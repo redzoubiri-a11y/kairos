@@ -49,6 +49,7 @@ export default function HomeScreen({ navigation }) {
   const [city, setCity]               = useState('alger');
   const [activeFilter, setFilter]     = useState(null);
   const [restaurants, setRestaurants] = useState([]);
+  const [loading, setLoading]         = useState(false);
   const [bannerVisible, setBannerVisible] = useState(false);
   const [userInitial, setUserInitial] = useState("?");
 
@@ -56,12 +57,19 @@ export default function HomeScreen({ navigation }) {
     supabase.auth.getUser().then(({ data }) => {
       if (data?.user?.email) setUserInitial(data.user.email[0].toUpperCase());
     });
-    supabase.from('restaurants').select('*').limit(12).then(({ data }) => {
-      if (data) setRestaurants(data);
-    });
     const t = setTimeout(() => setBannerVisible(true), 150);
     return () => clearTimeout(t);
   }, []);
+
+  useEffect(() => {
+    setLoading(true);
+    let query = supabase.from('restaurants').select('*').limit(12);
+    if (city !== 'nearby') query = query.eq('city', city);
+    query.then(({ data }) => {
+      setRestaurants(data ?? []);
+      setLoading(false);
+    });
+  }, [city]);
 
   const toggleFilter = (f) => setFilter((prev) => (prev === f ? null : f));
 
@@ -157,8 +165,10 @@ export default function HomeScreen({ navigation }) {
           <TouchableOpacity><Text style={s.seeAll}>Voir tout</Text></TouchableOpacity>
         </View>
 
-        {restaurants.length === 0 ? (
+        {loading ? (
           <View style={s.empty}><Text style={s.emptyTxt}>Chargement…</Text></View>
+        ) : restaurants.length === 0 ? (
+          <View style={s.empty}><Text style={s.emptyTxt}>Aucun restaurant disponible</Text></View>
         ) : (
           restaurants.map((r, i) => (
             <TouchableOpacity

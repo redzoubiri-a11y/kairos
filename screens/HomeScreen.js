@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView, Image, Dimensions,
 } from 'react-native';
@@ -99,16 +100,21 @@ export default function HomeScreen({ navigation }) {
   const [avatarUrl, setAvatarUrl] = useState(null);
 
   useEffect(() => {
+    const t = setTimeout(() => setBannerVisible(true), 150);
+    return () => clearTimeout(t);
+  }, []);
+
+  useFocusEffect(useCallback(() => {
     supabase.auth.getUser().then(({ data }) => {
       const u = data?.user;
       if (!u) return;
       if (u.email) setUserInitial(u.email[0].toUpperCase());
       supabase.from('users').select('avatar_url').eq('auth_id', u.id).single()
-        .then(({ data: row }) => { if (row?.avatar_url) setAvatarUrl(row.avatar_url); });
+        .then(({ data: row }) => {
+          setAvatarUrl(row?.avatar_url ?? null);
+        });
     });
-    const t = setTimeout(() => setBannerVisible(true), 150);
-    return () => clearTimeout(t);
-  }, []);
+  }, []));
 
   useEffect(() => {
     setLoading(true);

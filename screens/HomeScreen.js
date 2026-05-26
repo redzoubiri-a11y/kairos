@@ -184,7 +184,7 @@ export default function HomeScreen({ navigation }) {
                 </View>
               </View>
               <View style={s.listInfo}>
-                <Text style={s.listCuisine}>{r.cuisine_type ? r.cuisine_type.toUpperCase() : '—'}</Text>
+                <Text style={s.listCuisine}>{r.cuisine_type ? r.cuisine_type.toUpperCase() : '—'}{r.quartier ? '  ·  ' + r.quartier : ''}</Text>
                 <Text style={s.listName} numberOfLines={1}>{r.name}</Text>
                 <View style={s.listMeta}>
                   <Text style={s.listRating}>{'★ ' + (r.avg_rating > 0 ? Number(r.avg_rating).toFixed(1) : '—')}</Text>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView,
+  View, Text, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView, Image,
 } from 'react-native';
 import { supabase } from '../supabase';
 
@@ -177,7 +177,10 @@ export default function HomeScreen({ navigation }) {
               onPress={() => navigation.navigate('Restaurant', { restaurant: r })}
             >
               <View style={[s.listThumb, { backgroundColor: CARD_BG[i % CARD_BG.length] }]}>
-                <Text style={s.listEmoji}>{CUISINE_EMOJI[r.cuisine_type] || '🍽️'}</Text>
+                {r.photos && r.photos.length > 0
+                  ? <Image source={{ uri: r.photos[0] }} style={s.listPhoto} />
+                  : <Text style={s.listEmoji}>{CUISINE_EMOJI[r.cuisine_type] || '🍽️'}</Text>
+                }
                 <View style={s.openBadge}>
                   <View style={s.openDot} />
                   <Text style={s.openTxt}>Ouvert</Text>
@@ -266,7 +269,8 @@ const s = StyleSheet.create({
 
   /* List cards */
   listCard: { flexDirection: 'row', marginHorizontal: 20, marginBottom: 14, backgroundColor: C.card, borderRadius: 16, borderWidth: 1, borderColor: C.border, overflow: 'hidden' },
-  listThumb: { width: 90, alignItems: 'center', justifyContent: 'center', minHeight: 90 },
+  listThumb: { width: 90, alignItems: 'center', justifyContent: 'center', minHeight: 90, overflow: 'hidden' },
+  listPhoto: { width: 90, height: '100%', position: 'absolute', top: 0, left: 0 },
   listEmoji: { fontSize: 34 },
   openBadge: { position: 'absolute', bottom: 6, left: 6, flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(10,15,26,0.82)', borderRadius: 100, paddingHorizontal: 6, paddingVertical: 2, gap: 3 },
   openDot: { width: 5, height: 5, borderRadius: 3, backgroundColor: C.green },

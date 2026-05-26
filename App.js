@@ -15,6 +15,7 @@ import RestaurantScreen from './screens/RestaurantScreen';
 import ReservationFormScreen from './screens/ReservationFormScreen';
 import AuthScreen from './screens/AuthScreen';
 import ProInscriptionScreen from './screens/ProInscriptionScreen';
+import ProfilScreen from './screens/ProfilScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();

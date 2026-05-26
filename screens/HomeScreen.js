@@ -50,8 +50,12 @@ export default function HomeScreen({ navigation }) {
   const [activeFilter, setFilter]     = useState(null);
   const [restaurants, setRestaurants] = useState([]);
   const [bannerVisible, setBannerVisible] = useState(false);
+  const [userInitial, setUserInitial] = useState("?");
 
   useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      if (data?.user?.email) setUserInitial(data.user.email[0].toUpperCase());
+    });
     supabase.from('restaurants').select('*').limit(12).then(({ data }) => {
       if (data) setRestaurants(data);
     });
@@ -69,7 +73,7 @@ export default function HomeScreen({ navigation }) {
         <Text style={s.logo}>MIDA</Text>
         <View style={s.headerRight}>
           <TouchableOpacity style={s.iconBtn}><Text style={s.iconBtnTxt}>🔍</Text></TouchableOpacity>
-          <View style={s.avatar}><Text style={s.avatarTxt}>R</Text></View>
+          <View style={s.avatar}><Text style={s.avatarTxt}>{userInitial}</Text></View>
         </View>
       </View>
 

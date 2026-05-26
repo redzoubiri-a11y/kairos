@@ -1,47 +1,49 @@
 import { useState, useEffect } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView, Image,
+  View, Text, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView, Image, Dimensions,
 } from 'react-native';
 import { supabase } from '../supabase';
 
-function CardThumb({ photos, emoji, bg }) {
+const SW = Dimensions.get('window').width;
+const CARD_W = SW - 40;
+
+function CardHero({ photos, emoji, bg, rank }) {
   const [idx, setIdx] = useState(0);
-  const badge = (
-    <View style={s.openBadge}>
-      <View style={s.openDot} />
-      <Text style={s.openTxt}>Ouvert</Text>
-    </View>
-  );
-  if (!photos || photos.length === 0) {
-    return (
-      <View style={[s.listThumb, { backgroundColor: bg }]}>
-        <Text style={s.listEmoji}>{emoji}</Text>
-        {badge}
-      </View>
-    );
-  }
   return (
-    <View style={[s.listThumb, { backgroundColor: bg, overflow: 'hidden' }]}>
-      <ScrollView
-        horizontal pagingEnabled showsHorizontalScrollIndicator={false}
-        style={s.listThumbScroll}
-        onMomentumScrollEnd={(e) => {
-          const i = Math.round(e.nativeEvent.contentOffset.x / 90);
-          setIdx(i);
-        }}
-      >
-        {photos.map((uri, i) => (
-          <Image key={i} source={{ uri }} style={s.listPhoto} resizeMode="cover" />
-        ))}
-      </ScrollView>
-      {photos.length > 1 && (
-        <View style={s.thumbDots}>
+    <View style={[s.cardHero, { backgroundColor: bg }]}>
+      {photos && photos.length > 0 ? (
+        <ScrollView
+          horizontal pagingEnabled showsHorizontalScrollIndicator={false}
+          style={StyleSheet.absoluteFill}
+          onMomentumScrollEnd={(e) => {
+            const i = Math.round(e.nativeEvent.contentOffset.x / CARD_W);
+            setIdx(i);
+          }}
+        >
+          {photos.map((uri, i) => (
+            <Image key={i} source={{ uri }} style={{ width: CARD_W, height: 180 }} resizeMode="cover" />
+          ))}
+        </ScrollView>
+      ) : (
+        <Text style={s.heroEmoji}>{emoji}</Text>
+      )}
+      {/* Gradient overlay for readability */}
+      <View style={s.heroOverlay} />
+      {/* Dots */}
+      {photos && photos.length > 1 && (
+        <View style={s.heroDots}>
           {photos.map((_, i) => (
-            <View key={i} style={[s.thumbDot, i === idx && s.thumbDotOn]} />
+            <View key={i} style={[s.heroDot, i === idx && s.heroDotOn]} />
           ))}
         </View>
       )}
-      {badge}
+      {/* Rank */}
+      <View style={s.heroRank}><Text style={s.heroRankTxt}>#{rank}</Text></View>
+      {/* Ouvert badge */}
+      <View style={s.openBadge}>
+        <View style={s.openDot} />
+        <Text style={s.openTxt}>Ouvert</Text>
+      </View>
     </View>
   );
 }
@@ -218,10 +220,11 @@ export default function HomeScreen({ navigation }) {
               style={s.listCard}
               onPress={() => navigation.navigate('Restaurant', { restaurant: r })}
             >
-              <CardThumb
+              <CardHero
                 photos={r.photos}
                 emoji={CUISINE_EMOJI[r.cuisine_type] || '🍽️'}
                 bg={CARD_BG[i % CARD_BG.length]}
+                rank={i + 1}
               />
               <View style={s.listInfo}>
                 <Text style={s.listCuisine}>{r.cuisine_type ? r.cuisine_type.toUpperCase() : '—'}{r.quartier ? '  ·  ' + r.quartier : ''}</Text>
@@ -235,9 +238,6 @@ export default function HomeScreen({ navigation }) {
                   <View style={s.listTag}><Text style={s.listTagTxt}>Réservation</Text></View>
                   <View style={s.listTag}><Text style={s.listTagTxt}>20 min</Text></View>
                 </View>
-              </View>
-              <View style={s.listRank}>
-                <Text style={s.listRankTxt}>{'#' + (i + 1)}</Text>
               </View>
             </TouchableOpacity>
           ))
@@ -305,29 +305,28 @@ const s = StyleSheet.create({
   catLabel: { color: C.dim, fontSize: 10, textAlign: 'center', lineHeight: 13 },
 
   /* List cards */
-  listCard: { flexDirection: 'row', marginHorizontal: 20, marginBottom: 14, backgroundColor: C.card, borderRadius: 16, borderWidth: 1, borderColor: C.border, overflow: 'hidden' },
-  listThumb: { width: 90, alignItems: 'center', justifyContent: 'center', minHeight: 90, overflow: 'hidden' },
-  listThumbScroll: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 },
-  listPhoto: { width: 90, height: 90 },
-  listEmoji: { fontSize: 34 },
-  thumbDots: { position: 'absolute', bottom: 20, flexDirection: 'row', gap: 3, alignSelf: 'center' },
-  thumbDot: { width: 4, height: 4, borderRadius: 2, backgroundColor: 'rgba(255,255,255,0.4)' },
-  thumbDotOn: { backgroundColor: '#fff', width: 8 },
-  openBadge: { position: 'absolute', bottom: 6, left: 6, flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(10,15,26,0.82)', borderRadius: 100, paddingHorizontal: 6, paddingVertical: 2, gap: 3 },
+  listCard: { marginHorizontal: 20, marginBottom: 16, backgroundColor: C.card, borderRadius: 18, borderWidth: 1, borderColor: C.border, overflow: 'hidden' },
+  cardHero: { width: CARD_W, height: 180, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
+  heroEmoji: { fontSize: 52 },
+  heroOverlay: { position: 'absolute', bottom: 0, left: 0, right: 0, height: 60, backgroundColor: 'rgba(13,22,40,0.45)' },
+  heroDots: { position: 'absolute', bottom: 10, flexDirection: 'row', gap: 4, alignSelf: 'center' },
+  heroDot: { width: 5, height: 5, borderRadius: 3, backgroundColor: 'rgba(255,255,255,0.4)' },
+  heroDotOn: { backgroundColor: '#fff', width: 14 },
+  heroRank: { position: 'absolute', top: 10, right: 10, backgroundColor: 'rgba(13,22,40,0.75)', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3, borderWidth: 1, borderColor: C.border },
+  heroRankTxt: { color: C.dimmer, fontSize: 11, fontWeight: '600' },
+  openBadge: { position: 'absolute', bottom: 10, left: 10, flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(10,15,26,0.82)', borderRadius: 100, paddingHorizontal: 8, paddingVertical: 3, gap: 4 },
   openDot: { width: 5, height: 5, borderRadius: 3, backgroundColor: C.green },
-  openTxt: { color: C.green, fontSize: 8 },
-  listInfo: { flex: 1, padding: 12, justifyContent: 'center' },
-  listCuisine: { color: C.accent, fontSize: 8, letterSpacing: 2.5, marginBottom: 3 },
-  listName: { color: C.text, fontSize: 15, fontWeight: '400', letterSpacing: 0.3, marginBottom: 4 },
-  listMeta: { flexDirection: 'row', alignItems: 'center', gap: 5, marginBottom: 7 },
-  listRating: { color: C.accent, fontSize: 11, fontWeight: '500' },
-  listSep: { color: C.dimmer, fontSize: 11 },
-  listPrice: { color: C.dim, fontSize: 11 },
+  openTxt: { color: C.green, fontSize: 9 },
+  listInfo: { padding: 14 },
+  listCuisine: { color: C.accent, fontSize: 8, letterSpacing: 2.5, marginBottom: 4 },
+  listName: { color: C.text, fontSize: 16, fontWeight: '400', letterSpacing: 0.3, marginBottom: 6 },
+  listMeta: { flexDirection: 'row', alignItems: 'center', gap: 5, marginBottom: 8 },
+  listRating: { color: C.accent, fontSize: 12, fontWeight: '500' },
+  listSep: { color: C.dimmer, fontSize: 12 },
+  listPrice: { color: C.dim, fontSize: 12 },
   listTagRow: { flexDirection: 'row', gap: 6 },
   listTag: { backgroundColor: 'rgba(74,127,165,0.12)', borderRadius: 6, paddingHorizontal: 7, paddingVertical: 2, borderWidth: 1, borderColor: 'rgba(74,127,165,0.25)' },
   listTagTxt: { color: C.accent2, fontSize: 9 },
-  listRank: { width: 36, alignItems: 'center', justifyContent: 'center', borderLeftWidth: 1, borderLeftColor: C.border },
-  listRankTxt: { color: C.dimmer, fontSize: 12, fontWeight: '600' },
 
   /* Empty */
   empty: { alignItems: 'center', paddingVertical: 40 },

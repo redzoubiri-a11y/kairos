@@ -4,6 +4,48 @@ import {
 } from 'react-native';
 import { supabase } from '../supabase';
 
+function CardThumb({ photos, emoji, bg }) {
+  const [idx, setIdx] = useState(0);
+  const badge = (
+    <View style={s.openBadge}>
+      <View style={s.openDot} />
+      <Text style={s.openTxt}>Ouvert</Text>
+    </View>
+  );
+  if (!photos || photos.length === 0) {
+    return (
+      <View style={[s.listThumb, { backgroundColor: bg }]}>
+        <Text style={s.listEmoji}>{emoji}</Text>
+        {badge}
+      </View>
+    );
+  }
+  return (
+    <View style={[s.listThumb, { backgroundColor: bg, overflow: 'hidden' }]}>
+      <ScrollView
+        horizontal pagingEnabled showsHorizontalScrollIndicator={false}
+        style={s.listThumbScroll}
+        onMomentumScrollEnd={(e) => {
+          const i = Math.round(e.nativeEvent.contentOffset.x / 90);
+          setIdx(i);
+        }}
+      >
+        {photos.map((uri, i) => (
+          <Image key={i} source={{ uri }} style={s.listPhoto} resizeMode="cover" />
+        ))}
+      </ScrollView>
+      {photos.length > 1 && (
+        <View style={s.thumbDots}>
+          {photos.map((_, i) => (
+            <View key={i} style={[s.thumbDot, i === idx && s.thumbDotOn]} />
+          ))}
+        </View>
+      )}
+      {badge}
+    </View>
+  );
+}
+
 const C = {
   bg: '#0d1628', bg2: '#111827', bg3: '#1a2332',
   accent: '#c8975a', accent2: '#4a7fa5',
@@ -176,16 +218,11 @@ export default function HomeScreen({ navigation }) {
               style={s.listCard}
               onPress={() => navigation.navigate('Restaurant', { restaurant: r })}
             >
-              <View style={[s.listThumb, { backgroundColor: CARD_BG[i % CARD_BG.length] }]}>
-                {r.photos && r.photos.length > 0
-                  ? <Image source={{ uri: r.photos[0] }} style={s.listPhoto} />
-                  : <Text style={s.listEmoji}>{CUISINE_EMOJI[r.cuisine_type] || '🍽️'}</Text>
-                }
-                <View style={s.openBadge}>
-                  <View style={s.openDot} />
-                  <Text style={s.openTxt}>Ouvert</Text>
-                </View>
-              </View>
+              <CardThumb
+                photos={r.photos}
+                emoji={CUISINE_EMOJI[r.cuisine_type] || '🍽️'}
+                bg={CARD_BG[i % CARD_BG.length]}
+              />
               <View style={s.listInfo}>
                 <Text style={s.listCuisine}>{r.cuisine_type ? r.cuisine_type.toUpperCase() : '—'}{r.quartier ? '  ·  ' + r.quartier : ''}</Text>
                 <Text style={s.listName} numberOfLines={1}>{r.name}</Text>
@@ -270,8 +307,12 @@ const s = StyleSheet.create({
   /* List cards */
   listCard: { flexDirection: 'row', marginHorizontal: 20, marginBottom: 14, backgroundColor: C.card, borderRadius: 16, borderWidth: 1, borderColor: C.border, overflow: 'hidden' },
   listThumb: { width: 90, alignItems: 'center', justifyContent: 'center', minHeight: 90, overflow: 'hidden' },
-  listPhoto: { width: 90, height: '100%', position: 'absolute', top: 0, left: 0 },
+  listThumbScroll: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 },
+  listPhoto: { width: 90, height: 90 },
   listEmoji: { fontSize: 34 },
+  thumbDots: { position: 'absolute', bottom: 20, flexDirection: 'row', gap: 3, alignSelf: 'center' },
+  thumbDot: { width: 4, height: 4, borderRadius: 2, backgroundColor: 'rgba(255,255,255,0.4)' },
+  thumbDotOn: { backgroundColor: '#fff', width: 8 },
   openBadge: { position: 'absolute', bottom: 6, left: 6, flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(10,15,26,0.82)', borderRadius: 100, paddingHorizontal: 6, paddingVertical: 2, gap: 3 },
   openDot: { width: 5, height: 5, borderRadius: 3, backgroundColor: C.green },
   openTxt: { color: C.green, fontSize: 8 },

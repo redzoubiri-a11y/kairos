@@ -130,6 +130,7 @@ export default function App() {
         <Stack.Screen name="Restaurant" component={RestaurantScreen} />
         <Stack.Screen name="ReservationForm" component={ReservationFormScreen} />
         <Stack.Screen name="ProInscription" component={ProInscriptionScreen} />
+        <Stack.Screen name="Profil" component={ProfilScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -187,9 +187,9 @@ export default function HomeScreen({ navigation }) {
                 <Text style={s.listCuisine}>{r.cuisine_type ? r.cuisine_type.toUpperCase() : '—'}</Text>
                 <Text style={s.listName} numberOfLines={1}>{r.name}</Text>
                 <View style={s.listMeta}>
-                  <Text style={s.listRating}>{'★ ' + (r.rating || '4.8')}</Text>
+                  <Text style={s.listRating}>{'★ ' + (r.avg_rating > 0 ? Number(r.avg_rating).toFixed(1) : '—')}</Text>
                   <Text style={s.listSep}>·</Text>
-                  <Text style={s.listPrice}>{r.price_range || '1 800 DA'}</Text>
+                  <Text style={s.listPrice}>{r.avg_ticket > 0 ? r.avg_ticket.toLocaleString('fr-FR') + ' DA' : '—'}</Text>
                 </View>
                 <View style={s.listTagRow}>
                   <View style={s.listTag}><Text style={s.listTagTxt}>Réservation</Text></View>

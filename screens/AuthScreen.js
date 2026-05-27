@@ -103,6 +103,7 @@ export default function AuthScreen({ onAuth }) {
   const [step,      setStep]      = useState('form');
 
   const [phone,     setPhone]     = useState('');
+  const [prefix,    setPrefix]    = useState('+213');
   const [email,     setEmail]     = useState('');
   const [password,  setPassword]  = useState('');
   const [confirm,   setConfirm]   = useState('');
@@ -172,7 +173,7 @@ export default function AuthScreen({ onAuth }) {
 
   /* ── OTP ── */
   async function sendOTP() {
-    const full = phone.startsWith('+') ? phone : '+213' + phone.replace(/^0/, '');
+    const full = phone.startsWith('+') ? phone : prefix + phone.replace(/^0/, '');
     setLoading(true); setError('');
     const { error: err } = await supabase.auth.signInWithOtp({ phone: full });
     if (err) { setError(err.message); shake(); }
@@ -181,7 +182,7 @@ export default function AuthScreen({ onAuth }) {
   }
 
   async function verifyOTP() {
-    const full = phone.startsWith('+') ? phone : '+213' + phone.replace(/^0/, '');
+    const full = phone.startsWith('+') ? phone : prefix + phone.replace(/^0/, '');
     setLoading(true); setError('');
     const { data, error: err } = await supabase.auth.verifyOtp({ phone: full, token: otp, type: 'sms' });
     if (err) { setError(err.message); shake(); }
@@ -339,10 +340,27 @@ export default function AuthScreen({ onAuth }) {
                 </View>
 
                 <Text style={f.label}>NUMÉRO DE TÉLÉPHONE</Text>
+                {/* Sélecteur de pays */}
+                <View style={s.prefixRow}>
+                  {[
+                    { code: '+213', flag: '🇩🇿', label: 'DZ' },
+                    { code: '+33',  flag: '🇫🇷', label: 'FR' },
+                    { code: '+212', flag: '🇲🇦', label: 'MA' },
+                    { code: '+216', flag: '🇹🇳', label: 'TN' },
+                  ].map(c => (
+                    <TouchableOpacity
+                      key={c.code}
+                      style={[s.prefixChip, prefix === c.code && s.prefixChipOn]}
+                      onPress={() => setPrefix(c.code)}
+                    >
+                      <Text style={s.prefixFlag}>{c.flag}</Text>
+                      <Text style={[s.prefixCode, prefix === c.code && s.prefixCodeOn]}>{c.code}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
                 <View style={s.phoneRow}>
                   <View style={s.phonePrefixWrap}>
-                    <Text style={s.phonePrefixFlag}>🇩🇿</Text>
-                    <Text style={s.phonePrefixTxt}>+213</Text>
+                    <Text style={s.phonePrefixTxt}>{prefix}</Text>
                   </View>
                   <TextInput
                     style={s.phoneInput}
@@ -385,7 +403,7 @@ export default function AuthScreen({ onAuth }) {
                   </View>
                   <View style={{ flex: 1 }}>
                     <Text style={s.smsSent}>Code envoyé</Text>
-                    <Text style={s.smsNumber}>+213 {phone.replace(/^0/, '')}</Text>
+                    <Text style={s.smsNumber}>{prefix} {phone.replace(/^0/, '')}</Text>
                   </View>
                   <TouchableOpacity onPress={() => { setStep('form'); setOtp(''); setError(''); setCountdown(0); }} activeOpacity={0.7}>
                     <Text style={s.smsChange}>Modifier</Text>
@@ -488,9 +506,14 @@ const s = StyleSheet.create({
   eyeTxt:        { color: C.accent2, fontSize: 12 },
 
   /* ── Phone ── */
+  prefixRow:        { flexDirection: 'row', gap: 8, marginBottom: 12 },
+  prefixChip:       { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 10, paddingVertical: 7, borderRadius: 10, backgroundColor: C.bg2, borderWidth: 1.5, borderColor: C.border },
+  prefixChipOn:     { borderColor: C.accent, backgroundColor: 'rgba(200,151,90,0.1)' },
+  prefixFlag:       { fontSize: 14 },
+  prefixCode:       { color: C.dim, fontSize: 11 },
+  prefixCodeOn:     { color: C.accent },
   phoneRow:         { flexDirection: 'row', backgroundColor: C.bg2, borderRadius: 14, borderWidth: 1.5, borderColor: C.border, marginBottom: 14, overflow: 'hidden', minHeight: 52 },
   phonePrefixWrap:  { flexDirection: 'row', alignItems: 'center', gap: 7, paddingHorizontal: 14, backgroundColor: C.bg3, borderRightWidth: 1, borderRightColor: C.border },
-  phonePrefixFlag:  { fontSize: 16 },
   phonePrefixTxt:   { color: C.text, fontSize: 14, fontWeight: '300' },
   phoneInput:       { flex: 1, color: C.text, fontSize: 15, fontWeight: '300', paddingHorizontal: 14 },
 

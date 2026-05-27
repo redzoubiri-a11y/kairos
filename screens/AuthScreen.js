@@ -1,20 +1,102 @@
-import { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, SafeAreaView, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { useState, useRef, useEffect } from 'react';
+import {
+  View, Text, StyleSheet, TextInput, TouchableOpacity,
+  SafeAreaView, KeyboardAvoidingView, Platform, ScrollView,
+  ActivityIndicator, Animated,
+} from 'react-native';
 import { supabase } from '../supabase';
 
-const C = { bg:'#0d1628', marine:'#1a2332', sea:'#4a7fa5', accent:'#c8975a', text:'#f0ece4', dim:'#8a9ab0', card:'#111827', border:'rgba(255,255,255,0.07)', red:'#c0392b' };
+const C = {
+  bg: '#0d1628', bg2: '#111827', bg3: '#1a2332',
+  accent: '#c8975a', accent2: '#4a7fa5',
+  text: '#f0ece4', dim: '#8a9ab0', dimmer: '#4a5568',
+  green: '#3d9970',
+  border: 'rgba(255,255,255,0.07)',
+  borderAccent: 'rgba(200,151,90,0.3)',
+  red: '#e05a5a',
+};
 
+/* ─── Composant cases OTP ─── */
+function OtpBoxes({ value, onChange }) {
+  const refs = Array.from({ length: 6 }, () => useRef(null));
+
+  const handleKey = (i, char) => {
+    if (char === '') {
+      const next = value.split('');
+      next[i] = '';
+      onChange(next.join(''));
+      if (i > 0) refs[i - 1].current?.focus();
+      return;
+    }
+    const digit = char.replace(/\D/, '');
+    if (!digit) return;
+    const next = value.split('').concat(Array(6).fill('')).slice(0, 6);
+    next[i] = digit;
+    onChange(next.join(''));
+    if (i < 5) refs[i + 1].current?.focus();
+  };
+
+  return (
+    <View style={ot.row}>
+      {Array.from({ length: 6 }).map((_, i) => (
+        <TextInput
+          key={i}
+          ref={refs[i]}
+          style={[ot.box, value[i] && ot.boxFilled]}
+          value={value[i] || ''}
+          onChangeText={(char) => handleKey(i, char)}
+          keyboardType="number-pad"
+          maxLength={1}
+          selectTextOnFocus
+        />
+      ))}
+    </View>
+  );
+}
+
+const ot = StyleSheet.create({
+  row:      { flexDirection: 'row', gap: 10, justifyContent: 'center', marginBottom: 24 },
+  box:      { width: 46, height: 56, borderRadius: 14, borderWidth: 1.5, borderColor: C.border, backgroundColor: C.bg2, color: C.text, fontSize: 22, fontWeight: '300', textAlign: 'center' },
+  boxFilled:{ borderColor: C.accent2, backgroundColor: 'rgba(74,127,165,0.1)' },
+});
+
+/* ─── Écran principal ─── */
 export default function AuthScreen({ onAuth }) {
-  const [phone, setPhone] = useState('');
-  const [step, setStep] = useState('phone');
-  const [otp, setOtp] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [method, setMethod] = useState('email');   // 'phone' | 'email'
+  const [mode,   setMode]   = useState('signin');  // 'signin' | 'signup'
+  const [step,   setStep]   = useState('form');    // 'form' | 'otp'
 
+  // Champs
+  const [phone,    setPhone]    = useState('');
+  const [email,    setEmail]    = useState('');
+  const [password, setPassword] = useState('');
+  const [confirm,  setConfirm]  = useState('');
+  const [otp,      setOtp]      = useState('');
+
+  const [loading,  setLoading]  = useState(false);
+  const [error,    setError]    = useState('');
+  const [showPwd,  setShowPwd]  = useState(false);
+
+  const fadeAnim = useRef(new Animated.Value(1)).current;
+
+  function switchMethod(m) {
+    Animated.timing(fadeAnim, { toValue: 0, duration: 150, useNativeDriver: true }).start(() => {
+      setMethod(m); setError(''); setStep('form');
+      Animated.timing(fadeAnim, { toValue: 1, duration: 200, useNativeDriver: true }).start();
+    });
+  }
+
+  function switchMode(m) {
+    Animated.timing(fadeAnim, { toValue: 0, duration: 120, useNativeDriver: true }).start(() => {
+      setMode(m); setError('');
+      Animated.timing(fadeAnim, { toValue: 1, duration: 180, useNativeDriver: true }).start();
+    });
+  }
+
+  /* ── OTP téléphone ── */
   async function sendOTP() {
-    setLoading(true);
-    setError('');
     const full = phone.startsWith('+') ? phone : '+213' + phone.replace(/^0/, '');
+    setLoading(true); setError('');
     const { error: err } = await supabase.auth.signInWithOtp({ phone: full });
     if (err) setError(err.message);
     else setStep('otp');
@@ -22,51 +104,231 @@ export default function AuthScreen({ onAuth }) {
   }
 
   async function verifyOTP() {
-    setLoading(true);
-    setError('');
     const full = phone.startsWith('+') ? phone : '+213' + phone.replace(/^0/, '');
+    setLoading(true); setError('');
     const { data, error: err } = await supabase.auth.verifyOtp({ phone: full, token: otp, type: 'sms' });
     if (err) setError(err.message);
     else if (data.session) onAuth(data.session);
     setLoading(false);
   }
 
+  /* ── Email ── */
+  async function submitEmail() {
+    if (!email.trim() || !password) { setError('Remplissez tous les champs.'); return; }
+    if (mode === 'signup' && password !== confirm) { setError('Les mots de passe ne correspondent pas.'); return; }
+    if (password.length < 6) { setError('Mot de passe trop court (6 caractères min).'); return; }
+
+    setLoading(true); setError('');
+
+    if (mode === 'signin') {
+      const { data, error: err } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+      if (err) setError(err.message);
+      else if (data.session) onAuth(data.session);
+    } else {
+      const { data, error: err } = await supabase.auth.signUp({ email: email.trim(), password });
+      if (err) { setError(err.message); }
+      else if (data.session) { onAuth(data.session); }
+      else { setError('Vérifiez votre email pour confirmer votre compte.'); }
+    }
+    setLoading(false);
+  }
+
+  const isOtpComplete = otp.replace(/\s/g, '').length === 6;
+
   return (
-    <SafeAreaView style={s.container}>
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1, width: '100%' }}>
-        <ScrollView contentContainerStyle={s.scroll} keyboardShouldPersistTaps="handled">
-          <Text style={s.logo}>MIDA</Text>
-          <Text style={s.tagline}>La bonne table, au bon moment.</Text>
-          <View style={s.card}>
-            {step === 'phone' ? (
+    <SafeAreaView style={s.root}>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
+        <ScrollView contentContainerStyle={s.scroll} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+
+          {/* ── Hero ── */}
+          <View style={s.hero}>
+            <View style={s.heroDeco}>
+              <Text style={s.heroDecoTxt}>✦</Text>
+            </View>
+            <Text style={s.logo}>MIDA</Text>
+            <Text style={s.tagline}>La bonne table, au bon moment.</Text>
+          </View>
+
+          {/* ── Sélecteur de méthode ── */}
+          <View style={s.methodRow}>
+            <TouchableOpacity
+              style={[s.methodBtn, method === 'email' && s.methodBtnOn]}
+              onPress={() => switchMethod('email')}
+            >
+              <Text style={[s.methodTxt, method === 'email' && s.methodTxtOn]}>✉️  Email</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[s.methodBtn, method === 'phone' && s.methodBtnOn]}
+              onPress={() => switchMethod('phone')}
+            >
+              <Text style={[s.methodTxt, method === 'phone' && s.methodTxtOn]}>📱  Téléphone</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* ── Formulaire ── */}
+          <Animated.View style={[s.card, { opacity: fadeAnim }]}>
+
+            {/* Email */}
+            {method === 'email' && (
               <>
-                <Text style={s.title}>Bienvenue</Text>
-                <Text style={s.desc}>Entrez votre numero pour continuer</Text>
-                <View style={s.row}>
-                  <View style={s.prefix}><Text style={s.prefixTxt}>+213</Text></View>
-                  <TextInput style={s.input} placeholder="6XX XX XX XX" placeholderTextColor={C.dim} keyboardType="phone-pad" value={phone} onChangeText={setPhone} />
+                <Text style={s.cardTitle}>
+                  {mode === 'signin' ? 'Connexion' : 'Créer un compte'}
+                </Text>
+                <Text style={s.cardSub}>
+                  {mode === 'signin'
+                    ? 'Ravi de vous revoir.'
+                    : 'Rejoignez MIDA en quelques secondes.'}
+                </Text>
+
+                <Text style={s.fieldLabel}>ADRESSE EMAIL</Text>
+                <View style={s.inputWrap}>
+                  <TextInput
+                    style={s.input}
+                    placeholder="votre@email.com"
+                    placeholderTextColor={C.dimmer}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    value={email}
+                    onChangeText={setEmail}
+                  />
                 </View>
-                {error ? <Text style={s.err}>{error}</Text> : null}
-                <TouchableOpacity style={s.btn} onPress={sendOTP}>
-                  <Text style={s.btnTxt}>{loading ? '...' : 'RECEVOIR LE CODE'}</Text>
+
+                <Text style={s.fieldLabel}>MOT DE PASSE</Text>
+                <View style={s.inputWrap}>
+                  <TextInput
+                    style={[s.input, { flex: 1 }]}
+                    placeholder="••••••••"
+                    placeholderTextColor={C.dimmer}
+                    secureTextEntry={!showPwd}
+                    value={password}
+                    onChangeText={setPassword}
+                  />
+                  <TouchableOpacity onPress={() => setShowPwd(v => !v)} style={s.eyeBtn}>
+                    <Text style={s.eyeTxt}>{showPwd ? '🙈' : '👁️'}</Text>
+                  </TouchableOpacity>
+                </View>
+
+                {mode === 'signup' && (
+                  <>
+                    <Text style={s.fieldLabel}>CONFIRMER LE MOT DE PASSE</Text>
+                    <View style={s.inputWrap}>
+                      <TextInput
+                        style={s.input}
+                        placeholder="••••••••"
+                        placeholderTextColor={C.dimmer}
+                        secureTextEntry={!showPwd}
+                        value={confirm}
+                        onChangeText={setConfirm}
+                      />
+                    </View>
+                  </>
+                )}
+
+                {!!error && <View style={s.errorBox}><Text style={s.errorTxt}>⚠️  {error}</Text></View>}
+
+                <TouchableOpacity style={s.submitBtn} onPress={submitEmail} disabled={loading}>
+                  {loading
+                    ? <ActivityIndicator color={C.bg} />
+                    : <Text style={s.submitTxt}>
+                        {mode === 'signin' ? 'SE CONNECTER' : 'CRÉER MON COMPTE'}
+                      </Text>
+                  }
                 </TouchableOpacity>
-                <Text style={s.legal}>En continuant, vous acceptez nos <Text style={s.legalLink}>Conditions d utilisation</Text> et notre <Text style={s.legalLink}>Politique de confidentialite</Text></Text>
+
+                <View style={s.modeSwitch}>
+                  <Text style={s.modeSwitchTxt}>
+                    {mode === 'signin' ? 'Pas encore de compte ?' : 'Déjà un compte ?'}
+                  </Text>
+                  <TouchableOpacity onPress={() => switchMode(mode === 'signin' ? 'signup' : 'signin')}>
+                    <Text style={s.modeSwitchLink}>
+                      {mode === 'signin' ? 'Créer un compte' : 'Se connecter'}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               </>
-            ) : (
+            )}
+
+            {/* Téléphone — étape saisie */}
+            {method === 'phone' && step === 'form' && (
               <>
-                <Text style={s.title}>Code de verification</Text>
-                <Text style={s.desc}>Code envoye sur votre telephone</Text>
-                <TextInput style={s.otpInput} placeholder="000000" placeholderTextColor={C.dim} keyboardType="number-pad" value={otp} onChangeText={setOtp} maxLength={6} />
-                {error ? <Text style={s.err}>{error}</Text> : null}
-                <TouchableOpacity style={s.btn} onPress={verifyOTP}>
-                  <Text style={s.btnTxt}>{loading ? '...' : 'CONFIRMER'}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => setStep('phone')}>
-                  <Text style={s.back}>Changer de numero</Text>
+                <Text style={s.cardTitle}>Votre numéro</Text>
+                <Text style={s.cardSub}>Nous vous enverrons un code par SMS.</Text>
+
+                <Text style={s.fieldLabel}>NUMÉRO DE TÉLÉPHONE</Text>
+                <View style={s.phoneRow}>
+                  <View style={s.prefix}>
+                    <Text style={s.prefixFlag}>🇩🇿</Text>
+                    <Text style={s.prefixTxt}>+213</Text>
+                  </View>
+                  <TextInput
+                    style={s.phoneInput}
+                    placeholder="6XX XX XX XX"
+                    placeholderTextColor={C.dimmer}
+                    keyboardType="phone-pad"
+                    value={phone}
+                    onChangeText={setPhone}
+                  />
+                </View>
+
+                {!!error && <View style={s.errorBox}><Text style={s.errorTxt}>⚠️  {error}</Text></View>}
+
+                <TouchableOpacity
+                  style={[s.submitBtn, !phone && s.submitBtnDim]}
+                  onPress={sendOTP}
+                  disabled={loading || !phone}
+                >
+                  {loading
+                    ? <ActivityIndicator color={C.bg} />
+                    : <Text style={s.submitTxt}>ENVOYER LE CODE SMS</Text>
+                  }
                 </TouchableOpacity>
               </>
             )}
-          </View>
+
+            {/* Téléphone — étape OTP */}
+            {method === 'phone' && step === 'otp' && (
+              <>
+                <Text style={s.cardTitle}>Code de vérification</Text>
+                <Text style={s.cardSub}>
+                  Code envoyé au{'\n'}
+                  <Text style={s.phoneHighlight}>+213 {phone.replace(/^0/, '')}</Text>
+                </Text>
+
+                <OtpBoxes value={otp} onChange={setOtp} />
+
+                {!!error && <View style={s.errorBox}><Text style={s.errorTxt}>⚠️  {error}</Text></View>}
+
+                <TouchableOpacity
+                  style={[s.submitBtn, !isOtpComplete && s.submitBtnDim]}
+                  onPress={verifyOTP}
+                  disabled={loading || !isOtpComplete}
+                >
+                  {loading
+                    ? <ActivityIndicator color={C.bg} />
+                    : <Text style={s.submitTxt}>VALIDER</Text>
+                  }
+                </TouchableOpacity>
+
+                <TouchableOpacity style={s.backLink} onPress={() => { setStep('form'); setOtp(''); setError(''); }}>
+                  <Text style={s.backLinkTxt}>← Changer de numéro</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={s.resendLink} onPress={sendOTP}>
+                  <Text style={s.resendTxt}>Renvoyer le code</Text>
+                </TouchableOpacity>
+              </>
+            )}
+
+          </Animated.View>
+
+          {/* Legal */}
+          <Text style={s.legal}>
+            En continuant, vous acceptez nos{' '}
+            <Text style={s.legalLink}>Conditions d'utilisation</Text>
+            {' '}et notre{' '}
+            <Text style={s.legalLink}>Politique de confidentialité</Text>
+          </Text>
+
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -74,22 +336,66 @@ export default function AuthScreen({ onAuth }) {
 }
 
 const s = StyleSheet.create({
-  container:  { flex: 1, backgroundColor: C.bg },
-  scroll:     { flexGrow: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
-  logo:       { color: C.accent, fontSize: 36, fontWeight: '300', letterSpacing: 10, marginBottom: 6 },
-  tagline:    { color: C.dim, fontSize: 12, fontStyle: 'italic', marginBottom: 32, letterSpacing: 1 },
-  card:       { width: '100%', maxWidth: 360, backgroundColor: C.bg, borderRadius: 20, padding: 28 },
-  title:      { color: C.text, fontSize: 22, fontWeight: '300', marginBottom: 8 },
-  desc:       { color: C.dim, fontSize: 13, marginBottom: 24 },
-  row:        { flexDirection: 'row', alignItems: 'center', backgroundColor: C.bg, borderWidth: 1, borderColor: C.border, borderRadius: 12, marginBottom: 16, overflow: 'hidden' },
-  prefix:     { backgroundColor: C.marine, paddingHorizontal: 14, paddingVertical: 14, borderRightWidth: 1, borderRightColor: C.border },
-  prefixTxt:  { color: C.text, fontSize: 13 },
-  input:      { flex: 1, color: C.text, fontSize: 16, paddingHorizontal: 14, paddingVertical: 14 },
-  otpInput:   { backgroundColor: C.bg, borderWidth: 1, borderColor: C.sea, borderRadius: 12, color: C.text, fontSize: 28, fontWeight: '300', paddingVertical: 16, marginBottom: 16, textAlign: 'center' },
-  err:        { color: C.red, fontSize: 12, marginBottom: 12, textAlign: 'center' },
-  btn:        { backgroundColor: C.sea, borderRadius: 12, paddingVertical: 16, alignItems: 'center', marginBottom: 12 },
-  btnTxt:     { color: C.text, fontSize: 13, fontWeight: '400', letterSpacing: 2 },
-  back:       { color: C.sea, fontSize: 12, textAlign: 'center', marginTop: 8 },
-  legal:      { color: C.dim, fontSize: 10, textAlign: 'center', marginTop: 8, lineHeight: 16 },
-  legalLink:  { color: C.sea },
+  root:          { flex: 1, backgroundColor: C.bg },
+  scroll:        { flexGrow: 1, paddingHorizontal: 24, paddingBottom: 32 },
+
+  /* Hero */
+  hero:          { alignItems: 'center', paddingTop: 48, paddingBottom: 32 },
+  heroDeco:      { width: 80, height: 80, borderRadius: 24, backgroundColor: 'rgba(200,151,90,0.1)', borderWidth: 1, borderColor: C.borderAccent, alignItems: 'center', justifyContent: 'center', marginBottom: 20 },
+  heroDecoTxt:   { color: C.accent, fontSize: 32 },
+  logo:          { color: C.accent, fontSize: 32, fontWeight: '300', letterSpacing: 10, marginBottom: 6 },
+  tagline:       { color: C.dim, fontSize: 12, fontStyle: 'italic', letterSpacing: 1 },
+
+  /* Method selector */
+  methodRow:     { flexDirection: 'row', backgroundColor: C.bg2, borderRadius: 16, borderWidth: 1, borderColor: C.border, padding: 4, marginBottom: 16, gap: 4 },
+  methodBtn:     { flex: 1, paddingVertical: 10, borderRadius: 12, alignItems: 'center' },
+  methodBtnOn:   { backgroundColor: C.bg3, borderWidth: 1, borderColor: C.border },
+  methodTxt:     { color: C.dimmer, fontSize: 13 },
+  methodTxtOn:   { color: C.text },
+
+  /* Card */
+  card:          { backgroundColor: C.bg2, borderRadius: 20, borderWidth: 1, borderColor: C.border, padding: 24, marginBottom: 16 },
+  cardTitle:     { color: C.text, fontSize: 22, fontWeight: '300', letterSpacing: 0.5, marginBottom: 6 },
+  cardSub:       { color: C.dim, fontSize: 13, marginBottom: 24, lineHeight: 20 },
+
+  /* Labels */
+  fieldLabel:    { color: C.dimmer, fontSize: 10, letterSpacing: 3, marginBottom: 8 },
+
+  /* Inputs */
+  inputWrap:     { flexDirection: 'row', alignItems: 'center', backgroundColor: C.bg, borderRadius: 13, borderWidth: 1, borderColor: C.border, paddingHorizontal: 14, marginBottom: 16, minHeight: 50 },
+  input:         { flex: 1, color: C.text, fontSize: 15, fontWeight: '300', paddingVertical: 13 },
+  eyeBtn:        { paddingLeft: 8 },
+  eyeTxt:        { fontSize: 16 },
+
+  /* Phone */
+  phoneRow:      { flexDirection: 'row', backgroundColor: C.bg, borderRadius: 13, borderWidth: 1, borderColor: C.border, marginBottom: 16, overflow: 'hidden', minHeight: 50 },
+  prefix:        { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 14, backgroundColor: C.bg3, borderRightWidth: 1, borderRightColor: C.border },
+  prefixFlag:    { fontSize: 16 },
+  prefixTxt:     { color: C.text, fontSize: 13 },
+  phoneInput:    { flex: 1, color: C.text, fontSize: 15, fontWeight: '300', paddingHorizontal: 14 },
+  phoneHighlight:{ color: C.accent },
+
+  /* Erreur */
+  errorBox:      { backgroundColor: 'rgba(224,90,90,0.1)', borderRadius: 12, padding: 12, borderWidth: 1, borderColor: 'rgba(224,90,90,0.3)', marginBottom: 14 },
+  errorTxt:      { color: C.red, fontSize: 12, lineHeight: 18 },
+
+  /* Bouton submit */
+  submitBtn:     { backgroundColor: C.accent, borderRadius: 14, paddingVertical: 15, alignItems: 'center', marginBottom: 4 },
+  submitBtnDim:  { opacity: 0.45 },
+  submitTxt:     { color: C.bg, fontSize: 13, fontWeight: '600', letterSpacing: 1.5 },
+
+  /* Switch mode */
+  modeSwitch:    { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 6, marginTop: 14 },
+  modeSwitchTxt: { color: C.dim, fontSize: 13 },
+  modeSwitchLink:{ color: C.accent2, fontSize: 13, fontWeight: '400' },
+
+  /* Liens retour / renvoi */
+  backLink:      { alignItems: 'center', marginTop: 14 },
+  backLinkTxt:   { color: C.dim, fontSize: 13 },
+  resendLink:    { alignItems: 'center', marginTop: 10 },
+  resendTxt:     { color: C.accent2, fontSize: 13 },
+
+  /* Legal */
+  legal:         { color: C.dimmer, fontSize: 10, textAlign: 'center', lineHeight: 16 },
+  legalLink:     { color: C.dim },
 });

@@ -86,8 +86,14 @@ export default function AuthScreen({ onAuth }) {
     } else {
       const { data, error: err } = await supabase.auth.signUp({ email: email.trim(), password });
       if (err) { setError(err.message); shake(); }
-      else if (data.session) onAuth(data.session);
-      else setSuccess('Un email de confirmation a été envoyé. Si vous avez déjà un compte, connectez-vous directement.');
+      else if (data.session) { onAuth(data.session); }
+      else {
+        // Pas de session immédiate : email déjà existant ou confirmation requise
+        // On tente une connexion directe — si l'email est déjà confirmé, ça marche
+        const { data: d2, error: e2 } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+        if (d2?.session) { onAuth(d2.session); }
+        else { setSuccess('Compte créé ! Vérifiez votre boîte mail pour confirmer, puis connectez-vous.'); }
+      }
     }
     setLoading(false);
   }

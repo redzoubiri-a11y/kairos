@@ -19,6 +19,7 @@ import ProInscriptionScreen from './screens/ProInscriptionScreen';
 import ProfilScreen from './screens/ProfilScreen';
 import NotificationsScreen from './screens/NotificationsScreen';
 import SearchScreen from './screens/SearchScreen';
+import ProComptoir from './screens/ProComptoir';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -137,6 +138,7 @@ export default function App() {
         <Stack.Screen name="Profil" component={ProfilScreen} />
         <Stack.Screen name="Notifications" component={NotificationsScreen} />
         <Stack.Screen name="Search" component={SearchScreen} />
+        <Stack.Screen name="ProComptoir" component={ProComptoir} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -38,7 +38,7 @@ function formatDate(iso) {
   return `${d}/${m}/${y}`;
 }
 
-export default function ProDashboard() {
+export default function ProDashboard({ navigation }) {
   const [restaurant,   setRestaurant]   = useState(null);
   const [reservations, setReservations] = useState([]);
   const [loading,      setLoading]      = useState(true);
@@ -195,9 +195,17 @@ export default function ProDashboard() {
             <Text style={s.headerSub}>tableau de bord</Text>
             <Text style={s.headerTitle}>Manager</Text>
           </View>
-          <View style={s.proBadge}>
-            <View style={s.proDot} />
-            <Text style={s.proBadgeTxt}>En ligne</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <TouchableOpacity
+              style={s.comptoirBtn}
+              onPress={() => navigation.navigate('ProComptoir')}
+            >
+              <Text style={s.comptoirBtnTxt}>📟  Mode comptoir</Text>
+            </TouchableOpacity>
+            <View style={s.proBadge}>
+              <View style={s.proDot} />
+              <Text style={s.proBadgeTxt}>En ligne</Text>
+            </View>
           </View>
         </View>
 
@@ -356,6 +364,8 @@ const s = StyleSheet.create({
   header:         { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', paddingHorizontal: 20, paddingTop: 16, paddingBottom: 16, borderBottomWidth: 1, borderBottomColor: C.border },
   headerSub:      { color: C.accent, fontSize: 10, fontStyle: 'italic', letterSpacing: 3, marginBottom: 2 },
   headerTitle:    { color: C.text, fontSize: 26, fontWeight: '300', letterSpacing: 1 },
+  comptoirBtn:    { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 7, borderRadius: 10, backgroundColor: 'rgba(200,151,90,0.1)', borderWidth: 1, borderColor: 'rgba(200,151,90,0.3)' },
+  comptoirBtnTxt: { color: C.accent, fontSize: 12, fontWeight: '400' },
   proBadge:       { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(61,153,112,0.1)', borderRadius: 100, paddingHorizontal: 12, paddingVertical: 5, borderWidth: 1, borderColor: 'rgba(61,153,112,0.3)' },
   proDot:         { width: 6, height: 6, borderRadius: 3, backgroundColor: C.green },
   proBadgeTxt:    { color: C.green, fontSize: 11 },

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
@@ -6,163 +6,219 @@ import {
 } from 'react-native';
 import { supabase } from '../supabase';
 
-const SW = Dimensions.get('window').width;
-const CARD_W    = SW - 40;
-const FEAT_W    = SW * 0.78;
-const FEAT_H    = 220;
+const SW    = Dimensions.get('window').width;
+const CARD_W = SW - 40;
+const FEAT_W = SW * 0.76;
+const FEAT_H = 240;
 
 const C = {
   bg: '#0d1628', bg2: '#111827', bg3: '#1a2332',
   accent: '#c8975a', accent2: '#4a7fa5',
   text: '#f0ece4', dim: '#8a9ab0', dimmer: '#4a5568',
-  green: '#3d9970', card: '#141e2e',
+  green: '#3d9970', red: '#e05a5a', card: '#141e2e',
   border: 'rgba(255,255,255,0.07)',
   borderAccent: 'rgba(200,151,90,0.35)',
 };
 
 const CITIES = [
-  { id: 'alger',       label: 'Alger'         },
-  { id: 'oran',        label: 'Oran'           },
-  { id: 'constantine', label: 'Constantine'    },
-  { id: 'nearby',      label: '📍 Près de moi' },
+  { id: 'alger',       label: 'Alger',       emoji: '🏛️' },
+  { id: 'oran',        label: 'Oran',         emoji: '🌊' },
+  { id: 'constantine', label: 'Constantine',  emoji: '🌉' },
+  { id: 'nearby',      label: 'Autour',       emoji: '📍' },
 ];
 
 const CATEGORIES = [
-  { id: 'all',          label: 'Tout',          emoji: '✦',  bg: '#1a2332', cuisine: null         },
-  { id: 'algerien',     label: 'Algérien',      emoji: '🥘', bg: '#1a2e1a', cuisine: 'algerien'   },
-  { id: 'mediterraneen',label: 'Méditerranéen', emoji: '🐟', bg: '#1a2a2e', cuisine: 'mediterraneen'},
-  { id: 'italien',      label: 'Italien',       emoji: '🍕', bg: '#1a1e2e', cuisine: 'italien'    },
-  { id: 'japonais',     label: 'Japonais',      emoji: '🍣', bg: '#2a1a2e', cuisine: 'japonais'   },
-  { id: 'turc',         label: 'Turc',          emoji: '🍢', bg: '#2e1a1a', cuisine: 'turc'       },
-  { id: 'libanais',     label: 'Libanais',      emoji: '🌿', bg: '#2e2a1a', cuisine: 'libanais'   },
+  { id: 'all',           label: 'Tout',         emoji: '✦',  cuisine: null           },
+  { id: 'algerien',      label: 'Algérien',     emoji: '🥘', cuisine: 'algerien'     },
+  { id: 'mediterraneen', label: 'Méditerra.',   emoji: '🐟', cuisine: 'mediterraneen'},
+  { id: 'italien',       label: 'Italien',      emoji: '🍕', cuisine: 'italien'      },
+  { id: 'japonais',      label: 'Japonais',     emoji: '🍣', cuisine: 'japonais'     },
+  { id: 'turc',          label: 'Turc',         emoji: '🍢', cuisine: 'turc'         },
+  { id: 'libanais',      label: 'Libanais',     emoji: '🌿', cuisine: 'libanais'     },
 ];
 
 const CUISINE_EMOJI = {
   algerien:'🥘', mediterraneen:'🐟', fast_casual:'☕',
   italien:'🍕', japonais:'🍣', turc:'🍢', libanais:'🌿', francais:'🍷',
 };
-
 const CARD_BG = ['#1a2e1a','#1a1e2e','#2e2a1a','#2a1a2e','#1a2a2e','#2e1a1a'];
 
-const CITY_BANNERS = {
-  alger:       { title: 'Mida 30',       sub: 'Les incontournables d\'Alger',       emoji: '🏆' },
-  oran:        { title: 'La Côte',       sub: 'Les meilleures adresses d\'Oran',    emoji: '🌊' },
-  constantine: { title: 'Les Ponts',     sub: 'Les tables d\'exception',            emoji: '🌉' },
-  nearby:      { title: 'Autour de moi', sub: 'Les tables les plus proches',        emoji: '📍' },
-};
+function formatDate() {
+  const d = new Date();
+  const DAYS   = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+  const MONTHS = ['jan','fév','mar','avr','mai','juin','juil','août','sep','oct','nov','déc'];
+  return `${DAYS[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()]}`;
+}
 
 function greeting(name) {
   const h = new Date().getHours();
-  const label = h < 12 ? 'Bonjour' : h < 18 ? 'Bon après-midi' : 'Bonsoir';
-  return `${label}${name ? ', ' + name : ''} 👋`;
+  const g = h < 12 ? 'Bonjour' : h < 18 ? 'Bon après-midi' : 'Bonsoir';
+  return name ? `${g}, ${name}` : g;
 }
 
-/* ─── Carte featured (grande, carousel) ─── */
-function FeaturedCard({ r, onPress }) {
-  const photo = r.photos?.[0];
+function eveningSlots() {
+  const h = new Date().getHours();
+  const m = new Date().getMinutes();
+  const all = ['19h00','19h30','20h00','20h30','21h00','21h30'];
+  if (h >= 22) return [];
+  if (h < 17) return all;
+  return all.filter(s => {
+    const [sh, sm] = s.replace('h', ':').split(':').map(Number);
+    return sh > h || (sh === h && sm > m);
+  });
+}
+
+/* ─── Carte featured ─── */
+function FeaturedCard({ r, onPress, onReserve }) {
+  const photo = r.photos?.[0] || r.photo_url;
   return (
-    <TouchableOpacity style={f.card} onPress={onPress} activeOpacity={0.88}>
+    <TouchableOpacity style={fc.card} onPress={onPress} activeOpacity={0.88}>
       {photo
-        ? <Image source={{ uri: photo }} style={f.photo} resizeMode="cover" />
-        : <View style={[f.photo, { backgroundColor: '#1a2e1a', alignItems:'center', justifyContent:'center' }]}>
+        ? <Image source={{ uri: photo }} style={fc.photo} resizeMode="cover" />
+        : <View style={[fc.photo, { backgroundColor: '#1a2e1a', alignItems: 'center', justifyContent: 'center' }]}>
             <Text style={{ fontSize: 52 }}>{CUISINE_EMOJI[r.cuisine_type] || '🍽️'}</Text>
           </View>
       }
-      <View style={f.gradient} />
-      <View style={f.content}>
-        <View style={f.topRow}>
-          <View style={f.openPill}>
-            <View style={f.openDot} />
-            <Text style={f.openTxt}>Ouvert</Text>
+      <View style={fc.overlay} />
+      <View style={fc.content}>
+        <View style={fc.topRow}>
+          <View style={fc.openPill}>
+            <View style={fc.openDot} />
+            <Text style={fc.openTxt}>Ouvert</Text>
           </View>
-          <View style={f.ratingPill}>
-            <Text style={f.ratingTxt}>★ {r.avg_rating > 0 ? Number(r.avg_rating).toFixed(1) : '—'}</Text>
-          </View>
+          {r.avg_rating > 0 && (
+            <View style={fc.ratingPill}>
+              <Text style={fc.ratingTxt}>★ {Number(r.avg_rating).toFixed(1)}</Text>
+            </View>
+          )}
         </View>
-        <View style={f.bottom}>
-          <Text style={f.cuisine}>
-            {r.cuisine_type?.toUpperCase()}
+        <View style={fc.bottom}>
+          <Text style={fc.cuisine}>
+            {(r.cuisine_type || '').toUpperCase().replace(/_/g, ' ')}
             {r.quartier ? '  ·  ' + r.quartier : ''}
           </Text>
-          <Text style={f.name} numberOfLines={1}>{r.name}</Text>
-          <Text style={f.price}>{r.avg_ticket > 0 ? r.avg_ticket.toLocaleString('fr-FR') + ' DA / pers.' : ''}</Text>
+          <Text style={fc.name} numberOfLines={1}>{r.name}</Text>
+          <View style={fc.footRow}>
+            <Text style={fc.price}>{r.avg_ticket > 0 ? r.avg_ticket.toLocaleString('fr-FR') + ' DA' : ''}</Text>
+            <TouchableOpacity style={fc.resaBtn} onPress={onReserve}>
+              <Text style={fc.resaBtnTxt}>Réserver</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </TouchableOpacity>
   );
 }
 
-const f = StyleSheet.create({
-  card:     { width: FEAT_W, height: FEAT_H, borderRadius: 20, overflow: 'hidden', marginRight: 12, backgroundColor: C.bg3 },
-  photo:    { ...StyleSheet.absoluteFillObject },
-  gradient: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(8,14,26,0.55)' },
-  content:  { flex: 1, justifyContent: 'space-between', padding: 16 },
-  topRow:   { flexDirection: 'row', justifyContent: 'space-between' },
-  openPill: { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: 'rgba(10,15,26,0.7)', borderRadius: 100, paddingHorizontal: 10, paddingVertical: 4, borderWidth: 1, borderColor: 'rgba(61,153,112,0.35)' },
-  openDot:  { width: 5, height: 5, borderRadius: 3, backgroundColor: C.green },
-  openTxt:  { color: C.green, fontSize: 10 },
-  ratingPill: { backgroundColor: 'rgba(10,15,26,0.7)', borderRadius: 100, paddingHorizontal: 10, paddingVertical: 4, borderWidth: 1, borderColor: 'rgba(200,151,90,0.35)' },
-  ratingTxt:  { color: C.accent, fontSize: 11, fontWeight: '500' },
-  bottom:   { gap: 3 },
-  cuisine:  { color: 'rgba(200,151,90,0.8)', fontSize: 9, letterSpacing: 2 },
-  name:     { color: '#fff', fontSize: 18, fontWeight: '400', letterSpacing: 0.3 },
-  price:    { color: 'rgba(240,236,228,0.6)', fontSize: 11 },
+const fc = StyleSheet.create({
+  card:      { width: FEAT_W, height: FEAT_H, borderRadius: 22, overflow: 'hidden', marginRight: 14, backgroundColor: C.bg3 },
+  photo:     { ...StyleSheet.absoluteFillObject },
+  overlay:   { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(8,14,26,0.28)' },
+  content:   { flex: 1, justifyContent: 'space-between', padding: 14 },
+  topRow:    { flexDirection: 'row', justifyContent: 'space-between' },
+  openPill:  { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: 'rgba(8,14,26,0.75)', borderRadius: 100, paddingHorizontal: 10, paddingVertical: 5, borderWidth: 1, borderColor: 'rgba(61,153,112,0.4)' },
+  openDot:   { width: 5, height: 5, borderRadius: 3, backgroundColor: C.green },
+  openTxt:   { color: C.green, fontSize: 10 },
+  ratingPill:{ backgroundColor: 'rgba(8,14,26,0.75)', borderRadius: 100, paddingHorizontal: 10, paddingVertical: 5, borderWidth: 1, borderColor: 'rgba(200,151,90,0.4)' },
+  ratingTxt: { color: C.accent, fontSize: 11, fontWeight: '500' },
+  bottom:    { backgroundColor: 'rgba(8,14,26,0.72)', borderRadius: 14, padding: 12, gap: 4 },
+  cuisine:   { color: 'rgba(200,151,90,0.85)', fontSize: 8, letterSpacing: 2.5 },
+  name:      { color: '#fff', fontSize: 18, fontWeight: '400', letterSpacing: 0.3 },
+  footRow:   { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 6 },
+  price:     { color: 'rgba(240,236,228,0.65)', fontSize: 11 },
+  resaBtn:   { backgroundColor: C.accent, borderRadius: 10, paddingHorizontal: 14, paddingVertical: 7 },
+  resaBtnTxt:{ color: C.bg, fontSize: 11, fontWeight: '600' },
 });
 
 /* ─── Carte liste ─── */
-function ListCard({ r, rank, onPress }) {
+function ListCard({ r, rank, onPress, onReserve }) {
   const [idx, setIdx] = useState(0);
-  const photos = r.photos?.length > 0 ? r.photos : null;
+  const photos = r.photos?.length > 0 ? r.photos : r.photo_url ? [r.photo_url] : null;
   return (
-    <TouchableOpacity style={s.listCard} onPress={onPress} activeOpacity={0.85}>
-      <View style={[s.cardHero, { backgroundColor: CARD_BG[rank % CARD_BG.length] }]}>
+    <TouchableOpacity style={lc.card} onPress={onPress} activeOpacity={0.85}>
+      <View style={[lc.hero, { backgroundColor: CARD_BG[rank % CARD_BG.length] }]}>
         {photos ? (
           <ScrollView
             horizontal pagingEnabled showsHorizontalScrollIndicator={false}
             style={StyleSheet.absoluteFill}
-            onMomentumScrollEnd={(e) =>
-              setIdx(Math.round(e.nativeEvent.contentOffset.x / CARD_W))
-            }
+            onMomentumScrollEnd={e => setIdx(Math.round(e.nativeEvent.contentOffset.x / CARD_W))}
           >
             {photos.map((uri, i) => (
-              <Image key={i} source={{ uri }} style={{ width: CARD_W, height: 180 }} resizeMode="cover" />
+              <Image key={i} source={{ uri }} style={{ width: CARD_W, height: 185 }} resizeMode="cover" />
             ))}
           </ScrollView>
         ) : (
-          <Text style={s.heroEmoji}>{CUISINE_EMOJI[r.cuisine_type] || '🍽️'}</Text>
+          <Text style={lc.heroEmoji}>{CUISINE_EMOJI[r.cuisine_type] || '🍽️'}</Text>
         )}
-        <View style={s.heroOverlay} />
+        <View style={lc.heroOverlay} />
         {photos?.length > 1 && (
-          <View style={s.heroDots}>
-            {photos.map((_, i) => (
-              <View key={i} style={[s.heroDot, i === idx && s.heroDotOn]} />
-            ))}
+          <View style={lc.dots}>
+            {photos.map((_, i) => <View key={i} style={[lc.dot, i === idx && lc.dotOn]} />)}
           </View>
         )}
-        <View style={s.heroRank}><Text style={s.heroRankTxt}>#{rank + 1}</Text></View>
-        <View style={s.openBadge}>
-          <View style={s.openDot} /><Text style={s.openTxt}>Ouvert</Text>
+        <View style={lc.rankBadge}><Text style={lc.rankTxt}>#{rank + 1}</Text></View>
+        <View style={lc.openBadge}>
+          <View style={lc.openDot} /><Text style={lc.openTxt}>Ouvert</Text>
         </View>
       </View>
-      <View style={s.listInfo}>
-        <Text style={s.listCuisine}>
-          {r.cuisine_type?.toUpperCase()}
-          {r.quartier ? '  ·  ' + r.quartier : ''}
-        </Text>
-        <Text style={s.listName} numberOfLines={1}>{r.name}</Text>
-        <View style={s.listMeta}>
-          <Text style={s.listRating}>★ {r.avg_rating > 0 ? Number(r.avg_rating).toFixed(1) : '—'}</Text>
-          <Text style={s.listSep}>·</Text>
-          <Text style={s.listPrice}>{r.avg_ticket > 0 ? r.avg_ticket.toLocaleString('fr-FR') + ' DA' : '—'}</Text>
+      <View style={lc.body}>
+        <View>
+          <Text style={lc.cuisine}>
+            {(r.cuisine_type || '').toUpperCase().replace(/_/g, ' ')}
+            {r.quartier ? '  ·  ' + r.quartier : ''}
+          </Text>
+          <Text style={lc.name} numberOfLines={1}>{r.name}</Text>
+          <View style={lc.meta}>
+            <Text style={lc.rating}>★ {r.avg_rating > 0 ? Number(r.avg_rating).toFixed(1) : '—'}</Text>
+            <Text style={lc.sep}>·</Text>
+            <Text style={lc.price}>{r.avg_ticket > 0 ? r.avg_ticket.toLocaleString('fr-FR') + ' DA' : '—'}</Text>
+            {r.review_count > 0 && (
+              <><Text style={lc.sep}>·</Text><Text style={lc.reviews}>{r.review_count} avis</Text></>
+            )}
+          </View>
         </View>
-        <View style={s.listTagRow}>
-          <View style={s.listTag}><Text style={s.listTagTxt}>Réservation en ligne</Text></View>
-          <View style={s.listTag}><Text style={s.listTagTxt}>~20 min</Text></View>
+        <View style={lc.footer}>
+          <View style={lc.tags}>
+            <View style={lc.tag}><Text style={lc.tagTxt}>Résa en ligne</Text></View>
+            <View style={lc.tag}><Text style={lc.tagTxt}>~20 min</Text></View>
+          </View>
+          <TouchableOpacity style={lc.resaBtn} onPress={onReserve}>
+            <Text style={lc.resaBtnTxt}>Réserver →</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </TouchableOpacity>
   );
 }
+
+const lc = StyleSheet.create({
+  card:       { marginHorizontal: 20, marginBottom: 16, backgroundColor: C.card, borderRadius: 18, borderWidth: 1, borderColor: C.border, overflow: 'hidden' },
+  hero:       { width: CARD_W, height: 185, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
+  heroEmoji:  { fontSize: 52 },
+  heroOverlay:{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 70, backgroundColor: 'rgba(8,14,26,0.5)' },
+  dots:       { position: 'absolute', bottom: 10, flexDirection: 'row', gap: 4, alignSelf: 'center' },
+  dot:        { width: 5, height: 5, borderRadius: 3, backgroundColor: 'rgba(255,255,255,0.4)' },
+  dotOn:      { backgroundColor: '#fff', width: 14 },
+  rankBadge:  { position: 'absolute', top: 10, right: 10, backgroundColor: 'rgba(8,14,26,0.78)', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3, borderWidth: 1, borderColor: C.border },
+  rankTxt:    { color: C.dimmer, fontSize: 11, fontWeight: '600' },
+  openBadge:  { position: 'absolute', bottom: 10, left: 10, flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(8,14,26,0.82)', borderRadius: 100, paddingHorizontal: 8, paddingVertical: 3, gap: 4, borderWidth: 1, borderColor: 'rgba(61,153,112,0.3)' },
+  openDot:    { width: 5, height: 5, borderRadius: 3, backgroundColor: C.green },
+  openTxt:    { color: C.green, fontSize: 9 },
+  body:       { padding: 14, gap: 10 },
+  cuisine:    { color: C.accent, fontSize: 8, letterSpacing: 2.5, marginBottom: 4 },
+  name:       { color: C.text, fontSize: 16, fontWeight: '400', letterSpacing: 0.3, marginBottom: 6 },
+  meta:       { flexDirection: 'row', alignItems: 'center', gap: 5 },
+  rating:     { color: C.accent, fontSize: 12, fontWeight: '500' },
+  sep:        { color: C.dimmer },
+  price:      { color: C.dim, fontSize: 12 },
+  reviews:    { color: C.dimmer, fontSize: 11 },
+  footer:     { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  tags:       { flexDirection: 'row', gap: 6 },
+  tag:        { backgroundColor: 'rgba(74,127,165,0.1)', borderRadius: 6, paddingHorizontal: 7, paddingVertical: 3, borderWidth: 1, borderColor: 'rgba(74,127,165,0.22)' },
+  tagTxt:     { color: C.accent2, fontSize: 9 },
+  resaBtn:    { backgroundColor: C.accent, borderRadius: 10, paddingHorizontal: 14, paddingVertical: 8 },
+  resaBtnTxt: { color: C.bg, fontSize: 12, fontWeight: '600' },
+});
 
 /* ─── Écran principal ─── */
 export default function HomeScreen({ navigation }) {
@@ -175,7 +231,6 @@ export default function HomeScreen({ navigation }) {
   const [avatarUrl,    setAvatarUrl]    = useState(null);
   const [unreadNotifs, setUnreadNotifs] = useState(0);
 
-  /* User au focus */
   useFocusEffect(useCallback(() => {
     supabase.auth.getUser().then(({ data }) => {
       const u = data?.user;
@@ -189,32 +244,29 @@ export default function HomeScreen({ navigation }) {
           setAvatarUrl(row.avatar_url ?? null);
           setUserName(row.first_name || u.email?.split('@')[0] || '');
           supabase.from('notifications')
-            .select('id', { count:'exact', head:true })
-            .eq('recipient_id', row.id).eq('recipient_type','user').eq('is_read', false)
+            .select('id', { count: 'exact', head: true })
+            .eq('recipient_id', row.id).eq('recipient_type', 'user').eq('is_read', false)
             .then(({ count }) => setUnreadNotifs(count ?? 0));
         });
     });
   }, []));
 
-  /* Restaurants par ville */
   useEffect(() => {
     setLoading(true);
     let q = supabase.from('restaurants')
-      .select('id,name,cuisine_type,quartier,avg_rating,avg_ticket,photos,city')
-      .eq('status','active').limit(20).order('avg_rating', { ascending: false });
+      .select('id,name,cuisine_type,quartier,avg_rating,avg_ticket,photos,photo_url,review_count,city')
+      .eq('status', 'active').limit(20).order('avg_rating', { ascending: false });
     if (city !== 'nearby') q = q.eq('city', city);
     q.then(({ data }) => { setRestaurants(data ?? []); setLoading(false); });
   }, [city]);
 
-  /* Filtrage par catégorie côté client */
-  const filtered = category === 'all'
+  const filtered  = category === 'all'
     ? restaurants
     : restaurants.filter(r => r.cuisine_type === CATEGORIES.find(c => c.id === category)?.cuisine);
 
-  /* Top 3 pour le carousel (meilleure note) */
-  const featured = [...restaurants].sort((a, b) => (b.avg_rating||0) - (a.avg_rating||0)).slice(0, 5);
-
-  const banner = CITY_BANNERS[city] || CITY_BANNERS.alger;
+  const featured  = [...restaurants].sort((a, b) => (b.avg_rating || 0) - (a.avg_rating || 0)).slice(0, 6);
+  const slots     = eveningSlots();
+  const cityObj   = CITIES.find(c => c.id === city) || CITIES[0];
 
   return (
     <SafeAreaView style={s.root}>
@@ -223,7 +275,12 @@ export default function HomeScreen({ navigation }) {
       <View style={s.header}>
         <View>
           <Text style={s.greeting}>{greeting(userName)}</Text>
-          <Text style={s.logo}>MIDA</Text>
+          <View style={s.logoRow}>
+            <Text style={s.logo}>MIDA</Text>
+            <View style={s.datePill}>
+              <Text style={s.dateTxt}>{cityObj.emoji}  {formatDate()}</Text>
+            </View>
+          </View>
         </View>
         <View style={s.headerRight}>
           <TouchableOpacity style={s.iconBtn} onPress={() => navigation.navigate('Notifications')}>
@@ -247,12 +304,14 @@ export default function HomeScreen({ navigation }) {
       <TouchableOpacity style={s.searchBar} onPress={() => navigation.navigate('Search')} activeOpacity={0.8}>
         <Text style={s.searchIcon}>🔍</Text>
         <Text style={s.searchPlaceholder}>Restaurant, cuisine, quartier…</Text>
+        <View style={s.searchCta}><Text style={s.searchCtaTxt}>Chercher</Text></View>
       </TouchableOpacity>
 
       {/* ── Villes ── */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={s.cityRow} contentContainerStyle={s.cityContent}>
         {CITIES.map(c => (
           <TouchableOpacity key={c.id} style={[s.cityChip, city === c.id && s.cityChipOn]} onPress={() => { setCity(c.id); setCategory('all'); }}>
+            <Text style={s.cityEmoji}>{c.emoji}</Text>
             <Text style={[s.cityTxt, city === c.id && s.cityTxtOn]}>{c.label}</Text>
           </TouchableOpacity>
         ))}
@@ -261,24 +320,35 @@ export default function HomeScreen({ navigation }) {
       {/* ── Contenu scrollable ── */}
       <ScrollView showsVerticalScrollIndicator={false} style={s.scroll}>
 
-        {/* Bannière dynamique */}
-        <View style={s.banner}>
-          <View style={s.bannerInner}>
-            <View style={s.bannerBadge}><Text style={s.bannerBadgeTxt}>SÉLECTION MIDA</Text></View>
-            <Text style={s.bannerTitle}>{banner.title}</Text>
-            <Text style={s.bannerSub}>{banner.sub}</Text>
-            <TouchableOpacity style={s.bannerBtn}>
-              <Text style={s.bannerBtnTxt}>Découvrir →</Text>
-            </TouchableOpacity>
+        {/* Ce soir */}
+        {slots.length > 0 && (
+          <View style={s.tonightCard}>
+            <View style={s.tonightLeft}>
+              <Text style={s.tonightLabel}>🌙  CE SOIR</Text>
+              <Text style={s.tonightTitle}>Trouvez votre table</Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.slotRow}>
+                {slots.map(slot => (
+                  <TouchableOpacity key={slot} style={s.slotChip} onPress={() => navigation.navigate('Explorer')}>
+                    <Text style={s.slotTxt}>{slot}</Text>
+                  </TouchableOpacity>
+                ))}
+                <TouchableOpacity style={[s.slotChip, s.slotAll]} onPress={() => navigation.navigate('Explorer')}>
+                  <Text style={s.slotAllTxt}>Voir tout →</Text>
+                </TouchableOpacity>
+              </ScrollView>
+            </View>
+            <Text style={s.tonightEmoji}>🍽️</Text>
           </View>
-          <Text style={s.bannerEmoji}>{banner.emoji}</Text>
-        </View>
+        )}
 
-        {/* ── À la une : carousel featured ── */}
+        {/* À la une */}
         {!loading && featured.length > 0 && (
           <>
             <View style={s.sectionHead}>
               <Text style={s.sectionLabel}>À LA UNE</Text>
+              <TouchableOpacity onPress={() => navigation.navigate('Explorer')}>
+                <Text style={s.seeAll}>Voir tout →</Text>
+              </TouchableOpacity>
             </View>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.featRow}>
               {featured.map(r => (
@@ -286,13 +356,14 @@ export default function HomeScreen({ navigation }) {
                   key={r.id}
                   r={r}
                   onPress={() => navigation.navigate('Restaurant', { restaurant: r })}
+                  onReserve={() => navigation.navigate('ReservationForm', { restaurant: r })}
                 />
               ))}
             </ScrollView>
           </>
         )}
 
-        {/* ── Catégories ── */}
+        {/* Catégories */}
         <View style={s.sectionHead}>
           <Text style={s.sectionLabel}>CUISINES</Text>
           {category !== 'all' && (
@@ -301,25 +372,23 @@ export default function HomeScreen({ navigation }) {
             </TouchableOpacity>
           )}
         </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.catRow}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.pillRow}>
           {CATEGORIES.map(cat => (
             <TouchableOpacity
               key={cat.id}
-              style={[s.catCard, category === cat.id && s.catCardOn]}
+              style={[s.pill, category === cat.id && s.pillOn]}
               onPress={() => setCategory(cat.id)}
             >
-              <View style={[s.catImg, { backgroundColor: cat.bg }, category === cat.id && s.catImgOn]}>
-                <Text style={s.catEmoji}>{cat.emoji}</Text>
-              </View>
-              <Text style={[s.catLabel, category === cat.id && s.catLabelOn]}>{cat.label}</Text>
+              <Text style={s.pillEmoji}>{cat.emoji}</Text>
+              <Text style={[s.pillTxt, category === cat.id && s.pillTxtOn]}>{cat.label}</Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
 
-        {/* ── Liste principale ── */}
-        <View style={[s.sectionHead, { marginTop: 24 }]}>
+        {/* Liste */}
+        <View style={[s.sectionHead, { marginTop: 8 }]}>
           <Text style={s.sectionLabel}>
-            {category === 'all' ? 'LES PLUS RÉSERVÉS' : CATEGORIES.find(c=>c.id===category)?.label?.toUpperCase()}
+            {category === 'all' ? 'TOP RESTAURANTS' : (CATEGORIES.find(c => c.id === category)?.label || '').toUpperCase()}
           </Text>
           {!loading && (
             <Text style={s.resultCount}>{filtered.length} résultat{filtered.length > 1 ? 's' : ''}</Text>
@@ -327,15 +396,12 @@ export default function HomeScreen({ navigation }) {
         </View>
 
         {loading ? (
-          <View style={s.loadingWrap}>
-            <ActivityIndicator color={C.accent} size="large" />
-            <Text style={s.loadingTxt}>Chargement…</Text>
-          </View>
+          <View style={s.loadWrap}><ActivityIndicator color={C.accent} size="large" /></View>
         ) : filtered.length === 0 ? (
           <View style={s.emptyWrap}>
             <Text style={s.emptyEmoji}>🍽️</Text>
             <Text style={s.emptyTitle}>Aucun restaurant</Text>
-            <Text style={s.emptySub}>Essayez une autre catégorie ou ville</Text>
+            <Text style={s.emptySub}>Essayez une autre catégorie</Text>
             <TouchableOpacity onPress={() => setCategory('all')} style={s.emptyBtn}>
               <Text style={s.emptyBtnTxt}>Voir tout</Text>
             </TouchableOpacity>
@@ -347,6 +413,7 @@ export default function HomeScreen({ navigation }) {
               r={r}
               rank={i}
               onPress={() => navigation.navigate('Restaurant', { restaurant: r })}
+              onReserve={() => navigation.navigate('ReservationForm', { restaurant: r })}
             />
           ))
         )}
@@ -358,96 +425,77 @@ export default function HomeScreen({ navigation }) {
 }
 
 const s = StyleSheet.create({
-  root:         { flex:1, backgroundColor:C.bg },
-  scroll:       { flex:1 },
+  root:   { flex: 1, backgroundColor: C.bg },
+  scroll: { flex: 1 },
 
   /* Header */
-  header:       { flexDirection:'row', justifyContent:'space-between', alignItems:'center', paddingHorizontal:20, paddingTop:10, paddingBottom:10 },
-  greeting:     { color:C.dim, fontSize:12, fontWeight:'300', marginBottom:1 },
-  logo:         { color:C.accent, fontSize:24, fontWeight:'700', letterSpacing:6 },
-  headerRight:  { flexDirection:'row', alignItems:'center', gap:10 },
-  iconBtn:      { width:38, height:38, borderRadius:19, backgroundColor:C.bg2, borderWidth:1, borderColor:C.border, alignItems:'center', justifyContent:'center' },
-  iconBtnTxt:   { fontSize:17 },
-  notifBadge:   { position:'absolute', top:-4, right:-4, minWidth:16, height:16, borderRadius:8, backgroundColor:C.accent, alignItems:'center', justifyContent:'center', paddingHorizontal:3, borderWidth:1.5, borderColor:C.bg },
-  notifBadgeTxt:{ color:C.bg, fontSize:9, fontWeight:'700' },
-  avatar:       { width:38, height:38, borderRadius:19, backgroundColor:C.bg3, borderWidth:1.5, borderColor:C.accent, alignItems:'center', justifyContent:'center', overflow:'hidden' },
-  avatarTxt:    { color:C.accent, fontWeight:'600', fontSize:14 },
-  avatarPhoto:  { width:38, height:38, borderRadius:19 },
+  header:       { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', paddingHorizontal: 20, paddingTop: 10, paddingBottom: 10 },
+  greeting:     { color: C.dim, fontSize: 12, fontWeight: '300', marginBottom: 3 },
+  logoRow:      { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  logo:         { color: C.accent, fontSize: 24, fontWeight: '700', letterSpacing: 6 },
+  datePill:     { backgroundColor: C.bg2, borderRadius: 100, paddingHorizontal: 10, paddingVertical: 4, borderWidth: 1, borderColor: C.border },
+  dateTxt:      { color: C.dim, fontSize: 10, fontWeight: '300' },
+  headerRight:  { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  iconBtn:      { width: 38, height: 38, borderRadius: 19, backgroundColor: C.bg2, borderWidth: 1, borderColor: C.border, alignItems: 'center', justifyContent: 'center' },
+  iconBtnTxt:   { fontSize: 17 },
+  notifBadge:   { position: 'absolute', top: -4, right: -4, minWidth: 16, height: 16, borderRadius: 8, backgroundColor: C.accent, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 3, borderWidth: 1.5, borderColor: C.bg },
+  notifBadgeTxt:{ color: C.bg, fontSize: 9, fontWeight: '700' },
+  avatar:       { width: 38, height: 38, borderRadius: 19, backgroundColor: C.bg3, borderWidth: 1.5, borderColor: C.accent, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
+  avatarTxt:    { color: C.accent, fontWeight: '600', fontSize: 14 },
+  avatarPhoto:  { width: 38, height: 38, borderRadius: 19 },
 
   /* Search */
-  searchBar:    { flexDirection:'row', alignItems:'center', gap:10, marginHorizontal:20, marginBottom:10, marginTop:4, backgroundColor:C.bg2, borderRadius:14, borderWidth:1, borderColor:C.border, paddingHorizontal:14, height:46 },
-  searchIcon:   { fontSize:15 },
-  searchPlaceholder:{ color:C.dimmer, fontSize:14, fontWeight:'300' },
+  searchBar:         { flexDirection: 'row', alignItems: 'center', gap: 10, marginHorizontal: 20, marginBottom: 10, marginTop: 4, backgroundColor: C.bg2, borderRadius: 14, borderWidth: 1, borderColor: C.border, paddingHorizontal: 14, height: 50 },
+  searchIcon:        { fontSize: 15 },
+  searchPlaceholder: { flex: 1, color: C.dimmer, fontSize: 14, fontWeight: '300' },
+  searchCta:         { backgroundColor: C.accent, borderRadius: 9, paddingHorizontal: 12, paddingVertical: 5 },
+  searchCtaTxt:      { color: C.bg, fontSize: 11, fontWeight: '600' },
 
   /* Cities */
-  cityRow:      { maxHeight:48 },
-  cityContent:  { paddingHorizontal:20, paddingVertical:4, flexDirection:'row', gap:8, alignItems:'center' },
-  cityChip:     { paddingHorizontal:18, paddingVertical:7, borderRadius:100, backgroundColor:C.bg2, borderWidth:1, borderColor:C.border },
-  cityChipOn:   { backgroundColor:C.accent, borderColor:C.accent },
-  cityTxt:      { color:C.dim, fontSize:13, fontWeight:'400' },
-  cityTxtOn:    { color:C.bg, fontWeight:'600' },
+  cityRow:     { maxHeight: 50 },
+  cityContent: { paddingHorizontal: 20, paddingVertical: 5, flexDirection: 'row', gap: 8, alignItems: 'center' },
+  cityChip:    { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 14, paddingVertical: 7, borderRadius: 100, backgroundColor: C.bg2, borderWidth: 1, borderColor: C.border },
+  cityChipOn:  { backgroundColor: C.accent, borderColor: C.accent },
+  cityEmoji:   { fontSize: 12 },
+  cityTxt:     { color: C.dim, fontSize: 12 },
+  cityTxtOn:   { color: C.bg, fontWeight: '600' },
 
-  /* Banner */
-  banner:       { marginHorizontal:20, marginTop:16, borderRadius:18, backgroundColor:C.bg3, borderWidth:1, borderColor:C.borderAccent, padding:22, flexDirection:'row', alignItems:'center' },
-  bannerInner:  { flex:1 },
-  bannerBadge:  { alignSelf:'flex-start', backgroundColor:'rgba(200,151,90,0.15)', borderRadius:6, paddingHorizontal:8, paddingVertical:3, marginBottom:8, borderWidth:1, borderColor:C.borderAccent },
-  bannerBadgeTxt:{ color:C.accent, fontSize:9, fontWeight:'600', letterSpacing:2 },
-  bannerTitle:  { color:C.text, fontSize:26, fontWeight:'700', letterSpacing:1 },
-  bannerSub:    { color:C.dim, fontSize:12, marginTop:2, marginBottom:14 },
-  bannerBtn:    { alignSelf:'flex-start', backgroundColor:C.accent, borderRadius:100, paddingHorizontal:16, paddingVertical:8 },
-  bannerBtnTxt: { color:C.bg, fontSize:12, fontWeight:'600' },
-  bannerEmoji:  { fontSize:52 },
+  /* Ce soir */
+  tonightCard:  { marginHorizontal: 20, marginTop: 16, borderRadius: 18, backgroundColor: C.bg3, borderWidth: 1, borderColor: 'rgba(200,151,90,0.2)', padding: 18, flexDirection: 'row', alignItems: 'center', gap: 10 },
+  tonightLeft:  { flex: 1 },
+  tonightLabel: { color: C.accent, fontSize: 10, letterSpacing: 3, marginBottom: 4 },
+  tonightTitle: { color: C.text, fontSize: 18, fontWeight: '300', marginBottom: 12 },
+  slotRow:      { gap: 8 },
+  slotChip:     { paddingHorizontal: 14, paddingVertical: 7, borderRadius: 100, backgroundColor: 'rgba(200,151,90,0.1)', borderWidth: 1, borderColor: 'rgba(200,151,90,0.3)' },
+  slotTxt:      { color: C.accent, fontSize: 12 },
+  slotAll:      { backgroundColor: C.bg2, borderColor: C.border },
+  slotAllTxt:   { color: C.dim, fontSize: 12 },
+  tonightEmoji: { fontSize: 44 },
 
-  /* Section */
-  sectionHead:  { flexDirection:'row', justifyContent:'space-between', alignItems:'center', paddingHorizontal:20, marginTop:24, marginBottom:14 },
-  sectionLabel: { color:C.dimmer, fontSize:10, fontWeight:'500', letterSpacing:4 },
-  resultCount:  { color:C.accent2, fontSize:11 },
-  clearFilter:  { color:C.red, fontSize:11 },
+  /* Sections */
+  sectionHead:  { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, marginTop: 24, marginBottom: 14 },
+  sectionLabel: { color: C.dimmer, fontSize: 10, fontWeight: '500', letterSpacing: 4 },
+  seeAll:       { color: C.accent2, fontSize: 12 },
+  resultCount:  { color: C.accent2, fontSize: 11 },
+  clearFilter:  { color: C.red, fontSize: 11 },
 
   /* Featured */
-  featRow:      { paddingHorizontal:20, paddingBottom:4 },
+  featRow: { paddingHorizontal: 20, paddingBottom: 4 },
 
-  /* Catégories */
-  catRow:       { paddingHorizontal:20, gap:12 },
-  catCard:      { alignItems:'center', width:72 },
-  catCardOn:    {},
-  catImg:       { width:68, height:68, borderRadius:18, alignItems:'center', justifyContent:'center', marginBottom:7, borderWidth:1, borderColor:C.border },
-  catImgOn:     { borderColor:C.accent, borderWidth:2 },
-  catEmoji:     { fontSize:28 },
-  catLabel:     { color:C.dim, fontSize:10, textAlign:'center', lineHeight:13 },
-  catLabelOn:   { color:C.accent },
+  /* Pills */
+  pillRow:   { paddingHorizontal: 20, gap: 8, paddingBottom: 4 },
+  pill:      { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 14, paddingVertical: 9, borderRadius: 100, backgroundColor: C.bg2, borderWidth: 1, borderColor: C.border },
+  pillOn:    { backgroundColor: 'rgba(200,151,90,0.12)', borderColor: C.accent },
+  pillEmoji: { fontSize: 14 },
+  pillTxt:   { color: C.dim, fontSize: 12 },
+  pillTxtOn: { color: C.accent },
 
   /* Loading / empty */
-  loadingWrap:  { alignItems:'center', paddingVertical:52, gap:12 },
-  loadingTxt:   { color:C.dimmer, fontSize:13 },
-  emptyWrap:    { alignItems:'center', paddingVertical:52, gap:12 },
-  emptyEmoji:   { fontSize:44 },
-  emptyTitle:   { color:C.text, fontSize:18, fontWeight:'300' },
-  emptySub:     { color:C.dim, fontSize:13, textAlign:'center' },
-  emptyBtn:     { backgroundColor:C.bg2, borderRadius:12, paddingHorizontal:20, paddingVertical:10, borderWidth:1, borderColor:C.border, marginTop:4 },
-  emptyBtnTxt:  { color:C.dim, fontSize:13 },
-
-  /* List cards */
-  listCard:     { marginHorizontal:20, marginBottom:16, backgroundColor:C.card, borderRadius:18, borderWidth:1, borderColor:C.border, overflow:'hidden' },
-  cardHero:     { width:CARD_W, height:180, alignItems:'center', justifyContent:'center', overflow:'hidden' },
-  heroEmoji:    { fontSize:52 },
-  heroOverlay:  { position:'absolute', bottom:0, left:0, right:0, height:60, backgroundColor:'rgba(13,22,40,0.45)' },
-  heroDots:     { position:'absolute', bottom:10, flexDirection:'row', gap:4, alignSelf:'center' },
-  heroDot:      { width:5, height:5, borderRadius:3, backgroundColor:'rgba(255,255,255,0.4)' },
-  heroDotOn:    { backgroundColor:'#fff', width:14 },
-  heroRank:     { position:'absolute', top:10, right:10, backgroundColor:'rgba(13,22,40,0.75)', borderRadius:8, paddingHorizontal:8, paddingVertical:3, borderWidth:1, borderColor:C.border },
-  heroRankTxt:  { color:C.dimmer, fontSize:11, fontWeight:'600' },
-  openBadge:    { position:'absolute', bottom:10, left:10, flexDirection:'row', alignItems:'center', backgroundColor:'rgba(10,15,26,0.82)', borderRadius:100, paddingHorizontal:8, paddingVertical:3, gap:4 },
-  openDot:      { width:5, height:5, borderRadius:3, backgroundColor:C.green },
-  openTxt:      { color:C.green, fontSize:9 },
-  listInfo:     { padding:14 },
-  listCuisine:  { color:C.accent, fontSize:8, letterSpacing:2.5, marginBottom:4 },
-  listName:     { color:C.text, fontSize:16, fontWeight:'400', letterSpacing:0.3, marginBottom:6 },
-  listMeta:     { flexDirection:'row', alignItems:'center', gap:5, marginBottom:8 },
-  listRating:   { color:C.accent, fontSize:12, fontWeight:'500' },
-  listSep:      { color:C.dimmer, fontSize:12 },
-  listPrice:    { color:C.dim, fontSize:12 },
-  listTagRow:   { flexDirection:'row', gap:6 },
-  listTag:      { backgroundColor:'rgba(74,127,165,0.12)', borderRadius:6, paddingHorizontal:7, paddingVertical:2, borderWidth:1, borderColor:'rgba(74,127,165,0.25)' },
-  listTagTxt:   { color:C.accent2, fontSize:9 },
+  loadWrap:   { alignItems: 'center', paddingVertical: 52 },
+  emptyWrap:  { alignItems: 'center', paddingVertical: 52, gap: 12 },
+  emptyEmoji: { fontSize: 44 },
+  emptyTitle: { color: C.text, fontSize: 18, fontWeight: '300' },
+  emptySub:   { color: C.dim, fontSize: 13 },
+  emptyBtn:   { backgroundColor: C.bg2, borderRadius: 12, paddingHorizontal: 20, paddingVertical: 10, borderWidth: 1, borderColor: C.border, marginTop: 4 },
+  emptyBtnTxt:{ color: C.dim, fontSize: 13 },
 });

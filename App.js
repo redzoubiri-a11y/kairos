@@ -142,6 +142,7 @@ export default function App() {
           <Stack.Screen name="Notifications" component={NotificationsScreen} />
           <Stack.Screen name="Search" component={SearchScreen} />
           <Stack.Screen name="ProComptoir" component={ProComptoir} />
+          <Stack.Screen name="Explorer" component={ExplorerScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     );

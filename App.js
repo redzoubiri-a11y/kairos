@@ -8,7 +8,6 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { supabase } from './supabase';
 import OnboardingScreen from './screens/OnboardingScreen';
 import HomeScreen from './screens/HomeScreen';
-import MapScreen from './screens/MapScreen';
 import ExplorerScreen from './screens/ExplorerScreen';
 import FavorisScreen from './screens/FavorisScreen';
 import ReservationScreen from './screens/ReservationScreen';

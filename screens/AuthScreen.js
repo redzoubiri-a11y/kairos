@@ -87,7 +87,7 @@ export default function AuthScreen({ onAuth }) {
       const { data, error: err } = await supabase.auth.signUp({ email: email.trim(), password });
       if (err) { setError(err.message); shake(); }
       else if (data.session) onAuth(data.session);
-      else setSuccess('Vérifiez votre email pour confirmer votre compte.');
+      else setSuccess('Un email de confirmation a été envoyé. Si vous avez déjà un compte, connectez-vous directement.');
     }
     setLoading(false);
   }
@@ -194,8 +194,13 @@ export default function AuthScreen({ onAuth }) {
 
             {!!success && (
               <View style={s.successBox}>
-                <Text style={s.successIcon}>✉️</Text>
-                <Text style={s.successTxt}>{success}</Text>
+                <View style={s.successRow}>
+                  <Text style={s.successIcon}>✉️</Text>
+                  <Text style={s.successTxt}>{success}</Text>
+                </View>
+                <TouchableOpacity onPress={() => { setSuccess(''); switchMode('signin'); }} style={s.successLink}>
+                  <Text style={s.successLinkTxt}>→ Se connecter</Text>
+                </TouchableOpacity>
               </View>
             )}
 
@@ -261,9 +266,12 @@ const s = StyleSheet.create({
   errorBox:   { flexDirection: 'row', alignItems: 'flex-start', gap: 8, backgroundColor: 'rgba(224,90,90,0.08)', borderRadius: 12, padding: 12, borderWidth: 1, borderColor: 'rgba(224,90,90,0.25)', marginBottom: 14 },
   errorIcon:  { fontSize: 13 },
   errorTxt:   { color: C.red, fontSize: 12, lineHeight: 18, flex: 1 },
-  successBox: { flexDirection: 'row', alignItems: 'flex-start', gap: 8, backgroundColor: 'rgba(61,153,112,0.08)', borderRadius: 12, padding: 12, borderWidth: 1, borderColor: 'rgba(61,153,112,0.25)', marginBottom: 14 },
-  successIcon:{ fontSize: 13 },
-  successTxt: { color: C.green, fontSize: 12, lineHeight: 18, flex: 1 },
+  successBox:     { gap: 10, backgroundColor: 'rgba(61,153,112,0.08)', borderRadius: 12, padding: 14, borderWidth: 1, borderColor: 'rgba(61,153,112,0.25)', marginBottom: 14 },
+  successRow:     { flexDirection: 'row', alignItems: 'flex-start', gap: 8 },
+  successIcon:    { fontSize: 13 },
+  successTxt:     { color: C.green, fontSize: 12, lineHeight: 18, flex: 1 },
+  successLink:    { alignSelf: 'flex-start' },
+  successLinkTxt: { color: C.accent2, fontSize: 13, fontWeight: '500' },
 
   /* Submit */
   submitBtn: { backgroundColor: C.accent, borderRadius: 15, paddingVertical: 16, alignItems: 'center', marginTop: 4 },

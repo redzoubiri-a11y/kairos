@@ -113,8 +113,10 @@ export default function AuthScreen({ onAuth }) {
   const [error,     setError]     = useState('');
   const [showPwd,   setShowPwd]   = useState(false);
   const [countdown, setCountdown] = useState(0);
+  const [arriving,  setArriving]  = useState(false);
   const countdownTotal = useRef(120);
   const countdownRef   = useRef(null);
+  const arrivingRef    = useRef(null);
 
   const fadeAnim   = useRef(new Animated.Value(1)).current;
   const shakeAnim  = useRef(new Animated.Value(0)).current;
@@ -131,12 +133,18 @@ export default function AuthScreen({ onAuth }) {
     ).start();
   }, []);
 
-  useEffect(() => () => { if (countdownRef.current) clearInterval(countdownRef.current); }, []);
+  useEffect(() => () => {
+    if (countdownRef.current) clearInterval(countdownRef.current);
+    if (arrivingRef.current)  clearTimeout(arrivingRef.current);
+  }, []);
 
   function startCountdown(sec = 120) {
     countdownTotal.current = sec;
     setCountdown(sec);
+    setArriving(true);
     if (countdownRef.current) clearInterval(countdownRef.current);
+    if (arrivingRef.current)  clearTimeout(arrivingRef.current);
+    arrivingRef.current = setTimeout(() => setArriving(false), 40000);
     countdownRef.current = setInterval(() => {
       setCountdown(p => {
         if (p <= 1) { clearInterval(countdownRef.current); return 0; }
@@ -411,18 +419,28 @@ export default function AuthScreen({ onAuth }) {
                 </View>
 
                 <View style={s.otpSection}>
-                  <Text style={s.otpLabel}>ENTREZ LES 6 CHIFFRES</Text>
-                  <OtpInput value={otp} onChange={setOtp} />
+                  <Text style={s.otpLabel}>
+                    {arriving ? 'SMS EN COURS D\'ENVOI…' : 'ENTREZ LES 6 CHIFFRES'}
+                  </Text>
+                  {arriving && (
+                    <View style={s.arrivingBox}>
+                      <ActivityIndicator color={C.accent2} size="small" />
+                      <Text style={s.arrivingTxt}>Le SMS peut prendre jusqu'à 60 secondes</Text>
+                    </View>
+                  )}
+                  <OtpInput value={otp} onChange={v => { setOtp(v); if (v.length > 0) setArriving(false); }} />
 
-                  {/* Countdown */}
-                  <View style={s.countdownRow}>
-                    <CountdownBar total={countdownTotal.current} remaining={countdown} />
-                    <Text style={[s.countdownTxt, countdown === 0 && { color: C.red }]}>
-                      {countdown > 0
-                        ? `Code valide encore ${countdown}s`
-                        : 'Code expiré'}
-                    </Text>
-                  </View>
+                  {/* Countdown — visible seulement après la phase d'attente */}
+                  {!arriving && (
+                    <View style={s.countdownRow}>
+                      <CountdownBar total={countdownTotal.current} remaining={countdown} />
+                      <Text style={[s.countdownTxt, countdown === 0 && { color: C.red }]}>
+                        {countdown > 0
+                          ? `Code valide encore ${countdown}s`
+                          : 'Code expiré — renvoyez un nouveau code'}
+                      </Text>
+                    </View>
+                  )}
                 </View>
 
                 {!!error && (
@@ -528,6 +546,8 @@ const s = StyleSheet.create({
   /* ── OTP ── */
   otpSection:    { marginBottom: 16 },
   otpLabel:      { color: C.dimmer, fontSize: 9, letterSpacing: 3, fontWeight: '500', textAlign: 'center', marginBottom: 14 },
+  arrivingBox:   { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 14, padding: 10, backgroundColor: 'rgba(74,127,165,0.08)', borderRadius: 10, borderWidth: 1, borderColor: 'rgba(74,127,165,0.2)' },
+  arrivingTxt:   { color: C.accent2, fontSize: 12 },
   countdownRow:  { marginTop: 14, paddingHorizontal: 4 },
   countdownTxt:  { color: C.dim, fontSize: 11, textAlign: 'center' },
 

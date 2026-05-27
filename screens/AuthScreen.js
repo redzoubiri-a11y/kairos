@@ -37,10 +37,12 @@ export default function AuthScreen({ onAuth }) {
   const [email,    setEmail]    = useState('');
   const [password, setPassword] = useState('');
   const [confirm,  setConfirm]  = useState('');
-  const [loading,  setLoading]  = useState(false);
-  const [error,    setError]    = useState('');
-  const [showPwd,  setShowPwd]  = useState(false);
-  const [success,  setSuccess]  = useState('');
+  const [loading,       setLoading]       = useState(false);
+  const [error,         setError]         = useState('');
+  const [showPwd,       setShowPwd]       = useState(false);
+  const [success,       setSuccess]       = useState('');
+  const [resetSent,     setResetSent]     = useState(false);
+  const [resetLoading,  setResetLoading]  = useState(false);
 
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const shakeAnim = useRef(new Animated.Value(0)).current;
@@ -67,9 +69,17 @@ export default function AuthScreen({ onAuth }) {
 
   function switchMode(m) {
     Animated.timing(fadeAnim, { toValue: 0, duration: 140, useNativeDriver: true }).start(() => {
-      setMode(m); setError(''); setSuccess('');
+      setMode(m); setError(''); setSuccess(''); setResetSent(false);
       Animated.timing(fadeAnim, { toValue: 1, duration: 200, useNativeDriver: true }).start();
     });
+  }
+
+  async function sendReset() {
+    if (!email.trim()) { setError('Entrez votre email d\'abord.'); shake(); return; }
+    setResetLoading(true);
+    await supabase.auth.resetPasswordForEmail(email.trim());
+    setResetSent(true);
+    setResetLoading(false);
   }
 
   async function submit() {
@@ -85,14 +95,17 @@ export default function AuthScreen({ onAuth }) {
       else if (data.session) onAuth(data.session);
     } else {
       const { data, error: err } = await supabase.auth.signUp({ email: email.trim(), password });
-      if (err) { setError(err.message); shake(); }
+      if (err) {
+        if (err.message.toLowerCase().includes('already registered') || err.message.toLowerCase().includes('already been registered')) {
+          setError('Cet email est déjà utilisé. Connectez-vous avec votre mot de passe.');
+          switchMode('signin');
+        } else { setError(err.message); shake(); }
+      }
       else if (data.session) { onAuth(data.session); }
       else {
-        // Pas de session immédiate : email déjà existant ou confirmation requise
-        // On tente une connexion directe — si l'email est déjà confirmé, ça marche
-        const { data: d2, error: e2 } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+        const { data: d2 } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
         if (d2?.session) { onAuth(d2.session); }
-        else { setSuccess('Compte créé ! Vérifiez votre boîte mail pour confirmer, puis connectez-vous.'); }
+        else { setSuccess('Compte créé ! Connectez-vous avec vos identifiants.'); switchMode('signin'); }
       }
     }
     setLoading(false);
@@ -177,6 +190,15 @@ export default function AuthScreen({ onAuth }) {
                 <Text style={s.eyeTxt}>{showPwd ? 'Masquer' : 'Afficher'}</Text>
               </TouchableOpacity>
             </Field>
+
+            {mode === 'signin' && (
+              <TouchableOpacity onPress={sendReset} disabled={resetLoading} style={s.forgotBtn}>
+                {resetSent
+                  ? <Text style={s.forgotSent}>✓ Email de réinitialisation envoyé</Text>
+                  : <Text style={s.forgotTxt}>{resetLoading ? '...' : 'Mot de passe oublié ?'}</Text>
+                }
+              </TouchableOpacity>
+            )}
 
             {mode === 'signup' && (
               <Field icon="✅" label="CONFIRMER LE MOT DE PASSE">
@@ -282,6 +304,11 @@ const s = StyleSheet.create({
   /* Submit */
   submitBtn: { backgroundColor: C.accent, borderRadius: 15, paddingVertical: 16, alignItems: 'center', marginTop: 4 },
   submitTxt: { color: C.bg, fontSize: 13, fontWeight: '600', letterSpacing: 1.2 },
+
+  /* Forgot */
+  forgotBtn:  { alignSelf: 'flex-end', marginTop: -6, marginBottom: 10 },
+  forgotTxt:  { color: C.accent2, fontSize: 12 },
+  forgotSent: { color: C.green, fontSize: 12 },
 
   /* Legal */
   legal:     { color: C.dimmer, fontSize: 10, textAlign: 'center', lineHeight: 16 },

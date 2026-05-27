@@ -76,8 +76,23 @@ export default function AuthScreen({ onAuth }) {
   const [loading,  setLoading]  = useState(false);
   const [error,    setError]    = useState('');
   const [showPwd,  setShowPwd]  = useState(false);
+  const [countdown, setCountdown] = useState(0);
+  const countdownRef = useRef(null);
 
   const fadeAnim = useRef(new Animated.Value(1)).current;
+
+  function startCountdown(seconds = 120) {
+    setCountdown(seconds);
+    if (countdownRef.current) clearInterval(countdownRef.current);
+    countdownRef.current = setInterval(() => {
+      setCountdown(prev => {
+        if (prev <= 1) { clearInterval(countdownRef.current); return 0; }
+        return prev - 1;
+      });
+    }, 1000);
+  }
+
+  useEffect(() => () => { if (countdownRef.current) clearInterval(countdownRef.current); }, []);
 
   function switchMethod(m) {
     Animated.timing(fadeAnim, { toValue: 0, duration: 150, useNativeDriver: true }).start(() => {
@@ -99,7 +114,7 @@ export default function AuthScreen({ onAuth }) {
     setLoading(true); setError('');
     const { error: err } = await supabase.auth.signInWithOtp({ phone: full });
     if (err) setError(err.message);
-    else setStep('otp');
+    else { setStep('otp'); startCountdown(120); }
     setLoading(false);
   }
 
@@ -296,12 +311,20 @@ export default function AuthScreen({ onAuth }) {
 
                 <OtpBoxes value={otp} onChange={setOtp} />
 
+                {/* Countdown */}
+                <View style={s.countdownWrap}>
+                  {countdown > 0
+                    ? <Text style={s.countdownTxt}>Code valide encore <Text style={s.countdownNum}>{countdown}s</Text></Text>
+                    : <Text style={[s.countdownTxt, { color: C.red }]}>Code expiré — renvoie un nouveau code</Text>
+                  }
+                </View>
+
                 {!!error && <View style={s.errorBox}><Text style={s.errorTxt}>⚠️  {error}</Text></View>}
 
                 <TouchableOpacity
-                  style={[s.submitBtn, !isOtpComplete && s.submitBtnDim]}
+                  style={[s.submitBtn, (!isOtpComplete || countdown === 0) && s.submitBtnDim]}
                   onPress={verifyOTP}
-                  disabled={loading || !isOtpComplete}
+                  disabled={loading || !isOtpComplete || countdown === 0}
                 >
                   {loading
                     ? <ActivityIndicator color={C.bg} />
@@ -309,12 +332,18 @@ export default function AuthScreen({ onAuth }) {
                   }
                 </TouchableOpacity>
 
-                <TouchableOpacity style={s.backLink} onPress={() => { setStep('form'); setOtp(''); setError(''); }}>
+                <TouchableOpacity style={s.backLink} onPress={() => { setStep('form'); setOtp(''); setError(''); setCountdown(0); }}>
                   <Text style={s.backLinkTxt}>← Changer de numéro</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={s.resendLink} onPress={sendOTP}>
-                  <Text style={s.resendTxt}>Renvoyer le code</Text>
+                <TouchableOpacity
+                  style={[s.resendLink, countdown > 0 && { opacity: 0.4 }]}
+                  onPress={() => { if (countdown === 0) { setOtp(''); setError(''); sendOTP(); } }}
+                  disabled={countdown > 0}
+                >
+                  <Text style={s.resendTxt}>
+                    {countdown > 0 ? `Renvoyer dans ${countdown}s` : 'Renvoyer le code'}
+                  </Text>
                 </TouchableOpacity>
               </>
             )}
@@ -388,6 +417,11 @@ const s = StyleSheet.create({
   modeSwitch:    { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 6, marginTop: 14 },
   modeSwitchTxt: { color: C.dim, fontSize: 13 },
   modeSwitchLink:{ color: C.accent2, fontSize: 13, fontWeight: '400' },
+
+  /* Countdown OTP */
+  countdownWrap: { alignItems: 'center', marginBottom: 12 },
+  countdownTxt:  { color: C.dim, fontSize: 12 },
+  countdownNum:  { color: C.accent, fontWeight: '600' },
 
   /* Liens retour / renvoi */
   backLink:      { alignItems: 'center', marginTop: 14 },

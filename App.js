@@ -17,6 +17,7 @@ import ReservationFormScreen from './screens/ReservationFormScreen';
 import AuthScreen from './screens/AuthScreen';
 import ProInscriptionScreen from './screens/ProInscriptionScreen';
 import ProfilScreen from './screens/ProfilScreen';
+import NotificationsScreen from './screens/NotificationsScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -133,6 +134,7 @@ export default function App() {
         <Stack.Screen name="ReservationForm" component={ReservationFormScreen} />
         <Stack.Screen name="ProInscription" component={ProInscriptionScreen} />
         <Stack.Screen name="Profil" component={ProfilScreen} />
+        <Stack.Screen name="Notifications" component={NotificationsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

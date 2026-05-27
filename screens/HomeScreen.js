@@ -98,6 +98,8 @@ export default function HomeScreen({ navigation }) {
   const [bannerVisible, setBannerVisible] = useState(false);
   const [userInitial, setUserInitial] = useState("?");
   const [avatarUrl, setAvatarUrl] = useState(null);
+  const [userId, setUserId] = useState(null);
+  const [unreadNotifs, setUnreadNotifs] = useState(0);
 
   useEffect(() => {
     const t = setTimeout(() => setBannerVisible(true), 150);
@@ -109,9 +111,18 @@ export default function HomeScreen({ navigation }) {
       const u = data?.user;
       if (!u) return;
       if (u.email) setUserInitial(u.email[0].toUpperCase());
-      supabase.from('users').select('avatar_url').eq('auth_id', u.id).single()
+      supabase.from('users').select('id, avatar_url').eq('auth_id', u.id).single()
         .then(({ data: row }) => {
-          setAvatarUrl(row?.avatar_url ?? null);
+          if (!row) return;
+          setAvatarUrl(row.avatar_url ?? null);
+          setUserId(row.id);
+          supabase
+            .from('notifications')
+            .select('id', { count: 'exact', head: true })
+            .eq('recipient_id', row.id)
+            .eq('recipient_type', 'user')
+            .eq('is_read', false)
+            .then(({ count }) => setUnreadNotifs(count ?? 0));
         });
     });
   }, []));
@@ -135,7 +146,14 @@ export default function HomeScreen({ navigation }) {
       <View style={s.header}>
         <Text style={s.logo}>MIDA</Text>
         <View style={s.headerRight}>
-          <TouchableOpacity style={s.iconBtn}><Text style={s.iconBtnTxt}>🔍</Text></TouchableOpacity>
+          <TouchableOpacity style={s.iconBtn} onPress={() => navigation.navigate('Notifications')}>
+            <Text style={s.iconBtnTxt}>🔔</Text>
+            {unreadNotifs > 0 && (
+              <View style={s.notifBadge}>
+                <Text style={s.notifBadgeTxt}>{unreadNotifs > 9 ? '9+' : unreadNotifs}</Text>
+              </View>
+            )}
+          </TouchableOpacity>
           <TouchableOpacity style={s.avatar} onPress={() => navigation.navigate("Profil")}>
             {avatarUrl
               ? <Image source={{ uri: avatarUrl }} style={s.avatarPhoto} />
@@ -276,6 +294,8 @@ const s = StyleSheet.create({
   headerRight: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   iconBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: C.bg2, borderWidth: 1, borderColor: C.border, alignItems: 'center', justifyContent: 'center' },
   iconBtnTxt: { fontSize: 16 },
+  notifBadge: { position: 'absolute', top: -4, right: -4, minWidth: 16, height: 16, borderRadius: 8, backgroundColor: C.accent, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 3, borderWidth: 1.5, borderColor: C.bg },
+  notifBadgeTxt: { color: C.bg, fontSize: 9, fontWeight: '700' },
   avatar: { width: 36, height: 36, borderRadius: 18, backgroundColor: C.bg3, borderWidth: 1, borderColor: C.accent, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
   avatarTxt: { color: C.accent, fontWeight: '600', fontSize: 14 },
   avatarPhoto: { width: 36, height: 36, borderRadius: 18 },

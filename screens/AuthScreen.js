@@ -16,48 +16,44 @@ const C = {
   red: '#e05a5a',
 };
 
-/* ─── Composant cases OTP ─── */
-function OtpBoxes({ value, onChange }) {
-  const refs = Array.from({ length: 6 }, () => useRef(null));
-
-  const handleKey = (i, char) => {
-    if (char === '') {
-      const next = value.split('');
-      next[i] = '';
-      onChange(next.join(''));
-      if (i > 0) refs[i - 1].current?.focus();
-      return;
-    }
-    const digit = char.replace(/\D/, '');
-    if (!digit) return;
-    const next = value.split('').concat(Array(6).fill('')).slice(0, 6);
-    next[i] = digit;
-    onChange(next.join(''));
-    if (i < 5) refs[i + 1].current?.focus();
-  };
-
+/* ─── Composant saisie OTP (coller / auto-remplissage SMS) ─── */
+function OtpInput({ value, onChange }) {
+  const inputRef = useRef(null);
   return (
-    <View style={ot.row}>
-      {Array.from({ length: 6 }).map((_, i) => (
-        <TextInput
-          key={i}
-          ref={refs[i]}
-          style={[ot.box, value[i] && ot.boxFilled]}
-          value={value[i] || ''}
-          onChangeText={(char) => handleKey(i, char)}
-          keyboardType="number-pad"
-          maxLength={1}
-          selectTextOnFocus
-        />
-      ))}
-    </View>
+    <TouchableOpacity onPress={() => inputRef.current?.focus()} activeOpacity={1} style={ot.wrap}>
+      <View style={ot.row} pointerEvents="none">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <View key={i} style={[ot.box, !!value[i] && ot.boxFilled, value.length === i && ot.boxActive]}>
+            <Text style={ot.boxTxt}>{value[i] || ''}</Text>
+          </View>
+        ))}
+      </View>
+      <TextInput
+        ref={inputRef}
+        value={value}
+        onChangeText={t => onChange(t.replace(/\D/g, '').slice(0, 6))}
+        keyboardType="number-pad"
+        textContentType="oneTimeCode"
+        autoComplete="sms-otp"
+        maxLength={6}
+        autoFocus
+        style={ot.hidden}
+        caretHidden
+      />
+      <Text style={ot.hint}>Appuyez pour saisir  ·  Maintenez pour coller</Text>
+    </TouchableOpacity>
   );
 }
 
 const ot = StyleSheet.create({
-  row:      { flexDirection: 'row', gap: 10, justifyContent: 'center', marginBottom: 24 },
-  box:      { width: 46, height: 56, borderRadius: 14, borderWidth: 1.5, borderColor: C.border, backgroundColor: C.bg2, color: C.text, fontSize: 22, fontWeight: '300', textAlign: 'center' },
-  boxFilled:{ borderColor: C.accent2, backgroundColor: 'rgba(74,127,165,0.1)' },
+  wrap:      { alignItems: 'center', marginBottom: 16, paddingVertical: 4 },
+  row:       { flexDirection: 'row', gap: 10, justifyContent: 'center', marginBottom: 10 },
+  box:       { width: 48, height: 60, borderRadius: 14, borderWidth: 1.5, borderColor: C.border, backgroundColor: C.bg2, alignItems: 'center', justifyContent: 'center' },
+  boxFilled: { borderColor: C.accent2, backgroundColor: 'rgba(74,127,165,0.1)' },
+  boxActive: { borderColor: C.accent, borderWidth: 2 },
+  boxTxt:    { color: C.text, fontSize: 24, fontWeight: '300' },
+  hidden:    { position: 'absolute', width: '100%', height: '100%', opacity: 0 },
+  hint:      { color: C.dimmer, fontSize: 11 },
 });
 
 /* ─── Écran principal ─── */
@@ -309,7 +305,7 @@ export default function AuthScreen({ onAuth }) {
                   <Text style={s.phoneHighlight}>+213 {phone.replace(/^0/, '')}</Text>
                 </Text>
 
-                <OtpBoxes value={otp} onChange={setOtp} />
+                <OtpInput value={otp} onChange={setOtp} />
 
                 {/* Countdown */}
                 <View style={s.countdownWrap}>

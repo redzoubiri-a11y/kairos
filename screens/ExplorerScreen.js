@@ -189,27 +189,57 @@ export default function ExplorerScreen({ navigation }) {
   return (
     <View style={s.root}>
 
-      {/* ── CARTE (cachée en mode list) ── */}
+      {/* ── CARTE + FICHE (mode map) ── */}
       {mode === 'map' && (
-        <MapView
-          ref={mapRef}
-          style={s.map}
-          initialRegion={cityData.region}
-          showsUserLocation
-          showsCompass={false}
-          toolbarEnabled={false}
-        >
-          {filtered.map(r => (
-            <Marker
-              key={String(r.id)}
-              coordinate={getCoord(r, cityDefault)}
-              tracksViewChanges={false}
-              onPress={() => handleMarker(r)}
-            >
-              <RestaurantPin restaurant={r} isSelected={selected?.id === r.id} />
-            </Marker>
-          ))}
-        </MapView>
+        <View style={s.mapWrap}>
+          <MapView
+            ref={mapRef}
+            style={StyleSheet.absoluteFill}
+            initialRegion={cityData.region}
+            showsUserLocation
+            showsCompass={false}
+            toolbarEnabled={false}
+          >
+            {filtered.map(r => (
+              <Marker
+                key={String(r.id)}
+                coordinate={getCoord(r, cityDefault)}
+                tracksViewChanges={false}
+                onPress={() => handleMarker(r)}
+              >
+                <RestaurantPin restaurant={r} isSelected={selected?.id === r.id} />
+              </Marker>
+            ))}
+          </MapView>
+          {selected && (
+            <View style={s.selCard}>
+              {selected.photo_url
+                ? <Image source={{ uri: selected.photo_url }} style={s.selPhoto} resizeMode="cover" />
+                : <View style={[s.selPhoto, { backgroundColor: C.bg3, alignItems: 'center', justifyContent: 'center' }]}><Text style={{ fontSize: 30 }}>🍽️</Text></View>
+              }
+              <View style={s.selBody}>
+                <Text style={s.selCuisine}>{(selected.cuisine_type || '').toUpperCase().replace(/_/g,' ')}</Text>
+                <Text style={s.selName} numberOfLines={1}>{selected.name}</Text>
+                <Text style={s.selAddr} numberOfLines={1}>📍 {selected.quartier || selected.address || ''}</Text>
+                <View style={s.selStats}>
+                  {selected.avg_rating > 0 && <Text style={s.selRating}>★ {Number(selected.avg_rating).toFixed(1)}</Text>}
+                  {selected.avg_ticket > 0 && <Text style={s.selPrice}>{selected.avg_ticket.toLocaleString('fr-FR')} DA</Text>}
+                </View>
+              </View>
+              <View style={s.selActions}>
+                <TouchableOpacity style={s.selBtnPrimary} onPress={() => navigation.navigate('ReservationForm', { restaurant: selected })}>
+                  <Text style={s.selBtnPrimaryTxt}>Réserver</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={s.selBtnSecondary} onPress={() => navigation.navigate('Restaurant', { restaurant: selected })}>
+                  <Text style={s.selBtnSecondaryTxt}>Voir →</Text>
+                </TouchableOpacity>
+              </View>
+              <TouchableOpacity style={s.selClose} onPress={() => setSelected(null)}>
+                <Text style={s.selCloseTxt}>✕</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
       )}
 
       {/* ── HEADER OVERLAY ── */}
@@ -230,36 +260,6 @@ export default function ExplorerScreen({ navigation }) {
           </View>
         </View>
       </SafeAreaView>
-
-      {/* ── FICHE SÉLECTIONNÉE (mode map) ── */}
-      {mode === 'map' && selected && (
-        <View style={s.selCard}>
-          {selected.photo_url
-            ? <Image source={{ uri: selected.photo_url }} style={s.selPhoto} resizeMode="cover" />
-            : <View style={[s.selPhoto, { backgroundColor: C.bg3, alignItems: 'center', justifyContent: 'center' }]}><Text style={{ fontSize: 30 }}>🍽️</Text></View>
-          }
-          <View style={s.selBody}>
-            <Text style={s.selCuisine}>{(selected.cuisine_type || '').toUpperCase().replace(/_/g,' ')}</Text>
-            <Text style={s.selName} numberOfLines={1}>{selected.name}</Text>
-            <Text style={s.selAddr} numberOfLines={1}>📍 {selected.quartier || selected.address || ''}</Text>
-            <View style={s.selStats}>
-              {selected.avg_rating > 0 && <Text style={s.selRating}>★ {Number(selected.avg_rating).toFixed(1)}</Text>}
-              {selected.avg_ticket > 0 && <Text style={s.selPrice}>{selected.avg_ticket.toLocaleString('fr-FR')} DA</Text>}
-            </View>
-          </View>
-          <View style={s.selActions}>
-            <TouchableOpacity style={s.selBtnPrimary} onPress={() => navigation.navigate('ReservationForm', { restaurant: selected })}>
-              <Text style={s.selBtnPrimaryTxt}>Réserver</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={s.selBtnSecondary} onPress={() => navigation.navigate('Restaurant', { restaurant: selected })}>
-              <Text style={s.selBtnSecondaryTxt}>Voir →</Text>
-            </TouchableOpacity>
-          </View>
-          <TouchableOpacity style={s.selClose} onPress={() => setSelected(null)}>
-            <Text style={s.selCloseTxt}>✕</Text>
-          </TouchableOpacity>
-        </View>
-      )}
 
       {/* ── FEUILLE BASSE / LISTE PLEIN ÉCRAN ── */}
       <View style={[s.sheet, mode === 'list' && s.sheetFull]}>
@@ -380,12 +380,10 @@ export default function ExplorerScreen({ navigation }) {
   );
 }
 
-const MAP_H   = SH * 0.45;
-const SHEET_H = SH * 0.52;
-
 const s = StyleSheet.create({
   root:    { flex: 1, backgroundColor: C.bg },
-  map:     { height: MAP_H },
+  mapWrap: { flex: 46 },
+  map:     { ...StyleSheet.absoluteFillObject },
 
   /* Header overlay */
   overlay: { position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10 },
@@ -399,8 +397,8 @@ const s = StyleSheet.create({
   modeBtnTxt: { fontSize: 16 },
 
   /* Selected card */
-  selCard:    { position: 'absolute', bottom: SHEET_H + 10, left: 14, right: 14, backgroundColor: C.bg2, borderRadius: 18, borderWidth: 1, borderColor: C.borderAccent, overflow: 'hidden', zIndex: 5 },
-  selPhoto:   { width: '100%', height: 110 },
+  selCard:    { position: 'absolute', bottom: 8, left: 14, right: 14, backgroundColor: C.bg2, borderRadius: 18, borderWidth: 1, borderColor: C.borderAccent, zIndex: 5 },
+  selPhoto:   { width: '100%', height: 110, borderTopLeftRadius: 17, borderTopRightRadius: 17 },
   selBody:    { padding: 12, paddingBottom: 8 },
   selCuisine: { color: C.accent, fontSize: 8, letterSpacing: 2.5, marginBottom: 3 },
   selName:    { color: C.text, fontSize: 16, fontWeight: '300', letterSpacing: 0.3, marginBottom: 2 },
@@ -417,8 +415,8 @@ const s = StyleSheet.create({
   selCloseTxt:{ color: C.text, fontSize: 12 },
 
   /* Sheet */
-  sheet:      { height: SHEET_H, backgroundColor: C.bg2, borderTopLeftRadius: 22, borderTopRightRadius: 22, borderWidth: 1, borderColor: C.border, paddingTop: 10 },
-  sheetFull:  { flex: 1, height: undefined, borderRadius: 0, borderTopWidth: 1, marginTop: TOP + 62 },
+  sheet:      { flex: 54, backgroundColor: C.bg2, borderTopLeftRadius: 22, borderTopRightRadius: 22, borderWidth: 1, borderColor: C.border, paddingTop: 10 },
+  sheetFull:  { flex: 1, borderRadius: 0, borderTopWidth: 1, marginTop: TOP + 62 },
   sheetHandle:{ width: 40, height: 4, backgroundColor: C.dimmer, borderRadius: 2, alignSelf: 'center', marginBottom: 10, opacity: 0.4 },
 
   /* Chips rows */

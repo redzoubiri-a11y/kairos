@@ -1,7 +1,8 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  TextInput, SafeAreaView, ActivityIndicator, Dimensions, Image, Platform, StatusBar as RNStatusBar,
+  TextInput, SafeAreaView, ActivityIndicator, Dimensions,
+  Image, Platform, StatusBar as RNStatusBar, FlatList,
 } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { supabase } from '../supabase';
@@ -9,6 +10,7 @@ import { supabase } from '../supabase';
 const SW = Dimensions.get('window').width;
 const SH = Dimensions.get('window').height;
 const TOP = Platform.OS === 'android' ? (RNStatusBar.currentHeight || 0) : 0;
+const CARD_W = (SW - 14 * 2 - 10) / 2;
 
 const C = {
   bg:'#0d1628', bg2:'#111827', bg3:'#1a2332',
@@ -31,9 +33,16 @@ const CUISINE_EMOJI = {
 };
 
 const SORT_OPTIONS = [
-  { id:'rating', label:'Mieux notés' },
-  { id:'price_asc', label:'Prix ↑' },
-  { id:'price_desc', label:'Prix ↓' },
+  { id:'rating',     label:'Mieux notés',  icon:'★' },
+  { id:'price_asc',  label:'Prix croissant', icon:'↑' },
+  { id:'price_desc', label:'Prix décroissant',icon:'↓' },
+];
+
+const BUDGET_OPTIONS = [
+  { id:'all',   label:'Tous les budgets' },
+  { id:'low',   label:'< 1 000 DA',   max:1000 },
+  { id:'mid',   label:'1 000 – 2 500 DA', min:1000, max:2500 },
+  { id:'high',  label:'> 2 500 DA',   min:2500 },
 ];
 
 const QUARTIER_COORDS = {
@@ -78,30 +87,16 @@ function getCoord(r, cityDefault) {
   };
 }
 
-function RestoThumb({ url, size = 44, radius = 12 }) {
-  if (url) return <Image source={{ uri: url }} style={{ width: size, height: size, borderRadius: radius }} resizeMode="cover" />;
-  return (
-    <View style={{ width: size, height: size, borderRadius: radius, backgroundColor: C.bg3, alignItems: 'center', justifyContent: 'center' }}>
-      <Text style={{ fontSize: size * 0.45 }}>🍽️</Text>
-    </View>
-  );
-}
-
-function RatingStars({ value }) {
-  const v = Number(value || 0);
-  return <Text style={{ color: '#f0c040', fontSize: 10 }}>{'★'.repeat(Math.round(v))}</Text>;
-}
-
 /* ─── Pin carte ─── */
 function RestaurantPin({ restaurant, isSelected }) {
   return (
-    <View style={[p.wrap, isSelected && p.wrapOn]}>
-      <Text style={[p.emoji, isSelected && p.emojiOn]}>
+    <View style={[pin.wrap, isSelected && pin.wrapOn]}>
+      <Text style={[pin.emoji, isSelected && pin.emojiOn]}>
         {CUISINE_EMOJI[restaurant.cuisine_type] || '🍽️'}
       </Text>
       {restaurant.avg_rating > 0 && (
-        <View style={[p.badge, isSelected && p.badgeOn]}>
-          <Text style={[p.badgeTxt, isSelected && { color: C.bg }]}>
+        <View style={[pin.badge, isSelected && pin.badgeOn]}>
+          <Text style={[pin.badgeTxt, isSelected && { color: C.bg }]}>
             {Number(restaurant.avg_rating).toFixed(1)}
           </Text>
         </View>
@@ -110,28 +105,190 @@ function RestaurantPin({ restaurant, isSelected }) {
   );
 }
 
-const p = StyleSheet.create({
-  wrap:     { alignItems: 'center', gap: 2 },
-  wrapOn:   {},
-  emoji:    { fontSize: 22, lineHeight: 28 },
-  emojiOn:  { fontSize: 28, lineHeight: 34 },
-  badge:    { backgroundColor: 'rgba(13,22,40,0.88)', borderRadius: 8, paddingHorizontal: 5, paddingVertical: 2, borderWidth: 1, borderColor: C.borderAccent },
-  badgeOn:  { backgroundColor: C.accent, borderColor: C.accent },
-  badgeTxt: { color: C.accent, fontSize: 9, fontWeight: '600' },
+const pin = StyleSheet.create({
+  wrap:    { alignItems:'center', gap:2 },
+  emoji:   { fontSize:22, lineHeight:28 },
+  emojiOn: { fontSize:28, lineHeight:34 },
+  badge:   { backgroundColor:'rgba(13,22,40,0.88)', borderRadius:8, paddingHorizontal:5, paddingVertical:2, borderWidth:1, borderColor:C.borderAccent },
+  badgeOn: { backgroundColor:C.accent, borderColor:C.accent },
+  badgeTxt:{ color:C.accent, fontSize:9, fontWeight:'600' },
+});
+
+/* ─── Carte restaurant (mode liste) ─── */
+function RestoCard({ r, rank, onPress, onReserve }) {
+  return (
+    <TouchableOpacity style={lc.card} onPress={onPress} activeOpacity={0.88}>
+      <View style={lc.imgWrap}>
+        {r.photo_url
+          ? <Image source={{ uri: r.photo_url }} style={lc.img} resizeMode="cover" />
+          : <View style={[lc.img, lc.imgPlaceholder]}><Text style={{ fontSize: 30 }}>🍽️</Text></View>
+        }
+        {/* Rating badge */}
+        {r.avg_rating > 0 && (
+          <View style={lc.ratingBadge}>
+            <Text style={lc.ratingBadgeTxt}>★ {Number(r.avg_rating).toFixed(1)}</Text>
+          </View>
+        )}
+        {/* Rank medal */}
+        {rank != null && rank < 3 && (
+          <View style={[lc.medalWrap, rank === 0 && { backgroundColor:'#f0c040' }, rank === 1 && { backgroundColor:'#b0b0b0' }, rank === 2 && { backgroundColor:'#cd7f32' }]}>
+            <Text style={lc.medalTxt}>{rank + 1}</Text>
+          </View>
+        )}
+        {/* Cuisine pill */}
+        <View style={lc.cuisinePill}>
+          <Text style={lc.cuisinePillTxt}>
+            {CUISINE_EMOJI[r.cuisine_type] || '🍽️'} {(r.cuisine_type || '').replace(/_/g,' ')}
+          </Text>
+        </View>
+      </View>
+
+      <View style={lc.body}>
+        <Text style={lc.name} numberOfLines={1}>{r.name}</Text>
+        {r.quartier && <Text style={lc.quartier} numberOfLines={1}>📍 {r.quartier}</Text>}
+        <View style={lc.footer}>
+          <View>
+            {r.avg_ticket > 0 && <Text style={lc.price}>{r.avg_ticket.toLocaleString('fr-FR')} DA</Text>}
+            {r.review_count > 0 && <Text style={lc.reviews}>{r.review_count} avis</Text>}
+          </View>
+          <TouchableOpacity style={lc.reserveBtn} onPress={onReserve}>
+            <Text style={lc.reserveTxt}>Réserver</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
+}
+
+const lc = StyleSheet.create({
+  card:        { width: CARD_W, backgroundColor: C.card, borderRadius: 16, borderWidth: 1, borderColor: C.border, overflow:'hidden', marginBottom: 10 },
+  imgWrap:     { position:'relative', width:'100%', height: 130 },
+  img:         { width:'100%', height:'100%' },
+  imgPlaceholder:{ backgroundColor: C.bg3, alignItems:'center', justifyContent:'center' },
+  ratingBadge: { position:'absolute', top:8, right:8, backgroundColor:'rgba(13,22,40,0.82)', borderRadius:10, paddingHorizontal:7, paddingVertical:3, borderWidth:1, borderColor:C.borderAccent },
+  ratingBadgeTxt:{ color:C.accent, fontSize:10, fontWeight:'600' },
+  medalWrap:   { position:'absolute', top:8, left:8, width:22, height:22, borderRadius:11, alignItems:'center', justifyContent:'center' },
+  medalTxt:    { color:C.bg, fontSize:10, fontWeight:'700' },
+  cuisinePill: { position:'absolute', bottom:8, left:8, backgroundColor:'rgba(13,22,40,0.78)', borderRadius:8, paddingHorizontal:7, paddingVertical:3 },
+  cuisinePillTxt:{ color:C.text, fontSize:9 },
+  body:        { padding:10, gap:4 },
+  name:        { color:C.text, fontSize:13, fontWeight:'400', letterSpacing:0.2 },
+  quartier:    { color:C.dim, fontSize:10 },
+  footer:      { flexDirection:'row', justifyContent:'space-between', alignItems:'flex-end', marginTop:4 },
+  price:       { color:C.accent, fontSize:10, fontWeight:'500' },
+  reviews:     { color:C.dimmer, fontSize:9, marginTop:1 },
+  reserveBtn:  { backgroundColor:'rgba(200,151,90,0.15)', borderRadius:8, paddingHorizontal:8, paddingVertical:5, borderWidth:1, borderColor:C.borderAccent },
+  reserveTxt:  { color:C.accent, fontSize:10, fontWeight:'500' },
+});
+
+/* ─── Panel filtres ─── */
+function FilterPanel({ sort, setSort, budget, setBudget, onClose, onClear }) {
+  return (
+    <View style={fp.panel}>
+      <View style={fp.topRow}>
+        <Text style={fp.title}>Filtres & Tri</Text>
+        <TouchableOpacity onPress={onClear}>
+          <Text style={fp.clearTxt}>Tout effacer</Text>
+        </TouchableOpacity>
+      </View>
+
+      <Text style={fp.sectionLabel}>TRIER PAR</Text>
+      <View style={fp.optRow}>
+        {SORT_OPTIONS.map(o => (
+          <TouchableOpacity
+            key={o.id}
+            style={[fp.opt, sort === o.id && fp.optOn]}
+            onPress={() => setSort(o.id)}
+          >
+            <Text style={fp.optIcon}>{o.icon}</Text>
+            <Text style={[fp.optTxt, sort === o.id && fp.optTxtOn]}>{o.label}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      <Text style={fp.sectionLabel}>BUDGET MOYEN</Text>
+      <View style={fp.optRow}>
+        {BUDGET_OPTIONS.map(o => (
+          <TouchableOpacity
+            key={o.id}
+            style={[fp.opt, budget === o.id && fp.optOn]}
+            onPress={() => setBudget(o.id)}
+          >
+            <Text style={[fp.optTxt, budget === o.id && fp.optTxtOn]}>{o.label}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      <TouchableOpacity style={fp.applyBtn} onPress={onClose}>
+        <Text style={fp.applyTxt}>Appliquer</Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+const fp = StyleSheet.create({
+  panel:       { backgroundColor: C.bg2, borderTopLeftRadius:22, borderTopRightRadius:22, borderTopWidth:1, borderColor:C.border, padding:20, paddingBottom:32, gap:12 },
+  topRow:      { flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginBottom:4 },
+  title:       { color:C.text, fontSize:16, fontWeight:'300', letterSpacing:0.4 },
+  clearTxt:    { color:C.accent2, fontSize:12 },
+  sectionLabel:{ color:C.dimmer, fontSize:10, letterSpacing:2, marginTop:4 },
+  optRow:      { flexDirection:'row', flexWrap:'wrap', gap:8 },
+  opt:         { paddingHorizontal:12, paddingVertical:8, borderRadius:10, backgroundColor:C.bg3, borderWidth:1, borderColor:C.border, flexDirection:'row', alignItems:'center', gap:5 },
+  optOn:       { backgroundColor:'rgba(200,151,90,0.15)', borderColor:C.accent },
+  optIcon:     { color:C.dim, fontSize:11 },
+  optTxt:      { color:C.dim, fontSize:11 },
+  optTxtOn:    { color:C.accent },
+  applyBtn:    { backgroundColor:C.accent, borderRadius:12, paddingVertical:13, alignItems:'center', marginTop:8 },
+  applyTxt:    { color:C.bg, fontSize:14, fontWeight:'500', letterSpacing:0.3 },
+});
+
+/* ─── Chips filtres actifs ─── */
+function ActiveFilters({ sort, budget, cuisine, setSort, setBudget, setCuisine }) {
+  const chips = [];
+  if (sort !== 'rating') {
+    const o = SORT_OPTIONS.find(x => x.id === sort);
+    if (o) chips.push({ key:'sort', label: o.icon + ' ' + o.label, clear: () => setSort('rating') });
+  }
+  if (budget !== 'all') {
+    const o = BUDGET_OPTIONS.find(x => x.id === budget);
+    if (o) chips.push({ key:'budget', label: o.label, clear: () => setBudget('all') });
+  }
+  if (cuisine) {
+    chips.push({ key:'cuisine', label: (CUISINE_EMOJI[cuisine] || '') + ' ' + cuisine.replace(/_/g,' '), clear: () => setCuisine(null) });
+  }
+  if (chips.length === 0) return null;
+  return (
+    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal:14, paddingBottom:6, gap:6 }}>
+      {chips.map(c => (
+        <TouchableOpacity key={c.key} style={af.chip} onPress={c.clear}>
+          <Text style={af.chipTxt}>{c.label}</Text>
+          <Text style={af.chipX}>✕</Text>
+        </TouchableOpacity>
+      ))}
+    </ScrollView>
+  );
+}
+
+const af = StyleSheet.create({
+  chip:    { flexDirection:'row', alignItems:'center', gap:5, paddingHorizontal:10, paddingVertical:5, borderRadius:100, backgroundColor:'rgba(200,151,90,0.15)', borderWidth:1, borderColor:C.accent },
+  chipTxt: { color:C.accent, fontSize:11 },
+  chipX:   { color:C.accent, fontSize:9, opacity:0.7 },
 });
 
 /* ─── Écran principal ─── */
 export default function ExplorerScreen({ navigation }) {
   const mapRef = useRef(null);
 
-  const [city,       setCity]       = useState('alger');
-  const [search,     setSearch]     = useState('');
-  const [cuisine,    setCuisine]    = useState(null);
-  const [sort,       setSort]       = useState('rating');
-  const [mode,       setMode]       = useState('map');   // 'map' | 'list'
-  const [restaurants,setRestaurants]= useState([]);
-  const [loading,    setLoading]    = useState(false);
-  const [selected,   setSelected]   = useState(null);
+  const [city,        setCity]        = useState('alger');
+  const [search,      setSearch]      = useState('');
+  const [cuisine,     setCuisine]     = useState(null);
+  const [sort,        setSort]        = useState('rating');
+  const [budget,      setBudget]      = useState('all');
+  const [mode,        setMode]        = useState('map');
+  const [showFilters, setShowFilters] = useState(false);
+  const [restaurants, setRestaurants] = useState([]);
+  const [loading,     setLoading]     = useState(false);
+  const [selected,    setSelected]    = useState(null);
 
   const cityData    = CITIES.find(c => c.id === city) || CITIES[0];
   const cityDefault = { latitude: cityData.region.latitude, longitude: cityData.region.longitude };
@@ -166,13 +323,18 @@ export default function ExplorerScreen({ navigation }) {
     }
   };
 
-  /* Cuisine types disponibles */
   const cuisineTypes = [...new Set(restaurants.map(r => r.cuisine_type).filter(Boolean))];
 
-  /* Filtrage + tri */
+  const budgetData = BUDGET_OPTIONS.find(o => o.id === budget);
+
   const filtered = restaurants
     .filter(r => {
       if (cuisine && r.cuisine_type !== cuisine) return false;
+      if (budget !== 'all') {
+        const t = r.avg_ticket || 0;
+        if (budgetData.min != null && t < budgetData.min) return false;
+        if (budgetData.max != null && t > budgetData.max) return false;
+      }
       if (!search) return true;
       const q = search.toLowerCase();
       return (r.name || '').toLowerCase().includes(q)
@@ -186,10 +348,12 @@ export default function ExplorerScreen({ navigation }) {
       return 0;
     });
 
+  const hasActiveFilters = sort !== 'rating' || budget !== 'all' || !!cuisine;
+
   return (
     <View style={s.root}>
 
-      {/* ── CARTE + FICHE (mode map) ── */}
+      {/* ── CARTE (mode map) ── */}
       {mode === 'map' && (
         <View style={s.mapWrap}>
           <MapView
@@ -211,19 +375,21 @@ export default function ExplorerScreen({ navigation }) {
               </Marker>
             ))}
           </MapView>
+
+          {/* Fiche restaurant sélectionné */}
           {selected && (
             <View style={s.selCard}>
               {selected.photo_url
                 ? <Image source={{ uri: selected.photo_url }} style={s.selPhoto} resizeMode="cover" />
-                : <View style={[s.selPhoto, { backgroundColor: C.bg3, alignItems: 'center', justifyContent: 'center' }]}><Text style={{ fontSize: 30 }}>🍽️</Text></View>
+                : <View style={[s.selPhoto, { backgroundColor:C.bg3, alignItems:'center', justifyContent:'center' }]}><Text style={{ fontSize:28 }}>🍽️</Text></View>
               }
-              <View style={s.selBody}>
-                <Text style={s.selCuisine}>{(selected.cuisine_type || '').toUpperCase().replace(/_/g,' ')}</Text>
+              <View style={s.selOverlay}>
+                <Text style={s.selCuisine}>{(selected.cuisine_type||'').toUpperCase().replace(/_/g,' ')}</Text>
                 <Text style={s.selName} numberOfLines={1}>{selected.name}</Text>
-                <Text style={s.selAddr} numberOfLines={1}>📍 {selected.quartier || selected.address || ''}</Text>
-                <View style={s.selStats}>
+                <View style={s.selMeta}>
                   {selected.avg_rating > 0 && <Text style={s.selRating}>★ {Number(selected.avg_rating).toFixed(1)}</Text>}
-                  {selected.avg_ticket > 0 && <Text style={s.selPrice}>{selected.avg_ticket.toLocaleString('fr-FR')} DA</Text>}
+                  {selected.quartier && <Text style={s.selAddr}>· {selected.quartier}</Text>}
+                  {selected.avg_ticket > 0 && <Text style={s.selPrice}>· {selected.avg_ticket.toLocaleString('fr-FR')} DA</Text>}
                 </View>
               </View>
               <View style={s.selActions}>
@@ -231,7 +397,7 @@ export default function ExplorerScreen({ navigation }) {
                   <Text style={s.selBtnPrimaryTxt}>Réserver</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={s.selBtnSecondary} onPress={() => navigation.navigate('Restaurant', { restaurant: selected })}>
-                  <Text style={s.selBtnSecondaryTxt}>Voir →</Text>
+                  <Text style={s.selBtnSecondaryTxt}>Voir le resto →</Text>
                 </TouchableOpacity>
               </View>
               <TouchableOpacity style={s.selClose} onPress={() => setSelected(null)}>
@@ -249,23 +415,28 @@ export default function ExplorerScreen({ navigation }) {
             <Text style={s.headerLogo}>MIDA</Text>
             <Text style={s.headerSub}>Explorer</Text>
           </View>
-          <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
-            <View style={s.countBadge}>
-              <View style={s.countDot} />
-              <Text style={s.countTxt}>{loading ? '…' : `${filtered.length} restaurants`}</Text>
-            </View>
-            <TouchableOpacity style={s.modeBtn} onPress={() => { setMode(m => m === 'map' ? 'list' : 'map'); setSelected(null); }}>
+          <View style={{ flexDirection:'row', gap:8, alignItems:'center' }}>
+            {!loading && (
+              <View style={s.countBadge}>
+                <View style={s.countDot} />
+                <Text style={s.countTxt}>{filtered.length} restos</Text>
+              </View>
+            )}
+            <TouchableOpacity
+              style={[s.modeBtn, mode === 'list' && s.modeBtnOn]}
+              onPress={() => { setMode(m => m === 'map' ? 'list' : 'map'); setSelected(null); }}
+            >
               <Text style={s.modeBtnTxt}>{mode === 'map' ? '☰' : '🗺️'}</Text>
             </TouchableOpacity>
           </View>
         </View>
       </SafeAreaView>
 
-      {/* ── FEUILLE BASSE / LISTE PLEIN ÉCRAN ── */}
+      {/* ── FEUILLE BASSE ── */}
       <View style={[s.sheet, mode === 'list' && s.sheetFull]}>
         {mode === 'map' && <View style={s.sheetHandle} />}
 
-        {/* City chips */}
+        {/* Sélecteur de ville */}
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.chipRow}>
           {CITIES.map(c => (
             <TouchableOpacity key={c.id} style={[s.cityChip, city === c.id && s.cityChipOn]} onPress={() => changeCity(c.id)}>
@@ -275,7 +446,7 @@ export default function ExplorerScreen({ navigation }) {
           ))}
         </ScrollView>
 
-        {/* Search + sort */}
+        {/* Barre de recherche */}
         <View style={s.searchRow}>
           <View style={s.searchBar}>
             <Text style={s.searchIcon}>🔍</Text>
@@ -285,26 +456,41 @@ export default function ExplorerScreen({ navigation }) {
               placeholderTextColor={C.dimmer}
               value={search}
               onChangeText={setSearch}
+              returnKeyType="search"
             />
             {search.length > 0 && (
-              <TouchableOpacity onPress={() => setSearch('')}>
-                <Text style={{ color: C.dimmer, fontSize: 13 }}>✕</Text>
+              <TouchableOpacity onPress={() => setSearch('')} hitSlop={{ top:8, bottom:8, left:8, right:8 }}>
+                <Text style={{ color:C.dimmer, fontSize:12 }}>✕</Text>
               </TouchableOpacity>
             )}
           </View>
           <TouchableOpacity
-            style={s.sortBtn}
-            onPress={() => setSort(s => {
-              const idx = SORT_OPTIONS.findIndex(o => o.id === s);
-              return SORT_OPTIONS[(idx + 1) % SORT_OPTIONS.length].id;
-            })}
+            style={[s.filterBtn, hasActiveFilters && s.filterBtnOn]}
+            onPress={() => setShowFilters(v => !v)}
           >
-            <Text style={s.sortTxt}>{SORT_OPTIONS.find(o => o.id === sort)?.label}</Text>
+            <Text style={s.filterIcon}>⚙</Text>
+            <Text style={[s.filterTxt, hasActiveFilters && { color:C.accent }]}>
+              {hasActiveFilters ? 'Actifs' : 'Filtres'}
+            </Text>
+            {hasActiveFilters && <View style={s.filterDot} />}
           </TouchableOpacity>
         </View>
 
-        {/* Cuisine filters */}
-        {cuisineTypes.length > 0 && (
+        {/* Filtres actifs */}
+        <ActiveFilters sort={sort} budget={budget} cuisine={cuisine} setSort={setSort} setBudget={setBudget} setCuisine={setCuisine} />
+
+        {/* Panel filtres dépliable */}
+        {showFilters && (
+          <FilterPanel
+            sort={sort} setSort={setSort}
+            budget={budget} setBudget={setBudget}
+            onClose={() => setShowFilters(false)}
+            onClear={() => { setSort('rating'); setBudget('all'); setCuisine(null); setShowFilters(false); }}
+          />
+        )}
+
+        {/* Chips cuisine (masqués si panel filtres ouvert) */}
+        {!showFilters && cuisineTypes.length > 0 && (
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.chipRow}>
             <TouchableOpacity style={[s.cuisineChip, !cuisine && s.cuisineChipOn]} onPress={() => setCuisine(null)}>
               <Text style={[s.cuisineTxt, !cuisine && s.cuisineTxtOn]}>Tous</Text>
@@ -318,62 +504,38 @@ export default function ExplorerScreen({ navigation }) {
           </ScrollView>
         )}
 
-        {/* Liste */}
-        {loading ? (
-          <View style={s.empty}><ActivityIndicator color={C.accent} size="large" /></View>
-        ) : filtered.length === 0 ? (
-          <View style={s.empty}>
-            <Text style={{ fontSize: 36 }}>🔍</Text>
-            <Text style={s.emptyTxt}>Aucun restaurant trouvé</Text>
-            <TouchableOpacity onPress={() => { setSearch(''); setCuisine(null); }}>
-              <Text style={{ color: C.accent2, fontSize: 13, marginTop: 6 }}>Effacer les filtres</Text>
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
-            {filtered.map((r, idx) => (
-              <TouchableOpacity
-                key={String(r.id)}
-                style={[s.item, selected?.id === r.id && s.itemActive, idx === 0 && s.itemFirst]}
-                onPress={() => {
-                  navigation.navigate('Restaurant', { restaurant: r });
-                }}
-                onLongPress={() => mode === 'map' && handleMarker(r)}
-              >
-                {/* Rank badge */}
-                {sort === 'rating' && idx < 3 && (
-                  <View style={[s.rankBadge, idx === 0 && { backgroundColor: '#f0c040' }, idx === 1 && { backgroundColor: '#aaa' }, idx === 2 && { backgroundColor: '#cd7f32' }]}>
-                    <Text style={s.rankTxt}>{idx + 1}</Text>
-                  </View>
-                )}
-                <RestoThumb url={r.photo_url} size={58} radius={14} />
-                <View style={s.itemBody}>
-                  <View style={s.itemTop}>
-                    <Text style={s.itemName} numberOfLines={1}>{r.name}</Text>
-                    {r.avg_rating > 0 && (
-                      <View style={s.ratingPill}>
-                        <Text style={s.ratingPillTxt}>★ {Number(r.avg_rating).toFixed(1)}</Text>
-                      </View>
-                    )}
-                  </View>
-                  <View style={s.itemMidRow}>
-                    <View style={s.cuisineTag}>
-                      <Text style={s.cuisineTagTxt}>{CUISINE_EMOJI[r.cuisine_type] || '🍽️'} {(r.cuisine_type || '').replace(/_/g,' ')}</Text>
-                    </View>
-                    {r.quartier && <Text style={s.itemQuartier}>· {r.quartier}</Text>}
-                  </View>
-                  <View style={s.itemBottom}>
-                    {r.avg_ticket > 0 && <Text style={s.itemPrice}>{r.avg_ticket.toLocaleString('fr-FR')} DA</Text>}
-                    {r.review_count > 0 && <Text style={s.itemReviews}>{r.review_count} avis</Text>}
-                  </View>
-                </View>
-                <TouchableOpacity style={s.itemReserveBtn} onPress={() => navigation.navigate('ReservationForm', { restaurant: r })}>
-                  <Text style={s.itemReserveTxt}>Réserver</Text>
-                </TouchableOpacity>
+        {/* Contenu liste */}
+        {!showFilters && (
+          loading ? (
+            <View style={s.empty}><ActivityIndicator color={C.accent} size="large" /></View>
+          ) : filtered.length === 0 ? (
+            <View style={s.empty}>
+              <Text style={{ fontSize: 36 }}>🔍</Text>
+              <Text style={s.emptyTitle}>Aucun restaurant trouvé</Text>
+              <Text style={s.emptyDesc}>Essayez d'autres filtres ou une autre ville.</Text>
+              <TouchableOpacity style={s.emptyBtn} onPress={() => { setSearch(''); setCuisine(null); setBudget('all'); setSort('rating'); }}>
+                <Text style={s.emptyBtnTxt}>Effacer tous les filtres</Text>
               </TouchableOpacity>
-            ))}
-            <View style={{ height: 60 }} />
-          </ScrollView>
+            </View>
+          ) : (
+            <FlatList
+              data={filtered}
+              keyExtractor={r => String(r.id)}
+              numColumns={2}
+              columnWrapperStyle={s.gridRow}
+              contentContainerStyle={s.gridContent}
+              showsVerticalScrollIndicator={false}
+              renderItem={({ item: r, index }) => (
+                <RestoCard
+                  r={r}
+                  rank={sort === 'rating' ? index : null}
+                  onPress={() => navigation.navigate('Restaurant', { restaurant: r })}
+                  onReserve={() => navigation.navigate('ReservationForm', { restaurant: r })}
+                />
+              )}
+              ListFooterComponent={<View style={{ height: 60 }} />}
+            />
+          )
         )}
       </View>
     </View>
@@ -381,91 +543,78 @@ export default function ExplorerScreen({ navigation }) {
 }
 
 const s = StyleSheet.create({
-  root:    { flex: 1, backgroundColor: C.bg },
-  mapWrap: { flex: 46 },
-  map:     { ...StyleSheet.absoluteFillObject },
+  root:    { flex:1, backgroundColor:C.bg },
+  mapWrap: { flex:46 },
 
   /* Header overlay */
-  overlay: { position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10 },
-  header:  { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', margin: 14, marginTop: TOP + 10, backgroundColor: 'rgba(13,22,40,0.9)', borderRadius: 16, paddingHorizontal: 16, paddingVertical: 11, borderWidth: 1, borderColor: C.border },
-  headerLogo: { color: C.accent, fontSize: 14, fontWeight: '700', letterSpacing: 5 },
-  headerSub:  { color: C.dim, fontSize: 10 },
-  countBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(200,151,90,0.12)', borderRadius: 100, paddingHorizontal: 12, paddingVertical: 5, borderWidth: 1, borderColor: C.borderAccent },
-  countDot:   { width: 6, height: 6, borderRadius: 3, backgroundColor: C.green },
-  countTxt:   { color: C.accent, fontSize: 11, fontWeight: '500' },
-  modeBtn:    { width: 36, height: 36, borderRadius: 18, backgroundColor: C.bg3, borderWidth: 1, borderColor: C.border, alignItems: 'center', justifyContent: 'center' },
-  modeBtnTxt: { fontSize: 16 },
+  overlay:     { position:'absolute', top:0, left:0, right:0, zIndex:10 },
+  header:      { flexDirection:'row', justifyContent:'space-between', alignItems:'center', margin:14, marginTop:TOP+10, backgroundColor:'rgba(13,22,40,0.92)', borderRadius:16, paddingHorizontal:16, paddingVertical:11, borderWidth:1, borderColor:C.border },
+  headerLogo:  { color:C.accent, fontSize:14, fontWeight:'700', letterSpacing:5 },
+  headerSub:   { color:C.dim, fontSize:10 },
+  countBadge:  { flexDirection:'row', alignItems:'center', gap:5, backgroundColor:'rgba(200,151,90,0.1)', borderRadius:100, paddingHorizontal:10, paddingVertical:5, borderWidth:1, borderColor:C.borderAccent },
+  countDot:    { width:6, height:6, borderRadius:3, backgroundColor:C.green },
+  countTxt:    { color:C.accent, fontSize:11, fontWeight:'500' },
+  modeBtn:     { width:36, height:36, borderRadius:18, backgroundColor:C.bg3, borderWidth:1, borderColor:C.border, alignItems:'center', justifyContent:'center' },
+  modeBtnOn:   { backgroundColor:'rgba(200,151,90,0.15)', borderColor:C.borderAccent },
+  modeBtnTxt:  { fontSize:16 },
 
-  /* Selected card */
-  selCard:    { position: 'absolute', bottom: 8, left: 14, right: 14, backgroundColor: C.bg2, borderRadius: 18, borderWidth: 1, borderColor: C.borderAccent, zIndex: 5 },
-  selPhoto:   { width: '100%', height: 110, borderTopLeftRadius: 17, borderTopRightRadius: 17 },
-  selBody:    { padding: 12, paddingBottom: 8 },
-  selCuisine: { color: C.accent, fontSize: 8, letterSpacing: 2.5, marginBottom: 3 },
-  selName:    { color: C.text, fontSize: 16, fontWeight: '300', letterSpacing: 0.3, marginBottom: 2 },
-  selAddr:    { color: C.dim, fontSize: 11, marginBottom: 6 },
-  selStats:   { flexDirection: 'row', gap: 10 },
-  selRating:  { color: C.accent, fontSize: 12, fontWeight: '500' },
-  selPrice:   { color: C.dimmer, fontSize: 12 },
-  selActions: { flexDirection: 'row', gap: 8, paddingHorizontal: 12, paddingBottom: 12 },
-  selBtnPrimary:    { flex: 1, backgroundColor: C.accent, borderRadius: 10, paddingVertical: 10, alignItems: 'center' },
-  selBtnPrimaryTxt: { color: C.bg, fontSize: 13, fontWeight: '500' },
-  selBtnSecondary:  { flex: 1, borderRadius: 10, paddingVertical: 10, alignItems: 'center', borderWidth: 1, borderColor: C.border },
-  selBtnSecondaryTxt:{ color: C.text, fontSize: 13 },
-  selClose:   { position: 'absolute', top: 10, right: 10, width: 28, height: 28, borderRadius: 14, backgroundColor: 'rgba(13,22,40,0.7)', alignItems: 'center', justifyContent: 'center' },
-  selCloseTxt:{ color: C.text, fontSize: 12 },
+  /* Selected card (map) */
+  selCard:    { position:'absolute', bottom:8, left:14, right:14, backgroundColor:C.bg2, borderRadius:18, borderWidth:1, borderColor:C.borderAccent, overflow:'hidden', zIndex:5 },
+  selPhoto:   { width:'100%', height:120 },
+  selOverlay: { paddingHorizontal:14, paddingTop:10, paddingBottom:4 },
+  selCuisine: { color:C.accent, fontSize:8, letterSpacing:2.5, marginBottom:3 },
+  selName:    { color:C.text, fontSize:17, fontWeight:'300', letterSpacing:0.3, marginBottom:4 },
+  selMeta:    { flexDirection:'row', flexWrap:'wrap', gap:6 },
+  selRating:  { color:'#f0c040', fontSize:12, fontWeight:'500' },
+  selAddr:    { color:C.dim, fontSize:12 },
+  selPrice:   { color:C.dimmer, fontSize:12 },
+  selActions: { flexDirection:'row', gap:8, paddingHorizontal:14, paddingVertical:12 },
+  selBtnPrimary:    { flex:1, backgroundColor:C.accent, borderRadius:10, paddingVertical:11, alignItems:'center' },
+  selBtnPrimaryTxt: { color:C.bg, fontSize:13, fontWeight:'500' },
+  selBtnSecondary:  { flex:1, borderRadius:10, paddingVertical:11, alignItems:'center', borderWidth:1, borderColor:C.border },
+  selBtnSecondaryTxt:{ color:C.text, fontSize:13 },
+  selClose:   { position:'absolute', top:10, right:10, width:28, height:28, borderRadius:14, backgroundColor:'rgba(13,22,40,0.72)', alignItems:'center', justifyContent:'center' },
+  selCloseTxt:{ color:C.text, fontSize:12 },
 
   /* Sheet */
-  sheet:      { flex: 54, backgroundColor: C.bg2, borderTopLeftRadius: 22, borderTopRightRadius: 22, borderWidth: 1, borderColor: C.border, paddingTop: 10 },
-  sheetFull:  { flex: 1, borderRadius: 0, borderTopWidth: 1, marginTop: TOP + 62 },
-  sheetHandle:{ width: 40, height: 4, backgroundColor: C.dimmer, borderRadius: 2, alignSelf: 'center', marginBottom: 10, opacity: 0.4 },
+  sheet:       { flex:54, backgroundColor:C.bg2, borderTopLeftRadius:22, borderTopRightRadius:22, borderWidth:1, borderColor:C.border, paddingTop:10 },
+  sheetFull:   { flex:1, borderRadius:0, borderTopWidth:1, marginTop:TOP+62 },
+  sheetHandle: { width:40, height:4, backgroundColor:C.dimmer, borderRadius:2, alignSelf:'center', marginBottom:10, opacity:0.4 },
 
-  /* Chips rows */
-  chipRow:    { paddingHorizontal: 14, paddingVertical: 8, gap: 8 },
+  chipRow:     { paddingHorizontal:14, paddingVertical:8, gap:8 },
 
-  /* City chips */
-  cityChip:   { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 14, paddingVertical: 7, borderRadius: 100, backgroundColor: C.bg3, borderWidth: 1, borderColor: C.border },
-  cityChipOn: { backgroundColor: C.accent, borderColor: C.accent },
-  cityEmoji:  { fontSize: 13 },
-  cityTxt:    { color: C.dim, fontSize: 12 },
-  cityTxtOn:  { color: C.bg, fontWeight: '600' },
+  cityChip:    { flexDirection:'row', alignItems:'center', gap:5, paddingHorizontal:14, paddingVertical:7, borderRadius:100, backgroundColor:C.bg3, borderWidth:1, borderColor:C.border },
+  cityChipOn:  { backgroundColor:C.accent, borderColor:C.accent },
+  cityEmoji:   { fontSize:13 },
+  cityTxt:     { color:C.dim, fontSize:12 },
+  cityTxtOn:   { color:C.bg, fontWeight:'600' },
 
   /* Search row */
-  searchRow:  { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 14, marginBottom: 4 },
-  searchBar:  { flex: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: C.bg3, borderRadius: 12, paddingHorizontal: 12, paddingVertical: 10, borderWidth: 1, borderColor: C.border, gap: 8 },
-  searchIcon: { fontSize: 13 },
-  searchInput:{ flex: 1, color: C.text, fontSize: 13 },
-  sortBtn:    { backgroundColor: C.bg3, borderRadius: 10, paddingHorizontal: 10, paddingVertical: 9, borderWidth: 1, borderColor: C.border },
-  sortTxt:    { color: C.accent, fontSize: 10, fontWeight: '500' },
+  searchRow:   { flexDirection:'row', alignItems:'center', gap:8, paddingHorizontal:14, marginBottom:4 },
+  searchBar:   { flex:1, flexDirection:'row', alignItems:'center', backgroundColor:C.bg3, borderRadius:12, paddingHorizontal:12, paddingVertical:10, borderWidth:1, borderColor:C.border, gap:8 },
+  searchIcon:  { fontSize:13 },
+  searchInput: { flex:1, color:C.text, fontSize:13 },
+  filterBtn:   { flexDirection:'row', alignItems:'center', gap:4, backgroundColor:C.bg3, borderRadius:10, paddingHorizontal:10, paddingVertical:9, borderWidth:1, borderColor:C.border },
+  filterBtnOn: { borderColor:C.borderAccent, backgroundColor:'rgba(200,151,90,0.08)' },
+  filterIcon:  { color:C.dim, fontSize:12 },
+  filterTxt:   { color:C.dim, fontSize:10, fontWeight:'500' },
+  filterDot:   { width:5, height:5, borderRadius:3, backgroundColor:C.accent, marginLeft:1 },
 
-  /* Cuisine filter chips */
-  cuisineChip:   { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 100, backgroundColor: C.bg3, borderWidth: 1, borderColor: C.border },
-  cuisineChipOn: { backgroundColor: 'rgba(200,151,90,0.15)', borderColor: C.accent },
-  cuisineEmoji:  { fontSize: 12 },
-  cuisineTxt:    { color: C.dim, fontSize: 11 },
-  cuisineTxtOn:  { color: C.accent },
+  /* Cuisine chips */
+  cuisineChip:    { flexDirection:'row', alignItems:'center', gap:4, paddingHorizontal:12, paddingVertical:6, borderRadius:100, backgroundColor:C.bg3, borderWidth:1, borderColor:C.border },
+  cuisineChipOn:  { backgroundColor:'rgba(200,151,90,0.15)', borderColor:C.accent },
+  cuisineEmoji:   { fontSize:12 },
+  cuisineTxt:     { color:C.dim, fontSize:11 },
+  cuisineTxtOn:   { color:C.accent },
 
-  /* List items */
-  item:       { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 14, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: C.border },
-  itemFirst:  {},
-  itemActive: { backgroundColor: 'rgba(200,151,90,0.05)' },
-  rankBadge:  { position: 'absolute', left: 14, top: 12, width: 18, height: 18, borderRadius: 9, alignItems: 'center', justifyContent: 'center', zIndex: 1 },
-  rankTxt:    { color: C.bg, fontSize: 9, fontWeight: '700' },
-  itemBody:   { flex: 1, gap: 4 },
-  itemTop:    { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 6 },
-  itemName:   { color: C.text, fontSize: 14, fontWeight: '300', flex: 1 },
-  ratingPill: { backgroundColor: 'rgba(200,151,90,0.12)', borderRadius: 8, paddingHorizontal: 6, paddingVertical: 2, borderWidth: 1, borderColor: 'rgba(200,151,90,0.25)' },
-  ratingPillTxt: { color: C.accent, fontSize: 10, fontWeight: '500' },
-  itemMidRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  cuisineTag: { backgroundColor: C.bg3, borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 },
-  cuisineTagTxt: { color: C.dim, fontSize: 10 },
-  itemQuartier: { color: C.dimmer, fontSize: 10 },
-  itemBottom: { flexDirection: 'row', gap: 10, alignItems: 'center' },
-  itemPrice:  { color: C.dim, fontSize: 11 },
-  itemReviews:{ color: C.dimmer, fontSize: 10 },
-  itemReserveBtn: { backgroundColor: 'rgba(200,151,90,0.12)', borderRadius: 10, paddingHorizontal: 10, paddingVertical: 7, borderWidth: 1, borderColor: C.borderAccent },
-  itemReserveTxt: { color: C.accent, fontSize: 11, fontWeight: '400' },
+  /* Grid */
+  gridRow:     { paddingHorizontal:14, justifyContent:'space-between' },
+  gridContent: { paddingTop:6 },
 
-  /* Empty */
-  empty:      { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 30 },
-  emptyTxt:   { color: C.dim, fontSize: 14 },
+  /* Empty state */
+  empty:       { flex:1, alignItems:'center', justifyContent:'center', gap:8, padding:30 },
+  emptyTitle:  { color:C.text, fontSize:16, fontWeight:'300' },
+  emptyDesc:   { color:C.dim, fontSize:12, textAlign:'center' },
+  emptyBtn:    { marginTop:8, backgroundColor:'rgba(200,151,90,0.12)', borderRadius:10, paddingHorizontal:18, paddingVertical:10, borderWidth:1, borderColor:C.borderAccent },
+  emptyBtnTxt: { color:C.accent, fontSize:13 },
 });

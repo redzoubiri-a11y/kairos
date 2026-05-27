@@ -383,8 +383,8 @@ export default function ProDashboard({ navigation }) {
 
   /* Groupement Midi / Soir pour "Aujourd'hui" */
   const showGroups = dateFilter === "Aujourd'hui" && filter === 'Tout';
-  const midi = filtered.filter(r => { const h = parseInt(r.time_slot || '0'); return h < 17; });
-  const soir = filtered.filter(r => { const h = parseInt(r.time_slot || '0'); return h >= 17; });
+  const midi = filtered.filter(r => { const h = parseInt((r.time_slot || '00:00').split(':')[0]); return h < 17; });
+  const soir = filtered.filter(r => { const h = parseInt((r.time_slot || '00:00').split(':')[0]); return h >= 17; });
 
   if (loading) {
     return (

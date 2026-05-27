@@ -84,7 +84,7 @@ function FavCard({ fav, index, onPress, onReserve, onRemove, removing }) {
         <Text style={fc.name} numberOfLines={1}>{r.name || '—'}</Text>
         <View style={fc.bottom}>
           <Text style={fc.price}>
-            {r.avg_ticket > 0 ? `${(r.avg_ticket / 1000).toFixed(0)}k DA` : '—'}
+            {r.avg_ticket > 0 ? `${r.avg_ticket.toLocaleString('fr-FR')} DA` : '—'}
           </Text>
           <TouchableOpacity style={fc.reserveBtn} onPress={onReserve}>
             <Text style={fc.reserveTxt}>Réserver</Text>

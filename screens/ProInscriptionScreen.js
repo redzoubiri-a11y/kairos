@@ -42,7 +42,7 @@ export default function ProInscriptionScreen({ navigation }) {
     setLoading(true);
     setError('');
     const { data: { session } } = await supabase.auth.getSession();
-    if (!session) { setError('Vous devez etre connecte'); setLoading(false); setTimeout(() => navigation.navigate('Auth'), 2000); return; }
+    if (!session) { setError('Vous devez être connecté pour soumettre une demande.'); setLoading(false); return; }
     const { error: err } = await supabase.from('pro_requests').insert({
       user_id: session.user.id,
       first_name:   form.prenom,

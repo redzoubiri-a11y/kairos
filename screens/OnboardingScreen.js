@@ -98,11 +98,16 @@ export default function OnboardingScreen({ onSelect }) {
       setStep(next);
       slideAnim.setValue(24);
       scaleAnim.setValue(0.78);
-      Animated.parallel([
-        Animated.timing(fadeAnim,  { toValue: 1, duration: 220, useNativeDriver: true }),
-        Animated.timing(slideAnim, { toValue: 0, duration: 220, useNativeDriver: true }),
-        Animated.spring(scaleAnim, { toValue: 1, tension: 60, friction: 8, useNativeDriver: true }),
-      ]).start();
+      // setTimeout(0) laisse React committer le nouveau rendu avant de lancer
+      // l'animation sur les nouveaux noeuds natifs — évite l'écran noir bloqué
+      setTimeout(() => {
+        fadeAnim.setValue(0);
+        Animated.parallel([
+          Animated.timing(fadeAnim,  { toValue: 1, duration: 220, useNativeDriver: true }),
+          Animated.timing(slideAnim, { toValue: 0, duration: 220, useNativeDriver: true }),
+          Animated.spring(scaleAnim, { toValue: 1, tension: 60, friction: 8, useNativeDriver: true }),
+        ]).start();
+      }, 0);
     });
   }
 

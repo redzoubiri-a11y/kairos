@@ -365,7 +365,7 @@ const s = StyleSheet.create({
   footerBtns:  { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   skipBtn:     { paddingVertical: 10, paddingHorizontal: 4 },
   skipTxt:     { color: C.dimmer, fontSize: 14 },
-  nextBtn:     { borderRadius: 14, paddingVertical: 14, paddingHorizontal: 26 },
+  nextBtn:     { borderRadius: 14, paddingVertical: 14, paddingHorizontal: 26, backgroundColor: C.accent },
   nextBtnDim:  { backgroundColor: C.dimmer },
   nextTxt:     { color: C.bg, fontSize: 14, fontWeight: '500' },
 });

@@ -307,14 +307,14 @@ export default function ExplorerScreen({ navigation }) {
         {mode === 'map' && <View style={s.sheetHandle} />}
 
         {/* Sélecteur de ville */}
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.chipRow}>
+        <View style={s.cityGrid}>
           {CITIES.map(c => (
             <TouchableOpacity key={c.id} style={[s.cityChip, city === c.id && s.cityChipOn]} onPress={() => changeCity(c.id)}>
               <Text style={s.cityEmoji}>{c.emoji}</Text>
               <Text style={[s.cityTxt, city === c.id && s.cityTxtOn]}>{c.label}</Text>
             </TouchableOpacity>
           ))}
-        </ScrollView>
+        </View>
 
         {/* Contenu liste */}
         {loading ? (
@@ -389,12 +389,11 @@ const s = StyleSheet.create({
   sheetFull:   { flex:1, borderRadius:0, borderTopWidth:1, marginTop:TOP+62 },
   sheetHandle: { width:40, height:4, backgroundColor:C.dimmer, borderRadius:2, alignSelf:'center', marginBottom:10, opacity:0.4 },
 
-  chipRow:     { paddingHorizontal:14, paddingVertical:8, gap:8 },
-
-  cityChip:    { flexDirection:'row', alignItems:'center', gap:5, paddingHorizontal:14, paddingVertical:7, borderRadius:100, backgroundColor:C.bg3, borderWidth:1, borderColor:'rgba(255,255,255,0.18)' },
+  cityGrid:    { flexDirection:'row', flexWrap:'wrap', paddingHorizontal:14, paddingVertical:10, gap:8 },
+  cityChip:    { flexDirection:'row', alignItems:'center', gap:6, paddingHorizontal:14, paddingVertical:9, borderRadius:12, backgroundColor:C.bg3, borderWidth:1, borderColor:'rgba(255,255,255,0.18)' },
   cityChipOn:  { backgroundColor:C.accent, borderColor:C.accent },
-  cityEmoji:   { fontSize:13 },
-  cityTxt:     { color:C.text, fontSize:12 },
+  cityEmoji:   { fontSize:14 },
+  cityTxt:     { color:C.text, fontSize:13 },
   cityTxtOn:   { color:C.bg, fontWeight:'600' },
 
 

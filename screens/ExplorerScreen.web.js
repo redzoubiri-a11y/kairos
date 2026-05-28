@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, TouchableOpacity,
+  View, Text, StyleSheet, TouchableOpacity,
   SafeAreaView, ActivityIndicator, Dimensions, Image, FlatList,
 } from 'react-native';
 import { supabase } from '../supabase';
@@ -33,18 +33,6 @@ const CUISINE_EMOJI = {
   italien:'🍕', japonais:'🍣', turc:'🍢', libanais:'🌿', francais:'🍷', autre:'🍽️',
 };
 
-const SORT_OPTIONS = [
-  { id:'rating',     label:'Mieux notés',    icon:'★' },
-  { id:'price_asc',  label:'Prix croissant', icon:'↑' },
-  { id:'price_desc', label:'Prix décroissant',icon:'↓' },
-];
-
-const BUDGET_OPTIONS = [
-  { id:'all',  label:'Tous les budgets' },
-  { id:'low',  label:'< 1 000 DA',        max:1000 },
-  { id:'mid',  label:'1 000 – 2 500 DA',  min:1000, max:2500 },
-  { id:'high', label:'> 2 500 DA',        min:2500 },
-];
 
 function RestoCard({ r, rank, onPress, onReserve }) {
   return (
@@ -141,14 +129,14 @@ export default function ExplorerScreen({ navigation }) {
       </View>
 
       {/* Villes */}
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.chipRow}>
+      <View style={s.cityGrid}>
         {CITIES.map(c => (
           <TouchableOpacity key={c.id} style={[s.cityChip, city === c.id && s.cityChipOn]} onPress={() => setCity(c.id)}>
             <Text style={s.cityEmoji}>{c.emoji}</Text>
             <Text style={[s.cityTxt, city === c.id && s.cityTxtOn]}>{c.label}</Text>
           </TouchableOpacity>
         ))}
-      </ScrollView>
+      </View>
 
       {/* Liste */}
       {loading ? (
@@ -190,11 +178,11 @@ const s = StyleSheet.create({
   countDot:   { width:6, height:6, borderRadius:3, backgroundColor:C.green },
   countTxt:   { color:C.accent, fontSize:11, fontWeight:'500' },
 
-  chipRow:   { paddingHorizontal:14, paddingVertical:8, gap:8 },
-  cityChip:  { flexDirection:'row', alignItems:'center', gap:5, paddingHorizontal:14, paddingVertical:7, borderRadius:100, backgroundColor:C.bg3, borderWidth:1, borderColor:'rgba(255,255,255,0.18)' },
+  cityGrid:  { flexDirection:'row', flexWrap:'wrap', paddingHorizontal:14, paddingVertical:10, gap:8 },
+  cityChip:  { flexDirection:'row', alignItems:'center', gap:6, paddingHorizontal:14, paddingVertical:9, borderRadius:12, backgroundColor:C.bg3, borderWidth:1, borderColor:'rgba(255,255,255,0.18)' },
   cityChipOn:{ backgroundColor:C.accent, borderColor:C.accent },
-  cityEmoji: { fontSize:13 },
-  cityTxt:   { color:C.text, fontSize:12 },
+  cityEmoji: { fontSize:14 },
+  cityTxt:   { color:C.text, fontSize:13 },
   cityTxtOn: { color:C.bg, fontWeight:'600' },
 
 

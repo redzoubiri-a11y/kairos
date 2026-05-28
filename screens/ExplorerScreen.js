@@ -416,6 +416,9 @@ export default function ExplorerScreen({ navigation }) {
       {/* ── HEADER OVERLAY ── */}
       <SafeAreaView style={s.overlay} pointerEvents="box-none">
         <View style={s.header}>
+          <TouchableOpacity style={s.backBtn} onPress={() => navigation.goBack()}>
+            <Text style={s.backBtnTxt}>←</Text>
+          </TouchableOpacity>
           <View>
             <Text style={s.headerLogo}>MIDA</Text>
             <Text style={s.headerSub}>Explorer</Text>
@@ -599,18 +602,21 @@ const s = StyleSheet.create({
   searchBar:   { flex:1, flexDirection:'row', alignItems:'center', backgroundColor:C.bg3, borderRadius:12, paddingHorizontal:12, paddingVertical:10, borderWidth:1, borderColor:C.border, gap:8 },
   searchIcon:  { fontSize:13 },
   searchInput: { flex:1, color:C.text, fontSize:13 },
-  filterBtn:   { flexDirection:'row', alignItems:'center', gap:4, backgroundColor:C.bg3, borderRadius:10, paddingHorizontal:10, paddingVertical:9, borderWidth:1, borderColor:C.border },
+  filterBtn:   { flexDirection:'row', alignItems:'center', gap:4, backgroundColor:C.bg3, borderRadius:10, paddingHorizontal:10, paddingVertical:9, borderWidth:1, borderColor:'rgba(255,255,255,0.18)' },
   filterBtnOn: { borderColor:C.borderAccent, backgroundColor:'rgba(200,151,90,0.08)' },
-  filterIcon:  { color:C.dim, fontSize:12 },
-  filterTxt:   { color:C.dim, fontSize:10, fontWeight:'500' },
+  filterIcon:  { color:C.text, fontSize:12 },
+  filterTxt:   { color:C.text, fontSize:10, fontWeight:'500' },
   filterDot:   { width:5, height:5, borderRadius:3, backgroundColor:C.accent, marginLeft:1 },
 
   /* Cuisine chips */
-  cuisineChip:    { flexDirection:'row', alignItems:'center', gap:4, paddingHorizontal:12, paddingVertical:6, borderRadius:100, backgroundColor:C.bg3, borderWidth:1, borderColor:C.border },
+  cuisineChip:    { flexDirection:'row', alignItems:'center', gap:4, paddingHorizontal:12, paddingVertical:6, borderRadius:100, backgroundColor:C.bg3, borderWidth:1, borderColor:'rgba(255,255,255,0.18)' },
   cuisineChipOn:  { backgroundColor:'rgba(200,151,90,0.15)', borderColor:C.accent },
   cuisineEmoji:   { fontSize:12 },
-  cuisineTxt:     { color:C.dim, fontSize:11 },
-  cuisineTxtOn:   { color:C.accent },
+  cuisineTxt:     { color:C.text, fontSize:11 },
+  cuisineTxtOn:   { color:C.accent, fontWeight:'600' },
+
+  backBtn:     { width:36, height:36, borderRadius:18, backgroundColor:C.bg3, borderWidth:1, borderColor:'rgba(255,255,255,0.18)', alignItems:'center', justifyContent:'center' },
+  backBtnTxt:  { color:C.text, fontSize:18, lineHeight:22 },
 
   /* Grid */
   gridRow:     { paddingHorizontal:14, justifyContent:'space-between' },

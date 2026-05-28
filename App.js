@@ -120,6 +120,8 @@ export default function App() {
     return () => subscription.unsubscribe();
   }, []);
 
+  const [webUserType, setWebUserType] = useState('client');
+
   function renderContent() {
     if (loading) {
       return (
@@ -129,7 +131,7 @@ export default function App() {
       );
     }
     if (!session && !userType) {
-      if (Platform.OS === 'web') return <AuthScreen userType="client" onAuth={(s) => setSession(s)} />;
+      if (Platform.OS === 'web') return <AuthScreen userType={webUserType} onAuth={(s) => setSession(s)} onSwitchType={setWebUserType} />;
       return <OnboardingScreen onSelect={setUserType} />;
     }
     if (!session) return <AuthScreen userType={userType} onAuth={(s) => setSession(s)} />;

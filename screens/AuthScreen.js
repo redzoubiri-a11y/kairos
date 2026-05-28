@@ -32,7 +32,7 @@ const f = StyleSheet.create({
   icon:  { fontSize: 15, marginRight: 10, opacity: 0.6 },
 });
 
-export default function AuthScreen({ onAuth, userType }) {
+export default function AuthScreen({ onAuth, userType, onSwitchType }) {
   const isPro = userType === 'pro';
   const [mode,     setMode]     = useState('signin');
   const [email,    setEmail]    = useState('');
@@ -258,6 +258,14 @@ export default function AuthScreen({ onAuth, userType }) {
             <Text style={s.legalLink}>Politique de confidentialité</Text>.
           </Text>
 
+          {onSwitchType && (
+            <TouchableOpacity style={s.switchTypeBtn} onPress={() => onSwitchType(isPro ? 'client' : 'pro')}>
+              <Text style={s.switchTypeTxt}>
+                {isPro ? '← Retour espace client' : '🧑‍🍳 Espace Pro / Restaurateur →'}
+              </Text>
+            </TouchableOpacity>
+          )}
+
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -324,4 +332,8 @@ const s = StyleSheet.create({
   /* Legal */
   legal:     { color: C.dimmer, fontSize: 10, textAlign: 'center', lineHeight: 16 },
   legalLink: { color: C.dim },
+
+  /* Switch type */
+  switchTypeBtn: { alignSelf: 'center', marginTop: 20, paddingVertical: 10, paddingHorizontal: 18, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(74,127,165,0.3)', backgroundColor: 'rgba(74,127,165,0.07)' },
+  switchTypeTxt: { color: C.accent2, fontSize: 12, fontWeight: '500', letterSpacing: 0.3 },
 });

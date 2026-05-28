@@ -180,10 +180,12 @@ export default function ProComptoir({ navigation }) {
       .single();
 
     if (ownerRow?.restaurants) setRestaurant(ownerRow.restaurants);
+    if (!ownerRow?.restaurant_id) { setLoading(false); setRefreshing(false); return; }
 
     const { data: res } = await supabase
       .from('reservations')
       .select('id, date, time_slot, nb_adults, nb_children, notes, status, users(first_name, last_name, email)')
+      .eq('restaurant_id', ownerRow.restaurant_id)
       .eq('date', todayStr())
       .order('time_slot', { ascending: true });
 

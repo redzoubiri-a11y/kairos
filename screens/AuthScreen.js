@@ -90,25 +90,32 @@ export default function AuthScreen({ onAuth, userType, onSwitchType }) {
 
     setLoading(true); setError(''); setSuccess('');
 
-    if (mode === 'signin') {
-      const { data, error: err } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
-      if (err) { setError(err.message); shake(); }
-      else if (data.session) onAuth(data.session);
-    } else {
-      const { data, error: err } = await supabase.auth.signUp({ email: email.trim(), password });
-      if (err) {
-        if (err.message.toLowerCase().includes('already registered') || err.message.toLowerCase().includes('already been registered')) {
-          setError('Cet email est déjà utilisé. Connectez-vous avec votre mot de passe.');
-          switchMode('signin');
-        } else { setError(err.message); shake(); }
+    try {
+      if (mode === 'signin') {
+        const { data, error: err } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+        if (err) { setError(err.message); shake(); }
+        else if (data?.session) onAuth(data.session);
+        else setError('Connexion échouée. Vérifiez vos identifiants.');
+      } else {
+        const { data, error: err } = await supabase.auth.signUp({ email: email.trim(), password });
+        if (err) {
+          if (err.message.toLowerCase().includes('already registered') || err.message.toLowerCase().includes('already been registered')) {
+            setError('Cet email est déjà utilisé. Connectez-vous avec votre mot de passe.');
+            switchMode('signin');
+          } else { setError(err.message); shake(); }
+        }
+        else if (data?.session) { onAuth(data.session); }
+        else {
+          const { data: d2 } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+          if (d2?.session) { onAuth(d2.session); }
+          else { setSuccess('Compte créé ! Connectez-vous avec vos identifiants.'); switchMode('signin'); }
+        }
       }
-      else if (data.session) { onAuth(data.session); }
-      else {
-        const { data: d2 } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
-        if (d2?.session) { onAuth(d2.session); }
-        else { setSuccess('Compte créé ! Connectez-vous avec vos identifiants.'); switchMode('signin'); }
-      }
+    } catch (e) {
+      setError('Erreur réseau. Vérifiez votre connexion.');
+      shake();
     }
+
     setLoading(false);
   }
 

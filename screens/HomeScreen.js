@@ -36,9 +36,7 @@ const CATEGORIES = [
   { id: 'all',           label: 'Tout',       emoji: '✦',  cuisine: null            },
   { id: 'algerien',      label: 'Algérien',   emoji: '🥘', cuisine: 'algerien'      },
   { id: 'mediterraneen', label: 'Méditerra.', emoji: '🐟', cuisine: 'mediterraneen' },
-  { id: 'italien',       label: 'Italien',    emoji: '🍕', cuisine: 'italien'       },
-  { id: 'japonais',      label: 'Japonais',   emoji: '🍣', cuisine: 'japonais'      },
-  { id: 'turc',          label: 'Turc',       emoji: '🍢', cuisine: 'turc'          },
+  { id: 'francais',      label: 'Français',   emoji: '🍷', cuisine: 'francais'      },
   { id: 'libanais',      label: 'Libanais',   emoji: '🌿', cuisine: 'libanais'      },
 ];
 

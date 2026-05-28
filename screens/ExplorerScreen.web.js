@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  TextInput, SafeAreaView, ActivityIndicator, Dimensions, Image, FlatList,
+  SafeAreaView, ActivityIndicator, Dimensions, Image, FlatList,
 } from 'react-native';
 import { supabase } from '../supabase';
 
@@ -110,17 +110,11 @@ const lc = StyleSheet.create({
 
 export default function ExplorerScreen({ navigation }) {
   const [city,        setCity]        = useState('alger');
-  const [search,      setSearch]      = useState('');
-  const [cuisine,     setCuisine]     = useState(null);
-  const [sort,        setSort]        = useState('rating');
-  const [budget,      setBudget]      = useState('all');
-  const [showFilters, setShowFilters] = useState(false);
   const [restaurants, setRestaurants] = useState([]);
   const [loading,     setLoading]     = useState(false);
 
   useEffect(() => {
     setLoading(true);
-    setCuisine(null);
     supabase
       .from('restaurants')
       .select('id, name, cuisine_type, address, quartier, city, photos, avg_rating, avg_ticket, review_count, capacity')
@@ -129,31 +123,6 @@ export default function ExplorerScreen({ navigation }) {
       .order('avg_rating', { ascending: false })
       .then(({ data }) => { setRestaurants(data ?? []); setLoading(false); });
   }, [city]);
-
-  const cuisineTypes = [...new Set(restaurants.map(r => r.cuisine_type).filter(Boolean))];
-  const budgetData   = BUDGET_OPTIONS.find(o => o.id === budget);
-  const hasFilters   = sort !== 'rating' || budget !== 'all' || !!cuisine;
-
-  const filtered = restaurants
-    .filter(r => {
-      if (cuisine && r.cuisine_type !== cuisine) return false;
-      if (budget !== 'all') {
-        const t = r.avg_ticket || 0;
-        if (budgetData.min != null && t < budgetData.min) return false;
-        if (budgetData.max != null && t > budgetData.max) return false;
-      }
-      if (!search) return true;
-      const q = search.toLowerCase();
-      return (r.name || '').toLowerCase().includes(q)
-        || (r.quartier || '').toLowerCase().includes(q)
-        || (r.cuisine_type || '').toLowerCase().includes(q);
-    })
-    .sort((a, b) => {
-      if (sort === 'rating')     return (b.avg_rating || 0) - (a.avg_rating || 0);
-      if (sort === 'price_asc')  return (a.avg_ticket || 0) - (b.avg_ticket || 0);
-      if (sort === 'price_desc') return (b.avg_ticket || 0) - (a.avg_ticket || 0);
-      return 0;
-    });
 
   return (
     <SafeAreaView style={s.root}>
@@ -166,7 +135,7 @@ export default function ExplorerScreen({ navigation }) {
         {!loading && (
           <View style={s.countBadge}>
             <View style={s.countDot} />
-            <Text style={s.countTxt}>{filtered.length} restos</Text>
+            <Text style={s.countTxt}>{restaurants.length} restos</Text>
           </View>
         )}
       </View>
@@ -181,91 +150,17 @@ export default function ExplorerScreen({ navigation }) {
         ))}
       </ScrollView>
 
-      {/* Recherche */}
-      <View style={s.searchRow}>
-        <View style={s.searchBar}>
-          <Text style={s.searchIcon}>🔍</Text>
-          <TextInput
-            style={s.searchInput}
-            placeholder="Restaurant, quartier, cuisine…"
-            placeholderTextColor={C.dimmer}
-            value={search}
-            onChangeText={setSearch}
-          />
-          {search.length > 0 && (
-            <TouchableOpacity onPress={() => setSearch('')}>
-              <Text style={{ color:C.dimmer, fontSize:12 }}>✕</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-        <TouchableOpacity
-          style={[s.filterBtn, hasFilters && s.filterBtnOn]}
-          onPress={() => setShowFilters(v => !v)}
-        >
-          <Text style={s.filterIcon}>⚙</Text>
-          <Text style={[s.filterTxt, hasFilters && { color:C.accent }]}>{hasFilters ? 'Actifs' : 'Filtres'}</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Panel filtres */}
-      {showFilters && (
-        <View style={s.filterPanel}>
-          <Text style={s.filterSection}>TRIER PAR</Text>
-          <View style={s.filterRow}>
-            {SORT_OPTIONS.map(o => (
-              <TouchableOpacity key={o.id} style={[s.filterOpt, sort === o.id && s.filterOptOn]} onPress={() => setSort(o.id)}>
-                <Text style={[s.filterOptTxt, sort === o.id && { color:C.accent }]}>{o.icon} {o.label}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-          <Text style={s.filterSection}>BUDGET</Text>
-          <View style={s.filterRow}>
-            {BUDGET_OPTIONS.map(o => (
-              <TouchableOpacity key={o.id} style={[s.filterOpt, budget === o.id && s.filterOptOn]} onPress={() => setBudget(o.id)}>
-                <Text style={[s.filterOptTxt, budget === o.id && { color:C.accent }]}>{o.label}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-          <View style={s.filterActions}>
-            <TouchableOpacity onPress={() => { setSort('rating'); setBudget('all'); setCuisine(null); }}>
-              <Text style={{ color:C.accent2, fontSize:12 }}>Effacer</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={s.applyBtn} onPress={() => setShowFilters(false)}>
-              <Text style={s.applyTxt}>Appliquer</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      )}
-
-      {/* Cuisines */}
-      {!showFilters && cuisineTypes.length > 0 && (
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.chipRow}>
-          <TouchableOpacity style={[s.cuisineChip, !cuisine && s.cuisineChipOn]} onPress={() => setCuisine(null)}>
-            <Text style={[s.cuisineTxt, !cuisine && s.cuisineTxtOn]}>Tous</Text>
-          </TouchableOpacity>
-          {cuisineTypes.map(ct => (
-            <TouchableOpacity key={ct} style={[s.cuisineChip, cuisine === ct && s.cuisineChipOn]} onPress={() => setCuisine(cuisine === ct ? null : ct)}>
-              <Text style={s.cuisineEmoji}>{CUISINE_EMOJI[ct] || '🍽️'}</Text>
-              <Text style={[s.cuisineTxt, cuisine === ct && s.cuisineTxtOn]}>{ct.replace(/_/g,' ')}</Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      )}
-
       {/* Liste */}
       {loading ? (
         <View style={s.center}><ActivityIndicator color={C.accent} size="large" /></View>
-      ) : filtered.length === 0 ? (
+      ) : restaurants.length === 0 ? (
         <View style={s.center}>
-          <Text style={{ fontSize:36 }}>🔍</Text>
-          <Text style={s.emptyTitle}>Aucun restaurant trouvé</Text>
-          <TouchableOpacity onPress={() => { setSearch(''); setCuisine(null); setBudget('all'); setSort('rating'); }}>
-            <Text style={{ color:C.accent2, fontSize:13, marginTop:8 }}>Effacer les filtres</Text>
-          </TouchableOpacity>
+          <Text style={{ fontSize:36 }}>🍽️</Text>
+          <Text style={s.emptyTitle}>Aucun restaurant pour cette ville.</Text>
         </View>
       ) : (
         <FlatList
-          data={filtered}
+          data={restaurants}
           keyExtractor={r => String(r.id)}
           numColumns={2}
           columnWrapperStyle={s.gridRow}
@@ -274,7 +169,7 @@ export default function ExplorerScreen({ navigation }) {
           renderItem={({ item: r, index }) => (
             <RestoCard
               r={r}
-              rank={sort === 'rating' ? index : null}
+              rank={index}
               onPress={() => navigation.navigate('Restaurant', { restaurant: r })}
               onReserve={() => navigation.navigate('ReservationForm', { restaurant: r })}
             />
@@ -302,30 +197,6 @@ const s = StyleSheet.create({
   cityTxt:   { color:C.text, fontSize:12 },
   cityTxtOn: { color:C.bg, fontWeight:'600' },
 
-  searchRow:   { flexDirection:'row', alignItems:'center', gap:8, paddingHorizontal:14, marginBottom:4 },
-  searchBar:   { flex:1, flexDirection:'row', alignItems:'center', backgroundColor:C.bg3, borderRadius:12, paddingHorizontal:12, paddingVertical:10, borderWidth:1, borderColor:C.border, gap:8 },
-  searchIcon:  { fontSize:13 },
-  searchInput: { flex:1, color:C.text, fontSize:13 },
-  filterBtn:   { flexDirection:'row', alignItems:'center', gap:4, backgroundColor:C.bg3, borderRadius:10, paddingHorizontal:10, paddingVertical:9, borderWidth:1, borderColor:'rgba(255,255,255,0.18)' },
-  filterBtnOn: { borderColor:C.borderAccent, backgroundColor:'rgba(200,151,90,0.08)' },
-  filterIcon:  { color:C.text, fontSize:12 },
-  filterTxt:   { color:C.text, fontSize:10, fontWeight:'500' },
-
-  filterPanel:   { marginHorizontal:14, marginBottom:8, padding:14, backgroundColor:C.bg2, borderRadius:14, borderWidth:1, borderColor:C.border, gap:8 },
-  filterSection: { color:C.dimmer, fontSize:9, letterSpacing:2 },
-  filterRow:     { flexDirection:'row', flexWrap:'wrap', gap:6 },
-  filterOpt:     { paddingHorizontal:12, paddingVertical:7, borderRadius:10, backgroundColor:C.bg3, borderWidth:1, borderColor:'rgba(255,255,255,0.18)' },
-  filterOptOn:   { backgroundColor:'rgba(200,151,90,0.15)', borderColor:C.accent },
-  filterOptTxt:  { color:C.text, fontSize:11 },
-  filterActions: { flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginTop:4 },
-  applyBtn:      { backgroundColor:C.accent, borderRadius:10, paddingHorizontal:18, paddingVertical:9 },
-  applyTxt:      { color:C.bg, fontSize:13, fontWeight:'500' },
-
-  cuisineChip:   { flexDirection:'row', alignItems:'center', gap:4, paddingHorizontal:12, paddingVertical:6, borderRadius:100, backgroundColor:C.bg3, borderWidth:1, borderColor:'rgba(255,255,255,0.18)' },
-  cuisineChipOn: { backgroundColor:'rgba(200,151,90,0.15)', borderColor:C.accent },
-  cuisineEmoji:  { fontSize:12 },
-  cuisineTxt:    { color:C.text, fontSize:11 },
-  cuisineTxtOn:  { color:C.accent, fontWeight:'600' },
 
   gridRow:     { paddingHorizontal:14, justifyContent:'space-between' },
   gridContent: { paddingTop:6 },

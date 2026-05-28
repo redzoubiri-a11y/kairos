@@ -50,8 +50,8 @@ function RestoCard({ r, rank, onPress, onReserve }) {
   return (
     <TouchableOpacity style={lc.card} onPress={onPress} activeOpacity={0.88}>
       <View style={lc.imgWrap}>
-        {r.photo_url
-          ? <Image source={{ uri: r.photo_url }} style={lc.img} resizeMode="cover" />
+        {r.photos?.[0]
+          ? <Image source={{ uri: r.photos[0] }} style={lc.img} resizeMode="cover" />
           : <View style={[lc.img, lc.imgPlaceholder]}><Text style={{ fontSize: 30 }}>🍽️</Text></View>
         }
         {r.avg_rating > 0 && (
@@ -123,7 +123,7 @@ export default function ExplorerScreen({ navigation }) {
     setCuisine(null);
     supabase
       .from('restaurants')
-      .select('id, name, cuisine_type, address, quartier, city, photo_url, avg_rating, avg_ticket, review_count, capacity')
+      .select('id, name, cuisine_type, address, quartier, city, photos, avg_rating, avg_ticket, review_count, capacity')
       .eq('city', city)
       .eq('status', 'active')
       .order('avg_rating', { ascending: false })

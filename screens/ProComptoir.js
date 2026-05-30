@@ -290,6 +290,13 @@ export default function ProComptoir({ navigation }) {
     return { total: reservations.length, confirmed, pending, arrived, covers };
   }, [reservations]);
 
+  const goBack       = useCallback(() => navigation.goBack(), [navigation]);
+  const onRefresh    = useCallback(() => load(true), [load]);
+  const emptyDateStr = useMemo(
+    () => new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }),
+    [],
+  );
+
   const renderItem = useCallback(({ item, index }) => (
     <ResaRow
       resa={item}
@@ -308,7 +315,7 @@ export default function ProComptoir({ navigation }) {
       <View style={s.header}>
         <View style={s.headerLeft}>
           {navigation && (
-            <TouchableOpacity style={s.backBtn} onPress={() => navigation.goBack()}>
+            <TouchableOpacity style={s.backBtn} onPress={goBack}>
               <Text style={s.backTxt}>←</Text>
             </TouchableOpacity>
           )}
@@ -321,7 +328,7 @@ export default function ProComptoir({ navigation }) {
         <Clock />
 
         <View style={s.headerRight}>
-          <TouchableOpacity style={s.refreshBtn} onPress={() => load(true)} disabled={refreshing}>
+          <TouchableOpacity style={s.refreshBtn} onPress={onRefresh} disabled={refreshing}>
             <Text style={s.refreshTxt}>{refreshing ? '···' : '↺  Actualiser'}</Text>
           </TouchableOpacity>
         </View>
@@ -347,9 +354,7 @@ export default function ProComptoir({ navigation }) {
         <View style={s.center}>
           <Text style={s.emptyEmoji}>📅</Text>
           <Text style={s.emptyTitle}>Aucune réservation aujourd'hui</Text>
-          <Text style={s.emptySub}>
-            {new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
-          </Text>
+          <Text style={s.emptySub}>{emptyDateStr}</Text>
         </View>
       ) : (
         <ScrollView horizontal showsHorizontalScrollIndicator={false} bounces={false}>
@@ -367,7 +372,7 @@ export default function ProComptoir({ navigation }) {
               keyExtractor={item => String(item.id)}
               renderItem={renderItem}
               refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={() => load(true)} tintColor={colors.accent} />
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.accent} />
               }
               showsVerticalScrollIndicator={false}
               scrollEnabled={false}

@@ -26,7 +26,8 @@ export default function ProInscriptionScreen({ navigation }) {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
-  const set = useCallback((key) => (val) => setForm(prev => ({ ...prev, [key]: val })), []);
+  const set    = useCallback((key) => (val) => setForm(prev => ({ ...prev, [key]: val })), []);
+  const goBack = useCallback(() => navigation.goBack(), [navigation]);
 
   const soumettre = useCallback(async () => {
     if (!form.nom || !form.prenom || !form.restaurant || !form.telephone) {
@@ -94,7 +95,7 @@ export default function ProInscriptionScreen({ navigation }) {
           <Text style={s.successSub}>
             Notre équipe examine votre candidature{'\n'}et vous contacte dans les 48h.
           </Text>
-          <TouchableOpacity style={s.successBtn} onPress={() => navigation.goBack()}>
+          <TouchableOpacity style={s.successBtn} onPress={goBack}>
             <Text style={s.successBtnTxt}>RETOUR AU PROFIL</Text>
           </TouchableOpacity>
         </View>
@@ -105,7 +106,7 @@ export default function ProInscriptionScreen({ navigation }) {
   return (
     <SafeAreaView style={s.root}>
       <View style={s.header}>
-        <TouchableOpacity style={s.backBtn} onPress={() => navigation.goBack()}>
+        <TouchableOpacity style={s.backBtn} onPress={goBack}>
           <Text style={s.backBtnTxt}>←</Text>
         </TouchableOpacity>
         <View style={{ flex: 1 }}>

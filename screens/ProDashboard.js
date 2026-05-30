@@ -373,9 +373,7 @@ export default function ProDashboard({ navigation }) {
   }, [addActing, removeActing, load]);
 
   /* Stats */
-  const t  = todayStr();
-  const tm = tomorrowStr();
-  const we = weekEndStr();
+  const { t, tm, we } = useMemo(() => ({ t: todayStr(), tm: tomorrowStr(), we: weekEndStr() }), []);
 
   const todayResas = useMemo(
     () => reservations.filter(r => r.date === t),
@@ -393,7 +391,10 @@ export default function ProDashboard({ navigation }) {
     () => confirmedToday.reduce((acc, r) => acc + (r.nb_adults || 0) + (r.nb_children || 0), 0),
     [confirmedToday],
   );
-  const revenue = restaurant?.avg_ticket > 0 ? totalCovers * restaurant.avg_ticket : null;
+  const revenue = useMemo(
+    () => restaurant?.avg_ticket > 0 ? totalCovers * restaurant.avg_ticket : null,
+    [totalCovers, restaurant],
+  );
 
   const upcomingCount = useMemo(() => {
     const now = new Date();
@@ -417,7 +418,7 @@ export default function ProDashboard({ navigation }) {
     return statusOk && dateOk;
   }), [reservations, filter, dateFilter, t, tm, we]);
 
-  const showGroups = dateFilter === "Aujourd'hui" && filter === 'Tout';
+  const showGroups = useMemo(() => dateFilter === "Aujourd'hui" && filter === 'Tout', [dateFilter, filter]);
   const midi = useMemo(
     () => filtered.filter(r => parseInt((r.time_slot || '00:00').split(':')[0]) < 17),
     [filtered],
@@ -426,6 +427,14 @@ export default function ProDashboard({ navigation }) {
     () => filtered.filter(r => parseInt((r.time_slot || '00:00').split(':')[0]) >= 17),
     [filtered],
   );
+
+  const greetingTxt = useMemo(() => greeting(), []);
+  const onRefresh   = useCallback(() => load(true), [load]);
+  const goPromos    = useCallback(() => navigation.navigate('ProPromos'),   [navigation]);
+  const goComptoir  = useCallback(() => navigation.navigate('ProComptoir'), [navigation]);
+  const goMenu      = useCallback(() => navigation.navigate('ProMenu'),     [navigation]);
+  const goAvis      = useCallback(() => navigation.navigate('ProAvis'),     [navigation]);
+  const signOut     = useCallback(() => supabase.auth.signOut(), []);
 
   if (loading) {
     return (
@@ -439,21 +448,21 @@ export default function ProDashboard({ navigation }) {
     <SafeAreaView style={s.root}>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => load(true)} tintColor={colors.accent} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.accent} />}
       >
 
         {/* ── Header ── */}
         <View style={s.header}>
           <View style={{ flex:1 }}>
-            <Text style={s.headerGreeting}>{greeting()} 👋</Text>
+            <Text style={s.headerGreeting}>{greetingTxt} 👋</Text>
             <Text style={s.headerTitle}>{restaurant?.name || 'Manager'}</Text>
           </View>
           <View style={{ gap: spacing.md, alignItems: 'flex-end' }}>
             <View style={{ flexDirection: 'row', gap: spacing.sm }}>
-              <TouchableOpacity style={s.comptoirBtn} onPress={() => navigation.navigate('ProPromos')}>
+              <TouchableOpacity style={s.comptoirBtn} onPress={goPromos}>
                 <Text style={s.comptoirBtnTxt}>🏷️  Promos</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={s.comptoirBtn} onPress={() => navigation.navigate('ProComptoir')}>
+              <TouchableOpacity style={s.comptoirBtn} onPress={goComptoir}>
                 <Text style={s.comptoirBtnTxt}>📟  Comptoir</Text>
               </TouchableOpacity>
             </View>
@@ -482,10 +491,10 @@ export default function ProDashboard({ navigation }) {
               )}
             </View>
             <View style={{ gap: spacing.sm, alignItems: 'flex-end' }}>
-              <TouchableOpacity style={s.menuShortcut} onPress={() => navigation.navigate('ProMenu')}>
+              <TouchableOpacity style={s.menuShortcut} onPress={goMenu}>
                 <Text style={s.menuShortcutTxt}>🍽️ Menu</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={s.menuShortcut} onPress={() => navigation.navigate('ProAvis')}>
+              <TouchableOpacity style={s.menuShortcut} onPress={goAvis}>
                 <Text style={s.menuShortcutTxt}>⭐ Avis</Text>
               </TouchableOpacity>
             </View>
@@ -589,7 +598,7 @@ export default function ProDashboard({ navigation }) {
 
         <View style={{ height: spacing.xxxl }} />
 
-        <TouchableOpacity style={s.signOutBtn} onPress={() => supabase.auth.signOut()}>
+        <TouchableOpacity style={s.signOutBtn} onPress={signOut}>
           <Text style={s.signOutTxt}>Se déconnecter</Text>
         </TouchableOpacity>
 

@@ -91,6 +91,9 @@ export default function MapScreen({ navigation }) {
     );
   }, []);
 
+  const closeCard   = useCallback(() => setSelected(null), []);
+  const goSelected  = useCallback(() => navigation.navigate('Restaurant', { restaurant: selected }), [navigation, selected]);
+
   /* Web fallback */
   if (Platform.OS === 'web') {
     return (
@@ -188,7 +191,7 @@ export default function MapScreen({ navigation }) {
           <TouchableOpacity
             style={s.card}
             activeOpacity={0.88}
-            onPress={() => navigation.navigate('Restaurant', { restaurant: selected })}
+            onPress={goSelected}
           >
             <View style={s.cardThumb}>
               <Text style={s.cardEmoji}>
@@ -214,7 +217,7 @@ export default function MapScreen({ navigation }) {
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity style={s.closeBtn} onPress={() => setSelected(null)}>
+          <TouchableOpacity style={s.closeBtn} onPress={closeCard}>
             <Text style={s.closeBtnTxt}>✕</Text>
           </TouchableOpacity>
         </View>

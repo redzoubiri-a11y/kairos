@@ -147,9 +147,9 @@ function HeroGradient() {
 
 /* ─── Menu tab ─── */
 function MenuTab({ menu }) {
-  const cats = menu.map(c => c.cat);
+  const cats    = useMemo(() => menu.map(c => c.cat), [menu]);
   const [active, setActive] = useState(cats[0]);
-  const catData = menu.find(c => c.cat === active);
+  const catData = useMemo(() => menu.find(c => c.cat === active), [menu, active]);
 
   return (
     <>
@@ -212,14 +212,17 @@ const mt = StyleSheet.create({
 /* ─── Avis tab ─── */
 function AvisTab({ restaurant, reviews, loadingReviews }) {
   const rating = Number(restaurant.avg_rating || 0);
-  const list   = reviews.length > 0 ? reviews : MOCK_AVIS;
 
-  const dist = [5,4,3,2,1].map(n => ({
-    n,
-    pct: list.length > 0
-      ? Math.round((list.filter(r => Math.round(r.note || r.rating) === n).length / list.length) * 100)
-      : (n === 5 ? 60 : n === 4 ? 30 : 10),
-  }));
+  const { list, dist } = useMemo(() => {
+    const list = reviews.length > 0 ? reviews : MOCK_AVIS;
+    const dist = [5, 4, 3, 2, 1].map(n => ({
+      n,
+      pct: list.length > 0
+        ? Math.round((list.filter(r => Math.round(r.note || r.rating) === n).length / list.length) * 100)
+        : (n === 5 ? 60 : n === 4 ? 30 : 10),
+    }));
+    return { list, dist };
+  }, [reviews]);
 
   if (loadingReviews) return (
     <View style={{ padding: spacing.xxl }}>
@@ -410,8 +413,11 @@ export default function RestaurantScreen({ route, navigation }) {
     () => restaurant.avg_rating > 0 ? Number(restaurant.avg_rating).toFixed(1) : null,
     [restaurant.avg_rating],
   );
-  const cuisineEmoji = CUISINE_EMOJI[restaurant.cuisine_type] || '🍽️';
-  const desc = restaurant.description || CUISINE_DESC[restaurant.cuisine_type] || CUISINE_DESC.autre;
+  const cuisineEmoji = useMemo(() => CUISINE_EMOJI[restaurant.cuisine_type] || '🍽️', [restaurant.cuisine_type]);
+  const desc         = useMemo(
+    () => restaurant.description || CUISINE_DESC[restaurant.cuisine_type] || CUISINE_DESC.autre,
+    [restaurant.description, restaurant.cuisine_type],
+  );
 
   useEffect(() => {
     (async () => {
@@ -471,6 +477,9 @@ export default function RestaurantScreen({ route, navigation }) {
     }
   }, [userId, favLoading, isFav, favId, restaurant.id]);
 
+  const goBack    = useCallback(() => navigation?.goBack(), [navigation]);
+  const goReserve = useCallback(() => navigation.navigate('ReservationForm', { restaurant }), [navigation, restaurant]);
+
   const switchTab = useCallback((t) => {
     Animated.timing(tabAnim, { toValue: 0, duration: 80, useNativeDriver: true }).start(() => {
       setTab(t);
@@ -502,7 +511,7 @@ export default function RestaurantScreen({ route, navigation }) {
         <HeroGradient />
 
         {/* Bouton retour */}
-        <TouchableOpacity style={[s.heroBtn, { left: spacing.xl }]} onPress={() => navigation?.goBack()}>
+        <TouchableOpacity style={[s.heroBtn, { left: spacing.xl }]} onPress={goBack}>
           <Text style={s.heroBtnTxt}>←</Text>
         </TouchableOpacity>
 
@@ -613,7 +622,7 @@ export default function RestaurantScreen({ route, navigation }) {
           )}
           <TouchableOpacity
             style={[s.reserveBtn, !restaurant.avg_ticket && { flex: 1 }]}
-            onPress={() => navigation.navigate('ReservationForm', { restaurant })}
+            onPress={goReserve}
           >
             <Text style={s.reserveTxt}>RÉSERVER UNE TABLE</Text>
           </TouchableOpacity>

@@ -100,6 +100,8 @@ export default function SearchScreen({ navigation }) {
     inputRef.current?.focus();
   }, []);
 
+  const goBack = useCallback(() => navigation.goBack(), [navigation]);
+
   const renderCard = useCallback(({ item: r }) => {
     const photo = r.photos?.[0];
     return (
@@ -137,7 +139,7 @@ export default function SearchScreen({ navigation }) {
 
       {/* ── Barre de recherche ── */}
       <View style={s.searchBar}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
+        <TouchableOpacity onPress={goBack} style={s.backBtn}>
           <Text style={s.backBtnTxt}>←</Text>
         </TouchableOpacity>
         <View style={s.inputWrap}>

@@ -150,7 +150,9 @@ export default function NotificationsScreen({ navigation }) {
     return { unread, unreadResa, unreadRappel };
   }, [notifs]);
 
-  const groups = useMemo(() => grouped(filtered), [filtered]);
+  const groups    = useMemo(() => grouped(filtered), [filtered]);
+  const goBack    = useCallback(() => navigation.goBack(), [navigation]);
+  const onRefresh = useCallback(() => load(true), [load]);
 
   const badgeFor = (id) => {
     if (id === 'all')    return unread;
@@ -163,7 +165,7 @@ export default function NotificationsScreen({ navigation }) {
     <SafeAreaView style={s.root}>
 
       <View style={s.header}>
-        <TouchableOpacity style={s.backBtn} onPress={() => navigation.goBack()}>
+        <TouchableOpacity style={s.backBtn} onPress={goBack}>
           <Text style={s.backBtnTxt}>←</Text>
         </TouchableOpacity>
         <View style={s.headerCenter}>
@@ -213,7 +215,7 @@ export default function NotificationsScreen({ navigation }) {
       ) : (
         <ScrollView
           showsVerticalScrollIndicator={false}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => load(true)} tintColor={colors.accent} />}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.accent} />}
         >
           {groups.map(({ label, items }) => (
             <View key={label}>

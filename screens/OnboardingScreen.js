@@ -101,6 +101,12 @@ export default function OnboardingScreen({ onSelect }) {
     Animated.spring(scaleAnim, { toValue: 1, tension: 60, friction: 8, useNativeDriver: true }).start();
   }, []);
 
+  const goToFinal  = useCallback(() => goTo(4), [goTo]);
+  const goToNext   = useCallback(() => goTo(step + 1), [goTo, step]);
+  const goContinue = useCallback(() => city && goTo(4), [city, goTo]);
+  const goClient   = useCallback(() => onSelect('client'), [onSelect]);
+  const goPro      = useCallback(() => onSelect('pro'), [onSelect]);
+
   /* ── Slides intro (0–2) ── */
   if (step <= 2) {
     const sl = SLIDES[step];
@@ -135,12 +141,12 @@ export default function OnboardingScreen({ onSelect }) {
         <View style={s.footer}>
           <Dots total={TOTAL} current={step} accentColor={sl.accentColor} />
           <View style={s.footerBtns}>
-            <TouchableOpacity style={s.skipBtn} onPress={() => goTo(4)} activeOpacity={0.6}>
+            <TouchableOpacity style={s.skipBtn} onPress={goToFinal} activeOpacity={0.6}>
               <Text style={s.skipTxt}>Passer</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[s.nextBtn, { backgroundColor: sl.accentColor }]}
-              onPress={() => goTo(step + 1)}
+              onPress={goToNext}
               activeOpacity={0.85}
             >
               <Text style={s.nextTxt}>{step === 2 ? 'Commencer  ✦' : 'Suivant  →'}</Text>
@@ -195,12 +201,12 @@ export default function OnboardingScreen({ onSelect }) {
         <View style={s.footer}>
           <Dots total={TOTAL} current={3} accentColor={colors.accent} />
           <View style={s.footerBtns}>
-            <TouchableOpacity style={s.skipBtn} onPress={() => goTo(4)} activeOpacity={0.6}>
+            <TouchableOpacity style={s.skipBtn} onPress={goToFinal} activeOpacity={0.6}>
               <Text style={s.skipTxt}>Passer</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[s.nextBtn, !city && s.nextBtnDim]}
-              onPress={() => city && goTo(4)}
+              onPress={goContinue}
               disabled={!city}
               activeOpacity={0.85}
             >
@@ -223,7 +229,7 @@ export default function OnboardingScreen({ onSelect }) {
           <Text style={s.stepSub}>Choisissez votre profil pour commencer.</Text>
         </View>
 
-        <TouchableOpacity style={[s.roleCard, s.roleCardClient]} onPress={() => onSelect('client')} activeOpacity={0.82}>
+        <TouchableOpacity style={[s.roleCard, s.roleCardClient]} onPress={goClient} activeOpacity={0.82}>
           <View style={[s.roleIconWrap, { backgroundColor: colors.blueSoft, borderColor: 'rgba(90,155,224,0.3)' }]}>
             <Text style={s.roleEmoji}>🍽️</Text>
           </View>
@@ -247,7 +253,7 @@ export default function OnboardingScreen({ onSelect }) {
           <View style={s.roleSepLine} />
         </View>
 
-        <TouchableOpacity style={[s.roleCard, s.roleCardPro]} onPress={() => onSelect('pro')} activeOpacity={0.82}>
+        <TouchableOpacity style={[s.roleCard, s.roleCardPro]} onPress={goPro} activeOpacity={0.82}>
           <View style={[s.roleIconWrap, { backgroundColor: colors.accentSoft, borderColor: 'rgba(232,160,69,0.3)' }]}>
             <Text style={s.roleEmoji}>📊</Text>
           </View>

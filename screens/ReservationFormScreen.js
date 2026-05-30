@@ -147,8 +147,7 @@ export default function ReservationFormScreen({ route, navigation }) {
   const successAnim = useRef(new Animated.Value(0)).current;
   const shakeAnim   = useRef(new Animated.Value(0)).current;
 
-  /* Calcul du step actif pour la progress bar */
-  const step = !date ? 0 : !heure ? 1 : 2;
+  const step = useMemo(() => (!date ? 0 : !heure ? 1 : 2), [date, heure]);
 
   useEffect(() => {
     (async () => {
@@ -175,6 +174,13 @@ export default function ReservationFormScreen({ route, navigation }) {
       Animated.timing(shakeAnim, { toValue: 0,  duration: 60, useNativeDriver: true }),
     ]).start();
   }, []);
+
+  const goBack    = useCallback(() => navigation.goBack(), [navigation]);
+  const goHome    = useCallback(() => navigation.navigate('Main'), [navigation]);
+  const resetForm = useCallback(() => {
+    setSuccess(false); setDate(null); setHeure(null);
+    setNotes(''); setOccasion('normal'); successAnim.setValue(0);
+  }, [successAnim]);
 
   const occasionObj    = useMemo(() => OCCASIONS.find(o => o.id === occasion), [occasion]);
   const shakeTranslate = useMemo(() => shakeAnim.interpolate({ inputRange: [-1, 1], outputRange: [-8, 8] }), []);
@@ -298,13 +304,10 @@ export default function ReservationFormScreen({ route, navigation }) {
             <Text style={s.successStatusTxt}>En attente de confirmation  ·  Notification à venir</Text>
           </View>
 
-          <TouchableOpacity style={s.successBtn} onPress={() => navigation.navigate('Main')}>
+          <TouchableOpacity style={s.successBtn} onPress={goHome}>
             <Text style={s.successBtnTxt}>RETOUR À L'ACCUEIL</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={s.successBtnOutline} onPress={() => {
-            setSuccess(false); setDate(null); setHeure(null);
-            setNotes(''); setOccasion('normal'); successAnim.setValue(0);
-          }}>
+          <TouchableOpacity style={s.successBtnOutline} onPress={resetForm}>
             <Text style={s.successBtnOutlineTxt}>Faire une autre réservation</Text>
           </TouchableOpacity>
           <View style={{ height:40 }} />
@@ -319,7 +322,7 @@ export default function ReservationFormScreen({ route, navigation }) {
 
       {/* Header */}
       <View style={s.header}>
-        <TouchableOpacity style={s.backBtn} onPress={() => navigation.goBack()}>
+        <TouchableOpacity style={s.backBtn} onPress={goBack}>
           <Text style={s.backBtnTxt}>←</Text>
         </TouchableOpacity>
         <View style={{ flex:1 }}>

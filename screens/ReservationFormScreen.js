@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  SafeAreaView, TextInput,
+  SafeAreaView, TextInput, Image, Animated,
 } from 'react-native';
 import { colors, typography, spacing, radius } from '../src/theme';
 import useReservationForm, { MIDI_SLOTS, SOIR_SLOTS, OCCASIONS, DAYS, formatDateLong } from '../src/hooks/useReservationForm';

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { useState, useRef, useCallback, useMemo } from 'react';
 import { Animated } from 'react-native';
 import { supabase } from '../../supabase';
 
@@ -56,22 +56,11 @@ export default function useReservationForm(restaurant) {
   const [loading,  setLoading]  = useState(false);
   const [error,    setError]    = useState('');
   const [success,  setSuccess]  = useState(false);
-  const [userId,   setUserId]   = useState(null);
 
   const successAnim = useRef(new Animated.Value(0)).current;
   const shakeAnim   = useRef(new Animated.Value(0)).current;
 
   const step = useMemo(() => (!date ? 0 : !heure ? 1 : 2), [date, heure]);
-
-  useEffect(() => {
-    (async () => {
-      const { data } = await supabase.auth.getUser();
-      const u = data?.user;
-      if (!u) return;
-      const { data: row } = await supabase.from('users').select('id').eq('auth_id', u.id).single();
-      if (row) setUserId(row.id);
-    })();
-  }, []);
 
   useEffect(() => {
     if (success) {
@@ -104,19 +93,25 @@ export default function useReservationForm(restaurant) {
       triggerShake();
       return;
     }
-    if (!userId)        { setError('Connectez-vous pour réserver.'); return; }
     if (!restaurant.id) { setError('Restaurant introuvable.'); return; }
 
     setLoading(true);
     setError('');
     try {
+      const { data: authData } = await supabase.auth.getUser();
+      const u = authData?.user;
+      if (!u) { setError('Connectez-vous pour réserver.'); return; }
+      const { data: userRow } = await supabase.from('users').select('id').eq('auth_id', u.id).single();
+      if (!userRow) { setError('Compte introuvable.'); return; }
+      const uid = userRow.id;
+
       const noteText = [
         occasion !== 'normal' ? `Occasion : ${occasionObj?.label}` : null,
         notes.trim() || null,
       ].filter(Boolean).join('\n') || null;
 
       const { error: resaErr } = await supabase.from('reservations').insert({
-        user_id:       userId,
+        user_id:       uid,
         restaurant_id: restaurant.id,
         date,
         time_slot:     heure,
@@ -129,7 +124,7 @@ export default function useReservationForm(restaurant) {
       if (resaErr) { setError(resaErr.message); return; }
 
       await supabase.from('notifications').insert({
-        recipient_id:   userId,
+        recipient_id:   uid,
         recipient_type: 'user',
         type:           'new_resa',
         title:          'Demande envoyée',
@@ -140,7 +135,7 @@ export default function useReservationForm(restaurant) {
     } finally {
       setLoading(false);
     }
-  }, [date, heure, userId, restaurant, occasion, occasionObj, notes, adults, children, triggerShake]);
+  }, [date, heure, restaurant, occasion, occasionObj, notes, adults, children, triggerShake]);
 
   return {
     date, setDate, heure, setHeure,

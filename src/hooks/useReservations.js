@@ -40,6 +40,7 @@ export default function useReservations() {
   const [loading,      setLoading]      = useState(true);
   const [refreshing,   setRefreshing]   = useState(false);
   const [reservations, setReservations] = useState([]);
+  const [reviewedIds,  setReviewedIds]  = useState(new Set());
 
   const load = useCallback(async (refresh = false) => {
     if (refresh) setRefreshing(true); else setLoading(true);
@@ -54,7 +55,16 @@ export default function useReservations() {
         .eq('user_id', pu.id)
         .order('date', { ascending: true })
         .order('time_slot', { ascending: true });
-      setReservations(data || []);
+      const rows = data || [];
+      setReservations(rows);
+
+      if (rows.length > 0) {
+        const { data: reviewRows } = await supabase
+          .from('reviews')
+          .select('reservation_id')
+          .in('reservation_id', rows.map(r => r.id));
+        setReviewedIds(new Set((reviewRows || []).map(r => r.reservation_id)));
+      }
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -108,9 +118,27 @@ export default function useReservations() {
 
   const onRefresh = useCallback(() => load(true), [load]);
 
+  const submitReview = useCallback(async (resa, rating, comment) => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) throw new Error('Non connecté');
+    const { data: pu } = await supabase.from('users').select('id').eq('auth_id', session.user.id).single();
+    if (!pu) throw new Error('Utilisateur introuvable');
+    const { error } = await supabase.from('reviews').insert({
+      user_id:           pu.id,
+      restaurant_id:     resa.restaurants.id,
+      reservation_id:    resa.id,
+      rating,
+      comment:           comment || null,
+      moderation_status: 'approved',
+    });
+    if (error) throw error;
+    setReviewedIds(prev => new Set(prev).add(resa.id));
+  }, []);
+
   return {
     tab, setTab, loading, refreshing,
     today, aVenir, historique, next, later, pending, histByMonth,
-    cancelResa, onRefresh,
+    reviewedIds,
+    cancelResa, submitReview, onRefresh,
   };
 }

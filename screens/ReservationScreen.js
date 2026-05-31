@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   SafeAreaView, RefreshControl,
@@ -10,6 +10,7 @@ import NextResaCard from '../src/components/NextResaCard';
 import SmallResaCard from '../src/components/SmallResaCard';
 import HistResaCard from '../src/components/HistResaCard';
 import MidaLogo from '../src/components/MidaLogo';
+import ReviewModal from '../src/components/ReviewModal';
 
 function SkeletonView() {
   return (
@@ -33,8 +34,27 @@ export default function ReservationScreen({ navigation }) {
   const {
     tab, setTab, loading, refreshing,
     today, aVenir, historique, next, later, pending, histByMonth,
-    cancelResa, onRefresh,
+    reviewedIds,
+    cancelResa, submitReview, onRefresh,
   } = useReservations();
+
+  const [reviewTarget, setReviewTarget] = useState(null);
+  const [submitting,   setSubmitting]   = useState(false);
+
+  const openReview  = useCallback((r) => setReviewTarget(r), []);
+  const closeReview = useCallback(() => setReviewTarget(null), []);
+
+  const handleSubmitReview = useCallback(async (resa, rating, comment) => {
+    setSubmitting(true);
+    try {
+      await submitReview(resa, rating, comment);
+      setReviewTarget(null);
+    } catch (e) {
+      // error stays visible in modal via thrown error — re-throw so modal can catch
+    } finally {
+      setSubmitting(false);
+    }
+  }, [submitReview]);
 
   const goExplorer   = useCallback(() => navigation?.navigate('Explorer'), [navigation]);
   const onCancelNext = useCallback(() => next && cancelResa(next), [cancelResa, next]);
@@ -161,6 +181,8 @@ export default function ReservationScreen({ navigation }) {
                       ? () => navigation?.navigate('ReservationForm', { restaurant: r.restaurants })
                       : null
                     }
+                    onReview={openReview}
+                    hasReview={reviewedIds.has(r.id)}
                   />
                 ))}
               </View>
@@ -170,6 +192,15 @@ export default function ReservationScreen({ navigation }) {
 
         <View style={{ height:100 }} />
       </ScrollView>
+
+      <ReviewModal
+        resa={reviewTarget}
+        visible={!!reviewTarget}
+        onClose={closeReview}
+        onSubmit={handleSubmitReview}
+        submitting={submitting}
+      />
+
     </SafeAreaView>
   );
 }

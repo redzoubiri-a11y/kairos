@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import { colors, typography, spacing, radius } from '../src/theme';
 import useMapScreen, { INITIAL_REGION, CUISINE_EMOJI, getCoordinate } from '../src/hooks/useMapScreen';
+import MidaLogo from '../src/components/MidaLogo';
 
 let MapView, Marker;
 if (Platform.OS !== 'web') {
@@ -97,7 +98,7 @@ export default function MapScreen({ navigation }) {
       <SafeAreaView style={s.headerWrap} pointerEvents="box-none">
         <View style={s.header}>
           <View>
-            <Text style={s.headerLogo}>MIDA</Text>
+            <MidaLogo showTagline={false} style={{ alignItems: 'flex-start', marginBottom: 2 }} />
             <Text style={s.headerSub}>Alger</Text>
           </View>
           <View style={s.countBadge}>
@@ -172,7 +173,6 @@ const s = StyleSheet.create({
     borderRadius: radius.xxl, paddingHorizontal: spacing.xxl, paddingVertical: spacing.lg,
     borderWidth: 1, borderColor: colors.cardBorder,
   },
-  headerLogo: { color: colors.accent, fontSize: typography.size.heading2, fontWeight: '700', letterSpacing: 5 },
   headerSub:  { color: colors.textMuted, fontSize: typography.size.caption, marginTop: 1 },
   countBadge: {
     flexDirection: 'row', alignItems: 'center', gap: spacing.sm,

@@ -1,209 +1,29 @@
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { useRef, useCallback } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  TextInput, SafeAreaView, ActivityIndicator, Dimensions,
-  Image, Platform, StatusBar as RNStatusBar, FlatList,
+  View, Text, StyleSheet, TouchableOpacity,
+  SafeAreaView, ActivityIndicator, Platform,
+  StatusBar as RNStatusBar, Image, FlatList,
 } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
-import { supabase } from '../supabase';
 import { colors, typography, spacing, radius } from '../src/theme';
+import useExplorer, { CITIES, getCoord } from '../src/hooks/useExplorer';
+import RestaurantPin from '../src/components/RestaurantPin';
+import ExplorerRestoCard, { CARD_W } from '../src/components/ExplorerRestoCard';
 
-const SW = Dimensions.get('window').width;
 const TOP = Platform.OS === 'android' ? (RNStatusBar.currentHeight || 0) : 0;
-const CARD_W = (SW - 14 * 2 - 10) / 2;
 
-const CITIES = [
-  { id:'alger',       label:'Alger',       emoji:'🏛️', region:{ latitude:36.7538, longitude:3.0588,  latitudeDelta:0.13, longitudeDelta:0.13 } },
-  { id:'oran',        label:'Oran',        emoji:'🌊', region:{ latitude:35.6969, longitude:-0.6331, latitudeDelta:0.13, longitudeDelta:0.13 } },
-  { id:'constantine', label:'Constantine', emoji:'🌉', region:{ latitude:36.3650, longitude:6.6147,  latitudeDelta:0.13, longitudeDelta:0.13 } },
-  { id:'tizi_ouzou',  label:'Tizi Ouzou',  emoji:'⛰️', region:{ latitude:36.7117, longitude:4.0450,  latitudeDelta:0.13, longitudeDelta:0.13 } },
-  { id:'bejaia',      label:'Béjaïa',      emoji:'🌅', region:{ latitude:36.7509, longitude:5.0564,  latitudeDelta:0.13, longitudeDelta:0.13 } },
-  { id:'setif',       label:'Sétif',       emoji:'🌾', region:{ latitude:36.1898, longitude:5.4108,  latitudeDelta:0.13, longitudeDelta:0.13 } },
-  { id:'annaba',      label:'Annaba',      emoji:'🌺', region:{ latitude:36.9000, longitude:7.7667,  latitudeDelta:0.13, longitudeDelta:0.13 } },
-  { id:'tlemcen',     label:'Tlemcen',     emoji:'🕌', region:{ latitude:34.8828, longitude:-1.3167, latitudeDelta:0.13, longitudeDelta:0.13 } },
-];
-
-const CUISINE_EMOJI = {
-  algerien:'🥘', mediterraneen:'🐟', fast_casual:'☕',
-  italien:'🍕', japonais:'🍣', turc:'🍢', libanais:'🌿', francais:'🍷', autre:'🍽️',
-};
-
-const QUARTIER_COORDS = {
-  'hydra':{ latitude:36.7539, longitude:3.0427 },
-  'bab el oued':{ latitude:36.7900, longitude:3.0573 },
-  'el biar':{ latitude:36.7614, longitude:3.0364 },
-  'centre':{ latitude:36.7625, longitude:3.0521 },
-  'ben aknoun':{ latitude:36.7611, longitude:3.0157 },
-  'bir mourad raïs':{ latitude:36.7381, longitude:3.0521 },
-  'chéraga':{ latitude:36.7669, longitude:2.9605 },
-  'dely ibrahim':{ latitude:36.7608, longitude:2.9843 },
-  'sidi fredj':{ latitude:36.7760, longitude:2.9102 },
-  'pins maritimes':{ latitude:36.7522, longitude:3.0980 },
-  'casbah':{ latitude:36.7866, longitude:3.0601 },
-  'centre-ville':{ latitude:35.6973, longitude:-0.6342 },
-  'les falaises':{ latitude:35.7273, longitude:-0.6462 },
-  'bir el djir':{ latitude:35.6889, longitude:-0.5882 },
-  'la corniche':{ latitude:35.7384, longitude:-0.6718 },
-  'sidi el houari':{ latitude:35.7094, longitude:-0.6531 },
-  'eckmuhl':{ latitude:35.6923, longitude:-0.6291 },
-  'médina jedida':{ latitude:35.7065, longitude:-0.6422 },
-  'le plateau':{ latitude:35.7012, longitude:-0.6178 },
-  'aïn turk':{ latitude:35.7582, longitude:-0.7685 },
-  "sidi m'cid":{ latitude:36.3800, longitude:6.6100 },
-  'médina':{ latitude:36.3700, longitude:6.6050 },
-  'mansourah':{ latitude:36.3500, longitude:6.5950 },
-  'faubourg lamy':{ latitude:36.3620, longitude:6.6200 },
-  'el kantara':{ latitude:36.3450, longitude:6.6000 },
-  'daksi':{ latitude:36.3750, longitude:6.6400 },
-  'zouaghi':{ latitude:36.3300, longitude:6.5800 },
-};
-
-function getCoord(r, cityDefault) {
-  const key  = (r.quartier || '').toLowerCase();
-  const base = QUARTIER_COORDS[key] || cityDefault;
-  const seed = typeof r.id === 'string'
-    ? r.id.charCodeAt(0) + r.id.charCodeAt(r.id.length - 1)
-    : (r.id || 0);
-  return {
-    latitude:  base.latitude  + (((seed * 7919) % 1000) / 1000 - 0.5) * 0.006,
-    longitude: base.longitude + (((seed * 6271) % 1000) / 1000 - 0.5) * 0.006,
-  };
-}
-
-/* ─── Pin carte ─── */
-function RestaurantPin({ restaurant, isSelected }) {
-  return (
-    <View style={[pin.wrap, isSelected && pin.wrapOn]}>
-      <Text style={[pin.emoji, isSelected && pin.emojiOn]}>
-        {CUISINE_EMOJI[restaurant.cuisine_type] || '🍽️'}
-      </Text>
-      {restaurant.avg_rating > 0 && (
-        <View style={[pin.badge, isSelected && pin.badgeOn]}>
-          <Text style={[pin.badgeTxt, isSelected && { color: colors.bg }]}>
-            {Number(restaurant.avg_rating).toFixed(1)}
-          </Text>
-        </View>
-      )}
-    </View>
-  );
-}
-
-const pin = StyleSheet.create({
-  wrap:    { alignItems:'center', gap:2 },
-  emoji:   { fontSize:22, lineHeight:28 },
-  emojiOn: { fontSize:28, lineHeight:34 },
-  badge:   { backgroundColor:'rgba(15,13,11,0.88)', borderRadius:radius.sm, paddingHorizontal:5, paddingVertical:2, borderWidth:1, borderColor:'rgba(232,160,69,0.3)' },
-  badgeOn: { backgroundColor:colors.accent, borderColor:colors.accent },
-  badgeTxt:{ color:colors.accent, fontSize:typography.size.xs, fontWeight:'600' },
-});
-
-/* ─── Carte restaurant (mode liste) ─── */
-function RestoCard({ r, rank, onPress, onReserve }) {
-  return (
-    <TouchableOpacity style={lc.card} onPress={onPress} activeOpacity={0.88}>
-      <View style={lc.imgWrap}>
-        {r.photos?.[0]
-          ? <Image source={{ uri: r.photos[0] }} style={lc.img} resizeMode="cover" />
-          : <View style={[lc.img, lc.imgPlaceholder]}><Text style={{ fontSize: 30 }}>🍽️</Text></View>
-        }
-        {/* Rating badge */}
-        {r.avg_rating > 0 && (
-          <View style={lc.ratingBadge}>
-            <Text style={lc.ratingBadgeTxt}>★ {Number(r.avg_rating).toFixed(1)}</Text>
-          </View>
-        )}
-        {/* Rank medal */}
-        {rank != null && rank < 3 && (
-          <View style={[lc.medalWrap, rank === 0 && { backgroundColor:'#f0c040' }, rank === 1 && { backgroundColor:'#b0b0b0' }, rank === 2 && { backgroundColor:'#cd7f32' }]}>
-            <Text style={lc.medalTxt}>{rank + 1}</Text>
-          </View>
-        )}
-        {/* Cuisine pill */}
-        <View style={lc.cuisinePill}>
-          <Text style={lc.cuisinePillTxt}>
-            {CUISINE_EMOJI[r.cuisine_type] || '🍽️'} {(r.cuisine_type || '').replace(/_/g,' ')}
-          </Text>
-        </View>
-      </View>
-
-      <View style={lc.body}>
-        <Text style={lc.name} numberOfLines={1}>{r.name}</Text>
-        {r.quartier && <Text style={lc.quartier} numberOfLines={1}>📍 {r.quartier}</Text>}
-        <View style={lc.footer}>
-          <View>
-            {r.avg_ticket > 0 && <Text style={lc.price}>{r.avg_ticket.toLocaleString('fr-FR')} DA</Text>}
-            {r.review_count > 0 && <Text style={lc.reviews}>{r.review_count} avis</Text>}
-          </View>
-          <TouchableOpacity style={lc.reserveBtn} onPress={onReserve}>
-            <Text style={lc.reserveTxt}>Réserver</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
-}
-
-const lc = StyleSheet.create({
-  card:        { width: CARD_W, backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, overflow:'hidden', marginBottom: 10 },
-  imgWrap:     { position:'relative', width:'100%', height: 130 },
-  img:         { width:'100%', height:'100%' },
-  imgPlaceholder:{ backgroundColor: colors.cardHover, alignItems:'center', justifyContent:'center' },
-  ratingBadge: { position:'absolute', top:8, right:8, backgroundColor:'rgba(15,13,11,0.82)', borderRadius:radius.md, paddingHorizontal:7, paddingVertical:3, borderWidth:1, borderColor:'rgba(232,160,69,0.3)' },
-  ratingBadgeTxt:{ color:colors.accent, fontSize:typography.size.sm, fontWeight:'600' },
-  medalWrap:   { position:'absolute', top:8, left:8, width:22, height:22, borderRadius:11, alignItems:'center', justifyContent:'center' },
-  medalTxt:    { color:colors.bg, fontSize:typography.size.sm, fontWeight:'700' },
-  cuisinePill: { position:'absolute', bottom:8, left:8, backgroundColor:'rgba(15,13,11,0.78)', borderRadius:radius.sm, paddingHorizontal:7, paddingVertical:3 },
-  cuisinePillTxt:{ color:colors.text, fontSize:typography.size.xs },
-  body:        { padding:10, gap:4 },
-  name:        { color:colors.text, fontSize:typography.size.bodyLg, fontWeight:'400', letterSpacing:0.2 },
-  quartier:    { color:colors.textMuted, fontSize:typography.size.sm },
-  footer:      { flexDirection:'row', justifyContent:'space-between', alignItems:'flex-end', marginTop:4 },
-  price:       { color:colors.accent, fontSize:typography.size.sm, fontWeight:'500' },
-  reviews:     { color:colors.textDim, fontSize:typography.size.xs, marginTop:1 },
-  reserveBtn:  { backgroundColor:colors.accentSoft, borderRadius:radius.sm, paddingHorizontal:8, paddingVertical:5, borderWidth:1, borderColor:'rgba(232,160,69,0.3)' },
-  reserveTxt:  { color:colors.accent, fontSize:typography.size.sm, fontWeight:'500' },
-});
-
-
-/* ─── Écran principal ─── */
 export default function ExplorerScreen({ navigation }) {
   const mapRef = useRef(null);
-
-  const [city,        setCity]        = useState('alger');
-  const [mode,        setMode]        = useState('map');
-  const [restaurants, setRestaurants] = useState([]);
-  const [loading,     setLoading]     = useState(false);
-  const [selected,    setSelected]    = useState(null);
-
-  const cityData = useMemo(() => CITIES.find(c => c.id === city) || CITIES[0], [city]);
-  const cityDefault = useMemo(
-    () => ({ latitude: cityData.region.latitude, longitude: cityData.region.longitude }),
-    [cityData],
-  );
-
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
-      setSelected(null);
-      try {
-        const { data } = await supabase
-          .from('restaurants')
-          .select('id, name, cuisine_type, address, quartier, city, photos, avg_rating, avg_ticket, review_count, capacity')
-          .eq('city', city)
-          .eq('status', 'active')
-          .order('avg_rating', { ascending: false });
-        setRestaurants(data ?? []);
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, [city]);
+  const {
+    city, setCity, mode, setMode, restaurants, loading, selected, setSelected,
+    cityData, cityDefault,
+  } = useExplorer();
 
   const changeCity = useCallback((c) => {
     setCity(c);
     const r = CITIES.find(x => x.id === c)?.region;
     if (r) mapRef.current?.animateToRegion(r, 400);
-  }, []);
+  }, [setCity]);
 
   const handleMarker = useCallback((r) => {
     const same = selected?.id === r.id;
@@ -214,10 +34,10 @@ export default function ExplorerScreen({ navigation }) {
         350,
       );
     }
-  }, [selected, cityDefault]);
+  }, [selected, cityDefault, setSelected]);
 
   const renderItem = useCallback(({ item: r, index }) => (
-    <RestoCard
+    <ExplorerRestoCard
       r={r}
       rank={index}
       onPress={() => navigation.navigate('Restaurant', { restaurant: r })}
@@ -226,15 +46,14 @@ export default function ExplorerScreen({ navigation }) {
   ), [navigation]);
 
   const goBack            = useCallback(() => navigation.goBack(), [navigation]);
-  const toggleMode        = useCallback(() => { setMode(m => m === 'map' ? 'list' : 'map'); setSelected(null); }, []);
-  const closeSelected     = useCallback(() => setSelected(null), []);
+  const toggleMode        = useCallback(() => { setMode(m => m === 'map' ? 'list' : 'map'); setSelected(null); }, [setMode, setSelected]);
+  const closeSelected     = useCallback(() => setSelected(null), [setSelected]);
   const goReserveSelected = useCallback(() => navigation.navigate('ReservationForm', { restaurant: selected }), [navigation, selected]);
   const goViewSelected    = useCallback(() => navigation.navigate('Restaurant', { restaurant: selected }), [navigation, selected]);
 
   return (
     <View style={s.root}>
 
-      {/* ── CARTE (mode map) ── */}
       {mode === 'map' && (
         <View style={s.mapWrap}>
           <MapView
@@ -257,7 +76,6 @@ export default function ExplorerScreen({ navigation }) {
             ))}
           </MapView>
 
-          {/* Fiche restaurant sélectionné */}
           {selected && (
             <View style={s.selCard}>
               {selected.photos?.[0]
@@ -289,7 +107,6 @@ export default function ExplorerScreen({ navigation }) {
         </View>
       )}
 
-      {/* ── HEADER OVERLAY ── */}
       <SafeAreaView style={s.overlay} pointerEvents="box-none">
         <View style={s.header}>
           <TouchableOpacity style={s.backBtn} onPress={goBack}>
@@ -306,21 +123,16 @@ export default function ExplorerScreen({ navigation }) {
                 <Text style={s.countTxt}>{restaurants.length} restos</Text>
               </View>
             )}
-            <TouchableOpacity
-              style={[s.modeBtn, mode === 'list' && s.modeBtnOn]}
-              onPress={toggleMode}
-            >
+            <TouchableOpacity style={[s.modeBtn, mode === 'list' && s.modeBtnOn]} onPress={toggleMode}>
               <Text style={s.modeBtnTxt}>{mode === 'map' ? '☰' : '🗺️'}</Text>
             </TouchableOpacity>
           </View>
         </View>
       </SafeAreaView>
 
-      {/* ── FEUILLE BASSE ── */}
       <View style={[s.sheet, mode === 'list' && s.sheetFull]}>
         {mode === 'map' && <View style={s.sheetHandle} />}
 
-        {/* Sélecteur de ville */}
         <View style={s.cityGrid}>
           {CITIES.map(c => (
             <TouchableOpacity key={c.id} style={[s.cityChip, city === c.id && s.cityChipOn]} onPress={() => changeCity(c.id)}>
@@ -330,28 +142,26 @@ export default function ExplorerScreen({ navigation }) {
           ))}
         </View>
 
-        {/* Contenu liste */}
         {loading ? (
-            <View style={s.empty}><ActivityIndicator color={colors.accent} size="large" /></View>
-          ) : restaurants.length === 0 ? (
-            <View style={s.empty}>
-              <Text style={{ fontSize: 36 }}>🍽️</Text>
-              <Text style={s.emptyTitle}>Aucun restaurant trouvé</Text>
-              <Text style={s.emptyDesc}>Aucun établissement pour cette ville.</Text>
-            </View>
-          ) : (
-            <FlatList
-              data={restaurants}
-              keyExtractor={r => String(r.id)}
-              numColumns={2}
-              columnWrapperStyle={s.gridRow}
-              contentContainerStyle={s.gridContent}
-              showsVerticalScrollIndicator={false}
-              renderItem={renderItem}
-              ListFooterComponent={<View style={{ height: 60 }} />}
-            />
-          )
-        }
+          <View style={s.empty}><ActivityIndicator color={colors.accent} size="large" /></View>
+        ) : restaurants.length === 0 ? (
+          <View style={s.empty}>
+            <Text style={{ fontSize: 36 }}>🍽️</Text>
+            <Text style={s.emptyTitle}>Aucun restaurant trouvé</Text>
+            <Text style={s.emptyDesc}>Aucun établissement pour cette ville.</Text>
+          </View>
+        ) : (
+          <FlatList
+            data={restaurants}
+            keyExtractor={r => String(r.id)}
+            numColumns={2}
+            columnWrapperStyle={s.gridRow}
+            contentContainerStyle={s.gridContent}
+            showsVerticalScrollIndicator={false}
+            renderItem={renderItem}
+            ListFooterComponent={<View style={{ height: 60 }} />}
+          />
+        )}
       </View>
     </View>
   );
@@ -361,7 +171,6 @@ const s = StyleSheet.create({
   root:    { flex:1, backgroundColor:colors.bg },
   mapWrap: { flex:46 },
 
-  /* Header overlay */
   overlay:     { position:'absolute', top:0, left:0, right:0, zIndex:10 },
   header:      { flexDirection:'row', justifyContent:'space-between', alignItems:'center', margin:14, marginTop:TOP+10, backgroundColor:'rgba(15,13,11,0.92)', borderRadius:radius.xxl, paddingHorizontal:spacing.xl, paddingVertical:11, borderWidth:1, borderColor:colors.cardBorder },
   headerLogo:  { color:colors.accent, fontSize:typography.size.subheading, fontWeight:'700', letterSpacing:5 },
@@ -373,7 +182,6 @@ const s = StyleSheet.create({
   modeBtnOn:   { backgroundColor:colors.accentSoft, borderColor:'rgba(232,160,69,0.3)' },
   modeBtnTxt:  { fontSize:16 },
 
-  /* Selected card (map) */
   selCard:    { position:'absolute', bottom:8, left:14, right:14, backgroundColor:colors.card, borderRadius:radius.xxl, borderWidth:1, borderColor:'rgba(232,160,69,0.3)', overflow:'hidden', zIndex:5 },
   selPhoto:   { width:'100%', height:120 },
   selOverlay: { paddingHorizontal:spacing.xl, paddingTop:spacing.md, paddingBottom:spacing.xs },
@@ -391,7 +199,6 @@ const s = StyleSheet.create({
   selClose:   { position:'absolute', top:10, right:10, width:28, height:28, borderRadius:14, backgroundColor:'rgba(15,13,11,0.72)', alignItems:'center', justifyContent:'center' },
   selCloseTxt:{ color:colors.text, fontSize:typography.size.body },
 
-  /* Sheet */
   sheet:       { flex:54, backgroundColor:colors.cardHover, borderTopLeftRadius:22, borderTopRightRadius:22, borderWidth:1, borderColor:colors.cardBorder, paddingTop:10 },
   sheetFull:   { flex:1, borderRadius:0, borderTopWidth:1, marginTop:TOP+62 },
   sheetHandle: { width:40, height:4, backgroundColor:colors.textDim, borderRadius:2, alignSelf:'center', marginBottom:10, opacity:0.4 },
@@ -406,14 +213,10 @@ const s = StyleSheet.create({
   backBtn:     { width:36, height:36, borderRadius:18, backgroundColor:colors.card, borderWidth:1, borderColor:colors.cardBorder, alignItems:'center', justifyContent:'center' },
   backBtnTxt:  { color:colors.text, fontSize:18, lineHeight:22 },
 
-  /* Grid */
   gridRow:     { paddingHorizontal:14, justifyContent:'space-between' },
   gridContent: { paddingTop:6 },
 
-  /* Empty state */
   empty:       { flex:1, alignItems:'center', justifyContent:'center', gap:8, padding:30 },
   emptyTitle:  { color:colors.text, fontSize:typography.size.heading2, fontWeight:'300' },
   emptyDesc:   { color:colors.textMuted, fontSize:typography.size.body, textAlign:'center' },
-  emptyBtn:    { marginTop:8, backgroundColor:colors.accentSoft, borderRadius:radius.md, paddingHorizontal:18, paddingVertical:10, borderWidth:1, borderColor:'rgba(232,160,69,0.3)' },
-  emptyBtnTxt: { color:colors.accent, fontSize:typography.size.bodyLg },
 });

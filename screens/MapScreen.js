@@ -1,10 +1,10 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useRef, useCallback } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity,
   SafeAreaView, ActivityIndicator, Platform,
 } from 'react-native';
-import { supabase } from '../supabase';
 import { colors, typography, spacing, radius } from '../src/theme';
+import useMapScreen, { INITIAL_REGION, CUISINE_EMOJI, getCoordinate } from '../src/hooks/useMapScreen';
 
 let MapView, Marker;
 if (Platform.OS !== 'web') {
@@ -13,68 +13,9 @@ if (Platform.OS !== 'web') {
   Marker  = maps.Marker;
 }
 
-// ─── Map config ───────────────────────────────────────────────────────────────
-const ALGER = { latitude: 36.7538, longitude: 3.0588 };
-const INITIAL_REGION = { ...ALGER, latitudeDelta: 0.12, longitudeDelta: 0.12 };
-
-const CUISINE_EMOJI = {
-  algerien: '🥘', mediterraneen: '🐟', fast_casual: '☕',
-  italien: '🍕', japonais: '🍣', turc: '🍢',
-};
-
-// Fallback coordinates by quartier when DB rows have no GPS
-const QUARTIER_COORDS = {
-  'hydra':           { latitude: 36.7539, longitude: 3.0427 },
-  'bab el oued':     { latitude: 36.7900, longitude: 3.0573 },
-  'el biar':         { latitude: 36.7614, longitude: 3.0364 },
-  'didouche mourad': { latitude: 36.7625, longitude: 3.0521 },
-  'telemly':         { latitude: 36.7700, longitude: 3.0500 },
-  'ben aknoun':      { latitude: 36.7611, longitude: 3.0157 },
-  'bir mourad rais': { latitude: 36.7381, longitude: 3.0521 },
-  'el harrach':      { latitude: 36.7197, longitude: 3.1350 },
-  'cheraga':         { latitude: 36.7669, longitude: 2.9605 },
-  'dely ibrahim':    { latitude: 36.7608, longitude: 2.9843 },
-  'kouba':           { latitude: 36.7186, longitude: 3.0906 },
-};
-
-// Deterministic scatter so markers sharing the same fallback don't overlap
-function scatter(id, axis) {
-  return (((id * (axis === 0 ? 7919 : 6271)) % 1000) / 1000 - 0.5) * 0.005;
-}
-
-function getCoordinate(r) {
-  if (r.latitude && r.longitude) {
-    return { latitude: r.latitude, longitude: r.longitude };
-  }
-  const key = (r.quartier || '').toLowerCase();
-  const base = QUARTIER_COORDS[key] || ALGER;
-  const seed = typeof r.id === 'number' ? r.id : 0;
-  return {
-    latitude:  base.latitude  + scatter(seed, 1),
-    longitude: base.longitude + scatter(seed, 0),
-  };
-}
-
-// ─── Component ───────────────────────────────────────────────────────────────
 export default function MapScreen({ navigation }) {
   const mapRef = useRef(null);
-  const [restaurants, setRestaurants] = useState([]);
-  const [selected, setSelected]       = useState(null);
-  const [loading, setLoading]         = useState(true);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const { data, error } = await supabase
-          .from('restaurants')
-          .select('id, name, cuisine_type, quartier, avg_rating, avg_ticket, latitude, longitude');
-        if (data) setRestaurants(data);
-        if (error) console.warn('[MapScreen]', error.message);
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, []);
+  const { restaurants, loading, selected, setSelected } = useMapScreen();
 
   const handleMarkerPress = useCallback((r) => {
     setSelected(prev => (prev?.id === r.id ? null : r));
@@ -82,12 +23,11 @@ export default function MapScreen({ navigation }) {
       { ...getCoordinate(r), latitudeDelta: 0.04, longitudeDelta: 0.04 },
       350,
     );
-  }, []);
+  }, [setSelected]);
 
-  const closeCard   = useCallback(() => setSelected(null), []);
-  const goSelected  = useCallback(() => navigation.navigate('Restaurant', { restaurant: selected }), [navigation, selected]);
+  const closeCard  = useCallback(() => setSelected(null), [setSelected]);
+  const goSelected = useCallback(() => navigation.navigate('Restaurant', { restaurant: selected }), [navigation, selected]);
 
-  /* Web fallback */
   if (Platform.OS === 'web') {
     return (
       <View style={s.root}>
@@ -129,7 +69,6 @@ export default function MapScreen({ navigation }) {
   return (
     <View style={s.root}>
 
-      {/* ── Map ──────────────────────────────────────────────────────── */}
       <MapView
         ref={mapRef}
         style={s.map}
@@ -155,7 +94,6 @@ export default function MapScreen({ navigation }) {
         ))}
       </MapView>
 
-      {/* ── Header overlay ───────────────────────────────────────────── */}
       <SafeAreaView style={s.headerWrap} pointerEvents="box-none">
         <View style={s.header}>
           <View>
@@ -171,45 +109,34 @@ export default function MapScreen({ navigation }) {
         </View>
       </SafeAreaView>
 
-      {/* ── Spinner ──────────────────────────────────────────────────── */}
       {loading && (
         <View style={s.spinner}>
           <ActivityIndicator color={colors.accent} size="small" />
         </View>
       )}
 
-      {/* ── Selected restaurant card ─────────────────────────────────── */}
       {selected && (
         <View style={s.cardWrap}>
-          <TouchableOpacity
-            style={s.card}
-            activeOpacity={0.88}
-            onPress={goSelected}
-          >
+          <TouchableOpacity style={s.card} activeOpacity={0.88} onPress={goSelected}>
             <View style={s.cardThumb}>
               <Text style={s.cardEmoji}>
                 {CUISINE_EMOJI[selected.cuisine_type] || '🍽️'}
               </Text>
             </View>
-
             <View style={s.cardInfo}>
               <Text style={s.cardTag}>
                 {selected.cuisine_type ? selected.cuisine_type.toUpperCase() : '—'}
               </Text>
               <Text style={s.cardName} numberOfLines={1}>{selected.name}</Text>
-              <Text style={s.cardAddr} numberOfLines={1}>
-                {'📍 ' + (selected.quartier || 'Alger')}
-              </Text>
-              {selected.avg_rating > 0 ? (
+              <Text style={s.cardAddr} numberOfLines={1}>{'📍 ' + (selected.quartier || 'Alger')}</Text>
+              {selected.avg_rating > 0 && (
                 <Text style={s.cardRating}>{'★ ' + Number(selected.avg_rating).toFixed(1)}</Text>
-              ) : null}
+              )}
             </View>
-
             <View style={s.cardArrow}>
               <Text style={s.cardArrowTxt}>›</Text>
             </View>
           </TouchableOpacity>
-
           <TouchableOpacity style={s.closeBtn} onPress={closeCard}>
             <Text style={s.closeBtnTxt}>✕</Text>
           </TouchableOpacity>
@@ -219,12 +146,10 @@ export default function MapScreen({ navigation }) {
   );
 }
 
-// ─── Styles ──────────────────────────────────────────────────────────────────
 const s = StyleSheet.create({
   root: { flex: 1 },
   map:  { flex: 1 },
 
-  /* Marker */
   pin: {
     width: 38, height: 38, borderRadius: 19,
     backgroundColor: 'rgba(15,13,11,0.9)',
@@ -239,7 +164,6 @@ const s = StyleSheet.create({
   pinEmoji:   { fontSize: 18 },
   pinEmojiLg: { fontSize: 22 },
 
-  /* Header */
   headerWrap: { position: 'absolute', top: 0, left: 0, right: 0 },
   header: {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
@@ -259,14 +183,12 @@ const s = StyleSheet.create({
   countDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.green },
   countTxt:  { color: colors.accent, fontSize: typography.size.caption, fontWeight: '500' },
 
-  /* Spinner */
   spinner: {
     position: 'absolute', bottom: 140, alignSelf: 'center',
     backgroundColor: 'rgba(15,13,11,0.92)',
     borderRadius: radius.full, padding: spacing.lg,
   },
 
-  /* Restaurant card */
   cardWrap: {
     position: 'absolute', bottom: 110, left: spacing.xl, right: spacing.xl,
     flexDirection: 'row', alignItems: 'center', gap: spacing.md,

@@ -16,13 +16,15 @@ export const STATUS = {
 
 export const CUISINE_EMOJI = {
   algerien:'🥘', mediterraneen:'🐟', fast_casual:'☕',
-  italien:'🍕', japonais:'🍣', turc:'🍢', libanais:'🌿', francais:'🍷', autre:'🍽️',
+  italien:'🍕', japonais:'🍣', turc:'🍢', libanais:'🌿', francais:'🍷',
+  thai:'🍜', indien:'🍛', jordanien:'🧆', marocain:'🥙', egyptien:'🫓',
+  autre:'🍽️',
 };
 
 export const CARD_BG = ['#1a2e1a','#1a1e2e','#2e2a1a','#2a1a2e','#1a2a2e','#2e1a1a'];
 
 export const SITUATIONS = ['🌙 Dîner calme','👪 En famille','⚡ Déjeuner rapide','🌿 Terrasse','💼 Affaires','🎉 Occasion spéciale'];
-export const CUISINES   = ['🥘 Algérien','🐟 Méditerranéen','🍕 Italien','🍣 Japonais','🍢 Turc','🌿 Libanais','🍷 Français'];
+export const CUISINES   = ['🥘 Algérien','🐟 Méditerranéen','🍕 Italien','🍣 Japonais','🍢 Turc','🌿 Libanais','🍷 Français','🍜 Thaïlandais','🍛 Indien','🧆 Jordanien','🥙 Marocain','🫓 Égyptien'];
 
 export function fmtDate(d) {
   if (!d) return '—';

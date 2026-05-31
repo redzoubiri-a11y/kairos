@@ -139,7 +139,7 @@ export default function ProfilScreen({ navigation }) {
         {/* ══ PROFIL ══ */}
         {tab === 'profil' && (
           <View>
-            <Text style={s.sectionLbl}>MES SITUATIONS</Text>
+            <Text style={s.sectionLbl}>MES OCCASIONS PRÉFÉRÉES</Text>
             <View style={s.chipsWrap}>
               {SITUATIONS.map((sit, i) => (
                 <TouchableOpacity

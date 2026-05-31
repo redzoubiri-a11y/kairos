@@ -6,7 +6,9 @@ export const INITIAL_REGION = { ...ALGER, latitudeDelta: 0.12, longitudeDelta: 0
 
 export const CUISINE_EMOJI = {
   algerien: '🥘', mediterraneen: '🐟', fast_casual: '☕',
-  italien: '🍕', japonais: '🍣', turc: '🍢',
+  italien: '🍕', japonais: '🍣', turc: '🍢', libanais: '🌿', francais: '🍷',
+  thai: '🍜', indien: '🍛', jordanien: '🧆', marocain: '🥙', egyptien: '🫓',
+  autre: '🍽️',
 };
 
 export const QUARTIER_COORDS = {

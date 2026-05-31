@@ -14,7 +14,9 @@ export const CITIES = [
 
 export const CUISINE_EMOJI = {
   algerien:'🥘', mediterraneen:'🐟', fast_casual:'☕',
-  italien:'🍕', japonais:'🍣', turc:'🍢', libanais:'🌿', francais:'🍷', autre:'🍽️',
+  italien:'🍕', japonais:'🍣', turc:'🍢', libanais:'🌿', francais:'🍷',
+  thai:'🍜', indien:'🍛', jordanien:'🧆', marocain:'🥙', egyptien:'🫓',
+  autre:'🍽️',
 };
 
 export const QUARTIER_COORDS = {
@@ -59,8 +61,8 @@ export function getCoord(r, cityDefault) {
   };
 }
 
-export default function useExplorer() {
-  const [city,        setCity]        = useState('alger');
+export default function useExplorer(initialCity = 'alger') {
+  const [city,        setCity]        = useState(initialCity);
   const [mode,        setMode]        = useState('map');
   const [restaurants, setRestaurants] = useState([]);
   const [loading,     setLoading]     = useState(false);

@@ -12,12 +12,13 @@ import ExplorerRestoCard, { CARD_W } from '../src/components/ExplorerRestoCard';
 
 const TOP = Platform.OS === 'android' ? (RNStatusBar.currentHeight || 0) : 0;
 
-export default function ExplorerScreen({ navigation }) {
+export default function ExplorerScreen({ navigation, route }) {
   const mapRef = useRef(null);
+  const initialCity = route?.params?.initialCity;
   const {
     city, setCity, mode, setMode, restaurants, loading, selected, setSelected,
     cityData, cityDefault,
-  } = useExplorer();
+  } = useExplorer(initialCity);
 
   const changeCity = useCallback((c) => {
     setCity(c);

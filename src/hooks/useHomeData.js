@@ -16,11 +16,16 @@ export const CITIES = [
 ];
 
 export const CATEGORIES = [
-  { id: 'all',           label: 'Tout',       emoji: '✦',  cuisine: null            },
-  { id: 'algerien',      label: 'Algérien',   emoji: '🥘', cuisine: 'algerien'      },
-  { id: 'mediterraneen', label: 'Méditerra.', emoji: '🐟', cuisine: 'mediterraneen' },
-  { id: 'francais',      label: 'Français',   emoji: '🍷', cuisine: 'francais'      },
-  { id: 'libanais',      label: 'Libanais',   emoji: '🌿', cuisine: 'libanais'      },
+  { id: 'all',           label: 'Tout',        emoji: '✦',  cuisine: null            },
+  { id: 'algerien',      label: 'Algérien',    emoji: '🥘', cuisine: 'algerien'      },
+  { id: 'mediterraneen', label: 'Méditerra.',  emoji: '🐟', cuisine: 'mediterraneen' },
+  { id: 'francais',      label: 'Français',    emoji: '🍷', cuisine: 'francais'      },
+  { id: 'libanais',      label: 'Libanais',    emoji: '🌿', cuisine: 'libanais'      },
+  { id: 'thai',          label: 'Thaïlandais', emoji: '🍜', cuisine: 'thai'          },
+  { id: 'indien',        label: 'Indien',      emoji: '🍛', cuisine: 'indien'        },
+  { id: 'marocain',      label: 'Marocain',    emoji: '🥙', cuisine: 'marocain'      },
+  { id: 'jordanien',     label: 'Jordanien',   emoji: '🧆', cuisine: 'jordanien'     },
+  { id: 'egyptien',      label: 'Égyptien',    emoji: '🫓', cuisine: 'egyptien'      },
 ];
 
 export const QUICK_FILTERS = [

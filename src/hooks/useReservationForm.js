@@ -123,6 +123,7 @@ export default function useReservationForm(restaurant) {
         nb_adults:     adults,
         nb_children:   children,
         notes:         noteText,
+        status:        'pending',
       });
 
       if (resaErr) { setError(resaErr.message); return; }

@@ -74,8 +74,7 @@ export default function HomeScreen({ navigation }) {
 
   const goNotifications = useCallback(() => navigation.navigate('Notifications'), [navigation]);
   const goProfil        = useCallback(() => navigation.navigate('Profil'), [navigation]);
-  const goSearch        = useCallback(() => navigation.navigate('Search'), [navigation]);
-  const goExplorer      = useCallback(() => navigation.navigate('Explorer'), [navigation]);
+  const goExplorer      = useCallback(() => navigation.navigate('Explorer', { initialCity: city }), [navigation, city]);
   const clearCategory   = useCallback(() => setCategory('all'), []);
 
   return (
@@ -111,10 +110,22 @@ export default function HomeScreen({ navigation }) {
       </View>
 
       {/* ── Search bar ── */}
-      <TouchableOpacity style={s.searchBar} onPress={goSearch} activeOpacity={0.8}>
-        <Text style={s.searchIcon}>🔍</Text>
-        <Text style={s.searchPlaceholder}>Restaurant, cuisine, quartier…</Text>
-        <View style={s.searchCta}><Text style={s.searchCtaTxt}>Chercher</Text></View>
+      <TouchableOpacity style={s.searchBar} onPress={goExplorer} activeOpacity={0.8}>
+        <View style={s.searchSection}>
+          <Text style={s.searchSectionIcon}>{cityObj.emoji}</Text>
+          <Text style={s.searchSectionTxt} numberOfLines={1}>{cityObj.label}</Text>
+        </View>
+        <View style={s.searchDiv} />
+        <View style={s.searchSection}>
+          <Text style={s.searchSectionIcon}>📍</Text>
+          <Text style={s.searchSectionTxt}>Quartier</Text>
+        </View>
+        <View style={s.searchDiv} />
+        <View style={s.searchSection}>
+          <Text style={s.searchSectionIcon}>🍽️</Text>
+          <Text style={s.searchSectionTxt}>Cuisine</Text>
+        </View>
+        <View style={s.searchCta}><Text style={s.searchCtaTxt}>→</Text></View>
       </TouchableOpacity>
 
       {/* ── Cities ── */}
@@ -287,11 +298,13 @@ const s = StyleSheet.create({
   avatarPhoto:   { width: 38, height: 38, borderRadius: 19 },
 
   /* Search */
-  searchBar:         { flexDirection: 'row', alignItems: 'center', gap: spacing.lg, marginHorizontal: spacing.xl, marginBottom: spacing.md, marginTop: spacing.xs, backgroundColor: colors.card, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.cardBorder, paddingHorizontal: spacing.xl, height: 50 },
-  searchIcon:        { fontSize: typography.size.subheading },
-  searchPlaceholder: { flex: 1, color: colors.textDim, fontSize: typography.size.subheading, fontWeight: typography.weight.regular },
-  searchCta:         { backgroundColor: colors.accent, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
-  searchCtaTxt:      { color: colors.bg, fontSize: typography.size.caption, fontWeight: typography.weight.bold },
+  searchBar:         { flexDirection: 'row', alignItems: 'center', marginHorizontal: spacing.xl, marginBottom: spacing.md, marginTop: spacing.xs, backgroundColor: colors.card, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.cardBorder, paddingHorizontal: spacing.lg, height: 50, gap: spacing.sm },
+  searchSection:     { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 5 },
+  searchSectionIcon: { fontSize: 13 },
+  searchSectionTxt:  { color: colors.textMuted, fontSize: typography.size.body, fontWeight: typography.weight.regular, flex: 1 },
+  searchDiv:         { width: 1, height: 22, backgroundColor: colors.cardBorder },
+  searchCta:         { backgroundColor: colors.accent, borderRadius: radius.md, width: 32, height: 32, alignItems: 'center', justifyContent: 'center' },
+  searchCtaTxt:      { color: colors.bg, fontSize: typography.size.subheading, fontWeight: typography.weight.bold },
 
   /* Cities */
   cityRow:        { maxHeight: 50 },

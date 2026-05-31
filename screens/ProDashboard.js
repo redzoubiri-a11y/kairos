@@ -285,18 +285,21 @@ export default function ProDashboard({ navigation }) {
         .eq('auth_id', session.user.id)
         .maybeSingle();
 
-      if (ownerRow?.restaurant_id) {
-        const { data: resto } = await supabase
-          .from('restaurants')
-          .select('id, name, city, quartier, cuisine_type, photos, avg_rating, avg_ticket, capacity')
-          .eq('id', ownerRow.restaurant_id)
-          .maybeSingle();
-        if (resto) setRestaurant(resto);
-      }
+      if (!ownerRow?.restaurant_id) return;
+
+      const restaurantId = ownerRow.restaurant_id;
+
+      const { data: resto } = await supabase
+        .from('restaurants')
+        .select('id, name, city, quartier, cuisine_type, photos, avg_rating, avg_ticket, capacity')
+        .eq('id', restaurantId)
+        .maybeSingle();
+      if (resto) setRestaurant(resto);
 
       const { data: res } = await supabase
         .from('reservations')
         .select('id, date, time_slot, nb_adults, nb_children, notes, status, created_at, user_id')
+        .eq('restaurant_id', restaurantId)
         .order('date', { ascending: true })
         .order('time_slot', { ascending: true });
 
@@ -336,11 +339,14 @@ export default function ProDashboard({ navigation }) {
         { text: 'Confirmer ✓', onPress: async () => {
           addActing(resa.id);
           try {
-            await supabase.from('reservations').update({ status: 'confirmed' }).eq('id', resa.id);
+            const { error } = await supabase.from('reservations').update({ status: 'confirmed' }).eq('id', resa.id);
+            if (error) throw error;
             await sendNotification(
               resa.users, 'confirm', 'Réservation confirmée ✅',
               `Votre table chez ${restaurant?.name} le ${formatDate(resa.date)} à ${resa.time_slot?.slice(0,5)} est confirmée.`,
             );
+          } catch {
+            Alert.alert('Erreur', 'Impossible de confirmer la réservation. Vérifiez votre connexion.');
           } finally {
             removeActing(resa.id);
             load();
@@ -359,13 +365,16 @@ export default function ProDashboard({ navigation }) {
         { text: 'Refuser ✕', style: 'destructive', onPress: async () => {
           addActing(resa.id);
           try {
-            await supabase.from('reservations')
+            const { error } = await supabase.from('reservations')
               .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
               .eq('id', resa.id);
+            if (error) throw error;
             await sendNotification(
               resa.users, 'cancellation', 'Réservation annulée',
               `Votre réservation chez ${restaurant?.name} le ${formatDate(resa.date)} n'a pas pu être confirmée.`,
             );
+          } catch {
+            Alert.alert('Erreur', 'Impossible de refuser la réservation. Vérifiez votre connexion.');
           } finally {
             removeActing(resa.id);
             load();

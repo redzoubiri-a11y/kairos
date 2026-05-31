@@ -7,6 +7,7 @@ import { colors, typography, spacing, radius } from '../src/theme';
 import MLoader from '../src/components/MLoader';
 import useProfil, { CUISINE_EMOJI, CARD_BG, SITUATIONS, CUISINES } from '../src/hooks/useProfil';
 import ProfilResaCard from '../src/components/ProfilResaCard';
+import MidaLogo from '../src/components/MidaLogo';
 
 function SkeletonResaCard() {
   return (
@@ -54,7 +55,7 @@ export default function ProfilScreen({ navigation }) {
           <TouchableOpacity style={s.backBtn} onPress={goBack}>
             <Text style={s.backBtnTxt}>←</Text>
           </TouchableOpacity>
-          <Text style={s.headerTitle}>Mon profil</Text>
+          <MidaLogo showTagline={false} />
           <TouchableOpacity style={s.editBtn} onPress={toggleEditing}>
             <Text style={s.editBtnTxt}>{editingName ? '✕  Fermer' : '✏️  Modifier'}</Text>
           </TouchableOpacity>
@@ -314,7 +315,6 @@ const s = StyleSheet.create({
   header:      { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xxl, paddingTop: spacing.xl, paddingBottom: spacing.xl, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   backBtn:     { width: 36, height: 36, borderRadius: 18, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, alignItems: 'center', justifyContent: 'center' },
   backBtnTxt:  { color: colors.text, fontSize: typography.size.heading2 },
-  headerTitle: { color: colors.text, fontSize: typography.size.heading1, fontWeight: typography.weight.regular, letterSpacing: 0.5 },
   editBtn:     { paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: radius.md, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder },
   editBtnTxt:  { color: colors.textMuted, fontSize: typography.size.caption },
 

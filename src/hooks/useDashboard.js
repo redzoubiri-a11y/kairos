@@ -39,9 +39,8 @@ function weekEndStr()  { const d = new Date(); d.setDate(d.getDate()+6); return 
 function greeting()    { const h = new Date().getHours(); return h < 12 ? 'Bonjour' : h < 18 ? 'Bon après-midi' : 'Bonsoir'; }
 
 async function sendNotification(users, type, title, body) {
-  if (!users) return;
-  const { data: u } = await supabase.from('users').select('id').eq('email', users.email).maybeSingle();
-  if (u) await supabase.from('notifications').insert({ recipient_id: u.id, recipient_type: 'user', type, title, body });
+  if (!users?.id) return;
+  await supabase.from('notifications').insert({ recipient_id: users.id, recipient_type: 'user', type, title, body });
 }
 
 export default function useDashboard() {

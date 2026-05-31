@@ -26,7 +26,7 @@ async function handleUrl(url, navigation) {
 
   // mida://reservations
   if (url.includes('mida://reservations')) {
-    navigation.navigate('Resa');
+    navigation.navigate('Main', { screen: 'Resa' });
   }
 }
 

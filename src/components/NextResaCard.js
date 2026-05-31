@@ -3,7 +3,7 @@ import { colors, typography, spacing, radius } from '../theme';
 import ResaBadge from './ResaBadge';
 import { statusCfg, daysUntil, fmtLong } from '../hooks/useReservations';
 
-export default function NextResaCard({ r, onCancel, onViewRestaurant }) {
+export default function NextResaCard({ r, onCancel, onViewRestaurant, onEdit }) {
   const resto = r.restaurants || {};
   const diff  = Math.round((new Date(r.date+'T00:00:00') - new Date().setHours(0,0,0,0)) / 86400000);
   const urgentColor = diff === 0 ? colors.accent : diff === 1 ? colors.green : colors.blue;
@@ -89,6 +89,11 @@ export default function NextResaCard({ r, onCancel, onViewRestaurant }) {
               <Text style={s.viewBtnTxt}>Voir le restaurant →</Text>
             </TouchableOpacity>
           )}
+          {['confirmed','pending'].includes(r.status) && onEdit && (
+            <TouchableOpacity style={s.editBtn} onPress={onEdit}>
+              <Text style={s.editTxt}>Modifier la réservation</Text>
+            </TouchableOpacity>
+          )}
           {['confirmed','pending'].includes(r.status) && (
             <TouchableOpacity style={s.cancelBtn} onPress={onCancel}>
               <Text style={s.cancelTxt}>Annuler la réservation</Text>
@@ -128,6 +133,8 @@ const s = StyleSheet.create({
   actions:       { gap: spacing.md },
   viewBtn:       { backgroundColor: colors.blueSoft, borderWidth:1, borderColor:'rgba(90,155,224,0.25)', borderRadius: radius.lg, paddingVertical: spacing.lg, alignItems:'center' },
   viewBtnTxt:    { color: colors.blue, fontSize: typography.size.bodyLg },
+  editBtn:       { borderWidth:1, borderColor:'rgba(90,155,224,0.3)', borderRadius: radius.lg, paddingVertical: spacing.lg, alignItems:'center', backgroundColor: colors.blueSoft },
+  editTxt:       { color: colors.blue, fontSize: typography.size.bodyLg },
   cancelBtn:     { borderWidth:1, borderColor:'rgba(224,90,90,0.3)', borderRadius: radius.lg, paddingVertical: spacing.lg, alignItems:'center', backgroundColor: colors.redSoft },
   cancelTxt:     { color: colors.red, fontSize: typography.size.bodyLg },
 });

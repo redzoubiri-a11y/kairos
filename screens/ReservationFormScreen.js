@@ -26,11 +26,15 @@ const SLOT_GROUPS = [
 ];
 
 export default function ReservationFormScreen({ route, navigation }) {
-  const restaurant = route?.params?.restaurant || { name: 'Restaurant', id: null, photo_url: null, avg_rating: null };
+  const restaurant   = route?.params?.restaurant || { name: 'Restaurant', id: null, photo_url: null, avg_rating: null };
+  const existingResa = route?.params?.reservation || null;
+  const isEdit       = !!existingResa;
 
   const [success, setSuccess] = useState(false);
 
-  const onSuccess = useCallback(() => setSuccess(true), []);
+  const onSuccess = useCallback(() => {
+    if (isEdit) { navigation.goBack(); } else { setSuccess(true); }
+  }, [isEdit, navigation]);
 
   const {
     date, setDate, heure, setHeure,
@@ -39,7 +43,7 @@ export default function ReservationFormScreen({ route, navigation }) {
     loading, error,
     occasionObj, shakeTranslate,
     confirmer,
-  } = useReservationForm(restaurant, onSuccess);
+  } = useReservationForm(restaurant, onSuccess, existingResa);
 
   const goBack = useCallback(() => navigation.goBack(), [navigation]);
 
@@ -70,7 +74,7 @@ export default function ReservationFormScreen({ route, navigation }) {
         </TouchableOpacity>
         <View style={{ flex: 1 }}>
           <MidaLogo showTagline={false} style={{ alignItems: 'flex-start', marginBottom: 2 }} />
-          <Text style={s.headerSub}>RÉSERVATION</Text>
+          <Text style={s.headerSub}>{isEdit ? 'MODIFIER' : 'RÉSERVATION'}</Text>
           <Text style={s.headerTitle} numberOfLines={1}>{restaurant.name}</Text>
         </View>
         {!!restaurant.avg_rating && (
@@ -270,7 +274,7 @@ export default function ReservationFormScreen({ route, navigation }) {
           {loading
             ? <Text style={s.confirmBtnTxt}>···</Text>
             : <>
-                <Text style={s.confirmBtnTxt}>CONFIRMER LA RÉSERVATION</Text>
+                <Text style={s.confirmBtnTxt}>{isEdit ? 'MODIFIER LA RÉSERVATION' : 'CONFIRMER LA RÉSERVATION'}</Text>
                 <Text style={s.confirmBtnArrow}>→</Text>
               </>
           }

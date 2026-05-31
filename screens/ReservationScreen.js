@@ -62,6 +62,10 @@ export default function ReservationScreen({ navigation }) {
     () => next?.restaurants?.id && navigation?.navigate('Restaurant', { restaurant: next.restaurants }),
     [navigation, next],
   );
+  const onEditResa   = useCallback(
+    (r) => r?.restaurants?.id && navigation?.navigate('ReservationForm', { restaurant: r.restaurants, reservation: r }),
+    [navigation],
+  );
 
   if (loading) return (
     <SafeAreaView style={s.root}>
@@ -140,6 +144,7 @@ export default function ReservationScreen({ navigation }) {
                 r={next}
                 onCancel={onCancelNext}
                 onViewRestaurant={next?.restaurants?.id ? onViewNext : null}
+                onEdit={() => onEditResa(next)}
               />
 
               {later.length > 0 && (
@@ -153,6 +158,7 @@ export default function ReservationScreen({ navigation }) {
                       r={r}
                       onCancel={() => cancelResa(r)}
                       onPress={() => r.restaurants?.id && navigation?.navigate('Restaurant', { restaurant: r.restaurants })}
+                      onEdit={() => onEditResa(r)}
                     />
                   ))}
                 </>

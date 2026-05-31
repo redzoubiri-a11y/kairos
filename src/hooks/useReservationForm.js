@@ -46,13 +46,24 @@ export function formatDateLong(dateStr) {
   return d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
 }
 
-export default function useReservationForm(restaurant, onSuccess) {
-  const [date,     setDate]     = useState(null);
-  const [heure,    setHeure]    = useState(null);
-  const [adults,   setAdults]   = useState(2);
-  const [children, setChildren] = useState(0);
-  const [occasion, setOccasion] = useState('normal');
-  const [notes,    setNotes]    = useState('');
+function parseInitial(r) {
+  if (!r) return { occasion: 'normal', notes: '' };
+  const raw = r.notes || '';
+  const match = raw.match(/^Occasion : (.+?)(?:\n|$)([\s\S]*)/);
+  if (match) {
+    const occ = OCCASIONS.find(o => o.label === match[1]);
+    return { occasion: occ?.id || 'normal', notes: (match[2] || '').trim() };
+  }
+  return { occasion: 'normal', notes: raw.trim() };
+}
+
+export default function useReservationForm(restaurant, onSuccess, existingResa = null) {
+  const [date,     setDate]     = useState(() => existingResa?.date || null);
+  const [heure,    setHeure]    = useState(() => existingResa?.time_slot?.slice(0, 5) || null);
+  const [adults,   setAdults]   = useState(() => existingResa?.nb_adults ?? 2);
+  const [children, setChildren] = useState(() => existingResa?.nb_children ?? 0);
+  const [occasion, setOccasion] = useState(() => parseInitial(existingResa).occasion);
+  const [notes,    setNotes]    = useState(() => parseInitial(existingResa).notes);
   const [loading,  setLoading]  = useState(false);
   const [error,    setError]    = useState('');
 
@@ -94,28 +105,42 @@ export default function useReservationForm(restaurant, onSuccess) {
         notes.trim() || null,
       ].filter(Boolean).join('\n') || null;
 
-      const { error: resaErr } = await supabase.from('reservations').insert({
-        user_id:       uid,
-        restaurant_id: restaurant.id,
-        date,
-        time_slot:     heure,
-        nb_adults:     adults,
-        nb_children:   children,
-        notes:         noteText,
-        status:        'pending',
-      });
-
-      if (resaErr) { setError(resaErr.message); return; }
-
-      try {
-        await supabase.from('notifications').insert({
-          recipient_id:   uid,
-          recipient_type: 'user',
-          type:           'new_resa',
-          title:          'Demande envoyée',
-          body:           `Votre réservation chez ${restaurant.name} le ${formatDateLong(date)} à ${heure} pour ${adults} personne${adults > 1 ? 's' : ''} est en attente de confirmation.`,
+      if (existingResa) {
+        const { error: resaErr } = await supabase.from('reservations').update({
+          date, time_slot: heure, nb_adults: adults, nb_children: children, notes: noteText,
+        }).eq('id', existingResa.id);
+        if (resaErr) { setError(resaErr.message); return; }
+        try {
+          await supabase.from('notifications').insert({
+            recipient_id:   uid,
+            recipient_type: 'user',
+            type:           'new_resa',
+            title:          'Réservation modifiée',
+            body:           `Votre réservation chez ${restaurant.name} a été modifiée : ${formatDateLong(date)} à ${heure} pour ${adults} personne${adults > 1 ? 's' : ''}.`,
+          });
+        } catch (_) {}
+      } else {
+        const { error: resaErr } = await supabase.from('reservations').insert({
+          user_id:       uid,
+          restaurant_id: restaurant.id,
+          date,
+          time_slot:     heure,
+          nb_adults:     adults,
+          nb_children:   children,
+          notes:         noteText,
+          status:        'pending',
         });
-      } catch (_) {}
+        if (resaErr) { setError(resaErr.message); return; }
+        try {
+          await supabase.from('notifications').insert({
+            recipient_id:   uid,
+            recipient_type: 'user',
+            type:           'new_resa',
+            title:          'Demande envoyée',
+            body:           `Votre réservation chez ${restaurant.name} le ${formatDateLong(date)} à ${heure} pour ${adults} personne${adults > 1 ? 's' : ''} est en attente de confirmation.`,
+          });
+        } catch (_) {}
+      }
 
       onSuccess?.();
     } catch (e) {
@@ -123,7 +148,7 @@ export default function useReservationForm(restaurant, onSuccess) {
     } finally {
       setLoading(false);
     }
-  }, [date, heure, restaurant, occasion, occasionObj, notes, adults, children, triggerShake]);
+  }, [date, heure, restaurant, occasion, occasionObj, notes, adults, children, existingResa, triggerShake]);
 
   return {
     date, setDate, heure, setHeure,

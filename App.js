@@ -22,6 +22,7 @@ import SearchScreen from './screens/SearchScreen';
 import ProComptoir from './screens/ProComptoir';
 import ProPromosScreen from './screens/ProPromosScreen';
 import ProAvisScreen from './screens/ProAvisScreen';
+import ProMenuScreen from './screens/ProMenuScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import AideScreen from './screens/AideScreen';
 
@@ -154,6 +155,7 @@ export default function App() {
           <Stack.Screen name="Explorer" component={ExplorerScreen} />
           <Stack.Screen name="ProPromos" component={ProPromosScreen} />
           <Stack.Screen name="ProAvis" component={ProAvisScreen} />
+          <Stack.Screen name="ProMenu" component={ProMenuScreen} />
           <Stack.Screen name="Settings" component={SettingsScreen} />
           <Stack.Screen name="Aide" component={AideScreen} />
         </Stack.Navigator>

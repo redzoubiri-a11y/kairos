@@ -12,7 +12,7 @@ function Thumb({ url, size = 52 }) {
   );
 }
 
-export default function SmallResaCard({ r, onCancel, onPress }) {
+export default function SmallResaCard({ r, onCancel, onPress, onEdit }) {
   const days = daysUntil(r.date);
   return (
     <TouchableOpacity style={s.card} onPress={onPress} activeOpacity={0.85}>
@@ -26,6 +26,11 @@ export default function SmallResaCard({ r, onCancel, onPress }) {
       </View>
       <View style={{ alignItems:'flex-end', gap: spacing.sm }}>
         <ResaBadge status={r.status} />
+        {['confirmed','pending'].includes(r.status) && onEdit && (
+          <TouchableOpacity onPress={onEdit}>
+            <Text style={s.editTxt}>Modifier</Text>
+          </TouchableOpacity>
+        )}
         {['confirmed','pending'].includes(r.status) && (
           <TouchableOpacity onPress={onCancel}>
             <Text style={s.cancelTxt}>Annuler</Text>
@@ -41,5 +46,6 @@ const s = StyleSheet.create({
   name:      { color: colors.text, fontSize: typography.size.subheading, fontWeight: typography.weight.regular, marginBottom:3 },
   meta:      { color: colors.textMuted, fontSize: typography.size.caption, marginBottom:3 },
   countdown: { fontSize: typography.size.caption, fontWeight: typography.weight.regular },
+  editTxt:   { color: colors.blue, fontSize: typography.size.caption },
   cancelTxt: { color: colors.red, fontSize: typography.size.caption },
 });

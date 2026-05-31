@@ -1,41 +1,16 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useCallback } from 'react';
 import {
   View, Text, StyleSheet, FlatList, TouchableOpacity,
   SafeAreaView, TextInput, Image, Keyboard, ScrollView,
 } from 'react-native';
-import { supabase } from '../supabase';
 import { colors, typography, spacing, radius } from '../src/theme';
 import MLoader from '../src/components/MLoader';
-
-const CITIES = [
-  { id: 'all',         label: 'Toutes' },
-  { id: 'alger',       label: 'Alger' },
-  { id: 'oran',        label: 'Oran' },
-  { id: 'constantine', label: 'Constantine' },
-  { id: 'tizi_ouzou',  label: 'Tizi Ouzou' },
-  { id: 'bejaia',      label: 'Béjaïa' },
-  { id: 'setif',       label: 'Sétif' },
-  { id: 'annaba',      label: 'Annaba' },
-  { id: 'tlemcen',     label: 'Tlemcen' },
-];
-
-const SUGGESTIONS = [
-  { label: 'Couscous',      q: 'algerien',      emoji: '🥘' },
-  { label: 'Pizzeria',      q: 'italien',       emoji: '🍕' },
-  { label: 'Fruits de mer', q: 'mediterraneen', emoji: '🐟' },
-  { label: 'Japonais',      q: 'japonais',      emoji: '🍣' },
-  { label: 'Turc',          q: 'turc',          emoji: '🍢' },
-  { label: 'Libanais',      q: 'libanais',      emoji: '🌿' },
-];
-
-const CUISINE_EMOJI = {
-  algerien:'🥘', mediterraneen:'🐟', fast_casual:'☕',
-  italien:'🍕', japonais:'🍣', turc:'🍢', libanais:'🌿', francais:'🍷', autre:'🍽️',
-};
+import SearchResultCard from '../src/components/SearchResultCard';
+import useSearch, { CITIES, SUGGESTIONS } from '../src/hooks/useSearch';
 
 function SkeletonResult() {
   return (
-    <View style={s.card}>
+    <View style={s.skeletonCard}>
       <MLoader width={68} height={68} borderRadius={radius.lg} />
       <View style={{ flex: 1, gap: spacing.xs }}>
         <MLoader width="40%" height={10} borderRadius={radius.sm} />
@@ -47,92 +22,22 @@ function SkeletonResult() {
 }
 
 export default function SearchScreen({ navigation }) {
-  const inputRef = useRef(null);
-  const [query,      setQuery]      = useState('');
-  const [city,       setCity]       = useState('all');
-  const [results,    setResults]    = useState([]);
-  const [loading,    setLoading]    = useState(false);
-  const [searched,   setSearched]   = useState(false);
-
-  // Auto-focus à l'ouverture
-  useEffect(() => {
-    const t = setTimeout(() => inputRef.current?.focus(), 150);
-    return () => clearTimeout(t);
-  }, []);
-
-  // Recherche debouncée
-  useEffect(() => {
-    const q = query.trim();
-    if (!q) { setResults([]); setSearched(false); return; }
-
-    const timer = setTimeout(async () => {
-      setLoading(true);
-      setSearched(true);
-      try {
-        let req = supabase
-          .from('restaurants')
-          .select('id, name, cuisine_type, quartier, city, avg_rating, avg_ticket, photos')
-          .eq('status', 'active')
-          .or(`name.ilike.%${q}%,cuisine_type.ilike.%${q}%,quartier.ilike.%${q}%`)
-          .limit(25);
-
-        if (city !== 'all') req = req.eq('city', city);
-
-        const { data } = await req;
-        setResults(data ?? []);
-      } finally {
-        setLoading(false);
-      }
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [query, city]);
-
-  const searchSuggestion = useCallback((q) => {
-    setQuery(q);
-    Keyboard.dismiss();
-  }, []);
-
-  const clearQuery = useCallback(() => {
-    setQuery('');
-    setResults([]);
-    setSearched(false);
-    inputRef.current?.focus();
-  }, []);
+  const {
+    inputRef,
+    query, setQuery,
+    city, setCity,
+    results, loading, searched,
+    searchSuggestion, clearQuery,
+  } = useSearch();
 
   const goBack = useCallback(() => navigation.goBack(), [navigation]);
 
-  const renderCard = useCallback(({ item: r }) => {
-    const photo = r.photos?.[0];
-    return (
-      <TouchableOpacity
-        style={s.card}
-        onPress={() => { Keyboard.dismiss(); navigation.navigate('Restaurant', { restaurant: r }); }}
-        activeOpacity={0.85}
-      >
-        <View style={s.cardThumb}>
-          {photo
-            ? <Image source={{ uri: photo }} style={s.cardPhoto} resizeMode="cover" />
-            : <Text style={s.cardEmoji}>{CUISINE_EMOJI[r.cuisine_type] || '🍽️'}</Text>
-          }
-        </View>
-        <View style={s.cardInfo}>
-          <Text style={s.cardCuisine}>
-            {r.cuisine_type?.toUpperCase()}
-            {r.quartier ? '  ·  ' + r.quartier : ''}
-            {r.city ? '  ·  ' + r.city.charAt(0).toUpperCase() + r.city.slice(1) : ''}
-          </Text>
-          <Text style={s.cardName} numberOfLines={1}>{r.name}</Text>
-          <View style={s.cardMeta}>
-            <Text style={s.cardRating}>⭐ {r.avg_rating > 0 ? Number(r.avg_rating).toFixed(1) : '—'}</Text>
-            <Text style={s.cardSep}>·</Text>
-            <Text style={s.cardPrice}>{r.avg_ticket > 0 ? r.avg_ticket.toLocaleString('fr-FR') + ' DA' : '—'}</Text>
-          </View>
-        </View>
-        <Text style={s.cardArrow}>›</Text>
-      </TouchableOpacity>
-    );
-  }, [navigation]);
+  const renderCard = useCallback(({ item: r }) => (
+    <SearchResultCard
+      r={r}
+      onPress={() => { Keyboard.dismiss(); navigation.navigate('Restaurant', { restaurant: r }); }}
+    />
+  ), [navigation]);
 
   return (
     <SafeAreaView style={s.root}>
@@ -194,7 +99,7 @@ export default function SearchScreen({ navigation }) {
         </View>
       ) : loading ? (
         <View style={s.skeletonList}>
-          {[1,2,3,4,5].map((i) => <SkeletonResult key={i} />)}
+          {[1, 2, 3, 4, 5].map((i) => <SkeletonResult key={i} />)}
         </View>
       ) : results.length === 0 && searched ? (
         <View style={s.center}>
@@ -241,7 +146,7 @@ const s = StyleSheet.create({
 
   /* Suggestions */
   suggestionsWrap: { flex: 1, paddingHorizontal: spacing.lg, paddingTop: spacing.xl },
-  suggestTitle:    { color: colors.textDim, fontSize: typography.size.xxs, letterSpacing: 3, marginBottom: spacing.lg },
+  suggestTitle:    { color: colors.textDim, fontSize: typography.size.xs, letterSpacing: 3, marginBottom: spacing.lg },
   suggestGrid:     { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md },
   suggestCard:     { width: '30%', backgroundColor: colors.card, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.cardBorder, alignItems: 'center', paddingVertical: spacing.xl, gap: spacing.sm },
   suggestEmoji:    { fontSize: 28 },
@@ -249,6 +154,7 @@ const s = StyleSheet.create({
 
   /* Skeleton */
   skeletonList: { flex: 1 },
+  skeletonCard: { flexDirection: 'row', alignItems: 'center', gap: spacing.lg, paddingHorizontal: spacing.lg, paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
 
   /* État centre */
   center:     { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing.md },
@@ -258,17 +164,5 @@ const s = StyleSheet.create({
 
   /* Résultats */
   list:        { paddingBottom: spacing.xxxl },
-  resultCount: { color: colors.textDim, fontSize: typography.size.xxs, letterSpacing: 2, paddingHorizontal: spacing.lg, paddingVertical: spacing.md },
-  card:        { flexDirection: 'row', alignItems: 'center', gap: spacing.lg, paddingHorizontal: spacing.lg, paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
-  cardThumb:   { width: 68, height: 68, borderRadius: radius.lg, backgroundColor: colors.cardHover, alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 },
-  cardPhoto:   { width: 68, height: 68 },
-  cardEmoji:   { fontSize: 28 },
-  cardInfo:    { flex: 1, gap: spacing.xs },
-  cardCuisine: { color: colors.accent, fontSize: typography.size.xxs, letterSpacing: 2 },
-  cardName:    { color: colors.text, fontSize: typography.size.body, fontWeight: typography.weight.light },
-  cardMeta:    { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
-  cardRating:  { color: colors.accent, fontSize: typography.size.sm },
-  cardSep:     { color: colors.textDim, fontSize: typography.size.sm },
-  cardPrice:   { color: colors.textMuted, fontSize: typography.size.sm },
-  cardArrow:   { color: colors.textDim, fontSize: 22, fontWeight: typography.weight.light },
+  resultCount: { color: colors.textDim, fontSize: typography.size.xs, letterSpacing: 2, paddingHorizontal: spacing.lg, paddingVertical: spacing.md },
 });

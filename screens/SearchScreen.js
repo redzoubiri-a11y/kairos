@@ -7,6 +7,7 @@ import { colors, typography, spacing, radius } from '../src/theme';
 import MLoader from '../src/components/MLoader';
 import SearchResultCard from '../src/components/SearchResultCard';
 import useSearch, { CITIES, SUGGESTIONS } from '../src/hooks/useSearch';
+import MidaLogo from '../src/components/MidaLogo';
 
 function SkeletonResult() {
   return (
@@ -41,6 +42,11 @@ export default function SearchScreen({ navigation }) {
 
   return (
     <SafeAreaView style={s.root}>
+
+      {/* ── Header ── */}
+      <View style={s.logoHeader}>
+        <MidaLogo showTagline={false} />
+      </View>
 
       {/* ── Barre de recherche ── */}
       <View style={s.searchBar}>
@@ -128,6 +134,7 @@ const s = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.bg },
 
   /* Barre */
+  logoHeader: { alignItems: 'center', paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   searchBar:  { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingHorizontal: spacing.lg, paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   backBtn:    { width: 38, height: 38, borderRadius: 19, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, alignItems: 'center', justifyContent: 'center' },
   backBtnTxt: { color: colors.text, fontSize: typography.size.body },

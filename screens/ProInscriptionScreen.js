@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView } fr
 import { colors, typography, spacing, radius } from '../src/theme';
 import useProInscription from '../src/hooks/useProInscription';
 import FormField from '../src/components/FormField';
+import MidaLogo from '../src/components/MidaLogo';
 
 export default function ProInscriptionScreen({ navigation }) {
   const { form, loading, error, success, set, soumettre } = useProInscription();
@@ -34,6 +35,7 @@ export default function ProInscriptionScreen({ navigation }) {
           <Text style={s.backBtnTxt}>←</Text>
         </TouchableOpacity>
         <View style={{ flex: 1 }}>
+          <MidaLogo showTagline={false} style={{ alignItems: 'flex-start', marginBottom: 2 }} />
           <Text style={s.headerSub}>ESPACE PRO</Text>
           <Text style={s.headerTitle}>Devenir restaurateur</Text>
         </View>

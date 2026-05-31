@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   SafeAreaView, TextInput, Image, Animated,
@@ -27,20 +27,20 @@ const SLOT_GROUPS = [
 export default function ReservationFormScreen({ route, navigation }) {
   const restaurant = route?.params?.restaurant || { name: 'Restaurant', id: null, photo_url: null, avg_rating: null };
 
+  const onSuccess = useCallback(() => navigation.navigate('Main'), [navigation]);
+
   const {
     date, setDate, heure, setHeure,
     adults, setAdults, children, setChildren,
     occasion, setOccasion, notes, setNotes,
-    loading, error, success,
-    step, occasionObj, shakeTranslate,
+    loading, error,
+    occasionObj, shakeTranslate,
     confirmer,
-  } = useReservationForm(restaurant);
+  } = useReservationForm(restaurant, onSuccess);
 
   const goBack = useCallback(() => navigation.goBack(), [navigation]);
 
-  useEffect(() => {
-    if (success) navigation.navigate('Main');
-  }, [success, navigation]);
+  const step = date ? (heure ? 2 : 1) : 0;
 
   return (
     <SafeAreaView style={s.root}>

@@ -46,7 +46,7 @@ export function formatDateLong(dateStr) {
   return d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
 }
 
-export default function useReservationForm(restaurant) {
+export default function useReservationForm(restaurant, onSuccess) {
   const [date,     setDate]     = useState(null);
   const [heure,    setHeure]    = useState(null);
   const [adults,   setAdults]   = useState(2);
@@ -55,18 +55,8 @@ export default function useReservationForm(restaurant) {
   const [notes,    setNotes]    = useState('');
   const [loading,  setLoading]  = useState(false);
   const [error,    setError]    = useState('');
-  const [success,  setSuccess]  = useState(false);
 
-  const successAnim = useRef(new Animated.Value(0)).current;
-  const shakeAnim   = useRef(new Animated.Value(0)).current;
-
-  const step = useMemo(() => (!date ? 0 : !heure ? 1 : 2), [date, heure]);
-
-  useEffect(() => {
-    if (success) {
-      Animated.spring(successAnim, { toValue: 1, useNativeDriver: true, tension: 55, friction: 8 }).start();
-    }
-  }, [success]);
+  const shakeAnim = useRef(new Animated.Value(0)).current;
 
   const triggerShake = useCallback(() => {
     shakeAnim.setValue(0);
@@ -78,14 +68,8 @@ export default function useReservationForm(restaurant) {
     ]).start();
   }, [shakeAnim]);
 
-  const resetForm = useCallback(() => {
-    setSuccess(false); setDate(null); setHeure(null);
-    setNotes(''); setOccasion('normal'); successAnim.setValue(0);
-  }, [successAnim]);
-
   const occasionObj    = useMemo(() => OCCASIONS.find(o => o.id === occasion), [occasion]);
   const shakeTranslate = useMemo(() => shakeAnim.interpolate({ inputRange: [-1, 1], outputRange: [-8, 8] }), [shakeAnim]);
-  const successScale   = useMemo(() => successAnim.interpolate({ inputRange: [0, 1], outputRange: [0.92, 1] }), [successAnim]);
 
   const confirmer = useCallback(async () => {
     if (!date || !heure) {
@@ -131,7 +115,7 @@ export default function useReservationForm(restaurant) {
         body:           `Votre réservation chez ${restaurant.name} le ${formatDateLong(date)} à ${heure} pour ${adults} personne${adults > 1 ? 's' : ''} est en attente de confirmation.`,
       }).catch(() => {});
 
-      setSuccess(true);
+      onSuccess?.();
     } catch (e) {
       setError(e?.message || 'Une erreur inattendue est survenue.');
     } finally {
@@ -143,8 +127,8 @@ export default function useReservationForm(restaurant) {
     date, setDate, heure, setHeure,
     adults, setAdults, children, setChildren,
     occasion, setOccasion, notes, setNotes,
-    loading, error, success,
-    step, occasionObj, shakeTranslate, successScale, successAnim,
-    confirmer, resetForm,
+    loading, error,
+    occasionObj, shakeTranslate,
+    confirmer,
   };
 }

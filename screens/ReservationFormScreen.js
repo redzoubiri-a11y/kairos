@@ -1,13 +1,12 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  SafeAreaView, TextInput, Image, Animated,
+  SafeAreaView, TextInput,
 } from 'react-native';
 import { colors, typography, spacing, radius } from '../src/theme';
 import useReservationForm, { MIDI_SLOTS, SOIR_SLOTS, OCCASIONS, DAYS, formatDateLong } from '../src/hooks/useReservationForm';
 import FormProgressBar from '../src/components/FormProgressBar';
 import FormStepper from '../src/components/FormStepper';
-import ReservationSuccess from '../src/components/ReservationSuccess';
 import MidaLogo from '../src/components/MidaLogo';
 
 function SumRow({ icon, label, val, accent, last }) {
@@ -33,25 +32,15 @@ export default function ReservationFormScreen({ route, navigation }) {
     adults, setAdults, children, setChildren,
     occasion, setOccasion, notes, setNotes,
     loading, error, success,
-    step, occasionObj, shakeTranslate, successScale, successAnim,
-    confirmer, resetForm,
+    step, occasionObj, shakeTranslate,
+    confirmer,
   } = useReservationForm(restaurant);
 
   const goBack = useCallback(() => navigation.goBack(), [navigation]);
-  const goHome = useCallback(() => navigation.navigate('Main'), [navigation]);
 
-  if (success) {
-    return (
-      <SafeAreaView style={s.root}>
-        <ReservationSuccess
-          restaurant={restaurant}
-          date={date} heure={heure} adults={adults} children={children}
-          occasionObj={occasionObj}
-          onGoHome={goHome} onReset={resetForm}
-        />
-      </SafeAreaView>
-    );
-  }
+  useEffect(() => {
+    if (success) navigation.navigate('Main');
+  }, [success, navigation]);
 
   return (
     <SafeAreaView style={s.root}>

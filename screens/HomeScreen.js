@@ -10,6 +10,7 @@ import ListCard from '../src/components/ListCard';
 import useHomeData, { CITIES, CATEGORIES, QUICK_FILTERS } from '../src/hooks/useHomeData';
 import usePushNotifications from '../src/hooks/usePushNotifications';
 import useDeepLink from '../src/hooks/useDeepLink';
+import MidaLogo from '../src/components/MidaLogo';
 
 function greeting(name) {
   const h = new Date().getHours();
@@ -85,7 +86,7 @@ export default function HomeScreen({ navigation }) {
         <View>
           <Text style={s.greeting}>{greeting(userName)}</Text>
           <View style={s.logoRow}>
-            <Text style={s.logo}>mida</Text>
+            <MidaLogo showTagline={false} />
             <View style={s.locationPill}>
               <Text style={s.locationTxt}>{cityObj.emoji}  {cityObj.label}</Text>
             </View>
@@ -285,7 +286,6 @@ const s = StyleSheet.create({
   header:        { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', paddingHorizontal: spacing.xl, paddingTop: spacing.md, paddingBottom: spacing.md },
   greeting:      { color: colors.textMuted, fontSize: typography.size.body, fontWeight: typography.weight.regular, marginBottom: 3 },
   logoRow:       { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },
-  logo:          { color: colors.accent, fontSize: typography.size.title + 4, fontWeight: typography.weight.black, letterSpacing: -1, fontFamily: 'Georgia' },
   locationPill:  { backgroundColor: colors.card, borderRadius: 100, paddingHorizontal: spacing.lg, paddingVertical: spacing.xs, borderWidth: 1, borderColor: 'rgba(232,160,69,0.3)' },
   locationTxt:   { color: colors.accent, fontSize: typography.size.sm, fontWeight: typography.weight.regular },
   headerRight:   { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },

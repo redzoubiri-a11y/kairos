@@ -6,6 +6,7 @@ import {
 import { colors, typography, spacing, radius } from '../src/theme';
 import MLoader from '../src/components/MLoader';
 import useNotifications, { TYPE_CFG, TABS, timeAgo } from '../src/hooks/useNotifications';
+import MidaLogo from '../src/components/MidaLogo';
 
 function SkeletonList() {
   return (
@@ -47,8 +48,8 @@ export default function NotificationsScreen({ navigation }) {
           <Text style={s.backBtnTxt}>←</Text>
         </TouchableOpacity>
         <View style={s.headerCenter}>
+          <MidaLogo showTagline={false} style={{ marginBottom: spacing.xs }} />
           <Text style={s.headerSub}>ALERTES & RAPPELS</Text>
-          <Text style={s.headerTitle}>Notifications</Text>
         </View>
         <TouchableOpacity onPress={markAllRead} disabled={unread === 0} style={s.markAllBtn}>
           <Text style={[s.markAllTxt, unread === 0 && s.markAllDim]}>Tout lire</Text>
@@ -151,7 +152,6 @@ const s = StyleSheet.create({
   backBtnTxt:   { color: colors.text, fontSize: typography.size.heading2 },
   headerCenter: { flex: 1, alignItems: 'center' },
   headerSub:    { color: colors.accent, fontSize: typography.size.xs, letterSpacing: 3, marginBottom: 2 },
-  headerTitle:  { color: colors.text, fontSize: typography.size.title, fontWeight: typography.weight.regular, letterSpacing: 1 },
   markAllBtn:   { width: 60, alignItems: 'flex-end' },
   markAllTxt:   { color: colors.blue, fontSize: typography.size.body },
   markAllDim:   { color: colors.textDim },

@@ -8,6 +8,7 @@ import useReservationForm, { MIDI_SLOTS, SOIR_SLOTS, OCCASIONS, DAYS, formatDate
 import FormProgressBar from '../src/components/FormProgressBar';
 import FormStepper from '../src/components/FormStepper';
 import ReservationSuccess from '../src/components/ReservationSuccess';
+import MidaLogo from '../src/components/MidaLogo';
 
 function SumRow({ icon, label, val, accent, last }) {
   return (
@@ -62,6 +63,7 @@ export default function ReservationFormScreen({ route, navigation }) {
           <Text style={s.backBtnTxt}>←</Text>
         </TouchableOpacity>
         <View style={{ flex: 1 }}>
+          <MidaLogo showTagline={false} style={{ alignItems: 'flex-start', marginBottom: 2 }} />
           <Text style={s.headerSub}>RÉSERVATION</Text>
           <Text style={s.headerTitle} numberOfLines={1}>{restaurant.name}</Text>
         </View>

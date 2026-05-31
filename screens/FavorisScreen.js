@@ -7,6 +7,7 @@ import { colors, typography, spacing, radius } from '../src/theme';
 import MLoader from '../src/components/MLoader';
 import useFavoris, { CUISINE_EMOJI, SORT_OPTIONS, timeAdded } from '../src/hooks/useFavoris';
 import FavCard, { CARD_W } from '../src/components/FavCard';
+import MidaLogo from '../src/components/MidaLogo';
 
 function SkeletonGrid() {
   return (
@@ -36,8 +37,8 @@ export default function FavorisScreen({ navigation }) {
 
       <View style={s.header}>
         <View>
+          <MidaLogo showTagline={false} style={{ alignItems: 'flex-start', marginBottom: spacing.xs }} />
           <Text style={s.headerSub}>MES PRÉFÉRÉS</Text>
-          <Text style={s.headerTitle}>Favoris</Text>
         </View>
         {!loading && favorites.length > 0 && (
           <View style={s.countBadge}>
@@ -157,7 +158,6 @@ const s = StyleSheet.create({
 
   header:      { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: spacing.xxxl, paddingTop: 56, paddingBottom: spacing.xl, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   headerSub:   { color: colors.accent, fontSize: typography.size.xs, letterSpacing: 3, marginBottom: 2 },
-  headerTitle: { color: colors.text, fontSize: typography.size.hero, fontWeight: typography.weight.regular, letterSpacing: 1 },
   countBadge:  { backgroundColor: colors.accentSoft, borderRadius: radius.full, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderWidth: 1, borderColor: 'rgba(232,160,69,0.3)' },
   countTxt:    { color: colors.accent, fontSize: typography.size.bodyLg },
 

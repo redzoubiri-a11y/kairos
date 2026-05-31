@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { colors, typography, spacing, radius } from '../theme';
 
-export default function RestaurantInfosTab({ restaurant }) {
+export default function RestaurantInfosTab({ restaurant, desc }) {
   const rows = [
     { icon:'📍', label:'Adresse',      val: restaurant.address || restaurant.quartier || '—' },
     { icon:'🏙️', label:'Ville',        val: restaurant.city || '—' },
@@ -16,6 +16,12 @@ export default function RestaurantInfosTab({ restaurant }) {
 
   return (
     <>
+      {!!desc && (
+        <View style={s.descWrap}>
+          <Text style={s.descTxt}>{desc}</Text>
+        </View>
+      )}
+
       <View style={s.card}>
         {rows.map((row, i) => (
           <View key={i} style={[s.row, i < rows.length - 1 && s.rowBorder]}>
@@ -40,6 +46,8 @@ export default function RestaurantInfosTab({ restaurant }) {
 }
 
 const s = StyleSheet.create({
+  descWrap: { marginHorizontal: spacing.xl, marginTop: spacing.xl, marginBottom: spacing.sm, backgroundColor: colors.card, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.xl },
+  descTxt:  { color: colors.textMuted, fontSize: typography.size.bodyLg, lineHeight: 22, fontWeight: typography.weight.regular },
   card:     { margin: spacing.xl, backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, overflow: 'hidden' },
   row:      { flexDirection: 'row', alignItems: 'center', gap: spacing.xl - 2, paddingHorizontal: spacing.xl + 2, paddingVertical: spacing.xl - 2 },
   rowBorder:{ borderBottomWidth: 1, borderBottomColor: colors.cardBorder },

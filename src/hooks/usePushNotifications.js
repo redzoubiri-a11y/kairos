@@ -55,6 +55,11 @@ async function savePushToken(token) {
 
 function handleNotificationTap(response, navigation) {
   if (!navigation) return;
+  const data = response?.notification?.request?.content?.data;
+  if (data?.type === 'review_request') {
+    navigation.navigate('Main', { screen: 'Resa' });
+    return;
+  }
   navigation.navigate('Notifications');
 }
 

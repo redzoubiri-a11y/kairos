@@ -125,9 +125,30 @@ export default function useComptoir() {
       { text: 'Oui, arrivé', onPress: () => act(resa.id, async () => {
         await supabase.from('reservations').update({ status: 'arrived' }).eq('id', resa.id);
         setReservations(prev => prev.map(r => r.id === resa.id ? { ...r, status: 'arrived' } : r));
+        if (resa.user_id) {
+          const notifTitle = 'Comment était votre expérience ? ⭐';
+          const notifBody  = `Votre visite chez ${restaurant?.name} est terminée. Partagez votre avis !`;
+          try {
+            await supabase.from('notifications').insert({
+              recipient_id:   resa.user_id,
+              recipient_type: 'user',
+              type:           'review_request',
+              title:          notifTitle,
+              body:           notifBody,
+            });
+          } catch (_) {}
+          supabase.functions.invoke('push-manager', {
+            body: {
+              user_id: resa.user_id,
+              title:   notifTitle,
+              body:    notifBody,
+              data:    { type: 'review_request', reservationId: resa.id },
+            },
+          }).catch(() => {});
+        }
       })},
     ]);
-  }, [act]);
+  }, [act, restaurant]);
 
   const cancel = useCallback((resa) => {
     Alert.alert('Annuler', `Annuler la réservation de ${clientName(resa)} à ${resa.time_slot?.slice(0, 5)} ?`, [

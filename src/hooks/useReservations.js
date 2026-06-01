@@ -81,9 +81,50 @@ export default function useReservations() {
         { text: 'Non', style: 'cancel' },
         { text: 'Oui, annuler', style: 'destructive',
           onPress: async () => {
+            const { data: { session } } = await supabase.auth.getSession();
             await supabase.from('reservations')
-              .update({ status:'cancelled', cancelled_at: new Date().toISOString() })
+              .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
               .eq('id', r.id);
+
+            // Notification de confirmation au client
+            try {
+              const { data: pu } = await supabase.from('users').select('id').eq('auth_id', session.user.id).single();
+              if (pu) {
+                await supabase.from('notifications').insert({
+                  recipient_id:   pu.id,
+                  recipient_type: 'user',
+                  type:           'resa_cancelled',
+                  title:          'Réservation annulée',
+                  body:           `Votre réservation chez ${r.restaurants?.name || 'le restaurant'} le ${fmtShort(r.date)} à ${r.time_slot?.slice(0,5)} a bien été annulée.`,
+                });
+              }
+            } catch (_) {}
+
+            // Notification au manager
+            try {
+              const { data: owner } = await supabase
+                .from('restaurant_owners')
+                .select('auth_id')
+                .eq('restaurant_id', r.restaurant_id)
+                .single();
+              if (owner) {
+                const { data: managerUser } = await supabase
+                  .from('users')
+                  .select('id')
+                  .eq('auth_id', owner.auth_id)
+                  .single();
+                if (managerUser) {
+                  await supabase.from('notifications').insert({
+                    recipient_id:   managerUser.id,
+                    recipient_type: 'user',
+                    type:           'resa_cancelled',
+                    title:          'Réservation annulée',
+                    body:           `La réservation du ${fmtShort(r.date)} à ${r.time_slot?.slice(0,5)} (${(r.nb_adults||0)+(r.nb_children||0)} pers.) a été annulée par le client.`,
+                  });
+                }
+              }
+            } catch (_) {}
+
             load(true);
           },
         },

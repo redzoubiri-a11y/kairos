@@ -137,6 +137,13 @@ export default function useReservationForm(restaurant, onSuccess, existingResa =
               });
             }
           }
+          supabase.functions.invoke('push-manager', {
+            body: {
+              restaurant_id: restaurant.id,
+              title: 'Réservation modifiée',
+              body:  `${formatDateLong(date)} à ${heure} · ${adults} couvert${adults > 1 ? 's' : ''}.`,
+            },
+          });
         } catch (_) {}
       } else {
         const { error: resaErr } = await supabase.from('reservations').insert({
@@ -177,6 +184,13 @@ export default function useReservationForm(restaurant, onSuccess, existingResa =
               });
             }
           }
+          supabase.functions.invoke('push-manager', {
+            body: {
+              restaurant_id: restaurant.id,
+              title: 'Nouvelle réservation 📅',
+              body:  `Demande pour le ${formatDateLong(date)} à ${heure} · ${adults} couvert${adults > 1 ? 's' : ''}.`,
+            },
+          });
         } catch (_) {}
       }
 

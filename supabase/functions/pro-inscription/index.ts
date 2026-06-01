@@ -11,17 +11,26 @@ const SERVICE_KEY  = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const ANON_KEY     = Deno.env.get("SUPABASE_ANON_KEY")!;
 const RESEND_KEY   = Deno.env.get("RESEND_API_KEY");
 
+const FUNCTIONS_URL = `${SUPABASE_URL.replace("https://", "https://")}/functions/v1`;
+const ADMIN_EMAIL   = "red.zoubiri@gmail.com";
+
 const admin = createClient(SUPABASE_URL, SERVICE_KEY, {
   auth: { autoRefreshToken: false, persistSession: false },
 });
 
+async function sendEmail(to: string, subject: string, html: string) {
+  if (!RESEND_KEY) return;
+  await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: { "Authorization": `Bearer ${RESEND_KEY}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ from: "MIDA <onboarding@resend.dev>", to: [to], subject, html }),
+  }).catch(() => {});
+}
+
 serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: CORS });
-  }
+  if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
 
   try {
-    // Identify the calling user from JWT
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) throw new Error("Non authentifié");
 
@@ -34,7 +43,7 @@ serve(async (req) => {
 
     const { nom, prenom, restaurant, adresse, ville, telephone, email } = await req.json();
 
-    // 1. Find the pending pro_request for this user
+    // Find the pending pro_request just inserted by the app
     const { data: reqRow } = await admin
       .from("pro_requests")
       .select("id")
@@ -46,113 +55,51 @@ serve(async (req) => {
 
     if (!reqRow) throw new Error("Demande introuvable");
 
-    // 2. Create or update restaurant_owners
-    const { data: ownerRow, error: ownerErr } = await admin
-      .from("restaurant_owners")
-      .upsert({
-        auth_id:   user.id,
-        email:     email,
-        phone:     telephone,
-        full_name: `${prenom} ${nom}`,
-        role:      "owner",
-      }, { onConflict: "auth_id" })
-      .select("id")
-      .single();
+    const approveUrl = `${FUNCTIONS_URL}/approve-pro?id=${reqRow.id}`;
+    const rejectUrl  = `${FUNCTIONS_URL}/reject-pro?id=${reqRow.id}`;
 
-    if (ownerErr) throw new Error(`restaurant_owners: ${ownerErr.message}`);
+    // Email to admin with approve/reject buttons
+    await sendEmail(
+      ADMIN_EMAIL,
+      `Nouvelle demande PRO — ${restaurant} (${ville})`,
+      `
+      <div style="font-family:Georgia,serif;max-width:560px;margin:0 auto;color:#1a1a1a;">
+        <h1 style="letter-spacing:4px;font-size:20px;color:#0F0D0B;">MIDA</h1>
+        <h2 style="font-size:18px;">Nouvelle demande restaurateur</h2>
+        <table cellpadding="8" style="border-collapse:collapse;width:100%;margin:16px 0;">
+          <tr><td style="color:#888;width:130px;">Prénom</td><td><b>${prenom}</b></td></tr>
+          <tr><td style="color:#888;">Nom</td><td><b>${nom}</b></td></tr>
+          <tr><td style="color:#888;">Restaurant</td><td><b>${restaurant}</b></td></tr>
+          <tr><td style="color:#888;">Ville</td><td>${ville || "—"}</td></tr>
+          <tr><td style="color:#888;">Téléphone</td><td>${telephone}</td></tr>
+          <tr><td style="color:#888;">Adresse</td><td>${adresse || "—"}</td></tr>
+          <tr><td style="color:#888;">Email</td><td>${email}</td></tr>
+          <tr><td style="color:#888;">Date</td><td>${new Date().toLocaleString("fr-FR")}</td></tr>
+        </table>
+        <div style="display:flex;gap:16px;margin-top:24px;">
+          <a href="${approveUrl}" style="display:inline-block;background:#4CAF82;color:white;padding:12px 28px;text-decoration:none;border-radius:6px;font-weight:bold;letter-spacing:1px;">✓ APPROUVER</a>
+          &nbsp;&nbsp;
+          <a href="${rejectUrl}" style="display:inline-block;background:#E05A5A;color:white;padding:12px 28px;text-decoration:none;border-radius:6px;font-weight:bold;letter-spacing:1px;">✗ REFUSER</a>
+        </div>
+        <p style="color:#aaa;font-size:12px;margin-top:24px;">Ces liens sont à usage unique.</p>
+      </div>
+      `,
+    );
 
-    // 3. Create restaurant if not already exists
-    const { data: existingResto } = await admin
-      .from("restaurants")
-      .select("id")
-      .eq("owner_id", ownerRow.id)
-      .maybeSingle();
-
-    let restoId: string;
-    if (existingResto) {
-      restoId = existingResto.id;
-    } else {
-      const { data: restoRow, error: restoErr } = await admin
-        .from("restaurants")
-        .insert({
-          owner_id:     ownerRow.id,
-          name:         restaurant,
-          address:      adresse ?? "",
-          city:         (ville ?? "alger").toLowerCase(),
-          phone:        telephone,
-          cuisine_type: "autre",
-          status:       "pending",
-        })
-        .select("id")
-        .single();
-
-      if (restoErr) throw new Error(`restaurants: ${restoErr.message}`);
-      restoId = restoRow.id;
-    }
-
-    // 4. Link restaurant to owner
-    await admin.from("restaurant_owners").update({ restaurant_id: restoId }).eq("id", ownerRow.id);
-
-    // 5. Grant manager role
-    await admin.auth.admin.updateUserById(user.id, {
-      app_metadata: { role: "manager" },
-    });
-
-    // 6. Mark request approved
-    await admin.from("pro_requests").update({ status: "approved" }).eq("id", reqRow.id);
-
-    // 7. Welcome email to restaurateur
-    if (RESEND_KEY && email) {
-      await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: { "Authorization": `Bearer ${RESEND_KEY}`, "Content-Type": "application/json" },
-        body: JSON.stringify({
-          from: "MIDA <onboarding@resend.dev>",
-          to: [email],
-          subject: "Bienvenue sur MIDA — Votre compte restaurateur est activé",
-          html: `
-            <div style="font-family:Georgia,serif;max-width:520px;margin:0 auto;color:#1a1a1a;">
-              <h1 style="letter-spacing:4px;font-size:22px;">MIDA</h1>
-              <h2>Félicitations, ${prenom} !</h2>
-              <p>Votre compte restaurateur pour <strong>${restaurant}</strong> est maintenant actif.</p>
-              <p>Connectez-vous dès maintenant — vous avez accès à votre tableau de bord pour gérer vos réservations.</p>
-              <p>Pensez à compléter votre fiche restaurant (photos, menu, horaires) depuis l'application.</p>
-              <p style="color:#888;font-size:13px;">L'équipe MIDA</p>
-            </div>
-          `,
-        }),
-      }).catch(() => {});
-    }
-
-    // 8. Info-only email to admin (no approval button needed)
-    if (RESEND_KEY) {
-      await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: { "Authorization": `Bearer ${RESEND_KEY}`, "Content-Type": "application/json" },
-        body: JSON.stringify({
-          from: "MIDA <onboarding@resend.dev>",
-          to: ["red.zoubiri@gmail.com"],
-          subject: `Nouveau compte PRO activé — ${restaurant}`,
-          html: `
-            <div style="font-family:Georgia,serif;max-width:520px;margin:0 auto;color:#1a1a1a;">
-              <h2>Nouveau compte restaurateur activé</h2>
-              <p>Un compte a été <strong>automatiquement activé</strong>.</p>
-              <table cellpadding="8" style="border-collapse:collapse;width:100%">
-                <tr><td><b>Prénom :</b></td><td>${prenom}</td></tr>
-                <tr><td><b>Nom :</b></td><td>${nom}</td></tr>
-                <tr><td><b>Restaurant :</b></td><td>${restaurant}</td></tr>
-                <tr><td><b>Téléphone :</b></td><td>${telephone}</td></tr>
-                <tr><td><b>Adresse :</b></td><td>${adresse || "—"}</td></tr>
-                <tr><td><b>Ville :</b></td><td>${ville || "—"}</td></tr>
-                <tr><td><b>Email :</b></td><td>${email}</td></tr>
-                <tr><td><b>Date :</b></td><td>${new Date().toLocaleString("fr-FR")}</td></tr>
-              </table>
-              <p style="color:#888;font-size:13px;margin-top:16px;">Activation automatique — aucune action requise.</p>
-            </div>
-          `,
-        }),
-      }).catch(() => {});
-    }
+    // Acknowledgment email to applicant
+    await sendEmail(
+      email,
+      "MIDA — Votre demande est en cours d'examen",
+      `
+      <div style="font-family:Georgia,serif;max-width:520px;margin:0 auto;color:#1a1a1a;">
+        <h1 style="letter-spacing:4px;font-size:20px;">MIDA</h1>
+        <h2>Demande reçue, ${prenom} !</h2>
+        <p>Votre demande d'inscription pour <strong>${restaurant}</strong> a bien été reçue.</p>
+        <p>Notre équipe l'examine et vous recevrez une réponse par email dans les 24h.</p>
+        <p style="color:#888;font-size:13px;">L'équipe MIDA</p>
+      </div>
+      `,
+    );
 
     return new Response(JSON.stringify({ ok: true }), {
       status: 200,

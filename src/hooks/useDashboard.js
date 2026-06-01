@@ -116,10 +116,10 @@ export default function useDashboard() {
             const { error } = await supabase.from('reservations').update({ status: 'confirmed' }).eq('id', resa.id);
             if (error) throw error;
             setReservations(prev => prev.map(r => r.id === resa.id ? { ...r, status: 'confirmed' } : r));
-            await sendNotification(
+            sendNotification(
               resa.users, 'confirm', 'Réservation confirmée ✅',
               `Votre table chez ${restaurant?.name} le ${formatDate(resa.date)} à ${resa.time_slot?.slice(0,5)} est confirmée.`,
-            );
+            ).catch(() => {});
           } catch {
             Alert.alert('Erreur', 'Impossible de confirmer la réservation. Vérifiez votre connexion.');
           } finally {
@@ -145,10 +145,10 @@ export default function useDashboard() {
               .eq('id', resa.id);
             if (error) throw error;
             setReservations(prev => prev.map(r => r.id === resa.id ? { ...r, status: 'cancelled', cancelled_at: new Date().toISOString() } : r));
-            await sendNotification(
+            sendNotification(
               resa.users, 'cancellation', 'Réservation annulée',
               `Votre réservation chez ${restaurant?.name} le ${formatDate(resa.date)} n'a pas pu être confirmée.`,
-            );
+            ).catch(() => {});
           } catch {
             Alert.alert('Erreur', 'Impossible de refuser la réservation. Vérifiez votre connexion.');
           } finally {

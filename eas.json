@@ -13,12 +13,15 @@
         "buildType": "apk"
       },
       "ios": {
-        "simulator": true
+        "credentialsSource": "remote"
       }
     },
     "production": {
       "android": {
         "buildType": "app-bundle"
+      },
+      "ios": {
+        "credentialsSource": "remote"
       }
     }
   },

@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { colors, typography, spacing, radius } from '../theme';
 
 export default function DishCard({ dish, onEdit, onToggle, acting }) {
@@ -6,6 +6,9 @@ export default function DishCard({ dish, onEdit, onToggle, acting }) {
   return (
     <View style={s.card}>
       <View style={s.top}>
+        {dish.photo ? (
+          <Image source={{ uri: dish.photo }} style={s.photo} resizeMode="cover" />
+        ) : null}
         <View style={{ flex: 1, gap: spacing.xxs }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, flexWrap: 'wrap' }}>
             <Text style={[s.name, dimmed && s.nameDim]}>{dish.name}</Text>
@@ -50,6 +53,7 @@ export default function DishCard({ dish, onEdit, onToggle, acting }) {
 const s = StyleSheet.create({
   card:          { backgroundColor: colors.card, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.xl, marginBottom: spacing.lg, gap: spacing.lg },
   top:           { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.lg },
+  photo:         { width: 72, height: 72, borderRadius: radius.lg, backgroundColor: colors.cardHover, flexShrink: 0 },
   name:          { color: colors.text, fontSize: typography.size.subheading, fontWeight: typography.weight.medium },
   nameDim:       { color: colors.textDim },
   desc:          { color: colors.textDim, fontSize: typography.size.caption, lineHeight: 16 },

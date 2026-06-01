@@ -1,12 +1,29 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { colors, typography, spacing, radius } from '../theme';
 
+function fmtHours(oh) {
+  if (!oh) return null;
+  if (typeof oh === 'string') return oh;
+  if (!Array.isArray(oh) || oh.length === 0) return null;
+  const hm = s => (s || '').replace(':', 'h');
+  if (typeof oh[0].day === 'number') {
+    const opens  = [...new Set(oh.map(d => d.open))];
+    const closes = [...new Set(oh.map(d => d.close))];
+    if (opens.length === 1 && closes.length === 1)
+      return `Tous les jours  ${hm(opens[0])} – ${hm(closes[0])}`;
+    const minOpen  = oh.reduce((mn, d) => d.open  < mn ? d.open  : mn, oh[0].open);
+    const maxClose = oh.reduce((mx, d) => d.close > mx ? d.close : mx, oh[0].close);
+    return `Lun–Sam  ${hm(minOpen)} – ${hm(maxClose)}`;
+  }
+  return oh.map(d => `${d.day}  ${hm(d.open)} – ${hm(d.close)}`).join('  ·  ');
+}
+
 export default function RestaurantInfosTab({ restaurant, desc }) {
   const rows = [
     { icon:'📍', label:'Adresse',      val: restaurant.address || restaurant.quartier || '—' },
     { icon:'🏙️', label:'Ville',        val: restaurant.city || '—' },
     { icon:'🍽️', label:'Cuisine',      val: (restaurant.cuisine_type || '—').replace(/_/g, ' ') },
-    { icon:'🕐', label:'Horaires',     val: restaurant.opening_hours || '12h00 – 14h30  ·  19h00 – 22h30' },
+    { icon:'🕐', label:'Horaires',     val: fmtHours(restaurant.opening_hours) || '12h00 – 14h30  ·  19h00 – 22h30' },
     { icon:'📞', label:'Téléphone',    val: restaurant.phone || 'Non renseigné' },
     { icon:'💰', label:'Prix moyen',   val: restaurant.avg_ticket > 0 ? `${restaurant.avg_ticket.toLocaleString('fr-FR')} DA / pers.` : '—' },
     { icon:'🪑', label:'Capacité',     val: restaurant.capacity > 0 ? `${restaurant.capacity} couverts` : '—' },

@@ -44,10 +44,10 @@ async function savePushToken(token) {
   try {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
-    await supabase
-      .from('users')
-      .update({ push_token: token })
-      .eq('auth_id', user.id);
+    // Client
+    await supabase.from('users').update({ push_token: token }).eq('auth_id', user.id);
+    // Pro (restaurant owner) — silencieux si pas de row
+    await supabase.from('restaurant_owners').update({ push_token: token }).eq('auth_id', user.id);
   } catch {
     // échec silencieux — pas bloquant
   }

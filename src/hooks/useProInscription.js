@@ -33,7 +33,8 @@ export default function useProInscription() {
       const { error: fnErr } = await supabase.functions.invoke('pro-inscription', {
         body: { ...form, email: session.user.email },
       });
-      if (fnErr) { setError("L'email de confirmation n'a pas pu être envoyé."); return; }
+      if (fnErr) { setError("Une erreur est survenue lors de l'activation. Réessayez."); return; }
+      supabase.auth.refreshSession().catch(() => {});
       setSuccess(true);
     } finally {
       setLoading(false);

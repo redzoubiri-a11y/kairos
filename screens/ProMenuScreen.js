@@ -48,6 +48,7 @@ export default function ProMenuScreen({ navigation }) {
           isAvailable:  editingDish.is_available  ?? true,
           isDishOfDay:  editingDish.is_dish_of_day ?? false,
           hasAllergens: editingDish.has_allergens ?? false,
+          photo:        editingDish.photo         || '',
         }
       : { ...EMPTY_FORM, category: activeCat || categories[0] || DEFAULT_CATS[1] };
 
@@ -57,6 +58,7 @@ export default function ProMenuScreen({ navigation }) {
           initial={initial}
           categories={categories}
           isEdit={view === 'edit'}
+          restaurantId={restaurant?.id}
           onSave={saveDish}
           onCancel={cancelForm}
           onDelete={deleteDish}

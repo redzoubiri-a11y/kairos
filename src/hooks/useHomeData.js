@@ -89,7 +89,7 @@ export default function useHomeData() {
       fadeAnim.setValue(0);
       slideAnim.setValue(20);
       let q = supabase.from('restaurants')
-        .select('id,name,cuisine_type,quartier,avg_rating,avg_ticket,photos,review_count,city')
+        .select('id,name,cuisine_type,quartier,avg_rating,avg_ticket,photos,review_count,city,opening_hours,phone,capacity,address')
         .eq('status', 'active').limit(20).order('avg_rating', { ascending: false });
       if (city !== 'nearby') q = q.eq('city', city);
       try {

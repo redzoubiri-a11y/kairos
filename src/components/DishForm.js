@@ -2,8 +2,11 @@ import { useState, useCallback } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   TextInput, Alert, KeyboardAvoidingView, Platform,
+  Image, ActivityIndicator,
 } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 import { colors, typography, spacing, radius } from '../theme';
+import { supabase } from '../../supabase';
 
 function ToggleRow({ label, sub, value, onChange }) {
   return (
@@ -28,22 +31,55 @@ const tr = StyleSheet.create({
   thumbOn: { backgroundColor: colors.bg, alignSelf: 'flex-end' },
 });
 
-export default function DishForm({ initial, categories, isEdit, onSave, onCancel, onDelete }) {
-  const [form,     setForm]     = useState(initial);
-  const [saving,   setSaving]   = useState(false);
-  const [deleting, setDeleting] = useState(false);
+export default function DishForm({ initial, categories, isEdit, restaurantId, onSave, onCancel, onDelete }) {
+  const [form,      setForm]      = useState(initial);
+  const [saving,    setSaving]    = useState(false);
+  const [deleting,  setDeleting]  = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   const set     = (key, val) => setForm(f => ({ ...f, [key]: val }));
   const canSave = form.name.trim().length > 0 && form.price.trim().length > 0 && form.category;
 
+  const pickPhoto = useCallback(async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 0.7,
+    });
+    if (result.canceled) return;
+
+    setUploading(true);
+    try {
+      const uri  = result.assets[0].uri;
+      const ext  = uri.split('.').pop()?.split('?')[0]?.toLowerCase() || 'jpg';
+      const mime = ext === 'png' ? 'image/png' : ext === 'webp' ? 'image/webp' : 'image/jpeg';
+      const path = restaurantId
+        ? `${restaurantId}/${Date.now()}.${ext}`
+        : `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+
+      const response = await fetch(uri);
+      const blob     = await response.blob();
+
+      const { error: upErr } = await supabase.storage
+        .from('dishes')
+        .upload(path, blob, { contentType: mime, upsert: true });
+
+      if (upErr) throw upErr;
+
+      const { data } = supabase.storage.from('dishes').getPublicUrl(path);
+      set('photo', data.publicUrl);
+    } catch {
+      Alert.alert('Erreur', "Impossible d'envoyer la photo. Réessayez.");
+    } finally {
+      setUploading(false);
+    }
+  }, [restaurantId]);
+
   const handleSave = useCallback(async () => {
     if (!canSave) return;
     setSaving(true);
-    try {
-      await onSave(form);
-    } finally {
-      setSaving(false);
-    }
+    try { await onSave(form); } finally { setSaving(false); }
   }, [canSave, onSave, form]);
 
   const handleDelete = useCallback(() => {
@@ -54,11 +90,7 @@ export default function DishForm({ initial, categories, isEdit, onSave, onCancel
         { text: 'Annuler', style: 'cancel' },
         { text: 'Supprimer', style: 'destructive', onPress: async () => {
           setDeleting(true);
-          try {
-            await onDelete();
-          } finally {
-            setDeleting(false);
-          }
+          try { await onDelete(); } finally { setDeleting(false); }
         }},
       ]
     );
@@ -86,6 +118,36 @@ export default function DishForm({ initial, categories, isEdit, onSave, onCancel
       <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
         <View style={f.body}>
 
+          {/* Photo */}
+          <View style={f.field}>
+            <Text style={f.label}>Photo du plat</Text>
+            <TouchableOpacity style={f.photoBox} onPress={pickPhoto} disabled={uploading} activeOpacity={0.85}>
+              {form.photo ? (
+                <>
+                  <Image source={{ uri: form.photo }} style={f.photoImg} resizeMode="cover" />
+                  <View style={f.photoOverlay}>
+                    {uploading
+                      ? <ActivityIndicator color="#fff" size="small" />
+                      : <Text style={f.photoOverlayTxt}>📷  Changer</Text>
+                    }
+                  </View>
+                </>
+              ) : (
+                <View style={f.photoPlaceholder}>
+                  {uploading
+                    ? <ActivityIndicator color={colors.accent} size="small" />
+                    : <>
+                        <Text style={f.photoPlaceholderIcon}>📷</Text>
+                        <Text style={f.photoPlaceholderTxt}>Ajouter une photo</Text>
+                        <Text style={f.photoPlaceholderHint}>JPG, PNG · max 5 Mo</Text>
+                      </>
+                  }
+                </View>
+              )}
+            </TouchableOpacity>
+          </View>
+
+          {/* Nom */}
           <View style={f.field}>
             <Text style={f.label}>Nom du plat *</Text>
             <View style={[f.inputWrap, form.name && f.inputWrapActive]}>
@@ -100,6 +162,7 @@ export default function DishForm({ initial, categories, isEdit, onSave, onCancel
             </View>
           </View>
 
+          {/* Description */}
           <View style={f.field}>
             <Text style={f.label}>Description</Text>
             <Text style={f.hint}>Aide les clients à faire leur choix</Text>
@@ -116,6 +179,7 @@ export default function DishForm({ initial, categories, isEdit, onSave, onCancel
             </View>
           </View>
 
+          {/* Prix */}
           <View style={f.field}>
             <Text style={f.label}>Prix (DA) *</Text>
             <View style={[f.inputWrap, form.price && f.inputWrapActive]}>
@@ -131,6 +195,7 @@ export default function DishForm({ initial, categories, isEdit, onSave, onCancel
             </View>
           </View>
 
+          {/* Catégorie */}
           <View style={f.field}>
             <Text style={f.label}>Catégorie *</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -151,6 +216,7 @@ export default function DishForm({ initial, categories, isEdit, onSave, onCancel
             </ScrollView>
           </View>
 
+          {/* Toggles */}
           <View style={f.togglesWrap}>
             <ToggleRow label="Disponible dès maintenant" sub="Visible par les clients"   value={form.isAvailable}  onChange={v => set('isAvailable', v)}  />
             <ToggleRow label="Plat du jour"              sub="Mis en avant sur ta fiche" value={form.isDishOfDay}  onChange={v => set('isDishOfDay', v)}  />
@@ -161,9 +227,9 @@ export default function DishForm({ initial, categories, isEdit, onSave, onCancel
 
         <View style={{ paddingHorizontal: spacing.xxl, paddingBottom: 60 }}>
           <TouchableOpacity
-            style={[s.saveBtn, (!canSave || saving) && { opacity: 0.45 }]}
+            style={[s.saveBtn, (!canSave || saving || uploading) && { opacity: 0.45 }]}
             onPress={handleSave}
-            disabled={!canSave || saving}
+            disabled={!canSave || saving || uploading}
             activeOpacity={0.8}
           >
             <Text style={s.saveBtnTxt}>{saving ? '···' : isEdit ? 'Enregistrer →' : 'Ajouter au menu →'}</Text>
@@ -200,4 +266,13 @@ const f = StyleSheet.create({
   catChipTxtOn:   { color: colors.accent, fontWeight: typography.weight.semibold },
   togglesWrap:    { backgroundColor: colors.card, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.cardBorder, paddingHorizontal: spacing.xl, marginBottom: spacing.xl },
   deleteBtn:      { color: colors.red, fontSize: typography.size.body },
+
+  photoBox:         { borderRadius: radius.xl, overflow: 'hidden', borderWidth: 1, borderColor: colors.cardBorder, height: 160 },
+  photoImg:         { width: '100%', height: '100%' },
+  photoOverlay:     { position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: 'rgba(15,13,11,0.6)', paddingVertical: spacing.md, alignItems: 'center' },
+  photoOverlayTxt:  { color: '#fff', fontSize: typography.size.body, fontWeight: typography.weight.medium },
+  photoPlaceholder: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing.sm, backgroundColor: colors.card },
+  photoPlaceholderIcon: { fontSize: 32 },
+  photoPlaceholderTxt:  { color: colors.textMuted, fontSize: typography.size.body, fontWeight: typography.weight.medium },
+  photoPlaceholderHint: { color: colors.textDim, fontSize: typography.size.xs },
 });

@@ -3,7 +3,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { supabase } from '../../supabase';
 
 export const DEFAULT_CATS = ['🥗 Entrées', '🍖 Plats', '🍰 Desserts', '🥤 Boissons'];
-export const EMPTY_FORM   = { name: '', description: '', price: '', category: '🍖 Plats', isAvailable: true, isDishOfDay: false, hasAllergens: false };
+export const EMPTY_FORM   = { name: '', description: '', price: '', category: '🍖 Plats', isAvailable: true, isDishOfDay: false, hasAllergens: false, photo: '' };
 
 export default function useProMenu() {
   const [restaurant,  setRestaurant]  = useState(null);
@@ -33,7 +33,7 @@ export default function useProMenu() {
 
       const { data: rows } = await supabase
         .from('dishes')
-        .select('id, name, description, price, category, is_available, is_dish_of_day, has_allergens, created_at')
+        .select('id, name, description, price, category, is_available, is_dish_of_day, has_allergens, photo, created_at')
         .eq('restaurant_id', ownerRow.restaurants.id)
         .order('created_at', { ascending: true });
 
@@ -74,6 +74,7 @@ export default function useProMenu() {
       is_available:   form.isAvailable,
       is_dish_of_day: form.isDishOfDay,
       has_allergens:  form.hasAllergens,
+      photo:          form.photo || null,
     };
     if (editingDish) {
       await supabase.from('dishes').update(payload).eq('id', editingDish.id);

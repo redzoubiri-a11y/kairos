@@ -28,6 +28,7 @@ export default function SearchScreen({ navigation }) {
     query, setQuery,
     city, setCity,
     results, loading, searched,
+    nearMe, locLoading, requestNearMe,
     searchSuggestion, clearQuery,
   } = useSearch();
 
@@ -75,13 +76,21 @@ export default function SearchScreen({ navigation }) {
 
       {/* ── Filtres ville ── */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.cityRow}>
+        <TouchableOpacity
+          style={[s.cityChip, s.nearMeChip, nearMe && s.nearMeChipOn]}
+          onPress={requestNearMe}
+          disabled={locLoading}
+        >
+          <Text style={s.nearMeEmoji}>{locLoading ? '⏳' : '📍'}</Text>
+          <Text style={[s.cityTxt, nearMe && s.cityTxtOn]}>Près de moi</Text>
+        </TouchableOpacity>
         {CITIES.map((c) => (
           <TouchableOpacity
             key={c.id}
-            style={[s.cityChip, city === c.id && s.cityChipOn]}
+            style={[s.cityChip, !nearMe && city === c.id && s.cityChipOn]}
             onPress={() => setCity(c.id)}
           >
-            <Text style={[s.cityTxt, city === c.id && s.cityTxtOn]}>{c.label}</Text>
+            <Text style={[s.cityTxt, !nearMe && city === c.id && s.cityTxtOn]}>{c.label}</Text>
           </TouchableOpacity>
         ))}
       </ScrollView>
@@ -145,11 +154,14 @@ const s = StyleSheet.create({
   clearBtnTxt:{ color: colors.textDim, fontSize: typography.size.xs },
 
   /* Ville chips */
-  cityRow:    { flexDirection: 'row', gap: spacing.sm, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
-  cityChip:   { paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderRadius: radius.full, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder },
-  cityChipOn: { backgroundColor: colors.accent, borderColor: colors.accent },
-  cityTxt:    { color: colors.text, fontSize: typography.size.sm },
-  cityTxtOn:  { color: colors.bg, fontWeight: typography.weight.semibold },
+  cityRow:       { flexDirection: 'row', gap: spacing.sm, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
+  cityChip:      { paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderRadius: radius.full, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder },
+  cityChipOn:    { backgroundColor: colors.accent, borderColor: colors.accent },
+  nearMeChip:    { flexDirection: 'row', alignItems: 'center', gap: 5, borderColor: 'rgba(90,155,224,0.4)', backgroundColor: colors.blueSoft },
+  nearMeChipOn:  { backgroundColor: colors.blue, borderColor: colors.blue },
+  nearMeEmoji:   { fontSize: 13 },
+  cityTxt:       { color: colors.text, fontSize: typography.size.sm },
+  cityTxtOn:     { color: colors.bg, fontWeight: typography.weight.semibold },
 
   /* Suggestions */
   suggestionsWrap: { flex: 1, paddingHorizontal: spacing.lg, paddingTop: spacing.xl },

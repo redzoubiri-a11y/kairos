@@ -61,6 +61,7 @@ function haversineKm(lat1, lon1, lat2, lon2) {
 }
 
 export function getCoord(r, cityDefault) {
+  if (r.latitude && r.longitude) return { latitude: r.latitude, longitude: r.longitude };
   const key  = (r.quartier || '').toLowerCase();
   const base = QUARTIER_COORDS[key] || cityDefault;
   const seed = typeof r.id === 'string'
@@ -95,7 +96,7 @@ export default function useExplorer(initialCity = 'alger') {
       try {
         const query = supabase
           .from('restaurants')
-          .select('id, name, cuisine_type, address, quartier, city, photos, avg_rating, avg_ticket, review_count, capacity')
+          .select('id, name, cuisine_type, address, quartier, city, photos, avg_rating, avg_ticket, review_count, capacity, latitude, longitude, opening_hours, phone')
           .eq('status', 'active')
           .order('avg_rating', { ascending: false });
 

@@ -53,42 +53,54 @@ serve(async (req) => {
   const userEmail = authUser?.user?.email ?? "";
 
   try {
-    // 3. Créer restaurant_owners
+    // 3. Créer ou mettre à jour restaurant_owners (idempotent via upsert)
     const { data: ownerRow, error: ownerErr } = await admin
       .from("restaurant_owners")
-      .insert({
-        auth_id:  req_row.user_id,
-        email:    userEmail,
-        phone:    req_row.phone,
+      .upsert({
+        auth_id:   req_row.user_id,
+        email:     userEmail,
+        phone:     req_row.phone,
         full_name: `${req_row.first_name} ${req_row.last_name}`,
-        role:     "owner",
-      })
+        role:      "owner",
+      }, { onConflict: "auth_id" })
       .select("id")
       .single();
 
     if (ownerErr) throw new Error(`restaurant_owners: ${ownerErr.message}`);
 
-    // 4. Créer le restaurant
-    const { data: restoRow, error: restoErr } = await admin
+    // 4. Créer le restaurant seulement s'il n'existe pas déjà
+    const { data: existingResto } = await admin
       .from("restaurants")
-      .insert({
-        owner_id:     ownerRow.id,
-        name:         req_row.restaurant_name,
-        address:      req_row.address ?? "",
-        city:         (req_row.city ?? "alger").toLowerCase(),
-        phone:        req_row.phone,
-        cuisine_type: "autre",
-        status:       "pending",
-      })
       .select("id")
-      .single();
+      .eq("owner_id", ownerRow.id)
+      .maybeSingle();
 
-    if (restoErr) throw new Error(`restaurants: ${restoErr.message}`);
+    let restoId: string;
+    if (existingResto) {
+      restoId = existingResto.id;
+    } else {
+      const { data: restoRow, error: restoErr } = await admin
+        .from("restaurants")
+        .insert({
+          owner_id:     ownerRow.id,
+          name:         req_row.restaurant_name,
+          address:      req_row.address ?? "",
+          city:         (req_row.city ?? "alger").toLowerCase(),
+          phone:        req_row.phone,
+          cuisine_type: "autre",
+          status:       "pending",
+        })
+        .select("id")
+        .single();
+
+      if (restoErr) throw new Error(`restaurants: ${restoErr.message}`);
+      restoId = restoRow.id;
+    }
 
     // 5. Lier le restaurant à l'owner
     await admin
       .from("restaurant_owners")
-      .update({ restaurant_id: restoRow.id })
+      .update({ restaurant_id: restoId })
       .eq("id", ownerRow.id);
 
     // 6. Mettre à jour le rôle dans app_metadata

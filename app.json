@@ -7,7 +7,7 @@
     "orientation": "portrait",
     "icon": "./assets/logo.png",
     "userInterfaceStyle": "dark",
-    "newArchEnabled": false,
+
     "splash": {
       "resizeMode": "contain",
       "backgroundColor": "#0a0f1a"
@@ -53,6 +53,12 @@
         "projectId": "ce226e39-fe42-4bbe-a556-055b49805840"
       }
     },
-    "owner": "zlabia"
+    "owner": "zlabia",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/ce226e39-fe42-4bbe-a556-055b49805840"
+    }
   }
 }

@@ -16,12 +16,12 @@ export default function ProInscriptionScreen({ navigation }) {
           <View style={s.successRing}>
             <Text style={s.successEmoji}>🍽️</Text>
           </View>
-          <Text style={s.successTitle}>Demande envoyée</Text>
+          <Text style={s.successTitle}>Compte activé !</Text>
           <Text style={s.successSub}>
-            Notre équipe examine votre candidature{'\n'}et vous contacte dans les 48h.
+            Votre espace restaurateur est prêt.{'\n'}Accédez à votre tableau de bord pour{'\n'}gérer vos réservations.
           </Text>
           <TouchableOpacity style={s.successBtn} onPress={goBack}>
-            <Text style={s.successBtnTxt}>RETOUR AU PROFIL</Text>
+            <Text style={s.successBtnTxt}>ACCÉDER AU DASHBOARD</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -71,7 +71,7 @@ export default function ProInscriptionScreen({ navigation }) {
         </TouchableOpacity>
 
         <Text style={s.legalTxt}>
-          Votre dossier sera examiné sous 48h ouvrées. Activation gratuite pendant 3 mois.
+          Activation immédiate et gratuite pendant 3 mois.
         </Text>
 
         <View style={{ height: spacing.section * 2 }} />

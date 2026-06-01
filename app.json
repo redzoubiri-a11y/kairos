@@ -7,7 +7,6 @@
     "orientation": "portrait",
     "icon": "./assets/logo.png",
     "userInterfaceStyle": "dark",
-
     "splash": {
       "resizeMode": "contain",
       "backgroundColor": "#0a0f1a"
@@ -17,7 +16,8 @@
       "bundleIdentifier": "com.mida.app",
       "infoPlist": {
         "NSUserNotificationsUsageDescription": "MIDA vous envoie des notifications pour vos réservations.",
-        "NSLocationWhenInUseUsageDescription": "MIDA utilise votre position pour afficher les restaurants près de vous."
+        "NSLocationWhenInUseUsageDescription": "MIDA utilise votre position pour afficher les restaurants près de vous.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -31,7 +31,9 @@
         "RECEIVE_BOOT_COMPLETED",
         "VIBRATE",
         "ACCESS_FINE_LOCATION",
-        "ACCESS_COARSE_LOCATION"
+        "ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
       ]
     },
     "web": {

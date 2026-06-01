@@ -13,6 +13,19 @@ serve(async (req) => {
   try {
     const { nom, prenom, restaurant, adresse, ville, telephone, email } = await req.json();
 
+    const { data: reqRow } = await (await import("https://esm.sh/@supabase/supabase-js@2"))
+      .createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!)
+      .from("pro_requests")
+      .select("id")
+      .eq("status", "pending")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    const approveUrl = reqRow?.id
+      ? `${Deno.env.get("SUPABASE_URL")!.replace(".supabase.co", "")}.supabase.co/functions/v1/approve-pro?id=${reqRow.id}`
+      : null;
+
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
@@ -35,6 +48,13 @@ serve(async (req) => {
             <tr><td><b>Email :</b></td><td>${email}</td></tr>
             <tr><td><b>Date :</b></td><td>${new Date().toLocaleString("fr-FR")}</td></tr>
           </table>
+          ${approveUrl ? `
+          <br>
+          <a href="${approveUrl}" style="display:inline-block;background:#4CAF82;color:#fff;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:16px;margin-top:16px;">
+            ✅ Approuver d'un clic
+          </a>
+          <p style="color:#888;font-size:12px;margin-top:8px;">Ce lien active automatiquement le compte restaurateur.</p>
+          ` : ""}
         `,
       }),
     });

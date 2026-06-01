@@ -1,4 +1,4 @@
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback, useEffect } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity,
   SafeAreaView, ActivityIndicator, Platform,
@@ -19,6 +19,7 @@ export default function ExplorerScreen({ navigation, route }) {
   const {
     city, setCity, mode, setMode, restaurants, loading, selected, setSelected,
     cityData, cityDefault,
+    userLocation, nearMe, locLoading, requestNearMe,
   } = useExplorer(initialCity);
 
   const changeCity = useCallback((c) => {
@@ -26,6 +27,19 @@ export default function ExplorerScreen({ navigation, route }) {
     const r = CITIES.find(x => x.id === c)?.region;
     if (r) mapRef.current?.animateToRegion(r, 400);
   }, [setCity]);
+
+  const handleNearMe = useCallback(async () => {
+    await requestNearMe();
+  }, [requestNearMe]);
+
+  useEffect(() => {
+    if (nearMe && userLocation) {
+      mapRef.current?.animateToRegion(
+        { ...userLocation, latitudeDelta: 0.04, longitudeDelta: 0.04 },
+        500,
+      );
+    }
+  }, [nearMe, userLocation]);
 
   const handleMarker = useCallback((r) => {
     const same = selected?.id === r.id;
@@ -136,10 +150,18 @@ export default function ExplorerScreen({ navigation, route }) {
         {mode === 'map' && <View style={s.sheetHandle} />}
 
         <View style={s.cityGrid}>
+          <TouchableOpacity
+            style={[s.cityChip, s.nearMeChip, nearMe && s.cityChipOn]}
+            onPress={handleNearMe}
+            disabled={locLoading}
+          >
+            <Text style={s.cityEmoji}>{locLoading ? '⏳' : '📍'}</Text>
+            <Text style={[s.cityTxt, nearMe && s.cityTxtOn]}>Près de moi</Text>
+          </TouchableOpacity>
           {CITIES.map(c => (
-            <TouchableOpacity key={c.id} style={[s.cityChip, city === c.id && s.cityChipOn]} onPress={() => changeCity(c.id)}>
+            <TouchableOpacity key={c.id} style={[s.cityChip, !nearMe && city === c.id && s.cityChipOn]} onPress={() => changeCity(c.id)}>
               <Text style={s.cityEmoji}>{c.emoji}</Text>
-              <Text style={[s.cityTxt, city === c.id && s.cityTxtOn]}>{c.label}</Text>
+              <Text style={[s.cityTxt, !nearMe && city === c.id && s.cityTxtOn]}>{c.label}</Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -206,6 +228,7 @@ const s = StyleSheet.create({
 
   cityGrid:    { flexDirection:'row', flexWrap:'wrap', paddingHorizontal:14, paddingVertical:10, gap:8 },
   cityChip:    { flexDirection:'row', alignItems:'center', gap:6, paddingHorizontal:14, paddingVertical:9, borderRadius:radius.xl, backgroundColor:colors.card, borderWidth:1, borderColor:colors.cardBorder },
+  nearMeChip:  { borderColor:'rgba(90,155,224,0.4)', backgroundColor:colors.blueSoft },
   cityChipOn:  { backgroundColor:colors.accent, borderColor:colors.accent },
   cityEmoji:   { fontSize:14 },
   cityTxt:     { color:colors.text, fontSize:typography.size.bodyLg },

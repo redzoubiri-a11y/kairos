@@ -1,4 +1,6 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
+import { Alert } from 'react-native';
+import * as Location from 'expo-location';
 import { supabase } from '../../supabase';
 
 export const CITIES = [
@@ -49,6 +51,15 @@ export const QUARTIER_COORDS = {
   'zouaghi':{ latitude:36.3300, longitude:6.5800 },
 };
 
+function haversineKm(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) ** 2
+    + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
 export function getCoord(r, cityDefault) {
   const key  = (r.quartier || '').toLowerCase();
   const base = QUARTIER_COORDS[key] || cityDefault;
@@ -62,11 +73,14 @@ export function getCoord(r, cityDefault) {
 }
 
 export default function useExplorer(initialCity = 'alger') {
-  const [city,        setCity]        = useState(initialCity);
-  const [mode,        setMode]        = useState('map');
-  const [restaurants, setRestaurants] = useState([]);
-  const [loading,     setLoading]     = useState(false);
-  const [selected,    setSelected]    = useState(null);
+  const [city,         setCity]         = useState(initialCity);
+  const [mode,         setMode]         = useState('map');
+  const [restaurants,  setRestaurants]  = useState([]);
+  const [loading,      setLoading]      = useState(false);
+  const [selected,     setSelected]     = useState(null);
+  const [userLocation, setUserLocation] = useState(null);
+  const [nearMe,       setNearMe]       = useState(false);
+  const [locLoading,   setLocLoading]   = useState(false);
 
   const cityData = useMemo(() => CITIES.find(c => c.id === city) || CITIES[0], [city]);
   const cityDefault = useMemo(
@@ -79,21 +93,65 @@ export default function useExplorer(initialCity = 'alger') {
       setLoading(true);
       setSelected(null);
       try {
-        const { data } = await supabase
+        const query = supabase
           .from('restaurants')
           .select('id, name, cuisine_type, address, quartier, city, photos, avg_rating, avg_ticket, review_count, capacity')
-          .eq('city', city)
           .eq('status', 'active')
           .order('avg_rating', { ascending: false });
+
+        if (!nearMe) query.eq('city', city);
+
+        const { data } = await query;
         setRestaurants(data ?? []);
       } finally {
         setLoading(false);
       }
     })();
-  }, [city]);
+  }, [city, nearMe]);
+
+  const sortedRestaurants = useMemo(() => {
+    if (!nearMe || !userLocation) return restaurants;
+    return [...restaurants].sort((a, b) => {
+      const ca = getCoord(a, cityDefault);
+      const cb = getCoord(b, cityDefault);
+      const da = haversineKm(userLocation.latitude, userLocation.longitude, ca.latitude, ca.longitude);
+      const db = haversineKm(userLocation.latitude, userLocation.longitude, cb.latitude, cb.longitude);
+      return da - db;
+    });
+  }, [restaurants, nearMe, userLocation, cityDefault]);
+
+  const requestNearMe = useCallback(async () => {
+    setLocLoading(true);
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert(
+          'Localisation refusée',
+          'Activez la localisation dans les Réglages pour voir les restaurants près de vous.',
+        );
+        return;
+      }
+      const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
+      setUserLocation({ latitude: loc.coords.latitude, longitude: loc.coords.longitude });
+      setNearMe(true);
+    } catch (_) {
+      Alert.alert('Erreur', 'Impossible de récupérer votre position.');
+    } finally {
+      setLocLoading(false);
+    }
+  }, []);
+
+  const selectCity = useCallback((c) => {
+    setCity(c);
+    setNearMe(false);
+    setUserLocation(null);
+  }, []);
 
   return {
-    city, setCity, mode, setMode, restaurants, loading, selected, setSelected,
+    city, setCity: selectCity, mode, setMode,
+    restaurants: sortedRestaurants,
+    loading, selected, setSelected,
     cityData, cityDefault,
+    userLocation, nearMe, locLoading, requestNearMe,
   };
 }

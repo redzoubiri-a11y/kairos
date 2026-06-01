@@ -16,7 +16,8 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.mida.app",
       "infoPlist": {
-        "NSUserNotificationsUsageDescription": "MIDA vous envoie des notifications pour vos réservations."
+        "NSUserNotificationsUsageDescription": "MIDA vous envoie des notifications pour vos réservations.",
+        "NSLocationWhenInUseUsageDescription": "MIDA utilise votre position pour afficher les restaurants près de vous."
       }
     },
     "android": {
@@ -28,7 +29,9 @@
       "package": "com.mida.app",
       "permissions": [
         "RECEIVE_BOOT_COMPLETED",
-        "VIBRATE"
+        "VIBRATE",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION"
       ]
     },
     "web": {
@@ -42,7 +45,8 @@
           "color": "#E8A045",
           "sounds": []
         }
-      ]
+      ],
+      "expo-location"
     ],
     "extra": {
       "eas": {

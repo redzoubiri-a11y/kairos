@@ -7,7 +7,7 @@ import { colors, typography, spacing, radius } from '../src/theme';
 import MLoader from '../src/components/MLoader';
 import SearchResultCard from '../src/components/SearchResultCard';
 import useSearch, { CITIES, SUGGESTIONS } from '../src/hooks/useSearch';
-import MidaLogo from '../src/components/MidaLogo';
+
 
 function SkeletonResult() {
   return (
@@ -45,15 +45,19 @@ export default function SearchScreen({ navigation }) {
     <SafeAreaView style={s.root}>
 
       {/* ── Header ── */}
-      <View style={s.logoHeader}>
-        <MidaLogo showTagline={false} />
+      <View style={s.header}>
+        <TouchableOpacity onPress={goBack} style={s.backBtn}>
+          <Text style={s.backBtnTxt}>←</Text>
+        </TouchableOpacity>
+        <View style={{ alignItems: 'center' }}>
+          <Text style={s.headerItalic}>rechercher</Text>
+          <Text style={s.headerTitle}>RECHERCHE</Text>
+        </View>
+        <View style={{ width: 38 }} />
       </View>
 
       {/* ── Barre de recherche ── */}
       <View style={s.searchBar}>
-        <TouchableOpacity onPress={goBack} style={s.backBtn}>
-          <Text style={s.backBtnTxt}>←</Text>
-        </TouchableOpacity>
         <View style={s.inputWrap}>
           <Text style={s.searchIcon}>🔍</Text>
           <TextInput
@@ -75,6 +79,7 @@ export default function SearchScreen({ navigation }) {
       </View>
 
       {/* ── Filtres ville ── */}
+      <Text style={s.quartierLabel}>PAR QUARTIER</Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.cityRow}>
         <TouchableOpacity
           style={[s.cityChip, s.nearMeChip, nearMe && s.nearMeChipOn]}
@@ -142,18 +147,21 @@ export default function SearchScreen({ navigation }) {
 const s = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.bg },
 
-  /* Barre */
-  logoHeader: { alignItems: 'center', paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
-  searchBar:  { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingHorizontal: spacing.lg, paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
-  backBtn:    { width: 38, height: 38, borderRadius: 19, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, alignItems: 'center', justifyContent: 'center' },
-  backBtnTxt: { color: colors.text, fontSize: typography.size.body },
-  inputWrap:  { flex: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: colors.card, borderRadius: radius.lg, borderWidth: 1, borderColor: colors.cardBorder, paddingHorizontal: spacing.md, height: 44, gap: spacing.sm },
-  searchIcon: { fontSize: 15 },
-  input:      { flex: 1, color: colors.text, fontSize: typography.size.body, fontWeight: typography.weight.light },
-  clearBtn:   { width: 24, height: 24, borderRadius: 12, backgroundColor: colors.cardHover, alignItems: 'center', justifyContent: 'center' },
-  clearBtnTxt:{ color: colors.textDim, fontSize: typography.size.xs },
+  /* Header + Barre */
+  header:       { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: spacing.xl, paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
+  headerItalic: { color: colors.blue, fontSize: typography.size.caption, fontStyle: 'italic', letterSpacing: 1.5, marginBottom: 2 },
+  headerTitle:  { color: colors.text, fontSize: typography.size.heading2, fontWeight: typography.weight.bold, letterSpacing: 2 },
+  searchBar:    { paddingHorizontal: spacing.lg, paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
+  backBtn:      { width: 38, height: 38, borderRadius: 19, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, alignItems: 'center', justifyContent: 'center' },
+  backBtnTxt:   { color: colors.text, fontSize: typography.size.body },
+  inputWrap:    { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.card, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.cardBorder, paddingHorizontal: spacing.md, height: 44, gap: spacing.sm },
+  searchIcon:   { fontSize: 15 },
+  input:        { flex: 1, color: colors.text, fontSize: typography.size.body, fontWeight: typography.weight.light },
+  clearBtn:     { width: 24, height: 24, borderRadius: 12, backgroundColor: colors.cardHover, alignItems: 'center', justifyContent: 'center' },
+  clearBtnTxt:  { color: colors.textDim, fontSize: typography.size.xs },
 
   /* Ville chips */
+  quartierLabel: { color: colors.textMuted, fontSize: typography.size.xs, letterSpacing: 3, paddingHorizontal: spacing.lg, paddingTop: spacing.sm, paddingBottom: spacing.xs },
   cityRow:       { flexDirection: 'row', gap: spacing.sm, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
   cityChip:      { paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderRadius: radius.full, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder },
   cityChipOn:    { backgroundColor: colors.accent, borderColor: colors.accent },

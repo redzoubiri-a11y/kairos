@@ -151,8 +151,7 @@ export default function ExplorerScreen({ navigation, route }) {
       <View style={[s.sheet, mode === 'list' && s.sheetFull]}>
         {mode === 'map' && <View style={s.sheetHandle} />}
 
-        <Text style={s.quartierLabel}>PAR QUARTIER</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.cityGrid}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={s.chipsScroll} contentContainerStyle={s.cityGrid}>
           <TouchableOpacity
             style={[s.cityChip, s.nearMeChip, nearMe && s.cityChipOn]}
             onPress={handleNearMe}
@@ -167,26 +166,28 @@ export default function ExplorerScreen({ navigation, route }) {
           ))}
         </ScrollView>
 
-        {loading ? (
-          <View style={s.empty}><ActivityIndicator color={colors.accent} size="large" /></View>
-        ) : restaurants.length === 0 ? (
-          <View style={s.empty}>
-            <Text style={{ fontSize: 36 }}>🍽️</Text>
-            <Text style={s.emptyTitle}>Aucun restaurant trouvé</Text>
-            <Text style={s.emptyDesc}>Aucun établissement pour cette ville.</Text>
-          </View>
-        ) : (
-          <FlatList
-            data={restaurants}
-            keyExtractor={r => String(r.id)}
-            numColumns={2}
-            columnWrapperStyle={s.gridRow}
-            contentContainerStyle={s.gridContent}
-            showsVerticalScrollIndicator={false}
-            renderItem={renderItem}
-            ListFooterComponent={<View style={{ height: 60 }} />}
-          />
-        )}
+        <View style={{ flex: 1 }}>
+          {loading ? (
+            <View style={s.empty}><ActivityIndicator color={colors.accent} size="large" /></View>
+          ) : restaurants.length === 0 ? (
+            <View style={s.empty}>
+              <Text style={{ fontSize: 36 }}>🍽️</Text>
+              <Text style={s.emptyTitle}>Aucun restaurant trouvé</Text>
+              <Text style={s.emptyDesc}>Aucun établissement pour cette ville.</Text>
+            </View>
+          ) : (
+            <FlatList
+              data={restaurants}
+              keyExtractor={r => String(r.id)}
+              numColumns={2}
+              columnWrapperStyle={s.gridRow}
+              contentContainerStyle={s.gridContent}
+              showsVerticalScrollIndicator={false}
+              renderItem={renderItem}
+              ListFooterComponent={<View style={{ height: 60 }} />}
+            />
+          )}
+        </View>
       </View>
     </View>
   );
@@ -228,8 +229,8 @@ const s = StyleSheet.create({
   sheetFull:   { flex:1, borderTopWidth:1, borderTopColor:colors.cardBorder, marginTop:TOP+66 },
   sheetHandle: { width:36, height:3, backgroundColor:colors.textDim, borderRadius:2, alignSelf:'center', marginBottom:8, opacity:0.35 },
 
-  quartierLabel:{ color:colors.textMuted, fontSize:typography.size.xs, letterSpacing:3, paddingHorizontal:spacing.xl, paddingTop:spacing.sm, paddingBottom:spacing.xs },
-  cityGrid:    { flexDirection:'row', paddingHorizontal:14, paddingVertical:10, gap:8, borderBottomWidth:1, borderBottomColor:colors.cardBorder },
+  chipsScroll: { borderBottomWidth:1, borderBottomColor:colors.cardBorder },
+  cityGrid:    { flexDirection:'row', paddingHorizontal:14, paddingVertical:10, gap:8 },
   cityChip:    { flexDirection:'row', alignItems:'center', gap:5, paddingHorizontal:12, paddingVertical:8, borderRadius:radius.full, backgroundColor:colors.card, borderWidth:1, borderColor:colors.cardBorder },
   nearMeChip:  { borderColor:'rgba(90,155,224,0.3)', backgroundColor:colors.blueSoft },
   cityChipOn:  { backgroundColor:colors.accent, borderColor:colors.accent },

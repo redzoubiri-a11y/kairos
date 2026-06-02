@@ -76,7 +76,6 @@ export default function SearchScreen({ navigation }) {
       </View>
 
       {/* ── Filtres ville ── */}
-      <Text style={s.quartierLabel}>PAR QUARTIER</Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.cityRow}>
         <TouchableOpacity
           style={[s.cityChip, s.nearMeChip, nearMe && s.nearMeChipOn]}

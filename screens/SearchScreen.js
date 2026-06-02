@@ -49,10 +49,7 @@ export default function SearchScreen({ navigation }) {
         <TouchableOpacity onPress={goBack} style={s.backBtn}>
           <Text style={s.backBtnTxt}>←</Text>
         </TouchableOpacity>
-        <View style={{ alignItems: 'center' }}>
-          <Text style={s.headerItalic}>rechercher</Text>
-          <Text style={s.headerTitle}>RECHERCHE</Text>
-        </View>
+        <Text style={s.headerTitle}>RECHERCHE</Text>
         <View style={{ width: 38 }} />
       </View>
 
@@ -86,7 +83,6 @@ export default function SearchScreen({ navigation }) {
           onPress={requestNearMe}
           disabled={locLoading}
         >
-          <Text style={s.nearMeEmoji}>{locLoading ? '⏳' : '📍'}</Text>
           <Text style={[s.cityTxt, nearMe && s.cityTxtOn]}>Près de moi</Text>
         </TouchableOpacity>
         {CITIES.map((c) => (

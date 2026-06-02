@@ -1,7 +1,7 @@
 import { useRef, useCallback, useEffect } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import {
-  View, Text, StyleSheet, TouchableOpacity,
+  View, Text, StyleSheet, TouchableOpacity, ScrollView,
   SafeAreaView, ActivityIndicator, Platform,
   StatusBar as RNStatusBar, Image, FlatList,
 } from 'react-native';
@@ -133,10 +133,7 @@ export default function ExplorerScreen({ navigation, route }) {
             ? <TouchableOpacity style={s.backBtn} onPress={goBack}><Text style={s.backBtnTxt}>←</Text></TouchableOpacity>
             : <View style={{ width: 36 }} />
           }
-          <View style={{ alignItems: 'center' }}>
-            <Text style={s.headerItalic}>découvrir</Text>
-            <Text style={s.headerTitle}>EXPLORER</Text>
-          </View>
+          <Text style={s.headerTitle}>EXPLORER</Text>
           <View style={{ flexDirection:'row', gap:8, alignItems:'center' }}>
             {!loading && (
               <View style={s.countBadge}>
@@ -155,22 +152,20 @@ export default function ExplorerScreen({ navigation, route }) {
         {mode === 'map' && <View style={s.sheetHandle} />}
 
         <Text style={s.quartierLabel}>PAR QUARTIER</Text>
-        <View style={s.cityGrid}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.cityGrid}>
           <TouchableOpacity
             style={[s.cityChip, s.nearMeChip, nearMe && s.cityChipOn]}
             onPress={handleNearMe}
             disabled={locLoading}
           >
-            <Text style={s.cityEmoji}>{locLoading ? '⏳' : '📍'}</Text>
             <Text style={[s.cityTxt, nearMe && s.cityTxtOn]}>Près de moi</Text>
           </TouchableOpacity>
           {CITIES.map(c => (
             <TouchableOpacity key={c.id} style={[s.cityChip, !nearMe && city === c.id && s.cityChipOn]} onPress={() => changeCity(c.id)}>
-              <Text style={s.cityEmoji}>{c.emoji}</Text>
               <Text style={[s.cityTxt, !nearMe && city === c.id && s.cityTxtOn]}>{c.label}</Text>
             </TouchableOpacity>
           ))}
-        </View>
+        </ScrollView>
 
         {loading ? (
           <View style={s.empty}><ActivityIndicator color={colors.accent} size="large" /></View>
@@ -234,7 +229,7 @@ const s = StyleSheet.create({
   sheetHandle: { width:36, height:3, backgroundColor:colors.textDim, borderRadius:2, alignSelf:'center', marginBottom:8, opacity:0.35 },
 
   quartierLabel:{ color:colors.textMuted, fontSize:typography.size.xs, letterSpacing:3, paddingHorizontal:spacing.xl, paddingTop:spacing.sm, paddingBottom:spacing.xs },
-  cityGrid:    { flexDirection:'row', flexWrap:'wrap', paddingHorizontal:14, paddingBottom:8, gap:8 },
+  cityGrid:    { flexDirection:'row', paddingHorizontal:14, paddingBottom:8, gap:8 },
   cityChip:    { flexDirection:'row', alignItems:'center', gap:5, paddingHorizontal:12, paddingVertical:8, borderRadius:radius.full, backgroundColor:colors.card, borderWidth:1, borderColor:colors.cardBorder },
   nearMeChip:  { borderColor:'rgba(90,155,224,0.3)', backgroundColor:colors.blueSoft },
   cityChipOn:  { backgroundColor:colors.accent, borderColor:colors.accent },

@@ -19,7 +19,7 @@ export default function HistResaCard({ r, onReserveAgain, onPress, onReview, has
 
   return (
     <TouchableOpacity style={[s.card, { borderLeftColor: sc.color }]} onPress={onPress} activeOpacity={0.85}>
-      <Thumb url={r.restaurants?.photo_url} size={50} />
+      <Thumb url={r.restaurants?.photos?.[0]} size={50} />
       <View style={{ flex:1 }}>
         <Text style={s.name} numberOfLines={1}>{r.restaurants?.name || '—'}</Text>
         <Text style={s.meta}>{fmtShort(r.date)} · {r.time_slot?.slice(0,5)} · {(r.nb_adults||0)+(r.nb_children||0)} pers.</Text>

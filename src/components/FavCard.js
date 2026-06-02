@@ -9,7 +9,7 @@ const BG_COLORS = ['#1a2e1a', '#1a1e2e', '#2e2a1a', '#2a1a2e', '#1a2a2e'];
 
 export default function FavCard({ fav, index, onPress, onReserve, onRemove, removing }) {
   const r     = fav.restaurants || {};
-  const photo = r.photo_url || (r.photos?.[0]) || null;
+  const photo = r.photos?.[0] || null;
 
   return (
     <TouchableOpacity style={s.card} onPress={onPress} activeOpacity={0.88}>

@@ -90,7 +90,7 @@ export default function useProfil() {
             .select('*, restaurants(id, name, cuisine_type, quartier)')
             .eq('user_id', userId).order('date', { ascending: false }).limit(30),
           supabase.from('favorites')
-            .select('id, restaurant_id, restaurants(id, name, cuisine_type, quartier, avg_rating, avg_ticket, photos, photo_url)')
+            .select('id, restaurant_id, restaurants(id, name, cuisine_type, quartier, avg_rating, avg_ticket, photos)')
             .eq('user_id', userId).order('created_at', { ascending: false }),
         ]);
         setReservations(resas ?? []);

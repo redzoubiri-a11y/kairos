@@ -11,8 +11,8 @@ export default function NextResaCard({ r, onCancel, onViewRestaurant, onEdit }) 
   return (
     <View style={s.card}>
       <View style={s.photoWrap}>
-        {resto.photo_url
-          ? <Image source={{ uri: resto.photo_url }} style={s.photo} resizeMode="cover" />
+        {resto.photos?.[0]
+          ? <Image source={{ uri: resto.photos[0] }} style={s.photo} resizeMode="cover" />
           : <View style={[s.photo, { backgroundColor: colors.cardHover, alignItems:'center', justifyContent:'center' }]}>
               <Text style={{ fontSize:52 }}>🍽️</Text>
             </View>

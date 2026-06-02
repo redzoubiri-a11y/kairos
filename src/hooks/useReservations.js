@@ -48,11 +48,11 @@ export default function useReservations() {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
-      const { data: pu } = await supabase.from('users').select('id').eq('auth_id', session.user.id).single();
+      const { data: pu } = await supabase.from('users').select('id').eq('auth_id', session.user.id).maybeSingle();
       if (!pu) return;
       const { data } = await supabase
         .from('reservations')
-        .select('*, restaurants(id, name, photo_url, cuisine_type, avg_rating, quartier, city)')
+        .select('*, restaurants(id, name, photos, cuisine_type, avg_rating, quartier, city)')
         .eq('user_id', pu.id)
         .order('date', { ascending: true })
         .order('time_slot', { ascending: true });
@@ -90,7 +90,7 @@ export default function useReservations() {
 
             // Notification de confirmation au client
             try {
-              const { data: pu } = await supabase.from('users').select('id').eq('auth_id', session.user.id).single();
+              const { data: pu } = await supabase.from('users').select('id').eq('auth_id', session.user.id).maybeSingle();
               if (pu) {
                 await supabase.from('notifications').insert({
                   recipient_id:   pu.id,
@@ -108,13 +108,13 @@ export default function useReservations() {
                 .from('restaurant_owners')
                 .select('auth_id')
                 .eq('restaurant_id', r.restaurant_id)
-                .single();
+                .maybeSingle();
               if (owner) {
                 const { data: managerUser } = await supabase
                   .from('users')
                   .select('id')
                   .eq('auth_id', owner.auth_id)
-                  .single();
+                  .maybeSingle();
                 if (managerUser) {
                   await supabase.from('notifications').insert({
                     recipient_id:   managerUser.id,
@@ -164,7 +164,7 @@ export default function useReservations() {
   const submitReview = useCallback(async (resa, rating, comment) => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) throw new Error('Non connecté');
-    const { data: pu } = await supabase.from('users').select('id').eq('auth_id', session.user.id).single();
+    const { data: pu } = await supabase.from('users').select('id').eq('auth_id', session.user.id).maybeSingle();
     if (!pu) throw new Error('Utilisateur introuvable');
     const { error } = await supabase.from('reviews').insert({
       user_id:           pu.id,

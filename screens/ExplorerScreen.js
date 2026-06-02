@@ -1,4 +1,5 @@
 import { useRef, useCallback, useEffect } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import {
   View, Text, StyleSheet, TouchableOpacity,
   SafeAreaView, ActivityIndicator, Platform,
@@ -65,8 +66,10 @@ export default function ExplorerScreen({ navigation, route }) {
   const goBack            = useCallback(() => { if (navigation.canGoBack()) navigation.goBack(); }, [navigation]);
   const toggleMode        = useCallback(() => { setMode(m => m === 'map' ? 'list' : 'map'); setSelected(null); }, [setMode, setSelected]);
   const closeSelected     = useCallback(() => setSelected(null), [setSelected]);
-  const goReserveSelected = useCallback(() => navigation.navigate('ReservationForm', { restaurant: selected }), [navigation, selected]);
-  const goViewSelected    = useCallback(() => navigation.navigate('Restaurant', { restaurant: selected }), [navigation, selected]);
+  const goReserveSelected = useCallback(() => { const r = selected; setSelected(null); navigation.navigate('ReservationForm', { restaurant: r }); }, [navigation, selected, setSelected]);
+  const goViewSelected    = useCallback(() => { const r = selected; setSelected(null); navigation.navigate('Restaurant', { restaurant: r }); }, [navigation, selected, setSelected]);
+
+  useFocusEffect(useCallback(() => () => setSelected(null), [setSelected]));
 
   return (
     <View style={s.root}>

@@ -229,8 +229,8 @@ const s = StyleSheet.create({
   sheetFull:   { flex:1, borderTopWidth:1, borderTopColor:colors.cardBorder, marginTop:TOP+66 },
   sheetHandle: { width:36, height:3, backgroundColor:colors.textDim, borderRadius:2, alignSelf:'center', marginBottom:8, opacity:0.35 },
 
-  chipsScroll: { borderBottomWidth:1, borderBottomColor:colors.cardBorder },
-  cityGrid:    { flexDirection:'row', paddingHorizontal:14, paddingVertical:10, gap:8 },
+  chipsScroll: { borderBottomWidth:1, borderBottomColor:colors.cardBorder, flexShrink:0 },
+  cityGrid:    { flexDirection:'row', alignItems:'center', paddingHorizontal:14, paddingVertical:10, gap:8 },
   cityChip:    { flexDirection:'row', alignItems:'center', gap:5, paddingHorizontal:18, paddingVertical:5, backgroundColor:colors.card },
   nearMeChip:  { backgroundColor:colors.blueSoft },
   cityChipOn:  { backgroundColor:colors.accent },

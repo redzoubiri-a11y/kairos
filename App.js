@@ -5,6 +5,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { View, Text, Platform } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import { supabase } from './supabase';
 import { linkingConfig } from './src/linking';
 import OnboardingScreen from './screens/OnboardingScreen';
@@ -37,6 +38,41 @@ const C = {
   accent: '#c8975a', dim: '#8a9ab0', text: '#f0ece4',
 };
 
+const TAB_ICONS = {
+  Accueil:  { active: 'home',            inactive: 'home-outline' },
+  Recherche:{ active: 'search',          inactive: 'search-outline' },
+  Favoris:  { active: 'heart',           inactive: 'heart-outline' },
+  Manager:  { active: 'grid',            inactive: 'grid-outline' },
+  Resa:     { active: 'calendar',        inactive: 'calendar-outline' },
+};
+
+function TabIcon({ name, focused }) {
+  const icons = TAB_ICONS[name] || { active: 'ellipse', inactive: 'ellipse-outline' };
+  const iconName = focused ? icons.active : icons.inactive;
+  return (
+    <View style={{ alignItems: 'center', justifyContent: 'center', width: 32, height: 28 }}>
+      {focused && (
+        <View style={{
+          position: 'absolute', width: 36, height: 36, borderRadius: 18,
+          backgroundColor: 'rgba(200,151,90,0.12)',
+          shadowColor: C.accent, shadowOpacity: 0.6, shadowRadius: 12,
+          shadowOffset: { width: 0, height: 0 },
+        }} />
+      )}
+      <Ionicons
+        name={iconName}
+        size={focused ? 23 : 21}
+        color={focused ? C.accent : C.dim}
+        style={focused ? {
+          textShadowColor: C.accent,
+          textShadowOffset: { width: 0, height: 0 },
+          textShadowRadius: 8,
+        } : null}
+      />
+    </View>
+  );
+}
+
 
 function TabNavigator({ userRole }) {
   const isManager = userRole === 'manager';
@@ -45,21 +81,21 @@ function TabNavigator({ userRole }) {
 
   return (
     <Tab.Navigator
-      screenOptions={{
+      screenOptions={({ route }) => ({
         headerShown: false,
+        tabBarIcon: ({ focused }) => <TabIcon name={route.name} focused={focused} />,
         tabBarStyle: {
           backgroundColor: C.bg2,
           borderTopColor: C.border,
           borderTopWidth: 1,
-          paddingBottom: 28,
-          paddingTop: 10,
-          height: 64,
+          paddingBottom: 24,
+          paddingTop: 8,
+          height: 72,
         },
-        tabBarShowIcon: false,
         tabBarActiveTintColor: C.accent,
         tabBarInactiveTintColor: C.dim,
-        tabBarLabelStyle: { fontSize: 11, letterSpacing: 1, fontWeight: '400' },
-      }}
+        tabBarLabelStyle: { fontSize: 10, letterSpacing: 1, fontWeight: '400', marginTop: 2 },
+      })}
     >
       <Tab.Screen name="Accueil" component={HomeScreen} />
       <Tab.Screen name="Recherche" component={ExplorerScreen} />

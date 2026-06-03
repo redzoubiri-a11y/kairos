@@ -170,10 +170,7 @@ export default function HomeScreen({ navigation }) {
                 </TouchableOpacity>
               </ScrollView>
             </View>
-            <View style={s.tonightRight}>
-              <Text style={s.tonightEmoji}>🍽️</Text>
-              <Text style={s.tonightCount}>{slots.length} créneaux</Text>
-            </View>
+
           </View>
         )}
 
@@ -311,9 +308,6 @@ const s = StyleSheet.create({
   slotTxt:          { color: colors.accent, fontSize: typography.size.body, fontWeight: typography.weight.medium },
   slotAll:          { backgroundColor: colors.cardBorder, borderColor: colors.cardBorder },
   slotAllTxt:       { color: colors.textMuted, fontSize: typography.size.body },
-  tonightRight:     { paddingRight: spacing.xl, alignItems: 'center', gap: spacing.xs },
-  tonightEmoji:     { fontSize: 40 },
-  tonightCount:     { color: colors.textMuted, fontSize: typography.size.xs },
 
   /* Featured */
   featRow: { paddingHorizontal: spacing.xl, paddingBottom: spacing.xs },

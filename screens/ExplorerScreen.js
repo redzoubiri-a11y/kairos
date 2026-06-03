@@ -210,9 +210,9 @@ const s = StyleSheet.create({
   mapWrap: { flex:54 },
 
   overlay:     { position:'absolute', top:0, left:0, right:0, zIndex:10 },
-  header:      { flexDirection:'row', justifyContent:'space-between', alignItems:'center', paddingHorizontal:spacing.xl, paddingTop:TOP+14, paddingBottom:14, backgroundColor:'transparent' },
+  header:      { flexDirection:'row', justifyContent:'space-between', alignItems:'center', paddingHorizontal:spacing.xl, paddingTop:TOP+14, paddingBottom:14, backgroundColor:'rgba(13,22,40,0.6)', borderBottomWidth:1, borderBottomColor:'rgba(255,255,255,0.06)' },
   headerItalic:{ color:colors.blue, fontSize:typography.size.caption, fontStyle:'italic', letterSpacing:1.5, marginBottom:2 },
-  headerTitle: { color:colors.text, fontSize:typography.size.heading2, fontWeight:typography.weight.bold, letterSpacing:2, backgroundColor:'rgba(13,22,40,0.72)', borderRadius:10, paddingHorizontal:14, paddingVertical:6, overflow:'hidden' },
+  headerTitle: { color:colors.text, fontSize:typography.size.heading2, fontWeight:typography.weight.regular, letterSpacing:3 },
   countBadge:  { flexDirection:'row', alignItems:'center', gap:5, backgroundColor:colors.accentSoft, borderRadius:radius.full, paddingHorizontal:spacing.md, paddingVertical:5, borderWidth:1, borderColor:'rgba(232,160,69,0.3)' },
   countDot:    { width:6, height:6, borderRadius:3, backgroundColor:colors.green },
   countTxt:    { color:colors.accent, fontSize:typography.size.caption, fontWeight:'500' },

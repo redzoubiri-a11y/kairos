@@ -202,7 +202,7 @@ const s = StyleSheet.create({
   heroRight:    { position: 'absolute', top: TOP, right: spacing.xl, flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   favBtn:       { position: 'absolute', bottom: spacing.xl, right: spacing.xl, width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(15,13,11,0.72)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(240,235,227,0.12)' },
   sharePill:    { backgroundColor: 'rgba(255,255,255,0.07)', borderRadius: 100, paddingHorizontal: 14, paddingVertical: 9, borderWidth: 1, borderColor: 'rgba(255,255,255,0.13)' },
-  shareTxt:     { color: 'rgba(232,160,69,0.75)', fontSize: typography.size.caption, fontWeight: typography.weight.regular, letterSpacing: 2 },
+  shareTxt:     { color: 'rgba(240,235,227,0.75)', fontSize: typography.size.caption, fontWeight: typography.weight.regular, letterSpacing: 2 },
 
 
   openBadge: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs + 1, backgroundColor: 'rgba(15,13,11,0.76)', borderRadius: radius.full, paddingHorizontal: spacing.md + 2, paddingVertical: spacing.xs, borderWidth: 1, borderColor: 'rgba(76,175,130,0.3)' },

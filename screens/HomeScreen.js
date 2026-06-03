@@ -322,11 +322,11 @@ const s = StyleSheet.create({
 
   /* Quick filters */
   quickRow:    { paddingHorizontal: spacing.xl, gap: spacing.md, paddingTop: spacing.lg, paddingBottom: spacing.xs },
-  quickChip:   { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: 100, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder },
-  quickChipOn: { backgroundColor: colors.blueSoft, borderColor: colors.blue },
+  quickChip:   { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: 100, backgroundColor: 'transparent', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
+  quickChipOn: { backgroundColor: colors.blueSoft, borderColor: colors.blue, shadowColor: colors.blue, shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
   quickEmoji:  { fontSize: typography.size.body },
   quickTxt:    { color: colors.textMuted, fontSize: typography.size.caption },
-  quickTxtOn:  { color: colors.blue },
+  quickTxtOn:  { color: colors.blue, fontWeight: typography.weight.semibold },
 
   /* Empty */
   emptyWrap:  { alignItems: 'center', paddingVertical: spacing.section + spacing.xxl, gap: spacing.lg },

@@ -96,6 +96,22 @@ export default function ExplorerScreen({ navigation, route }) {
             ))}
           </MapView>
 
+          {/* Chips collés en bas de la carte */}
+          {!selected && (
+            <View style={s.mapChips}>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.cityGrid}>
+                <TouchableOpacity style={[s.cityChip, s.nearMeChip, nearMe && s.cityChipOn]} onPress={handleNearMe} disabled={locLoading}>
+                  <Text style={[s.cityTxt, nearMe && s.cityTxtOn]}>Près de moi</Text>
+                </TouchableOpacity>
+                {CITIES.map(c => (
+                  <TouchableOpacity key={c.id} style={[s.cityChip, !nearMe && city === c.id && s.cityChipOn]} onPress={() => changeCity(c.id)}>
+                    <Text style={[s.cityTxt, !nearMe && city === c.id && s.cityTxtOn]}>{c.label}</Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </View>
+          )}
+
           {selected && (
             <View style={s.selCard}>
               {selected.photos?.[0]
@@ -149,20 +165,18 @@ export default function ExplorerScreen({ navigation, route }) {
       </SafeAreaView>
 
       <View style={[s.sheet, mode === 'list' && s.sheetFull]}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={s.chipsScroll} contentContainerStyle={s.cityGrid}>
-          <TouchableOpacity
-            style={[s.cityChip, s.nearMeChip, nearMe && s.cityChipOn]}
-            onPress={handleNearMe}
-            disabled={locLoading}
-          >
-            <Text style={[s.cityTxt, nearMe && s.cityTxtOn]}>Près de moi</Text>
-          </TouchableOpacity>
-          {CITIES.map(c => (
-            <TouchableOpacity key={c.id} style={[s.cityChip, !nearMe && city === c.id && s.cityChipOn]} onPress={() => changeCity(c.id)}>
-              <Text style={[s.cityTxt, !nearMe && city === c.id && s.cityTxtOn]}>{c.label}</Text>
+        {mode === 'list' && (
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={s.chipsScroll} contentContainerStyle={s.cityGrid}>
+            <TouchableOpacity style={[s.cityChip, s.nearMeChip, nearMe && s.cityChipOn]} onPress={handleNearMe} disabled={locLoading}>
+              <Text style={[s.cityTxt, nearMe && s.cityTxtOn]}>Près de moi</Text>
             </TouchableOpacity>
-          ))}
-        </ScrollView>
+            {CITIES.map(c => (
+              <TouchableOpacity key={c.id} style={[s.cityChip, !nearMe && city === c.id && s.cityChipOn]} onPress={() => changeCity(c.id)}>
+                <Text style={[s.cityTxt, !nearMe && city === c.id && s.cityTxtOn]}>{c.label}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        )}
 
         <View style={{ flex: 1 }}>
           {loading ? (
@@ -202,8 +216,8 @@ const s = StyleSheet.create({
   countBadge:  { flexDirection:'row', alignItems:'center', gap:5, backgroundColor:colors.accentSoft, borderRadius:radius.full, paddingHorizontal:spacing.md, paddingVertical:5, borderWidth:1, borderColor:'rgba(232,160,69,0.3)' },
   countDot:    { width:6, height:6, borderRadius:3, backgroundColor:colors.green },
   countTxt:    { color:colors.accent, fontSize:typography.size.caption, fontWeight:'500' },
-  modeBtn:     { width:36, height:36, borderRadius:18, backgroundColor:colors.card, borderWidth:1, borderColor:colors.cardBorder, alignItems:'center', justifyContent:'center' },
-  modeBtnOn:   { backgroundColor:colors.accentSoft, borderColor:'rgba(232,160,69,0.3)' },
+  modeBtn:     { width:36, height:36, borderRadius:18, backgroundColor:'transparent', borderWidth:1, borderColor:'rgba(255,255,255,0.1)', alignItems:'center', justifyContent:'center' },
+  modeBtnOn:   { backgroundColor:colors.accentSoft, borderColor:colors.accent, shadowColor:colors.accent, shadowOpacity:0.35, shadowRadius:10, shadowOffset:{ width:0, height:0 }, elevation:5 },
   modeBtnTxt:  { fontSize:16 },
 
   selCard:    { position:'absolute', bottom:8, left:14, right:14, backgroundColor:colors.card, borderRadius:radius.xxl, borderWidth:1, borderColor:'rgba(232,160,69,0.3)', overflow:'hidden', zIndex:5 },
@@ -223,18 +237,19 @@ const s = StyleSheet.create({
   selClose:   { position:'absolute', top:10, right:10, width:28, height:28, borderRadius:14, backgroundColor:'rgba(15,13,11,0.72)', alignItems:'center', justifyContent:'center' },
   selCloseTxt:{ color:colors.text, fontSize:typography.size.body },
 
-  sheet:       { flex:46, backgroundColor:colors.bg, borderTopWidth:1, borderTopColor:colors.cardBorder },
+  mapChips:    { position:'absolute', bottom:0, left:0, right:0, backgroundColor:'rgba(13,22,40,0.88)', borderTopWidth:1, borderTopColor:colors.cardBorder },
+  sheet:       { flex:46, backgroundColor:colors.bg },
   sheetFull:   { flex:1, borderTopWidth:1, borderTopColor:colors.cardBorder, marginTop:TOP+66 },
   sheetHandle: { width:36, height:3, backgroundColor:colors.textDim, borderRadius:2, alignSelf:'center', marginBottom:8, opacity:0.35 },
 
   chipsScroll: { borderBottomWidth:1, borderBottomColor:colors.cardBorder, flexShrink:0 },
   cityGrid:    { flexDirection:'row', alignItems:'center', paddingHorizontal:14, paddingVertical:10, gap:8 },
-  cityChip:    { flexDirection:'row', alignItems:'center', gap:5, paddingHorizontal:18, paddingVertical:5, backgroundColor:colors.card },
-  nearMeChip:  { backgroundColor:colors.blueSoft },
-  cityChipOn:  { backgroundColor:colors.accent },
+  cityChip:    { flexDirection:'row', alignItems:'center', gap:5, paddingHorizontal:18, paddingVertical:5, borderRadius:100, backgroundColor:'transparent', borderWidth:1, borderColor:'rgba(255,255,255,0.1)' },
+  nearMeChip:  { borderColor:'rgba(90,155,224,0.3)' },
+  cityChipOn:  { backgroundColor:colors.accentSoft, borderColor:colors.accent, shadowColor:colors.accent, shadowOpacity:0.35, shadowRadius:10, shadowOffset:{ width:0, height:0 }, elevation:5 },
   cityEmoji:   { fontSize:13 },
-  cityTxt:     { color:colors.text, fontSize:typography.size.body },
-  cityTxtOn:   { color:colors.bg, fontWeight:'600' },
+  cityTxt:     { color:colors.textMuted, fontSize:typography.size.body },
+  cityTxtOn:   { color:colors.accent, fontWeight:'600' },
 
   backBtn:     { width:36, height:36, borderRadius:18, backgroundColor:colors.card, borderWidth:1, borderColor:colors.cardBorder, alignItems:'center', justifyContent:'center' },
   backBtnTxt:  { color:colors.text, fontSize:18, lineHeight:22 },

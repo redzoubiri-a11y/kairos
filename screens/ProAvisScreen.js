@@ -128,12 +128,12 @@ const s = StyleSheet.create({
   badgeTxt:   { color: colors.text, fontSize: typography.size.xs, fontWeight: typography.weight.bold },
 
   filterRow:   { paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, gap: spacing.sm },
-  chip:        { flexDirection: 'row', alignItems: 'center', gap: spacing.xs, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: radius.full, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder },
-  chipOn:      { backgroundColor: colors.accentSoft, borderColor: colors.accent },
+  chip:        { flexDirection: 'row', alignItems: 'center', gap: spacing.xs, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: radius.full, backgroundColor: 'transparent', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
+  chipOn:      { backgroundColor: colors.accentSoft, borderColor: colors.accent, shadowColor: colors.accent, shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
   chipAlert:   { borderColor: 'rgba(224,90,90,0.4)' },
   chipPending: { borderColor: 'rgba(232,160,69,0.5)' },
   chipTxt:     { color: colors.textMuted, fontSize: typography.size.body },
-  chipTxtOn:   { color: colors.accent },
+  chipTxtOn:   { color: colors.accent, fontWeight: typography.weight.semibold },
   chipCount:   { color: colors.textDim, fontSize: typography.size.xs },
   chipCountOn: { color: colors.accent },
 

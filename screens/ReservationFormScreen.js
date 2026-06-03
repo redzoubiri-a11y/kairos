@@ -89,8 +89,8 @@ export default function ReservationFormScreen({ route, navigation }) {
       <ScrollView showsVerticalScrollIndicator={false}>
 
         {/* Banner */}
-        {restaurant.photo_url
-          ? <Image source={{ uri: restaurant.photo_url }} style={s.banner} resizeMode="cover" />
+        {restaurant.photos?.[0]
+          ? <Image source={{ uri: restaurant.photos[0] }} style={s.banner} resizeMode="cover" />
           : (
             <View style={[s.banner, s.bannerPlaceholder]}>
               <Text style={{ fontSize: 48, opacity: 0.5 }}>🍽️</Text>
@@ -333,10 +333,10 @@ const s = StyleSheet.create({
   slotGroupIcon:   { fontSize: 14 },
   slotGroupLabel:  { color: colors.textMuted, fontSize: typography.size.body },
   slotsWrap:       { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md },
-  slotChip:        { alignItems: 'center', paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, borderRadius: radius.lg, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, minWidth: 78 },
-  slotChipOn:      { backgroundColor: 'rgba(90,155,224,0.15)', borderColor: colors.blue },
+  slotChip:        { alignItems: 'center', paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, borderRadius: radius.lg, backgroundColor: 'transparent', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)', minWidth: 78 },
+  slotChipOn:      { backgroundColor: 'rgba(90,155,224,0.12)', borderColor: colors.blue, shadowColor: colors.blue, shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
   slotTxt:         { color: colors.textMuted, fontSize: typography.size.heading3, fontWeight: typography.weight.regular },
-  slotTxtOn:       { color: colors.blue, fontWeight: typography.weight.medium },
+  slotTxtOn:       { color: colors.blue, fontWeight: typography.weight.semibold },
   slotBadge:       { marginTop: spacing.xs, paddingHorizontal: spacing.sm, paddingVertical: spacing.xxs, borderRadius: radius.sm, backgroundColor: colors.accentSoft },
   slotBadgePopular:{ backgroundColor: colors.accentSoft },
   slotBadgeLast:   { backgroundColor: colors.redSoft },
@@ -352,11 +352,11 @@ const s = StyleSheet.create({
   couvDivider: { height: 1, backgroundColor: colors.cardBorder, marginHorizontal: spacing.xxl },
 
   occasionGrid:   { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.lg, paddingHorizontal: spacing.xxl },
-  occasionChip:   { width: '30%', flexGrow: 1, alignItems: 'center', paddingVertical: spacing.lg, borderRadius: radius.xl, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, gap: spacing.sm, position: 'relative' },
-  occasionChipOn: { backgroundColor: colors.accentSoft, borderColor: colors.accent },
+  occasionChip:   { width: '30%', flexGrow: 1, alignItems: 'center', paddingVertical: spacing.lg, borderRadius: radius.xl, backgroundColor: 'transparent', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)', gap: spacing.sm, position: 'relative' },
+  occasionChipOn: { backgroundColor: colors.accentSoft, borderColor: colors.accent, shadowColor: colors.accent, shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
   occasionIcon:   { fontSize: 22 },
   occasionLabel:  { color: colors.textMuted, fontSize: typography.size.caption, textAlign: 'center' },
-  occasionLabelOn:{ color: colors.accent },
+  occasionLabelOn:{ color: colors.accent, fontWeight: typography.weight.semibold },
   occasionCheck:  { position: 'absolute', top: 7, right: 7, width: 16, height: 16, borderRadius: 8, backgroundColor: 'rgba(232,160,69,0.2)', alignItems: 'center', justifyContent: 'center' },
 
   noteWrap:  { marginHorizontal: spacing.xxl, backgroundColor: colors.card, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.cardBorder },

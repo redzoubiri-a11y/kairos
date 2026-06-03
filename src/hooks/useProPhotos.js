@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
+import { Linking, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { supabase } from '../../supabase';
 
@@ -24,7 +25,17 @@ export default function useProPhotos(restaurantId) {
 
   const addPhoto = useCallback(async () => {
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!perm.granted) { setError('Permission galerie refusée'); return; }
+    if (!perm.granted) {
+      Alert.alert(
+        'Accès photos refusé',
+        'Autorisez l\'accès aux photos dans Réglages > Expo Go > Photos.',
+        [
+          { text: 'Annuler', style: 'cancel' },
+          { text: 'Ouvrir Réglages', onPress: () => Linking.openSettings() },
+        ],
+      );
+      return;
+    }
 
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],

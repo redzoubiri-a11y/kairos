@@ -13,10 +13,12 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.mida.app",
+      "bundleIdentifier": "com.kairos.mida",
+      "buildNumber": "1",
       "infoPlist": {
         "NSUserNotificationsUsageDescription": "MIDA vous envoie des notifications pour vos réservations.",
         "NSLocationWhenInUseUsageDescription": "MIDA utilise votre position pour afficher les restaurants près de vous.",
+        "NSPhotoLibraryUsageDescription": "MIDA accède à vos photos pour ajouter des images à votre restaurant.",
         "ITSAppUsesNonExemptEncryption": false
       }
     },
@@ -27,6 +29,7 @@
       },
       "edgeToEdgeEnabled": true,
       "package": "com.mida.app",
+      "versionCode": 1,
       "permissions": [
         "RECEIVE_BOOT_COMPLETED",
         "VIBRATE",
@@ -48,7 +51,13 @@
           "sounds": []
         }
       ],
-      "expo-location"
+      "expo-location",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "MIDA accède à vos photos pour ajouter des images à votre restaurant."
+        }
+      ]
     ],
     "extra": {
       "eas": {

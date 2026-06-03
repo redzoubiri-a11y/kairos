@@ -73,7 +73,7 @@ export default function RestaurantScreen({ route, navigation }) {
 
         <HeroGradient />
 
-        <TouchableOpacity style={[s.heroBtn, { left: spacing.xl }]} onPress={goBack}>
+        <TouchableOpacity style={s.backBtn} onPress={goBack}>
           <Text style={s.heroBtnTxt}>←</Text>
         </TouchableOpacity>
 
@@ -193,6 +193,7 @@ const s = StyleSheet.create({
 
   hero:         { height: HERO, overflow: 'hidden' },
   heroBtn:      { position: 'absolute', top: TOP, width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(15,13,11,0.76)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(240,235,227,0.12)' },
+  backBtn:      { position: 'absolute', bottom: spacing.xl, left: spacing.xl, width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(15,13,11,0.72)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(240,235,227,0.12)' },
   heroLogo:     { position: 'absolute', top: TOP + 2, alignSelf: 'center', left: 0, right: 0 },
   heroBtnTxt:   { color: colors.text, fontSize: typography.size.heading1 },
   heroBtnIcon:  { fontSize: typography.size.heading1 },

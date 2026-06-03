@@ -344,19 +344,19 @@ const s = StyleSheet.create({
 
   tabWrap:    { flexDirection: 'row', marginHorizontal: spacing.xxl, marginBottom: spacing.md, backgroundColor: colors.card, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.xxs+1, gap: spacing.xxs },
   tabBtn:     { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: spacing.md+1, borderRadius: radius.lg, gap: spacing.sm },
-  tabBtnOn:   { backgroundColor: colors.cardHover },
+  tabBtnOn:   { backgroundColor: colors.accentSoft, shadowColor: colors.accent, shadowOpacity: 0.3, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 4 },
   tabTxt:     { color: colors.textDim, fontSize: typography.size.body, fontWeight: typography.weight.regular },
-  tabTxtOn:   { color: colors.text },
+  tabTxtOn:   { color: colors.accent, fontWeight: typography.weight.semibold },
   tabBadge:   { width: 16, height: 16, borderRadius: 8, backgroundColor: colors.accent, alignItems: 'center', justifyContent: 'center' },
   tabBadgeTxt:{ color: colors.bg, fontSize: typography.size.xs, fontWeight: typography.weight.bold },
 
   sectionLbl: { color: colors.textDim, fontSize: typography.size.xs, letterSpacing: 3, paddingHorizontal: spacing.xxl, marginTop: spacing.xxl, marginBottom: spacing.lg },
 
   chipsWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md, paddingHorizontal: spacing.xxl },
-  chip:      { paddingHorizontal: spacing.lg, paddingVertical: spacing.md, borderRadius: radius.full, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder },
-  chipOn:    { backgroundColor: colors.accentSoft, borderColor: colors.accent },
+  chip:      { paddingHorizontal: spacing.lg, paddingVertical: spacing.md, borderRadius: radius.full, backgroundColor: 'transparent', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
+  chipOn:    { backgroundColor: colors.accentSoft, borderColor: colors.accent, shadowColor: colors.accent, shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
   chipTxt:   { color: colors.textMuted, fontSize: typography.size.body, fontWeight: typography.weight.regular },
-  chipTxtOn: { color: colors.accent },
+  chipTxtOn: { color: colors.accent, fontWeight: typography.weight.semibold },
 
   proCard:      { flexDirection: 'row', alignItems: 'center', gap: spacing.lg, marginHorizontal: spacing.xxl, marginTop: spacing.xxl, padding: spacing.xl, borderRadius: radius.xxl, backgroundColor: 'rgba(232,160,69,0.07)', borderWidth: 1, borderColor: 'rgba(232,160,69,0.25)' },
   proCardIcon:  { width: 46, height: 46, borderRadius: radius.lg, backgroundColor: colors.accentSoft, alignItems: 'center', justifyContent: 'center' },

@@ -54,6 +54,7 @@ export default function ProInscriptionScreen({ navigation }) {
         <FormField label="Prénom"    value={form.prenom}    onChangeText={set('prenom')}    placeholder="Votre prénom" />
         <FormField label="Nom"       value={form.nom}       onChangeText={set('nom')}       placeholder="Votre nom" />
         <FormField label="Téléphone" value={form.telephone} onChangeText={set('telephone')} placeholder="+213 6XX XXX XXX" keyboardType="phone-pad" />
+        <FormField label="Email de contact" value={form.email} onChangeText={set('email')} placeholder="votre@email.com" keyboardType="email-address" autoCapitalize="none" />
 
         <Text style={s.sectionLabel}>VOTRE RESTAURANT</Text>
         <FormField label="Nom du restaurant" value={form.restaurant} onChangeText={set('restaurant')} placeholder="Ex: Dar Zitoun" />

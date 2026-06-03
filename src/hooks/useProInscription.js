@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { supabase } from '../../supabase';
 
 export default function useProInscription() {
-  const [form,    setFormState] = useState({ nom:'', prenom:'', restaurant:'', adresse:'', ville:'', telephone:'' });
+  const [form,    setFormState] = useState({ nom:'', prenom:'', telephone:'', email:'', restaurant:'', adresse:'', ville:'' });
   const [loading, setLoading]   = useState(false);
   const [error,   setError]     = useState('');
   const [success, setSuccess]   = useState(false);
@@ -10,8 +10,8 @@ export default function useProInscription() {
   const set = useCallback((key) => (val) => setFormState(prev => ({ ...prev, [key]: val })), []);
 
   const soumettre = useCallback(async () => {
-    if (!form.nom || !form.prenom || !form.restaurant || !form.telephone) {
-      setError('Nom, prénom, restaurant et téléphone sont obligatoires');
+    if (!form.nom || !form.prenom || !form.restaurant || !form.telephone || !form.email) {
+      setError('Nom, prénom, téléphone, email et restaurant sont obligatoires');
       return;
     }
     setLoading(true);
@@ -31,7 +31,7 @@ export default function useProInscription() {
       });
       if (err) { setError(err.message); return; }
       const { error: fnErr } = await supabase.functions.invoke('pro-inscription', {
-        body: { ...form, email: session.user.email },
+        body: { ...form },
       });
       if (fnErr) { setError("Une erreur est survenue lors de l'activation. Réessayez."); return; }
       supabase.auth.refreshSession().catch(() => {});

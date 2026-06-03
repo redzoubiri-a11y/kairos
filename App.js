@@ -6,6 +6,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { View, Text, Platform } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { supabase } from './supabase';
+import { linkingConfig } from './src/linking';
 import OnboardingScreen from './screens/OnboardingScreen';
 import HomeScreen from './screens/HomeScreen';
 import ExplorerScreen from './screens/ExplorerScreen';
@@ -23,6 +24,7 @@ import ProComptoir from './screens/ProComptoir';
 import ProPromosScreen from './screens/ProPromosScreen';
 import ProAvisScreen from './screens/ProAvisScreen';
 import ProMenuScreen from './screens/ProMenuScreen';
+import ProPhotosScreen from './screens/ProPhotosScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import AideScreen from './screens/AideScreen';
 
@@ -114,7 +116,7 @@ export default function App() {
     }
     if (!session) return <AuthScreen userType={userType} onAuth={(s) => setSession(s)} />;
     return (
-      <NavigationContainer>
+      <NavigationContainer linking={linkingConfig}>
         <StatusBar style="light" />
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Main">{() => <TabNavigator userRole={userRole} />}</Stack.Screen>
@@ -129,6 +131,7 @@ export default function App() {
           <Stack.Screen name="ProPromos" component={ProPromosScreen} />
           <Stack.Screen name="ProAvis" component={ProAvisScreen} />
           <Stack.Screen name="ProMenu" component={ProMenuScreen} />
+          <Stack.Screen name="ProPhotos" component={ProPhotosScreen} />
           <Stack.Screen name="Settings" component={SettingsScreen} />
           <Stack.Screen name="Aide" component={AideScreen} />
         </Stack.Navigator>

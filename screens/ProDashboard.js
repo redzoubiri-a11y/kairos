@@ -48,6 +48,7 @@ export default function ProDashboard({ navigation }) {
   const goComptoir = useCallback(() => navigation.navigate('ProComptoir'), [navigation]);
   const goMenu     = useCallback(() => navigation.navigate('ProMenu'),     [navigation]);
   const goAvis     = useCallback(() => navigation.navigate('ProAvis'),     [navigation]);
+  const goPhotos   = useCallback(() => navigation.navigate('ProPhotos', { restaurantId: restaurant?.id }), [navigation, restaurant]);
 
   if (loading) {
     return (
@@ -80,6 +81,9 @@ export default function ProDashboard({ navigation }) {
               </TouchableOpacity>
             </View>
             <View style={{ flexDirection: 'row', gap: spacing.sm }}>
+              <TouchableOpacity style={s.comptoirBtn} onPress={goPhotos}>
+                <Text style={s.comptoirBtnTxt}>📷  Photos</Text>
+              </TouchableOpacity>
               <TouchableOpacity style={s.comptoirBtn} onPress={goPromos}>
                 <Text style={s.comptoirBtnTxt}>🏷️  Promos</Text>
               </TouchableOpacity>

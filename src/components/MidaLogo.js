@@ -19,8 +19,8 @@ export default function MidaLogo({ showTagline = true, style }) {
 
 const s = StyleSheet.create({
   wrap:    { alignItems: 'center' },
-  logoWrap:{ position: 'relative' },
-  logo:    { color: colors.accent, fontSize: typography.size.display, fontWeight: typography.weight.black, letterSpacing: -1, fontFamily: 'Georgia', marginBottom: spacing.xs },
+  logoWrap:{ position: 'relative', opacity: 0.72 },
+  logo:    { color: colors.accent, fontSize: typography.size.display, fontWeight: typography.weight.black, letterSpacing: -1, fontFamily: 'Georgia', marginBottom: spacing.xs, textShadowColor: '#3D2008', textShadowOffset: { width: 2, height: 2 }, textShadowRadius: 1 },
   d1:      { position: 'absolute', top: 1,  left: 1,  color: '#C47830' },
   d2:      { position: 'absolute', top: 2,  left: 2,  color: '#9A5820' },
   d3:      { position: 'absolute', top: 3,  left: 3,  color: '#6B3A10' },

@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import {
   Platform, StatusBar as RNStatusBar, Dimensions,
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  SafeAreaView, Image, Animated,
+  SafeAreaView, Image, Animated, Share,
 } from 'react-native';
 import { colors, typography, spacing, radius } from '../src/theme';
 import useRestaurant from '../src/hooks/useRestaurant';
@@ -43,6 +43,12 @@ export default function RestaurantScreen({ route, navigation }) {
 
   const goBack    = useCallback(() => navigation?.goBack(), [navigation]);
   const goReserve = useCallback(() => navigation.navigate('ReservationForm', { restaurant }), [navigation, restaurant]);
+  const handleShare = useCallback(() => {
+    Share.share({
+      message: `🍽️ ${restaurant.name} sur MIDA\n${restaurant.address || ''}\n\nRéserve ta table : mida://restaurant/${restaurant.id}`,
+      title: restaurant.name,
+    });
+  }, [restaurant]);
 
   return (
     <SafeAreaView style={s.root}>
@@ -77,6 +83,10 @@ export default function RestaurantScreen({ route, navigation }) {
           <Text style={favLoading ? s.heroBtnActing : s.heroBtnIcon}>
             {favLoading ? '···' : isFav ? '❤️' : '🤍'}
           </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={[s.heroBtn, { right: spacing.xl, top: TOP + 50 }]} onPress={handleShare}>
+          <Text style={s.heroBtnIcon}>↗️</Text>
         </TouchableOpacity>
 
         {photos && photos.length > 1 && (

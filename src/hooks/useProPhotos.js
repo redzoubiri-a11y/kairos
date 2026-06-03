@@ -49,8 +49,7 @@ export default function useProPhotos(restaurantId) {
     setError('');
     try {
       const uri  = result.assets[0].uri;
-      const ext  = uri.split('.').pop() || 'jpg';
-      const path = `${restaurantId}/${Date.now()}.${ext}`;
+      const path = `${restaurantId}/${Date.now()}.jpg`;
 
       const response = await fetch(uri);
       const blob     = await response.blob();
@@ -62,7 +61,7 @@ export default function useProPhotos(restaurantId) {
 
       const { error: upErr } = await supabase.storage
         .from('restaurant-photos')
-        .upload(path, blob, { contentType: `image/${ext}` });
+        .upload(path, blob, { contentType: 'image/jpeg', upsert: false });
       if (upErr) { setError(upErr.message); return; }
 
       const { data: { publicUrl } } = supabase.storage

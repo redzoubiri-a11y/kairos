@@ -80,21 +80,16 @@ export default function RestaurantScreen({ route, navigation }) {
         <MidaLogo showTagline={false} style={s.heroLogo} />
 
         <View style={s.heroRight}>
-          <TouchableOpacity style={s.heroBtn} onPress={toggleFav} disabled={favLoading}>
-            <Text style={favLoading ? s.heroBtnActing : s.heroBtnIcon}>
-              {favLoading ? '···' : isFav ? '❤️' : '🤍'}
-            </Text>
-          </TouchableOpacity>
           <TouchableOpacity style={s.sharePill} onPress={handleShare}>
             <Text style={s.shareTxt}>Partage</Text>
           </TouchableOpacity>
         </View>
 
-        {photos && photos.length > 1 && (
-          <View style={s.photoCounter}>
-            <Text style={s.photoCounterTxt}>{photoIndex + 1} / {photos.length}</Text>
-          </View>
-        )}
+        <TouchableOpacity style={s.favBtn} onPress={toggleFav} disabled={favLoading}>
+          <Text style={favLoading ? s.heroBtnActing : s.heroBtnIcon}>
+            {favLoading ? '···' : isFav ? '❤️' : '🤍'}
+          </Text>
+        </TouchableOpacity>
 
         <View style={s.heroInfo}>
           <View style={s.heroTopRow}>
@@ -205,11 +200,10 @@ const s = StyleSheet.create({
   heroBtnActing:{ color: colors.accent, fontSize: typography.size.bodyLg, fontWeight: typography.weight.bold },
 
   heroRight:    { position: 'absolute', top: TOP, right: spacing.xl, flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  favBtn:       { position: 'absolute', bottom: spacing.xl, right: spacing.xl, width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(15,13,11,0.72)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(240,235,227,0.12)' },
   sharePill:    { backgroundColor: 'rgba(255,255,255,0.07)', borderRadius: 100, paddingHorizontal: 14, paddingVertical: 9, borderWidth: 1, borderColor: 'rgba(255,255,255,0.13)' },
   shareTxt:     { color: 'rgba(232,160,69,0.75)', fontSize: typography.size.caption, fontWeight: typography.weight.regular, letterSpacing: 2 },
 
-  photoCounter:    { position: 'absolute', top: TOP + 5, alignSelf: 'center', backgroundColor: 'rgba(15,13,11,0.7)', borderRadius: radius.full, paddingHorizontal: spacing.md + 2, paddingVertical: spacing.xs },
-  photoCounterTxt: { color: colors.text, fontSize: typography.size.caption, fontWeight: typography.weight.regular },
 
   openBadge: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs + 1, backgroundColor: 'rgba(15,13,11,0.76)', borderRadius: radius.full, paddingHorizontal: spacing.md + 2, paddingVertical: spacing.xs, borderWidth: 1, borderColor: 'rgba(76,175,130,0.3)' },
   openDot:   { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.green },

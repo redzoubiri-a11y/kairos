@@ -97,6 +97,9 @@ export default function MapScreen({ navigation }) {
 
       <SafeAreaView style={s.headerWrap} pointerEvents="box-none">
         <View style={s.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
+            <Text style={s.backBtnTxt}>←</Text>
+          </TouchableOpacity>
           <View>
             <Text style={s.headerSub}>Alger</Text>
           </View>
@@ -173,6 +176,8 @@ const s = StyleSheet.create({
     borderRadius: radius.xxl, paddingHorizontal: spacing.xxl, paddingVertical: spacing.lg,
     borderWidth: 1, borderColor: colors.cardBorder,
   },
+  backBtn:    { marginRight: spacing.sm },
+  backBtnTxt: { color: 'rgba(240,235,227,0.85)', fontSize: 22 },
   headerSub:  { color: colors.textMuted, fontSize: typography.size.caption, marginTop: 1 },
   countBadge: {
     flexDirection: 'row', alignItems: 'center', gap: spacing.sm,

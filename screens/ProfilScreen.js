@@ -200,7 +200,7 @@ export default function ProfilScreen({ navigation }) {
               {[
                 { icon:'⚙️', label:'Paramètres',             screen:'Settings'  },
                 { icon:'❓', label:'Aide & Support',          screen:'Aide'      },
-                { icon:'🔔', label:'Notifications'                               },
+                { icon:'🔔', label:'Notifications',          screen:'Notifications' },
                 { icon:'🔒', label:'Confidentialité',        action: goPrivacy  },
                 { icon:'⭐', label:'Donner un avis sur MIDA', action: goReview  },
               ].map((item, i, arr) => (

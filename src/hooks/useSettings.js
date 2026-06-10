@@ -28,15 +28,15 @@ export const GROUPS = [
   {
     section: '📄 Légal',
     items: [
-      { label: "Conditions d'utilisation",    arrow: true },
-      { label: 'Politique de confidentialité', arrow: true },
+      { label: "Conditions d'utilisation",    arrow: true, url: 'https://www.mida-food.com/cgu' },
+      { label: 'Politique de confidentialité', arrow: true, url: 'https://www.mida-food.com/confidentialite' },
     ],
   },
   {
     section: 'ℹ️ À propos',
     items: [
       { label: "Version de l'app", sub: 'Mida v1.0.0' },
-      { label: 'Mentions légales', arrow: true },
+      { label: 'Mentions légales', arrow: true, url: 'https://www.mida-food.com/mentions-legales' },
     ],
   },
 ];

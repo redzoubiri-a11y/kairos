@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  Switch,
+  Switch, Linking, Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, typography, spacing, radius } from '../src/theme';
@@ -11,6 +11,16 @@ import BottomTabBar from '../src/components/BottomTabBar';
 export default function SettingsScreen({ navigation }) {
   const { toggles, toggle } = useSettings();
   const goAide = useCallback(() => navigation.navigate('Aide'), [navigation]);
+
+  const handleItem = useCallback((item) => {
+    if (item.url) {
+      Linking.openURL(item.url);
+    } else if (item.screen) {
+      navigation.navigate(item.screen);
+    } else if (item.arrow) {
+      Alert.alert('Bientôt disponible', 'Cette fonctionnalité arrive dans une prochaine mise à jour.');
+    }
+  }, [navigation]);
 
   return (
     <SafeAreaView style={s.root} edges={['top', 'left', 'right']}>
@@ -54,6 +64,7 @@ export default function SettingsScreen({ navigation }) {
                       key={i}
                       style={[r.row, !isLast && r.border]}
                       activeOpacity={item.arrow ? 0.7 : 1}
+                      onPress={() => handleItem(item)}
                     >
                       <View style={{ flex: 1 }}>
                         <Text style={r.label}>{item.label}</Text>
@@ -74,7 +85,7 @@ export default function SettingsScreen({ navigation }) {
                 <Text style={r.label}>Centre d'aide & FAQ</Text>
                 <Text style={r.arrow}>›</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={r.row}>
+              <TouchableOpacity style={r.row} onPress={() => Linking.openURL('mailto:contact@mida-food.com?subject=Signalement%20problème')}>
                 <Text style={r.label}>Signaler un problème</Text>
                 <Text style={r.arrow}>›</Text>
               </TouchableOpacity>

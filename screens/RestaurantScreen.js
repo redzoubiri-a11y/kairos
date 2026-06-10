@@ -79,6 +79,10 @@ export default function RestaurantScreen({ route, navigation }) {
 
         <HeroGradient />
 
+        <TouchableOpacity style={s.heroBackBtn} onPress={() => navigation.goBack()}>
+          <Text style={s.heroBackBtnTxt}>←</Text>
+        </TouchableOpacity>
+
         <View style={s.heroBottomRight}>
           <TouchableOpacity style={s.sharePill} onPress={handleShare}>
             <Text style={s.shareTxt}>Partage</Text>
@@ -199,6 +203,8 @@ const s = StyleSheet.create({
   heroBtnIcon:  { fontSize: typography.size.heading1 },
   heroBtnActing:{ color: colors.accent, fontSize: typography.size.bodyLg, fontWeight: typography.weight.bold },
 
+  heroBackBtn:     { position: 'absolute', top: TOP, left: spacing.xl, width: 40, height: 40, borderRadius: 0, backgroundColor: 'rgba(15,13,11,0.72)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(240,235,227,0.12)' },
+  heroBackBtnTxt:  { color: 'rgba(240,235,227,0.9)', fontSize: 22, lineHeight: 26 },
   heroBottomRight: { position: 'absolute', bottom: spacing.xl, right: spacing.xl, flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   favBtn:          { width: 44, height: 44, borderRadius: 0, backgroundColor: 'rgba(15,13,11,0.72)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(240,235,227,0.12)' },
   sharePill:    { backgroundColor: 'rgba(255,255,255,0.07)', borderRadius: 0, paddingHorizontal: 14, paddingVertical: 9, borderWidth: 1, borderColor: 'rgba(255,255,255,0.13)' },

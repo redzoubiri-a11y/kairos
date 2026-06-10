@@ -72,6 +72,9 @@ export default function ReservationFormScreen({ route, navigation }) {
 
       {/* Header */}
       <View style={s.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
+          <Text style={s.backBtnTxt}>←</Text>
+        </TouchableOpacity>
         <View style={{ flex: 1 }}>
           <Text style={s.headerSub}>{isEdit ? 'MODIFIER' : 'RÉSERVATION'}</Text>
           <Text style={s.headerTitle} numberOfLines={1}>{restaurant.name}</Text>
@@ -299,6 +302,8 @@ const s = StyleSheet.create({
   bgOverlay: { ...StyleSheet.absoluteFillObject, opacity: 0.06 },
 
   header:      { flexDirection: 'row', alignItems: 'center', gap: spacing.lg, paddingHorizontal: spacing.xxl, paddingTop: spacing.lg, paddingBottom: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
+  backBtn:     { padding: spacing.xs, marginRight: spacing.sm },
+  backBtnTxt:  { color: colors.text, fontSize: 22 },
   headerSub:   { color: '#C87860', fontSize: typography.size.xs, letterSpacing: 3, marginBottom: 2 },
   headerTitle: { color: colors.text, fontSize: typography.size.heading3, fontWeight: typography.weight.regular, letterSpacing: 0.3 },
   ratingPill:  { backgroundColor: colors.navy, borderRadius: radius.md, borderWidth: 1, borderColor: colors.navyBorder, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },

@@ -77,7 +77,11 @@ export default function SearchScreen({ navigation, route }) {
 
       {/* ── Header ── */}
       <View style={s.header}>
+        <TouchableOpacity style={s.backBtn} onPress={() => navigation.goBack()}>
+          <Text style={s.backBtnTxt}>←</Text>
+        </TouchableOpacity>
         <Text style={s.headerTitle}>RECHERCHE</Text>
+        <View style={s.backBtn} />
       </View>
 
       {/* ── Inputs ── */}
@@ -192,8 +196,10 @@ export default function SearchScreen({ navigation, route }) {
 const s = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.bg },
 
-  header:      { height: 52, justifyContent: 'center', alignItems: 'center', borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
-  headerTitle: { color: colors.text, fontSize: typography.size.heading2, fontWeight: typography.weight.bold, letterSpacing: 3 },
+  header:      { height: 52, flexDirection: 'row', alignItems: 'center', paddingHorizontal: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
+  headerTitle: { flex: 1, color: colors.text, fontSize: typography.size.heading2, fontWeight: typography.weight.bold, letterSpacing: 3, textAlign: 'center' },
+  backBtn:     { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
+  backBtnTxt:  { color: colors.text, fontSize: 22 },
 
   inputBlock:  { borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   inputRow:    { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingHorizontal: spacing.xl, height: 50 },

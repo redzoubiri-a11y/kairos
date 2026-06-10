@@ -264,8 +264,8 @@ const s = StyleSheet.create({
   cityTxt:     { color:colors.textMuted, fontSize:typography.size.body },
   cityTxtOn:   { color:'#C87860', fontWeight:'600' },
 
-  backBtn:     { width:36, height:36, borderRadius:0, backgroundColor:'transparent', alignItems:'center', justifyContent:'center' },
-  backBtnTxt:  { color:'#FFFFFF', fontSize:18, lineHeight:22 },
+  backBtn:     { width:36, height:36, borderRadius:0, backgroundColor:'rgba(15,13,11,0.65)', alignItems:'center', justifyContent:'center', borderWidth:1, borderColor:'rgba(240,235,227,0.15)' },
+  backBtnTxt:  { color:'rgba(240,235,227,0.9)', fontSize:18, lineHeight:22 },
 
   gridRow:     { paddingHorizontal:14, justifyContent:'space-between' },
   gridContent: { paddingTop:6 },

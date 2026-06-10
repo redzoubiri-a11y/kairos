@@ -130,14 +130,11 @@ export default function useRestaurant(restaurant) {
           })),
       }));
     }
-    return MENUS[restaurant.cuisine_type] || MENUS.default;
-  }, [dbDishes, restaurant.cuisine_type]);
+    return [];
+  }, [dbDishes]);
   const rating       = useMemo(() => restaurant.avg_rating > 0 ? Number(restaurant.avg_rating).toFixed(1) : null, [restaurant.avg_rating]);
   const cuisineEmoji = useMemo(() => CUISINE_EMOJI[restaurant.cuisine_type] || '🍽️', [restaurant.cuisine_type]);
-  const desc         = useMemo(
-    () => restaurant.description || CUISINE_DESC[restaurant.cuisine_type] || CUISINE_DESC.autre,
-    [restaurant.description, restaurant.cuisine_type],
-  );
+  const desc         = useMemo(() => restaurant.description || null, [restaurant.description]);
 
   useEffect(() => {
     (async () => {

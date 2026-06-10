@@ -7,6 +7,16 @@ export default function RestaurantMenuTab({ menu }) {
   const [active, setActive] = useState(cats[0]);
   const catData = useMemo(() => menu.find(c => c.cat === active), [menu, active]);
 
+  if (menu.length === 0) {
+    return (
+      <View style={s.empty}>
+        <Text style={s.emptyEmoji}>🍽️</Text>
+        <Text style={s.emptyTxt}>Menu non disponible</Text>
+        <Text style={s.emptySub}>Le restaurant n'a pas encore renseigné son menu</Text>
+      </View>
+    );
+  }
+
   return (
     <>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.pillRow}>
@@ -67,4 +77,8 @@ const s = StyleSheet.create({
   priceBox:    { alignItems: 'flex-end', minWidth: 55 },
   price:       { color: colors.accent, fontSize: typography.size.heading3, fontWeight: typography.weight.regular },
   priceUnit:   { color: colors.textDim, fontSize: typography.size.xs, marginTop: 1 },
+  empty:     { alignItems: 'center', paddingVertical: 56, gap: spacing.md },
+  emptyEmoji:{ fontSize: 36 },
+  emptyTxt:  { color: colors.textMuted, fontSize: typography.size.subheading, fontWeight: typography.weight.regular },
+  emptySub:  { color: colors.textDim, fontSize: typography.size.body, textAlign: 'center', paddingHorizontal: spacing.xl },
 });

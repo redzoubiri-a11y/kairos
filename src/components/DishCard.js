@@ -63,7 +63,7 @@ const s = StyleSheet.create({
   dotdBadge:     { backgroundColor: colors.accentSoft, borderRadius: radius.pill, paddingHorizontal: spacing.md, paddingVertical: spacing.xxs, borderWidth: 1, borderColor: 'rgba(232,160,69,0.3)' },
   dotdTxt:       { color: colors.accent, fontSize: typography.size.xs, fontWeight: typography.weight.semibold },
   actions:       { flexDirection: 'row', gap: spacing.md },
-  editBtn:       { flex: 1, alignItems: 'center', paddingVertical: spacing.md, borderRadius: radius.lg, backgroundColor: colors.accentSoft, borderWidth: 1, borderColor: 'rgba(232,160,69,0.25)' },
+  editBtn:       { flex: 1, alignItems: 'center', paddingVertical: spacing.md, borderRadius: radius.lg, backgroundColor: 'rgba(200,151,90,0.14)', borderWidth: 1, borderColor: 'rgba(200,151,90,0.4)', shadowColor: '#000', shadowOpacity: 0.25, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 3 },
   editTxt:       { color: colors.accent, fontSize: typography.size.body, fontWeight: typography.weight.semibold },
   toggleBtn:     { flex: 1, alignItems: 'center', paddingVertical: spacing.md, borderRadius: radius.lg },
   toggleRed:     { backgroundColor: colors.redSoft, borderWidth: 1, borderColor: 'rgba(224,90,90,0.25)' },

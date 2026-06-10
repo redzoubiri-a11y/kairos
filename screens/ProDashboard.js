@@ -1,8 +1,12 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import * as ScreenOrientation from 'expo-screen-orientation';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  SafeAreaView, RefreshControl,
+  RefreshControl, Platform, StatusBar,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
 import { colors, typography, spacing, radius } from '../src/theme';
 import MLoader from '../src/components/MLoader';
 import usePushNotifications from '../src/hooks/usePushNotifications';
@@ -11,8 +15,9 @@ import useDashboard, { FILTERS, DATE_FILTERS } from '../src/hooks/useDashboard';
 import WeekStrip from '../src/components/WeekStrip';
 import StatCard from '../src/components/StatCard';
 import AlertBanner from '../src/components/AlertBanner';
-import MidaLogo from '../src/components/MidaLogo';
 import DashResaCard from '../src/components/DashResaCard';
+import ProSetupCard from '../src/components/ProSetupCard';
+import useProOnboarding from '../src/hooks/useProOnboarding';
 
 function SkeletonDashboard() {
   return (
@@ -20,7 +25,7 @@ function SkeletonDashboard() {
       <MLoader width="55%" height={18} borderRadius={radius.sm} style={{ marginBottom: spacing.sm }} />
       <MLoader width="35%" height={12} borderRadius={radius.sm} style={{ marginBottom: spacing.xxxl }} />
       <View style={{ flexDirection: 'row', gap: spacing.lg, marginBottom: spacing.xl }}>
-        {[1,2,3].map(i => <MLoader key={i} width={116} height={88} borderRadius={radius.xxl} />)}
+        {[1,2,3].map(i => <MLoader key={i} width={100} height={74} borderRadius={radius.xxl} />)}
       </View>
       <MLoader width="100%" height={56} borderRadius={radius.xl} style={{ marginBottom: spacing.lg }} />
       {[1,2,3].map(i => (
@@ -33,6 +38,10 @@ function SkeletonDashboard() {
 export default function ProDashboard({ navigation }) {
   usePushNotifications(navigation);
   useDeepLink(navigation);
+  useFocusEffect(useCallback(() => {
+    ScreenOrientation.unlockAsync();
+    return () => ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
+  }, []));
 
   const {
     restaurant, reservations, loading, refreshing,
@@ -44,11 +53,15 @@ export default function ProDashboard({ navigation }) {
     greetingTxt, t,
   } = useDashboard();
 
+  const { visible: setupVisible, visited, markVisited, dismiss: dismissSetup, reset: resetSetup } = useProOnboarding();
+
   const goPromos   = useCallback(() => navigation.navigate('ProPromos'),   [navigation]);
   const goComptoir = useCallback(() => navigation.navigate('ProComptoir'), [navigation]);
   const goMenu     = useCallback(() => navigation.navigate('ProMenu'),     [navigation]);
   const goAvis     = useCallback(() => navigation.navigate('ProAvis'),     [navigation]);
   const goPhotos   = useCallback(() => navigation.navigate('ProPhotos', { restaurantId: restaurant?.id }), [navigation, restaurant]);
+  const goInfo     = useCallback(() => navigation.navigate('ProInfo'),     [navigation]);
+  const goHoraires = useCallback(() => navigation.navigate('ProHoraires'), [navigation]);
 
   if (loading) {
     return (
@@ -60,55 +73,83 @@ export default function ProDashboard({ navigation }) {
 
   return (
     <SafeAreaView style={s.root}>
+      <LinearGradient colors={['#C4B8C8', '#8B9BB4', '#6B7F9E']} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
       <ScrollView
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.accent} />}
       >
         {/* Header */}
-        <View style={s.header}>
-          <View style={s.headerTop}>
-            <MidaLogo showTagline={false} style={{ alignItems: 'flex-start' }} />
+        <LinearGradient colors={['#0D1628', '#162040']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={s.darkHeader}>
+          <View style={s.header}>
+            <View style={s.headerLeft}>
+              <Text style={s.headerGreeting}>{greetingTxt} 👋</Text>
+              <Text style={s.headerTitle}>{restaurant?.name || 'Manager'}</Text>
+            </View>
             <View style={s.onlineBadge}>
               <View style={s.onlineDot} />
               <Text style={s.onlineTxt}>En ligne</Text>
             </View>
           </View>
-          <Text style={s.headerGreeting}>{greetingTxt} 👋</Text>
-          <Text style={s.headerTitle}>{restaurant?.name || 'Manager'}</Text>
-        </View>
 
-        {/* Actions rapides */}
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.actionsRow}>
+          {/* Actions rapides */}
+          <View style={s.actionsRow}>
           <TouchableOpacity style={s.comptoirBtn} onPress={goMenu}>
-            <Text style={s.comptoirBtnTxt}>🍽️  Menu</Text>
+            <Text style={s.comptoirIcon}>🍽️</Text>
+            <Text style={s.comptoirBtnTxt}>Menu</Text>
           </TouchableOpacity>
           <TouchableOpacity style={s.comptoirBtn} onPress={goAvis}>
-            <Text style={s.comptoirBtnTxt}>⭐  Avis</Text>
+            <Text style={s.comptoirIcon}>⭐</Text>
+            <Text style={s.comptoirBtnTxt}>Avis</Text>
           </TouchableOpacity>
           <TouchableOpacity style={s.comptoirBtn} onPress={goPhotos}>
-            <Text style={s.comptoirBtnTxt}>📷  Photos</Text>
+            <Text style={s.comptoirIcon}>📷</Text>
+            <Text style={s.comptoirBtnTxt}>Photos</Text>
           </TouchableOpacity>
           <TouchableOpacity style={s.comptoirBtn} onPress={goPromos}>
-            <Text style={s.comptoirBtnTxt}>🏷️  Promos</Text>
+            <Text style={s.comptoirIcon}>🏷️</Text>
+            <Text style={s.comptoirBtnTxt}>Promos</Text>
           </TouchableOpacity>
           <TouchableOpacity style={s.comptoirBtn} onPress={goComptoir}>
-            <Text style={s.comptoirBtnTxt}>📟  Comptoir</Text>
+            <Text style={s.comptoirIcon}>📟</Text>
+            <Text style={s.comptoirBtnTxt}>Comptoir</Text>
           </TouchableOpacity>
-        </ScrollView>
+          <TouchableOpacity style={s.comptoirBtn} onPress={goInfo}>
+            <Text style={s.comptoirIcon}>✏️</Text>
+            <Text style={s.comptoirBtnTxt}>Infos</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={s.comptoirBtn} onPress={goHoraires}>
+            <Text style={s.comptoirIcon}>🕐</Text>
+            <Text style={s.comptoirBtnTxt}>Horaires</Text>
+          </TouchableOpacity>
+        </View>
+        </LinearGradient>
+
+        {setupVisible && (
+          <ProSetupCard
+            navigation={navigation}
+            restaurantId={restaurant?.id}
+            visited={visited}
+            onVisit={markVisited}
+            onDismiss={dismissSetup}
+            onReset={resetSetup}
+          />
+        )}
 
         {/* KPIs */}
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.statsRow}>
-          <StatCard icon="📅" value={todayResas.length}    label={`Résa\naujourd'hui`} color={colors.blue} />
-          <StatCard icon="⏳" value={pendingAll.length}     label="En attente"          color={colors.accent} alert={pendingAll.length > 0} sub={pendingAll.length > 0 ? 'Action requise' : ''} />
-          <StatCard icon="✅" value={confirmedToday.length} label={`Confirmées\nauj.`}  color={colors.green} />
-          <StatCard icon="🪑" value={totalCovers}           label="Couverts\nconfirmés" color={colors.textMuted} />
+          <StatCard icon="📅" value={todayResas.length}    label="Résa auj."  color={colors.blue} />
+          <StatCard icon="⏳" value={pendingAll.length}     label="En attente"         color={colors.accent} alert={pendingAll.length > 0} sub={pendingAll.length > 0 ? 'Action requise' : ''} />
+          <StatCard icon="✅" value={confirmedToday.length} label="Confirmées"          color={colors.green} />
+          <StatCard icon="🪑" value={totalCovers}           label="Couverts"            color={'rgba(245,242,236,0.70)'} />
           {revenue != null && (
-            <StatCard icon="💰" value={`${(revenue/1000).toFixed(0)}k`} label="Revenus est.\naujourd'hui" color={colors.accent} sub="DA" />
+            <StatCard icon="💰" value={`${(revenue/1000).toFixed(0)}k`} label="Revenus DA" color={colors.accent} />
           )}
         </ScrollView>
 
         <AlertBanner pendingCount={pendingAll.length} upcomingCount={upcomingCount} />
+        <View style={s.sep} />
         <WeekStrip reservations={reservations} />
+        <View style={s.sep} />
 
         {/* Date filter */}
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.chipRow}>
@@ -131,6 +172,7 @@ export default function ProDashboard({ navigation }) {
           ))}
         </View>
 
+        <View style={s.sep} />
         <View style={s.listHead}>
           <Text style={s.listHeadTxt}>{filtered.length} réservation{filtered.length !== 1 ? 's' : ''}</Text>
         </View>
@@ -200,48 +242,53 @@ export default function ProDashboard({ navigation }) {
 }
 
 const s = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.bg },
+  root:      { flex: 1, backgroundColor: '#0D1B2A', paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 },
+  bgOverlay: { ...StyleSheet.absoluteFillObject, opacity: 0.06 },
 
-  header:         { paddingHorizontal: spacing.xxl, paddingTop: spacing.xl, paddingBottom: spacing.xl, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
-  headerTop:      { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.sm },
-  headerGreeting: { color: colors.textMuted, fontSize: typography.size.body, marginBottom: spacing.xxs },
-  headerTitle:    { color: colors.text, fontSize: typography.size.title + 4, fontWeight: '300', letterSpacing: 0.5 },
-  actionsRow:     { paddingHorizontal: spacing.xxl, paddingVertical: spacing.md, gap: spacing.sm },
-  comptoirBtn:    { flexDirection: 'row', alignItems: 'center', paddingHorizontal: spacing.lg, paddingVertical: spacing.sm + 1, borderRadius: radius.lg, backgroundColor: colors.accentSoft, borderWidth: 1, borderColor: 'rgba(232,160,69,0.3)' },
-  comptoirBtnTxt: { color: colors.accent, fontSize: typography.size.body },
-  onlineBadge:    { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: colors.greenSoft, borderRadius: radius.full, paddingHorizontal: spacing.lg, paddingVertical: spacing.xs, borderWidth: 1, borderColor: 'rgba(76,175,130,0.25)' },
-  onlineDot:      { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.green },
+  darkHeader:     { paddingBottom: spacing.lg },
+  header:         { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xl, paddingTop: spacing.lg, paddingBottom: spacing.lg },
+  headerLeft:     { flex: 1 },
+  headerGreeting: { color: 'rgba(245,242,236,0.55)', fontSize: typography.size.caption, letterSpacing: 2, marginBottom: spacing.xxs },
+  headerTitle:    { color: '#F5F2EC', fontSize: typography.size.title, fontWeight: '300', letterSpacing: 0.5 },
+  actionsRow:     { flexDirection: 'row', paddingHorizontal: spacing.xxl, paddingBottom: spacing.sm, gap: spacing.sm },
+  comptoirBtn:    { flex: 1, alignItems: 'center', paddingVertical: spacing.md, borderRadius: radius.lg, backgroundColor: 'rgba(255,255,255,0.07)', borderWidth: 1, borderColor: 'rgba(200,151,90,0.30)' },
+  comptoirIcon:   { fontSize: 16, marginBottom: spacing.xxs },
+  comptoirBtnTxt: { color: 'rgba(245,242,236,0.80)', fontSize: typography.size.xs },
+  onlineBadge:    { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: 'rgba(76,175,130,0.15)', borderRadius: radius.full, paddingHorizontal: spacing.lg, paddingVertical: spacing.xs, borderWidth: 1, borderColor: 'rgba(76,175,130,0.35)' },
+  onlineDot:      { width: 6, height: 6, borderRadius: 0, backgroundColor: colors.green },
   onlineTxt:      { color: colors.green, fontSize: typography.size.sm },
 
-  statsRow: { paddingHorizontal: spacing.xxl, paddingBottom: spacing.xl, gap: spacing.lg },
+  statsRow: { paddingHorizontal: spacing.xxl, paddingTop: spacing.sm, paddingBottom: spacing.sm, gap: spacing.sm },
 
-  chipRow:   { paddingHorizontal: spacing.xxl, paddingBottom: spacing.lg, gap: spacing.md },
-  chip:      { paddingHorizontal: spacing.lg, paddingVertical: spacing.sm + 1, borderRadius: radius.full, backgroundColor: 'transparent', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
-  chipOn:    { backgroundColor: colors.accentSoft, borderColor: colors.accent, shadowColor: colors.accent, shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
-  chipTxt:   { color: colors.textMuted, fontSize: typography.size.body },
-  chipTxtOn: { color: colors.accent, fontWeight: typography.weight.semibold },
+  sep:       { height: 1, backgroundColor: 'rgba(255,255,255,0.08)', marginHorizontal: spacing.xxl, marginVertical: spacing.sm },
 
-  statusTabs:     { flexDirection: 'row', marginHorizontal: spacing.xxl, marginBottom: spacing.lg, backgroundColor: colors.card, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.xxs + 1, gap: spacing.xxs },
-  statusTab:      { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: spacing.md + 1, borderRadius: radius.lg, gap: spacing.xs },
-  statusTabOn:    { backgroundColor: colors.accentSoft, shadowColor: colors.accent, shadowOpacity: 0.3, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 4 },
-  statusTabTxt:   { color: colors.textDim, fontSize: typography.size.caption },
-  statusTabTxtOn: { color: colors.accent, fontWeight: typography.weight.semibold },
-  badge:          { backgroundColor: colors.accent, borderRadius: radius.md, minWidth: 16, height: 16, alignItems: 'center', justifyContent: 'center', paddingHorizontal: spacing.xxs + 1 },
-  badgeTxt:       { color: colors.bg, fontSize: typography.size.xs, fontWeight: typography.weight.bold },
+  chipRow:   { paddingHorizontal: spacing.xxl, paddingBottom: spacing.sm, gap: spacing.sm },
+  chip:      { paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderRadius: radius.full, backgroundColor: 'transparent', borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)' },
+  chipOn:    { backgroundColor: 'rgba(200,151,90,0.20)', borderColor: '#c8975a' },
+  chipTxt:   { color: 'rgba(245,242,236,0.55)', fontSize: typography.size.body },
+  chipTxtOn: { color: '#C87860', fontWeight: typography.weight.semibold },
 
-  listHead:    { paddingHorizontal: spacing.xxl, paddingBottom: spacing.md },
-  listHeadTxt: { color: colors.textDim, fontSize: typography.size.sm, letterSpacing: 2 },
+  statusTabs:     { flexDirection: 'row', marginHorizontal: spacing.xxl, marginBottom: spacing.md, backgroundColor: 'rgba(255,255,255,0.10)', borderRadius: radius.xl, borderWidth: 1, borderColor: 'rgba(255,255,255,0.12)', padding: spacing.xxs + 1, gap: spacing.xxs },
+  statusTab:      { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: spacing.sm, borderRadius: radius.lg, gap: spacing.xs },
+  statusTabOn:    { backgroundColor: 'rgba(255,255,255,0.15)' },
+  statusTabTxt:   { color: 'rgba(245,242,236,0.45)', fontSize: typography.size.caption },
+  statusTabTxtOn: { color: '#F5F2EC', fontWeight: typography.weight.semibold },
+  badge:          { backgroundColor: '#C87860', borderRadius: radius.md, minWidth: 16, height: 16, alignItems: 'center', justifyContent: 'center', paddingHorizontal: spacing.xxs + 1 },
+  badgeTxt:       { color: '#FFFFFF', fontSize: typography.size.xs, fontWeight: typography.weight.bold },
+
+  listHead:    { paddingHorizontal: spacing.xxl, paddingBottom: spacing.xs },
+  listHeadTxt: { color: 'rgba(245,242,236,0.40)', fontSize: typography.size.sm, letterSpacing: 2 },
 
   groupHeader: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingHorizontal: spacing.xxl, paddingVertical: spacing.lg, marginTop: spacing.xs },
   groupIcon:   { fontSize: 14 },
-  groupLabel:  { color: colors.text, fontSize: typography.size.bodyLg, flex: 1 },
-  groupCount:  { color: colors.textDim, fontSize: typography.size.caption },
+  groupLabel:  { color: '#F5F2EC', fontSize: typography.size.bodyLg, flex: 1 },
+  groupCount:  { color: 'rgba(245,242,236,0.45)', fontSize: typography.size.caption },
 
   empty:      { alignItems: 'center', paddingVertical: 48, gap: spacing.md },
   emptyEmoji: { fontSize: 36 },
-  emptyTitle: { color: colors.textMuted, fontSize: typography.size.subheading, fontWeight: '300' },
-  emptyDesc:  { color: colors.textDim, fontSize: typography.size.body },
+  emptyTitle: { color: 'rgba(245,242,236,0.65)', fontSize: typography.size.subheading, fontWeight: '300' },
+  emptyDesc:  { color: 'rgba(245,242,236,0.40)', fontSize: typography.size.body },
 
-  signOutBtn: { marginHorizontal: spacing.xxl, paddingVertical: spacing.lg, borderRadius: radius.xl, borderWidth: 1, borderColor: 'rgba(224,90,90,0.2)', alignItems: 'center' },
-  signOutTxt: { color: colors.red, fontSize: typography.size.bodyLg },
+  signOutBtn: { marginHorizontal: spacing.xxl, paddingVertical: spacing.lg, borderRadius: radius.xl, borderWidth: 1, borderColor: 'rgba(224,90,90,0.25)', alignItems: 'center' },
+  signOutTxt: { color: 'rgba(224,90,90,0.80)', fontSize: typography.size.bodyLg },
 });

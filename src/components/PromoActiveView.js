@@ -39,7 +39,7 @@ export default function PromoActiveView({ onViewAll, onCreate }) {
 
 const s = StyleSheet.create({
   wrap:          { alignItems: 'center', padding: spacing.xxl, gap: spacing.xl },
-  iconWrap:      { width: 70, height: 70, borderRadius: 35, backgroundColor: colors.accentSoft, borderWidth: 2, borderColor: 'rgba(232,160,69,0.4)', alignItems: 'center', justifyContent: 'center' },
+  iconWrap:      { width: 70, height: 70, borderRadius: 0, backgroundColor: colors.accentSoft, borderWidth: 2, borderColor: 'rgba(232,160,69,0.4)', alignItems: 'center', justifyContent: 'center' },
   title:         { color: colors.text, fontSize: typography.size.title, fontWeight: typography.weight.black },
   sub:           { color: colors.textMuted, fontSize: typography.size.body, textAlign: 'center', lineHeight: 20, maxWidth: 220 },
   recapCard:     { backgroundColor: colors.card, borderRadius: radius.xl, padding: spacing.xl, borderWidth: 1, borderColor: 'rgba(232,160,69,0.3)', width: '100%' },
@@ -47,8 +47,8 @@ const s = StyleSheet.create({
   recapSep:      { borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   recapKey:      { color: colors.textMuted, fontSize: typography.size.body },
   recapVal:      { color: colors.text, fontSize: typography.size.body, fontWeight: typography.weight.medium },
-  activateBtn:   { backgroundColor: colors.accent, borderRadius: radius.xl, padding: spacing.xl, alignItems: 'center', width: '100%' },
+  activateBtn:   { backgroundColor: '#c8975a', borderRadius: radius.xl, padding: spacing.xl, alignItems: 'center', width: '100%', shadowColor: '#000', shadowOpacity: 0.5, shadowRadius: 14, shadowOffset: { width: 0, height: 0 }, elevation: 7 },
   activateBtnTxt:{ color: colors.bg, fontSize: typography.size.subheading, fontWeight: typography.weight.extrabold },
-  ghostBtn:      { backgroundColor: 'transparent', borderRadius: radius.xl, padding: spacing.xl, alignItems: 'center', borderWidth: 1.5, borderColor: colors.accent, marginTop: spacing.sm, width: '100%' },
+  ghostBtn:      { backgroundColor: 'transparent', borderRadius: radius.xl, padding: spacing.xl, alignItems: 'center', borderWidth: 1.5, borderColor: '#c8975a', marginTop: spacing.sm, width: '100%', shadowColor: '#000', shadowOpacity: 0.25, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 3 },
   ghostBtnTxt:   { color: colors.accent, fontSize: typography.size.subheading, fontWeight: typography.weight.bold },
 });

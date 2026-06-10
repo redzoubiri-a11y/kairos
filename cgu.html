@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conditions générales d'utilisation — MIDA</title>
+<meta name="description" content="Conditions générales d'utilisation de l'application MIDA, plateforme de réservation de restaurants en Algérie.">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:      #FAF7F2;
+    --text:    #1A1A1A;
+    --muted:   rgba(26,26,26,0.55);
+    --dim:     rgba(26,26,26,0.35);
+    --border:  rgba(26,26,26,0.09);
+    --accent:  #C87860;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky;
+    top: 0;
+    background: rgba(250,247,242,0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 100;
+  }
+  .nav-logo {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 22px;
+    letter-spacing: 6px;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .nav-back {
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.5px;
+  }
+  .nav-back:hover { color: var(--accent); }
+
+  /* ── HERO ── */
+  .hero {
+    border-bottom: 1px solid var(--border);
+    padding: 72px 32px 56px;
+    max-width: 780px;
+    margin: 0 auto;
+  }
+  .hero-label {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+  }
+  .hero-title {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: clamp(32px, 5vw, 48px);
+    font-weight: 400;
+    line-height: 1.2;
+    color: var(--text);
+    margin-bottom: 20px;
+  }
+  .hero-meta {
+    font-size: 13px;
+    color: var(--dim);
+    letter-spacing: 0.3px;
+  }
+
+  /* ── CONTENT ── */
+  .content {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 56px 32px 100px;
+  }
+
+  .article {
+    margin-bottom: 48px;
+  }
+  .article h2 {
+    font-size: 12px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+  .article p, .article li {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+  .article ul {
+    list-style: none;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .article li::before {
+    content: "—";
+    color: var(--dim);
+    margin-right: 10px;
+    font-size: 13px;
+  }
+  .article p + p { margin-top: 12px; }
+
+  hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0 0 48px;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px;
+    text-align: center;
+  }
+  .footer-logo {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 18px;
+    letter-spacing: 6px;
+    color: var(--dim);
+    margin-bottom: 8px;
+  }
+  footer p {
+    font-size: 12px;
+    color: var(--dim);
+    letter-spacing: 0.3px;
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  @media (max-width: 600px) {
+    nav  { padding: 12px 20px; }
+    .hero, .content { padding-left: 20px; padding-right: 20px; }
+    .hero { padding-top: 48px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="https://mida-food.com">MIDA</a>
+  <a class="nav-back" href="https://mida-food.com">← Retour</a>
+</nav>
+
+<div class="hero">
+  <p class="hero-label">Document légal</p>
+  <h1 class="hero-title">Conditions générales<br>d'utilisation</h1>
+  <p class="hero-meta">Dernière mise à jour : juin 2026 &nbsp;·&nbsp; Version 1.0</p>
+</div>
+
+<div class="content">
+
+  <div class="article">
+    <h2>1. Objet et champ d'application</h2>
+    <p>MIDA est une plateforme numérique de réservation de tables dans les restaurants partenaires en Algérie, éditée et exploitée depuis Alger. En téléchargeant ou en utilisant l'application MIDA, vous acceptez sans réserve les présentes Conditions Générales d'Utilisation (CGU). Si vous n'acceptez pas ces conditions, veuillez ne pas utiliser l'application.</p>
+  </div>
+
+  <hr>
+
+  <div class="article">
+    <h2>2. Création de compte</h2>
+    <p>L'accès aux fonctionnalités de réservation nécessite la création d'un compte personnel. Vous vous engagez à fournir des informations exactes, complètes et à jour. Vous êtes seul responsable de la confidentialité de vos identifiants (email et mot de passe) et de toute activité réalisée depuis votre compte. En cas de suspicion d'utilisation frauduleuse, vous devez nous contacter immédiatement à <a href="mailto:contact@mida-food.com" style="color:var(--accent)">contact@mida-food.com</a>.</p>
+  </div>
+
+  <hr>
+
+  <div class="article">
+    <h2>3. Description du service</h2>
+    <p>MIDA met en relation des clients et des restaurants partenaires. L'application permet de :</p>
+    <ul>
+      <li>Rechercher des restaurants par ville, quartier ou type de cuisine</li>
+      <li>Consulter les menus, photos, avis et disponibilités</li>
+      <li>Effectuer et gérer des réservations en ligne</li>
+      <li>Laisser des avis vérifiés après une visite</li>
+      <li>Pour les restaurateurs : gérer les réservations, le menu et les informations de l'établissement</li>
+    </ul>
+  </div>
+
+  <hr>
+
+  <div class="article">
+    <h2>4. Réservations</h2>
+    <p>Toute réservation est soumise à la confirmation du restaurant. Une réservation non confirmée ne constitue pas un engagement de la part de l'établissement.</p>
+    <p>En cas d'annulation par le client, celui-ci s'engage à en informer le restaurant au moins 2 heures avant l'heure prévue, directement via l'application.</p>
+    <p>MIDA ne peut être tenu responsable de l'indisponibilité d'une table, de la fermeture imprévue d'un restaurant ou de tout autre manquement de la part de l'établissement.</p>
+    <p>La réservation est nominative et non cessible.</p>
+  </div>
+
+  <hr>
+
+  <div class="article">
+    <h2>5. Avis et notations</h2>
+    <p>Les avis ne peuvent être déposés que par des utilisateurs ayant effectué et honoré une réservation via MIDA. MIDA se réserve le droit de modérer, modifier ou supprimer tout avis contenant des propos diffamatoires, injurieux, racistes ou portant atteinte à l'ordre public. Les avis publiés sont la seule responsabilité de leurs auteurs.</p>
+  </div>
+
+  <hr>
+
+  <div class="article">
+    <h2>6. Espace restaurateur</h2>
+    <p>L'accès à l'espace restaurateur est conditionné à la validation de la demande d'inscription par l'équipe MIDA. Le restaurateur s'engage à :</p>
+    <ul>
+      <li>Fournir des informations exactes sur son établissement</li>
+      <li>Maintenir ses horaires et disponibilités à jour</li>
+      <li>Répondre aux demandes de réservation dans les meilleurs délais</li>
+      <li>Respecter les réservations confirmées sauf cas de force majeure</li>
+    </ul>
+    <p style="margin-top:12px">Le non-respect de ces engagements peut entraîner la suspension ou la suppression du compte restaurateur.</p>
+  </div>
+
+  <hr>
+
+  <div class="article">
+    <h2>7. Propriété intellectuelle</h2>
+    <p>L'ensemble des contenus de l'application MIDA (logo, design, textes, code source) est la propriété exclusive de MIDA et est protégé par le droit de la propriété intellectuelle. Toute reproduction, même partielle, sans autorisation écrite préalable est interdite.</p>
+  </div>
+
+  <hr>
+
+  <div class="article">
+    <h2>8. Limitation de responsabilité</h2>
+    <p>MIDA agit en qualité d'intermédiaire technique entre les clients et les restaurants partenaires. En conséquence, MIDA ne peut être tenu responsable de la qualité des prestations des restaurants, de tout dommage direct ou indirect lié à l'utilisation de l'application, ni des interruptions de service dues à des raisons techniques indépendantes de sa volonté.</p>
+  </div>
+
+  <hr>
+
+  <div class="article">
+    <h2>9. Modifications des CGU</h2>
+    <p>MIDA se réserve le droit de modifier les présentes CGU à tout moment. Les utilisateurs seront informés de toute modification substantielle via l'application. La poursuite de l'utilisation de l'application après modification vaut acceptation des nouvelles conditions.</p>
+  </div>
+
+  <hr>
+
+  <div class="article">
+    <h2>10. Droit applicable</h2>
+    <p>Les présentes CGU sont soumises au droit algérien. Tout litige relatif à leur interprétation ou leur exécution sera soumis aux tribunaux compétents d'Alger.</p>
+  </div>
+
+  <hr>
+
+  <div class="article">
+    <h2>11. Contact</h2>
+    <p>Pour toute question relative aux présentes conditions :<br>
+    <a href="mailto:contact@mida-food.com" style="color:var(--accent)">contact@mida-food.com</a><br>
+    <a href="https://mida-food.com" style="color:var(--accent)">www.mida-food.com</a><br>
+    MIDA — Alger, Algérie</p>
+  </div>
+
+</div>
+
+<footer>
+  <p class="footer-logo">MIDA</p>
+  <p>© 2026 MIDA · <a href="https://mida-food.com/cgu">CGU</a> · <a href="https://mida-food.com/confidentialite">Confidentialité</a></p>
+</footer>
+
+</body>
+</html>

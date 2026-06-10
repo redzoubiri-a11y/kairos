@@ -1,11 +1,11 @@
 import { useRef, useCallback } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity,
-  SafeAreaView, ActivityIndicator, Platform,
+  ActivityIndicator, Platform,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, typography, spacing, radius } from '../src/theme';
 import useMapScreen, { INITIAL_REGION, CUISINE_EMOJI, getCoordinate } from '../src/hooks/useMapScreen';
-import MidaLogo from '../src/components/MidaLogo';
 
 let MapView, Marker;
 if (Platform.OS !== 'web') {
@@ -41,7 +41,7 @@ export default function MapScreen({ navigation }) {
           {loading ? (
             <ActivityIndicator color={colors.accent} />
           ) : (
-            <View style={{ backgroundColor: colors.accentSoft, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(232,160,69,0.3)', padding: 14, width: '100%' }}>
+            <View style={{ backgroundColor: colors.accentSoft, borderRadius: 0, borderWidth: 1, borderColor: 'rgba(232,160,69,0.3)', padding: 14, width: '100%' }}>
               <Text style={{ color: colors.accent, fontSize: 11, letterSpacing: 2, marginBottom: 8 }}>RESTAURANTS DISPONIBLES</Text>
               {restaurants.slice(0, 6).map(r => (
                 <TouchableOpacity
@@ -98,7 +98,6 @@ export default function MapScreen({ navigation }) {
       <SafeAreaView style={s.headerWrap} pointerEvents="box-none">
         <View style={s.header}>
           <View>
-            <MidaLogo showTagline={false} style={{ alignItems: 'flex-start', marginBottom: 2 }} />
             <Text style={s.headerSub}>Alger</Text>
           </View>
           <View style={s.countBadge}>
@@ -152,15 +151,16 @@ const s = StyleSheet.create({
   map:  { flex: 1 },
 
   pin: {
-    width: 38, height: 38, borderRadius: 19,
+    width: 38, height: 38, borderRadius: 0,
     backgroundColor: 'rgba(15,13,11,0.9)',
     borderWidth: 2, borderColor: colors.cardBorder,
     alignItems: 'center', justifyContent: 'center',
   },
   pinActive: {
-    borderColor: colors.accent, borderWidth: 2.5,
+    borderColor: '#c8975a', borderWidth: 2.5,
     backgroundColor: colors.card,
-    width: 46, height: 46, borderRadius: 23,
+    width: 46, height: 46, borderRadius: 0,
+    shadowColor: '#000', shadowOpacity: 0.5, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 6,
   },
   pinEmoji:   { fontSize: 18 },
   pinEmojiLg: { fontSize: 22 },
@@ -178,9 +178,10 @@ const s = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', gap: spacing.sm,
     backgroundColor: colors.accentSoft,
     borderRadius: radius.full, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm,
-    borderWidth: 1, borderColor: 'rgba(232,160,69,0.3)',
+    borderWidth: 1, borderColor: 'rgba(200,151,90,0.4)',
+    shadowColor: '#000', shadowOpacity: 0.25, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 3,
   },
-  countDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.green },
+  countDot: { width: 6, height: 6, borderRadius: 0, backgroundColor: colors.green },
   countTxt:  { color: colors.accent, fontSize: typography.size.caption, fontWeight: '500' },
 
   spinner: {
@@ -212,14 +213,15 @@ const s = StyleSheet.create({
   cardAddr:  { color: colors.textMuted, fontSize: typography.size.caption, marginBottom: 4 },
   cardRating:{ color: colors.accent, fontSize: typography.size.caption, fontWeight: '500' },
   cardArrow: {
-    width: 32, height: 32, borderRadius: 16,
-    backgroundColor: colors.accent,
+    width: 32, height: 32, borderRadius: 0,
+    backgroundColor: '#c8975a',
     alignItems: 'center', justifyContent: 'center',
+    shadowColor: '#000', shadowOpacity: 0.5, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5,
   },
   cardArrowTxt: { color: colors.bg, fontSize: 20, fontWeight: '700', marginTop: -1 },
 
   closeBtn: {
-    width: 40, height: 40, borderRadius: 20,
+    width: 40, height: 40, borderRadius: 0,
     backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder,
     alignItems: 'center', justifyContent: 'center',
   },

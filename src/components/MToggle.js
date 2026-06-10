@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
   track: {
     width: 38,
     height: 22,
-    borderRadius: 11,
+    borderRadius: 0,
     backgroundColor: colors.cardBorder,
     borderWidth: 1,
     borderColor: colors.cardBorder,
@@ -76,10 +76,10 @@ const styles = StyleSheet.create({
   thumb: {
     width: 16,
     height: 16,
-    borderRadius: 8,
+    borderRadius: 0,
     backgroundColor: colors.textDim,
   },
   thumbActive: {
-    backgroundColor: '#000000',
+    backgroundColor: colors.text,
   },
 });

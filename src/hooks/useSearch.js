@@ -33,13 +33,14 @@ function haversineKm(lat1, lon1, lat2, lon2) {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-export default function useSearch() {
+export default function useSearch({ initialQuery = '', initialCity = 'alger' } = {}) {
   const inputRef = useRef(null);
-  const [query,        setQuery]       = useState('');
-  const [city,         setCity]        = useState('all');
+  const [query,        setQuery]       = useState(initialQuery);
+  const [quartier,     setQuartier]    = useState('');
+  const [city,         setCity]        = useState(initialCity);
   const [results,      setResults]     = useState([]);
-  const [loading,      setLoading]     = useState(false);
-  const [searched,     setSearched]    = useState(false);
+  const [loading,      setLoading]     = useState(!!initialQuery);
+  const [searched,     setSearched]    = useState(!!initialQuery);
   const [userLocation, setUserLocation] = useState(null);
   const [nearMe,       setNearMe]      = useState(false);
   const [locLoading,   setLocLoading]  = useState(false);
@@ -51,7 +52,8 @@ export default function useSearch() {
 
   useEffect(() => {
     const q = query.trim();
-    if (!q) { setResults([]); setSearched(false); return; }
+    const qr = quartier.trim();
+    if (!q && !qr) { setResults([]); setSearched(false); return; }
 
     const timer = setTimeout(async () => {
       setLoading(true);
@@ -61,9 +63,10 @@ export default function useSearch() {
           .from('restaurants')
           .select('id, name, cuisine_type, quartier, city, avg_rating, avg_ticket, photos, latitude, longitude, opening_hours, phone, capacity, address')
           .eq('status', 'active')
-          .or(`name.ilike.%${q}%,cuisine_type.ilike.%${q}%,quartier.ilike.%${q}%`)
           .limit(25);
 
+        if (q) req = req.ilike('name', `%${q}%`);
+        if (qr) req = req.ilike('quartier', `%${qr}%`);
         if (!nearMe && city !== 'all') req = req.eq('city', city);
 
         const { data } = await req;
@@ -74,7 +77,7 @@ export default function useSearch() {
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [query, city, nearMe]);
+  }, [query, quartier, city, nearMe]);
 
   const sortedResults = useMemo(() => {
     if (!nearMe || !userLocation) return results;
@@ -124,6 +127,7 @@ export default function useSearch() {
 
   const clearQuery = useCallback(() => {
     setQuery('');
+    setQuartier('');
     setResults([]);
     setSearched(false);
     inputRef.current?.focus();
@@ -132,6 +136,7 @@ export default function useSearch() {
   return {
     inputRef,
     query, setQuery,
+    quartier, setQuartier,
     city, setCity: selectCity,
     results: sortedResults, loading, searched,
     nearMe, locLoading, requestNearMe,

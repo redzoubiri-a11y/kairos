@@ -28,7 +28,7 @@ export function daysUntil(d) {
   const today = new Date(); today.setHours(0,0,0,0);
   const diff  = Math.round((new Date(d+'T00:00:00') - today) / 86400000);
   if (diff === 0) return "Aujourd'hui";
-  if (diff === 1) return 'Demain';
+  if (diff === 1) return 'DEMAIN';
   if (diff > 1)  return `Dans ${diff} jours`;
   return `Il y a ${Math.abs(diff)} j`;
 }
@@ -84,6 +84,7 @@ export default function useReservations() {
         { text: 'Oui, annuler', style: 'destructive',
           onPress: async () => {
             const { data: { session } } = await supabase.auth.getSession();
+            if (!session) return;
             await supabase.from('reservations')
               .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
               .eq('id', r.id);

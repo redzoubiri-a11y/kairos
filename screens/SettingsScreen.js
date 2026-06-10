@@ -1,25 +1,21 @@
 import { useCallback } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  SafeAreaView, Switch,
+  Switch,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, typography, spacing, radius } from '../src/theme';
 import useSettings, { GROUPS } from '../src/hooks/useSettings';
-import MidaLogo from '../src/components/MidaLogo';
+import BottomTabBar from '../src/components/BottomTabBar';
 
 export default function SettingsScreen({ navigation }) {
   const { toggles, toggle } = useSettings();
-  const goBack = useCallback(() => navigation.goBack(), [navigation]);
   const goAide = useCallback(() => navigation.navigate('Aide'), [navigation]);
 
   return (
-    <SafeAreaView style={s.root}>
+    <SafeAreaView style={s.root} edges={['top', 'left', 'right']}>
       <View style={s.header}>
-        <TouchableOpacity style={s.backBtn} onPress={goBack}>
-          <Text style={s.backBtnTxt}>←</Text>
-        </TouchableOpacity>
         <View style={{ flex: 1 }}>
-          <MidaLogo showTagline={false} style={{ alignItems: 'flex-start', marginBottom: 2 }} />
           <Text style={s.title}>Paramètres</Text>
         </View>
       </View>
@@ -85,6 +81,7 @@ export default function SettingsScreen({ navigation }) {
           <View style={{ height: 32 }} />
         </View>
       </ScrollView>
+      <BottomTabBar navigation={navigation} activeTab={null} />
     </SafeAreaView>
   );
 }
@@ -100,8 +97,6 @@ const r = StyleSheet.create({
 const s = StyleSheet.create({
   root:         { flex: 1, backgroundColor: colors.bg },
   header:       { flexDirection: 'row', alignItems: 'center', gap: spacing.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.cardBorder, backgroundColor: colors.card },
-  backBtn:      { width: 36, height: 36, borderRadius: 18, backgroundColor: colors.bg, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: colors.cardBorder },
-  backBtnTxt:   { color: colors.text, fontSize: typography.size.subheading },
   title:        { color: colors.text, fontSize: typography.size.heading2, fontWeight: typography.weight.semibold },
   sectionLabel: { color: colors.accent, fontSize: typography.size.xs, fontWeight: typography.weight.bold, letterSpacing: 2, textTransform: 'uppercase', marginBottom: spacing.md },
   card:         { backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, overflow: 'hidden' },

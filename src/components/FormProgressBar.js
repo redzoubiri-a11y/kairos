@@ -32,7 +32,7 @@ export default function FormProgressBar({ current }) {
 const s = StyleSheet.create({
   row:          { flexDirection: 'row', alignItems: 'flex-start', paddingHorizontal: spacing.xxl, paddingVertical: spacing.lg, backgroundColor: colors.card, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   stepWrap:     { alignItems: 'center', gap: spacing.xs },
-  circle:       { width: 26, height: 26, borderRadius: 13, backgroundColor: colors.cardHover, borderWidth: 1, borderColor: colors.cardBorder, alignItems: 'center', justifyContent: 'center' },
+  circle:       { width: 26, height: 26, borderRadius: 0, backgroundColor: colors.cardHover, borderWidth: 1, borderColor: colors.cardBorder, alignItems: 'center', justifyContent: 'center' },
   circleDone:   { backgroundColor: 'rgba(76,175,130,0.2)', borderColor: colors.green },
   circleActive: { backgroundColor: colors.accentSoft, borderColor: colors.accent },
   checkTxt:     { color: colors.green, fontSize: typography.size.caption, fontWeight: typography.weight.semibold },

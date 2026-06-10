@@ -55,7 +55,7 @@ const s = StyleSheet.create({
   note:         { color: colors.textDim, fontSize: typography.size.sm },
   actions:      { flexDirection:'row', flexWrap:'wrap', gap: spacing.lg, marginTop: spacing.xs },
   reBook:       { color: colors.blue, fontSize: typography.size.caption },
-  reviewBtn:    { backgroundColor: colors.accentSoft, borderRadius: radius.md, paddingHorizontal: spacing.md, paddingVertical: spacing.xxs, borderWidth:1, borderColor:'rgba(232,160,69,0.3)' },
+  reviewBtn:    { backgroundColor: 'rgba(200,151,90,0.14)', borderRadius: radius.md, paddingHorizontal: spacing.md, paddingVertical: spacing.xxs, borderWidth:1, borderColor:'rgba(200,151,90,0.4)', shadowColor:'#000', shadowOpacity:0.3, shadowRadius:6, shadowOffset:{ width:0, height:0 }, elevation:3 },
   reviewBtnTxt: { color: colors.accent, fontSize: typography.size.caption, fontWeight: typography.weight.regular },
   reviewed:     { color: colors.green, fontSize: typography.size.caption },
   pending:      { color: colors.textMuted, fontSize: typography.size.caption, fontStyle: 'italic' },

@@ -1,8 +1,10 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  SafeAreaView, Image, Animated,
+  Image, Animated, Platform, StatusBar, TextInput,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
 import { colors, typography, spacing, radius } from '../src/theme';
 import MLoader from '../src/components/MLoader';
 import FeaturedCard from '../src/components/FeaturedCard';
@@ -10,13 +12,6 @@ import ListCard from '../src/components/ListCard';
 import useHomeData, { CITIES, CATEGORIES, QUICK_FILTERS } from '../src/hooks/useHomeData';
 import usePushNotifications from '../src/hooks/usePushNotifications';
 import useDeepLink from '../src/hooks/useDeepLink';
-import MidaLogo from '../src/components/MidaLogo';
-
-function greeting(name) {
-  const h = new Date().getHours();
-  const g = h < 6 ? 'Bonne nuit' : h < 12 ? 'Bonjour' : h < 18 ? 'Bon après-midi' : 'Bonsoir';
-  return name ? `${g}, ${name} 👋` : g;
-}
 
 function SectionHead({ label, right, rightAction }) {
   return (
@@ -34,11 +29,11 @@ function SectionHead({ label, right, rightAction }) {
   );
 }
 const sh = StyleSheet.create({
-  row:   { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: spacing.xl, marginTop: spacing.section - 4, marginBottom: spacing.xl },
+  row:   { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: spacing.xl, marginTop: spacing.lg, marginBottom: spacing.sm },
   left:  { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
-  bar:   { width: 3, height: 14, borderRadius: 2, backgroundColor: colors.accent },
-  label: { color: colors.textDim, fontSize: typography.size.xs, fontWeight: typography.weight.semibold, letterSpacing: 3.5 },
-  right: { color: colors.blue, fontSize: typography.size.body },
+  bar:   { width: 3, height: 14, borderRadius: 0, backgroundColor: '#C87860' },
+  label: { color: colors.textMuted, fontSize: typography.size.xs, fontWeight: typography.weight.semibold, letterSpacing: 3.5 },
+  right: { color: '#C87860', fontSize: typography.size.body },
 });
 
 function SkeletonCard() {
@@ -65,7 +60,6 @@ export default function HomeScreen({ navigation }) {
     city, setCity,
     category, setCategory,
     restaurants, loading,
-    userName, userInitial, avatarUrl,
     unreadNotifs,
     quickFilter, setQuickFilter,
     featured, filtered, topCount,
@@ -73,24 +67,33 @@ export default function HomeScreen({ navigation }) {
     fadeAnim, slideAnim,
   } = useHomeData();
 
+  const [searchText, setSearchText] = useState('');
+
   const goNotifications = useCallback(() => navigation.navigate('Notifications'), [navigation]);
-  const goProfil        = useCallback(() => navigation.navigate('Profil'), [navigation]);
   const goExplorer      = useCallback(() => navigation.navigate('Explorer', { initialCity: city }), [navigation, city]);
   const clearCategory   = useCallback(() => setCategory('all'), []);
+  const submitSearch    = useCallback(() => {
+    navigation.navigate('Search', { initialQuery: searchText.trim(), initialCity: city });
+    setSearchText('');
+  }, [navigation, searchText, city]);
 
   return (
     <SafeAreaView style={s.root}>
+      <LinearGradient colors={['#C4B8C8', '#8B9BB4', '#6B7F9E']} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bg} pointerEvents="none" />
 
       {/* ── Header ── */}
       <View style={s.header}>
-        <View>
-          <Text style={s.greeting}>{greeting(userName)}</Text>
-          <View style={s.logoRow}>
-            <MidaLogo showTagline={false} />
-            <View style={s.locationPill}>
-              <Text style={s.locationTxt}>{cityObj.emoji}  {cityObj.label}</Text>
-            </View>
-          </View>
+        <View style={s.searchBar}>
+          <Text style={s.searchIcon}>🔍</Text>
+          <TextInput
+            style={s.searchInput}
+            placeholder="Chercher un restaurant…"
+            placeholderTextColor={colors.textDim}
+            value={searchText}
+            onChangeText={setSearchText}
+            returnKeyType="search"
+            onSubmitEditing={submitSearch}
+          />
         </View>
         <View style={s.headerRight}>
           <TouchableOpacity style={s.iconBtn} onPress={goNotifications}>
@@ -100,12 +103,6 @@ export default function HomeScreen({ navigation }) {
                 <Text style={s.notifBadgeTxt}>{unreadNotifs > 9 ? '9+' : unreadNotifs}</Text>
               </View>
             )}
-          </TouchableOpacity>
-          <TouchableOpacity style={s.avatar} onPress={goProfil}>
-            {avatarUrl
-              ? <Image source={{ uri: avatarUrl }} style={s.avatarPhoto} />
-              : <Text style={s.avatarTxt}>{userInitial}</Text>
-            }
           </TouchableOpacity>
         </View>
       </View>
@@ -154,8 +151,7 @@ export default function HomeScreen({ navigation }) {
 
         {/* Ce soir */}
         {slots.length > 0 && (
-          <View style={s.tonightCard}>
-            <View style={s.tonightAccentBar} />
+          <LinearGradient colors={['#FF6B1A', '#D93A00']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={s.tonightCard}>
             <View style={s.tonightBody}>
               <Text style={s.tonightLabel}>🌙  CE SOIR</Text>
               <Text style={s.tonightTitle}>Trouvez votre table</Text>
@@ -170,8 +166,7 @@ export default function HomeScreen({ navigation }) {
                 </TouchableOpacity>
               </ScrollView>
             </View>
-
-          </View>
+          </LinearGradient>
         )}
 
         {/* À la une */}
@@ -256,83 +251,85 @@ export default function HomeScreen({ navigation }) {
   );
 }
 
+const NAVY = 'transparent';
+const NAVY_BORDER = 'rgba(0,0,0,0.10)';
+const RESA = '#C87860';
+const CREAM = colors.text;
+
 const s = StyleSheet.create({
-  root:   { flex: 1, backgroundColor: colors.bg },
+  root:   { flex: 1, backgroundColor: colors.bg, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 },
+  bg:     { ...StyleSheet.absoluteFillObject, opacity: 0.18 },
   scroll: { flex: 1 },
 
   /* Header */
-  header:        { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', paddingHorizontal: spacing.xl, paddingTop: spacing.md, paddingBottom: spacing.md },
-  greeting:      { color: colors.textMuted, fontSize: typography.size.body, fontWeight: typography.weight.regular, marginBottom: 3 },
-  logoRow:       { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },
-  locationPill:  { backgroundColor: colors.card, borderRadius: 100, paddingHorizontal: spacing.lg, paddingVertical: spacing.xs, borderWidth: 1, borderColor: 'rgba(232,160,69,0.3)' },
-  locationTxt:   { color: colors.accent, fontSize: typography.size.sm, fontWeight: typography.weight.regular },
-  headerRight:   { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },
-  iconBtn:       { width: 38, height: 38, borderRadius: 19, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, alignItems: 'center', justifyContent: 'center' },
+  header:        { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingHorizontal: spacing.xl, paddingVertical: spacing.sm },
+  searchBar:     { flex: 1, flexDirection: 'row', alignItems: 'center', gap: spacing.md, backgroundColor: NAVY, borderRadius: radius.full, borderWidth: 1, borderColor: NAVY_BORDER, paddingHorizontal: spacing.xl, paddingVertical: spacing.lg },
+  searchIcon:    { fontSize: 14 },
+  searchPlaceholder: { color: colors.textDim, fontSize: 16, fontWeight: '300', letterSpacing: 0.3, flex: 1 },
+  searchInput:   { flex: 1, color: colors.text, fontSize: 16, fontWeight: '300', letterSpacing: 0.3, padding: 0 },
+  headerRight:   { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  iconBtn:       { width: 38, height: 38, borderRadius: 0, backgroundColor: NAVY, borderWidth: 1, borderColor: 'rgba(200,151,90,0.3)', alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOpacity: 0.25, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 3 },
   iconBtnTxt:    { fontSize: 17 },
-  notifBadge:    { position: 'absolute', top: -4, right: -4, minWidth: 16, height: 16, borderRadius: 8, backgroundColor: colors.accent, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 3, borderWidth: 1.5, borderColor: colors.bg },
-  notifBadgeTxt: { color: colors.bg, fontSize: typography.size.xs, fontWeight: typography.weight.bold },
-  avatar:        { width: 38, height: 38, borderRadius: 19, backgroundColor: colors.card, borderWidth: 1.5, borderColor: colors.accent, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
-  avatarTxt:     { color: colors.accent, fontWeight: typography.weight.semibold, fontSize: typography.size.subheading },
-  avatarPhoto:   { width: 38, height: 38, borderRadius: 19 },
+  notifBadge:    { position: 'absolute', top: -4, right: -4, minWidth: 16, height: 16, borderRadius: 8, backgroundColor: RESA, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 3, borderWidth: 1.5, borderColor: colors.bg },
+  notifBadgeTxt: { color: '#FFFFFF', fontSize: typography.size.xs, fontWeight: typography.weight.bold },
 
   /* Cities */
-  cityRow:        { maxHeight: 50 },
-  cityContent:    { paddingHorizontal: spacing.xl, paddingVertical: 5, flexDirection: 'row', gap: spacing.md, alignItems: 'center' },
-  cityChip:       { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: spacing.lg, paddingVertical: 7, borderRadius: 100, backgroundColor: 'transparent', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
-  cityChipOn:     { backgroundColor: colors.accentSoft, borderColor: colors.accent, shadowColor: colors.accent, shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
+  cityRow:        { maxHeight: 40 },
+  cityContent:    { paddingHorizontal: spacing.xl, paddingVertical: spacing.xxs, flexDirection: 'row', gap: spacing.md, alignItems: 'center' },
+  cityChip:       { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderRadius: 0, backgroundColor: NAVY, borderWidth: 1, borderColor: NAVY_BORDER },
+  cityChipOn:     { backgroundColor: 'rgba(200,151,90,0.18)', borderColor: '#c8975a', shadowColor: '#000', shadowOpacity: 0.4, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
   cityEmoji:      { fontSize: typography.size.body },
   cityTxt:        { color: colors.textMuted, fontSize: typography.size.body },
-  cityTxtOn:      { color: colors.accent, fontWeight: typography.weight.semibold },
-  cityCount:      { backgroundColor: 'rgba(255,255,255,0.07)', borderRadius: 100, paddingHorizontal: 5, paddingVertical: 1, minWidth: 22, alignItems: 'center' },
-  cityCountOn:    { backgroundColor: 'rgba(232,160,69,0.2)' },
-  cityCountTxt:   { color: colors.textDim, fontSize: typography.size.xs, fontWeight: typography.weight.semibold },
-  cityCountTxtOn: { color: colors.accent },
+  cityTxtOn:      { color: CREAM, fontWeight: typography.weight.semibold },
+  cityCount:      { backgroundColor: 'rgba(0,0,0,0.06)', borderRadius: 0, paddingHorizontal: 5, paddingVertical: 1, minWidth: 22, alignItems: 'center' },
+  cityCountOn:    { backgroundColor: 'rgba(200,120,96,0.25)' },
+  cityCountTxt:   { color: colors.textMuted, fontSize: typography.size.xs, fontWeight: typography.weight.semibold },
+  cityCountTxtOn: { color: CREAM },
 
   /* Stats bar */
-  statsBar:      { flexDirection: 'row', alignItems: 'center', marginHorizontal: spacing.xl, marginTop: spacing.md, marginBottom: spacing.xs, backgroundColor: colors.card, borderRadius: radius.lg, paddingVertical: spacing.lg, paddingHorizontal: spacing.xl, borderWidth: 1, borderColor: colors.cardBorder },
+  statsBar:      { flexDirection: 'row', alignItems: 'center', marginHorizontal: spacing.xl, marginTop: spacing.xs, marginBottom: spacing.xs, backgroundColor: NAVY, borderRadius: radius.lg, paddingVertical: spacing.sm, paddingHorizontal: spacing.xl, borderWidth: 1, borderColor: NAVY_BORDER },
   statItem:      { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
   statVal:       { color: colors.text, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium },
-  statLabel:     { color: colors.textDim, fontSize: typography.size.caption },
+  statLabel:     { color: colors.textMuted, fontSize: typography.size.caption },
   statGreen:     { color: colors.green, fontSize: typography.size.caption },
-  statSep:       { width: 1, height: 18, backgroundColor: colors.cardBorder },
-  openDotInline: { width: 7, height: 7, borderRadius: 4, backgroundColor: colors.green },
+  statSep:       { width: 1, height: 18, backgroundColor: NAVY_BORDER },
+  openDotInline: { width: 7, height: 7, borderRadius: 0, backgroundColor: colors.green },
 
-  /* Ce soir */
-  tonightCard:      { marginHorizontal: spacing.xl, marginTop: spacing.xxl, borderRadius: radius.xxl, backgroundColor: colors.card, borderWidth: 1, borderColor: 'rgba(232,160,69,0.2)', overflow: 'hidden', flexDirection: 'row', alignItems: 'center' },
-  tonightAccentBar: { width: 3, alignSelf: 'stretch', backgroundColor: colors.accent },
-  tonightBody:      { flex: 1, padding: spacing.xl },
-  tonightLabel:     { color: colors.accent, fontSize: typography.size.xs, letterSpacing: 3.5, marginBottom: spacing.xs, fontWeight: typography.weight.semibold },
-  tonightTitle:     { color: colors.text, fontSize: typography.size.heading2, fontWeight: typography.weight.regular, marginBottom: spacing.lg },
-  slotRow:          { gap: spacing.md },
-  slotChip:         { paddingHorizontal: spacing.lg, paddingVertical: 7, borderRadius: 100, backgroundColor: colors.accentSoft, borderWidth: 1, borderColor: 'rgba(232,160,69,0.3)' },
-  slotTxt:          { color: colors.accent, fontSize: typography.size.body, fontWeight: typography.weight.medium },
-  slotAll:          { backgroundColor: colors.cardBorder, borderColor: colors.cardBorder },
-  slotAllTxt:       { color: colors.textMuted, fontSize: typography.size.body },
+  /* Ce soir — chaud éclatant */
+  tonightCard:  { marginHorizontal: spacing.xl, marginTop: spacing.md, borderRadius: radius.xl, overflow: 'hidden' },
+  tonightBody:  { paddingHorizontal: spacing.xl, paddingVertical: spacing.lg },
+  tonightLabel: { color: 'rgba(255,255,255,0.85)', fontSize: typography.size.xs, letterSpacing: 2.5, marginBottom: spacing.xxs, fontWeight: typography.weight.semibold },
+  tonightTitle: { color: '#FFFFFF', fontSize: typography.size.bodyLg, fontWeight: typography.weight.semibold, marginBottom: spacing.sm },
+  slotRow:      { gap: spacing.md },
+  slotChip:     { paddingHorizontal: spacing.lg, paddingVertical: 7, borderRadius: 0, backgroundColor: 'rgba(0,0,0,0.28)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.3)' },
+  slotTxt:      { color: '#FFFFFF', fontSize: typography.size.body, fontWeight: typography.weight.medium },
+  slotAll:      { backgroundColor: 'rgba(0,0,0,0.38)', borderColor: 'rgba(255,255,255,0.2)' },
+  slotAllTxt:   { color: 'rgba(255,255,255,0.75)', fontSize: typography.size.body },
 
   /* Featured */
   featRow: { paddingHorizontal: spacing.xl, paddingBottom: spacing.xs },
 
-  /* Pills */
+  /* Pills cuisine */
   pillRow:   { paddingHorizontal: spacing.xl, gap: spacing.md, paddingBottom: spacing.xs },
-  pill:      { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, borderRadius: 100, backgroundColor: 'transparent', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
-  pillOn:    { backgroundColor: colors.accentSoft, borderColor: colors.accent, shadowColor: colors.accent, shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
+  pill:      { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, borderRadius: 0, backgroundColor: NAVY, borderWidth: 1, borderColor: NAVY_BORDER },
+  pillOn:    { backgroundColor: 'rgba(200,151,90,0.18)', borderColor: '#c8975a', shadowColor: '#000', shadowOpacity: 0.4, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
   pillEmoji: { fontSize: typography.size.subheading },
   pillTxt:   { color: colors.textMuted, fontSize: typography.size.body },
-  pillTxtOn: { color: colors.accent, fontWeight: typography.weight.semibold },
+  pillTxtOn: { color: CREAM, fontWeight: typography.weight.semibold },
 
   /* Quick filters */
-  quickRow:    { paddingHorizontal: spacing.xl, gap: spacing.md, paddingTop: spacing.lg, paddingBottom: spacing.xs },
-  quickChip:   { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: 100, backgroundColor: 'transparent', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
-  quickChipOn: { backgroundColor: colors.blueSoft, borderColor: colors.blue, shadowColor: colors.blue, shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
+  quickRow:    { paddingHorizontal: spacing.xl, gap: spacing.md, paddingTop: spacing.xs, paddingBottom: spacing.xs },
+  quickChip:   { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: 0, backgroundColor: NAVY, borderWidth: 1, borderColor: NAVY_BORDER },
+  quickChipOn: { backgroundColor: 'rgba(200,151,90,0.18)', borderColor: '#c8975a', shadowColor: '#000', shadowOpacity: 0.4, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
   quickEmoji:  { fontSize: typography.size.body },
   quickTxt:    { color: colors.textMuted, fontSize: typography.size.caption },
-  quickTxtOn:  { color: colors.blue, fontWeight: typography.weight.semibold },
+  quickTxtOn:  { color: CREAM, fontWeight: typography.weight.semibold },
 
   /* Empty */
   emptyWrap:  { alignItems: 'center', paddingVertical: spacing.section + spacing.xxl, gap: spacing.lg },
   emptyEmoji: { fontSize: 44 },
-  emptyTitle: { color: colors.text, fontSize: typography.size.heading1, fontWeight: typography.weight.regular },
+  emptyTitle: { color: CREAM, fontSize: typography.size.heading1, fontWeight: typography.weight.regular },
   emptySub:   { color: colors.textMuted, fontSize: typography.size.bodyLg },
-  emptyBtn:   { backgroundColor: colors.card, borderRadius: radius.lg, paddingHorizontal: spacing.xxl, paddingVertical: spacing.lg, borderWidth: 1, borderColor: colors.cardBorder, marginTop: spacing.xs },
-  emptyBtnTxt:{ color: colors.textMuted, fontSize: typography.size.bodyLg },
+  emptyBtn:   { backgroundColor: NAVY, borderRadius: radius.lg, paddingHorizontal: spacing.xxl, paddingVertical: spacing.lg, borderWidth: 1, borderColor: 'rgba(200,151,90,0.35)', marginTop: spacing.xs, shadowColor: '#000', shadowOpacity: 0.3, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 4 },
+  emptyBtnTxt:{ color: CREAM, fontSize: typography.size.bodyLg },
 });

@@ -50,10 +50,10 @@ export default function RestaurantMenuTab({ menu }) {
 const s = StyleSheet.create({
   pillRow:     { paddingHorizontal: spacing.xl, paddingVertical: spacing.xl, gap: spacing.md },
   pill:        { paddingHorizontal: spacing.xl + 2, paddingVertical: spacing.md + 1, borderRadius: radius.full, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, position: 'relative' },
-  pillOn:      { backgroundColor: colors.accentSoft, borderColor: colors.accent },
+  pillOn:      { backgroundColor: 'rgba(200,151,90,0.14)', borderColor: '#c8975a', shadowColor: '#000', shadowOpacity: 0.35, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 4 },
   pillTxt:     { color: colors.textMuted, fontSize: typography.size.bodyLg, fontWeight: typography.weight.regular },
   pillTxtOn:   { color: colors.accent, fontWeight: typography.weight.regular },
-  pillDot:     { position: 'absolute', bottom: -1, left: '50%', width: 4, height: 4, borderRadius: 2, backgroundColor: colors.accent, marginLeft: -2 },
+  pillDot:     { position: 'absolute', bottom: -1, left: '50%', width: 4, height: 4, borderRadius: 0, backgroundColor: colors.accent, marginLeft: -2 },
   items:       { marginHorizontal: spacing.xl, backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, overflow: 'hidden' },
   row:         { flexDirection: 'row', alignItems: 'center', gap: spacing.lg, paddingHorizontal: spacing.xl + 2, paddingVertical: spacing.lg },
   dishPhoto:   { width: 64, height: 64, borderRadius: radius.lg, backgroundColor: colors.card, flexShrink: 0 },

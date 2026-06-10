@@ -2,14 +2,16 @@ import { useCallback } from 'react';
 import {
   Platform, StatusBar as RNStatusBar, Dimensions,
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  SafeAreaView, Image, Animated, Share,
+  Image, Animated, Share,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
 import { colors, typography, spacing, radius } from '../src/theme';
 import useRestaurant from '../src/hooks/useRestaurant';
 import RestaurantMenuTab from '../src/components/RestaurantMenuTab';
 import RestaurantAvisTab from '../src/components/RestaurantAvisTab';
 import RestaurantInfosTab from '../src/components/RestaurantInfosTab';
-import MidaLogo from '../src/components/MidaLogo';
+import BottomTabBar from '../src/components/BottomTabBar';
 
 const SW   = Dimensions.get('window').width;
 const HERO = 310;
@@ -17,14 +19,18 @@ const TOP  = Platform.OS === 'android' ? (RNStatusBar.currentHeight || 0) + 10 :
 
 function HeroGradient() {
   return (
-    <View style={StyleSheet.absoluteFill} pointerEvents="none">
-      <View style={{ flex: 1 }} />
-      <View style={{ height: HERO * 0.08, backgroundColor: 'rgba(15,13,11,0.1)'  }} />
-      <View style={{ height: HERO * 0.10, backgroundColor: 'rgba(15,13,11,0.25)' }} />
-      <View style={{ height: HERO * 0.12, backgroundColor: 'rgba(15,13,11,0.45)' }} />
-      <View style={{ height: HERO * 0.14, backgroundColor: 'rgba(15,13,11,0.65)' }} />
-      <View style={{ height: HERO * 0.16, backgroundColor: 'rgba(15,13,11,0.85)' }} />
-    </View>
+    <>
+      <LinearGradient
+        colors={['rgba(0,0,0,0.80)', 'transparent']}
+        style={{ position: 'absolute', top: 0, left: 0, right: 0, height: HERO * 0.38 }}
+        pointerEvents="none"
+      />
+      <LinearGradient
+        colors={['transparent', 'rgba(0,0,0,0.88)']}
+        style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: HERO * 0.60 }}
+        pointerEvents="none"
+      />
+    </>
   );
 }
 
@@ -41,7 +47,6 @@ export default function RestaurantScreen({ route, navigation }) {
     toggleFav, switchTab,
   } = useRestaurant(restaurant);
 
-  const goBack    = useCallback(() => navigation?.goBack(), [navigation]);
   const goReserve = useCallback(() => navigation.navigate('ReservationForm', { restaurant }), [navigation, restaurant]);
   const handleShare = useCallback(() => {
     Share.share({
@@ -51,7 +56,8 @@ export default function RestaurantScreen({ route, navigation }) {
   }, [restaurant]);
 
   return (
-    <SafeAreaView style={s.root}>
+    <SafeAreaView style={s.root} edges={['top', 'left', 'right']}>
+      <LinearGradient colors={['#C4B8C8', '#8B9BB4', '#6B7F9E']} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
 
       {/* Hero */}
       <View style={s.hero}>
@@ -72,12 +78,6 @@ export default function RestaurantScreen({ route, navigation }) {
         )}
 
         <HeroGradient />
-
-        <TouchableOpacity style={[s.heroBtn, { left: spacing.xl }]} onPress={goBack}>
-          <Text style={s.heroBtnTxt}>←</Text>
-        </TouchableOpacity>
-
-        <MidaLogo showTagline={false} style={s.heroLogo} />
 
         <View style={s.heroBottomRight}>
           <TouchableOpacity style={s.sharePill} onPress={handleShare}>
@@ -101,7 +101,6 @@ export default function RestaurantScreen({ route, navigation }) {
               <Text style={s.openTxt}>Ouvert</Text>
             </View>
           </View>
-          <Text style={s.heroName} numberOfLines={1}>{restaurant.name}</Text>
           <View style={s.heroMeta}>
             {rating && (
               <>
@@ -179,33 +178,35 @@ export default function RestaurantScreen({ route, navigation }) {
             style={[s.reserveBtn, !restaurant.avg_ticket && { flex: 1 }]}
             onPress={goReserve}
           >
+            <LinearGradient colors={['#FF6B1A','#D93A00']} start={{x:0,y:0}} end={{x:1,y:0}} style={StyleSheet.absoluteFillObject} />
             <Text style={s.reserveTxt}>RÉSERVER UNE TABLE</Text>
           </TouchableOpacity>
         </View>
       </View>
 
+      <BottomTabBar navigation={navigation} activeTab={null} />
     </SafeAreaView>
   );
 }
 
 const s = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.bg },
+  root:      { flex: 1, backgroundColor: colors.bg },
+  bgOverlay: { ...StyleSheet.absoluteFillObject, opacity: 0.06 },
 
   hero:         { height: HERO, overflow: 'hidden' },
-  heroBtn:      { position: 'absolute', top: TOP, width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(15,13,11,0.76)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(240,235,227,0.25)', shadowColor: 'rgba(240,235,227,1)', shadowOpacity: 0.18, shadowRadius: 12, shadowOffset: { width: 0, height: 0 }, elevation: 6 },
   heroLogo:     { position: 'absolute', top: TOP + 2, alignSelf: 'center', left: 0, right: 0 },
-  heroBtnTxt:   { color: colors.text, fontSize: typography.size.heading1, textShadowColor: 'rgba(240,235,227,0.6)', textShadowOffset: { width: 0, height: 0 }, textShadowRadius: 8 },
+  heroBtnTxt:   { color: '#FFFFFF', fontSize: typography.size.heading1, textShadowColor: 'rgba(0,0,0,0.8)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 4 },
   heroBtnIcon:  { fontSize: typography.size.heading1 },
   heroBtnActing:{ color: colors.accent, fontSize: typography.size.bodyLg, fontWeight: typography.weight.bold },
 
   heroBottomRight: { position: 'absolute', bottom: spacing.xl, right: spacing.xl, flexDirection: 'row', alignItems: 'center', gap: spacing.md },
-  favBtn:          { width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(15,13,11,0.72)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(240,235,227,0.12)' },
-  sharePill:    { backgroundColor: 'rgba(255,255,255,0.07)', borderRadius: 100, paddingHorizontal: 14, paddingVertical: 9, borderWidth: 1, borderColor: 'rgba(255,255,255,0.13)' },
+  favBtn:          { width: 44, height: 44, borderRadius: 0, backgroundColor: 'rgba(15,13,11,0.72)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(240,235,227,0.12)' },
+  sharePill:    { backgroundColor: 'rgba(255,255,255,0.07)', borderRadius: 0, paddingHorizontal: 14, paddingVertical: 9, borderWidth: 1, borderColor: 'rgba(255,255,255,0.13)' },
   shareTxt:     { color: 'rgba(240,235,227,0.75)', fontSize: typography.size.caption, fontWeight: typography.weight.regular, letterSpacing: 2 },
 
 
   openBadge: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs + 1, backgroundColor: 'rgba(15,13,11,0.76)', borderRadius: radius.full, paddingHorizontal: spacing.md + 2, paddingVertical: spacing.xs, borderWidth: 1, borderColor: 'rgba(76,175,130,0.3)' },
-  openDot:   { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.green },
+  openDot:   { width: 6, height: 6, borderRadius: 0, backgroundColor: colors.green },
   openTxt:   { color: colors.green, fontSize: typography.size.sm },
 
   heroInfo:        { position: 'absolute', bottom: 0, left: 0, right: 0, padding: spacing.xl, paddingBottom: spacing.xl + 2 },
@@ -232,16 +233,16 @@ const s = StyleSheet.create({
 
   tabBar:  { flexDirection: 'row', backgroundColor: colors.card, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   tabBtn:  { flex: 1, alignItems: 'center', paddingVertical: spacing.lg + 1, position: 'relative' },
-  tabBtnOn:{ backgroundColor: colors.accentSoft, shadowColor: colors.accent, shadowOpacity: 0.25, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 4 },
+  tabBtnOn:{ backgroundColor: 'rgba(200,151,90,0.12)', shadowColor: '#000', shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
   tabTxt:  { color: colors.textDim, fontSize: typography.size.bodyLg, fontWeight: typography.weight.regular },
   tabTxtOn:{ color: colors.accent, fontWeight: typography.weight.semibold },
-  tabLine: { position: 'absolute', bottom: 0, left: '25%', right: '25%', height: 2, backgroundColor: colors.accent, borderRadius: 1 },
+  tabLine: { position: 'absolute', bottom: 0, left: '25%', right: '25%', height: 2, backgroundColor: colors.accent, borderRadius: 0 },
 
-  footer:        { paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, borderTopWidth: 1, borderTopColor: colors.cardBorder, backgroundColor: colors.bg },
+  footer:        { paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, borderTopWidth: 1, borderTopColor: colors.cardBorder, backgroundColor: colors.navy },
   footerInner:   { flexDirection: 'row', alignItems: 'center', gap: spacing.xl - 2 },
   footerPrice:   { gap: spacing.xxs },
   footerPriceLbl:{ color: colors.textDim, fontSize: typography.size.xs, letterSpacing: 1.5 },
   footerPriceVal:{ color: colors.accent, fontSize: typography.size.heading2, fontWeight: typography.weight.regular },
-  reserveBtn:    { flex: 1, backgroundColor: colors.accent, borderRadius: radius.xl, paddingVertical: spacing.xl - 1, alignItems: 'center' },
-  reserveTxt:    { color: colors.bg, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium, letterSpacing: 1.5 },
+  reserveBtn:    { flex: 1, borderRadius: radius.xl, paddingVertical: spacing.xl - 1, alignItems: 'center', overflow: 'hidden', justifyContent: 'center' },
+  reserveTxt:    { color: '#FFFFFF', fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium, letterSpacing: 1.5 },
 });

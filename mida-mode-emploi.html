@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MIDA — Mode d'emploi</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black:   #0F0D0B;
+    --cream:   #FAF7F2;
+    --accent:  #E8A045;
+    --green:   #4CAF82;
+    --red:     #E05A5A;
+    --muted:   #888;
+    --border:  #E5E0D8;
+  }
+
+  body {
+    font-family: 'Inter', Georgia, sans-serif;
+    background: var(--cream);
+    color: var(--black);
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  /* ── COVER ── */
+  .cover {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 40px;
+    border-bottom: 1px solid var(--border);
+    page-break-after: always;
+  }
+  .cover .logo {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 56px;
+    letter-spacing: 12px;
+    color: var(--black);
+    margin-bottom: 12px;
+  }
+  .cover .tagline {
+    font-size: 13px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 60px;
+  }
+  .cover .doc-title {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 32px;
+    font-weight: 400;
+    margin-bottom: 16px;
+  }
+  .cover .doc-sub {
+    font-size: 14px;
+    color: var(--muted);
+    max-width: 400px;
+  }
+  .cover .roles {
+    display: flex;
+    gap: 16px;
+    margin-top: 48px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .cover .role-badge {
+    padding: 8px 20px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+  .cover .badge-client { background: #EFF8F4; color: var(--green); border: 1px solid var(--green); }
+  .cover .badge-pro    { background: #FEF6EC; color: var(--accent); border: 1px solid var(--accent); }
+  .cover .badge-admin  { background: #FDEEEE; color: var(--red);    border: 1px solid var(--red);    }
+  .cover .version {
+    position: absolute;
+    bottom: 32px;
+    font-size: 11px;
+    color: #ccc;
+    letter-spacing: 1px;
+  }
+
+  /* ── LAYOUT ── */
+  .content { max-width: 760px; margin: 0 auto; padding: 48px 40px 80px; }
+
+  /* ── TABLE OF CONTENTS ── */
+  .toc {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px 36px;
+    margin-bottom: 56px;
+    page-break-after: always;
+  }
+  .toc h2 {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 22px;
+    font-weight: 400;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .toc ol { padding-left: 0; list-style: none; }
+  .toc li { padding: 6px 0; display: flex; align-items: baseline; gap: 8px; }
+  .toc .toc-num { color: var(--accent); font-weight: 600; min-width: 24px; }
+  .toc .toc-title { flex: 1; }
+  .toc .toc-page { color: var(--muted); font-size: 12px; }
+  .toc .toc-section { font-weight: 600; margin-top: 12px; font-size: 13px; letter-spacing: 0.5px; }
+  .toc .toc-sub { padding-left: 32px; font-size: 13px; color: #555; }
+
+  /* ── ROLE HEADER ── */
+  .role-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 28px 32px;
+    border-radius: 12px;
+    margin-bottom: 36px;
+    margin-top: 48px;
+  }
+  .role-header.client { background: #EFF8F4; border-left: 4px solid var(--green); }
+  .role-header.pro    { background: #FEF6EC; border-left: 4px solid var(--accent); }
+  .role-header.admin  { background: #FDEEEE; border-left: 4px solid var(--red); }
+  .role-icon { font-size: 32px; }
+  .role-title { font-family: 'EB Garamond', Georgia, serif; font-size: 28px; font-weight: 400; }
+  .role-desc  { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
+  /* ── SECTIONS ── */
+  h2.section {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 22px;
+    font-weight: 400;
+    margin-top: 40px;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  h3 { font-size: 14px; font-weight: 600; margin-top: 24px; margin-bottom: 10px; letter-spacing: 0.3px; }
+  p  { margin-bottom: 12px; color: #333; }
+
+  /* ── STEPS ── */
+  .steps { counter-reset: step; list-style: none; padding: 0; margin-bottom: 16px; }
+  .steps li {
+    counter-increment: step;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 10px 0;
+    border-bottom: 1px solid #F0EDE8;
+  }
+  .steps li:last-child { border-bottom: none; }
+  .steps li::before {
+    content: counter(step);
+    background: var(--black);
+    color: white;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    font-size: 11px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  /* ── STATUS BADGES ── */
+  .status-grid { display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0; }
+  .status {
+    padding: 5px 14px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+  }
+  .s-pending   { background: #FEF6EC; color: var(--accent);  border: 1px solid rgba(232,160,69,0.4); }
+  .s-confirmed { background: #EFF8F4; color: var(--green);   border: 1px solid rgba(76,175,130,0.4); }
+  .s-arrived   { background: #EEF4FD; color: #5A9BE0;        border: 1px solid rgba(90,155,224,0.4); }
+  .s-cancelled { background: #FDEEEE; color: var(--red);     border: 1px solid rgba(224,90,90,0.4);  }
+  .s-noshow    { background: #F5F5F5; color: #888;            border: 1px solid #ddd; }
+
+  /* ── TABLE ── */
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px; }
+  th { background: var(--black); color: white; padding: 10px 14px; text-align: left; font-weight: 500; letter-spacing: 0.3px; }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: #FAFAFA; }
+  .btn-cell { font-weight: 600; white-space: nowrap; }
+  .btn-green { color: var(--green); }
+  .btn-red   { color: var(--red); }
+  .btn-blue  { color: #5A9BE0; }
+
+  /* ── CALLOUT ── */
+  .callout {
+    display: flex;
+    gap: 12px;
+    padding: 14px 18px;
+    border-radius: 8px;
+    margin: 16px 0;
+    font-size: 13px;
+  }
+  .callout.info    { background: #EEF4FD; border-left: 3px solid #5A9BE0; }
+  .callout.warning { background: #FEF6EC; border-left: 3px solid var(--accent); }
+  .callout.success { background: #EFF8F4; border-left: 3px solid var(--green); }
+  .callout.danger  { background: #FDEEEE; border-left: 3px solid var(--red); }
+  .callout-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  /* ── CODE / URL ── */
+  code {
+    background: #F0EDE8;
+    border: 1px solid var(--border);
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-family: 'SF Mono', 'Courier New', monospace;
+    color: var(--black);
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 40px 0;
+  }
+
+  /* ── PRINT ── */
+  @media print {
+    body { background: white; }
+    .cover { min-height: auto; padding: 80px 60px; }
+    .no-print { display: none; }
+    h2.section, .role-header { page-break-before: auto; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════ COVER ══════════════ -->
+<div class="cover">
+  <div class="logo">MIDA</div>
+  <div class="tagline">Réservation de restaurants · Alger</div>
+  <div class="doc-title">Mode d'emploi</div>
+  <p class="doc-sub">Guide complet d'utilisation de l'application pour tous les profils</p>
+  <div class="roles">
+    <span class="role-badge badge-client">Client</span>
+    <span class="role-badge badge-pro">Restaurateur</span>
+    <span class="role-badge badge-admin">Admin</span>
+  </div>
+  <div class="version">Version 1.0 · 2026</div>
+</div>
+
+<!-- ══════════════ CONTENT ══════════════ -->
+<div class="content">
+
+  <!-- TABLE DES MATIÈRES -->
+  <div class="toc">
+    <h2>Table des matières</h2>
+    <ol>
+      <li><span class="toc-num">1</span><span class="toc-title toc-section">CLIENT</span></li>
+      <li class="toc-sub"><span class="toc-num">1.1</span><span class="toc-title">Inscription et connexion</span></li>
+      <li class="toc-sub"><span class="toc-num">1.2</span><span class="toc-title">Chercher un restaurant</span></li>
+      <li class="toc-sub"><span class="toc-num">1.3</span><span class="toc-title">Faire une réservation</span></li>
+      <li class="toc-sub"><span class="toc-num">1.4</span><span class="toc-title">Gérer ses réservations</span></li>
+      <li class="toc-sub"><span class="toc-num">1.5</span><span class="toc-title">Favoris</span></li>
+      <li class="toc-sub"><span class="toc-num">1.6</span><span class="toc-title">Notifications</span></li>
+      <li class="toc-sub"><span class="toc-num">1.7</span><span class="toc-title">Laisser un avis</span></li>
+      <li><span class="toc-num">2</span><span class="toc-title toc-section">RESTAURATEUR (PRO)</span></li>
+      <li class="toc-sub"><span class="toc-num">2.1</span><span class="toc-title">Inscription et activation du compte</span></li>
+      <li class="toc-sub"><span class="toc-num">2.2</span><span class="toc-title">Dashboard</span></li>
+      <li class="toc-sub"><span class="toc-num">2.3</span><span class="toc-title">Comptoir — réservations du jour</span></li>
+      <li class="toc-sub"><span class="toc-num">2.4</span><span class="toc-title">Actions sur les réservations</span></li>
+      <li><span class="toc-num">3</span><span class="toc-title toc-section">ADMIN</span></li>
+      <li class="toc-sub"><span class="toc-num">3.1</span><span class="toc-title">Recevoir une demande pro</span></li>
+      <li class="toc-sub"><span class="toc-num">3.2</span><span class="toc-title">Approuver une demande</span></li>
+      <li class="toc-sub"><span class="toc-num">3.3</span><span class="toc-title">Refuser une demande</span></li>
+      <li class="toc-sub"><span class="toc-num">3.4</span><span class="toc-title">Sécurité anti-erreur</span></li>
+    </ol>
+  </div>
+
+  <!-- ══════════════ PARTIE 1 : CLIENT ══════════════ -->
+  <div class="role-header client">
+    <div class="role-icon">👤</div>
+    <div>
+      <div class="role-title">Partie 1 — Client</div>
+      <div class="role-desc">Recherche de restaurants, réservations, favoris et avis</div>
+    </div>
+  </div>
+
+  <h2 class="section">1.1 Inscription et connexion</h2>
+  <ol class="steps">
+    <li>Ouvrir l'application MIDA → écran de bienvenue</li>
+    <li>Taper <strong>Créer un compte</strong> → remplir le formulaire : prénom, nom, email, mot de passe</li>
+    <li>Valider → compte créé, connexion automatique</li>
+  </ol>
+  <p>Pour les connexions suivantes : taper <strong>Connexion</strong> → saisir email + mot de passe.</p>
+  <div class="callout info">
+    <span class="callout-icon">ℹ️</span>
+    <span>Après connexion, l'application s'ouvre sur l'onglet <strong>Accueil</strong> avec les quatre onglets du bas : Accueil, Recherche, Favoris, Profil.</span>
+  </div>
+
+  <h2 class="section">1.2 Chercher un restaurant</h2>
+  <h3>Depuis l'Accueil</h3>
+  <p>Restaurants mis en avant, filtrables par type de cuisine ou ville. Défiler vers le bas pour voir toutes les catégories.</p>
+  <h3>Depuis Recherche</h3>
+  <p>Barre de recherche en haut → taper un nom de restaurant, une cuisine (ex. : <em>pizza</em>, <em>kabyle</em>) ou un quartier. Les résultats s'affichent en temps réel.</p>
+  <h3>Depuis Explorer (carte)</h3>
+  <p>Vue cartographique de tous les restaurants. Taper sur un marqueur pour voir la fiche rapide. Taper <strong>Voir</strong> pour ouvrir la fiche complète.</p>
+
+  <h2 class="section">1.3 Faire une réservation</h2>
+  <ol class="steps">
+    <li>Ouvrir la fiche d'un restaurant</li>
+    <li>Taper <strong>Réserver</strong></li>
+    <li>Choisir la <strong>date</strong>, l'<strong>heure</strong> et le nombre de couverts (adultes + enfants)</li>
+    <li>Ajouter une note optionnelle (allergie, occasion spéciale, etc.)</li>
+    <li>Taper <strong>Confirmer la réservation</strong></li>
+    <li>La réservation est créée avec le statut <span class="status s-pending">EN ATTENTE</span></li>
+    <li>Le restaurateur confirme → notification <em>"Réservation confirmée ✓"</em> reçue</li>
+  </ol>
+  <div class="callout warning">
+    <span class="callout-icon">⚠️</span>
+    <span>Une réservation <strong>EN ATTENTE</strong> n'est pas encore garantie. Elle devient effective uniquement après confirmation par le restaurant.</span>
+  </div>
+
+  <h2 class="section">1.4 Gérer ses réservations</h2>
+  <p>Onglet <strong>Resa</strong> → liste complète des réservations passées et à venir.</p>
+  <p>Statuts possibles :</p>
+  <div class="status-grid">
+    <span class="status s-pending">EN ATTENTE</span>
+    <span class="status s-confirmed">CONFIRMÉE</span>
+    <span class="status s-arrived">ARRIVÉ</span>
+    <span class="status s-cancelled">ANNULÉE</span>
+    <span class="status s-noshow">NO SHOW</span>
+  </div>
+  <table>
+    <tr><th>Statut</th><th>Signification</th></tr>
+    <tr><td><span class="status s-pending">EN ATTENTE</span></td><td>Soumise, en cours d'examen par le restaurant</td></tr>
+    <tr><td><span class="status s-confirmed">CONFIRMÉE</span></td><td>Validée par le restaurant — votre table est réservée</td></tr>
+    <tr><td><span class="status s-arrived">ARRIVÉ</span></td><td>Votre présence a été enregistrée par le restaurant</td></tr>
+    <tr><td><span class="status s-cancelled">ANNULÉE</span></td><td>Annulée par le restaurant</td></tr>
+    <tr><td><span class="status s-noshow">NO SHOW</span></td><td>Vous ne vous êtes pas présenté</td></tr>
+  </table>
+
+  <h2 class="section">1.5 Favoris</h2>
+  <ol class="steps">
+    <li>Ouvrir la fiche d'un restaurant</li>
+    <li>Taper l'icône ♡ en haut à droite → restaurant ajouté aux favoris</li>
+    <li>Retrouver tous les restaurants sauvegardés dans l'onglet <strong>Favoris</strong></li>
+  </ol>
+  <p>Taper à nouveau l'icône ♡ pour retirer un restaurant des favoris.</p>
+
+  <h2 class="section">1.6 Notifications</h2>
+  <p>Onglet <strong>Notifications</strong> → historique de toutes les alertes reçues.</p>
+  <p>Types de notifications :</p>
+  <ul style="margin: 12px 0 16px 20px; color: #333;">
+    <li style="padding: 4px 0"><strong>Réservation confirmée</strong> — le restaurant a validé votre demande</li>
+    <li style="padding: 4px 0"><strong>Réservation annulée</strong> — le restaurant a annulé votre réservation</li>
+    <li style="padding: 4px 0"><strong>Demande d'avis</strong> — après chaque visite marquée comme terminée</li>
+  </ul>
+  <div class="callout info">
+    <span class="callout-icon">ℹ️</span>
+    <span>Les notifications push apparaissent aussi sur l'écran de verrouillage. Autoriser les notifications lors du premier lancement pour ne rien manquer.</span>
+  </div>
+
+  <h2 class="section">1.7 Laisser un avis</h2>
+  <ol class="steps">
+    <li>Après votre visite, recevoir la notification <em>"Comment était votre expérience ? ⭐"</em></li>
+    <li>Taper la notification → onglet <strong>Resa</strong> → sélectionner la réservation</li>
+    <li>Attribuer une note de 1 à 5 étoiles</li>
+    <li>Rédiger un commentaire (optionnel)</li>
+    <li>Valider → l'avis est soumis à modération puis publié</li>
+  </ol>
+
+  <hr class="divider">
+
+  <!-- ══════════════ PARTIE 2 : RESTAURATEUR ══════════════ -->
+  <div class="role-header pro">
+    <div class="role-icon">🍽️</div>
+    <div>
+      <div class="role-title">Partie 2 — Restaurateur</div>
+      <div class="role-desc">Gestion des réservations et du profil restaurant</div>
+    </div>
+  </div>
+
+  <h2 class="section">2.1 Inscription et activation du compte</h2>
+  <ol class="steps">
+    <li>Créer d'abord un compte client classique (voir 1.1)</li>
+    <li>Dans l'onglet <strong>Profil</strong> → taper <strong>Devenir restaurateur</strong></li>
+    <li>Remplir le formulaire d'inscription pro : nom, prénom, nom du restaurant, ville, adresse, téléphone, email professionnel</li>
+    <li>Soumettre → email de confirmation reçu : <em>"Votre demande est en cours d'examen"</em></li>
+    <li>L'administrateur MIDA examine la demande (délai : 24h maximum)</li>
+    <li>Une fois approuvé → email de bienvenue reçu</li>
+    <li>Se reconnecter dans l'app → accès automatique au <strong>Dashboard Pro</strong></li>
+  </ol>
+  <div class="callout warning">
+    <span class="callout-icon">⚠️</span>
+    <span>Si vous étiez déjà connecté au moment de l'approbation, <strong>déconnectez-vous et reconnectez-vous</strong> pour que le rôle restaurateur soit activé.</span>
+  </div>
+
+  <h2 class="section">2.2 Dashboard (ProDashboard)</h2>
+  <p>Vue d'ensemble de l'activité de votre restaurant :</p>
+  <ul style="margin: 12px 0 16px 20px; color: #333;">
+    <li style="padding: 4px 0">Statistiques du jour : réservations confirmées, en attente, nombre de couverts</li>
+    <li style="padding: 4px 0">Prochaines réservations à venir</li>
+    <li style="padding: 4px 0">Accès rapide au comptoir</li>
+  </ul>
+
+  <h2 class="section">2.3 Comptoir — réservations du jour</h2>
+  <p>Onglet <strong>Réservations</strong> → liste de toutes les réservations du jour, triées par horaire.</p>
+  <p>Compteurs en haut de l'écran :</p>
+  <table>
+    <tr><th>Compteur</th><th>Signification</th></tr>
+    <tr><td><strong>Confirmées</strong></td><td>Réservations validées pour aujourd'hui</td></tr>
+    <tr><td><strong>En attente</strong></td><td>Demandes à traiter</td></tr>
+    <tr><td><strong>Arrivées</strong></td><td>Clients présents</td></tr>
+    <tr><td><strong>Couverts</strong></td><td>Total de personnes attendues (confirmées + en attente + arrivées)</td></tr>
+  </table>
+  <div class="callout info">
+    <span class="callout-icon">ℹ️</span>
+    <span>La liste se rafraîchit automatiquement toutes les <strong>2 minutes</strong>. Tirer vers le bas pour forcer un rafraîchissement immédiat.</span>
+  </div>
+
+  <h2 class="section">2.4 Actions sur les réservations</h2>
+  <p>Taper sur une réservation pour voir les détails et les actions disponibles :</p>
+  <table>
+    <tr><th>Action</th><th>Résultat</th><th>Notification envoyée au client</th></tr>
+    <tr>
+      <td class="btn-cell btn-green">✓ Confirmer</td>
+      <td><span class="status s-pending">EN ATTENTE</span> → <span class="status s-confirmed">CONFIRMÉE</span></td>
+      <td>"Votre réservation chez [restaurant] est confirmée"</td>
+    </tr>
+    <tr>
+      <td class="btn-cell btn-blue">Arrivé</td>
+      <td><span class="status s-confirmed">CONFIRMÉE</span> → <span class="status s-arrived">ARRIVÉ</span></td>
+      <td>"Comment était votre expérience ? ⭐" (demande d'avis)</td>
+    </tr>
+    <tr>
+      <td class="btn-cell btn-red">✕ Annuler</td>
+      <td>Tout statut → <span class="status s-cancelled">ANNULÉE</span></td>
+      <td>"Votre réservation a été annulée par le restaurant"</td>
+    </tr>
+  </table>
+  <div class="callout success">
+    <span class="callout-icon">✅</span>
+    <span>Une confirmation de dialogue s'affiche toujours avant d'exécuter une action. Il est impossible d'agir par erreur sans valider deux fois.</span>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ══════════════ PARTIE 3 : ADMIN ══════════════ -->
+  <div class="role-header admin">
+    <div class="role-icon">⚙️</div>
+    <div>
+      <div class="role-title">Partie 3 — Administrateur</div>
+      <div class="role-desc">Validation des comptes restaurateurs et gestion de la plateforme</div>
+    </div>
+  </div>
+
+  <h2 class="section">3.1 Recevoir une demande pro</h2>
+  <p>Quand un utilisateur soumet une demande d'inscription restaurateur, un email est envoyé automatiquement à l'adresse admin avec :</p>
+  <ul style="margin: 12px 0 16px 20px; color: #333;">
+    <li style="padding: 4px 0">Prénom / Nom du demandeur</li>
+    <li style="padding: 4px 0">Nom du restaurant, ville, téléphone, adresse, email</li>
+    <li style="padding: 4px 0">Date et heure de la demande</li>
+    <li style="padding: 4px 0">Deux boutons d'action : <strong>✓ APPROUVER</strong> et <strong>✗ REFUSER</strong></li>
+  </ul>
+
+  <h2 class="section">3.2 Approuver une demande</h2>
+  <ol class="steps">
+    <li>Ouvrir l'email de nouvelle demande pro</li>
+    <li>Taper le bouton <strong>✓ APPROUVER</strong></li>
+    <li>Une page s'ouvre avec le récapitulatif de la demande et un lien de confirmation</li>
+    <li>Taper le lien <em>"OUI — confirmez en cliquant sur ce lien"</em></li>
+    <li>Page de succès affichée : <code>✓ APPROUVE</code></li>
+  </ol>
+  <p>Ce qui se passe automatiquement après approbation :</p>
+  <ul style="margin: 12px 0 16px 20px; color: #333;">
+    <li style="padding: 4px 0">Compte restaurateur (<code>restaurant_owners</code>) créé dans la base de données</li>
+    <li style="padding: 4px 0">Fiche restaurant créée (statut <em>pending</em> — à compléter par le restaurateur)</li>
+    <li style="padding: 4px 0">Rôle <code>manager</code> activé sur le compte utilisateur</li>
+    <li style="padding: 4px 0">Email de bienvenue envoyé au restaurateur</li>
+  </ul>
+
+  <h2 class="section">3.3 Refuser une demande</h2>
+  <ol class="steps">
+    <li>Ouvrir l'email de nouvelle demande pro</li>
+    <li>Taper le bouton <strong>✗ REFUSER</strong></li>
+    <li>Page de confirmation → taper le lien de confirmation</li>
+    <li>Page de succès : <code>✗ REFUSE</code></li>
+  </ol>
+  <p>Ce qui se passe automatiquement :</p>
+  <ul style="margin: 12px 0 16px 20px; color: #333;">
+    <li style="padding: 4px 0">Demande marquée <code>rejected</code></li>
+    <li style="padding: 4px 0">Email de notification envoyé au demandeur avec contact support (<a href="mailto:contact@mida-food.com">contact@mida-food.com</a>)</li>
+  </ul>
+
+  <h2 class="section">3.4 Sécurité anti-erreur</h2>
+  <div class="callout success">
+    <span class="callout-icon">🔒</span>
+    <span><strong>Double confirmation obligatoire.</strong> Les deux actions (approuver et refuser) nécessitent deux clics : le premier affiche un récapitulatif, le deuxième confirme l'exécution. Fermer la fenêtre après le premier clic = aucune action effectuée.</span>
+  </div>
+  <div class="callout warning">
+    <span class="callout-icon">⚠️</span>
+    <span>Une demande déjà traitée ne peut pas être ré-exécutée. Si vous approuvez ou refusez par erreur, contactez le support technique pour une correction manuelle.</span>
+  </div>
+
+  <hr class="divider">
+
+  <!-- FOOTER -->
+  <div style="text-align: center; padding: 24px 0; color: #bbb; font-size: 12px; letter-spacing: 1px;">
+    MIDA · mida-food.com · contact@mida-food.com
+  </div>
+
+</div>
+
+<!-- PRINT BUTTON (masqué à l'impression) -->
+<div class="no-print" style="position: fixed; bottom: 24px; right: 24px;">
+  <button onclick="window.print()" style="background: #0F0D0B; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+    🖨️ Imprimer / Exporter PDF
+  </button>
+</div>
+
+</body>
+</html>

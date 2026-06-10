@@ -20,7 +20,7 @@ export default function SmallResaCard({ r, onCancel, onPress, onEdit }) {
       <View style={{ flex:1 }}>
         <Text style={s.name} numberOfLines={1}>{r.restaurants?.name || '—'}</Text>
         <Text style={s.meta}>{fmtShort(r.date)} · {r.time_slot?.slice(0,5)} · {(r.nb_adults||0)+(r.nb_children||0)} pers.</Text>
-        <Text style={[s.countdown, { color: days === 'Demain' ? colors.green : colors.blue }]}>
+        <Text style={[s.countdown, { color: days === 'DEMAIN' ? colors.green : colors.blue }]}>
           {days}
         </Text>
       </View>

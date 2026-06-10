@@ -68,10 +68,10 @@ export default function useProfil() {
       );
       const { data: row } = await supabase.from('users')
         .select('id, avatar_url, first_name, last_name, city, phone')
-        .eq('auth_id', u.id).single();
+        .eq('auth_id', u.id).maybeSingle();
       if (!row) return;
       setUserId(row.id);
-      setAvatarUri(row.avatar_url ?? null);
+      setAvatarUri(row.avatar_url ? `${row.avatar_url}?v=${Date.now()}` : null);
       setFirstName(row.first_name ?? '');
       setLastName(row.last_name  ?? '');
       setCity(row.city ?? '');
@@ -110,16 +110,18 @@ export default function useProfil() {
       allowsEditing: true, aspect: [1, 1], quality: 0.8,
     });
     if (result.canceled || !result.assets[0]) return;
-    const uri = result.assets[0].uri;
+    const asset    = result.assets[0];
+    const mimeType = asset.mimeType || 'image/jpeg';
+    const ext      = mimeType === 'image/png' ? 'png' : 'jpeg';
+    const path     = `${authId}/avatar.${ext}`;
     setUploading(true);
     try {
-      const ext  = uri.split('.').pop().toLowerCase().replace('jpg', 'jpeg');
-      const path = `${authId}/avatar.${ext}`;
-      const blob = await (await fetch(uri)).blob();
-      await supabase.storage.from('avatars').upload(path, blob, { upsert: true, contentType: `image/${ext}` });
+      const response = await fetch(asset.uri);
+      const arrayBuffer = await response.arrayBuffer();
+      await supabase.storage.from('avatars').upload(path, arrayBuffer, { upsert: true, contentType: mimeType });
       const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(path);
       await supabase.from('users').update({ avatar_url: urlData.publicUrl }).eq('auth_id', authId);
-      setAvatarUri(urlData.publicUrl);
+      setAvatarUri(`${urlData.publicUrl}?v=${Date.now()}`);
     } catch (e) {
       console.error(e);
     } finally {
@@ -164,6 +166,11 @@ export default function useProfil() {
 
   const signOut = useCallback(() => supabase.auth.signOut(), []);
 
+  const deleteAccount = useCallback(async () => {
+    await supabase.rpc('delete_my_account');
+    await supabase.auth.signOut();
+  }, []);
+
   const displayName = useMemo(
     () => [firstName, lastName].filter(Boolean).join(' ') || userEmail.split('@')[0] || 'Mon profil',
     [firstName, lastName, userEmail],
@@ -195,6 +202,6 @@ export default function useProfil() {
     cancelling, activeSits, setActiveSits, activeCuisines, setActiveCuisines,
     removing,
     displayName, initial, upcoming, history, pendingCount,
-    pickAvatar, saveName, cancelResa, removeFav, signOut, toggleEditing,
+    pickAvatar, saveName, cancelResa, removeFav, signOut, deleteAccount, toggleEditing,
   };
 }

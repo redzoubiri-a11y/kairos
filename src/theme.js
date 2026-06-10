@@ -6,34 +6,50 @@
 
 export const colors = {
   // Backgrounds
-  bg: '#0F0D0B',
-  card: '#1A1714',
-  cardBorder: '#2A2520',
-  cardHover: '#221E1A',
+  bg: '#FFFFFF',
+  card: '#F4F2EE',
+  cardBorder: 'rgba(0,0,0,0.09)',
+  cardHover: 'rgba(0,0,0,0.05)',
 
-  // Accent principal
-  accent: '#E8A045',
-  accentSoft: 'rgba(232, 160, 69, 0.12)',
-  accentDim: '#C4863A',
+  // Neutral light — boutons et éléments UI (thème blanc)
+  navy: 'transparent',
+  navyBorder: 'rgba(0,0,0,0.10)',
+  navyDeep: 'rgba(0,0,0,0.04)',
+
+  // Accent UI — galets stone
+  accent: '#9B9088',
+  accentSoft: 'rgba(155,144,136,0.18)',
+  accentDim: '#7A7270',
+
+  // CTA Réservation — terracotta chaud
+  resa: '#C87860',
+  resaSoft: 'rgba(200,120,96,0.18)',
 
   // Texte
-  text: '#F0EBE3',
-  textMuted: '#8A7F74',
-  textDim: '#5A5148',
+  text: '#1A1A1A',
+  textMuted: 'rgba(26,26,26,0.60)',
+  textDim: 'rgba(26,26,26,0.38)',
 
   // États
   green: '#4CAF82',
-  greenSoft: 'rgba(76, 175, 130, 0.12)',
+  greenSoft: 'rgba(76, 175, 130, 0.15)',
   red: '#E05A5A',
-  redSoft: 'rgba(224, 90, 90, 0.12)',
+  redSoft: 'rgba(224, 90, 90, 0.15)',
   blue: '#5A9BE0',
-  blueSoft: 'rgba(90, 155, 224, 0.12)',
+  blueSoft: 'rgba(90, 155, 224, 0.15)',
   purple: '#9B7FE8',
-  purpleSoft: 'rgba(155, 127, 232, 0.12)',
+  purpleSoft: 'rgba(155, 127, 232, 0.15)',
+
+  // Turquoise réservation
+  teal: '#3A96A8',
+  tealLight: '#6BBDCB',
+  tealSoft: 'rgba(58,150,168,0.20)',
+  tealMid: 'rgba(58,150,168,0.35)',
+  tealDark: '#1A3D44',
 
   // Overlay
-  overlay: 'rgba(0,0,0,0.6)',
-  overlayLight: 'rgba(0,0,0,0.3)',
+  overlay: 'rgba(0,0,0,0.5)',
+  overlayLight: 'rgba(0,0,0,0.15)',
 };
 
 export const typography = {
@@ -88,12 +104,12 @@ export const spacing = {
 };
 
 export const radius = {
-  sm: 8,
-  md: 10,
+  sm: 4,
+  md: 8,
   lg: 12,
-  xl: 14,
-  xxl: 16,
-  pill: 20,
+  xl: 16,
+  xxl: 20,
+  pill: 32,
   full: 999,
 };
 
@@ -101,30 +117,30 @@ export const shadows = {
   sm: {
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.08,
     shadowRadius: 4,
-    elevation: 3,
+    elevation: 2,
   },
   md: {
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
+    shadowOpacity: 0.12,
     shadowRadius: 10,
-    elevation: 6,
+    elevation: 4,
   },
   lg: {
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.5,
+    shadowOpacity: 0.16,
     shadowRadius: 20,
-    elevation: 10,
+    elevation: 8,
   },
   accent: {
-    shadowColor: '#E8A045',
+    shadowColor: '#9B9088',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.2,
     shadowRadius: 12,
-    elevation: 6,
+    elevation: 5,
   },
 };
 
@@ -186,10 +202,17 @@ export const common = {
 export const buttonVariants = {
   primary: {
     container: {
-      backgroundColor: colors.accent,
+      backgroundColor: '#c8975a',
       borderRadius: radius.xl,
       padding: spacing.xl,
       alignItems: 'center',
+      borderWidth: 1,
+      borderColor: 'rgba(200,151,90,0.5)',
+      shadowColor: '#c8975a',
+      shadowOpacity: 0.5,
+      shadowRadius: 14,
+      shadowOffset: { width: 0, height: 0 },
+      elevation: 7,
     },
     text: {
       color: '#000000',
@@ -223,7 +246,7 @@ export const buttonVariants = {
       borderColor: colors.cardBorder,
     },
     text: {
-      color: colors.textMuted,
+      color: '#5A5550',
       fontSize: typography.size.subheading,
       fontWeight: typography.weight.bold,
     },

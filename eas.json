@@ -1,6 +1,7 @@
 {
   "cli": {
-    "version": ">= 14.0.0"
+    "version": ">= 16.0.1",
+    "appVersionSource": "remote"
   },
   "build": {
     "development": {
@@ -17,15 +18,23 @@
       }
     },
     "production": {
+      "autoIncrement": true,
       "android": {
         "buildType": "app-bundle"
       },
       "ios": {
-        "credentialsSource": "remote"
+        "credentialsSource": "remote",
+        "resourceClass": "m-medium"
       }
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "ios": {
+        "appleId": "red.zoubiri@gmail.com",
+        "ascAppId": "6776171199",
+        "language": "fr-FR"
+      }
+    }
   }
 }

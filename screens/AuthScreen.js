@@ -1,12 +1,12 @@
 import { useRef } from 'react';
 import {
   View, Text, StyleSheet, TextInput, TouchableOpacity,
-  SafeAreaView, KeyboardAvoidingView, Platform, ScrollView,
-  Animated,
+  KeyboardAvoidingView, Platform, ScrollView,
+  Animated, Linking,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, typography, spacing, radius } from '../src/theme';
 import useAuth from '../src/hooks/useAuth';
-import MidaLogo from '../src/components/MidaLogo';
 
 function Field({ icon, label, children }) {
   return (
@@ -48,7 +48,6 @@ export default function AuthScreen({ onAuth, userType, onSwitchType }) {
                 <Text style={s.heroStar}>✦</Text>
               </View>
             </Animated.View>
-            <MidaLogo />
           </View>
 
           {isPro && (
@@ -165,9 +164,9 @@ export default function AuthScreen({ onAuth, userType, onSwitchType }) {
 
           <Text style={s.legal}>
             En continuant, vous acceptez nos{' '}
-            <Text style={s.legalLink}>Conditions</Text>
+            <Text style={s.legalLink} onPress={() => Linking.openURL('https://mida-food.com/conditions')}>Conditions</Text>
             {' '}et notre{' '}
-            <Text style={s.legalLink}>Politique de confidentialité</Text>.
+            <Text style={s.legalLink} onPress={() => Linking.openURL('https://mida-food.com/confidentialite')}>Politique de confidentialité</Text>.
           </Text>
 
           {onSwitchType && (
@@ -195,7 +194,7 @@ const s = StyleSheet.create({
 
   tabRow:   { flexDirection: 'row', backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, padding: 4, marginBottom: spacing.xl },
   tabBtn:   { flex: 1, paddingVertical: spacing.lg, alignItems: 'center', borderRadius: radius.xl },
-  tabBtnOn: { backgroundColor: colors.accentSoft, borderWidth: 1, borderColor: colors.accent, shadowColor: colors.accent, shadowOpacity: 0.3, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 4 },
+  tabBtnOn: { backgroundColor: 'rgba(200,151,90,0.14)', borderWidth: 1, borderColor: '#c8975a', shadowColor: '#000', shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
   tabTxt:   { color: colors.textDim, fontSize: typography.size.subheading },
   tabTxtOn: { color: colors.accent, fontWeight: typography.weight.semibold },
 
@@ -222,7 +221,7 @@ const s = StyleSheet.create({
   successLink:    { alignSelf: 'flex-start' },
   successLinkTxt: { color: colors.blue, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium },
 
-  submitBtn: { backgroundColor: colors.accent, borderRadius: radius.xl, paddingVertical: spacing.xl - 2, alignItems: 'center', marginTop: spacing.xs },
+  submitBtn: { backgroundColor: '#c8975a', borderRadius: radius.xl, paddingVertical: spacing.xl - 2, alignItems: 'center', marginTop: spacing.xs, shadowColor: '#000', shadowOpacity: 0.5, shadowRadius: 14, shadowOffset: { width: 0, height: 0 }, elevation: 7 },
   submitTxt: { color: colors.bg, fontSize: typography.size.bodyLg, fontWeight: typography.weight.bold, letterSpacing: 0.5 },
 
   roleBadge:    { alignSelf: 'center', flexDirection: 'row', alignItems: 'center', backgroundColor: colors.blueSoft, borderRadius: radius.pill, borderWidth: 1, borderColor: 'rgba(90,155,224,0.3)', paddingHorizontal: spacing.xl, paddingVertical: spacing.md, marginBottom: spacing.xl },

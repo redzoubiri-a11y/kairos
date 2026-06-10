@@ -1,15 +1,16 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  SafeAreaView, RefreshControl,
+  RefreshControl,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
 import { colors, typography, spacing, radius } from '../src/theme';
 import MLoader from '../src/components/MLoader';
 import useReservations, { daysUntil } from '../src/hooks/useReservations';
 import NextResaCard from '../src/components/NextResaCard';
 import SmallResaCard from '../src/components/SmallResaCard';
 import HistResaCard from '../src/components/HistResaCard';
-import MidaLogo from '../src/components/MidaLogo';
 import ReviewModal from '../src/components/ReviewModal';
 
 function SkeletonView() {
@@ -81,21 +82,28 @@ export default function ReservationScreen({ navigation }) {
 
   return (
     <SafeAreaView style={s.root}>
+      <LinearGradient colors={['#C4B8C8', '#8B9BB4', '#6B7F9E']} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
 
       <View style={s.header}>
         <View style={{ flex:1 }}>
-          <MidaLogo showTagline={false} style={{ alignItems: 'flex-start', marginBottom: spacing.xs }} />
           <Text style={s.headerSub}>MES RÉSERVATIONS</Text>
-          <Text style={s.headerTitle}>
-            {aVenir.length > 0
-              ? next
-                ? (next.date === today
-                    ? `Ce soir chez ${next.restaurants?.name || '…'}`
-                    : `Prochaine table ${daysUntil(next.date).toLowerCase()}`)
-                : 'À venir'
-              : 'Aucune réservation'
-            }
-          </Text>
+          {aVenir.length > 0 && next ? (
+            next.date === today ? (
+              <View>
+                <Text style={s.headerLabel}>Ce soir chez</Text>
+                <Text style={s.headerTitle} numberOfLines={1}>{next.restaurants?.name || '…'}</Text>
+              </View>
+            ) : (
+              <View>
+                <Text style={s.headerLabel}>Prochaine table</Text>
+                <Text style={s.headerTitle}>{daysUntil(next.date)}</Text>
+              </View>
+            )
+          ) : (
+            <Text style={s.headerTitle}>
+              {aVenir.length > 0 ? 'À venir' : 'Aucune réservation'}
+            </Text>
+          )}
         </View>
         {pending > 0 && (
           <View style={s.pendingPill}>
@@ -213,30 +221,32 @@ export default function ReservationScreen({ navigation }) {
 }
 
 const s = StyleSheet.create({
-  root: { flex:1, backgroundColor: colors.bg },
+  root:      { flex:1, backgroundColor: colors.bg },
+  bgOverlay: { ...StyleSheet.absoluteFillObject, opacity: 0.06 },
 
   header:      { flexDirection:'row', alignItems:'center', justifyContent:'space-between', paddingHorizontal: spacing.xxl, paddingTop: spacing.xl, paddingBottom: spacing.xl, borderBottomWidth:1, borderBottomColor: colors.cardBorder },
-  headerSub:   { color: colors.accent, fontSize: typography.size.xs, letterSpacing:3, marginBottom: spacing.xs },
-  headerTitle: { color: colors.text, fontSize: typography.size.title, fontWeight: typography.weight.regular, letterSpacing:0.3 },
-  pendingPill: { flexDirection:'row', alignItems:'center', gap: spacing.sm, backgroundColor: colors.accentSoft, borderRadius: radius.full, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderWidth:1, borderColor:'rgba(232,160,69,0.3)' },
-  pendingDot:  { width:6, height:6, borderRadius:3, backgroundColor: colors.accent },
-  pendingTxt:  { color: colors.accent, fontSize: typography.size.caption },
+  headerSub:   { color: '#C87860', fontSize: typography.size.xs, letterSpacing: 3, marginBottom: spacing.xs },
+  headerLabel: { color: colors.textMuted, fontSize: typography.size.caption, letterSpacing: 1, marginBottom: spacing.xxs },
+  headerTitle: { color: colors.text, fontSize: typography.size.hero, fontWeight: '200', letterSpacing: -0.5 },
+  pendingPill: { flexDirection:'row', alignItems:'center', gap: spacing.sm, backgroundColor: colors.navy, borderRadius: radius.full, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderWidth:1, borderColor: colors.navyBorder },
+  pendingDot:  { width:6, height:6, borderRadius:0, backgroundColor: '#C87860' },
+  pendingTxt:  { color: colors.text, fontSize: typography.size.caption },
 
-  tabs:       { flexDirection:'row', margin: spacing.xl, backgroundColor: colors.cardHover, borderRadius: radius.xl, padding: spacing.xs, borderWidth:1, borderColor: colors.cardBorder, gap: spacing.xxs },
+  tabs:       { flexDirection:'row', margin: spacing.xl, backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: radius.xl, padding: spacing.xs, borderWidth:1, borderColor: colors.cardBorder, gap: spacing.xxs },
   tab:        { flex:1, flexDirection:'row', paddingVertical: spacing.md, borderRadius: radius.lg, alignItems:'center', justifyContent:'center', gap: spacing.sm },
-  tabOn:      { backgroundColor: colors.accentSoft, shadowColor: colors.accent, shadowOpacity: 0.3, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 4 },
+  tabOn:      { backgroundColor: colors.navy, shadowColor: '#000', shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
   tabTxt:     { color: colors.textMuted, fontSize: typography.size.bodyLg, fontWeight: typography.weight.regular },
-  tabTxtOn:   { color: colors.accent, fontWeight: typography.weight.semibold },
-  tabBadge:   { backgroundColor: colors.accent, borderRadius: radius.md, minWidth:18, height:18, alignItems:'center', justifyContent:'center', paddingHorizontal: spacing.xs },
-  tabBadgeTxt:{ color: colors.bg, fontSize: typography.size.sm, fontWeight: typography.weight.semibold },
+  tabTxtOn:   { color: colors.text, fontWeight: typography.weight.semibold },
+  tabBadge:   { backgroundColor: '#C87860', borderRadius: radius.md, minWidth:18, height:18, alignItems:'center', justifyContent:'center', paddingHorizontal: spacing.xs },
+  tabBadgeTxt:{ color: '#FFFFFF', fontSize: typography.size.sm, fontWeight: typography.weight.semibold },
 
-  sectionLbl: { color: colors.textDim, fontSize: typography.size.xs, letterSpacing:4, paddingHorizontal: spacing.xxl, marginBottom: spacing.lg },
+  sectionLbl: { color: colors.textMuted, fontSize: typography.size.xs, letterSpacing:4, paddingHorizontal: spacing.xxl, marginBottom: spacing.lg },
   monthLbl:   { color: colors.textDim, fontSize: typography.size.xs, letterSpacing:3, paddingHorizontal: spacing.xxl, paddingTop: spacing.xxl, paddingBottom: spacing.md, borderBottomWidth:1, borderBottomColor: colors.cardBorder },
 
   empty:      { alignItems:'center', paddingTop:80, gap: spacing.lg },
   emptyEmoji: { fontSize:52 },
   emptyTitle: { color: colors.text, fontSize: typography.size.heading2, fontWeight: typography.weight.regular },
   emptySub:   { color: colors.textMuted, fontSize: typography.size.bodyLg, textAlign:'center', lineHeight:20, paddingHorizontal: spacing.section },
-  emptyBtn:   { backgroundColor: colors.card, borderRadius: radius.lg, paddingHorizontal: spacing.xxl, paddingVertical: spacing.md, borderWidth:1, borderColor: colors.cardBorder, marginTop: spacing.xs },
-  emptyBtnTxt:{ color: colors.blue, fontSize: typography.size.bodyLg },
+  emptyBtn:   { backgroundColor: colors.navy, borderRadius: radius.lg, paddingHorizontal: spacing.xxl, paddingVertical: spacing.md, borderWidth:1, borderColor: 'rgba(200,151,90,0.35)', marginTop: spacing.xs, shadowColor: '#000', shadowOpacity: 0.3, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 4 },
+  emptyBtnTxt:{ color: colors.text, fontSize: typography.size.bodyLg },
 });

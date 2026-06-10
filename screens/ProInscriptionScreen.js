@@ -1,28 +1,48 @@
-import { useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
+import { useCallback, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
 import { colors, typography, spacing, radius } from '../src/theme';
 import useProInscription from '../src/hooks/useProInscription';
 import FormField from '../src/components/FormField';
-import MidaLogo from '../src/components/MidaLogo';
 
 export default function ProInscriptionScreen({ navigation }) {
-  const { form, loading, error, success, set, soumettre } = useProInscription();
+  const { form, loading, error, success, approved, rejected, set, soumettre } = useProInscription();
   const goBack = useCallback(() => navigation.goBack(), [navigation]);
+
+  useEffect(() => {
+    if (approved) navigation.navigate('Main', { screen: 'Manager' });
+  }, [approved, navigation]);
+
+  if (success && rejected) {
+    return (
+      <SafeAreaView style={s.root}>
+        <LinearGradient colors={['#C4B8C8', '#8B9BB4', '#6B7F9E']} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
+        <View style={s.successWrap}>
+          <View style={s.successRing}>
+            <Text style={s.successEmoji}>❌</Text>
+          </View>
+          <Text style={s.successTitle}>Demande non retenue</Text>
+          <Text style={s.successSub}>
+            Nous n'avons pas pu vérifier votre établissement.{'\n'}Contactez-nous à contact@mida-food.com{'\n'}avec des justificatifs.
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   if (success) {
     return (
       <SafeAreaView style={s.root}>
+        <LinearGradient colors={['#C4B8C8', '#8B9BB4', '#6B7F9E']} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
         <View style={s.successWrap}>
           <View style={s.successRing}>
             <Text style={s.successEmoji}>🍽️</Text>
           </View>
-          <Text style={s.successTitle}>Compte activé !</Text>
+          <Text style={s.successTitle}>Vérification en cours…</Text>
           <Text style={s.successSub}>
-            Votre espace restaurateur est prêt.{'\n'}Accédez à votre tableau de bord pour{'\n'}gérer vos réservations.
+            Nous vérifions votre établissement.{'\n'}Vous serez redirigé automatiquement{'\n'}dès la validation de votre compte.
           </Text>
-          <TouchableOpacity style={s.successBtn} onPress={goBack}>
-            <Text style={s.successBtnTxt}>ACCÉDER AU DASHBOARD</Text>
-          </TouchableOpacity>
         </View>
       </SafeAreaView>
     );
@@ -30,18 +50,18 @@ export default function ProInscriptionScreen({ navigation }) {
 
   return (
     <SafeAreaView style={s.root}>
+      <LinearGradient colors={['#C4B8C8', '#8B9BB4', '#6B7F9E']} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
       <View style={s.header}>
         <TouchableOpacity style={s.backBtn} onPress={goBack}>
           <Text style={s.backBtnTxt}>←</Text>
         </TouchableOpacity>
         <View style={{ flex: 1 }}>
-          <MidaLogo showTagline={false} style={{ alignItems: 'flex-start', marginBottom: 2 }} />
           <Text style={s.headerSub}>ESPACE PRO</Text>
-          <Text style={s.headerTitle}>Devenir restaurateur</Text>
         </View>
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
+      <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" keyboardDismissMode="interactive">
 
         <View style={s.intro}>
           <Text style={s.introEmoji}>🏪</Text>
@@ -77,38 +97,40 @@ export default function ProInscriptionScreen({ navigation }) {
 
         <View style={{ height: spacing.section * 2 }} />
       </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
 
 const s = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.bg },
+  root:      { flex: 1, backgroundColor: colors.bg },
+  bgOverlay: { ...StyleSheet.absoluteFillObject, opacity: 0.06 },
 
   header:      { flexDirection: 'row', alignItems: 'center', gap: spacing.xl - 2, paddingHorizontal: spacing.xxl, paddingTop: spacing.xl, paddingBottom: spacing.xl, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
-  backBtn:     { width: 38, height: 38, borderRadius: 19, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, alignItems: 'center', justifyContent: 'center' },
-  backBtnTxt:  { color: colors.text, fontSize: typography.size.heading1 },
-  headerSub:   { color: colors.accent, fontSize: typography.size.xs, letterSpacing: 3, marginBottom: spacing.xxs },
+  backBtn:     { width: 38, height: 38, borderRadius: 0, backgroundColor: 'transparent', alignItems: 'center', justifyContent: 'center' },
+  backBtnTxt:  { color: '#1A1A1A', fontSize: typography.size.heading1 },
+  headerSub:   { color: '#C87860', fontSize: typography.size.xs, letterSpacing: 3, marginBottom: spacing.xxs },
   headerTitle: { color: colors.text, fontSize: typography.size.title, fontWeight: typography.weight.regular, letterSpacing: 0.5 },
 
-  intro:     { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.lg, margin: spacing.xxl, padding: spacing.xl, backgroundColor: colors.accentSoft, borderRadius: radius.xl, borderWidth: 1, borderColor: 'rgba(232,160,69,0.2)' },
+  intro:     { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.lg, margin: spacing.xxl, padding: spacing.xl, backgroundColor: colors.navy, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.navyBorder },
   introEmoji:{ fontSize: typography.size.heading1 },
   introTxt:  { flex: 1, color: colors.textMuted, fontSize: typography.size.bodyLg, fontWeight: typography.weight.regular, lineHeight: 20 },
 
-  sectionLabel: { color: colors.textDim, fontSize: typography.size.xs, letterSpacing: 4, paddingHorizontal: spacing.xxl, marginTop: spacing.xxl, marginBottom: spacing.lg },
+  sectionLabel: { color: colors.textMuted, fontSize: typography.size.xs, letterSpacing: 4, paddingHorizontal: spacing.xxl, marginTop: spacing.xxl, marginBottom: spacing.lg },
 
   errorBox: { marginHorizontal: spacing.xxl, marginTop: spacing.md, backgroundColor: colors.redSoft, borderRadius: radius.lg, padding: spacing.lg, borderWidth: 1, borderColor: 'rgba(224,90,90,0.3)' },
   errorTxt:  { color: colors.red, fontSize: typography.size.body },
 
-  submitBtn:    { marginHorizontal: spacing.xxl, marginTop: spacing.xxl, backgroundColor: colors.accent, borderRadius: radius.xl, paddingVertical: spacing.xl - 1, alignItems: 'center' },
-  submitBtnTxt: { color: colors.bg, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium, letterSpacing: 1.5 },
+  submitBtn:    { marginHorizontal: spacing.xxl, marginTop: spacing.xxl, backgroundColor: '#C87860', borderRadius: radius.xl, paddingVertical: spacing.xl - 1, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,220,150,0.5)', shadowColor: '#000', shadowOpacity: 0.5, shadowRadius: 14, shadowOffset: { width: 0, height: 0 }, elevation: 7 },
+  submitBtnTxt: { color: '#FFFFFF', fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium, letterSpacing: 1.5 },
 
   legalTxt: { marginHorizontal: spacing.xxl, marginTop: spacing.lg, color: colors.textDim, fontSize: typography.size.caption, textAlign: 'center', lineHeight: 16, fontStyle: 'italic' },
 
   successWrap:  { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.section },
-  successRing:  { width: 100, height: 100, borderRadius: 50, backgroundColor: colors.accentSoft, borderWidth: 1, borderColor: 'rgba(232,160,69,0.3)', alignItems: 'center', justifyContent: 'center', marginBottom: spacing.xxl },
+  successRing:  { width: 100, height: 100, borderRadius: 0, backgroundColor: colors.navy, borderWidth: 1, borderColor: colors.navyBorder, alignItems: 'center', justifyContent: 'center', marginBottom: spacing.xxl },
   successEmoji: { fontSize: 44 },
   successTitle: { color: colors.text, fontSize: typography.size.title, fontWeight: typography.weight.regular, letterSpacing: 0.5, marginBottom: spacing.lg, textAlign: 'center' },
   successSub:   { color: colors.textMuted, fontSize: typography.size.bodyLg, textAlign: 'center', lineHeight: 22, marginBottom: spacing.section },
-  successBtn:   { backgroundColor: colors.accent, borderRadius: radius.xl, paddingVertical: spacing.xl - 1, paddingHorizontal: spacing.section, alignItems: 'center' },
-  successBtnTxt:{ color: colors.bg, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium, letterSpacing: 2 },
+  successBtn:   { backgroundColor: '#C87860', borderRadius: radius.xl, paddingVertical: spacing.xl - 1, paddingHorizontal: spacing.section, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,220,150,0.5)', shadowColor: '#000', shadowOpacity: 0.5, shadowRadius: 14, shadowOffset: { width: 0, height: 0 }, elevation: 7 },
+  successBtnTxt:{ color: '#FFFFFF', fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium, letterSpacing: 2 },
 });

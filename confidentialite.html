@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Politique de confidentialité — MIDA</title>
+<meta name="description" content="Politique de confidentialité de l'application MIDA. Comment nous collectons, utilisons et protégeons vos données personnelles.">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:      #FAF7F2;
+    --text:    #1A1A1A;
+    --muted:   rgba(26,26,26,0.55);
+    --dim:     rgba(26,26,26,0.35);
+    --border:  rgba(26,26,26,0.09);
+    --accent:  #C87860;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky;
+    top: 0;
+    background: rgba(250,247,242,0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 100;
+  }
+  .nav-logo {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 22px;
+    letter-spacing: 6px;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .nav-back {
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.5px;
+  }
+  .nav-back:hover { color: var(--accent); }
+
+  /* ── HERO ── */
+  .hero {
+    border-bottom: 1px solid var(--border);
+    padding: 72px 32px 56px;
+    max-width: 780px;
+    margin: 0 auto;
+  }
+  .hero-label {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+  }
+  .hero-title {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: clamp(32px, 5vw, 48px);
+    font-weight: 400;
+    line-height: 1.2;
+    color: var(--text);
+    margin-bottom: 20px;
+  }
+  .hero-meta {
+    font-size: 13px;
+    color: var(--dim);
+    letter-spacing: 0.3px;
+  }
+  .hero-law {
+    margin-top: 16px;
+    font-size: 12px;
+    color: var(--dim);
+    padding: 10px 14px;
+    border-left: 2px solid var(--accent);
+    background: rgba(200,120,96,0.05);
+  }
+
+  /* ── CONTENT ── */
+  .content {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 56px 32px 100px;
+  }
+
+  .article {
+    margin-bottom: 48px;
+  }
+  .article h2 {
+    font-size: 12px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+  .article p, .article li {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+  .article ul {
+    list-style: none;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .article li::before {
+    content: "—";
+    color: var(--dim);
+    margin-right: 10px;
+    font-size: 13px;
+  }
+  .article p + p { margin-top: 12px; }
+
+  .sub-label {
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text);
+    opacity: 0.6;
+    margin: 16px 0 6px;
+    font-weight: 500;
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0 0 48px;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px;
+    text-align: center;
+  }
+  .footer-logo {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 18px;
+    letter-spacing: 6px;
+    color: var(--dim);
+    margin-bottom: 8px;
+  }
+  footer p {
+    font-size: 12px;
+    color: var(--dim);
+    letter-spacing: 0.3px;
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  @media (max-width: 600px) {
+    nav  { padding: 12px 20px; }
+    .hero, .content { padding-left: 20px; padding-right: 20px; }
+    .hero { padding-top: 48px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="https://mida-food.com">MIDA</a>
+  <a class="nav-back" href="https://mida-food.com">← Retour</a>
+</nav>
+
+<div class="hero">
+  <p class="hero-label">Document légal</p>
+  <h1 class="hero-title">Politique de<br>confidentialité</h1>
+  <p class="hero-meta">Dernière mise à jour : juin 2026 &nbsp;·&nbsp; Version 1.0</p>
+  <p class="hero-law">Conforme à la loi algérienne n° 18-07 du 10 juin 2018 relative à la protection des personnes physiques dans le traitement des données à caractère personnel.</p>
+</div>
+
+<div class="content">
+
+  <div class="article">
+    <h2>1. Responsable du traitement</h2>
+    <p>MIDA, application de réservation de restaurants, exploitée depuis Alger, Algérie.<br>
+    Contact : <a href="mailto:contact@mida-food.com" style="color:var(--accent)">contact@mida-food.com</a> — <a href="https://mida-food.com" style="color:var(--accent)">www.mida-food.com</a></p>
+  </div>
+
+  <hr>
+
+  <div class="article">
+    <h2>2. Données collectées</h2>
+
+    <p class="sub-label">Données d'inscription</p>
+    <ul>
+      <li>Nom et prénom</li>
+      <li>Adresse email</li>
+      <li>Numéro de téléphone (optionnel)</li>
+      <li>Mot de passe (chiffré, jamais accessible en clair)</li>
+    </ul>
+
+    <p class="sub-label">Données de réservation</p>
+    <ul>
+      <li>Date, heure, nombre de couverts</li>
+      <li>Restaurant concerné</li>
+      <li>Notes et demandes particulières</li>
+      <li>Statut de la réservation</li>
+    </ul>
+
+    <p class="sub-label">Données de navigation</p>
+    <ul>
+      <li>Restaurants consultés et mis en favoris</li>
+      <li>Avis et notes déposés</li>
+    </ul>
+
+    <p class="sub-label">Données de localisation</p>
+    <ul>
+      <li>Position GPS, uniquement lorsque vous activez la fonction "Près de moi"</li>
+      <li>Collectée en temps réel, non conservée après la session</li>
+    </ul>
+
+    <p class="sub-label">Photo de profil</p>
+    <ul>
+      <li>Optionnelle, stockée de façon sécurisée si vous la téléchargez</li>
+    </ul>
+  </div>
+
+  <hr>
+
+  <div class="article">
+    <h2>3. Finalités du traitement</h2>
+    <p>Vos données sont utilisées exclusivement pour :</p>
+    <ul>
+      <li>Créer et gérer votre compte utilisateur</li>
+      <li>Traiter et confirmer vos réservations</li>
+      <li>Vous envoyer des notifications de confirmation, rappels et alertes liées à vos réservations</li>
+      <li>Permettre aux restaurants de vous identifier à votre arrivée</li>
+      <li>Afficher les restaurants proches de votre position (si vous l'autorisez)</li>
+      <li>Améliorer la qualité et la pertinence de nos recommandations</li>
+      <li>Garantir la sécurité de la plateforme et prévenir les abus</li>
+    </ul>
+  </div>
+
+  <hr>
+
+  <div class="article">
+    <h2>4. Base légale du traitement</h2>
+    <p>Le traitement de vos données repose sur :</p>
+    <ul>
+      <li>L'exécution du contrat (gestion de votre compte et de vos réservations)</li>
+      <li>Votre consentement explicite (localisation, notifications push, photo de profil)</li>
+      <li>L'intérêt légitime de MIDA (sécurité, amélioration du service)</li>
+    </ul>
+  </div>
+
+  <hr>
+
+  <div class="article">
+    <h2>5. Partage des données</h2>
+    <p>Vos données ne sont jamais vendues ni louées à des tiers. Elles sont partagées uniquement dans les cas suivants :</p>
+    <ul>
+      <li>Avec le restaurant concerné : nom, prénom, téléphone, date et heure de réservation, nombre de couverts et notes — uniquement pour les besoins de votre réservation</li>
+      <li>Avec nos prestataires techniques : Supabase (hébergement des données, Irlande — conforme RGPD), Expo (notifications push), Apple / Google (distribution de l'application)</li>
+    </ul>
+    <p>Ces prestataires sont contractuellement tenus de protéger vos données et de ne les utiliser qu'aux fins prévues.</p>
+  </div>
+
+  <hr>
+
+  <div class="article">
+    <h2>6. Durée de conservation</h2>
+    <ul>
+      <li>Données de compte : conservées tant que votre compte est actif</li>
+      <li>Données de réservation : conservées 3 ans après la dernière réservation</li>
+      <li>Données de localisation : non conservées après la session</li>
+      <li>Photo de profil : conservée jusqu'à suppression ou modification par l'utilisateur</li>
+    </ul>
+    <p>En cas de suppression de compte, toutes vos données personnelles sont effacées dans un délai de 30 jours, sauf obligation légale contraire.</p>
+  </div>
+
+  <hr>
+
+  <div class="article">
+    <h2>7. Vos droits</h2>
+    <p>Conformément à la loi 18-07, vous disposez des droits suivants :</p>
+    <ul>
+      <li><strong style="color:var(--text);font-weight:500">Droit d'accès</strong> : obtenir une copie de vos données</li>
+      <li><strong style="color:var(--text);font-weight:500">Droit de rectification</strong> : corriger des données inexactes</li>
+      <li><strong style="color:var(--text);font-weight:500">Droit à l'effacement</strong> : demander la suppression de votre compte et de vos données</li>
+      <li><strong style="color:var(--text);font-weight:500">Droit d'opposition</strong> : vous opposer à certains traitements</li>
+      <li><strong style="color:var(--text);font-weight:500">Droit à la portabilité</strong> : recevoir vos données dans un format lisible</li>
+    </ul>
+    <p>Pour exercer ces droits, contactez-nous à : <a href="mailto:contact@mida-food.com" style="color:var(--accent)">contact@mida-food.com</a><br>
+    Nous répondons à toute demande dans un délai de 30 jours.</p>
+  </div>
+
+  <hr>
+
+  <div class="article">
+    <h2>8. Notifications push</h2>
+    <p>Les notifications push sont envoyées uniquement si vous avez donné votre accord explicite lors de l'installation. Vous pouvez les désactiver à tout moment dans les réglages de votre téléphone.</p>
+  </div>
+
+  <hr>
+
+  <div class="article">
+    <h2>9. Sécurité</h2>
+    <p>Vos données sont hébergées sur l'infrastructure Supabase, conforme aux standards internationaux de sécurité (chiffrement en transit via TLS, chiffrement au repos). Les mots de passe sont hachés et salés — ils ne sont jamais stockés ni accessibles en clair. L'accès aux données est strictement limité aux personnes habilitées.</p>
+  </div>
+
+  <hr>
+
+  <div class="article">
+    <h2>10. Modifications</h2>
+    <p>MIDA se réserve le droit de modifier la présente politique à tout moment. Toute modification substantielle vous sera notifiée via l'application. La date de dernière mise à jour est indiquée en haut du document.</p>
+  </div>
+
+  <hr>
+
+  <div class="article">
+    <h2>11. Contact</h2>
+    <p>Pour toute question relative à vos données personnelles :<br>
+    <a href="mailto:contact@mida-food.com" style="color:var(--accent)">contact@mida-food.com</a><br>
+    MIDA — Alger, Algérie<br>
+    <a href="https://mida-food.com" style="color:var(--accent)">www.mida-food.com</a></p>
+  </div>
+
+</div>
+
+<footer>
+  <p class="footer-logo">MIDA</p>
+  <p>© 2026 MIDA · <a href="https://mida-food.com/cgu">CGU</a> · <a href="https://mida-food.com/confidentialite">Confidentialité</a></p>
+</footer>
+
+</body>
+</html>

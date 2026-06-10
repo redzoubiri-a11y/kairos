@@ -1,9 +1,9 @@
 import {
-  View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Animated,
+  View, Text, StyleSheet, TouchableOpacity, Animated, Linking,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, typography, spacing, radius } from '../src/theme';
 import useOnboarding, { SLIDES, TOTAL } from '../src/hooks/useOnboarding';
-import MidaLogo from '../src/components/MidaLogo';
 
 function Dots({ total, current, accentColor }) {
   return (
@@ -26,7 +26,7 @@ function Dots({ total, current, accentColor }) {
 }
 const d = StyleSheet.create({
   row: { flexDirection: 'row', justifyContent: 'center', gap: 6, alignItems: 'center' },
-  dot: { height: 6, borderRadius: 3 },
+  dot: { height: 6, borderRadius: 0 },
 });
 
 export default function OnboardingScreen({ onSelect }) {
@@ -86,7 +86,6 @@ export default function OnboardingScreen({ onSelect }) {
       <Animated.View style={[s.stepWrap, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
 
         <View style={s.stepHeader}>
-          <MidaLogo showTagline={false} style={{ marginBottom: spacing.xxl }} />
           <Text style={s.stepTitle}>Vous êtes…</Text>
           <Text style={s.stepSub}>Choisissez votre profil pour commencer.</Text>
         </View>
@@ -135,7 +134,12 @@ export default function OnboardingScreen({ onSelect }) {
           </View>
         </TouchableOpacity>
 
-        <Text style={s.legal}>En continuant, vous acceptez nos conditions{'\n'}d'utilisation et notre politique de confidentialité.</Text>
+        <Text style={s.legal}>
+          En continuant, vous acceptez nos{' '}
+          <Text onPress={() => Linking.openURL('https://mida-food.com/conditions')}>conditions d'utilisation</Text>
+          {'\n'}et notre{' '}
+          <Text onPress={() => Linking.openURL('https://mida-food.com/confidentialite')}>politique de confidentialité</Text>.
+        </Text>
 
       </Animated.View>
 
@@ -150,16 +154,16 @@ const s = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.bg },
 
   slideWrap:  { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 28 },
-  tag:        { flexDirection: 'row', alignItems: 'center', gap: 7, borderRadius: 100, borderWidth: 1, paddingHorizontal: spacing.xl, paddingVertical: spacing.sm, marginBottom: spacing.section },
-  tagDot:     { width: 5, height: 5, borderRadius: 3 },
+  tag:        { flexDirection: 'row', alignItems: 'center', gap: 7, borderRadius: 0, borderWidth: 1, paddingHorizontal: spacing.xl, paddingVertical: spacing.sm, marginBottom: spacing.section },
+  tagDot:     { width: 5, height: 5, borderRadius: 0 },
   tagTxt:     { fontSize: typography.size.xs, letterSpacing: 3, fontWeight: typography.weight.semibold },
-  emojiOuter: { width: 148, height: 148, borderRadius: 40, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center', marginBottom: spacing.section + 4 },
-  emojiInner: { width: 108, height: 108, borderRadius: 28, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
+  emojiOuter: { width: 148, height: 148, borderRadius: 0, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center', marginBottom: spacing.section + 4 },
+  emojiInner: { width: 108, height: 108, borderRadius: 0, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
   mainEmoji:  { fontSize: 56 },
   slideTitle: { color: colors.text, fontSize: typography.size.hero, fontWeight: typography.weight.regular, letterSpacing: 0.3, textAlign: 'center', lineHeight: 40, marginBottom: spacing.xl },
   slideSub:   { color: colors.textMuted, fontSize: typography.size.bodyLg, textAlign: 'center', lineHeight: 22, marginBottom: spacing.xxl + 4, paddingHorizontal: spacing.md },
   chipsRow:   { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md, justifyContent: 'center' },
-  chip:       { borderRadius: 100, borderWidth: 1, paddingHorizontal: spacing.lg, paddingVertical: spacing.xs },
+  chip:       { borderRadius: 0, borderWidth: 1, paddingHorizontal: spacing.lg, paddingVertical: spacing.xs },
   chipTxt:    { fontSize: typography.size.caption, fontWeight: typography.weight.regular },
 
   stepWrap:   { flex: 1, paddingHorizontal: spacing.xxl, paddingTop: spacing.xl },
@@ -170,7 +174,7 @@ const s = StyleSheet.create({
 
   cityCards:       { gap: spacing.lg },
   cityCard:        { flexDirection: 'row', alignItems: 'center', gap: spacing.xl, backgroundColor: colors.card, borderRadius: radius.xxl - 2, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.xl },
-  cityCardOn:      { borderColor: colors.accent, backgroundColor: colors.accentSoft },
+  cityCardOn:      { borderColor: '#c8975a', backgroundColor: 'rgba(200,151,90,0.12)', shadowColor: '#000', shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
   cityEmojiWrap:   { width: 48, height: 48, borderRadius: radius.lg, backgroundColor: colors.cardBorder, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   cityEmojiWrapOn: { backgroundColor: colors.accentSoft },
   cityEmoji:       { fontSize: 24 },
@@ -180,19 +184,19 @@ const s = StyleSheet.create({
   cityCountBadge:  { alignItems: 'center', marginRight: spacing.md },
   cityCount:       { color: colors.textMuted, fontSize: typography.size.heading1, fontWeight: typography.weight.regular },
   cityCountLbl:    { color: colors.textDim, fontSize: typography.size.xs },
-  cityCheck:       { width: 26, height: 26, borderRadius: 13, backgroundColor: colors.accent, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+  cityCheck:       { width: 26, height: 26, borderRadius: 0, backgroundColor: colors.accent, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   cityCheckTxt:    { color: colors.bg, fontSize: typography.size.bodyLg, fontWeight: typography.weight.bold },
-  cityUncheck:     { width: 26, height: 26, borderRadius: 13, borderWidth: 1.5, borderColor: colors.textDim, flexShrink: 0 },
+  cityUncheck:     { width: 26, height: 26, borderRadius: 0, borderWidth: 1.5, borderColor: colors.textDim, flexShrink: 0 },
 
   roleCard:      { flexDirection: 'row', alignItems: 'center', gap: spacing.xl, backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.xxl - 2 },
   roleCardClient:{ borderColor: 'rgba(90,155,224,0.3)' },
-  roleCardPro:   { borderColor: 'rgba(232,160,69,0.2)', backgroundColor: colors.accentSoft },
+  roleCardPro:   { borderColor: 'rgba(200,151,90,0.4)', backgroundColor: 'rgba(200,151,90,0.12)', shadowColor: '#000', shadowOpacity: 0.3, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 4 },
   roleIconWrap:  { width: 52, height: 52, borderRadius: radius.lg + 1, borderWidth: 1, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   roleEmoji:     { fontSize: 24 },
   roleTitle:     { color: colors.text, fontSize: typography.size.heading3, fontWeight: typography.weight.medium, marginBottom: spacing.xs },
   roleDesc:      { color: colors.textMuted, fontSize: typography.size.caption, lineHeight: 16, marginBottom: spacing.lg },
   roleChips:     { flexDirection: 'row', gap: spacing.sm },
-  roleChipSmall: { borderRadius: 100, borderWidth: 1, borderColor: colors.cardBorder, backgroundColor: colors.cardBorder, paddingHorizontal: spacing.md, paddingVertical: spacing.xxs },
+  roleChipSmall: { borderRadius: 0, borderWidth: 1, borderColor: colors.cardBorder, backgroundColor: colors.cardBorder, paddingHorizontal: spacing.md, paddingVertical: spacing.xxs },
   roleChipTxt:   { color: colors.textMuted, fontSize: typography.size.xs, fontWeight: typography.weight.regular },
   roleArrowWrap: { width: 34, height: 34, borderRadius: radius.md, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   roleArrow:     { fontSize: 20, fontWeight: typography.weight.regular },

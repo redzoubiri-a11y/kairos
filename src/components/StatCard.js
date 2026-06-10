@@ -14,10 +14,10 @@ export default function StatCard({ icon, value, label, color, alert, sub }) {
 }
 
 const s = StyleSheet.create({
-  card:  { width: 116, backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.lg, gap: spacing.xs },
-  icon:  { fontSize: 20 },
-  value: { fontSize: 26, fontWeight: '200' },
-  label: { color: colors.textDim, fontSize: typography.size.xs, lineHeight: 14 },
-  sub:   { color: colors.textMuted, fontSize: typography.size.sm, marginTop: 2 },
-  dot:   { position: 'absolute', top: spacing.lg, right: spacing.lg, width: 8, height: 8, borderRadius: 4 },
+  card:  { width: 92, backgroundColor: 'transparent', borderRadius: radius.xl, borderWidth: 1, borderColor: 'rgba(255,255,255,0.12)', paddingHorizontal: spacing.md, paddingVertical: spacing.sm, gap: 2 },
+  icon:  { fontSize: 14 },
+  value: { fontSize: 20, fontWeight: '300' },
+  label: { color: 'rgba(245,242,236,0.55)', fontSize: typography.size.xs, lineHeight: 13, textTransform: 'uppercase', letterSpacing: 0.5 },
+  sub:   { color: 'rgba(245,242,236,0.40)', fontSize: typography.size.xs, marginTop: 1 },
+  dot:   { position: 'absolute', top: spacing.sm, right: spacing.sm, width: 6, height: 6, borderRadius: 0 },
 });

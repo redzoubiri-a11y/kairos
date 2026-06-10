@@ -17,8 +17,8 @@ export default function WeekStrip({ reservations }) {
       <Text style={s.title}>7 PROCHAINS JOURS</Text>
       <View style={s.row}>
         {days.map(d => {
-          const barH = d.count > 0 ? Math.round(Math.max(d.count / maxCount, 0.12) * 36) : 2;
-          const barColor = d.isToday ? colors.accent : d.count > 0 ? colors.blue : colors.cardHover;
+          const barH = d.count > 0 ? Math.round(Math.max(d.count / maxCount, 0.15) * 20) : 2;
+          const barColor = d.isToday ? '#C87860' : d.count > 0 ? colors.blue : colors.cardHover;
           return (
             <View key={d.iso} style={s.col}>
               <Text style={s.countLbl}>{d.count > 0 ? d.count : ''}</Text>
@@ -36,15 +36,15 @@ export default function WeekStrip({ reservations }) {
 }
 
 const s = StyleSheet.create({
-  wrap:          { marginHorizontal: spacing.xxl, marginBottom: spacing.xl, backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.xl },
-  title:         { color: colors.textDim, fontSize: typography.size.xs, letterSpacing: 3, marginBottom: spacing.lg },
+  wrap:          { marginHorizontal: spacing.xxl, marginBottom: spacing.md, backgroundColor: 'transparent', borderRadius: radius.xl, borderWidth: 1, borderColor: 'rgba(255,255,255,0.12)', paddingHorizontal: spacing.lg, paddingVertical: spacing.md },
+  title:         { color: 'rgba(245,242,236,0.45)', fontSize: typography.size.xs, letterSpacing: 3, marginBottom: spacing.sm },
   row:           { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' },
-  col:           { alignItems: 'center', gap: spacing.xxs, flex: 1 },
-  countLbl:      { color: colors.accent, fontSize: typography.size.xs, fontWeight: typography.weight.medium, minHeight: 12 },
-  barTrack:      { height: 38, justifyContent: 'flex-end', width: '70%' },
+  col:           { alignItems: 'center', gap: 2, flex: 1 },
+  countLbl:      { color: '#C87860', fontSize: typography.size.xs, fontWeight: typography.weight.medium, minHeight: 10 },
+  barTrack:      { height: 22, justifyContent: 'flex-end', width: '65%' },
   bar:           { borderRadius: radius.sm, minHeight: 2 },
-  dayNum:        { color: colors.textMuted, fontSize: typography.size.caption },
-  dayNumToday:   { color: colors.accent, fontWeight: typography.weight.medium },
-  dayLabel:      { color: colors.textDim, fontSize: typography.size.xs },
-  dayLabelToday: { color: colors.accent },
+  dayNum:        { color: 'rgba(245,242,236,0.60)', fontSize: typography.size.xs },
+  dayNumToday:   { color: '#C87860', fontWeight: typography.weight.medium },
+  dayLabel:      { color: 'rgba(245,242,236,0.35)', fontSize: typography.size.xs },
+  dayLabelToday: { color: '#C87860' },
 });

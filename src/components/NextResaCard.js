@@ -62,18 +62,6 @@ export default function NextResaCard({ r, onCancel, onViewRestaurant, onEdit }) 
               </Text>
             </View>
           </View>
-          {!!resto.quartier && (
-            <>
-              <View style={s.detailSep} />
-              <View style={s.detailItem}>
-                <Text style={s.detailIcon}>📍</Text>
-                <View>
-                  <Text style={s.detailLbl}>QUARTIER</Text>
-                  <Text style={s.detailVal} numberOfLines={1}>{resto.quartier}</Text>
-                </View>
-              </View>
-            </>
-          )}
         </View>
 
         {!!r.notes && (
@@ -121,11 +109,11 @@ const s = StyleSheet.create({
   countdown:     { flexDirection:'row', alignItems:'center', justifyContent:'space-between', borderWidth:1, borderRadius: radius.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.lg },
   countdownLabel:{ fontSize: typography.size.subheading, fontWeight: typography.weight.medium },
   countdownDate: { fontSize: typography.size.body, fontWeight: typography.weight.regular },
-  details:       { flexDirection:'row', backgroundColor:'rgba(0,0,0,0.2)', borderRadius: radius.xl, overflow:'hidden' },
+  details:       { flexDirection:'row', backgroundColor: 'rgba(200,120,96,0.08)', borderRadius: radius.xl, overflow:'hidden', borderWidth:1, borderColor: 'rgba(200,120,96,0.22)' },
   detailItem:    { flex:1, flexDirection:'row', alignItems:'center', gap: spacing.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.lg },
-  detailSep:     { width:1, backgroundColor: colors.cardBorder, marginVertical: spacing.md },
+  detailSep:     { width:1, backgroundColor: 'rgba(200,120,96,0.18)', marginVertical: spacing.md },
   detailIcon:    { fontSize: typography.size.heading2 },
-  detailLbl:     { color: colors.textDim, fontSize: typography.size.xs, letterSpacing:2, marginBottom:3 },
+  detailLbl:     { color: '#C87860', fontSize: typography.size.xs, letterSpacing:2, marginBottom:3 },
   detailVal:     { color: colors.text, fontSize: typography.size.subheading, fontWeight: typography.weight.regular },
   note:          { backgroundColor: colors.cardHover, borderRadius: radius.lg, padding: spacing.lg, borderWidth:1, borderColor: colors.cardBorder },
   noteLbl:       { color: colors.textMuted, fontSize: typography.size.sm, letterSpacing:1, marginBottom: spacing.xs },

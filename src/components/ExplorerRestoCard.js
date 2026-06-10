@@ -1,4 +1,5 @@
 import { View, Text, StyleSheet, TouchableOpacity, Image, Dimensions } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { colors, typography, radius } from '../theme';
 import { CUISINE_EMOJI } from '../hooks/useExplorer';
 
@@ -46,6 +47,7 @@ export default function ExplorerRestoCard({ r, rank, distance, onPress, onReserv
             {r.review_count > 0 && <Text style={s.reviews}>{r.review_count} avis</Text>}
           </View>
           <TouchableOpacity style={s.reserveBtn} onPress={onReserve}>
+            <LinearGradient colors={['#FF6B1A','#D93A00']} start={{x:0,y:0}} end={{x:1,y:0}} style={StyleSheet.absoluteFillObject} />
             <Text style={s.reserveTxt}>Réserver</Text>
           </TouchableOpacity>
         </View>
@@ -55,13 +57,13 @@ export default function ExplorerRestoCard({ r, rank, distance, onPress, onReserv
 }
 
 const s = StyleSheet.create({
-  card:          { width: CARD_W, backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, overflow:'hidden', marginBottom: 10 },
+  card:          { width: CARD_W, backgroundColor: colors.card, borderRadius: 0, borderWidth: 1, borderColor: colors.cardBorder, overflow:'hidden', marginBottom: 10 },
   imgWrap:       { position:'relative', width:'100%', height: 130 },
   img:           { width:'100%', height:'100%' },
   imgPlaceholder:{ backgroundColor: colors.cardHover, alignItems:'center', justifyContent:'center' },
   ratingBadge:   { position:'absolute', top:8, right:8, backgroundColor:'rgba(15,13,11,0.82)', borderRadius:radius.md, paddingHorizontal:7, paddingVertical:3, borderWidth:1, borderColor:'rgba(232,160,69,0.3)' },
   ratingBadgeTxt:{ color:colors.accent, fontSize:typography.size.sm, fontWeight:'600' },
-  medalWrap:     { position:'absolute', top:8, left:8, width:22, height:22, borderRadius:11, alignItems:'center', justifyContent:'center' },
+  medalWrap:     { position:'absolute', top:8, left:8, width:22, height:22, borderRadius:0, alignItems:'center', justifyContent:'center' },
   medalTxt:      { color:colors.bg, fontSize:typography.size.sm, fontWeight:'700' },
   cuisinePill:   { position:'absolute', bottom:8, left:8, backgroundColor:'rgba(15,13,11,0.78)', borderRadius:radius.sm, paddingHorizontal:7, paddingVertical:3 },
   cuisinePillTxt:{ color:colors.text, fontSize:typography.size.xs },
@@ -71,6 +73,6 @@ const s = StyleSheet.create({
   footer:        { flexDirection:'row', justifyContent:'space-between', alignItems:'flex-end', marginTop:4 },
   price:         { color:colors.accent, fontSize:typography.size.sm, fontWeight:'500' },
   reviews:       { color:colors.textDim, fontSize:typography.size.xs, marginTop:1 },
-  reserveBtn:    { backgroundColor:colors.accentSoft, borderRadius:radius.sm, paddingHorizontal:8, paddingVertical:5, borderWidth:1, borderColor:'rgba(232,160,69,0.3)' },
-  reserveTxt:    { color:colors.accent, fontSize:typography.size.sm, fontWeight:'500' },
+  reserveBtn:    { borderRadius:radius.sm, paddingHorizontal:8, paddingVertical:5, overflow:'hidden', alignItems:'center', justifyContent:'center' },
+  reserveTxt:    { color:'#FFFFFF', fontSize:typography.size.sm, fontWeight:'500' },
 });

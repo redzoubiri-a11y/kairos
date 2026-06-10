@@ -10,13 +10,13 @@ export default function useProPhotos(restaurantId) {
   const [error,     setError]     = useState('');
 
   const fetchPhotos = useCallback(async () => {
-    if (!restaurantId) return;
+    if (!restaurantId) { setLoading(false); return; }
     setLoading(true);
     const { data } = await supabase
       .from('restaurants')
       .select('photos')
       .eq('id', restaurantId)
-      .single();
+      .maybeSingle();
     setPhotos(data?.photos || []);
     setLoading(false);
   }, [restaurantId]);

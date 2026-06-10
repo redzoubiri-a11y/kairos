@@ -1,12 +1,12 @@
-import { useCallback } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  SafeAreaView, RefreshControl,
+  RefreshControl,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, typography, spacing, radius } from '../src/theme';
 import MLoader from '../src/components/MLoader';
 import useNotifications, { TYPE_CFG, TABS, timeAgo } from '../src/hooks/useNotifications';
-import MidaLogo from '../src/components/MidaLogo';
+import BottomTabBar from '../src/components/BottomTabBar';
 
 function SkeletonList() {
   return (
@@ -32,7 +32,6 @@ export default function NotificationsScreen({ navigation }) {
     markRead, markAllRead, deleteNotif, onRefresh,
   } = useNotifications();
 
-  const goBack    = useCallback(() => navigation.goBack(), [navigation]);
   const badgeFor  = (id) => {
     if (id === 'all')    return unread;
     if (id === 'resa')   return unreadResa;
@@ -41,16 +40,13 @@ export default function NotificationsScreen({ navigation }) {
   };
 
   return (
-    <SafeAreaView style={s.root}>
+    <SafeAreaView style={s.root} edges={['top', 'left', 'right']}>
 
       <View style={s.header}>
-        <TouchableOpacity style={s.backBtn} onPress={goBack}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
           <Text style={s.backBtnTxt}>←</Text>
         </TouchableOpacity>
-        <View style={s.headerCenter}>
-          <MidaLogo showTagline={false} style={{ marginBottom: spacing.xs }} />
-          <Text style={s.headerSub}>ALERTES & RAPPELS</Text>
-        </View>
+        <Text style={s.headerSub}>ALERTES & RAPPELS</Text>
         <TouchableOpacity onPress={markAllRead} disabled={unread === 0} style={s.markAllBtn}>
           <Text style={[s.markAllTxt, unread === 0 && s.markAllDim]}>Tout lire</Text>
         </TouchableOpacity>
@@ -125,7 +121,7 @@ export default function NotificationsScreen({ navigation }) {
                       {isResa && (
                         <TouchableOpacity
                           style={s.actionBtn}
-                          onPress={() => { markRead(n); navigation.navigate('Main'); }}
+                          onPress={() => { markRead(n); try { navigation.navigate('Main', { screen: 'Resa' }); } catch (_) { navigation.navigate('Main'); } }}
                         >
                           <Text style={s.actionBtnTxt}>Voir mes réservations →</Text>
                         </TouchableOpacity>
@@ -140,6 +136,7 @@ export default function NotificationsScreen({ navigation }) {
           <View style={{ height: 60 }} />
         </ScrollView>
       )}
+      <BottomTabBar navigation={navigation} activeTab={null} />
     </SafeAreaView>
   );
 }
@@ -147,30 +144,29 @@ export default function NotificationsScreen({ navigation }) {
 const s = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.bg },
 
-  header:       { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xxl, paddingTop: spacing.xl, paddingBottom: spacing.xl, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
-  backBtn:      { width: 36, height: 36, borderRadius: 18, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, alignItems: 'center', justifyContent: 'center' },
-  backBtnTxt:   { color: colors.text, fontSize: typography.size.heading2 },
-  headerCenter: { flex: 1, alignItems: 'center' },
-  headerSub:    { color: colors.accent, fontSize: typography.size.xs, letterSpacing: 3, marginBottom: 2 },
+  header:       { flexDirection: 'row', alignItems: 'center', paddingHorizontal: spacing.xxl, paddingTop: spacing.xl, paddingBottom: spacing.xl, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
+  backBtn:      { width: 60, alignItems: 'flex-start' },
+  backBtnTxt:   { color: colors.text, fontSize: 22 },
+  headerSub:    { flex: 1, color: colors.accent, fontSize: typography.size.xs, letterSpacing: 3, textAlign: 'center' },
   markAllBtn:   { width: 60, alignItems: 'flex-end' },
   markAllTxt:   { color: colors.blue, fontSize: typography.size.body },
   markAllDim:   { color: colors.textDim },
 
   summaryBar:   { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingHorizontal: spacing.xxl, paddingVertical: spacing.md+1, backgroundColor: 'rgba(232,160,69,0.06)', borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
-  summaryDot:   { width: 7, height: 7, borderRadius: 4, backgroundColor: colors.accent },
+  summaryDot:   { width: 7, height: 7, borderRadius: 0, backgroundColor: colors.accent },
   summaryTxt:   { color: colors.accent, fontSize: typography.size.body },
   summaryHint:  { color: colors.textDim, fontSize: typography.size.caption },
 
   tabBar:       { flexDirection: 'row', backgroundColor: colors.card, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   tabBtn:       { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: spacing.lg, gap: spacing.sm, position: 'relative' },
-  tabBtnOn:     { backgroundColor: colors.accentSoft, shadowColor: colors.accent, shadowOpacity: 0.25, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 4 },
+  tabBtnOn:     { backgroundColor: 'rgba(200,151,90,0.12)', shadowColor: '#000', shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
   tabTxt:       { color: colors.textMuted, fontSize: typography.size.body, fontWeight: typography.weight.regular },
   tabTxtOn:     { color: colors.accent, fontWeight: typography.weight.semibold },
   tabBadge:     { backgroundColor: colors.accent, borderRadius: radius.md, minWidth: 16, height: 16, paddingHorizontal: spacing.xxs+1, alignItems: 'center', justifyContent: 'center' },
   tabBadgeTxt:  { color: colors.bg, fontSize: typography.size.xs, fontWeight: typography.weight.bold },
-  tabLine:      { position: 'absolute', bottom: 0, left: '15%', right: '15%', height: 2, backgroundColor: colors.accent, borderRadius: 1 },
+  tabLine:      { position: 'absolute', bottom: 0, left: '15%', right: '15%', height: 2, backgroundColor: colors.accent, borderRadius: 0 },
 
-  groupLabel:   { color: colors.textDim, fontSize: typography.size.xs, letterSpacing: 4, paddingHorizontal: spacing.xxl, paddingTop: spacing.xxl, paddingBottom: spacing.md },
+  groupLabel:   { color: colors.textMuted, fontSize: typography.size.xs, letterSpacing: 4, paddingHorizontal: spacing.xxl, paddingTop: spacing.xxl, paddingBottom: spacing.md },
 
   card:         { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.lg, paddingHorizontal: spacing.xxl, paddingVertical: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.cardBorder, borderLeftWidth: 3, borderLeftColor: 'transparent' },
   cardUnread:   { backgroundColor: 'rgba(255,255,255,0.02)' },
@@ -184,7 +180,7 @@ const s = StyleSheet.create({
   cardTitle:    { color: colors.text, fontSize: typography.size.subheading, fontWeight: typography.weight.regular, lineHeight: 20 },
   cardTitleBold:{ fontWeight: typography.weight.medium },
   cardBody:     { color: colors.textMuted, fontSize: typography.size.body, lineHeight: 18 },
-  unreadDot:    { width: 8, height: 8, borderRadius: 4, flexShrink: 0, marginTop: spacing.sm },
+  unreadDot:    { width: 8, height: 8, borderRadius: 0, flexShrink: 0, marginTop: spacing.sm },
 
   actionBtn:    { alignSelf: 'flex-start', marginTop: spacing.sm, paddingVertical: spacing.sm, paddingHorizontal: spacing.lg, backgroundColor: colors.blueSoft, borderRadius: radius.md, borderWidth: 1, borderColor: 'rgba(90,155,224,0.25)' },
   actionBtnTxt: { color: colors.blue, fontSize: typography.size.caption },

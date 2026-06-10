@@ -41,10 +41,10 @@ const s = StyleSheet.create({
   emoji:   { fontSize: 28 },
   info:    { flex: 1, gap: spacing.xs },
   cuisine: { color: colors.accent, fontSize: typography.size.xs, letterSpacing: 2 },
-  name:    { color: colors.text, fontSize: typography.size.body, fontWeight: typography.weight.light },
+  name:    { color: colors.text, fontSize: typography.size.body, fontWeight: '300' },
   meta:    { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
   rating:  { color: colors.accent, fontSize: typography.size.sm },
   sep:     { color: colors.textDim, fontSize: typography.size.sm },
   price:   { color: colors.textMuted, fontSize: typography.size.sm },
-  arrow:   { color: colors.textDim, fontSize: 22, fontWeight: typography.weight.light },
+  arrow:   { color: colors.textDim, fontSize: 22, fontWeight: '300' },
 });

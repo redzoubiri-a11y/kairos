@@ -23,7 +23,7 @@ async function sendEmail(to: string, subject: string, html: string) {
   await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { "Authorization": `Bearer ${RESEND_KEY}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ from: "MIDA <onboarding@resend.dev>", to: [to], subject, html }),
+    body: JSON.stringify({ from: "MIDA <noreply@mida-food.com>", to: [to], subject, html }),
   }).catch(() => {});
 }
 
@@ -55,8 +55,8 @@ serve(async (req) => {
 
     if (!reqRow) throw new Error("Demande introuvable");
 
-    const approveUrl = `${FUNCTIONS_URL}/approve-pro?id=${reqRow.id}`;
-    const rejectUrl  = `${FUNCTIONS_URL}/reject-pro?id=${reqRow.id}`;
+    const approveUrl = `${FUNCTIONS_URL}/approve-pro?id=${reqRow.id}&step=confirm`;
+    const rejectUrl  = `${FUNCTIONS_URL}/reject-pro?id=${reqRow.id}&step=confirm`;
 
     // Email to admin with approve/reject buttons
     await sendEmail(
@@ -65,23 +65,19 @@ serve(async (req) => {
       `
       <div style="font-family:Georgia,serif;max-width:560px;margin:0 auto;color:#1a1a1a;">
         <h1 style="letter-spacing:4px;font-size:20px;color:#0F0D0B;">MIDA</h1>
-        <h2 style="font-size:18px;">Nouvelle demande restaurateur</h2>
-        <table cellpadding="8" style="border-collapse:collapse;width:100%;margin:16px 0;">
-          <tr><td style="color:#888;width:130px;">Prénom</td><td><b>${prenom}</b></td></tr>
-          <tr><td style="color:#888;">Nom</td><td><b>${nom}</b></td></tr>
-          <tr><td style="color:#888;">Restaurant</td><td><b>${restaurant}</b></td></tr>
-          <tr><td style="color:#888;">Ville</td><td>${ville || "—"}</td></tr>
-          <tr><td style="color:#888;">Téléphone</td><td>${telephone}</td></tr>
-          <tr><td style="color:#888;">Adresse</td><td>${adresse || "—"}</td></tr>
-          <tr><td style="color:#888;">Email</td><td>${email}</td></tr>
-          <tr><td style="color:#888;">Date</td><td>${new Date().toLocaleString("fr-FR")}</td></tr>
-        </table>
-        <div style="display:flex;gap:16px;margin-top:24px;">
+        <p style="font-size:16px;margin:8px 0 16px;"><b>${prenom} ${nom}</b> — ${restaurant} (${ville || "—"})</p>
+        <div style="margin-bottom:20px;">
           <a href="${approveUrl}" style="display:inline-block;background:#4CAF82;color:white;padding:12px 28px;text-decoration:none;border-radius:6px;font-weight:bold;letter-spacing:1px;">✓ APPROUVER</a>
           &nbsp;&nbsp;
           <a href="${rejectUrl}" style="display:inline-block;background:#E05A5A;color:white;padding:12px 28px;text-decoration:none;border-radius:6px;font-weight:bold;letter-spacing:1px;">✗ REFUSER</a>
         </div>
-        <p style="color:#aaa;font-size:12px;margin-top:24px;">Ces liens sont à usage unique.</p>
+        <table cellpadding="6" style="border-collapse:collapse;width:100%;font-size:13px;">
+          <tr><td style="color:#888;width:110px;">Téléphone</td><td>${telephone}</td></tr>
+          <tr><td style="color:#888;">Adresse</td><td>${adresse || "—"}</td></tr>
+          <tr><td style="color:#888;">Email</td><td>${email}</td></tr>
+          <tr><td style="color:#888;">Date</td><td>${new Date().toLocaleString("fr-FR")}</td></tr>
+        </table>
+        <p style="color:#aaa;font-size:12px;margin-top:16px;">Liens à usage unique.</p>
       </div>
       `,
     );

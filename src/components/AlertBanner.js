@@ -23,8 +23,8 @@ export default function AlertBanner({ pendingCount, upcomingCount }) {
 }
 
 const s = StyleSheet.create({
-  wrap: { flexDirection: 'row', alignItems: 'center', gap: spacing.lg, marginHorizontal: spacing.xxl, marginBottom: spacing.lg, backgroundColor: colors.accentSoft, borderRadius: radius.xl, borderWidth: 1, borderColor: 'rgba(232,160,69,0.3)', padding: spacing.lg },
-  icon: { fontSize: 18 },
-  txt:  { color: colors.textMuted, fontSize: typography.size.body, lineHeight: 18 },
-  bold: { color: colors.accent, fontWeight: typography.weight.medium },
+  wrap: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, marginHorizontal: spacing.xxl, marginBottom: spacing.md, backgroundColor: 'transparent', borderRadius: radius.lg, borderWidth: 1, borderColor: 'rgba(255,255,255,0.12)', paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
+  icon: { fontSize: 14 },
+  txt:  { color: 'rgba(245,242,236,0.65)', fontSize: typography.size.caption, lineHeight: 16 },
+  bold: { color: '#C87860', fontWeight: typography.weight.medium },
 });

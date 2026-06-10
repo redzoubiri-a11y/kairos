@@ -74,7 +74,7 @@ const lc = StyleSheet.create({
   imgPlaceholder: { backgroundColor: colors.cardHover, alignItems:'center', justifyContent:'center' },
   ratingBadge:    { position:'absolute', top:8, right:8, backgroundColor:'rgba(15,13,11,0.82)', borderRadius:radius.md, paddingHorizontal:7, paddingVertical:3, borderWidth:1, borderColor:'rgba(232,160,69,0.3)' },
   ratingBadgeTxt: { color:colors.accent, fontSize:typography.size.sm, fontWeight:'600' },
-  medalWrap:      { position:'absolute', top:8, left:8, width:22, height:22, borderRadius:11, alignItems:'center', justifyContent:'center' },
+  medalWrap:      { position:'absolute', top:8, left:8, width:22, height:22, borderRadius:0, alignItems:'center', justifyContent:'center' },
   medalTxt:       { color:colors.bg, fontSize:typography.size.sm, fontWeight:'700' },
   cuisinePill:    { position:'absolute', bottom:8, left:8, backgroundColor:'rgba(15,13,11,0.78)', borderRadius:radius.sm, paddingHorizontal:7, paddingVertical:3 },
   cuisinePillTxt: { color:colors.text, fontSize:typography.size.xs },
@@ -175,7 +175,7 @@ const s = StyleSheet.create({
   logo:    { color:colors.accent, fontSize:typography.size.heading2, fontWeight:'700', letterSpacing:5 },
   logoSub: { color:colors.textMuted, fontSize:typography.size.sm },
   countBadge: { flexDirection:'row', alignItems:'center', gap:5, backgroundColor:colors.accentSoft, borderRadius:radius.full, paddingHorizontal:spacing.md, paddingVertical:5, borderWidth:1, borderColor:'rgba(232,160,69,0.3)' },
-  countDot:   { width:6, height:6, borderRadius:3, backgroundColor:colors.green },
+  countDot:   { width:6, height:6, borderRadius:0, backgroundColor:colors.green },
   countTxt:   { color:colors.accent, fontSize:typography.size.caption, fontWeight:'500' },
 
   cityGrid:  { flexDirection:'row', flexWrap:'wrap', paddingHorizontal:14, paddingVertical:10, gap:8 },

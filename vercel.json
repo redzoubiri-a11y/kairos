@@ -1,5 +1,11 @@
 {
-  "buildCommand": "npx expo export --platform web",
+  "buildCommand": "npx expo export --platform web && mkdir -p dist/cgu dist/confidentialite && cp cgu.html dist/cgu/index.html && cp confidentialite.html dist/confidentialite/index.html && cp fondateurs.html dist/fondateurs.html",
   "outputDirectory": "dist",
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/fondateurs", "destination": "/fondateurs.html" },
+    { "source": "/cgu", "destination": "/cgu/index.html" },
+    { "source": "/confidentialite", "destination": "/confidentialite/index.html" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
 }

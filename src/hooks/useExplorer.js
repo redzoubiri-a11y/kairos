@@ -100,9 +100,9 @@ export default function useExplorer(initialCity = 'alger') {
           .eq('status', 'active')
           .order('avg_rating', { ascending: false });
 
-        if (!nearMe) query.eq('city', city);
+        const finalQuery = !nearMe ? query.eq('city', city) : query;
 
-        const { data } = await query;
+        const { data } = await finalQuery;
         setRestaurants(data ?? []);
       } finally {
         setLoading(false);

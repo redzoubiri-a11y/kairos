@@ -2,9 +2,11 @@ import { useRef, useCallback, useEffect } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import {
   View, Text, StyleSheet, TouchableOpacity, ScrollView,
-  SafeAreaView, ActivityIndicator, Platform,
+  ActivityIndicator, Platform,
   StatusBar as RNStatusBar, Image, FlatList,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import MapView, { Marker } from 'react-native-maps';
 import { colors, typography, spacing, radius } from '../src/theme';
 import useExplorer, { CITIES, getCoord, haversineKm } from '../src/hooks/useExplorer';
@@ -82,6 +84,7 @@ export default function ExplorerScreen({ navigation, route }) {
 
   return (
     <View style={s.root}>
+      <LinearGradient colors={['#C4B8C8', '#8B9BB4', '#6B7F9E']} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
 
       {mode === 'map' && (
         <View style={s.mapWrap}>
@@ -158,7 +161,7 @@ export default function ExplorerScreen({ navigation, route }) {
             ? <TouchableOpacity style={s.backBtn} onPress={goBack}><Text style={s.backBtnTxt}>←</Text></TouchableOpacity>
             : <View style={{ width: 36 }} />
           }
-          <Text style={s.headerTitle}>EXPLORER</Text>
+          <View style={{ width: 36 }} />
           <View style={{ flexDirection:'row', gap:8, alignItems:'center' }}>
             {!loading && (
               <View style={s.countBadge}>
@@ -215,53 +218,54 @@ export default function ExplorerScreen({ navigation, route }) {
 }
 
 const s = StyleSheet.create({
-  root:    { flex:1, backgroundColor:colors.bg },
+  root:       { flex:1, backgroundColor:colors.bg },
+  bgOverlay:  { ...StyleSheet.absoluteFillObject, opacity: 0.06 },
   mapWrap: { flex:54 },
 
   overlay:     { position:'absolute', top:0, left:0, right:0, zIndex:10 },
-  header:      { flexDirection:'row', justifyContent:'space-between', alignItems:'center', paddingHorizontal:spacing.xl, paddingTop:TOP+14, paddingBottom:14, backgroundColor:'rgba(13,22,40,0.6)', borderBottomWidth:1, borderBottomColor:'rgba(255,255,255,0.06)' },
+  header:      { flexDirection:'row', justifyContent:'space-between', alignItems:'center', paddingHorizontal:spacing.xl, paddingTop:TOP+14, paddingBottom:14, backgroundColor:'transparent', borderBottomWidth:1, borderBottomColor:colors.cardBorder },
   headerItalic:{ color:colors.blue, fontSize:typography.size.caption, fontStyle:'italic', letterSpacing:1.5, marginBottom:2 },
   headerTitle: { color:colors.text, fontSize:typography.size.heading2, fontWeight:typography.weight.regular, letterSpacing:3 },
   countBadge:  { flexDirection:'row', alignItems:'center', gap:5, backgroundColor:colors.accentSoft, borderRadius:radius.full, paddingHorizontal:spacing.md, paddingVertical:5, borderWidth:1, borderColor:'rgba(232,160,69,0.3)' },
   countDot:    { width:6, height:6, borderRadius:3, backgroundColor:colors.green },
   countTxt:    { color:colors.accent, fontSize:typography.size.caption, fontWeight:'500' },
-  modeBtn:     { width:36, height:36, borderRadius:18, backgroundColor:'transparent', borderWidth:1, borderColor:'rgba(255,255,255,0.1)', alignItems:'center', justifyContent:'center' },
-  modeBtnOn:   { backgroundColor:colors.accentSoft, borderColor:colors.accent, shadowColor:colors.accent, shadowOpacity:0.35, shadowRadius:10, shadowOffset:{ width:0, height:0 }, elevation:5 },
+  modeBtn:     { width:36, height:36, borderRadius:radius.md, backgroundColor:'transparent', borderWidth:1, borderColor:colors.navyBorder, alignItems:'center', justifyContent:'center' },
+  modeBtnOn:   { backgroundColor:'rgba(200,151,90,0.14)', borderColor:'#c8975a', shadowColor:'#000', shadowOpacity:0.35, shadowRadius:10, shadowOffset:{ width:0, height:0 }, elevation:5 },
   modeBtnTxt:  { fontSize:16 },
 
-  selCard:    { position:'absolute', bottom:8, left:14, right:14, backgroundColor:colors.card, borderRadius:radius.xxl, borderWidth:1, borderColor:'rgba(232,160,69,0.3)', overflow:'hidden', zIndex:5 },
+  selCard:    { position:'absolute', bottom:8, left:14, right:14, backgroundColor:colors.card, borderRadius:radius.xl, borderWidth:1, borderColor:colors.cardBorder, overflow:'hidden', zIndex:5 },
   selPhoto:   { width:'100%', height:120 },
   selOverlay: { paddingHorizontal:spacing.xl, paddingTop:spacing.md, paddingBottom:spacing.xs },
-  selCuisine: { color:colors.accent, fontSize:typography.size.xs, letterSpacing:2.5, marginBottom:3 },
+  selCuisine: { color:'#C87860', fontSize:typography.size.xs, letterSpacing:2.5, marginBottom:3 },
   selName:    { color:colors.text, fontSize:typography.size.heading2, fontWeight:'300', letterSpacing:0.3, marginBottom:4 },
   selMeta:    { flexDirection:'row', flexWrap:'wrap', gap:6 },
-  selRating:  { color:colors.accent, fontSize:typography.size.body, fontWeight:'500' },
+  selRating:  { color:'#C87860', fontSize:typography.size.body, fontWeight:'500' },
   selAddr:    { color:colors.textMuted, fontSize:typography.size.body },
   selPrice:   { color:colors.textDim, fontSize:typography.size.body },
   selActions: { flexDirection:'row', gap:8, paddingHorizontal:spacing.xl, paddingVertical:spacing.lg },
-  selBtnPrimary:    { flex:1, backgroundColor:colors.accent, borderRadius:radius.md, paddingVertical:11, alignItems:'center' },
-  selBtnPrimaryTxt: { color:colors.bg, fontSize:typography.size.bodyLg, fontWeight:'500' },
+  selBtnPrimary:    { flex:1, backgroundColor:'#C87860', borderRadius:radius.md, paddingVertical:11, alignItems:'center', borderWidth:1, borderColor:'rgba(255,220,150,0.4)', shadowColor:'#000', shadowOpacity:0.45, shadowRadius:12, shadowOffset:{ width:0, height:0 }, elevation:6 },
+  selBtnPrimaryTxt: { color:'#FFFFFF', fontSize:typography.size.bodyLg, fontWeight:'500' },
   selBtnSecondary:  { flex:1, borderRadius:radius.md, paddingVertical:11, alignItems:'center', borderWidth:1, borderColor:colors.cardBorder },
   selBtnSecondaryTxt:{ color:colors.text, fontSize:typography.size.bodyLg },
   selClose:   { position:'absolute', top:10, right:10, width:28, height:28, borderRadius:14, backgroundColor:'rgba(15,13,11,0.72)', alignItems:'center', justifyContent:'center' },
-  selCloseTxt:{ color:colors.text, fontSize:typography.size.body },
+  selCloseTxt:{ color:'#FFFFFF', fontSize:typography.size.body },
 
-  mapChips:    { position:'absolute', bottom:0, left:0, right:0, backgroundColor:'rgba(13,22,40,0.88)', borderTopWidth:1, borderTopColor:colors.cardBorder },
+  mapChips:    { position:'absolute', bottom:0, left:0, right:0, backgroundColor:colors.bg, borderTopWidth:1, borderTopColor:colors.cardBorder },
   sheet:       { flex:46, backgroundColor:colors.bg },
   sheetFull:   { flex:1, borderTopWidth:1, borderTopColor:colors.cardBorder, marginTop:TOP+66 },
   sheetHandle: { width:36, height:3, backgroundColor:colors.textDim, borderRadius:2, alignSelf:'center', marginBottom:8, opacity:0.35 },
 
   chipsScroll: { borderBottomWidth:1, borderBottomColor:colors.cardBorder, flexShrink:0 },
   cityGrid:    { flexDirection:'row', alignItems:'center', paddingHorizontal:14, paddingVertical:10, gap:8 },
-  cityChip:    { flexDirection:'row', alignItems:'center', gap:5, paddingHorizontal:18, paddingVertical:5, borderRadius:100, backgroundColor:'transparent', borderWidth:1, borderColor:'rgba(255,255,255,0.1)' },
+  cityChip:    { flexDirection:'row', alignItems:'center', gap:5, paddingHorizontal:18, paddingVertical:5, borderRadius:radius.full, backgroundColor:'transparent', borderWidth:1, borderColor:colors.cardBorder },
   nearMeChip:  { borderColor:'rgba(90,155,224,0.3)' },
-  cityChipOn:  { backgroundColor:colors.accentSoft, borderColor:colors.accent, shadowColor:colors.accent, shadowOpacity:0.35, shadowRadius:10, shadowOffset:{ width:0, height:0 }, elevation:5 },
+  cityChipOn:  { backgroundColor:'rgba(200,120,96,0.18)', borderColor:'#C87860', shadowColor:'#000', shadowOpacity:0.35, shadowRadius:10, shadowOffset:{ width:0, height:0 }, elevation:5 },
   cityEmoji:   { fontSize:13 },
   cityTxt:     { color:colors.textMuted, fontSize:typography.size.body },
-  cityTxtOn:   { color:colors.accent, fontWeight:'600' },
+  cityTxtOn:   { color:'#C87860', fontWeight:'600' },
 
-  backBtn:     { width:36, height:36, borderRadius:18, backgroundColor:colors.card, borderWidth:1, borderColor:colors.cardBorder, alignItems:'center', justifyContent:'center' },
-  backBtnTxt:  { color:colors.text, fontSize:18, lineHeight:22 },
+  backBtn:     { width:36, height:36, borderRadius:0, backgroundColor:'transparent', alignItems:'center', justifyContent:'center' },
+  backBtnTxt:  { color:'#FFFFFF', fontSize:18, lineHeight:22 },
 
   gridRow:     { paddingHorizontal:14, justifyContent:'space-between' },
   gridContent: { paddingTop:6 },

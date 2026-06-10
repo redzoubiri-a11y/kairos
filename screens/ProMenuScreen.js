@@ -1,15 +1,17 @@
-import { useCallback } from 'react';
+import { useEffect } from 'react';
+import * as ScreenOrientation from 'expo-screen-orientation';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  SafeAreaView, RefreshControl,
+  RefreshControl, Alert,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, typography, spacing, radius } from '../src/theme';
 import MLoader from '../src/components/MLoader';
-import MidaLogo from '../src/components/MidaLogo';
 import useProMenu, { DEFAULT_CATS, EMPTY_FORM } from '../src/hooks/useProMenu';
 import DishCard from '../src/components/DishCard';
 import DishForm from '../src/components/DishForm';
 import MenuCategoriesView from '../src/components/MenuCategoriesView';
+import BottomTabBar from '../src/components/BottomTabBar';
 
 function SkeletonMenu() {
   return (
@@ -26,7 +28,8 @@ function SkeletonMenu() {
   );
 }
 
-export default function ProMenuScreen({ navigation }) {
+export default function ProMenuScreen({ navigation, route }) {
+  const onSetupComplete = route?.params?.onSetupComplete;
   const {
     restaurant, dishes, categories, loading, refreshing,
     view, activeCat, editingDish, acting,
@@ -36,7 +39,10 @@ export default function ProMenuScreen({ navigation }) {
     openAddForm, cancelForm, goCategories, goList, onRefresh, addCat, deleteCat,
   } = useProMenu();
 
-  const goBack = useCallback(() => navigation.goBack(), [navigation]);
+  useEffect(() => {
+    ScreenOrientation.unlockAsync();
+    return () => ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
+  }, []);
 
   if (view === 'add' || view === 'edit') {
     const initial = view === 'edit' && editingDish
@@ -63,7 +69,7 @@ export default function ProMenuScreen({ navigation }) {
           onCancel={cancelForm}
           onDelete={deleteDish}
         />
-      </SafeAreaView>
+    </SafeAreaView>
     );
   }
 
@@ -77,18 +83,14 @@ export default function ProMenuScreen({ navigation }) {
           onDelete={deleteCat}
           onBack={goList}
         />
-      </SafeAreaView>
+    </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={s.root}>
+    <SafeAreaView style={s.root} edges={['top', 'left', 'right']}>
       <View style={s.header}>
-        <TouchableOpacity style={s.backBtn} onPress={goBack}>
-          <Text style={s.backBtnTxt}>←</Text>
-        </TouchableOpacity>
         <View style={s.headerCenter}>
-          <MidaLogo showTagline={false} style={{ alignItems: 'center', marginBottom: 2 }} />
           <Text style={s.headerSub}>GESTION DU MENU</Text>
           <Text style={s.headerTitle}>{restaurant?.name || 'Menu'}</Text>
         </View>
@@ -133,6 +135,7 @@ export default function ProMenuScreen({ navigation }) {
           </View>
 
           <ScrollView
+            style={{ flex: 1 }}
             showsVerticalScrollIndicator={false}
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.accent} />}
           >
@@ -165,10 +168,34 @@ export default function ProMenuScreen({ navigation }) {
                   {activeCat ? `Ajouter un plat dans ${activeCat}` : 'Ajouter un plat'}
                 </Text>
               </TouchableOpacity>
+
+              {onSetupComplete && (
+                <TouchableOpacity
+                  style={s.nextBtn}
+                  onPress={() => {
+                    if (dishes.length === 0) {
+                      Alert.alert(
+                        'Menu vide',
+                        'Vous pouvez ajouter des plats plus tard depuis votre tableau de bord.',
+                        [
+                          { text: 'Rester', style: 'cancel' },
+                          { text: 'Continuer quand même', onPress: () => { onSetupComplete(); navigation.goBack(); } },
+                        ]
+                      );
+                      return;
+                    }
+                    onSetupComplete();
+                    navigation.goBack();
+                  }}
+                >
+                  <Text style={s.nextBtnTxt}>Étape suivante →</Text>
+                </TouchableOpacity>
+              )}
             </View>
           </ScrollView>
         </>
       )}
+      <BottomTabBar navigation={navigation} isPro={true} activeTab="Manager" />
     </SafeAreaView>
   );
 }
@@ -177,26 +204,24 @@ const s = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.bg },
 
   header:       { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xxl, paddingTop: spacing.xl, paddingBottom: spacing.xl, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
-  backBtn:      { width: 36, height: 36, borderRadius: 18, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, alignItems: 'center', justifyContent: 'center' },
-  backBtnTxt:   { color: colors.text, fontSize: typography.size.heading2 },
   headerCenter: { flex: 1, alignItems: 'center' },
   headerSub:    { color: colors.accent, fontSize: typography.size.xs, letterSpacing: 3, marginBottom: 2 },
   headerTitle:  { color: colors.text, fontSize: typography.size.title, fontWeight: '300', letterSpacing: 1 },
-  addBtn:       { backgroundColor: colors.accent, borderRadius: radius.lg, paddingHorizontal: spacing.lg, paddingVertical: spacing.md },
+  addBtn:       { backgroundColor: '#c8975a', borderRadius: radius.lg, paddingHorizontal: spacing.lg, paddingVertical: spacing.md, shadowColor: '#000', shadowOpacity: 0.45, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
   addBtnTxt:    { color: colors.bg, fontSize: typography.size.body, fontWeight: typography.weight.bold },
 
   subBar:  { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingHorizontal: spacing.xxl, paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
-  subDot:  { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.green },
+  subDot:  { width: 6, height: 6, borderRadius: 0, backgroundColor: colors.green },
   subTxt:  { color: colors.textMuted, fontSize: typography.size.body },
 
   catsWrap:     { borderBottomWidth: 1, borderBottomColor: colors.cardBorder, backgroundColor: colors.card },
   catsList:     { flexDirection: 'row', paddingHorizontal: spacing.xxl, paddingVertical: spacing.lg, gap: spacing.md },
   catChip:      { paddingHorizontal: spacing.lg, paddingVertical: spacing.md, borderRadius: radius.pill, backgroundColor: 'transparent', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)', position: 'relative' },
-  catChipOn:    { backgroundColor: colors.accentSoft, borderColor: colors.accent, shadowColor: colors.accent, shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
+  catChipOn:    { backgroundColor: 'rgba(200,151,90,0.14)', borderColor: '#c8975a', shadowColor: '#000', shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
   catChipTxt:   { color: colors.textMuted, fontSize: typography.size.body },
   catChipTxtOn: { color: colors.accent, fontWeight: typography.weight.semibold },
   catChipMuted: { color: colors.textDim, fontSize: typography.size.body },
-  catDot:       { position: 'absolute', bottom: -1, left: '30%', right: '30%', height: 2, backgroundColor: colors.accent, borderRadius: 1 },
+  catDot:       { position: 'absolute', bottom: -1, left: '30%', right: '30%', height: 2, backgroundColor: colors.accent, borderRadius: 0 },
 
   empty:      { alignItems: 'center', justifyContent: 'center', paddingVertical: 60, gap: spacing.lg },
   emptyEmoji: { fontSize: 48 },
@@ -206,4 +231,7 @@ const s = StyleSheet.create({
   addDashed:     { borderWidth: 1, borderStyle: 'dashed', borderColor: 'rgba(232,160,69,0.35)', borderRadius: radius.xl, paddingVertical: spacing.xxl, alignItems: 'center', gap: spacing.sm, marginTop: spacing.sm },
   addDashedPlus: { color: colors.accent, fontSize: 26 },
   addDashedTxt:  { color: colors.textMuted, fontSize: typography.size.body },
+
+  nextBtn:    { backgroundColor: colors.text, borderRadius: radius.xl, paddingVertical: spacing.lg, alignItems: 'center', marginTop: spacing.xl },
+  nextBtnTxt: { color: colors.bg, fontSize: typography.size.body, fontWeight: typography.weight.semibold },
 });

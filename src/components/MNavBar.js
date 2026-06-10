@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     width: 20,
     height: 2,
     backgroundColor: colors.accent,
-    borderRadius: 1,
+    borderRadius: 0,
   },
   icon: {
     fontSize: typography.size.heading2,

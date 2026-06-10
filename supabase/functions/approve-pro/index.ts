@@ -18,6 +18,12 @@ function txt(body: string): Response {
   });
 }
 
+function html(title: string, content: string): Response {
+  return new Response(`<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MIDA</title><style>body{font-family:Georgia,serif;background:#0F0D0B;color:#F5F0EB;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0}div{max-width:480px;padding:40px;text-align:center}h1{letter-spacing:6px;font-size:18px;color:#C8975A;margin-bottom:8px}h2{font-weight:300;font-size:22px;margin:0 0 24px}table{width:100%;text-align:left;border-collapse:collapse;margin:0 0 32px}td{padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.07);font-size:14px}td:first-child{color:#888;width:120px}a.btn{display:inline-block;background:#4CAF82;color:white;padding:14px 40px;text-decoration:none;border-radius:8px;font-weight:bold;letter-spacing:2px;font-size:15px}p.note{color:#555;font-size:12px;margin-top:24px}p.done{font-size:18px;margin:16px 0}</style></head><body><div>${content}</div></body></html>`,
+    { status: 200, headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" } }
+  );
+}
+
 Deno.serve(async (req) => {
   const url = new URL(req.url);
   const requestId = url.searchParams.get("id");
@@ -30,18 +36,18 @@ Deno.serve(async (req) => {
   if (row.status !== "pending") return txt("MIDA\n\nCette demande a deja ete traitee : " + row.status);
 
   if (step !== "confirm") {
-    return txt(
-      "MIDA — Administration\n" +
-      "─────────────────────────────\n\n" +
-      "Approuver cette demande ?\n\n" +
-      "Nom        : " + row.first_name + " " + row.last_name + "\n" +
-      "Restaurant : " + row.restaurant_name + "\n" +
-      "Ville      : " + (row.city || "—") + "\n\n" +
-      "OUI — confirmez en cliquant sur ce lien :\n\n" +
-      BASE_URL + "/approve-pro?id=" + requestId + "&step=confirm" +
-      "\n\n" +
-      "Fermez cette fenetre pour annuler."
-    );
+    const confirmUrl = BASE_URL + "/approve-pro?id=" + requestId + "&step=confirm";
+    return html("Approuver", `
+      <h1>MIDA</h1>
+      <h2>Approuver cette demande ?</h2>
+      <table>
+        <tr><td>Nom</td><td>${row.first_name} ${row.last_name}</td></tr>
+        <tr><td>Restaurant</td><td>${row.restaurant_name}</td></tr>
+        <tr><td>Ville</td><td>${row.city || "—"}</td></tr>
+      </table>
+      <a class="btn" href="${confirmUrl}">✓ CONFIRMER</a>
+      <p class="note">Fermez cette fenêtre pour annuler.</p>
+    `);
   }
 
   const { data: authUser } = await admin.auth.admin.getUserById(row.user_id);
@@ -61,8 +67,9 @@ Deno.serve(async (req) => {
     } else {
       const { data: restoRow, error: restoErr } = await admin.from("restaurants").insert({
         owner_id: ownerRow.id, name: row.restaurant_name,
-        address: row.address ?? "", city: (row.city ?? "alger").toLowerCase(),
-        phone: row.phone, cuisine_type: "autre", status: "pending",
+        cuisine_type: "autre", status: "pending",
+        address: "", quartier: "", phone: row.phone || "",
+        city: row.city?.trim() || "alger",
       }).select("id").single();
       if (restoErr) throw new Error(restoErr.message);
       restoId = restoRow.id;
@@ -73,26 +80,29 @@ Deno.serve(async (req) => {
     await admin.from("pro_requests").update({ status: "approved" }).eq("id", requestId);
 
     if (RESEND_KEY && userEmail) {
-      await fetch("https://api.resend.com/emails", {
+      const resendRes = await fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: { "Authorization": "Bearer " + RESEND_KEY, "Content-Type": "application/json" },
         body: JSON.stringify({
-          from: "MIDA <onboarding@resend.dev>", to: [userEmail],
-          subject: "Bienvenue sur MIDA — Votre compte restaurateur est active",
+          from: "MIDA <noreply@mida-food.com>",
+          to: [userEmail],
+          subject: "Bienvenue sur MIDA — Votre compte restaurateur est activé",
           html: "<div style='font-family:Georgia,serif;max-width:520px;margin:0 auto'><h1>MIDA</h1><h2>Félicitations, " + row.first_name + " !</h2><p>Votre compte pour <strong>" + row.restaurant_name + "</strong> est actif. Connectez-vous avec vos identifiants habituels.</p><p style='color:#888;font-size:13px'>L'équipe MIDA</p></div>",
         }),
-      }).catch(() => {});
+      });
+      if (!resendRes.ok) {
+        const resendErr = await resendRes.text();
+        console.error("[approve-pro] Resend error:", resendRes.status, resendErr);
+      }
     }
 
-    return txt(
-      "MIDA\n" +
-      "─────────────────────────────\n\n" +
-      "✓ APPROUVE\n\n" +
-      row.first_name + " " + row.last_name + " peut se connecter\n" +
-      "en tant que restaurateur pour " + row.restaurant_name + ".\n\n" +
-      "Email de bienvenue envoye.\n\n" +
-      "Vous pouvez fermer cette fenetre."
-    );
+    return html("Approuvé", `
+      <h1>MIDA</h1>
+      <p class="done">✓ APPROUVÉ</p>
+      <p>${row.first_name} ${row.last_name} peut se connecter en tant que restaurateur pour <strong>${row.restaurant_name}</strong>.</p>
+      <p>Email de bienvenue envoyé.</p>
+      <p class="note">Vous pouvez fermer cette fenêtre.</p>
+    `);
   } catch (err) {
     return txt("MIDA\n\nErreur : " + String(err));
   }

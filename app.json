@@ -4,7 +4,7 @@
     "slug": "mida",
     "version": "1.0.0",
     "scheme": "mida",
-    "orientation": "portrait",
+    "orientation": "default",
     "icon": "./assets/logo.png",
     "userInterfaceStyle": "dark",
     "splash": {
@@ -19,7 +19,12 @@
         "NSUserNotificationsUsageDescription": "MIDA vous envoie des notifications pour vos réservations.",
         "NSLocationWhenInUseUsageDescription": "MIDA utilise votre position pour afficher les restaurants près de vous.",
         "NSPhotoLibraryUsageDescription": "MIDA accède à vos photos pour ajouter des images à votre restaurant.",
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "UISupportedInterfaceOrientations": [
+          "UIInterfaceOrientationPortrait",
+          "UIInterfaceOrientationLandscapeLeft",
+          "UIInterfaceOrientationLandscapeRight"
+        ]
       }
     },
     "android": {
@@ -52,6 +57,7 @@
         }
       ],
       "expo-location",
+      ["expo-screen-orientation", { "initialOrientation": "DEFAULT" }],
       [
         "expo-image-picker",
         {

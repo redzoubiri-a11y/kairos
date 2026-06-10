@@ -1,13 +1,14 @@
 import { useCallback } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  Image, SafeAreaView, TextInput,
+  Image, TextInput, Alert, Linking,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
 import { colors, typography, spacing, radius } from '../src/theme';
 import MLoader from '../src/components/MLoader';
 import useProfil, { CUISINE_EMOJI, CARD_BG, SITUATIONS, CUISINES } from '../src/hooks/useProfil';
 import ProfilResaCard from '../src/components/ProfilResaCard';
-import MidaLogo from '../src/components/MidaLogo';
 
 function SkeletonResaCard() {
   return (
@@ -40,22 +41,36 @@ export default function ProfilScreen({ navigation }) {
     cancelling, activeSits, setActiveSits, activeCuisines, setActiveCuisines,
     removing,
     displayName, initial, upcoming, history, pendingCount,
-    pickAvatar, saveName, cancelResa, removeFav, signOut, toggleEditing,
+    pickAvatar, saveName, cancelResa, removeFav, signOut, deleteAccount, toggleEditing,
   } = useProfil();
+
+  const confirmDeleteAccount = useCallback(() => {
+    Alert.alert(
+      'Supprimer mon compte',
+      'Cette action est irréversible. Toutes vos données (réservations, favoris, profil) seront définitivement supprimées.',
+      [
+        { text: 'Annuler', style: 'cancel' },
+        { text: 'Supprimer', style: 'destructive', onPress: deleteAccount },
+      ]
+    );
+  }, [deleteAccount]);
 
   const goBack           = useCallback(() => navigation.goBack(), [navigation]);
   const goProInscription = useCallback(() => navigation.navigate('ProInscription'), [navigation]);
   const goExplorer       = useCallback(() => navigation.navigate('Explorer'), [navigation]);
+  const goPrivacy        = useCallback(() => Linking.openURL('app-settings:'), []);
+  const goReview         = useCallback(() => Linking.openURL('https://apps.apple.com/app/id6776171199?action=write-review'), []);
 
   return (
     <SafeAreaView style={s.root}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <LinearGradient colors={['#C4B8C8', '#8B9BB4', '#6B7F9E']} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
+      <ScrollView showsVerticalScrollIndicator={false} automaticallyAdjustKeyboardInsets={true} keyboardDismissMode="interactive">
 
+        <View style={s.darkTop}>
         <View style={s.header}>
           <TouchableOpacity style={s.backBtn} onPress={goBack}>
             <Text style={s.backBtnTxt}>←</Text>
           </TouchableOpacity>
-          <MidaLogo showTagline={false} />
           <TouchableOpacity style={s.editBtn} onPress={toggleEditing}>
             <Text style={s.editBtnTxt}>{editingName ? '✕  Fermer' : '✏️  Modifier'}</Text>
           </TouchableOpacity>
@@ -64,10 +79,14 @@ export default function ProfilScreen({ navigation }) {
         <View style={s.heroBlock}>
           <Text style={s.heroDeco}>✦</Text>
           <TouchableOpacity style={s.avatarWrap} onPress={pickAvatar} disabled={uploading}>
-            {avatarUri
-              ? <Image source={{ uri: avatarUri }} style={s.avatarImg} />
-              : <View style={s.avatarFallback}><Text style={s.avatarInitial}>{initial}</Text></View>
-            }
+            <View style={s.avatarRing}>
+              <View style={s.avatarClip}>
+                {avatarUri
+                  ? <Image source={{ uri: avatarUri }} style={s.avatarImg} resizeMode="cover" />
+                  : <View style={s.avatarFallback}><Text style={s.avatarInitial}>{initial}</Text></View>
+                }
+              </View>
+            </View>
             <View style={s.avatarBadge}>
               {uploading
                 ? <Text style={{ color: colors.bg, fontSize: 10 }}>···</Text>
@@ -103,6 +122,7 @@ export default function ProfilScreen({ navigation }) {
               {!!memberSince && <Text style={s.heroMember}>Membre depuis {memberSince}</Text>}
             </View>
           )}
+        </View>
         </View>
 
         <View style={s.statsRow}>
@@ -169,8 +189,8 @@ export default function ProfilScreen({ navigation }) {
             <TouchableOpacity style={s.proCard} onPress={goProInscription}>
               <View style={s.proCardIcon}><Text style={{ fontSize: 22 }}>🍽️</Text></View>
               <View style={{ flex: 1 }}>
-                <Text style={s.proCardTitle}>Je suis restaurateur</Text>
-                <Text style={s.proCardSub}>Rejoignez MIDA Pro · Gérez vos réservations</Text>
+                <Text style={s.proCardTitle}>DEVENIR PARTENAIRE</Text>
+                <Text style={s.proCardSub}>{'Rejoignez MIDA Pro\nGérez vos réservations'}</Text>
               </View>
               <Text style={s.proCardArrow}>›</Text>
             </TouchableOpacity>
@@ -181,10 +201,10 @@ export default function ProfilScreen({ navigation }) {
                 { icon:'⚙️', label:'Paramètres',             screen:'Settings'  },
                 { icon:'❓', label:'Aide & Support',          screen:'Aide'      },
                 { icon:'🔔', label:'Notifications'                               },
-                { icon:'🔒', label:'Confidentialité'                             },
-                { icon:'⭐', label:'Donner un avis sur MIDA'                     },
+                { icon:'🔒', label:'Confidentialité',        action: goPrivacy  },
+                { icon:'⭐', label:'Donner un avis sur MIDA', action: goReview  },
               ].map((item, i, arr) => (
-                <TouchableOpacity key={i} style={[s.settingRow, i < arr.length - 1 && s.settingBorder]} onPress={() => item.screen && navigation.navigate(item.screen)}>
+                <TouchableOpacity key={i} style={[s.settingRow, i < arr.length - 1 && s.settingBorder]} onPress={() => item.action ? item.action() : item.screen && navigation.navigate(item.screen)}>
                   <View style={s.settingIconWrap}><Text style={s.settingIcon}>{item.icon}</Text></View>
                   <Text style={s.settingLabel}>{item.label}</Text>
                   <Text style={s.settingArrow}>›</Text>
@@ -194,6 +214,9 @@ export default function ProfilScreen({ navigation }) {
 
             <TouchableOpacity style={s.signOutBtn} onPress={signOut}>
               <Text style={s.signOutTxt}>Se déconnecter</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={s.deleteAccountBtn} onPress={confirmDeleteAccount}>
+              <Text style={s.deleteAccountTxt}>Supprimer mon compte</Text>
             </TouchableOpacity>
             <View style={{ height: 32 }} />
           </View>
@@ -310,59 +333,63 @@ export default function ProfilScreen({ navigation }) {
 }
 
 const s = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.bg },
+  root:      { flex: 1, backgroundColor: colors.bg },
+  bgOverlay: { ...StyleSheet.absoluteFillObject, opacity: 0.06 },
 
-  header:      { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xxl, paddingTop: spacing.xl, paddingBottom: spacing.xl, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
-  backBtn:     { width: 36, height: 36, borderRadius: 18, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, alignItems: 'center', justifyContent: 'center' },
-  backBtnTxt:  { color: colors.text, fontSize: typography.size.heading2 },
-  editBtn:     { paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: radius.md, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder },
-  editBtnTxt:  { color: colors.textMuted, fontSize: typography.size.caption },
+  darkTop:     { backgroundColor: '#0D1628' },
+  header:      { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xxl, paddingTop: spacing.xl, paddingBottom: spacing.xl },
+  backBtn:     { width: 36, height: 36, borderRadius: 0, backgroundColor: 'transparent', alignItems: 'center', justifyContent: 'center' },
+  backBtnTxt:  { color: '#FFFFFF', fontSize: typography.size.heading2 },
+  editBtn:     { paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: radius.md, backgroundColor: 'rgba(255,255,255,0.08)', borderWidth: 1, borderColor: 'rgba(200,151,90,0.4)' },
+  editBtnTxt:  { color: 'rgba(245,242,236,0.75)', fontSize: typography.size.caption },
 
-  heroBlock:     { alignItems: 'center', paddingTop: 28, paddingBottom: 24, borderBottomWidth: 1, borderBottomColor: colors.cardBorder, paddingHorizontal: spacing.xxl, overflow: 'hidden' },
-  heroDeco:      { position: 'absolute', top: -30, color: 'rgba(232,160,69,0.06)', fontSize: 220, fontWeight: '700' },
+  heroBlock:     { alignItems: 'center', paddingTop: 28, paddingBottom: 28, paddingHorizontal: spacing.xxl, overflow: 'hidden' },
+  heroDeco:      { position: 'absolute', top: -30, color: 'rgba(232,160,69,0.12)', fontSize: 220, fontWeight: '700' },
   avatarWrap:    { position: 'relative', marginBottom: spacing.lg },
-  avatarImg:     { width: 100, height: 100, borderRadius: 50, borderWidth: 2.5, borderColor: colors.accent },
-  avatarFallback:{ width: 100, height: 100, borderRadius: 50, backgroundColor: colors.cardHover, borderWidth: 2.5, borderColor: colors.accent, alignItems: 'center', justifyContent: 'center' },
+  avatarRing:    { width: 104, height: 104, borderRadius: 52, borderWidth: 2.5, borderColor: colors.accent, alignItems: 'center', justifyContent: 'center' },
+  avatarClip:    { width: 96, height: 96, borderRadius: 48, overflow: 'hidden' },
+  avatarImg:     { width: 96, height: 96 },
+  avatarFallback:{ width: 96, height: 96, backgroundColor: 'rgba(200,151,90,0.18)', alignItems: 'center', justifyContent: 'center' },
   avatarInitial: { color: colors.accent, fontSize: 36, fontWeight: typography.weight.regular },
-  avatarBadge:   { position: 'absolute', bottom: 2, right: 2, width: 26, height: 26, borderRadius: 13, backgroundColor: colors.accent, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: colors.bg },
+  avatarBadge:   { position: 'absolute', bottom: 2, right: 2, width: 26, height: 26, borderRadius: 13, backgroundColor: colors.accent, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: '#0D1628' },
   heroInfo:      { alignItems: 'center', gap: spacing.sm },
-  heroName:      { color: colors.text, fontSize: typography.size.title, fontWeight: typography.weight.regular, letterSpacing: 0.5 },
-  heroEmail:     { color: colors.textMuted, fontSize: typography.size.bodyLg },
-  heroCity:      { color: colors.textDim, fontSize: typography.size.body },
-  heroMember:    { color: colors.textDim, fontSize: typography.size.sm, letterSpacing: 1, marginTop: 2 },
+  heroName:      { color: '#F5F2EC', fontSize: typography.size.title, fontWeight: typography.weight.regular, letterSpacing: 0.5 },
+  heroEmail:     { color: 'rgba(245,242,236,0.65)', fontSize: typography.size.bodyLg },
+  heroCity:      { color: 'rgba(245,242,236,0.50)', fontSize: typography.size.body },
+  heroMember:    { color: 'rgba(245,242,236,0.40)', fontSize: typography.size.sm, letterSpacing: 1, marginTop: 2 },
   editBlock:     { width: '100%', gap: spacing.lg },
   editRow:       { flexDirection: 'row', gap: spacing.lg },
   editInput:     { flex: 1, backgroundColor: colors.card, borderRadius: radius.lg, borderWidth: 1, borderColor: colors.cardBorder, color: colors.text, fontSize: typography.size.subheading, paddingHorizontal: spacing.lg, paddingVertical: spacing.lg },
-  saveBtn:       { backgroundColor: colors.accent, borderRadius: radius.lg, paddingVertical: 11, alignItems: 'center' },
-  saveBtnTxt:    { color: colors.bg, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium },
+  saveBtn:       { backgroundColor: '#C87860', borderRadius: radius.lg, paddingVertical: 11, alignItems: 'center', shadowColor: '#000', shadowOpacity: 0.45, shadowRadius: 12, shadowOffset: { width: 0, height: 0 }, elevation: 6 },
+  saveBtnTxt:    { color: '#FFFFFF', fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium },
 
   statsRow: { flexDirection: 'row', marginHorizontal: spacing.xxl, marginVertical: spacing.xl, backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, overflow: 'hidden' },
   statItem: { flex: 1, alignItems: 'center', paddingVertical: spacing.xl },
-  statVal:  { color: colors.accent, fontSize: typography.size.title, fontWeight: typography.weight.regular, marginBottom: spacing.xs },
+  statVal:  { color: '#C87860', fontSize: typography.size.title, fontWeight: typography.weight.regular, marginBottom: spacing.xs },
   statLbl:  { color: colors.textDim, fontSize: typography.size.xs, letterSpacing: 1.5 },
   statDiv:  { width: 1, backgroundColor: colors.cardBorder, marginVertical: spacing.lg },
 
   tabWrap:    { flexDirection: 'row', marginHorizontal: spacing.xxl, marginBottom: spacing.md, backgroundColor: colors.card, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.xxs+1, gap: spacing.xxs },
   tabBtn:     { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: spacing.md+1, borderRadius: radius.lg, gap: spacing.sm },
-  tabBtnOn:   { backgroundColor: colors.accentSoft, shadowColor: colors.accent, shadowOpacity: 0.3, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 4 },
+  tabBtnOn:   { backgroundColor: colors.navy, shadowColor: '#000', shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
   tabTxt:     { color: colors.textDim, fontSize: typography.size.body, fontWeight: typography.weight.regular },
-  tabTxtOn:   { color: colors.accent, fontWeight: typography.weight.semibold },
-  tabBadge:   { width: 16, height: 16, borderRadius: 8, backgroundColor: colors.accent, alignItems: 'center', justifyContent: 'center' },
-  tabBadgeTxt:{ color: colors.bg, fontSize: typography.size.xs, fontWeight: typography.weight.bold },
+  tabTxtOn:   { color: colors.text, fontWeight: typography.weight.semibold },
+  tabBadge:   { width: 16, height: 16, borderRadius: 0, backgroundColor: '#C87860', alignItems: 'center', justifyContent: 'center' },
+  tabBadgeTxt:{ color: '#FFFFFF', fontSize: typography.size.xs, fontWeight: typography.weight.bold },
 
-  sectionLbl: { color: colors.textDim, fontSize: typography.size.xs, letterSpacing: 3, paddingHorizontal: spacing.xxl, marginTop: spacing.xxl, marginBottom: spacing.lg },
+  sectionLbl: { color: colors.textMuted, fontSize: typography.size.xs, letterSpacing: 3, paddingHorizontal: spacing.xxl, marginTop: spacing.xxl, marginBottom: spacing.lg },
 
   chipsWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md, paddingHorizontal: spacing.xxl },
   chip:      { paddingHorizontal: spacing.lg, paddingVertical: spacing.md, borderRadius: radius.full, backgroundColor: 'transparent', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
-  chipOn:    { backgroundColor: colors.accentSoft, borderColor: colors.accent, shadowColor: colors.accent, shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
+  chipOn:    { backgroundColor: 'rgba(200,151,90,0.14)', borderColor: '#c8975a', shadowColor: '#000', shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
   chipTxt:   { color: colors.textMuted, fontSize: typography.size.body, fontWeight: typography.weight.regular },
-  chipTxtOn: { color: colors.accent, fontWeight: typography.weight.semibold },
+  chipTxtOn: { color: '#c8975a', fontWeight: typography.weight.semibold },
 
-  proCard:      { flexDirection: 'row', alignItems: 'center', gap: spacing.lg, marginHorizontal: spacing.xxl, marginTop: spacing.xxl, padding: spacing.xl, borderRadius: radius.xxl, backgroundColor: 'rgba(232,160,69,0.07)', borderWidth: 1, borderColor: 'rgba(232,160,69,0.25)' },
-  proCardIcon:  { width: 46, height: 46, borderRadius: radius.lg, backgroundColor: colors.accentSoft, alignItems: 'center', justifyContent: 'center' },
-  proCardTitle: { color: colors.accent, fontSize: typography.size.subheading, marginBottom: 2 },
-  proCardSub:   { color: colors.textMuted, fontSize: typography.size.caption },
-  proCardArrow: { color: colors.textDim, fontSize: 22 },
+  proCard:      { flexDirection: 'row', alignItems: 'center', gap: spacing.lg, marginHorizontal: spacing.xxl, marginTop: spacing.xxl, padding: spacing.xl, borderRadius: radius.xxl, backgroundColor: '#0D1628', borderWidth: 1, borderColor: 'rgba(200,151,90,0.5)' },
+  proCardIcon:  { width: 46, height: 46, borderRadius: radius.lg, backgroundColor: 'rgba(200,151,90,0.25)', alignItems: 'center', justifyContent: 'center' },
+  proCardTitle: { color: '#FFD580', fontSize: typography.size.subheading, fontWeight: typography.weight.semibold, marginBottom: 2 },
+  proCardSub:   { color: 'rgba(255,255,255,0.75)', fontSize: typography.size.caption },
+  proCardArrow: { color: '#FFD580', fontSize: 22 },
 
   settingsCard:    { marginHorizontal: spacing.xxl, backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, overflow: 'hidden' },
   settingRow:      { flexDirection: 'row', alignItems: 'center', gap: spacing.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.lg },
@@ -374,26 +401,28 @@ const s = StyleSheet.create({
 
   signOutBtn: { marginHorizontal: spacing.xxl, marginTop: spacing.lg, paddingVertical: spacing.lg, borderRadius: radius.xl, borderWidth: 1, borderColor: 'rgba(224,90,90,0.2)', alignItems: 'center' },
   signOutTxt: { color: colors.red, fontSize: typography.size.bodyLg },
+  deleteAccountBtn: { marginHorizontal: spacing.xxl, marginTop: spacing.sm, paddingVertical: spacing.md, alignItems: 'center' },
+  deleteAccountTxt: { color: colors.textDim, fontSize: typography.size.caption, textDecorationLine: 'underline' },
 
   center:     { alignItems: 'center', paddingVertical: 52, gap: spacing.lg },
   emptyEmoji: { fontSize: 44 },
   emptyTitle: { color: colors.text, fontSize: typography.size.heading1, fontWeight: typography.weight.regular },
   emptySub:   { color: colors.textMuted, fontSize: typography.size.bodyLg, textAlign: 'center', lineHeight: 20 },
-  emptyBtn:   { backgroundColor: colors.card, borderRadius: radius.lg, paddingHorizontal: spacing.xxl, paddingVertical: spacing.lg, borderWidth: 1, borderColor: colors.cardBorder },
-  emptyBtnTxt:{ color: colors.blue, fontSize: typography.size.bodyLg },
+  emptyBtn:   { backgroundColor: colors.card, borderRadius: radius.lg, paddingHorizontal: spacing.xxl, paddingVertical: spacing.lg, borderWidth: 1, borderColor: 'rgba(200,151,90,0.35)', shadowColor: '#000', shadowOpacity: 0.3, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 4 },
+  emptyBtnTxt:{ color: colors.text, fontSize: typography.size.bodyLg },
 
   favCard:      { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.lg, marginHorizontal: spacing.xxl, marginTop: spacing.lg, backgroundColor: colors.card, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.lg, overflow: 'hidden' },
   favThumb:     { width: 70, height: 90, borderRadius: radius.lg, alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 },
   favEmoji:     { fontSize: 28 },
   favBody:      { flex: 1, gap: spacing.xxs+1 },
-  favCuisine:   { color: colors.accent, fontSize: typography.size.xs, letterSpacing: 2, marginBottom: 1 },
+  favCuisine:   { color: '#C87860', fontSize: typography.size.xs, letterSpacing: 2, marginBottom: 1 },
   favName:      { color: colors.text, fontSize: typography.size.subheading, fontWeight: typography.weight.regular, marginBottom: 2 },
   favMeta:      { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.sm },
-  favRating:    { color: colors.accent, fontSize: typography.size.caption, fontWeight: typography.weight.medium },
+  favRating:    { color: '#C87860', fontSize: typography.size.caption, fontWeight: typography.weight.medium },
   favSep:       { color: colors.textDim },
   favPrice:     { color: colors.textMuted, fontSize: typography.size.caption },
-  favResaBtn:   { alignSelf: 'flex-start', backgroundColor: colors.accent, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
-  favResaBtnTxt:{ color: colors.bg, fontSize: typography.size.caption, fontWeight: typography.weight.semibold },
-  favHeart:     { width: 32, height: 32, borderRadius: 16, backgroundColor: colors.accentSoft, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(232,160,69,0.25)', flexShrink: 0 },
+  favResaBtn:   { alignSelf: 'flex-start', backgroundColor: '#8B3A20', borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, shadowColor: '#000', shadowOpacity: 0.35, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 4 },
+  favResaBtnTxt:{ color: '#FFFFFF', fontSize: typography.size.caption, fontWeight: typography.weight.semibold },
+  favHeart:     { width: 32, height: 32, borderRadius: 0, backgroundColor: 'rgba(200,151,90,0.14)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(200,151,90,0.35)', flexShrink: 0, shadowColor: '#000', shadowOpacity: 0.3, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 3 },
   favHeartTxt:  { fontSize: 14 },
 });

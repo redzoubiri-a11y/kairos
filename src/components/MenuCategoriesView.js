@@ -90,7 +90,7 @@ export default function MenuCategoriesView({ categories, dishes, onAdd, onDelete
 
 const s = StyleSheet.create({
   header:      { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xxl, paddingTop: spacing.xl, paddingBottom: spacing.xl, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
-  backBtn:     { width: 36, height: 36, borderRadius: 18, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, alignItems: 'center', justifyContent: 'center' },
+  backBtn:     { width: 36, height: 36, borderRadius: 0, backgroundColor: colors.card, borderWidth: 1, borderColor: 'rgba(200,151,90,0.3)', alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOpacity: 0.25, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 3 },
   backBtnTxt:  { color: colors.text, fontSize: typography.size.heading2 },
   headerCenter:{ flex: 1, alignItems: 'center' },
   headerSub:   { color: colors.accent, fontSize: typography.size.xs, letterSpacing: 3, marginBottom: 2 },
@@ -106,6 +106,6 @@ const c = StyleSheet.create({
   del:       { fontSize: typography.size.subheading, marginLeft: spacing.sm },
   addRow:    { flexDirection: 'row', gap: spacing.md, marginTop: spacing.lg },
   addInput:  { flex: 1, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, borderRadius: radius.xl, paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, color: colors.text, fontSize: typography.size.body },
-  addBtn:    { width: 46, height: 46, borderRadius: radius.xl, backgroundColor: colors.accentSoft, borderWidth: 1, borderColor: 'rgba(232,160,69,0.3)', alignItems: 'center', justifyContent: 'center' },
+  addBtn:    { width: 46, height: 46, borderRadius: radius.xl, backgroundColor: 'rgba(200,151,90,0.14)', borderWidth: 1, borderColor: 'rgba(200,151,90,0.4)', alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOpacity: 0.35, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 4 },
   addBtnTxt: { color: colors.accent, fontSize: typography.size.heading2, fontWeight: typography.weight.bold },
 });

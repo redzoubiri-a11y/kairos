@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useMemo } from 'react';
+import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import { Animated } from 'react-native';
 import { supabase } from '../../supabase';
 
@@ -27,18 +27,34 @@ function buildDays() {
   for (let i = 0; i < 30; i++) {
     const d = new Date(today);
     d.setDate(today.getDate() + i);
+    const dow = d.getDay(); // 0=Sunday … 6=Saturday
     days.push({
-      dayName:   d.toLocaleDateString('fr-FR', { weekday: 'short' }).replace('.', '').toUpperCase(),
-      dayNum:    d.getDate(),
-      month:     d.toLocaleDateString('fr-FR', { month: 'short' }),
-      value:     d.toISOString().split('T')[0],
-      isToday:   i === 0,
-      isWeekend: [0, 6].includes(d.getDay()),
+      dayName:    d.toLocaleDateString('fr-FR', { weekday: 'short' }).replace('.', '').toUpperCase(),
+      dayNum:     d.getDate(),
+      month:      d.toLocaleDateString('fr-FR', { month: 'short' }),
+      value:      d.toISOString().split('T')[0],
+      isToday:    i === 0,
+      isWeekend:  [0, 6].includes(dow),
+      dayOfWeek:  dow,
     });
   }
   return days;
 }
 export const DAYS = buildDays();
+
+function buildSlots(start, end, duration) {
+  if (!start || !end) return [];
+  const [sh, sm] = start.split(':').map(Number);
+  const [eh, em] = end.split(':').map(Number);
+  const endMin = eh * 60 + em;
+  const slots = [];
+  let cur = sh * 60 + sm;
+  while (cur < endMin) {
+    slots.push({ h: `${String(Math.floor(cur / 60)).padStart(2, '0')}:${String(cur % 60).padStart(2, '0')}` });
+    cur += duration;
+  }
+  return slots;
+}
 
 export function formatDateLong(dateStr) {
   if (!dateStr) return '—';
@@ -58,14 +74,38 @@ function parseInitial(r) {
 }
 
 export default function useReservationForm(restaurant, onSuccess, existingResa = null) {
-  const [date,     setDate]     = useState(() => existingResa?.date || null);
-  const [heure,    setHeure]    = useState(() => existingResa?.time_slot?.slice(0, 5) || null);
-  const [adults,   setAdults]   = useState(() => existingResa?.nb_adults ?? 2);
-  const [children, setChildren] = useState(() => existingResa?.nb_children ?? 0);
-  const [occasion, setOccasion] = useState(() => parseInitial(existingResa).occasion);
-  const [notes,    setNotes]    = useState(() => parseInitial(existingResa).notes);
-  const [loading,  setLoading]  = useState(false);
-  const [error,    setError]    = useState('');
+  const [date,        setDate]        = useState(() => existingResa?.date || null);
+  const [heure,       setHeure]       = useState(() => existingResa?.time_slot?.slice(0, 5) || null);
+  const [adults,      setAdults]      = useState(() => existingResa?.nb_adults ?? 2);
+  const [children,    setChildren]    = useState(() => existingResa?.nb_children ?? 0);
+  const [occasion,    setOccasion]    = useState(() => parseInitial(existingResa).occasion);
+  const [notes,       setNotes]       = useState(() => parseInitial(existingResa).notes);
+  const [loading,     setLoading]     = useState(false);
+  const [error,       setError]       = useState('');
+  const [scheduleMap, setScheduleMap] = useState(null);
+
+  useEffect(() => {
+    if (!restaurant?.id) return;
+    supabase
+      .from('restaurant_schedules')
+      .select('day_of_week, is_open, lunch_start, lunch_end, dinner_start, dinner_end, slot_duration')
+      .eq('restaurant_id', restaurant.id)
+      .then(({ data }) => {
+        if (!data?.length) return;
+        const m = {};
+        data.forEach(r => {
+          m[r.day_of_week] = {
+            is_open:      r.is_open,
+            lunch_start:  r.lunch_start  ? String(r.lunch_start).slice(0, 5)  : null,
+            lunch_end:    r.lunch_end    ? String(r.lunch_end).slice(0, 5)    : null,
+            dinner_start: r.dinner_start ? String(r.dinner_start).slice(0, 5) : null,
+            dinner_end:   r.dinner_end   ? String(r.dinner_end).slice(0, 5)   : null,
+            slot_duration: r.slot_duration,
+          };
+        });
+        setScheduleMap(m);
+      });
+  }, [restaurant?.id]);
 
   const shakeAnim = useRef(new Animated.Value(0)).current;
 
@@ -81,6 +121,29 @@ export default function useReservationForm(restaurant, onSuccess, existingResa =
 
   const occasionObj    = useMemo(() => OCCASIONS.find(o => o.id === occasion), [occasion]);
   const shakeTranslate = useMemo(() => shakeAnim.interpolate({ inputRange: [-1, 1], outputRange: [-8, 8] }), [shakeAnim]);
+
+  // Days filtered to restaurant's open days (fallback = all days)
+  const availableDays = useMemo(() => {
+    if (!scheduleMap) return DAYS;
+    return DAYS.filter(d => scheduleMap[d.dayOfWeek]?.is_open !== false);
+  }, [scheduleMap]);
+
+  // Schedule for the currently selected date
+  const daySchedule = useMemo(() => {
+    if (!scheduleMap || !date) return null;
+    const d = DAYS.find(d => d.value === date);
+    return d ? scheduleMap[d.dayOfWeek] : null;
+  }, [scheduleMap, date]);
+
+  const midiSlots = useMemo(() => {
+    if (!daySchedule) return MIDI_SLOTS;
+    return buildSlots(daySchedule.lunch_start, daySchedule.lunch_end, daySchedule.slot_duration || 30);
+  }, [daySchedule]);
+
+  const soirSlots = useMemo(() => {
+    if (!daySchedule) return SOIR_SLOTS;
+    return buildSlots(daySchedule.dinner_start, daySchedule.dinner_end, daySchedule.slot_duration || 30);
+  }, [daySchedule]);
 
   const confirmer = useCallback(async () => {
     if (!date || !heure) {
@@ -209,5 +272,6 @@ export default function useReservationForm(restaurant, onSuccess, existingResa =
     loading, error,
     occasionObj, shakeTranslate,
     confirmer,
+    availableDays, midiSlots, soirSlots,
   };
 }

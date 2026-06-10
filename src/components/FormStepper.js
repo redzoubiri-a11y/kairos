@@ -17,7 +17,7 @@ export default function FormStepper({ value, min, max, onChange }) {
 
 const s = StyleSheet.create({
   row:    { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },
-  btn:    { width: 38, height: 38, borderRadius: 19, backgroundColor: colors.cardHover, borderWidth: 1, borderColor: colors.cardBorder, alignItems: 'center', justifyContent: 'center' },
+  btn:    { width: 38, height: 38, borderRadius: 0, backgroundColor: colors.cardHover, borderWidth: 1, borderColor: colors.cardBorder, alignItems: 'center', justifyContent: 'center' },
   btnDim: { opacity: 0.25 },
   sym:    { color: colors.text, fontSize: 22, fontWeight: typography.weight.regular, lineHeight: 30 },
   val:    { color: colors.text, fontSize: 22, fontWeight: typography.weight.regular, minWidth: 32, textAlign: 'center' },

@@ -180,17 +180,28 @@ export default function useComptoir() {
   }, [act, restaurant]);
 
   const stats = useMemo(() => {
-    let confirmed = 0, pending = 0, arrived = 0, covers = 0;
+    let confirmed = 0, pending = 0, arrived = 0, no_show = 0, covers = 0;
     for (const r of reservations) {
       if (r.status === 'confirmed') confirmed++;
       if (r.status === 'pending')   pending++;
       if (r.status === 'arrived')   arrived++;
+      if (r.status === 'no_show')   no_show++;
       if (r.status === 'confirmed' || r.status === 'arrived' || r.status === 'pending') {
         covers += (r.nb_adults || 0) + (r.nb_children || 0);
       }
     }
-    return { total: reservations.length, confirmed, pending, arrived, covers };
+    return { total: confirmed + pending + arrived, confirmed, pending, arrived, no_show, covers };
   }, [reservations]);
+
+  const visibleReservations = useMemo(
+    () => {
+      const active  = reservations.filter(r => r.status !== 'cancelled' && r.status !== 'no_show' && r.status !== 'arrived');
+      const arrived = reservations.filter(r => r.status === 'arrived');
+      if (arrived.length === 0 || active.length === 0) return active;
+      return [...active, { id: '__arrived_sep__', _sep: true }, ...arrived];
+    },
+    [reservations],
+  );
 
   const selectResa = useCallback((id) => setSelectedResaId(id), []);
 
@@ -202,6 +213,7 @@ export default function useComptoir() {
   return {
     restaurant,
     reservations,
+    visibleReservations,
     loading, refreshing,
     acting,
     selectedResa, selectedResaId,

@@ -79,8 +79,8 @@ export default function ResaDetail({ resa, onConfirm, onCancel, onArrive, acting
 
 const s = StyleSheet.create({
   empty:       { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing.lg },
-  emptyTitle:  { color: colors.text, fontSize: typography.size.heading2, fontWeight: '300' },
-  emptySub:    { color: colors.textMuted, fontSize: typography.size.body },
+  emptyTitle:  { color: '#F5F2EC', fontSize: typography.size.heading2, fontWeight: '300' },
+  emptySub:    { color: 'rgba(245,242,236,0.45)', fontSize: typography.size.body },
 
   content:     { padding: spacing.section, alignItems: 'center', paddingBottom: 60 },
 
@@ -88,19 +88,19 @@ const s = StyleSheet.create({
   statusTxt:   { fontSize: typography.size.caption, fontWeight: typography.weight.bold, letterSpacing: 2 },
 
   time:        { fontSize: 80, fontWeight: '100', letterSpacing: 2, lineHeight: 90 },
-  clientName:  { color: colors.text, fontSize: typography.size.title, fontWeight: '300', letterSpacing: 0.5, marginBottom: spacing.xxl },
+  clientName:  { color: '#F5F2EC', fontSize: typography.size.title, fontWeight: '300', letterSpacing: 0.5, marginBottom: spacing.xxl },
 
   metaRow:     { flexDirection: 'row', gap: spacing.xxxl, marginBottom: spacing.xxl },
   metaBox:     { alignItems: 'center' },
-  metaVal:     { color: colors.accent, fontSize: 48, fontWeight: '200', lineHeight: 52 },
-  metaLbl:     { color: colors.textDim, fontSize: typography.size.xs, letterSpacing: 2, marginTop: spacing.xs },
+  metaVal:     { color: '#C87860', fontSize: 48, fontWeight: '200', lineHeight: 52 },
+  metaLbl:     { color: 'rgba(245,242,236,0.40)', fontSize: typography.size.xs, letterSpacing: 2, marginTop: spacing.xs },
 
-  notesBox:    { backgroundColor: colors.card, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.xl, width: '100%', marginBottom: spacing.xxl },
-  notesLabel:  { color: colors.textMuted, fontSize: typography.size.caption, letterSpacing: 1, marginBottom: spacing.md },
-  notesTxt:    { color: colors.text, fontSize: typography.size.bodyLg, lineHeight: 20 },
+  notesBox:    { backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: radius.xl, borderWidth: 1, borderColor: 'rgba(255,255,255,0.10)', padding: spacing.xl, width: '100%', marginBottom: spacing.xxl },
+  notesLabel:  { color: 'rgba(245,242,236,0.45)', fontSize: typography.size.caption, letterSpacing: 1, marginBottom: spacing.md },
+  notesTxt:    { color: '#F5F2EC', fontSize: typography.size.bodyLg, lineHeight: 20 },
 
   actions:       { width: '100%', gap: spacing.lg, marginTop: spacing.lg },
-  acting:        { color: colors.accent, fontSize: 36, fontWeight: '200', textAlign: 'center' },
+  acting:        { color: '#C87860', fontSize: 36, fontWeight: '200', textAlign: 'center' },
   btnConfirm:    { backgroundColor: colors.greenSoft, borderRadius: radius.xl, borderWidth: 1.5, borderColor: 'rgba(76,175,130,0.5)', paddingVertical: spacing.xl, alignItems: 'center' },
   btnConfirmTxt: { color: colors.green, fontSize: typography.size.heading2, fontWeight: typography.weight.semibold, letterSpacing: 1.5 },
   btnArrive:     { backgroundColor: colors.blueSoft, borderRadius: radius.xl, borderWidth: 1.5, borderColor: 'rgba(90,155,224,0.4)', paddingVertical: spacing.xl, alignItems: 'center' },

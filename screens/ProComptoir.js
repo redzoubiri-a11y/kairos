@@ -1,8 +1,12 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import {
   View, Text, StyleSheet, FlatList, TouchableOpacity,
-  SafeAreaView, RefreshControl, ScrollView, useWindowDimensions,
+  RefreshControl, useWindowDimensions, Platform, StatusBar,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
+import * as ScreenOrientation from 'expo-screen-orientation';
 import { colors, typography, spacing, radius } from '../src/theme';
 import MLoader from '../src/components/MLoader';
 import useComptoir from '../src/hooks/useComptoir';
@@ -10,7 +14,7 @@ import Clock from '../src/components/Clock';
 import ResaRow from '../src/components/ResaRow';
 import CompactResaRow from '../src/components/CompactResaRow';
 import ResaDetail from '../src/components/ResaDetail';
-import MidaLogo from '../src/components/MidaLogo';
+import BottomTabBar from '../src/components/BottomTabBar';
 
 function StatBox({ label, value, color }) {
   return (
@@ -23,12 +27,12 @@ function StatBox({ label, value, color }) {
 const sb = StyleSheet.create({
   wrap: { flex: 1, alignItems: 'center', paddingVertical: spacing.xl - 2 },
   val:  { fontSize: 36, fontWeight: '200', lineHeight: 40 },
-  lbl:  { color: colors.textDim, fontSize: typography.size.xs, letterSpacing: 2, marginTop: 2 },
+  lbl:  { color: 'rgba(245,242,236,0.45)', fontSize: typography.size.xs, letterSpacing: 2, marginTop: 2 },
 });
 
 function SkeletonComptoir() {
   return (
-    <View style={{ flex: 1 }}>
+    <View>
       {[1,2,3,4,5,6].map(i => (
         <View key={i} style={sk.row}>
           <MLoader width={90}  height={36} borderRadius={radius.sm} />
@@ -50,44 +54,81 @@ const sk = StyleSheet.create({
 
 export default function ProComptoir({ navigation }) {
   const {
-    restaurant, reservations, loading, refreshing,
+    restaurant, reservations, visibleReservations, loading, refreshing,
     acting, selectedResa, selectedResaId, stats, emptyDateStr,
     load, confirm, arrive, cancel, selectResa,
   } = useComptoir();
 
   const { width, height } = useWindowDimensions();
   const isLandscape = width > height;
+  const insets = useSafeAreaInsets();
 
-  const goBack    = useCallback(() => navigation.goBack(), [navigation]);
+  useEffect(() => { ScreenOrientation.unlockAsync(); }, []);
+
+  useFocusEffect(useCallback(() => {
+    const t = setTimeout(() => ScreenOrientation.unlockAsync(), 350);
+    return () => {
+      clearTimeout(t);
+      ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
+    };
+  }, []));
+
   const onRefresh = useCallback(() => load(true), [load]);
 
-  const { total, confirmed, pending, arrived, covers } = stats;
+  const { total, confirmed, pending, arrived, no_show, covers } = stats;
 
-  const renderCompact = useCallback(({ item }) => (
-    <CompactResaRow
-      resa={item}
-      isSelected={item.id === selectedResaId}
-      onSelect={selectResa}
-    />
-  ), [selectedResaId, selectResa]);
+  const renderCompact = useCallback(({ item }) => {
+    if (item._sep) return (
+      <View style={s.arrivedSep}>
+        <View style={s.arrivedSepLine} />
+        <Text style={s.arrivedSepTxt}>ARRIVÉS</Text>
+        <View style={s.arrivedSepLine} />
+      </View>
+    );
+    return (
+      <CompactResaRow
+        resa={item}
+        isSelected={item.id === selectedResaId}
+        onSelect={selectResa}
+      />
+    );
+  }, [selectedResaId, selectResa]);
+
+  const renderPortrait = useCallback(({ item, index }) => {
+    if (item._sep) return (
+      <View style={s.arrivedSep}>
+        <View style={s.arrivedSepLine} />
+        <Text style={s.arrivedSepTxt}>ARRIVÉS</Text>
+        <View style={s.arrivedSepLine} />
+      </View>
+    );
+    return (
+      <ResaRow
+        resa={item}
+        index={index}
+        onConfirm={confirm}
+        onCancel={cancel}
+        onArrive={arrive}
+        acting={acting}
+      />
+    );
+  }, [confirm, cancel, arrive, acting]);
+
+  const h = new Date().getHours();
+  const greeting = h < 6 ? 'Bonne nuit' : h < 12 ? 'Bonjour' : h < 18 ? 'Bon après-midi' : 'Bonsoir';
 
   const header = (
     <View style={s.header}>
       <View style={s.headerLeft}>
-        {navigation && (
-          <TouchableOpacity style={s.backBtn} onPress={goBack}>
-            <Text style={s.backTxt}>←</Text>
-          </TouchableOpacity>
-        )}
         <View>
-          <MidaLogo showTagline={false} style={{ alignItems: 'flex-start', marginBottom: spacing.xxs }} />
           <Text style={s.restoName}>{restaurant?.name || 'Mode comptoir'}</Text>
+          <Text style={s.dateStr}>{greeting} 👋</Text>
         </View>
       </View>
-      <Clock />
       <View style={s.headerRight}>
+        <Clock />
         <TouchableOpacity style={s.refreshBtn} onPress={onRefresh} disabled={refreshing}>
-          <Text style={s.refreshTxt}>{refreshing ? '···' : '↺  Actualiser'}</Text>
+          <Text style={s.refreshTxt}>{refreshing ? '···' : '↺'}</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -103,27 +144,29 @@ export default function ProComptoir({ navigation }) {
       <View style={s.statDiv} />
       <StatBox label="ARRIVÉS"    value={arrived}    color={colors.blue}     />
       <View style={s.statDiv} />
+      <StatBox label="NO SHOW"    value={no_show}    color='rgba(245,242,236,0.45)'/>
+      <View style={s.statDiv} />
       <StatBox label="COUVERTS"   value={covers}     color={colors.accent}   />
     </View>
   );
 
-  return (
-    <SafeAreaView style={s.root}>
-      {header}
-      {statsStrip}
-
-      {isLandscape ? (
+  if (isLandscape) {
+    return (
+      <View style={[s.root, { paddingTop: insets.top }]}>
+        <LinearGradient colors={['#C4B8C8', '#8B9BB4', '#6B7F9E']} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
+        {header}
+        {statsStrip}
         <View style={s.landscape}>
           <View style={s.leftPanel}>
             <View style={s.panelHeader}>
               <Text style={s.panelTitle}>RÉSERVATIONS</Text>
-              {!loading && <Text style={s.panelCount}>{reservations.length}</Text>}
+              {!loading && <Text style={s.panelCount}>{visibleReservations.length}</Text>}
             </View>
             {loading ? (
               <View style={{ padding: spacing.xl, gap: spacing.lg }}>
                 {[1,2,3,4].map(i => <MLoader key={i} width="100%" height={64} borderRadius={radius.lg} />)}
               </View>
-            ) : reservations.length === 0 ? (
+            ) : visibleReservations.length === 0 ? (
               <View style={s.center}>
                 <Text style={{ fontSize: 40 }}>📅</Text>
                 <Text style={s.emptyTitleSm}>Aucune réservation</Text>
@@ -131,14 +174,13 @@ export default function ProComptoir({ navigation }) {
               </View>
             ) : (
               <FlatList
-                data={reservations}
+                data={visibleReservations}
                 keyExtractor={item => String(item.id)}
                 renderItem={renderCompact}
-                refreshControl={
-                  <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.accent} />
-                }
-                showsVerticalScrollIndicator={false}
+                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.accent} />}
+                showsVerticalScrollIndicator={true}
                 contentContainerStyle={{ paddingBottom: 40 }}
+                style={{ flex: 1 }}
               />
             )}
           </View>
@@ -152,70 +194,73 @@ export default function ProComptoir({ navigation }) {
             />
           </View>
         </View>
-      ) : loading ? (
-        <SkeletonComptoir />
-      ) : reservations.length === 0 ? (
-        <View style={s.center}>
-          <Text style={s.emptyEmoji}>📅</Text>
-          <Text style={s.emptyTitle}>Aucune réservation aujourd'hui</Text>
-          <Text style={s.emptySub}>{emptyDateStr}</Text>
-        </View>
-      ) : (
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} bounces={false}>
-          <View style={{ minWidth: 760 }}>
-            <View style={s.colHeader}>
-              <Text style={[s.colLbl, { width: 110 }]}>HEURE</Text>
-              <Text style={[s.colLbl, { width: 200 }]}>CLIENT</Text>
-              <Text style={[s.colLbl, { width: 90, textAlign: 'center' }]}>COUVERTS</Text>
-              <Text style={[s.colLbl, { width: 160, textAlign: 'center' }]}>STATUT</Text>
-              <Text style={[s.colLbl, { width: 240, textAlign: 'center' }]}>ACTIONS</Text>
-            </View>
-            {reservations.map((item, index) => (
-              <ResaRow
-                key={String(item.id)}
-                resa={item}
-                index={index}
-                onConfirm={confirm}
-                onCancel={cancel}
-                onArrive={arrive}
-                acting={acting}
-              />
-            ))}
+        <BottomTabBar navigation={navigation} isPro={true} activeTab="Manager" />
+      </View>
+    );
+  }
+
+  // Portrait — FlatList couvre tout l'écran, header+stats dans ListHeaderComponent
+  return (
+    <View style={s.root}>
+      <LinearGradient colors={['#C4B8C8', '#8B9BB4', '#6B7F9E']} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
+      <FlatList
+        data={loading ? [] : visibleReservations}
+        keyExtractor={item => String(item.id)}
+        renderItem={renderPortrait}
+        ListHeaderComponent={
+          <View style={{ paddingTop: insets.top }}>
+            {header}
+            {statsStrip}
           </View>
-        </ScrollView>
-      )}
-    </SafeAreaView>
+        }
+        ListEmptyComponent={
+          loading ? <SkeletonComptoir /> : (
+            <View style={s.center}>
+              <Text style={s.emptyEmoji}>📅</Text>
+              <Text style={s.emptyTitle}>Aucune réservation aujourd'hui</Text>
+              <Text style={s.emptySub}>{emptyDateStr}</Text>
+            </View>
+          )
+        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.accent} />}
+        showsVerticalScrollIndicator={true}
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: insets.bottom + 40 }}
+        style={{ flex: 1 }}
+      />
+      <BottomTabBar navigation={navigation} isPro={true} activeTab="Manager" />
+    </View>
   );
 }
 
 const s = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.bg },
+  root:      { flex: 1, backgroundColor: '#0D1B2A', paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 },
+  bgOverlay: { ...StyleSheet.absoluteFillObject, opacity: 0 },
 
-  header:      { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xxxl, paddingVertical: spacing.xl, borderBottomWidth: 1, borderBottomColor: colors.cardBorder, backgroundColor: colors.card },
-  headerLeft:  { flexDirection: 'row', alignItems: 'center', gap: spacing.xl, flex: 1 },
-  headerRight: { flex: 1, alignItems: 'flex-end' },
-  backBtn:     { width: 44, height: 44, borderRadius: 22, backgroundColor: colors.cardHover, borderWidth: 1, borderColor: colors.cardBorder, alignItems: 'center', justifyContent: 'center' },
-  backTxt:     { color: colors.text, fontSize: 22 },
-  restoName:   { color: colors.textMuted, fontSize: typography.size.caption, letterSpacing: 1, marginTop: 2 },
-  refreshBtn:  { flexDirection: 'row', alignItems: 'center', gap: spacing.md, backgroundColor: colors.cardHover, borderRadius: radius.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, borderWidth: 1, borderColor: colors.cardBorder },
-  refreshTxt:  { color: colors.accent, fontSize: typography.size.subheading, fontWeight: typography.weight.regular, letterSpacing: 0.5 },
+  header:      { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xl, paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.10)' },
+  headerLeft:  { flexDirection: 'row', alignItems: 'center', gap: spacing.lg, flex: 1 },
+  headerRight: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
+  restoName:   { color: '#F5F2EC', fontSize: typography.size.heading1, fontWeight: '300', letterSpacing: 0.3 },
+  dateStr:     { color: 'rgba(245,242,236,0.50)', fontSize: typography.size.caption, textTransform: 'capitalize', marginTop: 1 },
+  refreshBtn:  { width: 38, height: 38, backgroundColor: 'rgba(255,255,255,0.07)', borderRadius: 0, borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)', alignItems: 'center', justifyContent: 'center' },
+  refreshTxt:  { color: '#c8975a', fontSize: 18 },
 
-  statsStrip: { flexDirection: 'row', backgroundColor: colors.card, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
-  statDiv:    { width: 1, backgroundColor: colors.cardBorder, marginVertical: spacing.lg },
+  statsStrip: { flexDirection: 'row', backgroundColor: '#091420', borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.08)' },
+  statDiv:    { width: 1, backgroundColor: 'rgba(255,255,255,0.08)', marginVertical: spacing.lg },
 
   landscape:   { flex: 1, flexDirection: 'row' },
-  leftPanel:   { width: '40%', borderRightWidth: 1, borderRightColor: colors.cardBorder },
+  leftPanel:   { width: '35%', overflow: 'hidden', borderRightWidth: 1, borderRightColor: 'rgba(255,255,255,0.08)' },
   rightPanel:  { flex: 1 },
-  panelHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xxl, paddingVertical: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.cardBorder, backgroundColor: colors.cardHover },
-  panelTitle:  { color: colors.textDim, fontSize: typography.size.xs, fontWeight: typography.weight.bold, letterSpacing: 3 },
-  panelCount:  { color: colors.accent, fontSize: typography.size.bodyLg, fontWeight: typography.weight.semibold },
+  panelHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xxl, paddingVertical: spacing.xl, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.08)', backgroundColor: '#091420' },
+  panelTitle:  { color: 'rgba(245,242,236,0.45)', fontSize: typography.size.body, fontWeight: typography.weight.bold, letterSpacing: 3 },
+  panelCount:  { color: '#C87860', fontSize: typography.size.heading2, fontWeight: typography.weight.semibold },
 
-  colHeader: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: spacing.xxxl, paddingVertical: spacing.lg, backgroundColor: colors.cardHover, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
-  colLbl:    { color: colors.textDim, fontSize: typography.size.xs, letterSpacing: 3, fontWeight: typography.weight.medium },
+  arrivedSep:     { flexDirection: 'row', alignItems: 'center', paddingHorizontal: spacing.xxl, paddingVertical: spacing.lg, gap: spacing.lg },
+  arrivedSepLine: { flex: 1, height: 1, backgroundColor: 'rgba(255,255,255,0.10)' },
+  arrivedSepTxt:  { color: 'rgba(245,242,236,0.35)', fontSize: typography.size.xs, letterSpacing: 3 },
 
-  center:      { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing.xl },
-  emptyEmoji:  { fontSize: 72 },
-  emptyTitle:  { color: colors.text, fontSize: 32, fontWeight: '200', letterSpacing: 0.5 },
-  emptyTitleSm:{ color: colors.text, fontSize: typography.size.heading2, fontWeight: '300' },
-  emptySub:    { color: colors.textMuted, fontSize: 18, fontWeight: '300', textTransform: 'capitalize' },
+  center:       { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing.xl, paddingVertical: spacing.section * 3 },
+  emptyEmoji:   { fontSize: 72 },
+  emptyTitle:   { color: '#F5F2EC', fontSize: 32, fontWeight: '200', letterSpacing: 0.5 },
+  emptyTitleSm: { color: '#F5F2EC', fontSize: typography.size.heading2, fontWeight: '300' },
+  emptySub:     { color: 'rgba(245,242,236,0.50)', fontSize: 18, fontWeight: '300', textTransform: 'capitalize' },
 });

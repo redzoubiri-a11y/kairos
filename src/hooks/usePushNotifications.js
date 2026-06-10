@@ -57,7 +57,9 @@ function handleNotificationTap(response, navigation) {
   if (!navigation) return;
   const data = response?.notification?.request?.content?.data;
   if (data?.type === 'review_request') {
-    navigation.navigate('Main', { screen: 'Resa' });
+    try { navigation.navigate('Main', { screen: 'Resa' }); } catch (_) {
+      try { navigation.navigate('Main', { screen: 'Manager' }); } catch (_2) {}
+    }
     return;
   }
   navigation.navigate('Notifications');

@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     height: 120,
-    backgroundColor: '#1A1209',
+    backgroundColor: colors.navyDeep,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
   },
   horizontalImage: {
     width: 70,
-    backgroundColor: '#1A1209',
+    backgroundColor: colors.navyDeep,
     alignItems: 'center',
     justifyContent: 'center',
   },

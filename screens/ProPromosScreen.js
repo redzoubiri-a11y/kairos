@@ -1,14 +1,16 @@
-import { useCallback } from 'react';
+import { useEffect } from 'react';
+import * as ScreenOrientation from 'expo-screen-orientation';
 import {
-  View, Text, StyleSheet, TouchableOpacity, SafeAreaView,
+  View, Text, StyleSheet, TouchableOpacity, 
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, typography, spacing, radius } from '../src/theme';
 import MLoader from '../src/components/MLoader';
-import MidaLogo from '../src/components/MidaLogo';
 import useProPromos from '../src/hooks/useProPromos';
 import PromoListView from '../src/components/PromoListView';
 import PromoCreateView from '../src/components/PromoCreateView';
 import PromoActiveView from '../src/components/PromoActiveView';
+import BottomTabBar from '../src/components/BottomTabBar';
 
 function Skeleton() {
   return (
@@ -24,17 +26,16 @@ function Skeleton() {
 
 export default function ProPromosScreen({ navigation }) {
   const { view, restaurant, loading, goList, goCreate, goActive } = useProPromos();
-  const goBack = useCallback(() => navigation.goBack(), [navigation]);
+  useEffect(() => {
+    ScreenOrientation.unlockAsync();
+    return () => ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
+  }, []);
 
   return (
-    <SafeAreaView style={s.root}>
+    <SafeAreaView style={s.root} edges={['top', 'left', 'right']}>
       <View style={s.header}>
         <View style={s.headerLeft}>
-          <TouchableOpacity style={s.backBtn} onPress={view !== 'list' ? goList : goBack}>
-            <Text style={s.backBtnTxt}>←</Text>
-          </TouchableOpacity>
           <View>
-            <MidaLogo showTagline={false} style={{ alignItems: 'flex-start', marginBottom: 2 }} />
             <Text style={s.title}>
               {view === 'list'   ? 'Mes promotions'      :
                view === 'create' ? 'Créer une promotion' :
@@ -55,6 +56,7 @@ export default function ProPromosScreen({ navigation }) {
         view === 'create' ? <PromoCreateView onActivate={goActive} onBack={goList} /> :
                             <PromoActiveView onViewAll={goList} onCreate={goCreate} />
       )}
+      <BottomTabBar navigation={navigation} isPro={true} activeTab={null} />
     </SafeAreaView>
   );
 }
@@ -63,10 +65,8 @@ const s = StyleSheet.create({
   root:         { flex: 1, backgroundColor: colors.bg },
   header:       { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.cardBorder, backgroundColor: colors.card },
   headerLeft:   { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },
-  backBtn:      { width: 36, height: 36, borderRadius: 18, backgroundColor: colors.bg, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: colors.cardBorder },
-  backBtnTxt:   { color: colors.text, fontSize: typography.size.subheading },
   title:        { color: colors.text, fontSize: typography.size.heading2, fontWeight: typography.weight.semibold },
   subtitle:     { color: colors.textMuted, fontSize: typography.size.caption, marginTop: 1 },
-  createBtn:    { backgroundColor: colors.accent, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
+  createBtn:    { backgroundColor: '#c8975a', borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, shadowColor: '#000', shadowOpacity: 0.45, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
   createBtnTxt: { color: colors.bg, fontSize: typography.size.caption, fontWeight: typography.weight.extrabold },
 });

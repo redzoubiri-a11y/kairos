@@ -1,29 +1,27 @@
 import { useCallback, useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  SafeAreaView, TextInput, Image, Animated,
+  TextInput, Image, Animated,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
 import { colors, typography, spacing, radius } from '../src/theme';
-import useReservationForm, { MIDI_SLOTS, SOIR_SLOTS, OCCASIONS, DAYS, formatDateLong } from '../src/hooks/useReservationForm';
+import useReservationForm, { OCCASIONS, DAYS, formatDateLong } from '../src/hooks/useReservationForm';
 import FormProgressBar from '../src/components/FormProgressBar';
 import FormStepper from '../src/components/FormStepper';
-import MidaLogo from '../src/components/MidaLogo';
 import ReservationSuccess from '../src/components/ReservationSuccess';
+import BottomTabBar from '../src/components/BottomTabBar';
 
 function SumRow({ icon, label, val, accent, last }) {
   return (
     <View style={[s.sumRow, !last && s.sumBorder]}>
       <Text style={s.sumIcon}>{icon}</Text>
       <Text style={s.sumLbl}>{label}</Text>
-      <Text style={[s.sumVal, accent && { color: colors.blue }]}>{val}</Text>
+      <Text style={[s.sumVal, accent && { color: '#C87860' }]}>{val}</Text>
     </View>
   );
 }
 
-const SLOT_GROUPS = [
-  { label: 'Déjeuner', icon: '☀️', slots: MIDI_SLOTS },
-  { label: 'Dîner',    icon: '🌙', slots: SOIR_SLOTS },
-];
 
 export default function ReservationFormScreen({ route, navigation }) {
   const restaurant   = route?.params?.restaurant || { name: 'Restaurant', id: null, photo_url: null, avg_rating: null };
@@ -43,9 +41,13 @@ export default function ReservationFormScreen({ route, navigation }) {
     loading, error,
     occasionObj, shakeTranslate,
     confirmer,
+    availableDays, midiSlots, soirSlots,
   } = useReservationForm(restaurant, onSuccess, existingResa);
 
-  const goBack = useCallback(() => navigation.goBack(), [navigation]);
+  const slotGroups = [
+    { label: 'Déjeuner', icon: '☀️', slots: midiSlots },
+    { label: 'Dîner',    icon: '🌙', slots: soirSlots },
+  ];
 
   const step = date ? (heure ? 2 : 1) : 0;
 
@@ -60,20 +62,17 @@ export default function ReservationFormScreen({ route, navigation }) {
           onGoHome={() => navigation.navigate('Main')}
           onReset={() => setSuccess(false)}
         />
-      </SafeAreaView>
+    </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={s.root}>
+    <SafeAreaView style={s.root} edges={['top', 'left', 'right']}>
+      <LinearGradient colors={['#C4B8C8', '#8B9BB4', '#6B7F9E']} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
 
       {/* Header */}
       <View style={s.header}>
-        <TouchableOpacity style={s.backBtn} onPress={goBack}>
-          <Text style={s.backBtnTxt}>←</Text>
-        </TouchableOpacity>
         <View style={{ flex: 1 }}>
-          <MidaLogo showTagline={false} style={{ alignItems: 'flex-start', marginBottom: 2 }} />
           <Text style={s.headerSub}>{isEdit ? 'MODIFIER' : 'RÉSERVATION'}</Text>
           <Text style={s.headerTitle} numberOfLines={1}>{restaurant.name}</Text>
         </View>
@@ -86,18 +85,21 @@ export default function ReservationFormScreen({ route, navigation }) {
 
       <FormProgressBar current={step} />
 
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView showsVerticalScrollIndicator={false} automaticallyAdjustKeyboardInsets={true} keyboardDismissMode="interactive">
 
         {/* Banner */}
-        {restaurant.photos?.[0]
-          ? <Image source={{ uri: restaurant.photos[0] }} style={s.banner} resizeMode="cover" />
-          : (
-            <View style={[s.banner, s.bannerPlaceholder]}>
-              <Text style={{ fontSize: 48, opacity: 0.5 }}>🍽️</Text>
-              <Text style={s.bannerPlaceholderTxt}>{restaurant.name}</Text>
-            </View>
-          )
-        }
+        <View style={s.bannerWrap}>
+          {restaurant.photos?.[0]
+            ? <Image source={{ uri: restaurant.photos[0] }} style={s.banner} resizeMode="cover" />
+            : (
+              <View style={[s.banner, s.bannerPlaceholder]}>
+                <Text style={{ fontSize: 48, opacity: 0.5 }}>🍽️</Text>
+                <Text style={s.bannerPlaceholderTxt}>{restaurant.name}</Text>
+              </View>
+            )
+          }
+          <LinearGradient colors={['rgba(0,0,0,0.70)', 'transparent']} style={s.bannerVeil} pointerEvents="none" />
+        </View>
 
         {/* Date */}
         <View style={s.sectionHeader}>
@@ -111,7 +113,7 @@ export default function ReservationFormScreen({ route, navigation }) {
         </View>
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.dateRow}>
-          {DAYS.map(d => (
+          {availableDays.map(d => (
             <TouchableOpacity
               key={d.value}
               style={[
@@ -122,7 +124,7 @@ export default function ReservationFormScreen({ route, navigation }) {
               ]}
               onPress={() => setDate(d.value)}
             >
-              <Text style={[s.dateDayName, date === d.value && s.dateTxtOn, d.isToday && date !== d.value && { color: colors.blue }]}>
+              <Text style={[s.dateDayName, date === d.value && s.dateTxtOn, d.isToday && date !== d.value && { color: '#C87860' }]}>
                 {d.isToday ? 'AUJ.' : d.dayName}
               </Text>
               <Text style={[s.dateDayNum, date === d.value && s.dateTxtOn]}>{d.dayNum}</Text>
@@ -140,10 +142,10 @@ export default function ReservationFormScreen({ route, navigation }) {
             </View>
             <Text style={[s.sectionLabel, heure && s.sectionLabelDone]}>CHOISIR UNE HEURE</Text>
           </View>
-          {heure && <Text style={[s.sectionChosen, { color: colors.blue }]}>{heure}</Text>}
+          {heure && <Text style={[s.sectionChosen, { color: '#C87860' }]}>{heure}</Text>}
         </View>
 
-        {SLOT_GROUPS.map(({ label, icon, slots }, gi) => (
+        {slotGroups.map(({ label, icon, slots }, gi) => (
           <View key={label} style={[s.slotSection, gi > 0 && { marginTop: spacing.lg }]}>
             <View style={s.slotGroupRow}>
               <Text style={s.slotGroupIcon}>{icon}</Text>
@@ -271,6 +273,7 @@ export default function ReservationFormScreen({ route, navigation }) {
           onPress={confirmer}
           disabled={loading || !date || !heure}
         >
+          <LinearGradient colors={['#FF6B1A','#D93A00']} start={{x:0,y:0}} end={{x:1,y:0}} style={StyleSheet.absoluteFillObject} />
           {loading
             ? <Text style={s.confirmBtnTxt}>···</Text>
             : <>
@@ -286,47 +289,49 @@ export default function ReservationFormScreen({ route, navigation }) {
 
         <View style={{ height: 60 }} />
       </ScrollView>
+      <BottomTabBar navigation={navigation} activeTab={null} />
     </SafeAreaView>
   );
 }
 
 const s = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.bg },
+  root:      { flex: 1, backgroundColor: colors.bg },
+  bgOverlay: { ...StyleSheet.absoluteFillObject, opacity: 0.06 },
 
   header:      { flexDirection: 'row', alignItems: 'center', gap: spacing.lg, paddingHorizontal: spacing.xxl, paddingTop: spacing.lg, paddingBottom: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
-  backBtn:     { width: 38, height: 38, borderRadius: 19, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, alignItems: 'center', justifyContent: 'center' },
-  backBtnTxt:  { color: colors.text, fontSize: 18 },
-  headerSub:   { color: colors.accent, fontSize: typography.size.xs, letterSpacing: 3, marginBottom: 2 },
+  headerSub:   { color: '#C87860', fontSize: typography.size.xs, letterSpacing: 3, marginBottom: 2 },
   headerTitle: { color: colors.text, fontSize: typography.size.heading3, fontWeight: typography.weight.regular, letterSpacing: 0.3 },
-  ratingPill:  { backgroundColor: colors.accentSoft, borderRadius: radius.md, borderWidth: 1, borderColor: 'rgba(232,160,69,0.3)', paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
-  ratingTxt:   { color: colors.accent, fontSize: typography.size.body, fontWeight: typography.weight.medium },
+  ratingPill:  { backgroundColor: colors.navy, borderRadius: radius.md, borderWidth: 1, borderColor: colors.navyBorder, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
+  ratingTxt:   { color: '#C87860', fontSize: typography.size.body, fontWeight: typography.weight.medium },
 
+  bannerWrap:          { width: '100%', height: 180, position: 'relative' },
   banner:              { width: '100%', height: 180 },
+  bannerVeil:          { position: 'absolute', top: 0, left: 0, right: 0, height: 80 },
   bannerPlaceholder:   { backgroundColor: colors.card, alignItems: 'center', justifyContent: 'center', gap: spacing.md },
   bannerPlaceholderTxt:{ color: colors.textMuted, fontSize: typography.size.bodyLg, fontWeight: typography.weight.regular },
 
   sectionHeader:   { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xxl, marginTop: spacing.xxxl, marginBottom: spacing.lg },
   sectionLeft:     { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },
-  sectionNum:      { width: 22, height: 22, borderRadius: 11, backgroundColor: colors.cardHover, borderWidth: 1, borderColor: colors.cardBorder, alignItems: 'center', justifyContent: 'center' },
-  sectionNumDone:  { backgroundColor: 'rgba(76,175,130,0.15)', borderColor: colors.green },
-  sectionNumTxt:   { color: colors.textDim, fontSize: typography.size.sm, fontWeight: typography.weight.semibold },
+  sectionNum:      { width: 22, height: 22, borderRadius: 0, backgroundColor: colors.cardHover, borderWidth: 1, borderColor: colors.cardBorder, alignItems: 'center', justifyContent: 'center' },
+  sectionNumDone:  { backgroundColor: 'rgba(76,175,130,0.25)', borderColor: colors.green },
+  sectionNumTxt:   { color: colors.text, fontSize: typography.size.sm, fontWeight: typography.weight.semibold },
   sectionLabel:    { color: colors.textMuted, fontSize: typography.size.sm, letterSpacing: 3 },
   sectionLabelDone:{ color: colors.green },
-  sectionChosen:   { color: colors.accent, fontSize: typography.size.caption },
-  optLabel:        { color: colors.textMuted, fontSize: typography.size.sm, letterSpacing: 3 },
+  sectionChosen:   { color: colors.textMuted, fontSize: typography.size.caption, fontWeight: typography.weight.medium },
+  optLabel:        { color: colors.textDim, fontSize: typography.size.sm, letterSpacing: 3 },
   optSub:          { color: colors.textDim, fontSize: typography.size.xs, letterSpacing: 1, fontWeight: typography.weight.regular },
   charCount:       { color: colors.textDim, fontSize: typography.size.sm },
 
   dateRow:         { paddingHorizontal: spacing.xxl, paddingBottom: spacing.xs, gap: spacing.md },
   dateCard:        { width: 66, paddingVertical: 13, borderRadius: radius.xxl, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, alignItems: 'center', gap: spacing.xxs },
-  dateCardOn:      { backgroundColor: colors.accentSoft, borderColor: colors.accent },
-  dateCardToday:   { borderColor: 'rgba(90,155,224,0.5)' },
-  dateCardWeekend: { borderColor: 'rgba(232,160,69,0.15)' },
+  dateCardOn:      { backgroundColor: colors.navy, borderColor: colors.navyBorder },
+  dateCardToday:   { borderColor: '#C87860' },
+  dateCardWeekend: { borderColor: colors.cardBorder },
   dateDayName:     { color: colors.textDim, fontSize: typography.size.xs, letterSpacing: 1.5 },
   dateDayNum:      { color: colors.text, fontSize: 22, fontWeight: typography.weight.regular },
   dateMonth:       { color: colors.textDim, fontSize: typography.size.xs },
-  dateTxtOn:       { color: colors.accent },
-  weekendDot:      { width: 4, height: 4, borderRadius: 2, backgroundColor: 'rgba(232,160,69,0.4)', marginTop: 2 },
+  dateTxtOn:       { color: colors.text, fontWeight: typography.weight.semibold },
+  weekendDot:      { width: 4, height: 4, borderRadius: 0, backgroundColor: '#C87860', marginTop: 2 },
 
   slotSection:     { paddingHorizontal: spacing.xxl },
   slotGroupRow:    { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.lg },
@@ -334,9 +339,9 @@ const s = StyleSheet.create({
   slotGroupLabel:  { color: colors.textMuted, fontSize: typography.size.body },
   slotsWrap:       { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md },
   slotChip:        { alignItems: 'center', paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, borderRadius: radius.lg, backgroundColor: 'transparent', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)', minWidth: 78 },
-  slotChipOn:      { backgroundColor: 'rgba(90,155,224,0.12)', borderColor: colors.blue, shadowColor: colors.blue, shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
+  slotChipOn:      { backgroundColor: 'rgba(200,120,96,0.14)', borderColor: '#C87860', shadowColor: '#000', shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
   slotTxt:         { color: colors.textMuted, fontSize: typography.size.heading3, fontWeight: typography.weight.regular },
-  slotTxtOn:       { color: colors.blue, fontWeight: typography.weight.semibold },
+  slotTxtOn:       { color: '#C87860', fontWeight: typography.weight.semibold },
   slotBadge:       { marginTop: spacing.xs, paddingHorizontal: spacing.sm, paddingVertical: spacing.xxs, borderRadius: radius.sm, backgroundColor: colors.accentSoft },
   slotBadgePopular:{ backgroundColor: colors.accentSoft },
   slotBadgeLast:   { backgroundColor: colors.redSoft },
@@ -347,36 +352,36 @@ const s = StyleSheet.create({
   couvInfo:    { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },
   couvIconWrap:{ width: 40, height: 40, borderRadius: radius.lg, backgroundColor: colors.cardHover, alignItems: 'center', justifyContent: 'center' },
   couvEmoji:   { fontSize: 20 },
-  couvLabel:   { color: colors.text, fontSize: typography.size.bodyLg, fontWeight: typography.weight.regular, marginBottom: 2 },
-  couvSub:     { color: colors.textDim, fontSize: typography.size.caption },
+  couvLabel:   { color: colors.text, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium, marginBottom: 2 },
+  couvSub:     { color: colors.textMuted, fontSize: typography.size.caption },
   couvDivider: { height: 1, backgroundColor: colors.cardBorder, marginHorizontal: spacing.xxl },
 
   occasionGrid:   { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.lg, paddingHorizontal: spacing.xxl },
   occasionChip:   { width: '30%', flexGrow: 1, alignItems: 'center', paddingVertical: spacing.lg, borderRadius: radius.xl, backgroundColor: 'transparent', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)', gap: spacing.sm, position: 'relative' },
-  occasionChipOn: { backgroundColor: colors.accentSoft, borderColor: colors.accent, shadowColor: colors.accent, shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
+  occasionChipOn: { backgroundColor: 'rgba(200,151,90,0.14)', borderColor: '#c8975a', shadowColor: '#000', shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
   occasionIcon:   { fontSize: 22 },
   occasionLabel:  { color: colors.textMuted, fontSize: typography.size.caption, textAlign: 'center' },
   occasionLabelOn:{ color: colors.accent, fontWeight: typography.weight.semibold },
-  occasionCheck:  { position: 'absolute', top: 7, right: 7, width: 16, height: 16, borderRadius: 8, backgroundColor: 'rgba(232,160,69,0.2)', alignItems: 'center', justifyContent: 'center' },
+  occasionCheck:  { position: 'absolute', top: 7, right: 7, width: 16, height: 16, borderRadius: 0, backgroundColor: 'rgba(232,160,69,0.2)', alignItems: 'center', justifyContent: 'center' },
 
   noteWrap:  { marginHorizontal: spacing.xxl, backgroundColor: colors.card, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.cardBorder },
   noteInput: { color: colors.text, fontSize: typography.size.bodyLg, fontWeight: typography.weight.regular, padding: spacing.xl, minHeight: 90, textAlignVertical: 'top' },
 
-  summaryCard:  { margin: spacing.xxl, backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: 'rgba(232,160,69,0.3)', padding: spacing.xl },
+  summaryCard:  { margin: spacing.xxl, backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.xl },
   summaryTitle: { color: colors.textDim, fontSize: typography.size.xs, letterSpacing: 4, marginBottom: spacing.lg },
   sumRow:       { flexDirection: 'row', alignItems: 'center', gap: spacing.lg, paddingVertical: spacing.sm + 2 },
   sumBorder:    { borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   sumIcon:      { fontSize: 15, width: 22 },
   sumLbl:       { color: colors.textMuted, fontSize: typography.size.bodyLg, flex: 1 },
-  sumVal:       { color: colors.text, fontSize: typography.size.bodyLg, fontWeight: typography.weight.regular, textAlign: 'right', flexShrink: 1, maxWidth: '55%' },
+  sumVal:       { color: colors.text, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium, textAlign: 'right', flexShrink: 1, maxWidth: '55%' },
 
   errorBox: { marginHorizontal: spacing.xxl, marginBottom: spacing.lg, backgroundColor: colors.redSoft, borderRadius: radius.lg, padding: spacing.lg, borderWidth: 1, borderColor: 'rgba(224,90,90,0.3)' },
   errorTxt: { color: colors.red, fontSize: typography.size.body },
 
-  confirmBtn:     { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.lg, marginHorizontal: spacing.xxl, backgroundColor: colors.accent, borderRadius: radius.xxl, paddingVertical: 17 },
+  confirmBtn:     { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.lg, marginHorizontal: spacing.xxl, borderRadius: radius.xxl, paddingVertical: 17, overflow: 'hidden' },
   confirmBtnDim:  { opacity: 0.4 },
-  confirmBtnTxt:  { color: colors.bg, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium, letterSpacing: 1.5 },
-  confirmBtnArrow:{ color: colors.bg, fontSize: 18, fontWeight: typography.weight.regular },
+  confirmBtnTxt:  { color: '#FFFFFF', fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium, letterSpacing: 1.5 },
+  confirmBtnArrow:{ color: '#FFFFFF', fontSize: 18, fontWeight: typography.weight.regular },
 
   legalTxt: { marginHorizontal: spacing.xxl, marginTop: spacing.lg, color: colors.textDim, fontSize: typography.size.sm, lineHeight: 16, textAlign: 'center', fontStyle: 'italic' },
 });

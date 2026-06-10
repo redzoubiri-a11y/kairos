@@ -1,14 +1,16 @@
-import { useCallback } from 'react';
+import { useEffect } from 'react';
+import * as ScreenOrientation from 'expo-screen-orientation';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  SafeAreaView, KeyboardAvoidingView, Platform, RefreshControl,
+  KeyboardAvoidingView, Platform, RefreshControl,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, typography, spacing, radius } from '../src/theme';
 import MLoader from '../src/components/MLoader';
-import MidaLogo from '../src/components/MidaLogo';
 import useProAvis, { FILTERS } from '../src/hooks/useProAvis';
 import AvisStats from '../src/components/AvisStats';
 import ReviewCard from '../src/components/ReviewCard';
+import BottomTabBar from '../src/components/BottomTabBar';
 
 function Skeleton() {
   return (
@@ -29,16 +31,15 @@ export default function ProAvisScreen({ navigation }) {
     onRefresh, noReply, ratingCounts, filtered, pendingCount,
   } = useProAvis();
 
-  const goBack = useCallback(() => navigation.goBack(), [navigation]);
+  useEffect(() => {
+    ScreenOrientation.unlockAsync();
+    return () => ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
+  }, []);
 
   return (
-    <SafeAreaView style={s.root}>
+    <SafeAreaView style={s.root} edges={['top', 'left', 'right']}>
       <View style={s.header}>
-        <TouchableOpacity style={s.backBtn} onPress={goBack}>
-          <Text style={s.backBtnTxt}>←</Text>
-        </TouchableOpacity>
         <View style={{ flex: 1 }}>
-          <MidaLogo showTagline={false} style={{ alignItems: 'flex-start', marginBottom: 2 }} />
           <Text style={s.title}>Avis clients</Text>
           {restaurant && <Text style={s.subtitle}>{restaurant.name}</Text>}
         </View>
@@ -112,6 +113,7 @@ export default function ProAvisScreen({ navigation }) {
           </ScrollView>
         )}
       </KeyboardAvoidingView>
+      <BottomTabBar navigation={navigation} isPro={true} activeTab={null} />
     </SafeAreaView>
   );
 }
@@ -120,16 +122,14 @@ const s = StyleSheet.create({
   root:   { flex: 1, backgroundColor: colors.bg },
 
   header:     { flexDirection: 'row', alignItems: 'center', gap: spacing.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.cardBorder, backgroundColor: colors.card },
-  backBtn:    { width: 36, height: 36, borderRadius: 18, backgroundColor: colors.bg, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: colors.cardBorder },
-  backBtnTxt: { color: colors.text, fontSize: typography.size.subheading },
   title:      { color: colors.text, fontSize: typography.size.heading2, fontWeight: typography.weight.semibold },
   subtitle:   { color: colors.textMuted, fontSize: typography.size.caption, marginTop: 1 },
   badge:      { backgroundColor: colors.red, borderRadius: radius.full, minWidth: 22, height: 22, alignItems: 'center', justifyContent: 'center', paddingHorizontal: spacing.sm },
-  badgeTxt:   { color: colors.text, fontSize: typography.size.xs, fontWeight: typography.weight.bold },
+  badgeTxt:   { color: '#FFFFFF', fontSize: typography.size.xs, fontWeight: typography.weight.bold },
 
   filterRow:   { paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, gap: spacing.sm },
-  chip:        { flexDirection: 'row', alignItems: 'center', gap: spacing.xs, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: radius.full, backgroundColor: 'transparent', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
-  chipOn:      { backgroundColor: colors.accentSoft, borderColor: colors.accent, shadowColor: colors.accent, shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
+  chip:        { flexDirection: 'row', alignItems: 'center', gap: spacing.xs, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: radius.full, backgroundColor: 'transparent', borderWidth: 1, borderColor: colors.cardBorder },
+  chipOn:      { backgroundColor: 'rgba(200,151,90,0.14)', borderColor: '#c8975a', shadowColor: '#000', shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
   chipAlert:   { borderColor: 'rgba(224,90,90,0.4)' },
   chipPending: { borderColor: 'rgba(232,160,69,0.5)' },
   chipTxt:     { color: colors.textMuted, fontSize: typography.size.body },

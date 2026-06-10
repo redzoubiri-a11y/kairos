@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mida — Partenaires Fondateurs</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --orange: #E8640A;
+    --orange-light: #FEF0E6;
+    --orange-dark: #B84D06;
+    --dark: #1A1A1A;
+    --mid: #555;
+    --light: #888;
+    --bg: #FAFAF8;
+    --white: #FFFFFF;
+    --border: rgba(0,0,0,0.08);
+  }
+
+  body {
+    font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--dark);
+    font-size: 16px;
+    line-height: 1.6;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  /* HERO */
+  .hero {
+    background: var(--dark);
+    padding: 48px 24px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: var(--orange);
+    opacity: 0.12;
+  }
+
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 32px;
+  }
+
+  .logo-text {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: var(--white);
+  }
+
+  .logo-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--orange);
+    display: inline-block;
+    margin-left: 1px;
+  }
+
+  .badge-test {
+    display: inline-block;
+    background: rgba(232, 100, 10, 0.2);
+    color: #FFAA70;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(232, 100, 10, 0.3);
+    margin-bottom: 20px;
+  }
+
+  .hero h1 {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.25;
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+  }
+
+  .hero h1 span {
+    color: var(--orange);
+  }
+
+  .hero p {
+    font-size: 15px;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.65;
+    max-width: 340px;
+    margin: 0 auto;
+  }
+
+  /* SECTION */
+  .section {
+    padding: 36px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section:last-child { border-bottom: none; }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 20px;
+  }
+
+  .section h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 8px;
+    letter-spacing: -0.3px;
+    line-height: 1.3;
+  }
+
+  .section p {
+    font-size: 15px;
+    color: var(--mid);
+    line-height: 1.65;
+    margin-bottom: 16px;
+  }
+
+  /* BENEFITS */
+  .benefit-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 8px;
+  }
+
+  .benefit {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+  }
+
+  .benefit-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    background: var(--orange-light);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 20px;
+  }
+
+  .benefit-body strong {
+    display: block;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--dark);
+    margin-bottom: 3px;
+  }
+
+  .benefit-body p {
+    font-size: 13px;
+    color: var(--light);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  /* FOUNDER DEAL */
+  .deal-card {
+    background: var(--dark);
+    border-radius: 16px;
+    padding: 24px;
+    margin-top: 4px;
+  }
+
+  .deal-card h3 {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 18px;
+    letter-spacing: -0.2px;
+  }
+
+  .deal-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .deal-item:last-child { margin-bottom: 0; }
+
+  .deal-check {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--orange);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .deal-check svg {
+    width: 11px; height: 11px;
+    stroke: white;
+    stroke-width: 2.5;
+    fill: none;
+  }
+
+  .deal-item p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.8);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .deal-item strong {
+    color: var(--white);
+    font-weight: 600;
+  }
+
+  /* EXCHANGE */
+  .exchange-card {
+    background: var(--orange-light);
+    border: 1px solid rgba(232, 100, 10, 0.15);
+    border-radius: 14px;
+    padding: 20px;
+    margin-top: 16px;
+  }
+
+  .exchange-card h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--orange-dark);
+    margin-bottom: 12px;
+  }
+
+  .exchange-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .exchange-item:last-child { margin-bottom: 0; }
+
+  .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--orange);
+    flex-shrink: 0;
+    margin-top: 7px;
+  }
+
+  .exchange-item p {
+    font-size: 14px;
+    color: var(--orange-dark);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  /* HOW IT WORKS */
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 8px;
+  }
+
+  .step {
+    display: flex;
+    gap: 16px;
+    position: relative;
+  }
+
+  .step-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 32px;
+    flex-shrink: 0;
+  }
+
+  .step-num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--orange);
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .step-line {
+    width: 1px;
+    background: var(--border);
+    flex: 1;
+    margin: 4px 0;
+    min-height: 24px;
+  }
+
+  .step:last-child .step-line { display: none; }
+
+  .step-body {
+    padding-bottom: 24px;
+    flex: 1;
+  }
+
+  .step-body strong {
+    display: block;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--dark);
+    margin-bottom: 3px;
+    padding-top: 5px;
+  }
+
+  .step-body p {
+    font-size: 13px;
+    color: var(--light);
+    margin: 0;
+  }
+
+  /* CTA */
+  .cta-section {
+    padding: 36px 24px 48px;
+    text-align: center;
+  }
+
+  .cta-section h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 10px;
+    letter-spacing: -0.4px;
+    line-height: 1.3;
+  }
+
+  .cta-section p {
+    font-size: 14px;
+    color: var(--light);
+    margin-bottom: 28px;
+    line-height: 1.6;
+  }
+
+  .cta-btn {
+    display: inline-block;
+    background: var(--orange);
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 15px 32px;
+    border-radius: 12px;
+    text-decoration: none;
+    letter-spacing: -0.2px;
+    transition: background 0.15s;
+  }
+
+  .cta-btn:hover { background: var(--orange-dark); }
+
+  .cta-sub {
+    font-size: 12px;
+    color: var(--light);
+    margin-top: 12px;
+  }
+
+  /* FOOTER */
+  .footer {
+    padding: 20px 24px;
+    text-align: center;
+    border-top: 1px solid var(--border);
+  }
+
+  .footer p {
+    font-size: 12px;
+    color: var(--light);
+    line-height: 1.6;
+  }
+
+  .footer a {
+    color: var(--orange);
+    text-decoration: none;
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="logo">
+    <span class="logo-text">mida</span><span class="logo-dot"></span>
+  </div>
+  <div class="badge-test">Phase test · 20 places fondateurs</div>
+  <h1>Votre restaurant,<br><span>visible avant les autres.</span></h1>
+  <p>Mida arrive bientôt en Algérie. On cherche des restaurants sérieux pour construire l'app avec nous — pas après.</p>
+</div>
+
+<!-- CE QU'ILS GAGNENT -->
+<div class="section">
+  <div class="section-label">Pourquoi rejoindre maintenant</div>
+  <h2>Ce que vous gagnez concrètement</h2>
+
+  <div class="benefit-list">
+    <div class="benefit">
+      <div class="benefit-icon">📍</div>
+      <div class="benefit-body">
+        <strong>Présence prioritaire au lancement</strong>
+        <p>Vos réservations en premier, avant les concurrents qui attendent.</p>
+      </div>
+    </div>
+    <div class="benefit">
+      <div class="benefit-icon">📱</div>
+      <div class="benefit-body">
+        <strong>Fiche restaurant complète et gratuite</strong>
+        <p>Photos, menu, horaires, réservations en ligne — zéro effort de votre côté.</p>
+      </div>
+    </div>
+    <div class="benefit">
+      <div class="benefit-icon">📞</div>
+      <div class="benefit-body">
+        <strong>Moins d'appels, moins de no-shows</strong>
+        <p>Les clients réservent depuis l'app. Vous gérez les tables, pas le téléphone.</p>
+      </div>
+    </div>
+    <div class="benefit">
+      <div class="benefit-icon">🔒</div>
+      <div class="benefit-body">
+        <strong>Tarif fondateur à vie</strong>
+        <p>Rejoindre maintenant = tarif préférentiel verrouillé. Pour toujours.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- L'OFFRE FONDATEUR -->
+<div class="section">
+  <div class="section-label">L'offre partenaire fondateur</div>
+  <h2>6 mois gratuits.<br>Zéro risque.</h2>
+  <p>On est en phase de test — on a besoin de vrais restaurants, pas de vitrines vides. En échange, vous avez tout à gagner.</p>
+
+  <div class="deal-card">
+    <h3>Ce qu'on vous offre</h3>
+    <div class="deal-item">
+      <div class="deal-check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+      <p><strong>Gratuit 6 mois</strong> — aucun abonnement, aucune carte à fournir</p>
+    </div>
+    <div class="deal-item">
+      <div class="deal-check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+      <p><strong>Badge "Fondateur"</strong> affiché sur votre profil dans l'app</p>
+    </div>
+    <div class="deal-item">
+      <div class="deal-check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+      <p><strong>Position haute</strong> dans les résultats de votre ville</p>
+    </div>
+    <div class="deal-item">
+      <div class="deal-check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+      <p><strong>Tarif réduit à vie</strong> quand la phase gratuite se termine</p>
+    </div>
+    <div class="deal-item">
+      <div class="deal-check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+      <p>On <strong>crée votre fiche</strong> — vous n'avez rien à installer</p>
+    </div>
+  </div>
+
+  <div class="exchange-card">
+    <h3>Ce qu'on vous demande</h3>
+    <div class="exchange-item">
+      <div class="dot"></div>
+      <p>Partager vos <strong>photos de plats et de salle</strong> (ce que vous avez déjà)</p>
+    </div>
+    <div class="exchange-item">
+      <div class="dot"></div>
+      <p>Nous autoriser à <strong>afficher votre menu et vos photos</strong> dans l'app pendant la phase test</p>
+    </div>
+    <div class="exchange-item">
+      <div class="dot"></div>
+      <p>Un <strong>retour honnête</strong> sur ce qui marche ou pas — votre avis améliore l'app</p>
+    </div>
+  </div>
+</div>
+
+<!-- COMMENT ÇA SE PASSE -->
+<div class="section">
+  <div class="section-label">Comment ça se passe</div>
+  <h2>Simple et rapide.</h2>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-left">
+        <div class="step-num">1</div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-body">
+        <strong>Vous répondez oui</strong>
+        <p>Un simple message suffit. On prend contact dans les 24h.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-left">
+        <div class="step-num">2</div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-body">
+        <strong>On crée votre fiche</strong>
+        <p>Vous partagez vos photos et menu. On s'occupe du reste.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-left">
+        <div class="step-num">3</div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-body">
+        <strong>L'app se teste avec de vrais clients</strong>
+        <p>Votre restaurant est visible pendant la phase test. Vous recevez vos premières réservations.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-left">
+        <div class="step-num">4</div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-body">
+        <strong>Lancement officiel</strong>
+        <p>Vous êtes déjà dedans — avec votre tarif fondateur et votre badge.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-section">
+  <h2>Vous voulez en faire partie ?</h2>
+  <p>Il reste 20 places fondateurs à Alger.<br>Répondez-nous simplement sur WhatsApp.</p>
+  <a class="cta-btn" href="https://wa.me/33635574571?text=Bonjour%2C%20je%20suis%20int%C3%A9ress%C3%A9%20par%20le%20statut%20Partenaire%20Fondateur%20Mida">
+    Rejoindre via WhatsApp
+  </a>
+  <p class="cta-sub">20 places · Gratuit 6 mois · Sans engagement</p>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <p>
+    Mida — Plateforme de réservation de restaurants en Algérie<br>
+    <a href="https://mida-food.com">mida-food.com</a>
+  </p>
+</div>
+
+</body>
+</html>

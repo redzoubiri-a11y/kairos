@@ -1,13 +1,13 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  SafeAreaView, TextInput, RefreshControl,
+  TextInput, RefreshControl,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, typography, spacing, radius } from '../src/theme';
 import MLoader from '../src/components/MLoader';
 import useFavoris, { CUISINE_EMOJI, SORT_OPTIONS, timeAdded } from '../src/hooks/useFavoris';
 import FavCard, { CARD_W } from '../src/components/FavCard';
-import MidaLogo from '../src/components/MidaLogo';
 
 function SkeletonGrid() {
   return (
@@ -36,9 +36,13 @@ export default function FavorisScreen({ navigation }) {
     <SafeAreaView style={s.root}>
 
       <View style={s.header}>
-        <View>
-          <MidaLogo showTagline={false} style={{ alignItems: 'flex-start', marginBottom: spacing.xs }} />
+        <View style={{ flex: 1 }}>
           <Text style={s.headerSub}>MES PRÉFÉRÉS</Text>
+          <Text style={s.headerTitle}>
+            {loading ? '…' : favorites.length > 0
+              ? `${favorites.length} restaurant${favorites.length > 1 ? 's' : ''}`
+              : 'Aucun favori'}
+          </Text>
         </View>
         {!loading && favorites.length > 0 && (
           <View style={s.countBadge}>
@@ -156,8 +160,9 @@ export default function FavorisScreen({ navigation }) {
 const s = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.bg },
 
-  header:      { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: spacing.xxxl, paddingTop: 56, paddingBottom: spacing.xl, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
-  headerSub:   { color: colors.accent, fontSize: typography.size.xs, letterSpacing: 3, marginBottom: 2 },
+  header:      { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: spacing.xxxl, paddingTop: spacing.xl, paddingBottom: spacing.xl, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
+  headerSub:   { color: '#C87860', fontSize: typography.size.xs, letterSpacing: 3, marginBottom: spacing.xs },
+  headerTitle: { color: colors.text, fontSize: typography.size.heading2, fontWeight: '300', letterSpacing: 1, textTransform: 'uppercase' },
   countBadge:  { backgroundColor: colors.accentSoft, borderRadius: radius.full, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderWidth: 1, borderColor: 'rgba(232,160,69,0.3)' },
   countTxt:    { color: colors.accent, fontSize: typography.size.bodyLg },
 
@@ -165,7 +170,7 @@ const s = StyleSheet.create({
   searchBar:   { flex: 1, flexDirection: 'row', alignItems: 'center', gap: spacing.md, backgroundColor: colors.card, borderRadius: radius.lg, paddingHorizontal: spacing.lg, paddingVertical: spacing.md+1, borderWidth: 1, borderColor: colors.cardBorder },
   searchIcon:  { fontSize: 13 },
   searchInput: { flex: 1, color: colors.text, fontSize: typography.size.bodyLg },
-  sortBtn:     { backgroundColor: colors.card, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.md+1, borderWidth: 1, borderColor: colors.cardBorder, justifyContent: 'center' },
+  sortBtn:     { backgroundColor: colors.card, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.md+1, borderWidth: 1, borderColor: 'rgba(200,151,90,0.3)', justifyContent: 'center', shadowColor: '#000', shadowOpacity: 0.3, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 3 },
   sortTxt:     { color: colors.accent, fontSize: typography.size.sm, fontWeight: typography.weight.medium },
 
   statStrip:   { flexDirection: 'row', backgroundColor: colors.card, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.cardBorder, marginHorizontal: spacing.xxl, marginBottom: spacing.xl },
@@ -189,6 +194,6 @@ const s = StyleSheet.create({
   emptyEmoji:   { fontSize: 56 },
   emptyTitle:   { color: colors.text, fontSize: typography.size.title, fontWeight: typography.weight.regular, letterSpacing: 0.5 },
   emptySub:     { color: colors.textMuted, fontSize: typography.size.bodyLg, textAlign: 'center', lineHeight: 20 },
-  exploreBtn:   { backgroundColor: colors.accent, borderRadius: radius.xl, paddingVertical: 13, paddingHorizontal: spacing.xxxl, marginTop: spacing.md },
+  exploreBtn:   { backgroundColor: '#c8975a', borderRadius: radius.xl, paddingVertical: 13, paddingHorizontal: spacing.xxxl, marginTop: spacing.md, shadowColor: '#000', shadowOpacity: 0.45, shadowRadius: 12, shadowOffset: { width: 0, height: 0 }, elevation: 6 },
   exploreBtnTxt:{ color: colors.bg, fontSize: typography.size.body, fontWeight: typography.weight.medium, letterSpacing: 2 },
 });

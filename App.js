@@ -28,6 +28,9 @@ import ProMenuScreen from './screens/ProMenuScreen';
 import ProPhotosScreen from './screens/ProPhotosScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import AideScreen from './screens/AideScreen';
+import MapScreen from './screens/MapScreen';
+import ProInfoScreen from './screens/ProInfoScreen';
+import ProHorairesScreen from './screens/ProHorairesScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -44,6 +47,7 @@ const TAB_ICONS = {
   Favoris:  { active: 'heart',           inactive: 'heart-outline' },
   Manager:  { active: 'grid',            inactive: 'grid-outline' },
   Resa:     { active: 'calendar',        inactive: 'calendar-outline' },
+  Profil:   { active: 'person',          inactive: 'person-outline' },
 };
 
 function TabIcon({ name, focused }) {
@@ -101,6 +105,7 @@ function TabNavigator({ userRole }) {
       <Tab.Screen name="Recherche" component={ExplorerScreen} />
       <Tab.Screen name="Favoris" component={FavorisScreen} />
       <Tab.Screen name={lastName} component={LastScreen} />
+      <Tab.Screen name="Profil" component={ProfilScreen} />
     </Tab.Navigator>
   );
 }
@@ -170,6 +175,9 @@ export default function App() {
           <Stack.Screen name="ProPhotos" component={ProPhotosScreen} />
           <Stack.Screen name="Settings" component={SettingsScreen} />
           <Stack.Screen name="Aide" component={AideScreen} />
+          <Stack.Screen name="Map" component={MapScreen} />
+          <Stack.Screen name="ProInfo" component={ProInfoScreen} />
+          <Stack.Screen name="ProHoraires" component={ProHorairesScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     );

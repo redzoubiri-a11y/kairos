@@ -75,7 +75,7 @@ export default function ErrorState({
 
 const s = StyleSheet.create({
   wrap:       { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xxxl || 48, gap: spacing.lg },
-  iconWrap:   { width: 72, height: 72, borderRadius: 36, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, alignItems: 'center', justifyContent: 'center', marginBottom: spacing.sm },
+  iconWrap:   { width: 72, height: 72, borderRadius: 0, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, alignItems: 'center', justifyContent: 'center', marginBottom: spacing.sm },
   icon:       { fontSize: 32 },
   title:      { color: colors.text, fontSize: typography.size.heading3, fontWeight: '300', textAlign: 'center' },
   sub:        { color: colors.textMuted, fontSize: typography.size.body, textAlign: 'center', lineHeight: 20, maxWidth: 260 },

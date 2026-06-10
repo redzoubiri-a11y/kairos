@@ -9,7 +9,7 @@ function StarPicker({ value, onChange }) {
   return (
     <View style={s.stars}>
       {[1, 2, 3, 4, 5].map(i => (
-        <TouchableOpacity key={i} onPress={() => onChange(i)} hitSlop={8}>
+        <TouchableOpacity key={i} onPress={() => onChange(i)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
           <Text style={[s.star, i <= value && s.starOn]}>★</Text>
         </TouchableOpacity>
       ))}
@@ -95,7 +95,7 @@ export default function ReviewModal({ resa, visible, onClose, onSubmit, submitti
 const s = StyleSheet.create({
   overlay:      { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'flex-end' },
   sheet:        { backgroundColor: colors.card, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: spacing.xxl, paddingBottom: 40, gap: spacing.xl, borderTopWidth: 1, borderTopColor: colors.cardBorder },
-  drag:         { width: 36, height: 4, borderRadius: 2, backgroundColor: colors.cardBorder, alignSelf: 'center', marginBottom: spacing.sm },
+  drag:         { width: 36, height: 4, borderRadius: 0, backgroundColor: colors.cardBorder, alignSelf: 'center', marginBottom: spacing.sm },
 
   title:        { color: colors.text, fontSize: typography.size.heading2, fontWeight: typography.weight.regular, textAlign: 'center' },
   sub:          { color: colors.textMuted, fontSize: typography.size.bodyLg, textAlign: 'center', marginTop: -spacing.sm },
@@ -111,7 +111,7 @@ const s = StyleSheet.create({
   input:        { color: colors.text, fontSize: typography.size.bodyLg, padding: spacing.xl, minHeight: 90 },
   charCount:    { color: colors.textDim, fontSize: typography.size.sm, textAlign: 'right', paddingRight: spacing.lg, paddingBottom: spacing.sm },
 
-  btnSubmit:    { backgroundColor: colors.accent, borderRadius: radius.xxl, paddingVertical: 15, alignItems: 'center' },
+  btnSubmit:    { backgroundColor: '#c8975a', borderRadius: radius.xxl, paddingVertical: 15, alignItems: 'center', shadowColor: '#000', shadowOpacity: 0.5, shadowRadius: 14, shadowOffset: { width: 0, height: 0 }, elevation: 7 },
   btnDim:       { opacity: 0.4 },
   btnSubmitTxt: { color: colors.bg, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium, letterSpacing: 1.5 },
   btnCancel:    { alignItems: 'center', paddingVertical: spacing.md },

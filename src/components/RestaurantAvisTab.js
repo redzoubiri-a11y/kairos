@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { colors, typography, spacing, radius } from '../theme';
 import MLoader from './MLoader';
 import Stars from './Stars';
@@ -94,7 +94,7 @@ export default function RestaurantAvisTab({ restaurant, reviews, loadingReviews 
           <Text style={s.ctaDividerTxt}>Vous y étiez ?</Text>
           <View style={{ flex: 1, height: 1, backgroundColor: colors.cardBorder }} />
         </View>
-        <TouchableOpacity style={s.ctaBtn}>
+        <TouchableOpacity style={s.ctaBtn} onPress={() => Alert.alert('Laisser un avis', 'Après votre visite, vous pouvez laisser un avis depuis Profil → Mes réservations → Historique.')}>
           <Text style={s.ctaIcon}>✏️</Text>
           <Text style={s.ctaTxt}>Laisser un avis</Text>
         </TouchableOpacity>

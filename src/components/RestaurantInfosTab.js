@@ -23,12 +23,10 @@ export default function RestaurantInfosTab({ restaurant, desc }) {
     { icon:'📍', label:'Adresse',      val: restaurant.address || restaurant.quartier || '—' },
     { icon:'🏙️', label:'Ville',        val: restaurant.city || '—' },
     { icon:'🍽️', label:'Cuisine',      val: (restaurant.cuisine_type || '—').replace(/_/g, ' ') },
-    { icon:'🕐', label:'Horaires',     val: fmtHours(restaurant.opening_hours) || '12h00 – 14h30  ·  19h00 – 22h30' },
+    { icon:'🕐', label:'Horaires',     val: fmtHours(restaurant.opening_hours) || 'Non renseigné' },
     { icon:'📞', label:'Téléphone',    val: restaurant.phone || 'Non renseigné' },
     { icon:'💰', label:'Prix moyen',   val: restaurant.avg_ticket > 0 ? `${restaurant.avg_ticket.toLocaleString('fr-FR')} DA / pers.` : '—' },
     { icon:'🪑', label:'Capacité',     val: restaurant.capacity > 0 ? `${restaurant.capacity} couverts` : '—' },
-    { icon:'🅿️', label:'Parking',      val: 'Disponible à proximité' },
-    { icon:'♿', label:'Accessibilité', val: 'Accessible PMR' },
   ];
 
   return (

@@ -35,10 +35,7 @@ function HeroGradient() {
 }
 
 export default function RestaurantScreen({ route, navigation }) {
-  const restaurant = route?.params?.restaurant || {
-    name: 'Dar Zitoun', cuisine_type: 'algerien',
-    address: 'Bab El Oued, Alger', quartier: 'Bab El Oued',
-  };
+  const restaurant = route?.params?.restaurant || {};
 
   const {
     tab, photoIndex, setPhotoIndex,

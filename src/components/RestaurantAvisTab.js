@@ -4,13 +4,6 @@ import { colors, typography, spacing, radius } from '../theme';
 import MLoader from './MLoader';
 import Stars from './Stars';
 
-const MOCK_AVIS = [
-  { id:'m1', nom:'Karim B.',   note:5, date:'12 mai 2026', txt:'Excellent ! Service impeccable, on reviendra sans hésiter.' },
-  { id:'m2', nom:'Amira M.',   note:4, date:'8 mai 2026',  txt:'Très bonne cuisine, ambiance chaleureuse. Je recommande.' },
-  { id:'m3', nom:'Sofiane A.', note:5, date:'2 mai 2026',  txt:"L'un des meilleurs de la ville. Qualité constante." },
-  { id:'m4', nom:'Nadia K.',   note:4, date:'28 avr 2026', txt:'Service attentionné, plats généreux. Le couscous était parfait.' },
-];
-
 const AVATAR_COLORS = ['#E8A045','#5A9BE0','#4CAF82','#9b6cc8','#E05A5A','#5ab4c8'];
 function avatarColor(name) {
   let h = 0;
@@ -21,15 +14,13 @@ function avatarColor(name) {
 export default function RestaurantAvisTab({ restaurant, reviews, loadingReviews }) {
   const rating = Number(restaurant.avg_rating || 0);
 
-  const { list, dist } = useMemo(() => {
-    const list = reviews.length > 0 ? reviews : MOCK_AVIS;
-    const dist = [5, 4, 3, 2, 1].map(n => ({
+  const dist = useMemo(() => {
+    return [5, 4, 3, 2, 1].map(n => ({
       n,
-      pct: list.length > 0
-        ? Math.round((list.filter(r => Math.round(r.note || r.rating) === n).length / list.length) * 100)
-        : (n === 5 ? 60 : n === 4 ? 30 : 10),
+      pct: reviews.length > 0
+        ? Math.round((reviews.filter(r => Math.round(r.note || r.rating) === n).length / reviews.length) * 100)
+        : 0,
     }));
-    return { list, dist };
   }, [reviews]);
 
   if (loadingReviews) return (
@@ -47,7 +38,7 @@ export default function RestaurantAvisTab({ restaurant, reviews, loadingReviews 
           <Text style={s.bigRating}>{rating > 0 ? rating.toFixed(1) : '—'}</Text>
           <Stars value={rating} size={15} />
           <Text style={s.reviewCount}>
-            {restaurant.review_count > 0 ? `${restaurant.review_count} avis` : `${list.length} avis`}
+            {reviews.length > 0 ? `${reviews.length} avis` : 'Aucun avis'}
           </Text>
         </View>
         <View style={s.summaryRight}>
@@ -65,7 +56,13 @@ export default function RestaurantAvisTab({ restaurant, reviews, loadingReviews 
 
       <View style={s.divider} />
 
-      {list.map((a, i) => {
+      {reviews.length === 0 ? (
+        <View style={s.empty}>
+          <Text style={s.emptyEmoji}>💬</Text>
+          <Text style={s.emptyTxt}>Aucun avis pour l'instant</Text>
+          <Text style={s.emptySub}>Soyez le premier à partager votre expérience</Text>
+        </View>
+      ) : reviews.map((a, i) => {
         const displayName = a.nom || `${a.first_name || ''}${a.last_name ? ' ' + a.last_name[0] + '.' : ''}`.trim() || 'Anonyme';
         const note  = a.note || a.rating || 0;
         const color = avatarColor(displayName);
@@ -130,6 +127,10 @@ const s = StyleSheet.create({
   noteBadgeGood:{ backgroundColor: colors.greenSoft, borderColor: 'rgba(76,175,130,0.25)' },
   noteBadgeTxt: { color: colors.textMuted, fontSize: typography.size.sm },
   txt:          { color: colors.textMuted, fontSize: typography.size.bodyLg, fontWeight: typography.weight.regular, lineHeight: 20 },
+  empty:        { alignItems: 'center', paddingVertical: 48, gap: spacing.md },
+  emptyEmoji:   { fontSize: 36 },
+  emptyTxt:     { color: colors.textMuted, fontSize: typography.size.subheading, fontWeight: typography.weight.regular },
+  emptySub:     { color: colors.textDim, fontSize: typography.size.body, textAlign: 'center', paddingHorizontal: spacing.xl },
   ctaWrap:      { margin: spacing.xl, gap: spacing.xl - 2 },
   ctaDivider:   { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },
   ctaDividerTxt:{ color: colors.textDim, fontSize: typography.size.caption },

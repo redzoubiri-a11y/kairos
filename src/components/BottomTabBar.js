@@ -68,11 +68,7 @@ export default function BottomTabBar({ navigation, isPro = false, activeTab = nu
   const tabs = effectiveIsPro ? PRO_TABS : CLIENT_TABS;
 
   const goTab = useCallback((route) => {
-    if (route === 'Profil') {
-      navigation.navigate('Profil');
-    } else {
-      navigation.navigate('Main', { screen: route });
-    }
+    navigation.navigate('Main', { screen: route });
   }, [navigation]);
 
   return (

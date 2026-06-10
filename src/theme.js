@@ -21,6 +21,10 @@ export const colors = {
   accentSoft: 'rgba(155,144,136,0.18)',
   accentDim: '#7A7270',
 
+  // CTA Pro — ambre doré
+  gold: '#c8975a',
+  goldSoft: 'rgba(200,151,90,0.14)',
+
   // CTA Réservation — terracotta chaud
   resa: '#C87860',
   resaSoft: 'rgba(200,120,96,0.18)',

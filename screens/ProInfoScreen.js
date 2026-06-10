@@ -44,6 +44,11 @@ export default function ProInfoScreen({ navigation, route }) {
     <SafeAreaView style={s.root} edges={['top', 'left', 'right']}>
       <View style={s.header}>
         <View style={s.headerLeft}>
+          {!onSetupComplete && (
+            <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
+              <Text style={s.backBtnTxt}>←</Text>
+            </TouchableOpacity>
+          )}
           <Text style={s.title}>Mes informations</Text>
         </View>
         <TouchableOpacity
@@ -228,6 +233,8 @@ const s = StyleSheet.create({
   root:        { flex: 1, backgroundColor: colors.bg },
   header:      { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.cardBorder, backgroundColor: colors.card },
   headerLeft:  { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },
+  backBtn:     { marginRight: spacing.sm, padding: spacing.xs },
+  backBtnTxt:  { color: colors.text, fontSize: 22 },
   title:       { color: colors.text, fontSize: typography.size.heading2, fontWeight: typography.weight.semibold },
   saveBtn:     { backgroundColor: PRO_ACCENT, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, opacity: 1 },
   saveBtnActive:{ opacity: 0.75 },

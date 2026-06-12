@@ -102,6 +102,7 @@ export default function RestaurantScreen({ route, navigation }) {
               <Text style={s.openTxt}>Ouvert</Text>
             </View>
           </View>
+          <Text style={s.heroName} numberOfLines={2}>{restaurant.name}</Text>
           <View style={s.heroMeta}>
             {rating && (
               <>

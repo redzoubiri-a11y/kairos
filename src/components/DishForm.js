@@ -31,7 +31,7 @@ const tr = StyleSheet.create({
   thumbOn: { backgroundColor: colors.bg, alignSelf: 'flex-end' },
 });
 
-export default function DishForm({ initial, categories, isEdit, restaurantId, onSave, onCancel, onDelete }) {
+export default function DishForm({ initial, categories, isEdit, restaurantId, onSave, onCancel, onDelete, onTerminer }) {
   const [form,      setForm]      = useState(initial);
   const [saving,    setSaving]    = useState(false);
   const [deleting,  setDeleting]  = useState(false);
@@ -232,6 +232,11 @@ export default function DishForm({ initial, categories, isEdit, restaurantId, on
           >
             <Text style={s.saveBtnTxt}>{saving ? '···' : isEdit ? 'Enregistrer →' : 'Ajouter au menu →'}</Text>
           </TouchableOpacity>
+          {onTerminer && (
+            <TouchableOpacity style={s.terminerBtn} onPress={onTerminer}>
+              <Text style={s.terminerTxt}>Terminer → Dashboard</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -247,6 +252,8 @@ const s = StyleSheet.create({
   headerTitle: { color: colors.text, fontSize: typography.size.title, fontWeight: '300', letterSpacing: 1 },
   saveBtn:     { backgroundColor: '#c8975a', borderRadius: radius.xl, paddingVertical: 15, alignItems: 'center', shadowColor: '#000', shadowOpacity: 0.5, shadowRadius: 14, shadowOffset: { width: 0, height: 0 }, elevation: 7 },
   saveBtnTxt:  { color: colors.bg, fontSize: typography.size.subheading, fontWeight: typography.weight.bold, letterSpacing: 0.3 },
+  terminerBtn: { alignItems: 'center', paddingVertical: spacing.lg },
+  terminerTxt: { color: colors.accent, fontSize: typography.size.body, fontWeight: typography.weight.medium },
 });
 
 const f = StyleSheet.create({

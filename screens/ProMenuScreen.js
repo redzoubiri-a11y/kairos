@@ -68,6 +68,7 @@ export default function ProMenuScreen({ navigation, route }) {
           onSave={saveDish}
           onCancel={cancelForm}
           onDelete={deleteDish}
+          onTerminer={() => navigation.navigate('Main', { screen: 'Manager' })}
         />
     </SafeAreaView>
     );

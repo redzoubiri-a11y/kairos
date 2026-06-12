@@ -207,9 +207,9 @@ const s = StyleSheet.create({
   eyeBtn:  { marginLeft: spacing.md },
   eyeTxt:  { color: colors.blue, fontSize: typography.size.body },
 
-  forgotBtn:  { alignSelf: 'flex-end', marginTop: -spacing.md, marginBottom: spacing.lg },
-  forgotTxt:  { color: colors.blue, fontSize: typography.size.body },
-  forgotSent: { color: colors.green, fontSize: typography.size.body },
+  forgotBtn:  { alignSelf: 'flex-end', marginTop: spacing.sm, marginBottom: spacing.lg },
+  forgotTxt:  { color: colors.accent, fontSize: typography.size.caption, fontWeight: typography.weight.medium },
+  forgotSent: { color: colors.green, fontSize: typography.size.caption, fontWeight: typography.weight.medium },
 
   errorBox:       { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.md, backgroundColor: colors.redSoft, borderRadius: radius.lg, padding: spacing.lg, borderWidth: 1, borderColor: 'rgba(224,90,90,0.25)', marginBottom: spacing.xl },
   errorIcon:      { fontSize: typography.size.bodyLg },

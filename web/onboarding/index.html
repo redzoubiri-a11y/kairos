@@ -340,10 +340,10 @@
         <div class="success-state" id="successState">
           <div class="success-icon">🍽️</div>
           <h2 class="success-title">Demande envoyée</h2>
-          <p class="success-sub">Nous vérifions votre établissement et vous contactons sous 24h pour finaliser votre accès.</p>
+          <p class="success-sub">Votre demande est en cours de vérification. Vous recevrez la réponse (approbation ou refus) directement dans votre boîte mail <strong id="successEmail" style="color:var(--accent)"></strong> dans les prochaines minutes.</p>
           <div class="success-note">
             <span style="font-size:16px">✓</span>
-            Vérification en cours
+            Vérification en cours — réponse par email
           </div>
         </div>
 
@@ -559,6 +559,8 @@
       }
 
       form.style.display = 'none';
+      const emailEl = document.getElementById('successEmail');
+      if (emailEl) emailEl.textContent = email;
       success.classList.add('visible');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });

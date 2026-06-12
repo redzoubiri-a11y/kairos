@@ -450,15 +450,14 @@
       submitBtn.disabled = true;
       submitBtn.innerHTML = '<span class="spinner"></span>Envoi en cours…';
 
-      const { error } = await sb.from('pro_requests').insert({
-        first_name:      prenom,
-        last_name:       nom,
-        email:           email,
-        phone:           telephone,
-        restaurant_name: restaurant,
-        address:         adresse,
-        city:            ville,
-        status:          'pending',
+      const { error } = await sb.rpc('submit_pro_request', {
+        p_first_name:      prenom,
+        p_last_name:       nom,
+        p_email:           email,
+        p_phone:           telephone,
+        p_restaurant_name: restaurant,
+        p_address:         adresse,
+        p_city:            ville,
       });
 
       if (error) {

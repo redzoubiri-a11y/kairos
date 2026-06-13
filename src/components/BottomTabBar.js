@@ -94,31 +94,38 @@ export default function BottomTabBar({ navigation, isPro = false, activeTab = nu
   }, [navigation]);
 
   return (
-    <View style={[s.container, { paddingBottom: Math.max(insets.bottom, Platform.OS === 'android' ? 8 : 16) }]}>
-      {tabs.map(tab => (
-        <TabItem
-          key={tab.name}
-          tab={tab}
-          isActive={tab.name === activeTab}
-          onPress={() => goTab(tab.route)}
-        />
-      ))}
+    <View style={[s.outerWrap, { paddingBottom: Math.max(insets.bottom, Platform.OS === 'android' ? 8 : 12) }]}>
+      <View style={s.container}>
+        {tabs.map(tab => (
+          <TabItem
+            key={tab.name}
+            tab={tab}
+            isActive={tab.name === activeTab}
+            onPress={() => goTab(tab.route)}
+          />
+        ))}
+      </View>
     </View>
   );
 }
 
 const s = StyleSheet.create({
+  outerWrap: {
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    backgroundColor: 'transparent',
+  },
   container: {
     flexDirection: 'row',
     backgroundColor: 'rgba(255,255,255,0.97)',
-    borderTopWidth: 0.5,
-    borderTopColor: 'rgba(0,0,0,0.06)',
+    borderRadius: 36,
     paddingTop: 6,
+    paddingBottom: 6,
     shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: -3 },
-    elevation: 8,
+    shadowOpacity: 0.16,
+    shadowRadius: 20,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 16,
   },
   tab: {
     flex: 1,

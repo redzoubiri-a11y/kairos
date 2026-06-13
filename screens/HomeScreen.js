@@ -13,6 +13,12 @@ import useHomeData, { CITIES, CATEGORIES, QUICK_FILTERS } from '../src/hooks/use
 import usePushNotifications from '../src/hooks/usePushNotifications';
 import useDeepLink from '../src/hooks/useDeepLink';
 
+const NAVY        = 'transparent';
+const NAVY_BORDER = 'rgba(13,22,40,0.12)';
+const PRIMARY     = '#0D1628';
+const PRIMARY_SOFT = 'rgba(13,22,40,0.07)';
+const CREAM = colors.text;
+
 function SectionHead({ label, right, rightAction }) {
   return (
     <View style={sh.row}>
@@ -250,12 +256,6 @@ export default function HomeScreen({ navigation }) {
     </SafeAreaView>
   );
 }
-
-const NAVY        = 'transparent';
-const NAVY_BORDER = 'rgba(13,22,40,0.12)';
-const PRIMARY     = '#0D1628';
-const PRIMARY_SOFT = 'rgba(13,22,40,0.07)';
-const CREAM = colors.text;
 
 const s = StyleSheet.create({
   root:   { flex: 1, backgroundColor: colors.bg, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 },

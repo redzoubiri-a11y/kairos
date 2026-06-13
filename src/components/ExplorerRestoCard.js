@@ -1,5 +1,4 @@
 import { View, Text, StyleSheet, TouchableOpacity, Image, Dimensions } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { colors, typography, radius } from '../theme';
 import { CUISINE_EMOJI } from '../hooks/useExplorer';
 
@@ -47,7 +46,6 @@ export default function ExplorerRestoCard({ r, rank, distance, onPress, onReserv
             {r.review_count > 0 && <Text style={s.reviews}>{r.review_count} avis</Text>}
           </View>
           <TouchableOpacity style={s.reserveBtn} onPress={onReserve}>
-            <LinearGradient colors={['#FF6B1A','#D93A00']} start={{x:0,y:0}} end={{x:1,y:0}} style={StyleSheet.absoluteFillObject} />
             <Text style={s.reserveTxt}>Réserver</Text>
           </TouchableOpacity>
         </View>
@@ -73,6 +71,6 @@ const s = StyleSheet.create({
   footer:        { flexDirection:'row', justifyContent:'space-between', alignItems:'flex-end', marginTop:4 },
   price:         { color:colors.accent, fontSize:typography.size.sm, fontWeight:'500' },
   reviews:       { color:colors.textDim, fontSize:typography.size.xs, marginTop:1 },
-  reserveBtn:    { borderRadius:radius.sm, paddingHorizontal:8, paddingVertical:5, overflow:'hidden', alignItems:'center', justifyContent:'center' },
+  reserveBtn:    { borderRadius:radius.sm, paddingHorizontal:8, paddingVertical:5, overflow:'hidden', alignItems:'center', justifyContent:'center', backgroundColor: '#006233' },
   reserveTxt:    { color:'#FFFFFF', fontSize:typography.size.sm, fontWeight:'500' },
 });

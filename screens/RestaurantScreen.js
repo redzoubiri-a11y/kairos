@@ -180,7 +180,6 @@ export default function RestaurantScreen({ route, navigation }) {
             style={[s.reserveBtn, !restaurant.avg_ticket && { flex: 1 }]}
             onPress={goReserve}
           >
-            <LinearGradient colors={['#FF6B1A','#D93A00']} start={{x:0,y:0}} end={{x:1,y:0}} style={StyleSheet.absoluteFillObject} />
             <Text style={s.reserveTxt}>RÉSERVER UNE TABLE</Text>
           </TouchableOpacity>
         </View>
@@ -247,6 +246,6 @@ const s = StyleSheet.create({
   footerPrice:   { gap: spacing.xxs },
   footerPriceLbl:{ color: colors.textDim, fontSize: typography.size.xs, letterSpacing: 1.5 },
   footerPriceVal:{ color: colors.accent, fontSize: typography.size.heading2, fontWeight: typography.weight.regular },
-  reserveBtn:    { flex: 1, borderRadius: radius.xl, paddingVertical: spacing.xl - 1, alignItems: 'center', overflow: 'hidden', justifyContent: 'center' },
+  reserveBtn:    { flex: 1, borderRadius: radius.xl, paddingVertical: spacing.xl - 1, alignItems: 'center', overflow: 'hidden', justifyContent: 'center', backgroundColor: '#006233' },
   reserveTxt:    { color: '#FFFFFF', fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium, letterSpacing: 1.5 },
 });

@@ -31,9 +31,9 @@ function SectionHead({ label, right, rightAction }) {
 const sh = StyleSheet.create({
   row:   { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: spacing.xl, marginTop: spacing.lg, marginBottom: spacing.sm },
   left:  { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
-  bar:   { width: 3, height: 14, borderRadius: 0, backgroundColor: '#C87860' },
+  bar:   { width: 3, height: 14, borderRadius: 2, backgroundColor: PRIMARY },
   label: { color: colors.textMuted, fontSize: typography.size.xs, fontWeight: typography.weight.semibold, letterSpacing: 3.5 },
-  right: { color: '#C87860', fontSize: typography.size.body },
+  right: { color: PRIMARY, fontSize: typography.size.body },
 });
 
 function SkeletonCard() {
@@ -151,7 +151,7 @@ export default function HomeScreen({ navigation }) {
 
         {/* Ce soir */}
         {slots.length > 0 && (
-          <LinearGradient colors={['#FF6B1A', '#D93A00']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={s.tonightCard}>
+          <LinearGradient colors={['#1a3460', '#0D1628']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={s.tonightCard}>
             <View style={s.tonightBody}>
               <Text style={s.tonightLabel}>🌙  CE SOIR</Text>
               <Text style={s.tonightTitle}>Trouvez votre table</Text>
@@ -251,9 +251,10 @@ export default function HomeScreen({ navigation }) {
   );
 }
 
-const NAVY = 'transparent';
-const NAVY_BORDER = 'rgba(0,0,0,0.10)';
-const RESA = '#C87860';
+const NAVY        = 'transparent';
+const NAVY_BORDER = 'rgba(13,22,40,0.12)';
+const PRIMARY     = '#0D1628';
+const PRIMARY_SOFT = 'rgba(13,22,40,0.07)';
 const CREAM = colors.text;
 
 const s = StyleSheet.create({
@@ -268,23 +269,23 @@ const s = StyleSheet.create({
   searchPlaceholder: { color: colors.textDim, fontSize: 16, fontWeight: '300', letterSpacing: 0.3, flex: 1 },
   searchInput:   { flex: 1, color: colors.text, fontSize: 16, fontWeight: '300', letterSpacing: 0.3, padding: 0 },
   headerRight:   { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
-  iconBtn:       { width: 38, height: 38, borderRadius: 0, backgroundColor: NAVY, borderWidth: 1, borderColor: 'rgba(200,151,90,0.3)', alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOpacity: 0.25, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 3 },
+  iconBtn:       { width: 38, height: 38, borderRadius: radius.full, backgroundColor: NAVY, borderWidth: 1, borderColor: NAVY_BORDER, alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOpacity: 0.08, shadowRadius: 6, shadowOffset: { width: 0, height: 2 }, elevation: 2 },
   iconBtnTxt:    { fontSize: 17 },
-  notifBadge:    { position: 'absolute', top: -4, right: -4, minWidth: 16, height: 16, borderRadius: 8, backgroundColor: RESA, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 3, borderWidth: 1.5, borderColor: colors.bg },
+  notifBadge:    { position: 'absolute', top: -4, right: -4, minWidth: 16, height: 16, borderRadius: 8, backgroundColor: PRIMARY, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 3, borderWidth: 1.5, borderColor: colors.bg },
   notifBadgeTxt: { color: '#FFFFFF', fontSize: typography.size.xs, fontWeight: typography.weight.bold },
 
   /* Cities */
-  cityRow:        { maxHeight: 40 },
+  cityRow:        { maxHeight: 42 },
   cityContent:    { paddingHorizontal: spacing.xl, paddingVertical: spacing.xxs, flexDirection: 'row', gap: spacing.md, alignItems: 'center' },
-  cityChip:       { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderRadius: 0, backgroundColor: NAVY, borderWidth: 1, borderColor: NAVY_BORDER },
-  cityChipOn:     { backgroundColor: 'rgba(200,151,90,0.18)', borderColor: '#c8975a', shadowColor: '#000', shadowOpacity: 0.4, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
+  cityChip:       { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: radius.full, backgroundColor: NAVY, borderWidth: 1, borderColor: NAVY_BORDER },
+  cityChipOn:     { backgroundColor: PRIMARY, borderColor: PRIMARY, shadowColor: PRIMARY, shadowOpacity: 0.25, shadowRadius: 8, shadowOffset: { width: 0, height: 2 }, elevation: 4 },
   cityEmoji:      { fontSize: typography.size.body },
   cityTxt:        { color: colors.textMuted, fontSize: typography.size.body },
-  cityTxtOn:      { color: CREAM, fontWeight: typography.weight.semibold },
-  cityCount:      { backgroundColor: 'rgba(0,0,0,0.06)', borderRadius: 0, paddingHorizontal: 5, paddingVertical: 1, minWidth: 22, alignItems: 'center' },
-  cityCountOn:    { backgroundColor: 'rgba(200,120,96,0.25)' },
+  cityTxtOn:      { color: '#FFFFFF', fontWeight: typography.weight.semibold },
+  cityCount:      { backgroundColor: 'rgba(0,0,0,0.06)', borderRadius: radius.full, paddingHorizontal: 6, paddingVertical: 1, minWidth: 20, alignItems: 'center' },
+  cityCountOn:    { backgroundColor: 'rgba(255,255,255,0.22)' },
   cityCountTxt:   { color: colors.textMuted, fontSize: typography.size.xs, fontWeight: typography.weight.semibold },
-  cityCountTxtOn: { color: CREAM },
+  cityCountTxtOn: { color: '#FFFFFF' },
 
   /* Stats bar */
   statsBar:      { flexDirection: 'row', alignItems: 'center', marginHorizontal: spacing.xl, marginTop: spacing.xs, marginBottom: spacing.xs, backgroundColor: NAVY, borderRadius: radius.lg, paddingVertical: spacing.sm, paddingHorizontal: spacing.xl, borderWidth: 1, borderColor: NAVY_BORDER },
@@ -311,25 +312,25 @@ const s = StyleSheet.create({
 
   /* Pills cuisine */
   pillRow:   { paddingHorizontal: spacing.xl, gap: spacing.md, paddingBottom: spacing.xs },
-  pill:      { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, borderRadius: 0, backgroundColor: NAVY, borderWidth: 1, borderColor: NAVY_BORDER },
-  pillOn:    { backgroundColor: 'rgba(200,151,90,0.18)', borderColor: '#c8975a', shadowColor: '#000', shadowOpacity: 0.4, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
+  pill:      { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, borderRadius: radius.pill, backgroundColor: NAVY, borderWidth: 1, borderColor: NAVY_BORDER },
+  pillOn:    { backgroundColor: PRIMARY, borderColor: PRIMARY, shadowColor: PRIMARY, shadowOpacity: 0.22, shadowRadius: 8, shadowOffset: { width: 0, height: 2 }, elevation: 4 },
   pillEmoji: { fontSize: typography.size.subheading },
   pillTxt:   { color: colors.textMuted, fontSize: typography.size.body },
-  pillTxtOn: { color: CREAM, fontWeight: typography.weight.semibold },
+  pillTxtOn: { color: '#FFFFFF', fontWeight: typography.weight.semibold },
 
   /* Quick filters */
   quickRow:    { paddingHorizontal: spacing.xl, gap: spacing.md, paddingTop: spacing.xs, paddingBottom: spacing.xs },
-  quickChip:   { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: 0, backgroundColor: NAVY, borderWidth: 1, borderColor: NAVY_BORDER },
-  quickChipOn: { backgroundColor: 'rgba(200,151,90,0.18)', borderColor: '#c8975a', shadowColor: '#000', shadowOpacity: 0.4, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
+  quickChip:   { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: radius.pill, backgroundColor: NAVY, borderWidth: 1, borderColor: NAVY_BORDER },
+  quickChipOn: { backgroundColor: PRIMARY_SOFT, borderColor: PRIMARY },
   quickEmoji:  { fontSize: typography.size.body },
   quickTxt:    { color: colors.textMuted, fontSize: typography.size.caption },
-  quickTxtOn:  { color: CREAM, fontWeight: typography.weight.semibold },
+  quickTxtOn:  { color: PRIMARY, fontWeight: typography.weight.semibold },
 
   /* Empty */
   emptyWrap:  { alignItems: 'center', paddingVertical: spacing.section + spacing.xxl, gap: spacing.lg },
   emptyEmoji: { fontSize: 44 },
   emptyTitle: { color: CREAM, fontSize: typography.size.heading1, fontWeight: typography.weight.regular },
   emptySub:   { color: colors.textMuted, fontSize: typography.size.bodyLg },
-  emptyBtn:   { backgroundColor: NAVY, borderRadius: radius.lg, paddingHorizontal: spacing.xxl, paddingVertical: spacing.lg, borderWidth: 1, borderColor: 'rgba(200,151,90,0.35)', marginTop: spacing.xs, shadowColor: '#000', shadowOpacity: 0.3, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 4 },
+  emptyBtn:   { backgroundColor: NAVY, borderRadius: radius.pill, paddingHorizontal: spacing.xxl, paddingVertical: spacing.lg, borderWidth: 1, borderColor: NAVY_BORDER, marginTop: spacing.xs },
   emptyBtnTxt:{ color: CREAM, fontSize: typography.size.bodyLg },
 });

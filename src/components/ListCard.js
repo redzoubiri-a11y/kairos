@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { TouchableOpacity, View, Text, Image, ScrollView, StyleSheet, Dimensions } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { colors, typography, spacing, radius } from '../theme';
 
 const SW     = Dimensions.get('window').width;
@@ -68,7 +67,6 @@ export default function ListCard({ r, rank, onPress, onReserve }) {
               <View style={s.chip}><Text style={s.chipTxt}>⚡ ~20 min</Text></View>
             </View>
             <TouchableOpacity style={s.resaBtn} onPress={onReserve}>
-              <LinearGradient colors={['#FF6B1A','#D93A00']} start={{x:0,y:0}} end={{x:1,y:0}} style={StyleSheet.absoluteFillObject} />
               <Text style={s.resaBtnTxt}>Réserver →</Text>
             </TouchableOpacity>
           </View>
@@ -106,6 +104,6 @@ const s = StyleSheet.create({
   chips:       { flexDirection: 'row', gap: spacing.sm },
   chip:        { backgroundColor: colors.navyDeep, borderRadius: radius.sm, paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderWidth: 1, borderColor: colors.cardBorder },
   chipTxt:     { color: colors.textMuted, fontSize: typography.size.sm },
-  resaBtn:     { borderRadius: radius.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
+  resaBtn:     { borderRadius: radius.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', backgroundColor: '#006233' },
   resaBtnTxt:  { color: '#FFFFFF', fontSize: typography.size.body, fontWeight: typography.weight.semibold, letterSpacing: 0.3 },
 });

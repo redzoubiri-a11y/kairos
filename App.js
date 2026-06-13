@@ -36,9 +36,9 @@ const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 const C = {
-  bg: '#0d1628', bg2: '#111827',
-  border: 'rgba(255,255,255,0.07)',
-  accent: '#c8975a', dim: '#8a9ab0', text: '#f0ece4',
+  bg: '#0d1628', bg2: 'transparent',
+  border: 'transparent',
+  accent: '#0D1628', dim: '#b0bec5', text: '#f0ece4',
 };
 
 const TAB_ICONS = {
@@ -57,21 +57,14 @@ function TabIcon({ name, focused }) {
     <View style={{ alignItems: 'center', justifyContent: 'center', width: 32, height: 28 }}>
       {focused && (
         <View style={{
-          position: 'absolute', width: 36, height: 36, borderRadius: 18,
-          backgroundColor: 'rgba(200,151,90,0.07)',
-          shadowColor: C.accent, shadowOpacity: 0.25, shadowRadius: 8,
-          shadowOffset: { width: 0, height: 0 },
+          position: 'absolute', width: 40, height: 32, borderRadius: 16,
+          backgroundColor: 'rgba(13,22,40,0.13)',
         }} />
       )}
       <Ionicons
         name={iconName}
-        size={focused ? 23 : 21}
+        size={focused ? 22 : 20}
         color={focused ? C.accent : C.dim}
-        style={focused ? {
-          textShadowColor: C.accent,
-          textShadowOffset: { width: 0, height: 0 },
-          textShadowRadius: 4,
-        } : null}
       />
     </View>
   );
@@ -89,16 +82,21 @@ function TabNavigator({ userRole }) {
         headerShown: false,
         tabBarIcon: ({ focused }) => <TabIcon name={route.name} focused={focused} />,
         tabBarStyle: {
-          backgroundColor: C.bg2,
-          borderTopColor: C.border,
-          borderTopWidth: 1,
-          paddingBottom: 24,
-          paddingTop: 8,
-          height: 72,
+          backgroundColor: 'rgba(255,255,255,0.97)',
+          borderTopColor: 'rgba(0,0,0,0.06)',
+          borderTopWidth: 0.5,
+          paddingBottom: 20,
+          paddingTop: 6,
+          height: 68,
+          elevation: 8,
+          shadowColor: '#000',
+          shadowOpacity: 0.08,
+          shadowRadius: 12,
+          shadowOffset: { width: 0, height: -3 },
         },
         tabBarActiveTintColor: C.accent,
         tabBarInactiveTintColor: C.dim,
-        tabBarLabelStyle: { fontSize: 10, letterSpacing: 1, fontWeight: '400', marginTop: 2 },
+        tabBarLabelStyle: { fontSize: 10, letterSpacing: 0.5, fontWeight: '400', marginTop: 1 },
       })}
     >
       <Tab.Screen name="Accueil" component={HomeScreen} />

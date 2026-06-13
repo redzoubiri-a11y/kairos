@@ -4,10 +4,11 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
 const C = {
-  bg:     '#111827',
-  border: 'rgba(255,255,255,0.07)',
-  accent: '#c8975a',
-  dim:    '#8a9ab0',
+  bg:     'rgba(255,255,255,0.97)',
+  border: 'rgba(0,0,0,0.06)',
+  accent: '#0D1628',
+  dim:    '#b0bec5',
+  activeBg: 'rgba(13,22,40,0.08)',
 };
 
 const CLIENT_TABS = [
@@ -39,10 +40,10 @@ function TabItem({ tab, isActive, onPress }) {
 
   return (
     <TouchableOpacity style={s.tab} onPress={handlePress} activeOpacity={1}>
-      <Animated.View style={[s.tabInner, { transform: [{ scale }] }]}>
+      <Animated.View style={[s.tabInner, isActive && s.tabInnerActive, { transform: [{ scale }] }]}>
         <Ionicons
           name={isActive ? tab.icon : `${tab.icon}-outline`}
-          size={isActive ? 23 : 21}
+          size={isActive ? 22 : 20}
           color={isActive ? C.accent : C.dim}
         />
         <Text style={[s.label, isActive && s.labelActive]}>{tab.label ?? tab.name}</Text>
@@ -109,10 +110,15 @@ export default function BottomTabBar({ navigation, isPro = false, activeTab = nu
 const s = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    backgroundColor: C.bg,
-    borderTopWidth: 1,
-    borderTopColor: C.border,
-    paddingTop: 8,
+    backgroundColor: 'rgba(255,255,255,0.97)',
+    borderTopWidth: 0.5,
+    borderTopColor: 'rgba(0,0,0,0.06)',
+    paddingTop: 6,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: -3 },
+    elevation: 8,
   },
   tab: {
     flex: 1,
@@ -124,10 +130,13 @@ const s = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 3,
-    position: 'relative',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    borderRadius: 20,
   },
-  label:       { fontSize: 10, letterSpacing: 1, fontWeight: '400', color: C.dim, marginTop: 2 },
-  labelActive: { color: C.accent },
+  tabInnerActive: {
+    backgroundColor: C.activeBg,
+  },
+  label:       { fontSize: 10, letterSpacing: 0.5, fontWeight: '400', color: C.dim, marginTop: 1 },
+  labelActive: { color: C.accent, fontWeight: '600' },
 });

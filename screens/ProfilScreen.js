@@ -336,10 +336,10 @@ const s = StyleSheet.create({
   root:      { flex: 1, backgroundColor: colors.bg },
   bgOverlay: { ...StyleSheet.absoluteFillObject, opacity: 0.06 },
 
-  darkTop:     { backgroundColor: '#006233' },
+  darkTop:     { backgroundColor: '#0D1628' },
   header:      { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xxl, paddingTop: spacing.xl, paddingBottom: spacing.xl },
-  backBtn:     { width: 36, height: 36, borderRadius: 0, backgroundColor: 'transparent', alignItems: 'center', justifyContent: 'center' },
-  backBtnTxt:  { color: '#FFFFFF', fontSize: typography.size.heading2 },
+  backBtn:     { width: 38, height: 38, borderRadius: 19, backgroundColor: 'rgba(255,255,255,0.2)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.35)', alignItems: 'center', justifyContent: 'center' },
+  backBtnTxt:  { color: '#FFFFFF', fontSize: typography.size.heading2, lineHeight: 24 },
   editBtn:     { paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: radius.md, backgroundColor: 'rgba(255,255,255,0.12)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.35)' },
   editBtnTxt:  { color: 'rgba(255,255,255,0.85)', fontSize: typography.size.caption },
 
@@ -351,7 +351,7 @@ const s = StyleSheet.create({
   avatarImg:     { width: 96, height: 96 },
   avatarFallback:{ width: 96, height: 96, backgroundColor: 'rgba(255,255,255,0.18)', alignItems: 'center', justifyContent: 'center' },
   avatarInitial: { color: '#FFFFFF', fontSize: 36, fontWeight: typography.weight.regular },
-  avatarBadge:   { position: 'absolute', bottom: 2, right: 2, width: 26, height: 26, borderRadius: 13, backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: '#006233' },
+  avatarBadge:   { position: 'absolute', bottom: 2, right: 2, width: 26, height: 26, borderRadius: 13, backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: '#0D1628' },
   heroInfo:      { alignItems: 'center', gap: spacing.sm },
   heroName:      { color: '#F5F2EC', fontSize: typography.size.title, fontWeight: typography.weight.regular, letterSpacing: 0.5 },
   heroEmail:     { color: 'rgba(245,242,236,0.65)', fontSize: typography.size.bodyLg },
@@ -360,7 +360,7 @@ const s = StyleSheet.create({
   editBlock:     { width: '100%', gap: spacing.lg },
   editRow:       { flexDirection: 'row', gap: spacing.lg },
   editInput:     { flex: 1, backgroundColor: colors.card, borderRadius: radius.lg, borderWidth: 1, borderColor: colors.cardBorder, color: colors.text, fontSize: typography.size.subheading, paddingHorizontal: spacing.lg, paddingVertical: spacing.lg },
-  saveBtn:       { backgroundColor: '#004d27', borderRadius: radius.lg, paddingVertical: 11, alignItems: 'center', borderWidth: 1.5, borderColor: '#FFFFFF', shadowColor: '#000', shadowOpacity: 0.35, shadowRadius: 12, shadowOffset: { width: 0, height: 0 }, elevation: 6 },
+  saveBtn:       { backgroundColor: '#061020', borderRadius: radius.lg, paddingVertical: 11, alignItems: 'center', borderWidth: 1.5, borderColor: '#FFFFFF', shadowColor: '#000', shadowOpacity: 0.35, shadowRadius: 12, shadowOffset: { width: 0, height: 0 }, elevation: 6 },
   saveBtnTxt:    { color: '#FFFFFF', fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium },
 
   statsRow: { flexDirection: 'row', marginHorizontal: spacing.xxl, marginVertical: spacing.xl, backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, overflow: 'hidden' },

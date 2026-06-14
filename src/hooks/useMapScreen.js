@@ -52,7 +52,6 @@ export default function useMapScreen() {
           .from('restaurants')
           .select('id, name, cuisine_type, quartier, avg_rating, avg_ticket, latitude, longitude');
         if (data) setRestaurants(data);
-        if (error) console.warn('[MapScreen]', error.message);
       } finally {
         setLoading(false);
       }

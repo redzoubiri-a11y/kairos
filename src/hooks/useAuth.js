@@ -21,12 +21,14 @@ export default function useAuth({ onAuth, userType, onSwitchType }) {
   const fadeAnim  = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
-    Animated.loop(
+    const anim = Animated.loop(
       Animated.sequence([
         Animated.timing(pulseAnim, { toValue: 1.08, duration: 2400, useNativeDriver: true }),
         Animated.timing(pulseAnim, { toValue: 1,    duration: 2400, useNativeDriver: true }),
       ])
-    ).start();
+    );
+    anim.start();
+    return () => anim.stop();
   }, []);
 
   const shakeX = useMemo(

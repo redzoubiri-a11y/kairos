@@ -123,7 +123,6 @@ export default function useProfil() {
       await supabase.from('users').update({ avatar_url: urlData.publicUrl }).eq('auth_id', authId);
       setAvatarUri(`${urlData.publicUrl}?v=${Date.now()}`);
     } catch (e) {
-      console.error(e);
     } finally {
       setUploading(false);
     }

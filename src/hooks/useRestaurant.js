@@ -108,7 +108,6 @@ export default function useRestaurant(restaurant) {
           .upsert({ user_id: userId, restaurant_id: restaurant.id }, { onConflict: 'user_id,restaurant_id' })
           .select('id');
         if (error) {
-          console.error('Fav upsert:', error.message, error.code);
         } else {
           const id = data?.[0]?.id;
           if (id) {

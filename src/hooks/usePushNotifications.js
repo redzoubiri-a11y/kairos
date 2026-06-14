@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { Platform } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import Constants from 'expo-constants';
@@ -9,16 +10,18 @@ import { supabase } from '../../supabase';
 let _coldStartHandled = false;
 
 // Comportement des notifications quand l'app est au premier plan
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge:  true,
-  }),
-});
+if (Platform.OS !== 'web') {
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge:  true,
+    }),
+  });
+}
 
 async function registerForPushNotifications() {
-  if (!Device.isDevice) return null;
+  if (Platform.OS === 'web' || !Device.isDevice) return null;
 
   const { status: existing } = await Notifications.getPermissionsAsync();
   let finalStatus = existing;
@@ -74,6 +77,7 @@ export default function usePushNotifications(navigation) {
   const responseListener = useRef(null);
 
   useEffect(() => {
+    if (Platform.OS === 'web') return;
     registerForPushNotifications().then(savePushToken);
 
     // Cold start: handle once per session — not on every HomeScreen remount

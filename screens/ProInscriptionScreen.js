@@ -8,7 +8,14 @@ import FormField from '../src/components/FormField';
 
 export default function ProInscriptionScreen({ navigation }) {
   const { form, loading, error, success, approved, rejected, set, soumettre } = useProInscription();
-  const goBack = useCallback(() => navigation.goBack(), [navigation]);
+  const goBack = useCallback(() => {
+    if (navigation.canGoBack()) navigation.goBack();
+    else navigation.navigate('Main', { screen: 'Accueil' });
+  }, [navigation]);
+
+  const continueAsClient = useCallback(() => {
+    navigation.navigate('Main', { screen: 'Accueil' });
+  }, [navigation]);
 
   useEffect(() => {
     if (approved) navigation.navigate('Main', { screen: 'Manager' });
@@ -95,6 +102,10 @@ export default function ProInscriptionScreen({ navigation }) {
           Activation immédiate et gratuite pendant 3 mois.
         </Text>
 
+        <TouchableOpacity style={s.clientLink} onPress={continueAsClient}>
+          <Text style={s.clientLinkTxt}>Continuer comme client →</Text>
+        </TouchableOpacity>
+
         <View style={{ height: spacing.section * 2 }} />
       </ScrollView>
       </KeyboardAvoidingView>
@@ -124,7 +135,9 @@ const s = StyleSheet.create({
   submitBtn:    { marginHorizontal: spacing.xxl, marginTop: spacing.xxl, backgroundColor: '#C87860', borderRadius: radius.xl, paddingVertical: spacing.xl - 1, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,220,150,0.5)', shadowColor: '#000', shadowOpacity: 0.5, shadowRadius: 14, shadowOffset: { width: 0, height: 0 }, elevation: 7 },
   submitBtnTxt: { color: '#FFFFFF', fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium, letterSpacing: 1.5 },
 
-  legalTxt: { marginHorizontal: spacing.xxl, marginTop: spacing.lg, color: colors.textDim, fontSize: typography.size.caption, textAlign: 'center', lineHeight: 16, fontStyle: 'italic' },
+  legalTxt:   { marginHorizontal: spacing.xxl, marginTop: spacing.lg, color: colors.textDim, fontSize: typography.size.caption, textAlign: 'center', lineHeight: 16, fontStyle: 'italic' },
+  clientLink: { marginHorizontal: spacing.xxl, marginTop: spacing.xl, paddingVertical: spacing.lg, alignItems: 'center' },
+  clientLinkTxt: { color: colors.textMuted, fontSize: typography.size.body, textDecorationLine: 'underline' },
 
   successWrap:  { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.section },
   successRing:  { width: 100, height: 100, borderRadius: 0, backgroundColor: colors.navy, borderWidth: 1, borderColor: colors.navyBorder, alignItems: 'center', justifyContent: 'center', marginBottom: spacing.xxl },

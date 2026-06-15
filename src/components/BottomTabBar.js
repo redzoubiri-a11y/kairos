@@ -3,11 +3,9 @@ import { View, Text, TouchableOpacity, StyleSheet, Platform, Animated } from 're
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const C = {
-  accent:    '#006233',
-  dim:       'rgba(255,255,255,0.45)',
-  activeTxt: '#FFFFFF',
-  activeBg:  'rgba(255,255,255,0.18)',
-  border:    'rgba(255,255,255,0.12)',
+  accent:   '#0D1628',
+  dim:      '#b0bec5',
+  activeBg: 'rgba(13,22,40,0.08)',
 };
 
 const CLIENT_TABS = [
@@ -43,7 +41,6 @@ function TabItem({ tab, isActive, onPress }) {
         <Text style={[s.label, isActive && s.labelActive]} numberOfLines={1}>
           {tab.label}
         </Text>
-        {isActive && <View style={s.activeDot} />}
       </Animated.View>
     </TouchableOpacity>
   );
@@ -102,58 +99,45 @@ export default function BottomTabBar({ navigation, isPro = false, activeTab = nu
 
 const s = StyleSheet.create({
   outerWrap: {
-    paddingHorizontal: 12,
-    paddingTop: 6,
+    paddingHorizontal: 16,
+    paddingTop: 8,
     backgroundColor: 'transparent',
   },
   container: {
     flexDirection: 'row',
-    backgroundColor: 'rgba(13,22,40,0.72)',
-    borderRadius: 32,
+    backgroundColor: 'rgba(255,255,255,0.97)',
+    borderRadius: 36,
     paddingVertical: 8,
-    paddingHorizontal: 4,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.10)',
+    height: 50,
     shadowColor: '#000',
-    shadowOpacity: 0.28,
+    shadowOpacity: 0.16,
     shadowRadius: 24,
     shadowOffset: { width: 0, height: 8 },
-    elevation: 18,
+    elevation: 16,
   },
   tab: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 40,
   },
   tabInner: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 8,
-    paddingVertical: 6,
-    borderRadius: 20,
-    gap: 3,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 16,
   },
   tabInnerActive: {
     backgroundColor: C.activeBg,
-    borderWidth: 1,
-    borderColor: C.border,
   },
   label: {
-    fontSize: 11,
-    letterSpacing: 0.3,
+    fontSize: 10,
+    letterSpacing: 0.5,
     fontWeight: '400',
     color: C.dim,
   },
   labelActive: {
-    color: C.activeTxt,
+    color: C.accent,
     fontWeight: '600',
-    fontSize: 11,
-  },
-  activeDot: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: '#006233',
   },
 });

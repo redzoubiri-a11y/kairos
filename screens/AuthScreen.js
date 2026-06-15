@@ -27,7 +27,7 @@ const f = StyleSheet.create({
   icon:  { fontSize: typography.size.subheading, marginRight: spacing.md, opacity: 0.7 },
 });
 
-export default function AuthScreen({ onAuth, userType, onSwitchType }) {
+export default function AuthScreen({ onAuth, userType, onSwitchType, onGuest }) {
   const [showCGU, setShowCGU] = useState(false);
   const {
     isPro, mode, email, setEmail, password, setPassword, confirm, setConfirm,
@@ -180,6 +180,12 @@ export default function AuthScreen({ onAuth, userType, onSwitchType }) {
             </TouchableOpacity>
           )}
 
+          {onGuest && !isPro && (
+            <TouchableOpacity style={s.guestBtn} onPress={onGuest} activeOpacity={0.6}>
+              <Text style={s.guestTxt}>Explorer sans compte →</Text>
+            </TouchableOpacity>
+          )}
+
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -237,4 +243,6 @@ const s = StyleSheet.create({
 
   switchTypeBtn: { alignSelf: 'center', marginTop: spacing.xxl, paddingVertical: spacing.md, paddingHorizontal: spacing.xxl - 2, borderRadius: radius.lg, borderWidth: 1, borderColor: 'rgba(90,155,224,0.3)', backgroundColor: colors.blueSoft },
   switchTypeTxt: { color: colors.blue, fontSize: typography.size.body, fontWeight: typography.weight.medium, letterSpacing: 0.3 },
+  guestBtn:      { alignSelf: 'center', marginTop: spacing.xl, paddingVertical: spacing.md, paddingHorizontal: spacing.xxl },
+  guestTxt:      { color: colors.textMuted, fontSize: typography.size.bodyLg },
 });

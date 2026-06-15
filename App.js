@@ -161,7 +161,7 @@ export default function App() {
       );
     }
     if (!session && !userType && !guestMode) {
-      if (Platform.OS === 'web') return <AuthScreen userType={webUserType} onAuth={(s) => setSession(s)} onSwitchType={setWebUserType} />;
+      if (Platform.OS === 'web') return <AuthScreen userType={webUserType} onAuth={(s) => setSession(s)} onSwitchType={setWebUserType} onGuest={enterGuestMode} />;
       return <OnboardingScreen onSelect={setUserType} onGuest={enterGuestMode} />;
     }
     if (!session && !guestMode) return <AuthScreen userType={userType} onAuth={(s) => setSession(s)} />;

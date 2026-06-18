@@ -8,8 +8,9 @@
     "icon": "./assets/logo.png",
     "userInterfaceStyle": "dark",
     "splash": {
+      "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#0a0f1a"
+      "backgroundColor": "#13502e"
     },
     "ios": {
       "supportsTablet": true,
@@ -30,7 +31,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#0a0f1a"
+        "backgroundColor": "#13502e"
       },
       "edgeToEdgeEnabled": true,
       "package": "com.mida.app",

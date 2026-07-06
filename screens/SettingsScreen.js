@@ -7,15 +7,19 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, typography, spacing, radius } from '../src/theme';
 import useSettings, { GROUPS } from '../src/hooks/useSettings';
 import CGUModal from '../src/components/CGUModal';
+import PrivacyPolicyModal from '../src/components/PrivacyPolicyModal';
 
 export default function SettingsScreen({ navigation }) {
   const { toggles, toggle } = useSettings();
   const [showCGU, setShowCGU] = useState(false);
+  const [showPrivacy, setShowPrivacy] = useState(false);
   const goAide = useCallback(() => navigation.navigate('Aide'), [navigation]);
 
   const handleItem = useCallback((item) => {
     if (item.cgu) {
       setShowCGU(true);
+    } else if (item.privacy) {
+      setShowPrivacy(true);
     } else if (item.url) {
       Linking.openURL(item.url);
     } else if (item.screen) {
@@ -28,6 +32,7 @@ export default function SettingsScreen({ navigation }) {
   return (
     <SafeAreaView style={s.root} edges={['top', 'left', 'right']}>
       <CGUModal visible={showCGU} onClose={() => setShowCGU(false)} />
+      <PrivacyPolicyModal visible={showPrivacy} onClose={() => setShowPrivacy(false)} />
       <View style={s.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
           <Text style={s.backBtnTxt}>←</Text>

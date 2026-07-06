@@ -25,6 +25,11 @@
 - Proche de : **آل عمران 3:173** « حَسْبُنَا اللَّهُ وَنِعْمَ الْوَكِيلُ » et **at-Tawba 9:129** « حَسْبِيَ اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ ».
 - ✅ Usage légitime en tant que dhikr ; **ne pas** l'introduire par « Allah dit dans le verset… » sous cette forme abrégée.
 
+### V3 — Sourate Ash-Shuʿarâ' (26), versets 88-89 ✅ *(ajouté Arc 2)*
+- **Arabe :** يَوْمَ لَا يَنفَعُ مَالٌ وَلَا بَنُونَ * إِلَّا مَنْ أَتَى اللَّهَ بِقَلْبٍ سَلِيمٍ
+- **Sens :** « Le Jour où ni les biens ni les enfants ne serviront, sauf celui qui vient à Allah avec un cœur sain. »
+- **Emploi :** Épisode 5 (le qalb salîm). Citation exacte, aucune réserve.
+
 ---
 
 ## 2. Hadiths
@@ -71,7 +76,37 @@
 - **Réf. :** **Musnad Ahmad 23630** ; classé **hasan**, et **sahîh** par al-Albânî (as-Silsila as-Sahîha 951).
 - ❗ **Important :** ce hadith **n'est pas** dans Bukhârî/Muslim. Le présenter comme « rapporté par Ahmad, authentifié » — **ne pas** dire « muttafaq ʿalayh ».
 - **Terminologie :** le hadith dit **shirk asghar** (petit polythéisme). L'expression « shirk khafî » (polythéisme *caché*) est une **description de savants**, pas le mot du hadith → à distinguer. Corrigé dans le lead magnet H (levier 6).
-- **Emploi :** Lead magnet H (levier 6) ; calendrier F (S8 — riyâ').
+- **Emploi :** Lead magnet H (levier 6) ; calendrier F (S8 — riyâ') ; **Épisode 8**.
+
+### H7 — Le cœur, morceau de chair qui gouverne le corps ✅ (muttafaq ʿalayh) *(ajouté Arc 2)*
+- **Arabe :** أَلَا وَإِنَّ فِي الجَسَدِ مُضْغَةً، إِذَا صَلَحَتْ صَلَحَ الجَسَدُ كُلُّهُ، وَإِذَا فَسَدَتْ فَسَدَ الجَسَدُ كُلُّهُ، أَلَا وَهِيَ القَلْبُ
+- **Sens :** « Il y a dans le corps un morceau de chair : s'il est sain, tout le corps l'est ; s'il est corrompu, tout l'est. C'est le cœur. »
+- **Rapporteur :** an-Nuʿmân b. Bashîr (رضي الله عنه).
+- **Réf. :** **Bukhârî 52**, **Muslim 1599** (muttafaq ʿalayh).
+- **Emploi :** Épisode 5 (les maladies du cœur).
+
+### H8 — « Saisis cinq avant cinq » ⚠️ (al-Hâkim — sahîh, PAS dans les deux Sahîh) *(ajouté Arc 2)*
+- **Arabe :** اغْتَنِمْ خَمْسًا قَبْلَ خَمْسٍ: شَبَابَكَ قَبْلَ هَرَمِكَ… وَحَيَاتَكَ قَبْلَ مَوْتِكَ
+- **Sens :** « Saisis cinq avant cinq : ta jeunesse avant ta vieillesse… et ta vie avant ta mort. »
+- **Rapporteur :** Ibn ʿAbbâs (رضي الله عنهما).
+- **Réf. :** **Mustadrak al-Hâkim** (7846) ; authentifié — **Sahîh al-Jâmiʿ 1077** (al-Albânî).
+- ❗ **Ne pas** dire « muttafaq ʿalayh » → « rapporté par al-Hâkim, authentifié (sahîh) ».
+- **Emploi :** Épisode 6 (procrastination / tûl al-amal).
+
+### H9 — « Dis : je crois en Allah, puis tiens-toi droit » ✅ (Muslim) *(ajouté Arc 2)*
+- **Arabe :** قُلْ: آمَنْتُ بِاللَّهِ، ثُمَّ اسْتَقِمْ
+- **Sens :** « Dis : "Je crois en Allah", puis tiens-toi droit (istiqâma). »
+- **Rapporteur :** Sufyân b. ʿAbdillâh ath-Thaqafî (رضي الله عنه).
+- **Réf. :** **Muslim 38** ; **Nawawî 40 n°21**.
+- **Emploi :** Épisode 7 (rituels / istiqâma).
+
+### H10 — Duʿâ de protection contre le shirk (riyâ') ⚠️ (al-Adab al-Mufrad — sahîh) *(ajouté Arc 2)*
+- **Arabe :** اللَّهُمَّ إِنِّي أَعُوذُ بِكَ أَنْ أُشْرِكَ بِكَ وَأَنَا أَعْلَمُ، وَأَسْتَغْفِرُكَ لِمَا لَا أَعْلَمُ
+- **Sens :** « Ô Allah, je cherche refuge contre le fait de T'associer sciemment, et je Te demande pardon pour ce que j'ignore. »
+- **Contexte :** « Le shirk parmi vous est plus discret que le pas d'une fourmi… » — le Prophète ﷺ enseigne ce duʿâ à Abû Bakr.
+- **Rapporteur :** Abû Bakr as-Siddîq (رضي الله عنه).
+- **Réf. :** **al-Bukhârî, al-Adab al-Mufrad 716** ; authentifié par al-Albânî (Sahîh al-Jâmiʿ). ❗ Pas dans les deux Sahîh.
+- **Emploi :** Épisode 8 (protection contre le riyâ').
 
 ---
 
@@ -97,7 +132,9 @@ mais bon à connaître pour la solidité :
 ---
 
 ## Bilan
-Toutes les citations des scripts ép. 2–4 et des livrables F/H sont **authentiques et vérifiées**.
+Toutes les citations des scripts ép. **2–8** et des livrables F/H sont **authentiques et vérifiées**.
+Rappel de vigilance : hadiths **hors des deux Sahîh** (H6 riyâ' = Ahmad ; H8 « cinq avant cinq » = al-Hâkim ;
+H10 duʿâ shirk = al-Adab al-Mufrad) → les annoncer « rapporté par…, authentifié », jamais « muttafaq ʿalayh ».
 Deux points de vigilance à respecter en production : (a) l'attribution de **Yûsuf 12:53**
 (parole rapportée dans le Coran, pas du Prophète Yûsuf), et (b) le hadith du **riyâ'** (Ahmad,
 hasan/sahîh — pas des deux Sahîh, et « shirk asghar » plutôt que « khafî »). Corrections déjà

@@ -50,7 +50,7 @@
 
 **Levier 6 — Teste ta sincérité (contre le riyâ').**
 - *Blocage :* tu fais le bien en partie pour le regard des autres — et ça évide l'acte.
-- *Éclairage :* le riyâ', « le polythéisme caché », dévore les bonnes actions en silence.
+- *Éclairage :* le riyâ' est ce que le Prophète ﷺ nomma « **le petit polythéisme** » (ash-shirk al-asghar), ce qu'il craignait le plus pour nous ; il dévore les bonnes actions en silence. *(Mahmûd b. Labîd — Musnad Ahmad ; hasan/sahîh — voir K)*
 - *Ce soir :* pose-toi : « le ferais-je si personne ne le voyait jamais ? » Ajuste **un** acte en conséquence.
 
 **Levier 7 — Vise l'ihsân (comme si tu Le voyais).**

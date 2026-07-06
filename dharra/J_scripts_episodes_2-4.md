@@ -6,9 +6,9 @@
 > en Amiri à l'écran ; `[AYA]` = cartouche verset/hadith voyellisé).
 > CTA de ces 3 épisodes = **lead magnet « 7 leviers de la Tazkiya »** (rotation F.4, S1–4).
 
-> ⚠️ **Note fiabilité (QA kit G) :** les versets et hadiths cités ci-dessous doivent être
-> **vérifiés et sourcés précisément** (référence exacte, degré d'authenticité) avant tournage.
-> Les mentions `[source à vérifier]` marquent les points à confirmer avec une référence fiable.
+> ✅ **Sources vérifiées** (juillet 2026, via quran.com / sunnah.com / dorar.net) : voir le
+> détail et les références exactes dans `dharra/K_sources_verifiees.md`. Toutes les citations
+> ci-dessous ont été confirmées ; les degrés d'authenticité et numéros sont dans ce document.
 
 ---
 
@@ -38,7 +38,9 @@ Elle habille la paresse en sagesse. Et toi, tu signes. »
 
 **[2:00 — ANCRAGE]**
 `[AYA]` « إِنَّ النَّفْسَ لَأَمَّارَةٌ بِالسُّوءِ »
-« Certes, l'âme est très incitatrice au mal… » *(Yûsuf, 12:53)* `[source à vérifier — réf. exacte]`
+« Certes, l'âme est très incitatrice au mal… » *(Yûsuf, 12:53 — ✅ vérifié)*
+*(note de production : dans le contexte, ce sont les paroles de la femme d'al-ʿAzîz ;
+l'enseignement sur la nafs ammâra reste valide et couramment cité ainsi.)*
 *(voix qui baisse, nappe qui monte)*
 « Remarque le mot : *incitatrice*. Pas *ordonnatrice*. Elle ne t'oblige pas.
 Elle **suggère**. En douceur. Sans jamais lever la voix. C'est ça qui la rend dangereuse. »
@@ -102,7 +104,7 @@ Ce n'est pas de la paresse. C'est un malentendu sur l'ordre des choses. »
 **[2:30 — ANCRAGE]**
 `[AYA]` « أَحَبُّ الأَعْمَالِ إِلَى اللَّهِ أَدْوَمُهَا وَإِنْ قَلَّ »
 « Les actes les plus aimés d'Allah sont les plus constants, même s'ils sont peu. »
-*(Muttafaq ʿalayh)* `[source à vérifier — réf. exacte]`
+*(ʿÂʾisha — Bukhârî 6464 & Muslim 783, muttafaq ʿalayh — ✅ vérifié)*
 *(pause)*
 « Regarde ce que le hadith **ne dit pas**. Il ne dit pas : *les plus grands*.
 Il dit : *les plus constants, même peu*.
@@ -164,7 +166,7 @@ Alors tu ajoutes la culpabilité à l'angoisse. Tu portes deux poids au lieu d'u
 
 **[2:30 — ANCRAGE]**
 `[AYA]` « أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ »
-« N'est-ce point par le rappel d'Allah que s'apaisent les cœurs ? » *(Ar-Raʿd, 13:28)* `[source à vérifier]`
+« N'est-ce point par le rappel d'Allah que s'apaisent les cœurs ? » *(Ar-Raʿd, 13:28 — ✅ vérifié)*
 *(voix basse, nappe qui enfle doucement)*
 « Le verset ne dit pas : *quand les problèmes disparaissent, les cœurs s'apaisent*.
 Il dit : par le **rappel**. L'apaisement n'est pas de l'autre côté de l'épreuve.
@@ -206,7 +208,9 @@ pour toi, PDF + audio, en description. Gratuit. Prends-les, et commence ce soir.
 - **Visuel** : fond nuit `#0E1C1B` + halo or ; `[KEY]` en Amiri or/ivoire ; `[AYA]` en cartouche pleine.
 - **Sous-titres** : Plex Sans Arabic SemiBold, systématiques.
 - **Dérivés (F.5)** : par épisode → short « hook » + short « outil » + short « verset ».
-- **QA religieuse** : vérifier **chaque** référence marquée `[source à vérifier]` avant publication.
+- **QA religieuse** : références **vérifiées** (voir `K_sources_verifiees.md`). Note ép. 4 :
+  « حسبي الله » est employé comme **dhikr** (proche de 3:173 « حسبنا الله ونعم الوكيل » et 9:129
+  « حسبي الله لا إله إلا هو ») — ce n'est pas une citation littérale d'un verset unique.
 
 ## Dérivés shorts (à découper de chaque master)
 | Épisode | Short 1 (hook) | Short 2 (outil) | Short 3 (verset) |

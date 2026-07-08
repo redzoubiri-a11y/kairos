@@ -70,7 +70,7 @@ export default function useComptoir() {
       if (userIds.length > 0) {
         const { data: usersData } = await supabase
           .from('users')
-          .select('id, first_name, last_name, email')
+          .select('id, first_name, last_name, email, phone, no_show_count')
           .in('id', userIds);
         (usersData || []).forEach(u => { usersMap[u.id] = u; });
       }
@@ -151,6 +151,16 @@ export default function useComptoir() {
     ]);
   }, [act, restaurant]);
 
+  const noShow = useCallback((resa) => {
+    Alert.alert('No Show', `Confirmer que ${clientName(resa)} n'est pas venu ?`, [
+      { text: 'Annuler', style: 'cancel' },
+      { text: 'Confirmer No Show', style: 'destructive', onPress: () => act(resa.id, async () => {
+        await supabase.from('reservations').update({ status: 'no_show' }).eq('id', resa.id);
+        setReservations(prev => prev.map(r => r.id === resa.id ? { ...r, status: 'no_show' } : r));
+      })},
+    ]);
+  }, [act]);
+
   const cancel = useCallback((resa) => {
     Alert.alert('Annuler', `Annuler la réservation de ${clientName(resa)} à ${resa.time_slot?.slice(0, 5)} ?`, [
       { text: 'Non', style: 'cancel' },
@@ -221,7 +231,7 @@ export default function useComptoir() {
     stats,
     emptyDateStr,
     load,
-    confirm, arrive, cancel,
+    confirm, arrive, cancel, noShow,
     selectResa,
   };
 }

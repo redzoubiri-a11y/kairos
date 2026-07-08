@@ -14,6 +14,7 @@ import Clock from '../src/components/Clock';
 import ResaRow from '../src/components/ResaRow';
 import CompactResaRow from '../src/components/CompactResaRow';
 import ResaDetail from '../src/components/ResaDetail';
+import BottomTabBar from '../src/components/BottomTabBar';
 
 function StatBox({ label, value, color }) {
   return (
@@ -55,7 +56,7 @@ export default function ProComptoir({ navigation }) {
   const {
     restaurant, reservations, visibleReservations, loading, refreshing,
     acting, selectedResa, selectedResaId, stats, emptyDateStr,
-    load, confirm, arrive, cancel, selectResa,
+    load, confirm, arrive, cancel, noShow, selectResa,
   } = useComptoir();
 
   const { width, height } = useWindowDimensions();
@@ -119,6 +120,9 @@ export default function ProComptoir({ navigation }) {
   const header = (
     <View style={s.header}>
       <View style={s.headerLeft}>
+        <TouchableOpacity style={s.backBtn} onPress={() => navigation.goBack()}>
+          <Text style={s.backBtnTxt}>←</Text>
+        </TouchableOpacity>
         <View>
           <Text style={s.restoName}>{restaurant?.name || 'Mode comptoir'}</Text>
           <Text style={s.dateStr}>{greeting} 👋</Text>
@@ -189,10 +193,12 @@ export default function ProComptoir({ navigation }) {
               onConfirm={confirm}
               onCancel={cancel}
               onArrive={arrive}
+              onNoShow={noShow}
               acting={acting}
             />
           </View>
         </View>
+        <BottomTabBar navigation={navigation} isPro activeTab="Manager" transparent />
       </View>
     );
   }
@@ -222,9 +228,10 @@ export default function ProComptoir({ navigation }) {
         }
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.accent} />}
         showsVerticalScrollIndicator={true}
-        contentContainerStyle={{ flexGrow: 1, paddingBottom: insets.bottom + 40 }}
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: 100 }}
         style={{ flex: 1 }}
       />
+      <BottomTabBar navigation={navigation} isPro activeTab="Manager" transparent />
     </View>
   );
 }
@@ -235,6 +242,8 @@ const s = StyleSheet.create({
 
   header:      { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xl, paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.10)' },
   headerLeft:  { flexDirection: 'row', alignItems: 'center', gap: spacing.lg, flex: 1 },
+  backBtn:     { width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.12)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.20)' },
+  backBtnTxt:  { color: 'rgba(245,242,236,0.9)', fontSize: 20, lineHeight: 24 },
   headerRight: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   restoName:   { color: '#F5F2EC', fontSize: typography.size.heading1, fontWeight: '300', letterSpacing: 0.3 },
   dateStr:     { color: 'rgba(245,242,236,0.50)', fontSize: typography.size.caption, textTransform: 'capitalize', marginTop: 1 },

@@ -9,7 +9,6 @@ const CUISINE_EMOJI = {
   algerien: '🥘', mediterraneen: '🐟', fast_casual: '☕',
   italien: '🍕', japonais: '🍣', turc: '🍢', libanais: '🌿', francais: '🍷',
 };
-const CARD_BG = ['#1A1006', '#0F1006', '#16100A', '#100616', '#060F16', '#160606'];
 
 export default function ListCard({ r, rank, onPress, onReserve }) {
   const [idx, setIdx] = useState(0);
@@ -18,7 +17,7 @@ export default function ListCard({ r, rank, onPress, onReserve }) {
     <View style={s.shadow}>
       <TouchableOpacity style={s.card} onPress={onPress} activeOpacity={0.85}>
         {/* Image hero */}
-        <View style={[s.hero, { backgroundColor: CARD_BG[rank % CARD_BG.length] }]}>
+        <View style={s.hero}>
           {photos ? (
             <ScrollView
               horizontal pagingEnabled showsHorizontalScrollIndicator={false}
@@ -30,7 +29,9 @@ export default function ListCard({ r, rank, onPress, onReserve }) {
               ))}
             </ScrollView>
           ) : (
-            <Text style={s.heroEmoji}>{CUISINE_EMOJI[r.cuisine_type] || '🍽️'}</Text>
+            <View style={[StyleSheet.absoluteFill, { backgroundColor: colors.card, alignItems: 'center', justifyContent: 'center' }]}>
+              <Text style={s.heroEmoji}>{CUISINE_EMOJI[r.cuisine_type] || '🍽️'}</Text>
+            </View>
           )}
           {photos?.length > 1 && (
             <View style={s.dots}>
@@ -46,7 +47,7 @@ export default function ListCard({ r, rank, onPress, onReserve }) {
           </View>
         </View>
 
-        {/* Corps carte — navy défini */}
+        {/* Corps carte */}
         <View style={s.body}>
           <View style={s.bodyTop}>
             <Text style={s.tag}>
@@ -78,32 +79,32 @@ export default function ListCard({ r, rank, onPress, onReserve }) {
 
 const s = StyleSheet.create({
   shadow:      { marginHorizontal: spacing.xl, marginBottom: spacing.xl },
-  card:        { backgroundColor: colors.card, borderRadius: 0, borderWidth: 1, borderColor: colors.cardBorder, overflow: 'hidden' },
-  hero:        { width: CARD_W, height: 220, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
+  card:        { backgroundColor: colors.bg, borderRadius: radius.card, borderWidth: 1, borderColor: colors.separator, overflow: 'hidden' },
+  hero:        { width: CARD_W, height: 220, alignItems: 'center', justifyContent: 'center', overflow: 'hidden', backgroundColor: colors.card },
   heroEmoji:   { fontSize: 56 },
   dots:        { position: 'absolute', bottom: spacing.lg, flexDirection: 'row', gap: 4, alignSelf: 'center' },
-  dot:         { width: 5, height: 5, borderRadius: 0, backgroundColor: 'rgba(0,0,0,0.20)' },
-  dotOn:       { backgroundColor: colors.text, width: 16 },
+  dot:         { width: 5, height: 5, borderRadius: 3, backgroundColor: 'rgba(255,255,255,0.4)' },
+  dotOn:       { backgroundColor: '#FFFFFF', width: 16 },
   rankBadge:   { position: 'absolute', top: spacing.lg, right: spacing.lg, backgroundColor: 'rgba(0,0,0,0.45)', borderRadius: radius.sm, paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)' },
   rankTxt:     { color: 'rgba(255,255,255,0.8)', fontSize: typography.size.caption, fontWeight: typography.weight.bold },
-  topBadge:    { position: 'absolute', top: spacing.lg, left: spacing.lg, backgroundColor: 'rgba(13,107,63,0.20)', borderRadius: radius.sm, paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderWidth: 1, borderColor: 'rgba(13,107,63,0.40)' },
+  topBadge:    { position: 'absolute', top: spacing.lg, left: spacing.lg, backgroundColor: colors.halalBg, borderRadius: radius.sm, paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderWidth: 1, borderColor: colors.halalBorder },
   topBadgeTxt: { color: colors.primary, fontSize: typography.size.sm, fontWeight: typography.weight.semibold },
-  openBadge:   { position: 'absolute', bottom: spacing.lg, left: spacing.lg, flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.45)', borderRadius: 0, paddingHorizontal: spacing.md, paddingVertical: spacing.xs, gap: 5, borderWidth: 1, borderColor: 'rgba(76,175,130,0.35)' },
-  openDot:     { width: 6, height: 6, borderRadius: 0, backgroundColor: colors.green },
+  openBadge:   { position: 'absolute', bottom: spacing.lg, left: spacing.lg, flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.45)', borderRadius: radius.sm, paddingHorizontal: spacing.md, paddingVertical: spacing.xs, gap: 5, borderWidth: 1, borderColor: 'rgba(76,175,130,0.35)' },
+  openDot:     { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.green },
   openTxt:     { color: colors.green, fontSize: typography.size.sm, fontWeight: typography.weight.medium },
-  body:        { padding: spacing.xl, gap: spacing.xl - 2, backgroundColor: colors.card },
+  body:        { padding: spacing.xl, gap: spacing.xl - 2, backgroundColor: colors.bg },
   bodyTop:     { gap: spacing.xs },
-  tag:         { color: colors.primary, fontSize: typography.size.xs, letterSpacing: 2.5, fontWeight: typography.weight.medium },
+  tag:         { color: colors.textSecondary, fontSize: typography.size.xs, letterSpacing: 2, fontWeight: typography.weight.medium },
   name:        { color: colors.text, fontSize: typography.size.heading2, fontWeight: typography.weight.medium, letterSpacing: 0.2 },
   meta:        { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
-  ratingVal:   { color: colors.primary, fontSize: typography.size.body, fontWeight: typography.weight.semibold },
-  reviews:     { color: colors.textDim, fontSize: typography.size.caption },
-  dot2:        { width: 3, height: 3, borderRadius: 0, backgroundColor: colors.textDim },
+  ratingVal:   { color: colors.star, fontSize: typography.size.body, fontWeight: typography.weight.semibold },
+  reviews:     { color: colors.textTertiary, fontSize: typography.size.caption },
+  dot2:        { width: 3, height: 3, borderRadius: 2, backgroundColor: colors.textTertiary },
   price:       { color: colors.primary, fontSize: typography.size.body, fontWeight: typography.weight.semibold },
   footer:      { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   chips:       { flexDirection: 'row', gap: spacing.sm },
-  chip:        { backgroundColor: colors.navyDeep, borderRadius: radius.sm, paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderWidth: 1, borderColor: colors.cardBorder },
-  chipTxt:     { color: colors.textMuted, fontSize: typography.size.sm },
-  resaBtn:     { borderRadius: radius.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', backgroundColor: '#006233' },
-  resaBtnTxt:  { color: '#FFFFFF', fontSize: typography.size.body, fontWeight: typography.weight.semibold, letterSpacing: 0.3 },
+  chip:        { backgroundColor: colors.halalBg, borderRadius: radius.sm, paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderWidth: 1, borderColor: colors.halalBorder },
+  chipTxt:     { color: colors.textSecondary, fontSize: typography.size.sm },
+  resaBtn:     { borderRadius: radius.card, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.primary },
+  resaBtnTxt:  { color: colors.bg, fontSize: typography.size.body, fontWeight: typography.weight.semibold, letterSpacing: 0.3 },
 });

@@ -34,7 +34,7 @@
         "backgroundColor": "#13502e"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.mida.app",
+      "package": "com.midadz.app",
       "versionCode": 1,
       "permissions": [
         "RECEIVE_BOOT_COMPLETED",

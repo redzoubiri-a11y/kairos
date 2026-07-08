@@ -297,9 +297,6 @@ const s = StyleSheet.create({
   slotRow:      { gap: spacing.md },
   slotChip:     { paddingHorizontal: spacing.lg, paddingVertical: 7, borderRadius: 0, backgroundColor: 'rgba(0,0,0,0.28)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.30)' },
   slotTxt:      { color: '#FFFFFF', fontSize: typography.size.body, fontWeight: typography.weight.medium },
-  slotAll:      { backgroundColor: 'rgba(0,0,0,0.38)', borderColor: 'rgba(255,255,255,0.20)' },
-  slotAllTxt:   { color: 'rgba(255,255,255,0.75)', fontSize: typography.size.body },
-
   /* À la une */
   featRow: { paddingHorizontal: spacing.xl, paddingBottom: spacing.xs },
 

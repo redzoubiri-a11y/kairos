@@ -1,0 +1,11 @@
+const noop = () => null;
+const MapView = noop;
+MapView.Animated = noop;
+export const Marker = noop;
+export const Callout = noop;
+export const Circle = noop;
+export const Polygon = noop;
+export const Polyline = noop;
+export const PROVIDER_GOOGLE = 'google';
+export const PROVIDER_DEFAULT = null;
+export default MapView;

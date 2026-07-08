@@ -62,6 +62,14 @@ export const colors = {
   // Overlay
   overlay: 'rgba(0,0,0,0.5)',
   overlayLight: 'rgba(0,0,0,0.15)',
+
+  // Restaurant cards design system
+  star: '#f5c842',
+  separator: '#eeeeee',
+  halalBg: '#e8f5ee',
+  halalBorder: '#a3d4b8',
+  textSecondary: '#555555',
+  textTertiary: '#888888',
 };
 
 export const typography = {
@@ -118,6 +126,7 @@ export const spacing = {
 export const radius = {
   sm: 4,
   md: 8,
+  card: 10,
   lg: 12,
   xl: 16,
   xxl: 20,

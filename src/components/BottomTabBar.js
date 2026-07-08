@@ -8,6 +8,12 @@ const C = {
   activeBg: 'rgba(13,22,40,0.08)',
 };
 
+const C_DARK = {
+  accent:   '#FFFFFF',
+  dim:      'rgba(255,255,255,0.45)',
+  activeBg: 'rgba(255,255,255,0.10)',
+};
+
 const CLIENT_TABS = [
   { name: 'Accueil',   label: 'Accueil',      route: 'Accueil' },
   { name: 'Recherche', label: 'Recherche',     route: 'Recherche' },
@@ -24,8 +30,9 @@ const PRO_TABS = [
   { name: 'Profil',    label: 'Profil',    route: 'Profil' },
 ];
 
-function TabItem({ tab, isActive, onPress }) {
+function TabItem({ tab, isActive, onPress, dark }) {
   const scale = useRef(new Animated.Value(1)).current;
+  const colors = dark ? C_DARK : C;
 
   const handlePress = useCallback(() => {
     Animated.sequence([
@@ -37,8 +44,12 @@ function TabItem({ tab, isActive, onPress }) {
 
   return (
     <TouchableOpacity style={s.tab} onPress={handlePress} activeOpacity={1}>
-      <Animated.View style={[s.tabInner, isActive && s.tabInnerActive, { transform: [{ scale }] }]}>
-        <Text style={[s.label, isActive && s.labelActive]} numberOfLines={1}>
+      <Animated.View style={[
+        s.tabInner,
+        isActive && { backgroundColor: colors.activeBg },
+        { transform: [{ scale }] },
+      ]}>
+        <Text style={[s.label, { color: isActive ? colors.accent : colors.dim }]} numberOfLines={1}>
           {tab.label}
         </Text>
       </Animated.View>
@@ -63,7 +74,7 @@ function detectManager(navigation) {
   } catch { return false; }
 }
 
-export default function BottomTabBar({ navigation, isPro = false, activeTab = null }) {
+export default function BottomTabBar({ navigation, isPro = false, activeTab = null, transparent = false }) {
   const insets = useSafeAreaInsets();
   const [effectiveIsPro, setEffectiveIsPro] = useState(() => isPro || detectManager(navigation));
 
@@ -83,13 +94,14 @@ export default function BottomTabBar({ navigation, isPro = false, activeTab = nu
 
   return (
     <View style={[s.outerWrap, { paddingBottom: Math.max(insets.bottom, Platform.OS === 'android' ? 8 : 12) }]}>
-      <View style={s.container}>
+      <View style={[s.container, transparent && s.containerTransparent]}>
         {tabs.map(tab => (
           <TabItem
             key={tab.name}
             tab={tab}
             isActive={tab.name === activeTab}
             onPress={() => goTab(tab.route)}
+            dark={transparent}
           />
         ))}
       </View>
@@ -114,6 +126,11 @@ const s = StyleSheet.create({
     shadowRadius: 24,
     shadowOffset: { width: 0, height: 8 },
     elevation: 16,
+  },
+  containerTransparent: {
+    backgroundColor: 'transparent',
+    shadowOpacity: 0,
+    elevation: 0,
   },
   tab: {
     flex: 1,

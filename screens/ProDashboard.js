@@ -18,6 +18,8 @@ import AlertBanner from '../src/components/AlertBanner';
 import DashResaCard from '../src/components/DashResaCard';
 import ProSetupCard from '../src/components/ProSetupCard';
 import useProOnboarding from '../src/hooks/useProOnboarding';
+import { useMonthlyReport } from '../src/hooks/useMonthlyReport';
+import MonthlyReport from '../src/components/MonthlyReport';
 
 function SkeletonDashboard() {
   return (
@@ -54,6 +56,7 @@ export default function ProDashboard({ navigation }) {
   } = useDashboard();
 
   const { visible: setupVisible, visited, markVisited, dismiss: dismissSetup, reset: resetSetup } = useProOnboarding();
+  const { report: monthlyReport, loading: monthlyLoading, error: monthlyError, refetch: refetchReport } = useMonthlyReport(restaurant?.id);
 
   const goPromos   = useCallback(() => navigation.navigate('ProPromos'),   [navigation]);
   const goComptoir = useCallback(() => navigation.navigate('ProComptoir'), [navigation]);
@@ -149,6 +152,13 @@ export default function ProDashboard({ navigation }) {
         <AlertBanner pendingCount={pendingAll.length} upcomingCount={upcomingCount} />
         <View style={s.sep} />
         <WeekStrip reservations={reservations} />
+        <View style={s.sep} />
+        <MonthlyReport
+          report={monthlyReport}
+          loading={monthlyLoading}
+          error={monthlyError}
+          onRefetch={refetchReport}
+        />
         <View style={s.sep} />
 
         {/* Date filter */}

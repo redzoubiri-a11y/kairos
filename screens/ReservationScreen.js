@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   RefreshControl,
@@ -8,12 +8,30 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { colors, typography, spacing, radius } from '../src/theme';
 import MLoader from '../src/components/MLoader';
 import useReservations, { daysUntil } from '../src/hooks/useReservations';
+import useMyReservations from '../src/hooks/useMyReservations';
 import NextResaCard from '../src/components/NextResaCard';
-import SmallResaCard from '../src/components/SmallResaCard';
+import ReservationCard from '../src/components/ReservationCard';
 import HistResaCard from '../src/components/HistResaCard';
 import ReviewModal from '../src/components/ReviewModal';
 import GuestWall from '../src/components/GuestWall';
 import { useGuestContext } from '../src/context/GuestContext';
+
+// ── Feedback helpers pour la NextResaCard (cancel EF) ─────────────────────
+function nextFbStyle(status) {
+  if (status === 'ok')                 return { backgroundColor: colors.greenSoft,  borderColor: 'rgba(76,175,130,0.30)' };
+  if (status === 'pending_validation') return { backgroundColor: colors.blueSoft,   borderColor: 'rgba(90,155,224,0.30)' };
+  return                                      { backgroundColor: colors.redSoft,    borderColor: 'rgba(224,90,90,0.30)'  };
+}
+function nextFbColor(status) {
+  if (status === 'ok')                 return { color: colors.green  };
+  if (status === 'pending_validation') return { color: colors.blue   };
+  return                                      { color: colors.red    };
+}
+function nextFbMsg(fb) {
+  if (fb.status === 'ok')                 return '✓  Annulation enregistrée.';
+  if (fb.status === 'pending_validation') return '⏳  Demande transmise au restaurant.';
+  return `✕  ${fb.reason || 'Impossible pour le moment.'}`;
+}
 
 function SkeletonView() {
   return (
@@ -35,12 +53,35 @@ function SkeletonView() {
 
 export default function ReservationScreen({ navigation }) {
   const { isGuest } = useGuestContext();
+
+  // ── Historique + reviews (tab "Historique") ──────────────────────────────
   const {
-    tab, setTab, loading, refreshing,
-    today, aVenir, historique, next, later, pending, histByMonth,
+    tab, setTab,
+    historique, histByMonth,
     reviewedIds, pendingReviewIds,
-    cancelResa, submitReview, onRefresh,
+    submitReview,
+    onRefresh: refreshHistory,
   } = useReservations();
+
+  // ── Réservations à venir + actions EF (tab "À venir") ───────────────────
+  const myResas = useMyReservations();
+
+  const loading    = myResas.loading;
+  const refreshing = myResas.refreshing || false;
+  const onRefresh  = useCallback(() => {
+    myResas.load(true);
+    refreshHistory();
+  }, [myResas.load, refreshHistory]);
+
+  // Dérivés : prochaine + suite
+  const today  = new Date().toISOString().split('T')[0];
+  const next   = myResas.upcomingResas[0] ?? null;
+  const later  = myResas.upcomingResas.slice(1);
+  const aVenir = myResas.upcomingResas;
+  const pending = useMemo(
+    () => aVenir.filter(r => r.status === 'pending').length,
+    [aVenir],
+  );
 
   const [reviewTarget, setReviewTarget] = useState(null);
   const [submitting,   setSubmitting]   = useState(false);
@@ -61,7 +102,7 @@ export default function ReservationScreen({ navigation }) {
   }, [submitReview]);
 
   const goExplorer   = useCallback(() => navigation?.navigate('Explorer'), [navigation]);
-  const onCancelNext = useCallback(() => next && cancelResa(next), [cancelResa, next]);
+  const onCancelNext = useCallback(() => next && myResas.cancel(next.id), [myResas.cancel, next]);
   const onViewNext   = useCallback(
     () => next?.restaurants?.id && navigation?.navigate('Restaurant', { restaurant: next.restaurants }),
     [navigation, next],
@@ -161,6 +202,16 @@ export default function ReservationScreen({ navigation }) {
                 onViewRestaurant={next?.restaurants?.id ? onViewNext : null}
                 onEdit={() => onEditResa(next)}
               />
+              {myResas.feedback[next?.id] && (
+                <View style={[s.nextFeedback, nextFbStyle(myResas.feedback[next.id].status)]}>
+                  <Text style={[s.nextFeedbackTxt, nextFbColor(myResas.feedback[next.id].status)]}>
+                    {nextFbMsg(myResas.feedback[next.id])}
+                  </Text>
+                  <TouchableOpacity onPress={() => myResas.clearFeedback(next.id)}>
+                    <Text style={[s.nextFeedbackDismiss, nextFbColor(myResas.feedback[next.id].status)]}>✕</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
 
               {later.length > 0 && (
                 <>
@@ -168,12 +219,15 @@ export default function ReservationScreen({ navigation }) {
                     PLUS TARD  ·  {later.length}
                   </Text>
                   {later.map(r => (
-                    <SmallResaCard
+                    <ReservationCard
                       key={r.id}
                       r={r}
-                      onCancel={() => cancelResa(r)}
-                      onPress={() => r.restaurants?.id && navigation?.navigate('Restaurant', { restaurant: r.restaurants })}
-                      onEdit={() => onEditResa(r)}
+                      acting={myResas.acting.has(r.id)}
+                      feedback={myResas.feedback[r.id] ?? null}
+                      onClearFeedback={() => myResas.clearFeedback(r.id)}
+                      onCancel={myResas.cancel}
+                      onModifyTime={myResas.modifyTime}
+                      onModifyParty={myResas.modifyParty}
                     />
                   ))}
                 </>
@@ -248,6 +302,9 @@ const s = StyleSheet.create({
   tabBadgeTxt:{ color: '#FFFFFF', fontSize: typography.size.sm, fontWeight: typography.weight.semibold },
 
   sectionLbl: { color: colors.textMuted, fontSize: typography.size.xs, letterSpacing:4, paddingHorizontal: spacing.xxl, marginBottom: spacing.lg },
+  nextFeedback:        { flexDirection: 'row', alignItems: 'center', marginHorizontal: spacing.xl, marginBottom: spacing.lg, borderRadius: radius.lg, borderWidth: 1, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, gap: spacing.sm },
+  nextFeedbackTxt:     { flex: 1, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium, lineHeight: 18 },
+  nextFeedbackDismiss: { fontSize: typography.size.caption, fontWeight: typography.weight.bold },
   monthLbl:   { color: colors.textDim, fontSize: typography.size.xs, letterSpacing:3, paddingHorizontal: spacing.xxl, paddingTop: spacing.xxl, paddingBottom: spacing.md, borderBottomWidth:1, borderBottomColor: colors.cardBorder },
 
   empty:      { alignItems:'center', paddingTop:80, gap: spacing.lg },

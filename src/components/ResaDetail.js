@@ -2,7 +2,7 @@ import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-nati
 import { colors, typography, spacing, radius } from '../theme';
 import { STATUS_CFG, clientName } from '../hooks/useComptoir';
 
-export default function ResaDetail({ resa, onConfirm, onCancel, onArrive, acting }) {
+export default function ResaDetail({ resa, onConfirm, onCancel, onArrive, onNoShow, acting }) {
   if (!resa) {
     return (
       <View style={s.empty}>
@@ -13,11 +13,12 @@ export default function ResaDetail({ resa, onConfirm, onCancel, onArrive, acting
     );
   }
 
-  const cfg    = STATUS_CFG[resa.status] || STATUS_CFG.pending;
-  const isAct  = acting.has(resa.id);
-  const isPend = resa.status === 'pending';
-  const isConf = resa.status === 'confirmed';
-  const canAct = isPend || isConf;
+  const cfg        = STATUS_CFG[resa.status] || STATUS_CFG.pending;
+  const isAct      = acting.has(resa.id);
+  const isPend     = resa.status === 'pending';
+  const isConf     = resa.status === 'confirmed';
+  const canAct     = isPend || isConf;
+  const noShowCount = resa.users?.no_show_count ?? 0;
 
   return (
     <ScrollView contentContainerStyle={s.content} showsVerticalScrollIndicator={false}>
@@ -27,6 +28,14 @@ export default function ResaDetail({ resa, onConfirm, onCancel, onArrive, acting
 
       <Text style={[s.time, { color: cfg.color }]}>{resa.time_slot?.slice(0, 5)}</Text>
       <Text style={s.clientName}>{clientName(resa)}</Text>
+
+      {noShowCount > 0 && (
+        <View style={[s.noShowBadge, noShowCount >= 3 && s.noShowBadgeDanger]}>
+          <Text style={[s.noShowTxt, noShowCount >= 3 && s.noShowTxtDanger]}>
+            ⚠️  {noShowCount} no-show{noShowCount > 1 ? 's' : ''} enregistré{noShowCount > 1 ? 's' : ''}
+          </Text>
+        </View>
+      )}
 
       <View style={s.metaRow}>
         <View style={s.metaBox}>
@@ -61,6 +70,11 @@ export default function ResaDetail({ resa, onConfirm, onCancel, onArrive, acting
             {isConf && (
               <TouchableOpacity style={s.btnArrive} onPress={() => onArrive(resa)}>
                 <Text style={s.btnArriveTxt}>✓  MARQUER ARRIVÉ</Text>
+              </TouchableOpacity>
+            )}
+            {isConf && (
+              <TouchableOpacity style={s.btnNoShow} onPress={() => onNoShow(resa)}>
+                <Text style={s.btnNoShowTxt}>✕  NO SHOW</Text>
               </TouchableOpacity>
             )}
             <TouchableOpacity style={s.btnCancel} onPress={() => onCancel(resa)}>
@@ -109,4 +123,12 @@ const s = StyleSheet.create({
   btnCancelTxt:  { color: colors.red, fontSize: typography.size.heading2, fontWeight: typography.weight.semibold, letterSpacing: 1.5 },
   finalBadge:    { borderRadius: radius.pill, borderWidth: 1.5, paddingHorizontal: spacing.xxl, paddingVertical: spacing.xl, alignSelf: 'center', marginTop: spacing.lg },
   finalTxt:      { fontSize: typography.size.heading3, fontWeight: typography.weight.semibold, letterSpacing: 2 },
+
+  noShowBadge:       { backgroundColor: 'rgba(232,160,69,0.12)', borderRadius: radius.lg, borderWidth: 1, borderColor: 'rgba(232,160,69,0.35)', paddingHorizontal: spacing.xxl, paddingVertical: spacing.md, marginBottom: spacing.xxl },
+  noShowBadgeDanger: { backgroundColor: 'rgba(224,90,90,0.12)', borderColor: 'rgba(224,90,90,0.40)' },
+  noShowTxt:         { color: colors.accent, fontSize: typography.size.caption, fontWeight: typography.weight.semibold, letterSpacing: 0.5 },
+  noShowTxtDanger:   { color: colors.red },
+
+  btnNoShow:    { backgroundColor: 'rgba(245,242,236,0.06)', borderRadius: radius.xl, borderWidth: 1.5, borderColor: 'rgba(245,242,236,0.18)', paddingVertical: spacing.xl, alignItems: 'center' },
+  btnNoShowTxt: { color: 'rgba(245,242,236,0.55)', fontSize: typography.size.heading2, fontWeight: typography.weight.semibold, letterSpacing: 1.5 },
 });

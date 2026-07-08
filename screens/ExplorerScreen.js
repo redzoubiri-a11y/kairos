@@ -7,7 +7,12 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import MapView, { Marker } from 'react-native-maps';
+let MapView, Marker;
+if (Platform.OS !== 'web') {
+  const maps = require('react-native-maps');
+  MapView = maps.default;
+  Marker  = maps.Marker;
+}
 import { colors, typography, spacing, radius } from '../src/theme';
 import useExplorer, { CITIES, getCoord, haversineKm } from '../src/hooks/useExplorer';
 import RestaurantPin from '../src/components/RestaurantPin';

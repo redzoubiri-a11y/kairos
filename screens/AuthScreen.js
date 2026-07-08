@@ -197,15 +197,15 @@ const s = StyleSheet.create({
   scroll: { flexGrow: 1, paddingHorizontal: spacing.xl, paddingBottom: spacing.section + 4 },
 
   hero:          { alignItems: 'center', paddingTop: 50, paddingBottom: spacing.section },
-  heroRingOuter: { width: 88, height: 88, borderRadius: radius.xxl, backgroundColor: colors.accentSoft, borderWidth: 1.5, borderColor: 'rgba(232,160,69,0.2)', alignItems: 'center', justifyContent: 'center', marginBottom: spacing.xxl },
-  heroRingInner: { width: 60, height: 60, borderRadius: radius.xl, backgroundColor: colors.accentSoft, borderWidth: 1, borderColor: 'rgba(232,160,69,0.3)', alignItems: 'center', justifyContent: 'center' },
-  heroStar:      { color: colors.accent, fontSize: 28 },
+  heroRingOuter: { width: 88, height: 88, borderRadius: radius.xxl, backgroundColor: colors.primarySoft, borderWidth: 1.5, borderColor: colors.primarySoft, alignItems: 'center', justifyContent: 'center', marginBottom: spacing.xxl },
+  heroRingInner: { width: 60, height: 60, borderRadius: radius.xl, backgroundColor: colors.primarySoft, borderWidth: 1, borderColor: colors.primarySoft, alignItems: 'center', justifyContent: 'center' },
+  heroStar:      { color: colors.primary, fontSize: 28 },
 
   tabRow:   { flexDirection: 'row', backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, padding: 4, marginBottom: spacing.xl },
   tabBtn:   { flex: 1, paddingVertical: spacing.lg, alignItems: 'center', borderRadius: radius.xl },
-  tabBtnOn: { backgroundColor: 'rgba(200,151,90,0.14)', borderWidth: 1, borderColor: '#c8975a', shadowColor: '#000', shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
+  tabBtnOn: { backgroundColor: colors.primarySoft, borderWidth: 1, borderColor: colors.primary, shadowColor: colors.primary, shadowOpacity: 0.25, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
   tabTxt:   { color: colors.textDim, fontSize: typography.size.subheading },
-  tabTxtOn: { color: colors.accent, fontWeight: typography.weight.semibold },
+  tabTxtOn: { color: colors.primary, fontWeight: typography.weight.semibold },
 
   card:      { backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.xxl, marginBottom: spacing.xl },
   cardHead:  { marginBottom: spacing.xxl },
@@ -230,7 +230,7 @@ const s = StyleSheet.create({
   successLink:    { alignSelf: 'flex-start' },
   successLinkTxt: { color: colors.blue, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium },
 
-  submitBtn: { backgroundColor: '#c8975a', borderRadius: radius.xl, paddingVertical: spacing.xl - 2, alignItems: 'center', marginTop: spacing.xs, shadowColor: '#000', shadowOpacity: 0.5, shadowRadius: 14, shadowOffset: { width: 0, height: 0 }, elevation: 7 },
+  submitBtn: { backgroundColor: colors.primary, borderRadius: radius.xl, paddingVertical: spacing.xl - 2, alignItems: 'center', marginTop: spacing.xs, shadowColor: colors.primary, shadowOpacity: 0.4, shadowRadius: 14, shadowOffset: { width: 0, height: 0 }, elevation: 7 },
   submitTxt: { color: colors.bg, fontSize: typography.size.bodyLg, fontWeight: typography.weight.bold, letterSpacing: 0.5 },
 
   roleBadge:    { alignSelf: 'center', flexDirection: 'row', alignItems: 'center', backgroundColor: colors.blueSoft, borderRadius: radius.pill, borderWidth: 1, borderColor: 'rgba(90,155,224,0.3)', paddingHorizontal: spacing.xl, paddingVertical: spacing.md, marginBottom: spacing.xl },

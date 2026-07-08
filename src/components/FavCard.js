@@ -5,8 +5,6 @@ import { CUISINE_EMOJI } from '../hooks/useFavoris';
 const SW = Dimensions.get('window').width;
 export const CARD_W = (SW - spacing.xxl * 2 - spacing.lg) / 2;
 
-const BG_COLORS = ['#1a2e1a', '#1a1e2e', '#2e2a1a', '#2a1a2e', '#1a2a2e'];
-
 export default function FavCard({ fav, index, onPress, onReserve, onRemove, removing }) {
   const r     = fav.restaurants || {};
   const photo = r.photos?.[0] || null;
@@ -17,8 +15,8 @@ export default function FavCard({ fav, index, onPress, onReserve, onRemove, remo
         {photo
           ? <Image source={{ uri: photo }} style={StyleSheet.absoluteFill} resizeMode="cover" />
           : (
-            <View style={[StyleSheet.absoluteFill, { backgroundColor: BG_COLORS[index % 5], alignItems: 'center', justifyContent: 'center' }]}>
-              <Text style={{ fontSize: 38, opacity: 0.7 }}>{CUISINE_EMOJI[r.cuisine_type] || '🍽️'}</Text>
+            <View style={[StyleSheet.absoluteFill, { backgroundColor: colors.card, alignItems: 'center', justifyContent: 'center' }]}>
+              <Text style={{ fontSize: 38, opacity: 0.5 }}>{CUISINE_EMOJI[r.cuisine_type] || '🍽️'}</Text>
             </View>
           )
         }
@@ -53,17 +51,17 @@ export default function FavCard({ fav, index, onPress, onReserve, onRemove, remo
 }
 
 const s = StyleSheet.create({
-  card:        { width: CARD_W, backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, overflow: 'hidden' },
+  card:        { width: CARD_W, backgroundColor: colors.bg, borderRadius: radius.card, borderWidth: 1, borderColor: colors.separator, overflow: 'hidden' },
   photoWrap:   { height: 130, backgroundColor: colors.cardHover },
-  grad:        { position: 'absolute', bottom: 0, left: 0, right: 0, height: 50, backgroundColor: 'rgba(15,13,11,0.5)' },
-  ratingBadge: { position: 'absolute', bottom: spacing.md, left: spacing.md, backgroundColor: 'rgba(15,13,11,0.82)', borderRadius: radius.sm, paddingHorizontal: spacing.sm, paddingVertical: spacing.xxs+1, borderWidth: 1, borderColor: 'rgba(232,160,69,0.3)' },
-  ratingTxt:   { color: colors.accent, fontSize: typography.size.sm, fontWeight: typography.weight.semibold },
-  heartBtn:    { position: 'absolute', top: spacing.md, right: spacing.md, width: 30, height: 30, borderRadius: 0, backgroundColor: 'rgba(15,13,11,0.75)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: colors.cardBorder },
-  info:        { padding: spacing.lg },
-  cuisine:     { color: colors.accent, fontSize: typography.size.xs, letterSpacing: 1.5, marginBottom: 2, textTransform: 'uppercase' },
-  name:        { color: colors.text, fontSize: typography.size.bodyLg, fontWeight: typography.weight.regular, letterSpacing: 0.2, marginBottom: spacing.md },
-  bottom:      { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  price:       { color: colors.textMuted, fontSize: typography.size.sm },
-  reserveBtn:  { backgroundColor: 'rgba(200,151,90,0.14)', borderRadius: radius.sm, paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderWidth: 1, borderColor: 'rgba(200,151,90,0.4)', shadowColor: '#000', shadowOpacity: 0.3, shadowRadius: 6, shadowOffset: { width: 0, height: 0 }, elevation: 3 },
-  reserveTxt:  { color: colors.accent, fontSize: typography.size.xs, fontWeight: typography.weight.medium },
+  grad:        { position: 'absolute', bottom: 0, left: 0, right: 0, height: 50, backgroundColor: 'rgba(0,0,0,0.4)' },
+  ratingBadge: { position: 'absolute', bottom: spacing.md, left: spacing.md, backgroundColor: 'rgba(0,0,0,0.65)', borderRadius: radius.sm, paddingHorizontal: spacing.sm, paddingVertical: spacing.xxs + 1 },
+  ratingTxt:   { color: colors.star, fontSize: typography.size.sm, fontWeight: typography.weight.semibold },
+  heartBtn:    { position: 'absolute', top: spacing.md, right: spacing.md, width: 30, height: 30, borderRadius: 15, backgroundColor: 'rgba(0,0,0,0.55)', alignItems: 'center', justifyContent: 'center' },
+  info:        { padding: spacing.lg, gap: spacing.xs },
+  cuisine:     { color: colors.textSecondary, fontSize: typography.size.xs, letterSpacing: 1.5, textTransform: 'uppercase' },
+  name:        { color: colors.text, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium, letterSpacing: 0.2 },
+  bottom:      { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: spacing.xs },
+  price:       { color: colors.textSecondary, fontSize: typography.size.sm },
+  reserveBtn:  { backgroundColor: colors.primary, borderRadius: radius.card, paddingHorizontal: spacing.md, paddingVertical: spacing.xs },
+  reserveTxt:  { color: colors.bg, fontSize: typography.size.xs, fontWeight: typography.weight.semibold },
 });

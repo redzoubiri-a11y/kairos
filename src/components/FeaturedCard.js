@@ -39,6 +39,7 @@ export default function FeaturedCard({ r, onPress, onReserve }) {
               <Text style={s.infoTag} numberOfLines={1}>
                 {(r.cuisine_type || '').replace(/_/g, ' ')}
               </Text>
+              <Text style={s.infoName} numberOfLines={1}>{r.name}</Text>
               {!!r.quartier && <Text style={s.infoQuartier} numberOfLines={1}>{r.quartier}</Text>}
             </View>
             <TouchableOpacity style={s.resaBtn} onPress={onReserve}>
@@ -53,20 +54,20 @@ export default function FeaturedCard({ r, onPress, onReserve }) {
 
 const s = StyleSheet.create({
   shadow:     { marginRight: spacing.xl - 2 },
-  card:       { width: FEAT_W, height: FEAT_H, borderRadius: 0, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(0,0,0,0.09)' },
+  card:       { width: FEAT_W, height: FEAT_H, borderRadius: radius.card, overflow: 'hidden', borderWidth: 1, borderColor: colors.separator },
   photo:      { ...StyleSheet.absoluteFillObject },
   content:    { flex: 1, justifyContent: 'space-between', padding: spacing.xl },
   topRow:     { flexDirection: 'row', justifyContent: 'space-between' },
-  openPill:   { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: 'rgba(0,0,0,0.45)', borderRadius: 0, paddingHorizontal: spacing.lg, paddingVertical: 5, borderWidth: 1, borderColor: 'rgba(76,175,130,0.4)' },
-  openDot:    { width: 6, height: 6, borderRadius: 0, backgroundColor: colors.green },
+  openPill:   { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: 'rgba(0,0,0,0.45)', borderRadius: radius.card, paddingHorizontal: spacing.lg, paddingVertical: 5, borderWidth: 1, borderColor: 'rgba(76,175,130,0.4)' },
+  openDot:    { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.green },
   openTxt:    { color: colors.green, fontSize: typography.size.sm, fontWeight: typography.weight.medium },
-  ratingPill: { backgroundColor: 'rgba(0,0,0,0.45)', borderRadius: 0, paddingHorizontal: spacing.lg, paddingVertical: 5, borderWidth: 1, borderColor: 'rgba(13,107,63,0.5)' },
-  ratingTxt:  { color: colors.primary, fontSize: typography.size.caption, fontWeight: typography.weight.semibold },
+  ratingPill: { backgroundColor: 'rgba(0,0,0,0.45)', borderRadius: radius.card, paddingHorizontal: spacing.lg, paddingVertical: 5, borderWidth: 1, borderColor: 'rgba(245,200,66,0.5)' },
+  ratingTxt:  { color: colors.star, fontSize: typography.size.caption, fontWeight: typography.weight.semibold },
   bottomRow:    { flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' },
-  infoBox:      { backgroundColor: 'rgba(0,0,0,0.40)', paddingHorizontal: spacing.md, paddingVertical: spacing.sm, gap: 2, maxWidth: '62%' },
+  infoBox:      { backgroundColor: 'rgba(0,0,0,0.50)', paddingHorizontal: spacing.md, paddingVertical: spacing.sm, gap: 2, maxWidth: '62%', borderRadius: radius.sm },
   infoTag:      { color: 'rgba(255,255,255,0.65)', fontSize: typography.size.xs, letterSpacing: 1.5, textTransform: 'uppercase' },
+  infoName:     { color: '#FFFFFF', fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium },
   infoQuartier: { color: 'rgba(255,255,255,0.65)', fontSize: typography.size.xs },
-  infoName:     { color: '#FFFFFF', fontSize: typography.size.body, fontWeight: typography.weight.medium },
-  resaBtn:    { borderRadius: radius.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', backgroundColor: '#006233' },
-  resaBtnTxt: { color: '#FFFFFF', fontSize: typography.size.body, fontWeight: typography.weight.semibold, letterSpacing: 0.3 },
+  resaBtn:    { borderRadius: radius.card, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.primary },
+  resaBtnTxt: { color: colors.bg, fontSize: typography.size.body, fontWeight: typography.weight.semibold, letterSpacing: 0.3 },
 });

@@ -256,7 +256,7 @@
     <span class="role-badge badge-pro">Restaurateur</span>
     <span class="role-badge badge-admin">Admin</span>
   </div>
-  <div class="version">Version 1.0 · 2026</div>
+  <div class="version">Version 1.1 · juillet 2026</div>
 </div>
 
 <!-- ══════════════ CONTENT ══════════════ -->
@@ -272,11 +272,12 @@
       <li class="toc-sub"><span class="toc-num">1.3</span><span class="toc-title">Faire une réservation</span></li>
       <li class="toc-sub"><span class="toc-num">1.4</span><span class="toc-title">Gérer ses réservations</span></li>
       <li class="toc-sub"><span class="toc-num">1.5</span><span class="toc-title">Favoris</span></li>
-      <li class="toc-sub"><span class="toc-num">1.6</span><span class="toc-title">Notifications</span></li>
+      <li class="toc-sub"><span class="toc-num">1.5b</span><span class="toc-title">Self-service — modifier ou annuler sans l'app</span></li>
+      <li class="toc-sub"><span class="toc-num">1.6</span><span class="toc-title">Notifications et rappels WhatsApp</span></li>
       <li class="toc-sub"><span class="toc-num">1.7</span><span class="toc-title">Laisser un avis</span></li>
       <li><span class="toc-num">2</span><span class="toc-title toc-section">RESTAURATEUR (PRO)</span></li>
       <li class="toc-sub"><span class="toc-num">2.1</span><span class="toc-title">Inscription et activation du compte</span></li>
-      <li class="toc-sub"><span class="toc-num">2.2</span><span class="toc-title">Dashboard</span></li>
+      <li class="toc-sub"><span class="toc-num">2.2</span><span class="toc-title">Dashboard et bilan mensuel</span></li>
       <li class="toc-sub"><span class="toc-num">2.3</span><span class="toc-title">Comptoir — réservations du jour</span></li>
       <li class="toc-sub"><span class="toc-num">2.4</span><span class="toc-title">Actions sur les réservations</span></li>
       <li><span class="toc-num">3</span><span class="toc-title toc-section">ADMIN</span></li>
@@ -358,12 +359,28 @@
   </ol>
   <p>Taper à nouveau l'icône ♡ pour retirer un restaurant des favoris.</p>
 
+  <h2 class="section">1.5b Self-service — modifier ou annuler sans l'app</h2>
+  <p>Après confirmation de votre réservation, vous recevez un message WhatsApp avec un lien de gestion. Ce lien vous permet de modifier ou annuler votre réservation <strong>directement depuis le navigateur, sans compte et sans télécharger l'application</strong>.</p>
+  <p>Actions disponibles depuis le lien :</p>
+  <table>
+    <tr><th>Action</th><th>Conditions</th></tr>
+    <tr><td><strong>Annuler</strong></td><td>Selon la politique du restaurant (délai minimum avant le créneau)</td></tr>
+    <tr><td><strong>Changer l'heure</strong></td><td>Nouvelle date et horaire au choix parmi les créneaux disponibles</td></tr>
+    <tr><td><strong>Changer les couverts</strong></td><td>Adultes et enfants — validation automatique ou par le restaurant si augmentation importante</td></tr>
+  </table>
+  <div class="callout info">
+    <span class="callout-icon">ℹ️</span>
+    <span>Le lien est valable <strong>7 jours</strong> à partir de l'envoi. Passé ce délai, contacter directement le restaurant.</span>
+  </div>
+
   <h2 class="section">1.6 Notifications</h2>
   <p>Onglet <strong>Notifications</strong> → historique de toutes les alertes reçues.</p>
   <p>Types de notifications :</p>
   <ul style="margin: 12px 0 16px 20px; color: #333;">
     <li style="padding: 4px 0"><strong>Réservation confirmée</strong> — le restaurant a validé votre demande</li>
     <li style="padding: 4px 0"><strong>Réservation annulée</strong> — le restaurant a annulé votre réservation</li>
+    <li style="padding: 4px 0"><strong>Rappel J-1</strong> — rappel WhatsApp la veille de votre réservation à 18h (heure d'Alger), avec lien de gestion</li>
+    <li style="padding: 4px 0"><strong>Rappel H-2</strong> — rappel WhatsApp 2 heures avant votre créneau, avec lien de gestion</li>
     <li style="padding: 4px 0"><strong>Demande d'avis</strong> — après chaque visite marquée comme terminée</li>
   </ul>
   <div class="callout info">
@@ -413,6 +430,20 @@
     <li style="padding: 4px 0">Prochaines réservations à venir</li>
     <li style="padding: 4px 0">Accès rapide au comptoir</li>
   </ul>
+  <h3>Bilan mensuel</h3>
+  <p>Le Dashboard affiche un bilan automatique du mois en cours :</p>
+  <table>
+    <tr><th>Indicateur</th><th>Signification</th></tr>
+    <tr><td><strong>Réservations totales</strong></td><td>Nombre de réservations reçues ce mois</td></tr>
+    <tr><td><strong>No-shows évités</strong></td><td>Clients ayant reçu un rappel et qui se sont présentés</td></tr>
+    <tr><td><strong>No-shows</strong></td><td>Clients absents sans annulation</td></tr>
+    <tr><td><strong>Annulations</strong></td><td>Réservations annulées en self-service par les clients</td></tr>
+    <tr><td><strong>Heures économisées</strong></td><td>Estimation du temps administratif épargné grâce à l'automatisation</td></tr>
+  </table>
+  <div class="callout success">
+    <span class="callout-icon">✅</span>
+    <span>Le bilan se met à jour automatiquement. Tirer vers le bas pour forcer un rafraîchissement.</span>
+  </div>
 
   <h2 class="section">2.3 Comptoir — réservations du jour</h2>
   <p>Onglet <strong>Réservations</strong> → liste de toutes les réservations du jour, triées par horaire.</p>

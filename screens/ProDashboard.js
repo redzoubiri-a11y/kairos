@@ -242,7 +242,7 @@ export default function ProDashboard({ navigation }) {
         <View style={{ height: spacing.xxxl }} />
 
         <TouchableOpacity style={s.signOutBtn} onPress={signOut}>
-          <Text style={s.signOutTxt}>Se déconnecter</Text>
+          <Text style={s.signOutTxt} maxFontSizeMultiplier={1.3} numberOfLines={1} adjustsFontSizeToFit>Se déconnecter</Text>
         </TouchableOpacity>
 
         <View style={{ height: 48 }} />

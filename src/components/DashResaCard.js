@@ -13,7 +13,7 @@ export default function DashResaCard({ r, onConfirm, onCancel, onArrived, isActi
   const showActions    = r.status === 'pending';
 
   return (
-    <View style={[s.card, { borderLeftColor: st.color }]}>
+    <View style={[s.card, { borderLeftColor: st.color }, isToday && s.cardToday]}>
       <View style={s.top}>
         <View style={s.timeCol}>
           <Text style={s.timeVal}>{r.time_slot?.slice(0, 5) || '—'}</Text>
@@ -66,6 +66,7 @@ export default function DashResaCard({ r, onConfirm, onCancel, onArrived, isActi
 
 const s = StyleSheet.create({
   card:          { backgroundColor: 'transparent', borderRadius: 0, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.08)', borderLeftWidth: 3, borderLeftColor: 'transparent', marginHorizontal: spacing.xxl, paddingVertical: spacing.xl, gap: spacing.lg },
+  cardToday:     { backgroundColor: 'rgba(255,255,255,0.08)' },
   top:           { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },
   timeCol:       { alignItems: 'center', minWidth: 46 },
   timeVal:       { color: '#F5F2EC', fontSize: typography.size.heading3, fontWeight: typography.weight.medium },

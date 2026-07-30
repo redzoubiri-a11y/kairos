@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native';
 import { colors, typography, spacing, radius } from '../theme';
 
 function fmtHours(oh) {
@@ -18,9 +18,18 @@ function fmtHours(oh) {
   return oh.map(d => `${d.day}  ${hm(d.open)} – ${hm(d.close)}`).join('  ·  ');
 }
 
+function openInMaps(restaurant) {
+  const query = restaurant.latitude && restaurant.longitude
+    ? `${restaurant.latitude},${restaurant.longitude}`
+    : restaurant.address || restaurant.quartier || restaurant.name;
+  if (!query) return;
+  Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`);
+}
+
 export default function RestaurantInfosTab({ restaurant, desc }) {
+  const hasAddress = !!(restaurant.address || restaurant.quartier || (restaurant.latitude && restaurant.longitude));
   const rows = [
-    { icon:'📍', label:'Adresse',      val: restaurant.address || restaurant.quartier || '—' },
+    { icon:'📍', label:'Adresse',      val: restaurant.address || restaurant.quartier || '—', onPress: hasAddress ? () => openInMaps(restaurant) : undefined },
     { icon:'🏙️', label:'Ville',        val: restaurant.city || '—' },
     { icon:'🍽️', label:'Cuisine',      val: (restaurant.cuisine_type || '—').replace(/_/g, ' ') },
     { icon:'🕐', label:'Horaires',     val: fmtHours(restaurant.opening_hours) || 'Non renseigné' },
@@ -38,17 +47,21 @@ export default function RestaurantInfosTab({ restaurant, desc }) {
       )}
 
       <View style={s.card}>
-        {rows.map((row, i) => (
-          <View key={i} style={[s.row, i < rows.length - 1 && s.rowBorder]}>
-            <View style={s.iconWrap}>
-              <Text style={s.icon}>{row.icon}</Text>
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={s.label}>{row.label.toUpperCase()}</Text>
-              <Text style={s.val}>{row.val}</Text>
-            </View>
-          </View>
-        ))}
+        {rows.map((row, i) => {
+          const Row = row.onPress ? TouchableOpacity : View;
+          return (
+            <Row key={i} style={[s.row, i < rows.length - 1 && s.rowBorder]} onPress={row.onPress} activeOpacity={row.onPress ? 0.6 : 1}>
+              <View style={s.iconWrap}>
+                <Text style={s.icon}>{row.icon}</Text>
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={s.label}>{row.label.toUpperCase()}</Text>
+                <Text style={[s.val, row.onPress && s.valLink]}>{row.val}</Text>
+              </View>
+              {!!row.onPress && <Text style={s.rowArrow}>›</Text>}
+            </Row>
+          );
+        })}
       </View>
 
       <Text style={s.note}>
@@ -70,5 +83,7 @@ const s = StyleSheet.create({
   icon:     { fontSize: typography.size.heading2 },
   label:    { color: colors.textDim, fontSize: typography.size.xs, letterSpacing: 2, marginBottom: spacing.xxs },
   val:      { color: colors.text, fontSize: typography.size.bodyLg, fontWeight: typography.weight.regular },
+  valLink:  { color: colors.primary },
+  rowArrow: { color: colors.textDim, fontSize: 20 },
   note:     { marginHorizontal: spacing.xl, color: colors.textDim, fontSize: typography.size.caption, lineHeight: 17, fontStyle: 'italic' },
 });

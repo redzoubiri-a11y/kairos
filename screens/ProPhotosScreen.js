@@ -38,7 +38,7 @@ export default function ProPhotosScreen({ navigation, route }) {
   };
 
   return (
-    <SafeAreaView style={s.root} edges={['top', 'left', 'right']}>
+    <SafeAreaView style={s.root} edges={['top', 'left', 'right', 'bottom']}>
       <View style={s.header}>
         {!onSetupComplete && (
           <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>

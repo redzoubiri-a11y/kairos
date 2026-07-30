@@ -1,9 +1,10 @@
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback, useEffect, useState } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity,
   ActivityIndicator, Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import * as Location from 'expo-location';
 import { colors, typography, spacing, radius } from '../src/theme';
 import useMapScreen, { INITIAL_REGION, CUISINE_EMOJI, getCoordinate } from '../src/hooks/useMapScreen';
 
@@ -17,6 +18,13 @@ if (Platform.OS !== 'web') {
 export default function MapScreen({ navigation }) {
   const mapRef = useRef(null);
   const { restaurants, loading, selected, setSelected } = useMapScreen();
+  const [hasLocationPermission, setHasLocationPermission] = useState(false);
+
+  useEffect(() => {
+    Location.getForegroundPermissionsAsync().then(({ status }) => {
+      setHasLocationPermission(status === 'granted');
+    });
+  }, []);
 
   const handleMarkerPress = useCallback((r) => {
     setSelected(prev => (prev?.id === r.id ? null : r));
@@ -74,7 +82,7 @@ export default function MapScreen({ navigation }) {
         ref={mapRef}
         style={s.map}
         initialRegion={INITIAL_REGION}
-        showsUserLocation
+        showsUserLocation={hasLocationPermission}
         showsCompass={false}
         showsScale={false}
         toolbarEnabled={false}

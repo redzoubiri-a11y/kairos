@@ -52,7 +52,7 @@ export default function RestaurantScreen({ route, navigation }) {
   }, [restaurant]);
 
   return (
-    <SafeAreaView style={s.root} edges={['top', 'left', 'right']}>
+    <SafeAreaView style={s.root} edges={['top', 'left', 'right', 'bottom']}>
       <LinearGradient colors={['#C4B8C8', '#8B9BB4', '#6B7F9E']} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
 
       {/* Hero */}

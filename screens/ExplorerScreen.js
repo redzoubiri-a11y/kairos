@@ -97,7 +97,7 @@ export default function ExplorerScreen({ navigation, route }) {
             ref={mapRef}
             style={StyleSheet.absoluteFill}
             initialRegion={cityData.region}
-            showsUserLocation
+            showsUserLocation={nearMe}
             showsCompass={false}
             toolbarEnabled={false}
           >

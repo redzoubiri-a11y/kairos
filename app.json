@@ -36,6 +36,11 @@
       "edgeToEdgeEnabled": true,
       "package": "com.midadz.app",
       "versionCode": 1,
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyDItXI-VUjF5ONSzHuM8GVNJRPbDQUlzto"
+        }
+      },
       "permissions": [
         "RECEIVE_BOOT_COMPLETED",
         "VIBRATE",

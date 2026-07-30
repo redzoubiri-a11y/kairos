@@ -39,7 +39,7 @@ const Stack = createNativeStackNavigator();
 const C = {
   bg: '#0d1628', bg2: 'transparent',
   border: 'transparent',
-  accent: '#0D1628', dim: '#7A7270', text: '#f0ece4',
+  accent: '#C87860', dim: '#7A7270', text: '#f0ece4',
 };
 
 const TAB_ICONS = {
@@ -84,12 +84,13 @@ function TabNavigator({ userRole }) {
         headerShown: false,
         tabBarIcon: ({ focused }) => <TabIcon name={route.name} focused={focused} />,
         tabBarStyle: {
-          backgroundColor: 'rgba(255,255,255,0.97)',
+          backgroundColor: '#FDFCFB',
           borderTopWidth: 0,
           borderTopColor: 'transparent',
           marginHorizontal: 16,
           marginBottom: Math.max(12, insets.bottom),
           borderRadius: 36,
+          overflow: 'hidden',
           paddingBottom: 8,
           paddingTop: 8,
           height: 66,

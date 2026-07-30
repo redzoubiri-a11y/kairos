@@ -140,8 +140,9 @@ export default function SearchScreen({ navigation, route }) {
           >
             {results.filter(r => r.latitude && r.longitude).map(r => (
               <Marker
-                key={r.id}
+                key={String(r.id)}
                 coordinate={{ latitude: r.latitude, longitude: r.longitude }}
+                tracksViewChanges={false}
                 onPress={() => goRestaurant(r)}
               >
                 <View style={s.pin}>

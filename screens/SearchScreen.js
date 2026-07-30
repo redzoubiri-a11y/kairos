@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity,
   TextInput, Keyboard, ActivityIndicator, Platform,
@@ -42,27 +42,32 @@ export default function SearchScreen({ navigation, route }) {
   } = useSearch({ initialQuery, initialCity });
 
   const mapRef = useRef(null);
+  const [mapReady, setMapReady] = useState(false);
 
   // Recentre la carte sur les résultats
   useEffect(() => {
-    if (!mapRef.current) return;
+    if (!mapRef.current || !mapReady) return;
     const coords = results
       .filter(r => r.latitude && r.longitude)
       .map(r => ({ latitude: r.latitude, longitude: r.longitude }));
-    if (coords.length === 1) {
-      mapRef.current.animateToRegion(
-        { latitude: coords[0].latitude, longitude: coords[0].longitude, latitudeDelta: 0.05, longitudeDelta: 0.05 },
-        400,
-      );
-    } else if (coords.length > 1) {
-      mapRef.current.fitToCoordinates(coords, {
-        edgePadding: { top: 80, right: 60, bottom: 80, left: 60 },
-        animated: true,
-      });
-    } else if (!query.trim() && !quartier.trim()) {
-      mapRef.current.animateToRegion(CITY_REGIONS[city] || CITY_REGIONS.alger, 400);
-    }
-  }, [results, city, query, quartier]);
+    try {
+      if (coords.length === 1) {
+        mapRef.current.animateToRegion(
+          { latitude: coords[0].latitude, longitude: coords[0].longitude, latitudeDelta: 0.05, longitudeDelta: 0.05 },
+          400,
+        );
+      } else if (coords.length > 1) {
+        setTimeout(() => {
+          mapRef.current?.fitToCoordinates(coords, {
+            edgePadding: { top: 80, right: 60, bottom: 80, left: 60 },
+            animated: true,
+          });
+        }, 300);
+      } else if (!query.trim() && !quartier.trim()) {
+        mapRef.current.animateToRegion(CITY_REGIONS[city] || CITY_REGIONS.alger, 400);
+      }
+    } catch (_) {}
+  }, [results, city, query, quartier, mapReady]);
 
   const goRestaurant = useCallback((r) => {
     Keyboard.dismiss();
@@ -131,6 +136,7 @@ export default function SearchScreen({ navigation, route }) {
             style={StyleSheet.absoluteFill}
             initialRegion={initialRegion}
             showsMyLocationButton={false}
+            onMapReady={() => setMapReady(true)}
           >
             {results.filter(r => r.latitude && r.longitude).map(r => (
               <Marker

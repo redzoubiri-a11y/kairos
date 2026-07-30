@@ -52,7 +52,7 @@ export default function SearchScreen({ navigation, route }) {
       .map(r => ({ latitude: r.latitude, longitude: r.longitude }));
     try {
       if (coords.length === 1) {
-        mapRef.current.animateToRegion(
+        mapRef.current?.animateToRegion(
           { latitude: coords[0].latitude, longitude: coords[0].longitude, latitudeDelta: 0.05, longitudeDelta: 0.05 },
           400,
         );
@@ -64,7 +64,7 @@ export default function SearchScreen({ navigation, route }) {
           });
         }, 300);
       } else if (!query.trim() && !quartier.trim()) {
-        mapRef.current.animateToRegion(CITY_REGIONS[city] || CITY_REGIONS.alger, 400);
+        mapRef.current?.animateToRegion(CITY_REGIONS[city] || CITY_REGIONS.alger, 400);
       }
     } catch (_) {}
   }, [results, city, query, quartier, mapReady]);

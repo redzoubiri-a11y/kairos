@@ -69,8 +69,11 @@ export default function useSearch({ initialQuery = '', initialCity = 'alger' } =
         if (qr) req = req.ilike('quartier', `%${qr}%`);
         if (!nearMe && city !== 'all') req = req.eq('city', city);
 
-        const { data } = await req;
-        setResults(data ?? []);
+        const { data, error } = await req;
+        if (!error) setResults(data ?? []);
+        else setResults([]);
+      } catch (_) {
+        setResults([]);
       } finally {
         setLoading(false);
       }

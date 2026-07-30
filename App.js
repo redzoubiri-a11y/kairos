@@ -39,7 +39,7 @@ const Stack = createNativeStackNavigator();
 const C = {
   bg: '#0d1628', bg2: 'transparent',
   border: 'transparent',
-  accent: '#0D1628', dim: '#b0bec5', text: '#f0ece4',
+  accent: '#0D1628', dim: '#7A7270', text: '#f0ece4',
 };
 
 const TAB_ICONS = {
@@ -101,7 +101,7 @@ function TabNavigator({ userRole }) {
         },
         tabBarActiveTintColor: C.accent,
         tabBarInactiveTintColor: C.dim,
-        tabBarLabelStyle: { fontSize: 10, letterSpacing: 0.5, fontWeight: '400', marginTop: 1 },
+        tabBarLabelStyle: { fontSize: 10, letterSpacing: 0.5, fontWeight: '500', marginTop: 1 },
       })}
     >
       <Tab.Screen name="Accueil" component={HomeScreen} />

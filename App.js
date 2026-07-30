@@ -4,7 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { View, Text, Platform } from 'react-native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { supabase } from './supabase';
 import { GuestContext } from './src/context/GuestContext';
@@ -76,6 +76,7 @@ function TabNavigator({ userRole }) {
   const isManager = userRole === 'manager';
   const LastScreen = isManager ? ProDashboard : ReservationScreen;
   const lastName   = isManager ? 'Manager' : 'Resa';
+  const insets = useSafeAreaInsets();
 
   return (
     <Tab.Navigator
@@ -87,7 +88,7 @@ function TabNavigator({ userRole }) {
           borderTopWidth: 0,
           borderTopColor: 'transparent',
           marginHorizontal: 16,
-          marginBottom: 12,
+          marginBottom: Math.max(12, insets.bottom),
           borderRadius: 36,
           paddingBottom: 8,
           paddingTop: 8,

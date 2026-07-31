@@ -256,7 +256,7 @@
     <span class="role-badge badge-pro">Restaurateur</span>
     <span class="role-badge badge-admin">Admin</span>
   </div>
-  <div class="version">Version 1.1 · juillet 2026</div>
+  <div class="version">Version 1.2 · 31 juillet 2026</div>
 </div>
 
 <!-- ══════════════ CONTENT ══════════════ -->
@@ -277,14 +277,17 @@
       <li class="toc-sub"><span class="toc-num">1.7</span><span class="toc-title">Laisser un avis</span></li>
       <li><span class="toc-num">2</span><span class="toc-title toc-section">RESTAURATEUR (PRO)</span></li>
       <li class="toc-sub"><span class="toc-num">2.1</span><span class="toc-title">Inscription et activation du compte</span></li>
-      <li class="toc-sub"><span class="toc-num">2.2</span><span class="toc-title">Dashboard et bilan mensuel</span></li>
+      <li class="toc-sub"><span class="toc-num">2.2</span><span class="toc-title">Dashboard — tous les outils en détail</span></li>
       <li class="toc-sub"><span class="toc-num">2.3</span><span class="toc-title">Comptoir — réservations du jour</span></li>
       <li class="toc-sub"><span class="toc-num">2.4</span><span class="toc-title">Actions sur les réservations</span></li>
       <li><span class="toc-num">3</span><span class="toc-title toc-section">ADMIN</span></li>
-      <li class="toc-sub"><span class="toc-num">3.1</span><span class="toc-title">Recevoir une demande pro</span></li>
-      <li class="toc-sub"><span class="toc-num">3.2</span><span class="toc-title">Approuver une demande</span></li>
-      <li class="toc-sub"><span class="toc-num">3.3</span><span class="toc-title">Refuser une demande</span></li>
-      <li class="toc-sub"><span class="toc-num">3.4</span><span class="toc-title">Sécurité anti-erreur</span></li>
+      <li class="toc-sub"><span class="toc-num">3.1</span><span class="toc-title">Vérification automatique des nouvelles demandes</span></li>
+      <li class="toc-sub"><span class="toc-num">3.2</span><span class="toc-title">Recevoir une demande à traiter</span></li>
+      <li class="toc-sub"><span class="toc-num">3.3</span><span class="toc-title">Approuver / refuser manuellement</span></li>
+      <li class="toc-sub"><span class="toc-num">3.4</span><span class="toc-title">Vérifier qu'un nouveau resto apparaît bien</span></li>
+      <li class="toc-sub"><span class="toc-num">3.5</span><span class="toc-title">Ajouter un vrai restaurant vous-même</span></li>
+      <li class="toc-sub"><span class="toc-num">3.6</span><span class="toc-title">Supprimer ou cacher un faux restaurant</span></li>
+      <li class="toc-sub"><span class="toc-num">3.7</span><span class="toc-title">Sécurité anti-erreur</span></li>
     </ol>
   </div>
 
@@ -423,41 +426,87 @@
     <span>Si vous étiez déjà connecté au moment de l'approbation, <strong>déconnectez-vous et reconnectez-vous</strong> pour que le rôle restaurateur soit activé.</span>
   </div>
 
-  <h2 class="section">2.2 Dashboard (ProDashboard)</h2>
-  <p>Vue d'ensemble de l'activité de votre restaurant :</p>
-  <ul style="margin: 12px 0 16px 20px; color: #333;">
-    <li style="padding: 4px 0">Statistiques du jour : réservations confirmées, en attente, nombre de couverts</li>
-    <li style="padding: 4px 0">Prochaines réservations à venir</li>
-    <li style="padding: 4px 0">Accès rapide au comptoir</li>
-  </ul>
+  <h2 class="section">2.2 Dashboard — tous les outils en détail</h2>
+  <p>Le tableau de bord (<code>ProDashboard</code>) est l'écran d'accueil du restaurateur. Il empile, du haut vers le bas, tous les outils suivants — tirer vers le bas n'importe où rafraîchit l'ensemble.</p>
+
+  <h3>En-tête</h3>
+  <p>Message de bienvenue (Bonjour / Bon après-midi / Bonsoir selon l'heure), nom du restaurant, et badge <strong>En ligne</strong> confirmant que le compte est actif.</p>
+
+  <h3>Actions rapides (7 raccourcis)</h3>
+  <p>Une rangée de boutons qui ouvrent chacun un écran de gestion dédié :</p>
+  <table>
+    <tr><th>Bouton</th><th>Ouvre</th></tr>
+    <tr><td>🍽️ <strong>Menu</strong></td><td>Gestion des plats et catégories de la carte</td></tr>
+    <tr><td>⭐ <strong>Avis</strong></td><td>Avis clients laissés sur le restaurant</td></tr>
+    <tr><td>📷 <strong>Photos</strong></td><td>Photos affichées sur la fiche du restaurant</td></tr>
+    <tr><td>🏷️ <strong>Promos</strong></td><td>Offres et promotions en cours</td></tr>
+    <tr><td>📟 <strong>Comptoir</strong></td><td>Mode plein écran pour le service du jour (voir 2.3)</td></tr>
+    <tr><td>✏️ <strong>Infos</strong></td><td>Adresse, description, téléphone, type de cuisine</td></tr>
+    <tr><td>🕐 <strong>Horaires</strong></td><td>Jours et heures d'ouverture</td></tr>
+  </table>
+
+  <h3>Carte de configuration initiale</h3>
+  <p>À la première connexion, une carte <strong>"Configurez votre restaurant"</strong> s'affiche avec une progression (ex. <em>2/5 étapes complètes</em>) et guide vers chaque écran à compléter (photos, infos, horaires…). Elle se ferme automatiquement une fois toutes les étapes visitées, ou peut être masquée manuellement.</p>
+
+  <h3>Indicateurs (KPI) du jour</h3>
+  <p>Rangée de cartes défilante horizontalement :</p>
+  <table>
+    <tr><th>Indicateur</th><th>Calcul</th></tr>
+    <tr><td>📅 <strong>Résa aujourd'hui</strong></td><td>Toutes les réservations datées du jour, quel que soit leur statut</td></tr>
+    <tr><td>⏳ <strong>En attente</strong></td><td>Réservations non encore traitées (tous jours confondus) — surligné en alerte si &gt; 0</td></tr>
+    <tr><td>✅ <strong>Confirmées</strong></td><td>Réservations du jour confirmées ou déjà arrivées</td></tr>
+    <tr><td>🪑 <strong>Couverts</strong></td><td>Somme adultes + enfants des réservations confirmées du jour</td></tr>
+    <tr><td>💰 <strong>Revenus (DA)</strong></td><td>Couverts confirmés × ticket moyen — n'apparaît que si le ticket moyen est renseigné dans Infos</td></tr>
+  </table>
+
+  <h3>Bandeau d'alerte</h3>
+  <p>Apparaît uniquement s'il y a quelque chose à signaler : nombre de réservations en attente de confirmation, et/ou nombre de tables attendues dans <strong>moins d'une heure</strong>.</p>
+
+  <h3>7 prochains jours</h3>
+  <p>Mini graphique en barres montrant le volume de réservations (hors annulées) jour par jour sur la semaine à venir — repère visuel rapide pour anticiper les jours chargés.</p>
+
   <h3>Bilan mensuel</h3>
-  <p>Le Dashboard affiche un bilan automatique du mois en cours :</p>
+  <p>Résumé automatique du mois en cours :</p>
   <table>
     <tr><th>Indicateur</th><th>Signification</th></tr>
     <tr><td><strong>Réservations totales</strong></td><td>Nombre de réservations reçues ce mois</td></tr>
     <tr><td><strong>No-shows évités</strong></td><td>Clients ayant reçu un rappel et qui se sont présentés</td></tr>
     <tr><td><strong>No-shows</strong></td><td>Clients absents sans annulation</td></tr>
-    <tr><td><strong>Annulations</strong></td><td>Réservations annulées en self-service par les clients</td></tr>
+    <tr><td><strong>Annulations self-service</strong></td><td>Réservations annulées par les clients eux-mêmes via le lien WhatsApp</td></tr>
     <tr><td><strong>Heures économisées</strong></td><td>Estimation du temps administratif épargné grâce à l'automatisation</td></tr>
   </table>
   <div class="callout success">
     <span class="callout-icon">✅</span>
-    <span>Le bilan se met à jour automatiquement. Tirer vers le bas pour forcer un rafraîchissement.</span>
+    <span>Le bilan se met à jour automatiquement. Un bouton ↺ dédié permet de le rafraîchir sans recharger tout le tableau de bord.</span>
   </div>
 
-  <h2 class="section">2.3 Comptoir — réservations du jour</h2>
-  <p>Onglet <strong>Réservations</strong> → liste de toutes les réservations du jour, triées par horaire.</p>
-  <p>Compteurs en haut de l'écran :</p>
+  <h3>Filtres de la liste des réservations</h3>
+  <p>Deux rangées de filtres combinables au-dessus de la liste :</p>
   <table>
-    <tr><th>Compteur</th><th>Signification</th></tr>
-    <tr><td><strong>Confirmées</strong></td><td>Réservations validées pour aujourd'hui</td></tr>
-    <tr><td><strong>En attente</strong></td><td>Demandes à traiter</td></tr>
-    <tr><td><strong>Arrivées</strong></td><td>Clients présents</td></tr>
-    <tr><td><strong>Couverts</strong></td><td>Total de personnes attendues (confirmées + en attente + arrivées)</td></tr>
+    <tr><th>Filtre par date</th><th>Filtre par statut</th></tr>
+    <tr><td>Aujourd'hui · Demain · Cette semaine · Tout</td><td>Tout · En attente (badge avec le nombre) · Confirmées · Annulées</td></tr>
   </table>
   <div class="callout info">
     <span class="callout-icon">ℹ️</span>
-    <span>La liste se rafraîchit automatiquement toutes les <strong>2 minutes</strong>. Tirer vers le bas pour forcer un rafraîchissement immédiat.</span>
+    <span>Avec les filtres <strong>Aujourd'hui</strong> + <strong>Tout</strong> (réglage par défaut), la liste se regroupe automatiquement en deux blocs <strong>MIDI</strong> (avant 17h) et <strong>SOIR</strong> (à partir de 17h) pour visualiser le service en un coup d'œil.</span>
+  </div>
+
+  <h2 class="section">2.3 Comptoir — réservations du jour</h2>
+  <p>Bouton <strong>Comptoir</strong> depuis le Dashboard → mode plein écran pensé pour être laissé ouvert à l'accueil du restaurant pendant le service.</p>
+  <p>Bandeau de compteurs en haut de l'écran :</p>
+  <table>
+    <tr><th>Compteur</th><th>Signification</th></tr>
+    <tr><td><strong>Total</strong></td><td>Toutes les réservations du jour, tous statuts confondus</td></tr>
+    <tr><td><strong>Confirmées</strong></td><td>Réservations validées pour aujourd'hui</td></tr>
+    <tr><td><strong>En attente</strong></td><td>Demandes à traiter</td></tr>
+    <tr><td><strong>Arrivés</strong></td><td>Clients présents, pointés sur place</td></tr>
+    <tr><td><strong>No show</strong></td><td>Clients absents sans annulation</td></tr>
+    <tr><td><strong>Couverts</strong></td><td>Total de personnes attendues aujourd'hui</td></tr>
+  </table>
+  <p>Les réservations déjà arrivées sont séparées visuellement du reste de la liste par un repère <strong>ARRIVÉS</strong>.</p>
+  <div class="callout info">
+    <span class="callout-icon">ℹ️</span>
+    <span>Sur tablette en <strong>mode paysage</strong>, l'écran se scinde en deux : la liste des réservations à gauche, le détail de la réservation sélectionnée à droite — pratique pour suivre le service sans changer d'écran à chaque client. Tirer vers le bas pour forcer un rafraîchissement immédiat.</span>
   </div>
 
   <h2 class="section">2.4 Actions sur les réservations</h2>
@@ -496,45 +545,90 @@
     </div>
   </div>
 
-  <h2 class="section">3.1 Recevoir une demande pro</h2>
-  <p>Quand un utilisateur soumet une demande d'inscription restaurateur, un email est envoyé automatiquement à l'adresse admin avec :</p>
+  <h2 class="section">3.1 Vérification automatique des nouvelles demandes</h2>
+  <p>Dès qu'un restaurateur soumet le formulaire "Devenir partenaire", une vérification automatique se déclenche <strong>avant</strong> que vous n'ayez quoi que ce soit à faire : le système cherche l'établissement sur Google Maps et calcule un score de crédibilité sur 100.</p>
+  <table>
+    <tr><th>Critère</th><th>Points</th></tr>
+    <tr><td>Nom crédible (pas "test", "aaa", répétitions suspectes…)</td><td>10</td></tr>
+    <tr><td>Ville algérienne reconnue</td><td>10</td></tr>
+    <tr><td>Numéro de téléphone algérien valide</td><td>20</td></tr>
+    <tr><td>Trouvé sur Google Maps</td><td>40</td></tr>
+    <tr><td>A des avis sur Google Maps</td><td>20</td></tr>
+  </table>
+  <table>
+    <tr><th>Score</th><th>Décision</th></tr>
+    <tr><td><span class="status s-confirmed">≥ 70</span></td><td>Approuvé <strong>immédiatement et automatiquement</strong> — le resto apparaît tout de suite dans l'app, aucune action de votre part</td></tr>
+    <tr><td><span class="status s-pending">40 à 69</span></td><td>Vous recevez un email détaillé pour trancher vous-même (voir 3.2)</td></tr>
+    <tr><td><span class="status s-cancelled">&lt; 40</span></td><td>Refusé automatiquement — le candidat reçoit un email l'invitant à vous contacter avec des justificatifs s'il pense qu'il s'agit d'une erreur</td></tr>
+  </table>
+  <div class="callout info">
+    <span class="callout-icon">ℹ️</span>
+    <span>Filet de sécurité : toute demande restée bloquée en "en attente" plus de <strong>48h</strong> (ex. panne temporaire de la vérification) est approuvée automatiquement pour ne jamais laisser un restaurateur sans réponse.</span>
+  </div>
+
+  <h2 class="section">3.2 Recevoir une demande à traiter</h2>
+  <p>Uniquement pour les demandes au score intermédiaire (40 à 69). L'email envoyé à votre adresse contient :</p>
   <ul style="margin: 12px 0 16px 20px; color: #333;">
-    <li style="padding: 4px 0">Prénom / Nom du demandeur</li>
-    <li style="padding: 4px 0">Nom du restaurant, ville, téléphone, adresse, email</li>
-    <li style="padding: 4px 0">Date et heure de la demande</li>
+    <li style="padding: 4px 0">Le score obtenu et le détail point par point</li>
+    <li style="padding: 4px 0">La fiche trouvée sur Google Maps (nom, adresse, note, avis) si disponible, ou un avertissement si rien n'a été trouvé</li>
+    <li style="padding: 4px 0">Prénom / Nom du demandeur, restaurant, ville, téléphone, email, date de la demande</li>
     <li style="padding: 4px 0">Deux boutons d'action : <strong>✓ APPROUVER</strong> et <strong>✗ REFUSER</strong></li>
   </ul>
 
-  <h2 class="section">3.2 Approuver une demande</h2>
+  <h2 class="section">3.3 Approuver / refuser manuellement</h2>
   <ol class="steps">
-    <li>Ouvrir l'email de nouvelle demande pro</li>
-    <li>Taper le bouton <strong>✓ APPROUVER</strong></li>
-    <li>Une page s'ouvre avec le récapitulatif de la demande et un lien de confirmation</li>
-    <li>Taper le lien <em>"OUI — confirmez en cliquant sur ce lien"</em></li>
-    <li>Page de succès affichée : <code>✓ APPROUVE</code></li>
+    <li>Ouvrir l'email de demande à examiner</li>
+    <li>Taper <strong>✓ APPROUVER</strong> ou <strong>✗ REFUSER</strong></li>
+    <li>Une page s'ouvre avec le récapitulatif et un lien de confirmation</li>
+    <li>Taper le lien de confirmation pour valider l'action</li>
+    <li>Page de succès affichée : <code>✓ APPROUVÉ</code> ou <code>✗ REFUSÉ</code></li>
   </ol>
-  <p>Ce qui se passe automatiquement après approbation :</p>
+  <p>Ce qui se passe automatiquement après approbation (manuelle ou automatique, même résultat) :</p>
   <ul style="margin: 12px 0 16px 20px; color: #333;">
     <li style="padding: 4px 0">Compte restaurateur (<code>restaurant_owners</code>) créé dans la base de données</li>
-    <li style="padding: 4px 0">Fiche restaurant créée (statut <em>pending</em> — à compléter par le restaurateur)</li>
+    <li style="padding: 4px 0">Fiche restaurant créée avec le statut <strong>actif</strong> — visible immédiatement par les clients dans l'app</li>
     <li style="padding: 4px 0">Rôle <code>manager</code> activé sur le compte utilisateur</li>
     <li style="padding: 4px 0">Email de bienvenue envoyé au restaurateur</li>
   </ul>
+  <p>En cas de refus : la demande est marquée refusée et le demandeur reçoit un email avec le contact support (<a href="mailto:contact@mida-food.com">contact@mida-food.com</a>).</p>
 
-  <h2 class="section">3.3 Refuser une demande</h2>
+  <h2 class="section">3.4 Vérifier qu'un nouveau resto apparaît bien</h2>
+  <p>Trois façons de confirmer qu'un restaurant est bien visible côté client :</p>
   <ol class="steps">
-    <li>Ouvrir l'email de nouvelle demande pro</li>
-    <li>Taper le bouton <strong>✗ REFUSER</strong></li>
-    <li>Page de confirmation → taper le lien de confirmation</li>
-    <li>Page de succès : <code>✗ REFUSE</code></li>
+    <li>Dans l'app, en tant que client : Accueil ou Recherche → taper son nom</li>
+    <li>Dans Supabase (Table Editor) → table <code>restaurants</code> → chercher la ligne par nom → vérifier que la colonne <code>status</code> vaut <code>active</code></li>
+    <li>Demander directement au restaurateur de se déconnecter/reconnecter dans l'app et de vérifier son tableau de bord (si le rôle manager ne s'est pas activé, la déconnexion force le rafraîchissement)</li>
   </ol>
-  <p>Ce qui se passe automatiquement :</p>
-  <ul style="margin: 12px 0 16px 20px; color: #333;">
-    <li style="padding: 4px 0">Demande marquée <code>rejected</code></li>
-    <li style="padding: 4px 0">Email de notification envoyé au demandeur avec contact support (<a href="mailto:contact@mida-food.com">contact@mida-food.com</a>)</li>
-  </ul>
+  <div class="callout warning">
+    <span class="callout-icon">⚠️</span>
+    <span>L'app ne montre <strong>que</strong> les restaurants avec <code>status = "active"</code>. Un restaurant avec un autre statut (<code>pending</code>, <code>inactive</code>…) existe bien en base mais reste invisible pour les clients — c'est volontaire, ça permet de "mettre en pause" un resto sans le supprimer.</span>
+  </div>
 
-  <h2 class="section">3.4 Sécurité anti-erreur</h2>
+  <h2 class="section">3.5 Ajouter un vrai restaurant vous-même</h2>
+  <p>Sans passer par le formulaire d'inscription (utile pour pré-remplir le catalogue) :</p>
+  <ol class="steps">
+    <li>Ouvrir Supabase → projet KAIROS (<code>rghjgyzpdadapmktislv</code>) → Table Editor → table <code>restaurants</code></li>
+    <li>Insérer une nouvelle ligne avec au minimum : <code>name</code>, <code>city</code>, <code>cuisine_type</code>, <code>address</code>, <code>phone</code></li>
+    <li>Mettre <code>status</code> sur <code>active</code></li>
+    <li>Le restaurant apparaît immédiatement dans l'app, sans redémarrage nécessaire</li>
+  </ol>
+  <div class="callout info">
+    <span class="callout-icon">ℹ️</span>
+    <span>Un resto ajouté ainsi n'a pas de compte restaurateur associé (pas de ligne <code>restaurant_owners</code>) — il est visible et réservable par les clients, mais personne ne peut le gérer depuis un tableau de bord Pro tant qu'un compte n'est pas rattaché manuellement.</span>
+  </div>
+
+  <h2 class="section">3.6 Supprimer ou cacher un faux restaurant</h2>
+  <table>
+    <tr><th>Besoin</th><th>Action dans Supabase</th></tr>
+    <tr><td><strong>Cacher temporairement</strong> (garder l'historique, réservations, avis)</td><td>Table <code>restaurants</code> → changer <code>status</code> à autre chose que <code>active</code> (ex. <code>inactive</code>) → disparaît instantanément de l'app</td></tr>
+    <tr><td><strong>Supprimer définitivement</strong> (faux resto, doublon, test)</td><td>Table <code>restaurants</code> → supprimer la ligne correspondante</td></tr>
+  </table>
+  <div class="callout danger">
+    <span class="callout-icon">🗑️</span>
+    <span>Avant une suppression définitive, vérifier s'il existe des réservations, favoris ou avis liés à ce restaurant (tables <code>reservations</code>, <code>favorites</code>) — sans suppression en cascade configurée, ces lignes resteront orphelines en base. En cas de doute, préférer <strong>cacher</strong> plutôt que <strong>supprimer</strong>.</span>
+  </div>
+
+  <h2 class="section">3.7 Sécurité anti-erreur</h2>
   <div class="callout success">
     <span class="callout-icon">🔒</span>
     <span><strong>Double confirmation obligatoire.</strong> Les deux actions (approuver et refuser) nécessitent deux clics : le premier affiche un récapitulatif, le deuxième confirme l'exécution. Fermer la fenêtre après le premier clic = aucune action effectuée.</span>

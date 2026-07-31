@@ -54,7 +54,7 @@ Deno.serve(async (_req) => {
           city: (row.city ?? "alger").toLowerCase(),
           phone: row.phone,
           cuisine_type: "autre",
-          status: "pending",
+          status: "active",
         }).select("id").single();
         if (restoErr) throw new Error(restoErr.message);
         restoId = restoRow.id;

@@ -67,7 +67,7 @@ Deno.serve(async (req) => {
     } else {
       const { data: restoRow, error: restoErr } = await admin.from("restaurants").insert({
         owner_id: ownerRow.id, name: row.restaurant_name,
-        cuisine_type: "autre", status: "pending",
+        cuisine_type: "autre", status: "active",
         address: "", quartier: "", phone: row.phone || "",
         city: row.city?.trim() || "alger",
       }).select("id").single();

@@ -56,6 +56,7 @@ export default function useProfil() {
   const [activeCuisines, setActiveCuisines] = useState([]);
   const [removing,       setRemoving]       = useState(new Set());
   const [isManager,      setIsManager]      = useState(false);
+  const [deletingHistory,setDeletingHistory]= useState(new Set());
 
   useEffect(() => {
     (async () => {
@@ -158,6 +159,21 @@ export default function useProfil() {
     ]);
   }, []);
 
+  const deleteHistoryItem = useCallback((id, restoName) => {
+    Alert.alert('Supprimer de l\'historique', `Supprimer définitivement cette réservation chez ${restoName} ?`, [
+      { text: 'Annuler', style: 'cancel' },
+      {
+        text: 'Supprimer', style: 'destructive',
+        onPress: async () => {
+          setDeletingHistory(p => new Set(p).add(id));
+          const { error } = await supabase.from('reservations').delete().eq('id', id);
+          if (!error) setReservations(p => p.filter(r => r.id !== id));
+          setDeletingHistory(p => { const next = new Set(p); next.delete(id); return next; });
+        },
+      },
+    ]);
+  }, []);
+
   const removeFav = useCallback(async (favId) => {
     setRemoving(p => new Set(p).add(favId));
     await supabase.from('favorites').delete().eq('id', favId);
@@ -201,8 +217,8 @@ export default function useProfil() {
     editingName, savingName,
     reservations, resaLoading, favorites, favLoading,
     cancelling, activeSits, setActiveSits, activeCuisines, setActiveCuisines,
-    removing, isManager,
+    removing, isManager, deletingHistory,
     displayName, initial, upcoming, history, pendingCount,
-    pickAvatar, saveName, cancelResa, removeFav, signOut, deleteAccount, toggleEditing,
+    pickAvatar, saveName, cancelResa, removeFav, signOut, deleteAccount, toggleEditing, deleteHistoryItem,
   };
 }

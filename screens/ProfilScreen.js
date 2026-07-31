@@ -42,9 +42,9 @@ export default function ProfilScreen({ navigation }) {
     editingName, savingName,
     reservations, resaLoading, favorites, favLoading,
     cancelling, activeSits, setActiveSits, activeCuisines, setActiveCuisines,
-    removing, isManager,
+    removing, isManager, deletingHistory,
     displayName, initial, upcoming, history, pendingCount,
-    pickAvatar, saveName, cancelResa, removeFav, signOut, deleteAccount, toggleEditing,
+    pickAvatar, saveName, cancelResa, removeFav, signOut, deleteAccount, toggleEditing, deleteHistoryItem,
   } = useProfil();
 
   const confirmDeleteAccount = useCallback(() => {
@@ -263,6 +263,7 @@ export default function ProfilScreen({ navigation }) {
                       <ProfilResaCard
                         key={r.id} r={r} cancelling={cancelling} onCancel={cancelResa}
                         onReserveAgain={r.restaurants?.id ? () => navigation.navigate('ReservationForm', { restaurant: r.restaurants }) : undefined}
+                        deleting={deletingHistory} onDelete={deleteHistoryItem}
                       />
                     ))}
                   </>

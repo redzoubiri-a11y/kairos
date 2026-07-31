@@ -4,10 +4,11 @@ import { STATUS, CUISINE_EMOJI, fmtDate } from '../hooks/useProfil';
 
 function todayStr() { return new Date().toISOString().split('T')[0]; }
 
-export default function ProfilResaCard({ r, cancelling, onCancel, onReserveAgain }) {
+export default function ProfilResaCard({ r, cancelling, onCancel, onReserveAgain, deleting, onDelete }) {
   const resto = r.restaurants || {};
   const st = STATUS[r.status] || { label: r.status, color: colors.textDim };
   const isCancelling = cancelling.has(r.id);
+  const isDeleting = deleting?.has(r.id);
   const isPast = r.date < todayStr() || ['cancelled','completed','no_show','arrived'].includes(r.status);
 
   return (
@@ -34,16 +35,25 @@ export default function ProfilResaCard({ r, cancelling, onCancel, onReserveAgain
       {!!r.notes && (
         <View style={s.note}><Text style={s.noteTxt}>💬  {r.notes}</Text></View>
       )}
-      {(!isPast || onReserveAgain) && (
-        <View style={s.foot}>
+      {(!isPast || onReserveAgain || (isPast && onDelete)) && (
+        <View style={[s.foot, isPast && s.footRow]}>
           {!isPast && (
             <TouchableOpacity style={s.cancelBtn} onPress={() => onCancel(r.id, resto.name)} disabled={isCancelling}>
               <Text style={s.cancelTxt}>{isCancelling ? '···' : 'Annuler la réservation'}</Text>
             </TouchableOpacity>
           )}
           {isPast && onReserveAgain && (
-            <TouchableOpacity style={s.againBtn} onPress={onReserveAgain}>
+            <TouchableOpacity style={[s.againBtn, { flex: 1 }]} onPress={onReserveAgain}>
               <Text style={s.againTxt}>Réserver à nouveau →</Text>
+            </TouchableOpacity>
+          )}
+          {isPast && onDelete && (
+            <TouchableOpacity
+              style={[s.deleteBtn, onReserveAgain && s.deleteBtnDivider]}
+              onPress={() => onDelete(r.id, resto.name)}
+              disabled={isDeleting}
+            >
+              <Text style={s.deleteTxt}>{isDeleting ? '···' : '🗑️'}</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -67,8 +77,12 @@ const s = StyleSheet.create({
   note:     { backgroundColor: colors.cardHover, marginHorizontal: spacing.lg, marginBottom: spacing.lg, padding: spacing.lg, borderRadius: radius.md },
   noteTxt:  { color: colors.textMuted, fontSize: typography.size.body, lineHeight: 18 },
   foot:     { borderTopWidth: 1, borderTopColor: colors.cardBorder },
+  footRow:  { flexDirection: 'row', alignItems: 'stretch' },
   cancelBtn:{ paddingVertical: 11, alignItems: 'center' },
   cancelTxt:{ color: colors.red, fontSize: typography.size.body },
   againBtn: { paddingVertical: 11, alignItems: 'center' },
   againTxt: { color: colors.blue, fontSize: typography.size.body },
+  deleteBtn:       { paddingVertical: 11, paddingHorizontal: spacing.xl, alignItems: 'center', justifyContent: 'center' },
+  deleteBtnDivider:{ borderLeftWidth: 1, borderLeftColor: colors.cardBorder },
+  deleteTxt:       { fontSize: typography.size.body },
 });

@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import {
   Platform, StatusBar as RNStatusBar, Dimensions,
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  Image, Animated, Share,
+  Image, Animated, Share, Linking,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -49,6 +49,13 @@ export default function RestaurantScreen({ route, navigation }) {
       message: `🍽️ ${restaurant.name} sur MIDA\n${restaurant.address || ''}\n\nRéserve ta table : mida://restaurant/${restaurant.id}`,
       title: restaurant.name,
     });
+  }, [restaurant]);
+  const goDirections = useCallback(() => {
+    const query = restaurant.latitude && restaurant.longitude
+      ? `${restaurant.latitude},${restaurant.longitude}`
+      : restaurant.address || restaurant.quartier || restaurant.name;
+    if (!query) return;
+    Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`);
   }, [restaurant]);
 
   return (
@@ -175,6 +182,9 @@ export default function RestaurantScreen({ route, navigation }) {
               <Text style={s.footerPriceVal}>{restaurant.avg_ticket.toLocaleString('fr-FR')} DA</Text>
             </View>
           )}
+          <TouchableOpacity style={s.directionsBtn} onPress={goDirections}>
+            <Text style={s.directionsIcon}>🧭</Text>
+          </TouchableOpacity>
           <TouchableOpacity
             style={[s.reserveBtn, !restaurant.avg_ticket && { flex: 1 }]}
             onPress={goReserve}
@@ -246,4 +256,6 @@ const s = StyleSheet.create({
   footerPriceVal:{ color: colors.primary, fontSize: typography.size.heading2, fontWeight: typography.weight.medium },
   reserveBtn:    { flex: 1, borderRadius: radius.card, paddingVertical: spacing.xl - 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.primary },
   reserveTxt:    { color: colors.bg, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium, letterSpacing: 1.5 },
+  directionsBtn: { width: 52, paddingVertical: spacing.xl - 1, borderRadius: radius.card, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder },
+  directionsIcon:{ fontSize: 20 },
 });

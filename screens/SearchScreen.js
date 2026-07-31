@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity,
-  TextInput, Keyboard, ActivityIndicator, Platform,
+  TextInput, Keyboard, ActivityIndicator, Platform, FlatList, Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -43,6 +43,7 @@ export default function SearchScreen({ navigation, route }) {
 
   const mapRef = useRef(null);
   const [mapReady, setMapReady] = useState(false);
+  const [showList, setShowList] = useState(false);
 
   // Recentre la carte sur les résultats
   useEffect(() => {
@@ -73,6 +74,13 @@ export default function SearchScreen({ navigation, route }) {
     Keyboard.dismiss();
     navigation.navigate('Restaurant', { restaurant: r });
   }, [navigation]);
+
+  useEffect(() => { setShowList(false); }, [query, quartier]);
+
+  const handleBadgePress = useCallback(() => {
+    if (results.length === 1) { goRestaurant(results[0]); return; }
+    setShowList(v => !v);
+  }, [results, goRestaurant]);
 
   const initialRegion = CITY_REGIONS[city] || CITY_REGIONS.alger;
 
@@ -158,13 +166,42 @@ export default function SearchScreen({ navigation, route }) {
           </View>
         )}
 
+        {/* Liste des résultats */}
+        {showList && results.length > 1 && (
+          <View style={s.listPanel}>
+            <FlatList
+              data={results}
+              keyExtractor={r => String(r.id)}
+              contentContainerStyle={{ paddingTop: 60, paddingBottom: spacing.sm }}
+              renderItem={({ item: r }) => (
+                <TouchableOpacity style={s.resultRow} onPress={() => goRestaurant(r)} activeOpacity={0.7}>
+                  <View style={s.resultThumb}>
+                    {r.photos?.[0]
+                      ? <Image source={{ uri: r.photos[0] }} style={StyleSheet.absoluteFill} resizeMode="cover" />
+                      : <Text style={{ fontSize: 20 }}>{CUISINE_EMOJI[r.cuisine_type] || '🍽️'}</Text>
+                    }
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={s.resultName} numberOfLines={1}>{r.name}</Text>
+                    <Text style={s.resultSub} numberOfLines={1}>
+                      {(r.cuisine_type || '').replace(/_/g, ' ')}{r.quartier ? ` · ${r.quartier}` : ''}
+                    </Text>
+                  </View>
+                  <Text style={s.resultArrow}>›</Text>
+                </TouchableOpacity>
+              )}
+            />
+          </View>
+        )}
+
         {/* Badge résultats */}
         {results.length > 0 && !loading && (
-          <View style={s.countBadge}>
+          <TouchableOpacity style={s.countBadge} onPress={handleBadgePress} activeOpacity={0.75}>
             <Text style={s.countTxt}>
               {results.length} résultat{results.length > 1 ? 's' : ''}
             </Text>
-          </View>
+            {results.length > 1 && <Text style={s.countArrow}>{showList ? '🗺️' : '☰'}</Text>}
+          </TouchableOpacity>
         )}
 
         {/* Chargement */}
@@ -218,8 +255,16 @@ const s = StyleSheet.create({
   pinEmoji: { fontSize: 14 },
   pinName:  { color: '#1A1A1A', fontSize: 9, fontWeight: '600', marginTop: 2, letterSpacing: 0.3 },
 
-  countBadge: { position: 'absolute', top: spacing.lg, left: spacing.lg, backgroundColor: '#1A1A1A', paddingHorizontal: spacing.lg, paddingVertical: spacing.xs },
+  countBadge: { position: 'absolute', top: spacing.lg, left: spacing.lg, flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: '#1A1A1A', paddingHorizontal: spacing.lg, paddingVertical: spacing.xs },
   countTxt:   { color: '#fff', fontSize: typography.size.caption, fontWeight: typography.weight.semibold, letterSpacing: 1 },
+  countArrow: { fontSize: 12 },
+
+  listPanel:   { ...StyleSheet.absoluteFillObject, backgroundColor: colors.bg },
+  resultRow:   { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
+  resultThumb: { width: 44, height: 44, borderRadius: 8, backgroundColor: colors.cardHover, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
+  resultName:  { color: colors.text, fontSize: typography.size.bodyLg, fontWeight: '500' },
+  resultSub:   { color: colors.textMuted, fontSize: typography.size.caption, marginTop: 2, textTransform: 'capitalize' },
+  resultArrow: { color: colors.textDim, fontSize: 20 },
 
   tipBadge: { position: 'absolute', bottom: spacing.lg, alignSelf: 'center', backgroundColor: 'rgba(255,255,255,0.92)', paddingHorizontal: spacing.xl, paddingVertical: spacing.md, borderWidth: 1, borderColor: colors.cardBorder },
   tipTxt:   { color: colors.textMuted, fontSize: typography.size.caption },

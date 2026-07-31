@@ -264,10 +264,10 @@ const s = StyleSheet.create({
   cityGrid:    { flexDirection:'row', alignItems:'center', paddingHorizontal:14, paddingVertical:10, gap:8 },
   cityChip:    { flexDirection:'row', alignItems:'center', gap:5, paddingHorizontal:18, paddingVertical:5, borderRadius:radius.full, backgroundColor:'transparent', borderWidth:1, borderColor:colors.cardBorder },
   nearMeChip:  { borderColor:'rgba(90,155,224,0.3)' },
-  cityChipOn:  { backgroundColor:'rgba(200,120,96,0.18)', borderColor:'#C87860', shadowColor:'#000', shadowOpacity:0.35, shadowRadius:10, shadowOffset:{ width:0, height:0 }, elevation:5 },
+  cityChipOn:  { backgroundColor:'#FFFFFF', borderColor:colors.primary, borderWidth:1.5 },
   cityEmoji:   { fontSize:13 },
   cityTxt:     { color:colors.textMuted, fontSize:typography.size.body },
-  cityTxtOn:   { color:'#C87860', fontWeight:'600' },
+  cityTxtOn:   { color:colors.primary, fontWeight:'600' },
 
   backBtn:     { width:36, height:36, borderRadius:0, backgroundColor:'rgba(15,13,11,0.65)', alignItems:'center', justifyContent:'center', borderWidth:1, borderColor:'rgba(240,235,227,0.15)' },
   backBtnTxt:  { color:'rgba(240,235,227,0.9)', fontSize:18, lineHeight:22 },

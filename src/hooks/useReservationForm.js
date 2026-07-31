@@ -181,6 +181,13 @@ export default function useReservationForm(restaurant, onSuccess, existingResa =
             title:          'Réservation modifiée',
             body:           `Votre réservation chez ${restaurant.name} a été modifiée : ${formatDateLong(date)} à ${heure} pour ${adults} personne${adults > 1 ? 's' : ''}.`,
           });
+          supabase.functions.invoke('push-manager', {
+            body: {
+              user_id: uid,
+              title: 'Réservation modifiée ✅',
+              body:  `Chez ${restaurant.name} · ${formatDateLong(date)} à ${heure} pour ${adults} personne${adults > 1 ? 's' : ''}.`,
+            },
+          });
         } catch (_) {}
         try {
           const { data: ownerRows } = await supabase
@@ -228,6 +235,13 @@ export default function useReservationForm(restaurant, onSuccess, existingResa =
             type:           'new_resa',
             title:          'Demande envoyée',
             body:           `Votre réservation chez ${restaurant.name} le ${formatDateLong(date)} à ${heure} pour ${adults} personne${adults > 1 ? 's' : ''} est en attente de confirmation.`,
+          });
+          supabase.functions.invoke('push-manager', {
+            body: {
+              user_id: uid,
+              title: 'Demande envoyée ✅',
+              body:  `Chez ${restaurant.name} · ${formatDateLong(date)} à ${heure} pour ${adults} personne${adults > 1 ? 's' : ''}. En attente de confirmation.`,
+            },
           });
         } catch (_) {}
         try {

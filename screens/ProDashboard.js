@@ -85,12 +85,12 @@ export default function ProDashboard({ navigation }) {
         <LinearGradient colors={['#0D1628', '#162040']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={s.darkHeader}>
           <View style={s.header}>
             <View style={s.headerLeft}>
-              <Text style={s.headerGreeting}>{greetingTxt} 👋</Text>
-              <Text style={s.headerTitle}>{restaurant?.name || 'Manager'}</Text>
+              <Text style={s.headerGreeting} numberOfLines={1}>{greetingTxt} 👋</Text>
+              <Text style={s.headerTitle} numberOfLines={1}>{restaurant?.name || 'Manager'}</Text>
             </View>
             <View style={s.onlineBadge}>
               <View style={s.onlineDot} />
-              <Text style={s.onlineTxt}>En ligne</Text>
+              <Text style={s.onlineTxt} numberOfLines={1} maxFontSizeMultiplier={1.3}>En ligne</Text>
             </View>
           </View>
 
@@ -264,7 +264,7 @@ const s = StyleSheet.create({
   comptoirBtn:    { flex: 1, alignItems: 'center', paddingVertical: spacing.md, borderRadius: radius.lg, backgroundColor: 'rgba(255,255,255,0.07)', borderWidth: 1, borderColor: 'rgba(200,151,90,0.30)' },
   comptoirIcon:   { fontSize: 16, marginBottom: spacing.xxs },
   comptoirBtnTxt: { color: 'rgba(245,242,236,0.80)', fontSize: typography.size.xs },
-  onlineBadge:    { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: 'rgba(76,175,130,0.15)', borderRadius: radius.full, paddingHorizontal: spacing.lg, paddingVertical: spacing.xs, borderWidth: 1, borderColor: 'rgba(76,175,130,0.35)' },
+  onlineBadge:    { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, flexShrink: 0, backgroundColor: 'rgba(76,175,130,0.15)', borderRadius: radius.full, paddingHorizontal: spacing.lg, paddingVertical: spacing.xs, borderWidth: 1, borderColor: 'rgba(76,175,130,0.35)' },
   onlineDot:      { width: 6, height: 6, borderRadius: 0, backgroundColor: colors.green },
   onlineTxt:      { color: colors.green, fontSize: typography.size.sm },
 

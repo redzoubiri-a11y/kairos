@@ -42,7 +42,7 @@ export default function ProfilScreen({ navigation }) {
     editingName, savingName,
     reservations, resaLoading, favorites, favLoading,
     cancelling, activeSits, setActiveSits, activeCuisines, setActiveCuisines,
-    removing,
+    removing, isManager,
     displayName, initial, upcoming, history, pendingCount,
     pickAvatar, saveName, cancelResa, removeFav, signOut, deleteAccount, toggleEditing,
   } = useProfil();
@@ -194,14 +194,16 @@ export default function ProfilScreen({ navigation }) {
               ))}
             </View>
 
-            <TouchableOpacity style={s.proCard} onPress={goProInscription}>
-              <View style={s.proCardIcon}><Text style={{ fontSize: 22 }}>🍽️</Text></View>
-              <View style={{ flex: 1 }}>
-                <Text style={s.proCardTitle}>DEVENIR PARTENAIRE</Text>
-                <Text style={s.proCardSub}>{'Rejoignez MIDA Pro\nGérez vos réservations'}</Text>
-              </View>
-              <Text style={s.proCardArrow}>›</Text>
-            </TouchableOpacity>
+            {!isManager && (
+              <TouchableOpacity style={s.proCard} onPress={goProInscription}>
+                <View style={s.proCardIcon}><Text style={{ fontSize: 22 }}>🍽️</Text></View>
+                <View style={{ flex: 1 }}>
+                  <Text style={s.proCardTitle}>DEVENIR PARTENAIRE</Text>
+                  <Text style={s.proCardSub}>{'Rejoignez MIDA Pro\nGérez vos réservations'}</Text>
+                </View>
+                <Text style={s.proCardArrow}>›</Text>
+              </TouchableOpacity>
+            )}
 
             <Text style={s.sectionLbl}>COMPTE</Text>
             <View style={s.settingsCard}>

@@ -55,6 +55,7 @@ export default function useProfil() {
   const [activeSits,     setActiveSits]     = useState([]);
   const [activeCuisines, setActiveCuisines] = useState([]);
   const [removing,       setRemoving]       = useState(new Set());
+  const [isManager,      setIsManager]      = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -63,6 +64,7 @@ export default function useProfil() {
       if (!u) return;
       setAuthId(u.id);
       setUserEmail(u.email || '');
+      setIsManager((u.app_metadata?.role || u.user_metadata?.role) === 'manager');
       if (u.created_at) setMemberSince(
         new Date(u.created_at).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })
       );
@@ -199,7 +201,7 @@ export default function useProfil() {
     editingName, savingName,
     reservations, resaLoading, favorites, favLoading,
     cancelling, activeSits, setActiveSits, activeCuisines, setActiveCuisines,
-    removing,
+    removing, isManager,
     displayName, initial, upcoming, history, pendingCount,
     pickAvatar, saveName, cancelResa, removeFav, signOut, deleteAccount, toggleEditing,
   };

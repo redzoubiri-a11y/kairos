@@ -6,6 +6,7 @@ import { supabase } from '../../supabase';
 export const CITIES = [
   { id: 'all',         label: 'Toutes' },
   { id: 'alger',       label: 'Alger' },
+  { id: 'tipaza',      label: 'Tipaza' },
   { id: 'oran',        label: 'Oran' },
   { id: 'constantine', label: 'Constantine' },
   { id: 'tizi_ouzou',  label: 'Tizi Ouzou' },

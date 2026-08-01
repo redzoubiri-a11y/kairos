@@ -5,6 +5,7 @@ import { supabase } from '../../supabase';
 
 export const CITIES = [
   { id:'alger',       label:'Alger',       emoji:'🏛️', region:{ latitude:36.7538, longitude:3.0588,  latitudeDelta:0.13, longitudeDelta:0.13 } },
+  { id:'tipaza',      label:'Tipaza',      emoji:'🏖️', region:{ latitude:36.5911, longitude:2.4475,  latitudeDelta:0.13, longitudeDelta:0.13 } },
   { id:'oran',        label:'Oran',        emoji:'🌊', region:{ latitude:35.6969, longitude:-0.6331, latitudeDelta:0.13, longitudeDelta:0.13 } },
   { id:'constantine', label:'Constantine', emoji:'🌉', region:{ latitude:36.3650, longitude:6.6147,  latitudeDelta:0.13, longitudeDelta:0.13 } },
   { id:'tizi_ouzou',  label:'Tizi Ouzou',  emoji:'⛰️', region:{ latitude:36.7117, longitude:4.0450,  latitudeDelta:0.13, longitudeDelta:0.13 } },

@@ -19,6 +19,7 @@ if (Platform.OS !== 'web') {
 const CITY_REGIONS = {
   all:         { latitude: 36.7538, longitude: 3.0588, latitudeDelta: 4.0,  longitudeDelta: 4.0  },
   alger:       { latitude: 36.7538, longitude: 3.0588, latitudeDelta: 0.22, longitudeDelta: 0.22 },
+  tipaza:      { latitude: 36.5911, longitude: 2.4475, latitudeDelta: 0.22, longitudeDelta: 0.22 },
   oran:        { latitude: 35.6971, longitude: -0.6420,latitudeDelta: 0.22, longitudeDelta: 0.22 },
   constantine: { latitude: 36.3650, longitude: 6.6147, latitudeDelta: 0.22, longitudeDelta: 0.22 },
   tizi_ouzou:  { latitude: 36.7117, longitude: 4.0451, latitudeDelta: 0.22, longitudeDelta: 0.22 },

@@ -5,6 +5,7 @@ import { supabase } from '../../supabase';
 
 export const CITIES = [
   { id: 'alger',       label: 'Alger',        emoji: '🏛️', count: '20+' },
+  { id: 'tipaza',      label: 'Tipaza',        emoji: '🏖️', count: '1+'  },
   { id: 'oran',        label: 'Oran',          emoji: '🌊', count: '10+' },
   { id: 'constantine', label: 'Constantine',   emoji: '🌉', count: '10+' },
   { id: 'tizi_ouzou',  label: 'Tizi Ouzou',    emoji: '⛰️', count: '5+'  },

@@ -11,6 +11,7 @@ const CARD_W = Math.min((SW - 14 * 2 - 10) / 2, 300);
 
 const CITIES = [
   { id:'alger',       label:'Alger',       emoji:'🏛️' },
+  { id:'tipaza',      label:'Tipaza',      emoji:'🏖️' },
   { id:'oran',        label:'Oran',        emoji:'🌊' },
   { id:'constantine', label:'Constantine', emoji:'🌉' },
   { id:'tizi_ouzou',  label:'Tizi Ouzou',  emoji:'⛰️' },

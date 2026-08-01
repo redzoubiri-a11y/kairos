@@ -17,6 +17,7 @@ import StatCard from '../src/components/StatCard';
 import AlertBanner from '../src/components/AlertBanner';
 import DashResaCard from '../src/components/DashResaCard';
 import ProSetupCard from '../src/components/ProSetupCard';
+import RestaurantCompletionCard from '../src/components/RestaurantCompletionCard';
 import useProOnboarding from '../src/hooks/useProOnboarding';
 import { useMonthlyReport } from '../src/hooks/useMonthlyReport';
 import MonthlyReport from '../src/components/MonthlyReport';
@@ -137,6 +138,8 @@ export default function ProDashboard({ navigation }) {
             onReset={resetSetup}
           />
         )}
+
+        <RestaurantCompletionCard navigation={navigation} restaurantId={restaurant?.id} />
 
         {/* KPIs */}
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.statsRow}>

@@ -32,6 +32,7 @@ import AideScreen from './screens/AideScreen';
 import MapScreen from './screens/MapScreen';
 import ProInfoScreen from './screens/ProInfoScreen';
 import ProHorairesScreen from './screens/ProHorairesScreen';
+import AdminValidationScreen from './screens/AdminValidationScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -73,7 +74,7 @@ function TabIcon({ name, focused }) {
 
 
 function TabNavigator({ userRole }) {
-  const isManager = userRole === 'manager';
+  const isManager = userRole === 'manager' || userRole === 'admin';
   const LastScreen = isManager ? ProDashboard : ReservationScreen;
   const lastName   = isManager ? 'Manager' : 'Resa';
   const insets = useSafeAreaInsets();
@@ -190,6 +191,7 @@ export default function App() {
             <Stack.Screen name="Map" component={MapScreen} />
             <Stack.Screen name="ProInfo" component={ProInfoScreen} />
             <Stack.Screen name="ProHoraires" component={ProHorairesScreen} />
+            <Stack.Screen name="AdminValidation" component={AdminValidationScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </GuestContext.Provider>

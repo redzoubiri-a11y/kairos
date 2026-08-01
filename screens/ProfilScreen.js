@@ -42,7 +42,7 @@ export default function ProfilScreen({ navigation }) {
     editingName, savingName,
     reservations, resaLoading, favorites, favLoading,
     cancelling, activeSits, setActiveSits, activeCuisines, setActiveCuisines,
-    removing, isManager, deletingHistory,
+    removing, isManager, isAdmin, deletingHistory,
     displayName, initial, upcoming, history, pendingCount,
     pickAvatar, saveName, cancelResa, removeFav, signOut, deleteAccount, toggleEditing, deleteHistoryItem,
   } = useProfil();
@@ -213,6 +213,7 @@ export default function ProfilScreen({ navigation }) {
                 { icon:'🔔', label:'Notifications',          screen:'Notifications' },
                 { icon:'🔒', label:'Confidentialité',        action: goPrivacy  },
                 { icon:'⭐', label:'Donner un avis sur MIDA', action: goReview  },
+                ...(isAdmin ? [{ icon:'🛡️', label:'Validation restaurants', screen:'AdminValidation' }] : []),
               ].map((item, i, arr) => (
                 <TouchableOpacity key={i} style={[s.settingRow, i < arr.length - 1 && s.settingBorder]} onPress={() => item.action ? item.action() : item.screen && navigation.navigate(item.screen)}>
                   <View style={s.settingIconWrap}><Text style={s.settingIcon}>{item.icon}</Text></View>

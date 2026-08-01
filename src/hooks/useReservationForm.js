@@ -46,11 +46,13 @@ function buildSlots(start, end, duration) {
   if (!start || !end) return [];
   const [sh, sm] = start.split(':').map(Number);
   const [eh, em] = end.split(':').map(Number);
-  const endMin = eh * 60 + em;
+  const startMin = sh * 60 + sm;
+  let endMin = eh * 60 + em;
+  if (endMin <= startMin) endMin += 24 * 60; // horaire qui passe minuit (ex: 18h30 → 01h00)
   const slots = [];
-  let cur = sh * 60 + sm;
+  let cur = startMin;
   while (cur < endMin) {
-    slots.push({ h: `${String(Math.floor(cur / 60)).padStart(2, '0')}:${String(cur % 60).padStart(2, '0')}` });
+    slots.push({ h: `${String(Math.floor(cur / 60) % 24).padStart(2, '0')}:${String(cur % 60).padStart(2, '0')}` });
     cur += duration;
   }
   return slots;

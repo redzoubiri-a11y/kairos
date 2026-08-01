@@ -96,8 +96,8 @@ export default function ProMenuScreen({ navigation, route }) {
           </TouchableOpacity>
         ) : <View style={s.backBtn} />}
         <View style={s.headerCenter}>
-          <Text style={s.headerSub}>GESTION DU MENU</Text>
-          <Text style={s.headerTitle}>{restaurant?.name || 'Menu'}</Text>
+          <Text style={s.headerSub} numberOfLines={1} maxFontSizeMultiplier={1.3} adjustsFontSizeToFit>GESTION DU MENU</Text>
+          <Text style={s.headerTitle} numberOfLines={1}>{restaurant?.name || 'Menu'}</Text>
         </View>
         <TouchableOpacity style={s.addBtn} onPress={openAddForm} activeOpacity={0.75}>
           <Text style={s.addBtnTxt}>+ Ajouter</Text>
@@ -130,7 +130,6 @@ export default function ProMenuScreen({ navigation, route }) {
                     activeOpacity={0.7}
                   >
                     <Text style={[s.catChipTxt, active && s.catChipTxtOn]}>{cat}</Text>
-                    {active && <View style={s.catDot} />}
                   </TouchableOpacity>
                 );
               })}
@@ -231,12 +230,11 @@ const s = StyleSheet.create({
 
   catsWrap:     { borderBottomWidth: 1, borderBottomColor: colors.cardBorder, backgroundColor: colors.card },
   catsList:     { flexDirection: 'row', paddingHorizontal: spacing.xxl, paddingVertical: spacing.lg, gap: spacing.md },
-  catChip:      { paddingHorizontal: spacing.lg, paddingVertical: spacing.md, borderRadius: radius.pill, backgroundColor: 'transparent', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)', position: 'relative' },
-  catChipOn:    { backgroundColor: 'rgba(200,151,90,0.14)', borderColor: '#c8975a', shadowColor: '#000', shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
+  catChip:      { paddingHorizontal: spacing.lg, paddingVertical: spacing.md, borderRadius: radius.pill, backgroundColor: 'transparent', borderWidth: 1.5, borderColor: colors.text },
+  catChipOn:    { borderColor: colors.blue },
   catChipTxt:   { color: colors.textMuted, fontSize: typography.size.body },
-  catChipTxtOn: { color: colors.accent, fontWeight: typography.weight.semibold },
+  catChipTxtOn: { color: colors.blue, fontWeight: typography.weight.semibold },
   catChipMuted: { color: colors.textDim, fontSize: typography.size.body },
-  catDot:       { position: 'absolute', bottom: -1, left: '30%', right: '30%', height: 2, backgroundColor: colors.accent, borderRadius: 0 },
 
   empty:      { alignItems: 'center', justifyContent: 'center', paddingVertical: 60, gap: spacing.lg },
   emptyEmoji: { fontSize: 48 },

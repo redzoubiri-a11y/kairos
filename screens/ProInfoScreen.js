@@ -29,7 +29,10 @@ export default function ProInfoScreen({ navigation, route }) {
     return () => ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
   }, []);
 
-  const { form, loading, saving, saved, error, set, toggleTag, save } = useProInfo();
+  const {
+    form, loading, saving, saved, error, set, toggleTag, save,
+    generating, aiError, generateWithAI,
+  } = useProInfo();
 
   useEffect(() => {
     if (saved && onSetupComplete && !completedRef.current) {
@@ -81,7 +84,16 @@ export default function ProInfoScreen({ navigation, route }) {
             placeholderTextColor={colors.textDim}
           />
 
-          <Text style={s.label}>Description</Text>
+          <View style={s.labelRow}>
+            <Text style={s.label}>Description</Text>
+            <TouchableOpacity
+              style={[s.aiBtn, generating && s.aiBtnActive]}
+              onPress={generateWithAI}
+              disabled={generating}
+            >
+              <Text style={s.aiBtnTxt}>{generating ? 'Génération…' : '✨ Générer avec l\'IA'}</Text>
+            </TouchableOpacity>
+          </View>
           <TextInput
             style={[s.input, s.inputMulti]}
             value={form.description}
@@ -92,6 +104,7 @@ export default function ProInfoScreen({ navigation, route }) {
             numberOfLines={3}
             textAlignVertical="top"
           />
+          {!!aiError && <Text style={s.error}>{aiError}</Text>}
 
           {/* Contact */}
           <Text style={s.section}>Contact & Localisation</Text>
@@ -249,6 +262,10 @@ const s = StyleSheet.create({
   content:     { padding: spacing.xl, gap: 0 },
   section:     { color: colors.textMuted, fontSize: typography.size.xs, fontWeight: typography.weight.semibold, letterSpacing: 1, textTransform: 'uppercase', marginTop: spacing.xxl, marginBottom: spacing.md },
   label:       { color: colors.text, fontSize: typography.size.caption, fontWeight: typography.weight.medium, marginBottom: spacing.xs, marginTop: spacing.md },
+  labelRow:    { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  aiBtn:       { borderRadius: radius.full, borderWidth: 1, borderColor: PRO_ACCENT, paddingHorizontal: spacing.md, paddingVertical: spacing.xxs },
+  aiBtnActive: { opacity: 0.6 },
+  aiBtnTxt:    { color: PRO_ACCENT, fontSize: typography.size.xs, fontWeight: typography.weight.semibold },
   input:       { backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.md, color: colors.text, fontSize: typography.size.body },
   inputMulti:  { minHeight: 80, paddingTop: spacing.md },
 

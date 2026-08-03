@@ -34,6 +34,8 @@ export default function useProInfo() {
   const [saving,  setSaving]  = useState(false);
   const [saved,   setSaved]   = useState(false);
   const [error,   setError]   = useState('');
+  const [generating, setGenerating] = useState(false);
+  const [aiError,    setAiError]    = useState('');
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -117,5 +119,33 @@ export default function useProInfo() {
     }
   }, [restaurantId, form]);
 
-  return { form, loading, saving, saved, error, set, toggleTag, save };
+  // ── Génération IA (description + tags) — jamais auto-sauvegardée ─────────
+  const generateWithAI = useCallback(async () => {
+    if (!restaurantId) return;
+    setGenerating(true);
+    setAiError('');
+    try {
+      const { data, error: err } = await supabase.functions.invoke('generate-restaurant-content', {
+        body: { restaurant_id: restaurantId },
+      });
+      if (err || !data?.ok) {
+        setAiError(data?.error || err?.message || 'Erreur lors de la génération.');
+        return;
+      }
+      setForm(prev => ({
+        ...prev,
+        description: data.description ?? prev.description,
+        occasion_tags: data.occasion_tags ?? prev.occasion_tags,
+      }));
+    } catch {
+      setAiError('Erreur réseau. Vérifiez votre connexion.');
+    } finally {
+      setGenerating(false);
+    }
+  }, [restaurantId]);
+
+  return {
+    form, loading, saving, saved, error, set, toggleTag, save,
+    generating, aiError, generateWithAI,
+  };
 }

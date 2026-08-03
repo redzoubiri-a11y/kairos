@@ -10,6 +10,7 @@ export default function useProInscription() {
   const [rejected,  setRejected]  = useState(false);
   const [requestId, setRequestId] = useState(null);
   const channelRef = useRef(null);
+  const submittingRef = useRef(false);
 
   const set = useCallback((key) => (val) => setFormState(prev => ({ ...prev, [key]: val })), []);
 
@@ -36,10 +37,12 @@ export default function useProInscription() {
   }, [requestId]);
 
   const soumettre = useCallback(async () => {
+    if (submittingRef.current) return;
     if (!form.nom || !form.prenom || !form.restaurant || !form.telephone || !form.email) {
       setError('Nom, prénom, téléphone, email et restaurant sont obligatoires');
       return;
     }
+    submittingRef.current = true;
     setLoading(true);
     setError('');
     try {
@@ -61,6 +64,7 @@ export default function useProInscription() {
       setSuccess(true);
     } finally {
       setLoading(false);
+      submittingRef.current = false;
     }
   }, [form]);
 

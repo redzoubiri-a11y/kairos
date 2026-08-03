@@ -46,14 +46,14 @@ export default function usePushToken(authUserId) {
         // Only write if token changed
         const { data: row } = await supabase
           .from('users')
-          .select('expo_push_token')
+          .select('push_token')
           .eq('auth_id', authUserId)
           .maybeSingle();
 
-        if (row?.expo_push_token !== newToken) {
+        if (row?.push_token !== newToken) {
           await supabase
             .from('users')
-            .update({ expo_push_token: newToken })
+            .update({ push_token: newToken })
             .eq('auth_id', authUserId);
         }
 

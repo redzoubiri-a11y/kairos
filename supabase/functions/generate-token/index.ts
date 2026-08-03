@@ -141,7 +141,7 @@ serve(async (req) => {
     }
 
     // ── 7. Envoyer le lien WhatsApp au client ────────────────────────────────
-    const link  = `${SITE_URL}/resa/${token!}`;
+    const link  = `${SITE_URL}/r/${token!}`;
     const user_ = resa.users as { first_name: string; phone: string } | null;
     const resto = resa.restaurants as { name: string } | null;
     const phone = user_?.phone ?? null;

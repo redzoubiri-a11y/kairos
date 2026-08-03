@@ -163,7 +163,7 @@ Deno.serve(async (req) => {
     // ── Construire la requête selon le mode ──────────────────────────────────
     const baseSelect = `
       id, date, time_slot, nb_adults, nb_children,
-      users!user_id   (first_name, phone, expo_push_token),
+      users!user_id   (first_name, phone, push_token),
       restaurants!restaurant_id (name)
     `;
 
@@ -217,7 +217,7 @@ Deno.serve(async (req) => {
 
       const firstName      = user?.first_name    ?? "Cher client";
       const phone          = user?.phone          ?? "";
-      const pushToken      = user?.expo_push_token ?? null;
+      const pushToken      = user?.push_token ?? null;
       const restaurantName = restaurant?.name     ?? "votre restaurant";
       const timeSlot       = (resa.time_slot as string).slice(0, 5);
       const total          = (resa.nb_adults as number ?? 0) + (resa.nb_children as number ?? 0);

@@ -1,0 +1,77 @@
+// Constantes métier — alignées sur les specs §8 (enums) et §10 (règles).
+
+export const ROLES = { CLIENT: 'client', PRO: 'pro', ADMIN: 'admin' };
+
+export const EVENT_TYPES = ['mariage', 'fiancailles', 'anniversaire', 'conference', 'autre'];
+
+export const EVENT_EMOJI = {
+  mariage: '💍',
+  fiancailles: '💐',
+  anniversaire: '🎂',
+  conference: '🏢',
+  autre: '🎉',
+};
+
+export const RESERVATION_STATUS = {
+  PENDING: 'pending',
+  CONFIRMED: 'confirmed',
+  CANCELLED: 'cancelled',
+  COMPLETED: 'completed',
+};
+
+export const REVIEW_STATUS = {
+  PENDING: 'pending',
+  APPROVED: 'approved',
+  REJECTED: 'rejected',
+  FLAGGED: 'flagged',
+};
+
+export const SUBSCRIPTION_STATUS = {
+  TRIAL: 'trial',
+  ACTIVE: 'active',
+  CANCELLED: 'cancelled',
+  EXPIRED: 'expired',
+};
+
+export const PAYMENT_METHODS = ['ccp', 'baridimob', 'edahabia'];
+
+export const AMENITIES = ['clim', 'cuisine', 'sono', 'parking', 'terrasse', 'pmr', 'traiteur', 'wifi'];
+
+export const AMENITY_ICONS = {
+  clim: 'snow-outline',
+  cuisine: 'restaurant-outline',
+  sono: 'musical-notes-outline',
+  parking: 'car-outline',
+  terrasse: 'sunny-outline',
+  pmr: 'accessibility-outline',
+  traiteur: 'fast-food-outline',
+  wifi: 'wifi-outline',
+};
+
+// Wilayas les plus demandées pour les salles des fêtes
+export const CITIES = [
+  'Alger', 'Oran', 'Constantine', 'Blida', 'Annaba', 'Sétif',
+  'Tizi Ouzou', 'Béjaïa', 'Batna', 'Tlemcen', 'Tipaza', 'Boumerdès',
+];
+
+// §10.3 — Abonnement
+export const TRIAL_DAYS = 90;
+export const SUBSCRIPTION_PRICE = 500;
+
+// §10.1 — Réservations
+export const PRO_RESPONSE_HOURS = 48;
+export const DEPOSIT_MIN_RATE = 0.3;
+export const DEPOSIT_MAX_RATE = 0.5;
+
+// §10.2 — Avis
+export const REVIEW_DELAY_HOURS = 48;
+export const REVIEW_MODERATION_HOURS = 24;
+export const REVIEW_MAX_PHOTOS = 5;
+
+// §5.5 — Photos salle
+export const SALLE_MAX_PHOTOS = 10;
+
+// §10.4 — Notifications
+export const SMS_QUIET_START = 22;
+export const SMS_QUIET_END = 8;
+export const SMS_MAX_PER_DAY = 3;

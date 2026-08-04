@@ -1,0 +1,45 @@
+{
+  "expo": {
+    "name": "Mawsim",
+    "slug": "mawsim",
+    "version": "1.0.0",
+    "scheme": "mawsim",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#0B6E5F"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "dz.mawsim.app",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSPhotoLibraryUsageDescription": "Mawsim accède à vos photos pour illustrer votre salle et vos avis."
+      }
+    },
+    "android": {
+      "package": "dz.mawsim.app",
+      "edgeToEdgeEnabled": true,
+      "versionCode": 1
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single"
+    },
+    "plugins": [
+      "expo-localization",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Mawsim accède à vos photos pour illustrer votre salle et vos avis."
+        }
+      ]
+    ],
+    "extra": {
+      "supabaseUrl": null,
+      "supabaseAnonKey": null
+    }
+  }
+}

@@ -273,6 +273,8 @@ export default {
     version: 'الإصدار',
   },
   pro: {
+    sallesCount: '{{count}} قاعات',
+    switchSalle: 'تغيير القاعة',
     dashboard: 'لوحة التحكم',
     trialBadge: 'تجربة مجانية — {{days}} يوم متبقٍ',
     proBadge: 'محترف',

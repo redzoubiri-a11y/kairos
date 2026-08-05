@@ -239,15 +239,18 @@ export async function registerSalle(payload) {
   });
 
   user.role = ROLES.PRO;
-  user.salle_id = salle.id;
+  // Pas de `user.salle_id` : le lien va dans l'autre sens (salles.owner_id),
+  // sinon un propriétaire à deux salles n'en garderait qu'une.
   user.pin = payload.pin || null;
   user.ccp = payload.ccp || null;
 
-  // §10.3 — essai gratuit de 90 jours ouvert à l'inscription
-  db.subscriptions.push({
+  // §10.3 — un seul essai par propriétaire : ajouter une deuxième salle ne
+  // relance pas les 90 jours et ne double pas la facture.
+  const dejaAbonne = db.subscriptions.some((s) => s.pro_id === user.id);
+  if (!dejaAbonne) db.subscriptions.push({
     id: uid('sub'),
     pro_id: user.id,
-    salle_id: salle.id,
+    salle_id: null,
     status: SUBSCRIPTION_STATUS.TRIAL,
     trial_started_at: todayISO(),
     trial_ends_at: addDays(todayISO(), TRIAL_DAYS),
@@ -291,9 +294,11 @@ export async function listSalles(filters = {}) {
     rows = rows.filter((s) => (s.amenities || []).includes('sono'));
   }
 
-  // §10.3 — une salle sans abonnement à jour passe en "non prioritaire"
+  // §10.3 — une salle sans abonnement à jour passe en "non prioritaire".
+  // L'abonnement est porté par le propriétaire : ses salles se déclassent
+  // donc ensemble.
   const rank = (s) => {
-    const sub = db.subscriptions.find((x) => x.salle_id === s.id);
+    const sub = db.subscriptions.find((x) => x.pro_id === s.owner_id);
     const lapsed = sub && sub.status === SUBSCRIPTION_STATUS.EXPIRED;
     return (lapsed ? 2 : 0) - (s.is_premium ? 1 : 0);
   };
@@ -549,16 +554,53 @@ export async function toggleFavorite(salleId) {
 
 // ── Réservations pro (§9.4) ───────────────────────────────────────────────
 
-function proSalle() {
+/** Toutes les salles du propriétaire connecté, dans l'ordre de création. */
+export async function proListSalles() {
+  await load();
   const user = requireUser();
-  const salle = db.salles.find((s) => s.owner_id === user.id);
-  if (!salle) throw new Error('NO_SALLE');
+  return db.salles
+    .filter((s) => s.owner_id === user.id)
+    .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+    .map(decorateSalle);
+}
+
+/**
+ * Résout la salle sur laquelle porte l'appel et vérifie qu'elle appartient
+ * bien au propriétaire connecté. Sans identifiant, on retombe sur sa première
+ * salle — le cas courant, un pro n'en ayant souvent qu'une.
+ */
+function proSalle(salleId) {
+  const user = requireUser();
+  const miennes = db.salles.filter((s) => s.owner_id === user.id);
+  if (miennes.length === 0) throw new Error('NO_SALLE');
+
+  if (!salleId) return { user, salle: miennes[0] };
+
+  const salle = miennes.find((s) => s.id === salleId);
+  if (!salle) {
+    // La salle existe peut-être, mais pas pour ce propriétaire.
+    const err = new Error('FORBIDDEN');
+    err.code = 'FORBIDDEN';
+    throw err;
+  }
   return { user, salle };
 }
 
-export async function proListReservations(filter = 'all') {
+/** Vérifie la propriété d'une salle désignée indirectement (par une réservation, un avis). */
+function assertOwns(salleId) {
+  const user = requireUser();
+  const salle = db.salles.find((s) => s.id === salleId && s.owner_id === user.id);
+  if (!salle) {
+    const err = new Error('FORBIDDEN');
+    err.code = 'FORBIDDEN';
+    throw err;
+  }
+  return { user, salle };
+}
+
+export async function proListReservations(salleId, filter = 'all') {
   await load();
-  const { salle } = proSalle();
+  const { salle } = proSalle(salleId);
   const today = todayISO();
 
   let rows = db.reservations.filter((r) => r.salle_id === salle.id);
@@ -575,7 +617,10 @@ export async function proListReservations(filter = 'all') {
 /** §9.4 + §10.1 — confirmation avec acompte et signature PIN. */
 export async function proConfirmReservation(id, { depositAmount, ccp, pin }) {
   await load();
-  const { user, salle } = proSalle();
+  const cible = db.reservations.find((x) => x.id === id);
+  if (!cible) throw new Error('RESERVATION_NOT_FOUND');
+  // La salle est celle de la réservation : c'est elle qui doit appartenir au pro.
+  const { user, salle } = assertOwns(cible.salle_id);
 
   if (user.pin && String(pin) !== String(user.pin)) {
     const err = new Error('WRONG_PIN');
@@ -645,9 +690,9 @@ export async function proConfirmReservation(id, { depositAmount, ccp, pin }) {
 
 export async function proCancelReservation(id, reason) {
   await load();
-  const { salle } = proSalle();
-  const r = db.reservations.find((x) => x.id === id && x.salle_id === salle.id);
+  const r = db.reservations.find((x) => x.id === id);
   if (!r) throw new Error('RESERVATION_NOT_FOUND');
+  const { salle } = assertOwns(r.salle_id);
 
   r.status = RESERVATION_STATUS.CANCELLED;
   r.pro_notes = reason || null;
@@ -673,9 +718,9 @@ export async function proCancelReservation(id, reason) {
 
 export async function proVerifyDeposit(id) {
   await load();
-  const { salle } = proSalle();
-  const r = db.reservations.find((x) => x.id === id && x.salle_id === salle.id);
+  const r = db.reservations.find((x) => x.id === id);
   if (!r) throw new Error('RESERVATION_NOT_FOUND');
+  const { salle } = assertOwns(r.salle_id);
 
   r.deposit_paid = true;
   r.deposit_paid_at = new Date().toISOString();
@@ -696,9 +741,9 @@ export async function proVerifyDeposit(id) {
 
 // ── Planning pro (§5.3) ───────────────────────────────────────────────────
 
-export async function proGetPlanning(year, month) {
+export async function proGetPlanning(salleId, year, month) {
   await load();
-  const { salle } = proSalle();
+  const { salle } = proSalle(salleId);
   const availability = await getAvailability(salle.id, year, month);
   const reservations = db.reservations.filter(
     (r) => r.salle_id === salle.id && r.status !== RESERVATION_STATUS.CANCELLED
@@ -715,9 +760,9 @@ export async function proGetPlanning(year, month) {
   return { availability, byDay, salleId: salle.id, salleName: salle.name };
 }
 
-export async function proToggleBlockedDay(day) {
+export async function proToggleBlockedDay(salleId, day) {
   await load();
-  const { salle } = proSalle();
+  const { salle } = proSalle(salleId);
   const idx = db.blocked_days.findIndex((b) => b.salle_id === salle.id && b.day === day);
   if (idx >= 0) db.blocked_days.splice(idx, 1);
   else db.blocked_days.push({ salle_id: salle.id, day });
@@ -731,9 +776,9 @@ function monthKey(iso) {
   return iso.slice(0, 7);
 }
 
-export async function proGetDashboard() {
+export async function proGetDashboard(salleId) {
   await load();
-  const { user, salle } = proSalle();
+  const { user, salle } = proSalle(salleId);
   const today = todayISO();
   const thisMonth = monthKey(today);
   const prevMonth = monthKey(addDays(`${thisMonth}-01`, -1));
@@ -761,7 +806,7 @@ export async function proGetDashboard() {
   const rating = ratingOf(salle.id);
   const pending = all.filter((r) => r.status === RESERVATION_STATUS.PENDING);
 
-  const sub = db.subscriptions.find((s) => s.salle_id === salle.id);
+  const sub = db.subscriptions.find((s) => s.pro_id === user.id);
   const trialDaysLeft = sub?.trial_ends_at
     ? Math.max(0, Math.round((new Date(sub.trial_ends_at) - new Date(today)) / 86_400_000))
     : 0;
@@ -814,9 +859,9 @@ function deltaPoints(current, previous) {
   return current - previous;
 }
 
-export async function proGetStats() {
+export async function proGetStats(salleId) {
   await load();
-  const { salle } = proSalle();
+  const { salle } = proSalle(salleId);
   const all = db.reservations.filter(
     (r) => r.salle_id === salle.id && r.status !== RESERVATION_STATUS.CANCELLED
   );
@@ -868,15 +913,15 @@ export async function proGetStats() {
 
 // ── Ma salle (§5.5) ───────────────────────────────────────────────────────
 
-export async function proGetSalle() {
+export async function proGetSalle(salleId) {
   await load();
-  const { salle } = proSalle();
+  const { salle } = proSalle(salleId);
   return decorateSalle(salle);
 }
 
-export async function proUpdateSalle(patch) {
+export async function proUpdateSalle(salleId, patch) {
   await load();
-  const { salle } = proSalle();
+  const { salle } = proSalle(salleId);
   Object.assign(salle, {
     name: patch.name ?? salle.name,
     city: patch.city ?? salle.city,
@@ -891,9 +936,9 @@ export async function proUpdateSalle(patch) {
   return decorateSalle(salle);
 }
 
-export async function proUpdateTarifs(list) {
+export async function proUpdateTarifs(salleId, list) {
   await load();
-  const { salle } = proSalle();
+  const { salle } = proSalle(salleId);
   db.tarifs = db.tarifs.filter((t) => t.salle_id !== salle.id);
   list.forEach((t, i) => {
     db.tarifs.push({
@@ -966,9 +1011,9 @@ export async function createReview(payload) {
   return clone(review);
 }
 
-export async function proListPendingReviews() {
+export async function proListPendingReviews(salleId) {
   await load();
-  const { salle } = proSalle();
+  const { salle } = proSalle(salleId);
   return clone(
     db.reviews.filter(
       (r) => r.salle_id === salle.id && r.status === REVIEW_STATUS.PENDING && !isPubliclyVisible(r)
@@ -978,9 +1023,9 @@ export async function proListPendingReviews() {
 
 export async function proModerateReview(id, action, replyText) {
   await load();
-  const { salle } = proSalle();
-  const review = db.reviews.find((r) => r.id === id && r.salle_id === salle.id);
+  const review = db.reviews.find((r) => r.id === id);
   if (!review) throw new Error('REVIEW_NOT_FOUND');
+  const { salle } = assertOwns(review.salle_id);
 
   if (action === 'approve') review.status = REVIEW_STATUS.APPROVED;
   // §10.2 — un pro ne peut pas supprimer un avis, seulement le signaler
@@ -1128,8 +1173,9 @@ export async function listSmsLog() {
 
 export async function getSubscription() {
   await load();
-  const { salle } = proSalle();
-  const sub = db.subscriptions.find((s) => s.salle_id === salle.id);
+  // Un abonnement par propriétaire : 500 DA donnent accès à toutes ses salles.
+  const user = requireUser();
+  const sub = db.subscriptions.find((s) => s.pro_id === user.id);
   if (!sub) return null;
 
   const today = todayISO();
@@ -1141,8 +1187,8 @@ export async function getSubscription() {
 
 export async function setPaymentMethod(method, details) {
   await load();
-  const { salle } = proSalle();
-  const sub = db.subscriptions.find((s) => s.salle_id === salle.id);
+  const user = requireUser();
+  const sub = db.subscriptions.find((s) => s.pro_id === user.id);
   if (!sub) throw new Error('NO_SUBSCRIPTION');
   sub.payment_method = method;
   sub.payment_details = details || null;

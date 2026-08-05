@@ -6,6 +6,7 @@ import { RevenueLine, BreakdownBars } from '../../components/charts';
 import { MCard, SectionTitle, Loader, ErrorState } from '../../components/primitives';
 import { useTheme } from '../../context/ThemeContext';
 import { useI18n } from '../../i18n';
+import { useProSalle } from '../../context/ProSalleContext';
 import * as api from '../../data';
 
 const SOURCE_LABEL = {
@@ -18,6 +19,7 @@ const SOURCE_LABEL = {
 export default function ProStatsScreen({ navigation }) {
   const { spacing } = useTheme();
   const { t, list } = useI18n();
+  const { currentId } = useProSalle();
 
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -26,13 +28,13 @@ export default function ProStatsScreen({ navigation }) {
   const load = useCallback(async () => {
     try {
       setError(null);
-      setStats(await api.proGetStats());
+      setStats(await api.proGetStats(currentId));
     } catch (e) {
       setError(e.message);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [currentId]);
 
   useFocusEffect(
     useCallback(() => {

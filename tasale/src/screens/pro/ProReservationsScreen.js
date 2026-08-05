@@ -12,6 +12,8 @@ import { useTheme } from '../../context/ThemeContext';
 import { useI18n } from '../../i18n';
 import { formatDA, displayPhone, formatLongDate } from '../../lib/format';
 import { RESERVATION_STATUS, DEPOSIT_MIN_RATE, DEPOSIT_MAX_RATE } from '../../lib/constants';
+import { useProSalle } from '../../context/ProSalleContext';
+import SalleSwitcher from '../../components/SalleSwitcher';
 import * as api from '../../data';
 
 const FILTERS = ['all', 'pending', 'confirmed', 'cancelled', 'past'];
@@ -19,6 +21,7 @@ const FILTERS = ['all', 'pending', 'confirmed', 'cancelled', 'past'];
 export default function ProReservationsScreen({ route, navigation }) {
   const { colors, typography, spacing } = useTheme();
   const { t, list, dir, isRTL, align } = useI18n();
+  const { currentId } = useProSalle();
 
   const [filter, setFilter] = useState(route.params?.filter || 'all');
   const [rows, setRows] = useState([]);
@@ -40,13 +43,13 @@ export default function ProReservationsScreen({ route, navigation }) {
   const load = useCallback(async () => {
     try {
       setError(null);
-      setRows(await api.proListReservations(filter));
+      setRows(await api.proListReservations(currentId, filter));
     } catch (e) {
       setError(e.message);
     } finally {
       setLoading(false);
     }
-  }, [filter]);
+  }, [filter, currentId]);
 
   useFocusEffect(
     useCallback(() => {
@@ -121,6 +124,8 @@ export default function ProReservationsScreen({ route, navigation }) {
   return (
     <Screen>
       <Header title={t('pro.reservationsTitle')} bordered={false} />
+
+      <SalleSwitcher />
 
       <ScrollView
         horizontal

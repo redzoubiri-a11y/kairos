@@ -49,6 +49,7 @@ export const proToggleBlockedDay = impl.proToggleBlockedDay;
 // Pro — dashboard, stats, salle
 export const proGetDashboard = impl.proGetDashboard;
 export const proGetStats = impl.proGetStats;
+export const proListSalles = impl.proListSalles;
 export const proGetSalle = impl.proGetSalle;
 export const proUpdateSalle = impl.proUpdateSalle;
 export const proUpdateTarifs = impl.proUpdateTarifs;

@@ -12,11 +12,14 @@ import { useTheme } from '../../context/ThemeContext';
 import { useI18n } from '../../i18n';
 import { formatDA, formatLongDate, todayISO } from '../../lib/format';
 
+import { useProSalle } from '../../context/ProSalleContext';
+import SalleSwitcher from '../../components/SalleSwitcher';
 import * as api from '../../data';
 
 export default function ProPlanningScreen({ navigation }) {
   const { colors, typography, spacing } = useTheme();
   const { t, list, dir, align } = useI18n();
+  const { currentId } = useProSalle();
 
   const today = new Date();
   const [cursor, setCursor] = useState({ year: today.getFullYear(), month: today.getMonth() });
@@ -32,15 +35,16 @@ export default function ProPlanningScreen({ navigation }) {
     try {
       // §1.4 — le planning reste consultable sans connexion.
       const { data, at } = await withCache(
-        cacheKey('planning', cursor.year, cursor.month),
-        () => api.proGetPlanning(cursor.year, cursor.month)
+        // La clé porte la salle : deux salles ne partagent pas leur cache.
+        cacheKey('planning', currentId, cursor.year, cursor.month),
+        () => api.proGetPlanning(currentId, cursor.year, cursor.month)
       );
       setPlanning(data);
       setStaleSince(at);
     } finally {
       setLoading(false);
     }
-  }, [cursor]);
+  }, [cursor, currentId]);
 
   useEffect(() => {
     load();
@@ -79,7 +83,7 @@ export default function ProPlanningScreen({ navigation }) {
   const toggleBlock = async () => {
     setBusy(true);
     try {
-      await api.proToggleBlockedDay(selected);
+      await api.proToggleBlockedDay(currentId, selected);
       await load();
     } finally {
       setBusy(false);
@@ -114,6 +118,8 @@ export default function ProPlanningScreen({ navigation }) {
           />
         }
       />
+
+      <SalleSwitcher />
 
       <Body>
         <OfflineBanner at={staleSince} />

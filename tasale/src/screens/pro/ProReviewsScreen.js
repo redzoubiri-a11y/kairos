@@ -11,6 +11,7 @@ import { Loader, EmptyState, MCard } from '../../components/primitives';
 import { useTheme } from '../../context/ThemeContext';
 import { useI18n } from '../../i18n';
 import { REVIEW_MODERATION_HOURS } from '../../lib/constants';
+import { useProSalle } from '../../context/ProSalleContext';
 import * as api from '../../data';
 
 export default function ProReviewsScreen({ navigation }) {
@@ -29,7 +30,7 @@ export default function ProReviewsScreen({ navigation }) {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [currentId]);
 
   useFocusEffect(
     useCallback(() => {

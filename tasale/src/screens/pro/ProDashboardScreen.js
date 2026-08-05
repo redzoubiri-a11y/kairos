@@ -10,8 +10,11 @@ import { RevenueBars } from '../../components/charts';
 import { MCard, MBadge, SectionTitle, Loader, ErrorState, EmptyState } from '../../components/primitives';
 import { useTheme } from '../../context/ThemeContext';
 import { useI18n } from '../../i18n';
+import { useAuth } from '../../context/AuthContext';
 import { formatDACompact } from '../../lib/format';
 
+import { useProSalle } from '../../context/ProSalleContext';
+import SalleSwitcher from '../../components/SalleSwitcher';
 import * as api from '../../data';
 
 function AlertRow({ icon, tone, label, onPress }) {
@@ -45,6 +48,8 @@ export default function ProDashboardScreen({ navigation }) {
   const { colors, typography, spacing } = useTheme();
   const { t, dir } = useI18n();
   const { width } = useWindowDimensions();
+  const { currentId, isMulti, salles } = useProSalle();
+  const { user } = useAuth();
 
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -54,14 +59,14 @@ export default function ProDashboardScreen({ navigation }) {
   const load = useCallback(async () => {
     try {
       setError(null);
-      setData(await api.proGetDashboard());
+      setData(await api.proGetDashboard(currentId));
     } catch (e) {
       setError(e.message);
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
-  }, []);
+  }, [currentId]);
 
   useFocusEffect(
     useCallback(() => {
@@ -104,12 +109,14 @@ export default function ProDashboardScreen({ navigation }) {
         }}
       >
         <TasaleLogo size={32} showText={false} />
+        {/* À plusieurs salles, le sélecteur juste en dessous porte déjà le nom
+            de la salle : l'en-tête identifie alors le compte, pas la salle. */}
         <View style={{ flex: 1 }}>
           <Text style={[typography.title, { fontSize: 15, color: colors.dark }]} numberOfLines={1}>
-            {data.salle?.name}
+            {isMulti ? user?.full_name : data.salle?.name}
           </Text>
           <Text style={[typography.caption, { color: colors.warmGray }]} numberOfLines={1}>
-            {data.salle?.city}
+            {isMulti ? t('pro.sallesCount', { count: salles.length }) : data.salle?.city}
           </Text>
         </View>
 
@@ -119,6 +126,8 @@ export default function ProDashboardScreen({ navigation }) {
           <MBadge label={`⭐ ${t('pro.proBadge')}`} tone="gold" size="sm" />
         )}
       </View>
+
+      <SalleSwitcher />
 
       <Body
         refreshControl={

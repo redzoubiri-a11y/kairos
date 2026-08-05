@@ -184,7 +184,7 @@ describe('confirmation par le pro (§10.1, §11.1)', () => {
     await api
       .proConfirmReservation('resa-002', { depositAmount: 16000, pin: '9999' })
       .catch(() => {});
-    const rows = await api.proListReservations('pending');
+    const rows = await api.proListReservations(SALLE, 'pending');
     expect(rows.some((r) => r.id === 'resa-002')).toBe(true);
   });
 
@@ -359,7 +359,7 @@ describe('avis (§7, §10.2)', () => {
 
   it('permet au pro d’approuver et de répondre, jamais de supprimer', async () => {
     await loginAs(PRO_PHONE);
-    const enAttente = await api.proListPendingReviews();
+    const enAttente = await api.proListPendingReviews(SALLE);
     expect(enAttente).toHaveLength(1); // review-002
 
     const repondu = await api.proModerateReview(enAttente[0].id, 'reply', 'Merci !');
@@ -485,7 +485,7 @@ describe('recherche (§4.2)', () => {
 describe('tableau de bord pro (§5.2)', () => {
   it('renvoie KPI, série de revenus et alertes', async () => {
     await loginAs(PRO_PHONE);
-    const data = await api.proGetDashboard();
+    const data = await api.proGetDashboard(SALLE);
 
     expect(data.salle.id).toBe(SALLE);
     expect(data.revenueSeries).toHaveLength(6);
@@ -497,13 +497,13 @@ describe('tableau de bord pro (§5.2)', () => {
 
   it('compte les avis en attente de modération', async () => {
     await loginAs(PRO_PHONE);
-    const data = await api.proGetDashboard();
+    const data = await api.proGetDashboard(SALLE);
     expect(data.pendingReviews).toBe(1); // review-002
   });
 
   it('produit six mois de statistiques', async () => {
     await loginAs(PRO_PHONE);
-    const stats = await api.proGetStats();
+    const stats = await api.proGetStats(SALLE);
     expect(stats.occupancy).toHaveLength(6);
     expect(stats.revenueSeries).toHaveLength(6);
     expect(stats.eventTypes.reduce((acc, e) => acc + e.count, 0)).toBeGreaterThan(0);
@@ -515,10 +515,10 @@ describe('planning pro (§5.3)', () => {
     await loginAs(PRO_PHONE);
     const jour = addDays(T, 60);
 
-    expect(await api.proToggleBlockedDay(jour)).toBe(true);
+    expect(await api.proToggleBlockedDay(SALLE, jour)).toBe(true);
     expect(await stateOf(jour)).toBe('blocked');
 
-    expect(await api.proToggleBlockedDay(jour)).toBe(false);
+    expect(await api.proToggleBlockedDay(SALLE, jour)).toBe(false);
     expect(await stateOf(jour)).toBe('available');
   });
 });
@@ -647,5 +647,104 @@ describe('console d’administration (§2.1)', () => {
     expect(arbitre.moderated_at).toBeTruthy();
     // Retiré du public, mais conservé pour traçabilité
     expect(await api.getSalleReviews('salle-003', {})).toHaveLength(0);
+  });
+});
+
+describe('multi-salles (§12 Phase 4)', () => {
+  const SALLE_2 = 'salle-002';
+  const AUTRE_PRO_SALLE = 'salle-003';
+
+  it('liste les salles du propriétaire connecté', async () => {
+    await loginAs(PRO_PHONE);
+    const miennes = await api.proListSalles();
+    expect(miennes.map((s) => s.id)).toEqual([SALLE, SALLE_2]);
+  });
+
+  it('ne liste que les siennes', async () => {
+    await loginAs('0555 10 00 03');
+    const miennes = await api.proListSalles();
+    expect(miennes.map((s) => s.id)).toEqual([AUTRE_PRO_SALLE]);
+  });
+
+  it('sépare les tableaux de bord de deux salles', async () => {
+    await loginAs(PRO_PHONE);
+    const a = await api.proGetDashboard(SALLE);
+    const b = await api.proGetDashboard(SALLE_2);
+
+    expect(a.salle.id).toBe(SALLE);
+    expect(b.salle.id).toBe(SALLE_2);
+    // Toutes les réservations du jeu de démo portent sur la première salle
+    expect(a.pendingCount).toBe(2);
+    expect(b.pendingCount).toBe(0);
+  });
+
+  it('sépare les plannings', async () => {
+    await loginAs(PRO_PHONE);
+    const today = new Date();
+    const p1 = await api.proGetPlanning(SALLE, today.getFullYear(), today.getMonth());
+    const p2 = await api.proGetPlanning(SALLE_2, today.getFullYear(), today.getMonth());
+
+    expect(p1.salleName).toBe('Salle El Widad');
+    expect(p2.salleName).toBe('Espace Andalous');
+    expect(Object.keys(p2.byDay)).toHaveLength(0);
+  });
+
+  it('refuse l’accès à la salle d’un autre propriétaire', async () => {
+    await loginAs(PRO_PHONE);
+    await expect(api.proGetDashboard(AUTRE_PRO_SALLE)).rejects.toMatchObject({
+      code: 'FORBIDDEN',
+    });
+    await expect(api.proGetSalle(AUTRE_PRO_SALLE)).rejects.toMatchObject({ code: 'FORBIDDEN' });
+    await expect(api.proListReservations(AUTRE_PRO_SALLE)).rejects.toMatchObject({
+      code: 'FORBIDDEN',
+    });
+  });
+
+  it('refuse de bloquer un jour chez un autre', async () => {
+    await loginAs(PRO_PHONE);
+    await expect(api.proToggleBlockedDay(AUTRE_PRO_SALLE, addDays(T, 60))).rejects.toMatchObject({
+      code: 'FORBIDDEN',
+    });
+  });
+
+  it('retombe sur la première salle sans identifiant', async () => {
+    await loginAs(PRO_PHONE);
+    const data = await api.proGetDashboard();
+    expect(data.salle.id).toBe(SALLE);
+  });
+
+  it('modifie chaque salle indépendamment', async () => {
+    await loginAs(PRO_PHONE);
+    await api.proUpdateSalle(SALLE_2, { name: 'Espace Andalous — Rénové' });
+
+    expect((await api.proGetSalle(SALLE_2)).name).toBe('Espace Andalous — Rénové');
+    expect((await api.proGetSalle(SALLE)).name).toBe('Salle El Widad');
+  });
+
+  it('facture le propriétaire, pas la salle', async () => {
+    await loginAs(PRO_PHONE);
+    const sub = await api.getSubscription();
+
+    // Un seul abonnement, bien qu'il gère deux salles
+    expect(sub.pro_id).toBe('user-pro-001');
+    expect(sub.salle_id).toBeNull();
+    expect(sub.amount).toBe(500);
+  });
+
+  it('n’ouvre pas un second essai en ajoutant une salle', async () => {
+    await loginAs(PRO_PHONE);
+    const avant = await api.getSubscription();
+
+    await api.registerSalle({
+      name: 'Troisième salle',
+      city: 'Alger',
+      capacity_max: 150,
+      tarifs: [{ name: 'Location', price: 20000 }],
+    });
+
+    const apres = await api.getSubscription();
+    expect(apres.id).toBe(avant.id);
+    expect(apres.trial_ends_at).toBe(avant.trial_ends_at);
+    expect((await api.proListSalles())).toHaveLength(3);
   });
 });

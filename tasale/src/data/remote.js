@@ -150,14 +150,19 @@ export async function registerSalle(payload) {
     unwrap(await supabase.rpc('set_pro_pin', { p_pin: String(payload.pin) }));
   }
 
-  unwrap(
-    await supabase.from('subscriptions').insert({
-      pro_id: id,
-      salle_id: salle.id,
-      status: SUBSCRIPTION_STATUS.TRIAL,
-      trial_ends_at: addDays(todayISO(), TRIAL_DAYS),
-    })
+  // §10.3 — un seul essai par propriétaire : ajouter une salle ne le relance pas
+  const abonnement = unwrap(
+    await supabase.from('subscriptions').select('id').eq('pro_id', id).maybeSingle()
   );
+  if (!abonnement) {
+    unwrap(
+      await supabase.from('subscriptions').insert({
+        pro_id: id,
+        status: SUBSCRIPTION_STATUS.TRIAL,
+        trial_ends_at: addDays(todayISO(), TRIAL_DAYS),
+      })
+    );
+  }
 
   return { salle, user };
 }
@@ -300,25 +305,48 @@ export async function toggleFavorite(salleId) {
 
 // ── Réservations pro ──────────────────────────────────────────────────────
 
-async function mySalle() {
+/** Toutes les salles du propriétaire connecté. */
+export async function proListSalles() {
   const id = await currentUserId();
-  const row = unwrap(
-    await supabase.from('salles').select('id, name').eq('owner_id', id).limit(1).maybeSingle()
+  const rows = unwrap(
+    await supabase
+      .from('salles')
+      .select(SALLE_SELECT)
+      .eq('owner_id', id)
+      .order('created_at', { ascending: true })
   );
-  if (!row) throw new Error('NO_SALLE');
+  return (rows || []).map(decorate);
+}
+
+/**
+ * Résout la salle visée et vérifie qu'elle appartient au pro. Sans
+ * identifiant, on retombe sur sa première salle. La requête filtre sur
+ * `owner_id` : une salle d'autrui ne remonte simplement pas.
+ */
+async function mySalle(salleId) {
+  const id = await currentUserId();
+  let q = supabase.from('salles').select('id, name').eq('owner_id', id);
+  q = salleId ? q.eq('id', salleId) : q.order('created_at', { ascending: true }).limit(1);
+
+  const row = unwrap(await q.maybeSingle());
+  if (!row) {
+    const err = new Error(salleId ? 'FORBIDDEN' : 'NO_SALLE');
+    err.code = salleId ? 'FORBIDDEN' : 'NO_SALLE';
+    throw err;
+  }
   return row;
 }
 
-async function mySalleId() {
-  return (await mySalle()).id;
+async function mySalleId(salleId) {
+  return (await mySalle(salleId)).id;
 }
 
-export async function proListReservations(filter = 'all') {
-  const salleId = await mySalleId();
+export async function proListReservations(salleId, filter = 'all') {
+  const cible = await mySalleId(salleId);
   let q = supabase
     .from('reservations')
     .select('*, formula:tarifs ( id, name, price )')
-    .eq('salle_id', salleId);
+    .eq('salle_id', cible);
 
   if (filter === 'pending') q = q.eq('status', RESERVATION_STATUS.PENDING);
   if (filter === 'confirmed') q = q.eq('status', RESERVATION_STATUS.CONFIRMED);
@@ -350,9 +378,8 @@ export async function proVerifyDeposit(id) {
 
 // ── Planning ──────────────────────────────────────────────────────────────
 
-export async function proGetPlanning(year, month) {
-  const salle = await mySalle();
-  const salleId = salle.id;
+export async function proGetPlanning(salleId, year, month) {
+  const salle = await mySalle(salleId);
   const availability = await getAvailability(salleId, year, month);
   const from = toISODate(new Date(year, month - 1, 1));
   const to = toISODate(new Date(year, month + 2, 0));
@@ -375,57 +402,59 @@ export async function proGetPlanning(year, month) {
   return { availability, byDay, salleId, salleName: salle.name };
 }
 
-export async function proToggleBlockedDay(day) {
-  const salleId = await mySalleId();
+export async function proToggleBlockedDay(salleId, day) {
+  const cible = await mySalleId(salleId);
   const existing = unwrap(
-    await supabase.from('blocked_days').select('day').eq('salle_id', salleId).eq('day', day).maybeSingle()
+    await supabase.from('blocked_days').select('day').eq('salle_id', cible).eq('day', day).maybeSingle()
   );
   if (existing) {
-    unwrap(await supabase.from('blocked_days').delete().eq('salle_id', salleId).eq('day', day));
+    unwrap(await supabase.from('blocked_days').delete().eq('salle_id', cible).eq('day', day));
     return false;
   }
-  unwrap(await supabase.from('blocked_days').insert({ salle_id: salleId, day }));
+  unwrap(await supabase.from('blocked_days').insert({ salle_id: cible, day }));
   return true;
 }
 
 // ── Dashboard & stats ─────────────────────────────────────────────────────
 
-export async function proGetDashboard() {
-  const data = unwrap(await supabase.rpc('pro_dashboard'));
+export async function proGetDashboard(salleId) {
+  const cible = await mySalleId(salleId);
+  const data = unwrap(await supabase.rpc('pro_dashboard', { p_salle: cible }));
   return Array.isArray(data) ? data[0] : data;
 }
 
-export async function proGetStats() {
-  const data = unwrap(await supabase.rpc('pro_stats'));
+export async function proGetStats(salleId) {
+  const cible = await mySalleId(salleId);
+  const data = unwrap(await supabase.rpc('pro_stats', { p_salle: cible }));
   return Array.isArray(data) ? data[0] : data;
 }
 
 // ── Ma salle ──────────────────────────────────────────────────────────────
 
-export async function proGetSalle() {
-  const salleId = await mySalleId();
-  const row = unwrap(await supabase.from('salles').select(SALLE_SELECT).eq('id', salleId).single());
+export async function proGetSalle(salleId) {
+  const cible = await mySalleId(salleId);
+  const row = unwrap(await supabase.from('salles').select(SALLE_SELECT).eq('id', cible).single());
   return decorate(row);
 }
 
-export async function proUpdateSalle(patch) {
-  const salleId = await mySalleId();
+export async function proUpdateSalle(salleId, patch) {
+  const cible = await mySalleId(salleId);
   const row = unwrap(
-    await supabase.from('salles').update(patch).eq('id', salleId).select(SALLE_SELECT).single()
+    await supabase.from('salles').update(patch).eq('id', cible).select(SALLE_SELECT).single()
   );
   return decorate(row);
 }
 
-export async function proUpdateTarifs(list) {
-  const salleId = await mySalleId();
-  unwrap(await supabase.from('tarifs').delete().eq('salle_id', salleId));
+export async function proUpdateTarifs(salleId, list) {
+  const cible = await mySalleId(salleId);
+  unwrap(await supabase.from('tarifs').delete().eq('salle_id', cible));
   return (
     unwrap(
       await supabase
         .from('tarifs')
         .insert(
           list.map((t, i) => ({
-            salle_id: salleId,
+            salle_id: cible,
             name: t.name,
             description: t.description || '',
             price: Number(t.price) || 0,
@@ -455,14 +484,14 @@ export async function createReview(payload) {
   return Array.isArray(row) ? row[0] : row;
 }
 
-export async function proListPendingReviews() {
-  const salleId = await mySalleId();
+export async function proListPendingReviews(salleId) {
+  const cible = await mySalleId(salleId);
   return (
     unwrap(
       await supabase
         .from('reviews')
         .select('*')
-        .eq('salle_id', salleId)
+        .eq('salle_id', cible)
         .eq('status', REVIEW_STATUS.PENDING)
         .order('created_at', { ascending: false })
     ) || []
@@ -569,9 +598,10 @@ export async function listSmsLog() {
 // ── Abonnement ────────────────────────────────────────────────────────────
 
 export async function getSubscription() {
-  const salleId = await mySalleId();
+  // Un abonnement par propriétaire, quel que soit son nombre de salles.
+  const id = await currentUserId();
   const sub = unwrap(
-    await supabase.from('subscriptions').select('*').eq('salle_id', salleId).maybeSingle()
+    await supabase.from('subscriptions').select('*').eq('pro_id', id).maybeSingle()
   );
   if (!sub) return null;
   const daysLeft = Math.max(
@@ -582,22 +612,22 @@ export async function getSubscription() {
 }
 
 export async function setPaymentMethod(method, details) {
-  const salleId = await mySalleId();
+  const id = await currentUserId();
   return unwrap(
     await supabase
       .from('subscriptions')
       .update({ payment_method: method, payment_details: details || null })
-      .eq('salle_id', salleId)
+      .eq('pro_id', id)
       .select()
       .single()
   );
 }
 
 export async function listInvoices() {
-  const salleId = await mySalleId();
+  const id = await currentUserId();
   return (
     unwrap(
-      await supabase.from('invoices').select('*').eq('salle_id', salleId).order('issued_at', { ascending: false })
+      await supabase.from('invoices').select('*').eq('pro_id', id).order('issued_at', { ascending: false })
     ) || []
   );
 }

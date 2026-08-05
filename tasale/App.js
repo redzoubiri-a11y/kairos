@@ -10,6 +10,7 @@ import { ThemeProvider, useTheme } from './src/context/ThemeContext';
 import { I18nProvider, useI18n } from './src/i18n';
 import { AuthProvider, useAuth } from './src/context/AuthContext';
 import { FavoritesProvider } from './src/context/FavoritesContext';
+import { ProSalleProvider } from './src/context/ProSalleContext';
 import { linking } from './src/linking';
 import { configureForegroundBehaviour } from './src/services/push';
 import { ROLES } from './src/lib/constants';
@@ -248,7 +249,9 @@ export default function App() {
         <I18nProvider>
           <AuthProvider>
             <FavoritesProvider>
-              <NavigationRoot />
+              <ProSalleProvider>
+                <NavigationRoot />
+              </ProSalleProvider>
             </FavoritesProvider>
           </AuthProvider>
         </I18nProvider>

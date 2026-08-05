@@ -44,7 +44,8 @@ export const SEED_SALLES = [
   },
   {
     id: 'salle-002',
-    owner_id: 'user-pro-002',
+    // Deuxième salle du compte de démonstration : le pro en gère deux.
+    owner_id: 'user-pro-001',
     name: 'Espace Andalous',
     city: 'Alger',
     address: 'Route de Chéraga, Dely Ibrahim, Alger',
@@ -276,22 +277,23 @@ export const SEED_TARIFS = SEED_SALLES.flatMap((s, i) => {
   ];
 });
 
-// Propriétaires : un par salle. Le premier est le compte de démonstration
-// documenté dans le README (0555 10 00 01), les autres rendent le jeu de
+// Propriétaires. Le premier est le compte de démonstration documenté dans le
+// README (0555 10 00 01) et gère deux salles ; les autres rendent le jeu de
 // données cohérent — chaque salle, réservation et avis pointe vers un
 // utilisateur réel, ce qui permet de tester messagerie et notifications.
+// Le rattachement aux salles vit dans `salles.owner_id`, pas ici.
 const PRO_OWNERS = [
-  ['user-pro-001', 'salle-001', 'Karim Belkacem', '0021458796 clé 33'],
-  ['user-pro-002', 'salle-002', 'Samir Aït Ouali', '0034125870 clé 12'],
-  ['user-pro-003', 'salle-003', 'Mohamed Benali', '0045236981 clé 47'],
-  ['user-pro-004', 'salle-004', 'Hakim Zerrouki', '0056987412 clé 08'],
-  ['user-pro-005', 'salle-005', 'Rachid Amrani', '0067412589 clé 21'],
-  ['user-pro-006', 'salle-006', 'Djamel Kaci', '0078523691 clé 63'],
-  ['user-pro-007', 'salle-007', 'Mourad Ouyahia', '0089634127 clé 35'],
-  ['user-pro-008', 'salle-008', 'Tarek Boudjelal', '0090147852 clé 19'],
-  ['user-pro-009', 'salle-009', 'Nabil Hamdani', '0012369874 clé 52'],
-  ['user-pro-010', 'salle-010', 'Salim Merabet', '0023698741 clé 74'],
-  ['user-pro-011', 'salle-011', 'Farid Benhamou', '0034789612 clé 90'],
+  ['user-pro-001', 'Karim Belkacem', '0021458796 clé 33'],
+  ['user-pro-002', 'Samir Aït Ouali', '0034125870 clé 12'],
+  ['user-pro-003', 'Mohamed Benali', '0045236981 clé 47'],
+  ['user-pro-004', 'Hakim Zerrouki', '0056987412 clé 08'],
+  ['user-pro-005', 'Rachid Amrani', '0067412589 clé 21'],
+  ['user-pro-006', 'Djamel Kaci', '0078523691 clé 63'],
+  ['user-pro-007', 'Mourad Ouyahia', '0089634127 clé 35'],
+  ['user-pro-008', 'Tarek Boudjelal', '0090147852 clé 19'],
+  ['user-pro-009', 'Nabil Hamdani', '0012369874 clé 52'],
+  ['user-pro-010', 'Salim Merabet', '0023698741 clé 74'],
+  ['user-pro-011', 'Farid Benhamou', '0034789612 clé 90'],
 ];
 
 // Familles ayant réservé — référencées par les réservations et les avis.
@@ -314,14 +316,13 @@ export const SEED_USERS = [
     preferred_language: 'fr',
     created_at: '2025-09-01T09:00:00Z',
   },
-  ...PRO_OWNERS.map(([id, salleId, name, ccp], i) => ({
+  ...PRO_OWNERS.map(([id, name, ccp], i) => ({
     id,
-    // 0555 10 00 01 … 0555 10 00 10
+    // 0555 10 00 01 … 0555 10 00 11
     phone: `+2135551000${String(i + 1).padStart(2, '0')}`,
     full_name: name,
     role: 'pro',
     preferred_language: 'fr',
-    salle_id: salleId,
     pin: '1234',
     ccp,
     created_at: '2026-01-12T09:00:00Z',
@@ -605,7 +606,9 @@ export const SEED_BLOCKED_DAYS = [
 export const SEED_SUBSCRIPTION = {
   id: 'sub-001',
   pro_id: 'user-pro-001',
-  salle_id: 'salle-001',
+  // L'abonnement porte sur le propriétaire, pas sur une salle : 500 DA
+  // couvrent toutes celles qu'il gère.
+  salle_id: null,
   status: 'trial',
   // 45 jours consommés sur 90
   trial_started_at: addDays(T, -45),
@@ -618,14 +621,14 @@ export const SEED_SUBSCRIPTION = {
   created_at: `${addDays(T, -45)}T09:00:00Z`,
 };
 
-// Chaque salle a son abonnement : aucun parcours pro ne tombe sur un
-// abonnement absent, quel que soit le propriétaire connecté.
+// Un abonnement par propriétaire : aucun parcours pro ne tombe sur un
+// abonnement absent, quel que soit le compte connecté.
 export const SEED_SUBSCRIPTIONS = [
   SEED_SUBSCRIPTION,
-  ...PRO_OWNERS.slice(1).map(([proId, salleId], i) => ({
+  ...PRO_OWNERS.slice(1).map(([proId], i) => ({
     id: `sub-${String(i + 2).padStart(3, '0')}`,
     pro_id: proId,
-    salle_id: salleId,
+    salle_id: null,
     status: 'trial',
     trial_started_at: addDays(T, -20 - i * 5),
     trial_ends_at: addDays(T, 70 - i * 5),

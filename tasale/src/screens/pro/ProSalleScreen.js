@@ -12,6 +12,8 @@ import { useTheme } from '../../context/ThemeContext';
 import { useI18n } from '../../i18n';
 import { CITIES, AMENITIES, AMENITY_ICONS, SALLE_MAX_PHOTOS } from '../../lib/constants';
 import { uploadImage, BUCKETS } from '../../lib/storage';
+import { useProSalle } from '../../context/ProSalleContext';
+import SalleSwitcher from '../../components/SalleSwitcher';
 import * as api from '../../data';
 
 const TABS = ['infos', 'photos', 'pricing'];
@@ -19,6 +21,7 @@ const TABS = ['infos', 'photos', 'pricing'];
 export default function ProSalleScreen() {
   const { colors, typography, spacing, radii } = useTheme();
   const { t, dir, align } = useI18n();
+  const { currentId } = useProSalle();
 
   const [tab, setTab] = useState('infos');
   const [salle, setSalle] = useState(null);
@@ -32,7 +35,7 @@ export default function ProSalleScreen() {
   const load = useCallback(async () => {
     try {
       setError(null);
-      const s = await api.proGetSalle();
+      const s = await api.proGetSalle(currentId);
       setSalle(s);
       setTarifs((s.tarifs || []).map((x) => ({ ...x, price: String(x.price) })));
     } catch (e) {
@@ -40,7 +43,7 @@ export default function ProSalleScreen() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [currentId]);
 
   useFocusEffect(
     useCallback(() => {
@@ -94,7 +97,7 @@ export default function ProSalleScreen() {
     setSaving(true);
     setError(null);
     try {
-      await api.proUpdateSalle({
+      await api.proUpdateSalle(currentId, {
         name: salle.name,
         city: salle.city,
         address: salle.address,
@@ -105,6 +108,7 @@ export default function ProSalleScreen() {
         photos: salle.photos,
       });
       await api.proUpdateTarifs(
+        currentId,
         tarifs.filter((x) => x.name?.trim()).map((x) => ({ name: x.name, description: x.description, price: x.price }))
       );
       setSaved(true);
@@ -136,6 +140,8 @@ export default function ProSalleScreen() {
   return (
     <Screen>
       <Header title={t('pro.myHall')} subtitle={salle?.name} bordered={false} />
+
+      <SalleSwitcher />
 
       <View style={{ flexDirection: dir, gap: spacing.sm, paddingHorizontal: spacing.lg }}>
         {TABS.map((key) => (

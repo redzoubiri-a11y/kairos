@@ -273,6 +273,8 @@ export default {
     version: 'Version',
   },
   pro: {
+    sallesCount: '{{count}} salles',
+    switchSalle: 'Changer de salle',
     dashboard: 'Tableau de bord',
     trialBadge: 'Essai gratuit — {{days}} j restants',
     proBadge: 'Pro',

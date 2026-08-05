@@ -64,9 +64,9 @@ Le code SMS est toujours `123456`.
 
 | Rôle | Téléphone | Contenu |
 |------|-----------|---------|
-| **Pro** | `0555 10 00 01` | Salle El Widad (Alger) — 7 réservations, 2 en attente, 1 avis à modérer, essai à J+45 |
+| **Pro** | `0555 10 00 01` | Karim Belkacem — **deux salles** : El Widad (7 réservations, 2 en attente, 1 avis à modérer) et Espace Andalous (vide). Essai à J+45, un seul pour les deux |
 | **Client** | `0661 23 45 67` | Amina Cherif — 1 réservation confirmée, 1 événement passé à évaluer, 2 favoris |
-| *Autres pros* | `0555 10 00 02` … `0555 10 00 10` | Un propriétaire par salle du jeu de données |
+| *Autres pros* | `0555 10 00 02` … `0555 10 00 11` | Propriétaires mono-salle : le sélecteur de salle ne s'affiche pas chez eux |
 | **Admin** | `0555 00 00 00` | Équipe Tasale — 1 salle à valider, 1 avis signalé |
 | *Nouveau compte* | tout autre numéro valide | Parcours d'inscription complet (client ou pro) |
 
@@ -98,6 +98,7 @@ psql "$DATABASE_URL" -f supabase/migrations/0004_cron.sql       # planification
 psql "$DATABASE_URL" -f supabase/migrations/0005_delivery.sql   # file d'expédition
 psql "$DATABASE_URL" -f supabase/migrations/0006_admin.sql      # console d'administration
 psql "$DATABASE_URL" -f supabase/migrations/0007_geo.sql        # position des salles
+psql "$DATABASE_URL" -f supabase/migrations/0008_multi_salles.sql # plusieurs salles par propriétaire
 ```
 
 `0003` suppose le schéma `storage` : il ne s'applique que sur Supabase.
@@ -153,24 +154,38 @@ puis rejouer `0004_cron.sql`.
 ## Tests
 
 ```bash
-npm test                                                    # 167 tests JS (jest-expo)
+npm test                                                    # 187 tests JS (jest-expo)
 psql "$DATABASE_URL" -f supabase/tests/business_rules.sql   # 17 assertions SQL
 psql "$DATABASE_URL" -f supabase/tests/lifecycle.sql        # 16 assertions SQL
 psql "$DATABASE_URL" -f supabase/tests/admin.sql            # 14 assertions SQL
+psql "$DATABASE_URL" -f supabase/tests/multi_salles.sql     # 10 assertions SQL
+```
+
+Les suites SQL tournent aussi sur un PostgreSQL nu, sans projet Supabase :
+`supabase/tests/_bootstrap_local.sql` recrée d'abord le schéma `auth`, la
+fonction `auth.uid()` et les rôles `anon` / `authenticated` / `service_role`
+que Supabase fournit d'office. À appliquer avant les migrations, et seulement
+en local.
+
+```bash
+createdb tasale && export DATABASE_URL=postgres:///tasale
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/tests/_bootstrap_local.sql
 ```
 
 | Suite | Portée |
 |-------|--------|
 | `src/services/notify.test.js` (24) | Heures calmes 22 h–08 h, report au lendemain, quota journalier, blackout Ramadan, troncature à 160 caractères, priorités d'envoi |
-| `src/data/local.test.js` (52) | Backend local : authentification, disponibilités, création et annulation, signature PIN, acompte, avis et modération, quota SMS, photos, favoris, recherche, tableau de bord, planning, abonnement, messagerie |
+| `src/data/local.test.js` (71) | Backend local : authentification, disponibilités, création et annulation, signature PIN, acompte, avis et modération, quota SMS, photos, favoris, recherche, tableau de bord, planning, abonnement, messagerie, cloisonnement entre propriétaires |
 | `src/lib/storage.test.js` (10) | Décodage base64 des images (les 256 valeurs d'octet), unicité et extension des chemins de destination |
 | `src/data/cache.test.js` (11) | Cache hors ligne : repli sur la dernière réponse connue, refus d'une donnée périmée, propagation de l'erreur quand aucun cache n'existe |
 | `src/services/pdfTemplates.test.js` (22) | Contrat et planning : montants et solde, mention de signature, échappement HTML d'un nom de client piégé, traduction des énumérations |
 | `src/lib/geo.test.js` (26) | Distance orthodromique vérifiée sur des écarts connus (Alger–Oran, un degré de latitude), tri par proximité, liens d'itinéraire par plateforme |
+| `src/i18n/i18n.test.js` (10) | Parité des clés français/arabe, jetons `{{x}}` cohérents, et surtout : chaque clé appelée dans le code existe bien — une clé absente s'afficherait telle quelle à l'écran, sans erreur |
 | `src/theme.test.js` (13) | Contrastes calculés selon WCAG 2.1 : encre de marque ≥ 4,5:1 dans les deux thèmes, blanc lisible sur les aplats de bouton, thème clair verrouillé à l'identique |
 | `supabase/tests/business_rules.sql` (17) | Les mêmes règles §10, mais côté PostgreSQL : unicité du jour confirmé, PIN, délai d'avis, publication automatique, agrégats, absence de policy `DELETE` sur les avis |
 | `supabase/tests/admin.sql` (14) | Autorisations de la console : un client n'obtient pas les chiffres, un pro ne valide pas sa propre salle, un avis retiré reste en base |
 | `supabase/tests/lifecycle.sql` (16) | Clôture des événements passés, rappel J-1, demande d'avis à J+48 h, rappels et expiration d'essai — chaque tâche vérifiée aussi pour son idempotence |
+| `supabase/tests/multi_salles.sql` (10) | Un propriétaire ne lit ni ne modifie la salle d'un autre, un seul abonnement par propriétaire, le tableau de bord et les statistiques restent cloisonnés par salle |
 
 Les règles critiques sont vérifiées **dans les deux implémentations**, ce qui
 garantit que passer du mode démo à Supabase ne change pas le comportement.
@@ -194,7 +209,7 @@ tasale/
 │   ├── services/
 │   │   ├── notify.js         Décision d'envoi : canaux, quotas, heures calmes
 │   │   └── push.js           Enregistrement de l'appareil pour les push
-│   ├── context/              Thème, authentification, favoris
+│   ├── context/              Thème, authentification, favoris, salle courante
 │   ├── components/           Design system + composants métier
 │   └── screens/
 │       ├── auth/             Onboarding, téléphone, OTP, rôle, inscription salle
@@ -237,6 +252,10 @@ applicative.
 - **§9 Endpoints** — équivalents en RPC Supabase
 - **§10 Règles métier** — les quatre familles de règles, testées
 - **§11 Paiement** — workflow d'acompte complet (demande → SMS CCP → déclaration → vérification), configuration de l'abonnement
+- **§12 Phase 4 — plusieurs salles par propriétaire** — un sélecteur en tête de
+  l'espace pro, chaque écran cloisonné sur la salle choisie, choix mémorisé
+  d'une session à l'autre. L'abonnement reste **par propriétaire** : ajouter
+  une salle ne relance pas l'essai et ne double pas les 500 DA
 
 ### Non livré
 
@@ -275,7 +294,7 @@ catégorielle : terracotta `#C8956C` et or `#D4A853` ne sont séparés que de
 couleurs ne les distingue pas. Les répartitions (types d'événements, sources,
 occupation) sont donc rendues en lignes libellées mono-teinte, l'identité
 étant portée par le texte. Sur fond sombre, l'émeraude passe à `#14A38C` :
-`#0B6E5F` n'atteint que 2,83:1 de contraste.
+`#0B6E5F` n'atteint que 2,33:1 de contraste.
 
 **RTL sans redémarrage.** `I18nManager.forceRTL` impose un redémarrage natif.
 La direction est appliquée dans les styles (`dir`, `align`, `writing`), ce qui
@@ -286,14 +305,17 @@ champs téléphone restent en LTR conformément au §4.4.
 
 ## Vérification effectuée
 
-- `npm test` — 167 tests au vert
-- `npx expo export --platform web` — 753 modules, aucune erreur
+- `npm test` — 187 tests au vert
+- `npx expo export --platform web` — 917 modules, aucune erreur
 - Parcours pro complet en navigateur (Playwright) : connexion OTP → tableau de
   bord → confirmation d'une demande avec acompte et signature PIN → planning →
   statistiques → abonnement
 - Parcours client complet : connexion → recherche → fiche salle → réservation
   en 4 étapes → écran de succès avec référence `TAS-2026-XXXX`
 - Bascule en arabe : accueil, recherche et barre d'onglets correctement inversés
+- Multi-salles en navigateur : le sélecteur n'apparaît qu'à partir de deux
+  salles, le tableau de bord, le planning et « Ma salle » suivent la salle
+  choisie, et celle-ci survit à un rechargement
 - Zéro erreur console sur les trois parcours
 - Schéma appliqué sur PostgreSQL 16 : 23 policies RLS, 33 assertions SQL au vert
 - File d'expédition vérifiée : un message échu sort de la file, un message

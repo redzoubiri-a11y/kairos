@@ -1,5 +1,4 @@
 import { View, Text, StyleSheet } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../context/ThemeContext';
 import { useI18n } from '../i18n';
 
@@ -16,22 +15,31 @@ export default function TasaleLogo({ size = 36, showText = true, tone = 'default
 
   return (
     <View style={[styles.row, { gap: spacing.sm }]}>
-      <LinearGradient
-        colors={[colors.primary, colors.secondary]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
+      <View
         style={{
           width: size,
           height: size,
           borderRadius: size * 0.28,
+          backgroundColor: colors.logoBg,
           alignItems: 'center',
           justifyContent: 'center',
+          // Le carré est sombre : ce liseré le détache du fond en thème sombre
+          // sans se voir sur fond blanc.
+          borderWidth: StyleSheet.hairlineWidth,
+          borderColor: 'rgba(255,255,255,0.16)',
         }}
       >
-        <Text style={{ fontSize: size * 0.55, color: '#FFFFFF', fontWeight: '500', lineHeight: size * 0.8 }}>
+        <Text
+          style={{
+            fontSize: size * 0.55,
+            color: colors.logoInk,
+            fontWeight: '600',
+            lineHeight: size * 0.8,
+          }}
+        >
           T
         </Text>
-      </LinearGradient>
+      </View>
 
       {showText && (
         <View>

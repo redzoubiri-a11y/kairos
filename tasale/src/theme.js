@@ -41,6 +41,11 @@ export const lightColors = {
   overlay: 'rgba(0,0,0,0.55)',
   skeleton: '#EFEBE5',
 
+  // Logo : carré uni émeraude profond, initiale or. 4,31:1 entre les deux,
+  // au-dessus du seuil AA pour un glyphe de cette taille.
+  logoBg: '#084F44',
+  logoInk: '#D4A853',
+
   // Marques de graphique. Les séries sont mono-teinte : l'identité est portée
   // par les libellés de ligne, pas par la couleur, ce qui évite une palette
   // catégorielle dont les teintes chaudes (terracotta/or) sont trop proches
@@ -67,6 +72,10 @@ export const darkColors = {
   // Émeraude éclairci : #0B6E5F ne tient que 2.83:1 sur fond sombre.
   chartInk: '#14A38C',
   chartGrid: 'rgba(255,255,255,0.10)',
+
+  // Le logo garde ses couleurs : c'est une marque, pas un élément d'interface.
+  logoBg: '#084F44',
+  logoInk: '#D4A853',
 };
 
 // §3.2 — Typographie (police système uniquement)

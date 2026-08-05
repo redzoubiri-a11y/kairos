@@ -6,7 +6,7 @@ import { useI18n } from '../i18n';
 // ── Badge (§3.3) ──────────────────────────────────────────────────────────
 
 const BADGE_TONES = {
-  success: (c) => ({ bg: c.successBg, fg: c.primary }),
+  success: (c) => ({ bg: c.successBg, fg: c.primaryInk }),
   warning: (c) => ({ bg: c.warningBg, fg: c.goldText }),
   danger: (c) => ({ bg: c.dangerBg, fg: c.accent }),
   info: (c) => ({ bg: c.infoBg, fg: c.info }),
@@ -58,7 +58,7 @@ export function MChip({ label, active, onPress, icon }) {
         gap: 6,
         backgroundColor: active ? colors.primary : colors.surface,
         borderWidth: 1,
-        borderColor: active ? colors.primary : colors.border,
+        borderColor: active ? colors.primaryInk : colors.border,
         borderRadius: radii.pill,
         paddingVertical: 7,
         paddingHorizontal: 14,
@@ -115,7 +115,7 @@ export function SectionTitle({ title, action, onAction }) {
       <Text style={[typography.h3, { color: colors.dark, flexShrink: 1 }]}>{title}</Text>
       {action ? (
         <Pressable onPress={onAction} accessibilityRole="button">
-          <Text style={[typography.secondary, { color: colors.primary, fontWeight: '500' }]}>{action}</Text>
+          <Text style={[typography.secondary, { color: colors.primaryInk, fontWeight: '500' }]}>{action}</Text>
         </Pressable>
       ) : null}
     </View>
@@ -129,7 +129,7 @@ export function Loader({ label }) {
   const { t } = useI18n();
   return (
     <View style={{ padding: spacing.xxxl, alignItems: 'center', gap: spacing.md }}>
-      <ActivityIndicator color={colors.primary} />
+      <ActivityIndicator color={colors.primaryInk} />
       <Text style={[typography.secondary, { color: colors.warmGray }]}>{label ?? t('common.loading')}</Text>
     </View>
   );
@@ -151,7 +151,7 @@ export function EmptyState({ icon = 'sparkles-outline', title, body, action, onA
           marginBottom: spacing.xs,
         }}
       >
-        <Ionicons name={icon} size={26} color={colors.primary} />
+        <Ionicons name={icon} size={26} color={colors.primaryInk} />
       </View>
       <Text style={[typography.title, { color: colors.dark, textAlign: 'center' }]}>{title}</Text>
       {body ? (
@@ -159,7 +159,7 @@ export function EmptyState({ icon = 'sparkles-outline', title, body, action, onA
       ) : null}
       {action ? (
         <Pressable onPress={onAction} style={{ marginTop: spacing.sm }} accessibilityRole="button">
-          <Text style={[typography.secondary, { color: colors.primary, fontWeight: '500' }]}>{action}</Text>
+          <Text style={[typography.secondary, { color: colors.primaryInk, fontWeight: '500' }]}>{action}</Text>
         </Pressable>
       ) : null}
     </View>
@@ -178,7 +178,7 @@ export function ErrorState({ message, onRetry }) {
       </Text>
       {onRetry ? (
         <Pressable onPress={onRetry} accessibilityRole="button">
-          <Text style={[typography.secondary, { color: colors.primary, fontWeight: '500' }]}>
+          <Text style={[typography.secondary, { color: colors.primaryInk, fontWeight: '500' }]}>
             {t('common.retry')}
           </Text>
         </Pressable>
@@ -193,7 +193,7 @@ export function ProgressBar({ percent, tone = 'primary', height = 8, showLabel =
   const { colors, typography, radii, spacing } = useTheme();
   const { dir } = useI18n();
   const value = Math.max(0, Math.min(100, Number(percent) || 0));
-  const fill = tone === 'gold' ? colors.gold : tone === 'secondary' ? colors.secondary : colors.primary;
+  const fill = tone === 'gold' ? colors.gold : tone === 'secondary' ? colors.secondary : colors.primaryInk;
 
   return (
     <View style={{ flexDirection: dir, alignItems: 'center', gap: spacing.sm, flex: 1 }}>
@@ -275,7 +275,7 @@ export function KeyValue({ label, value, strong = false, tone }) {
       <Text
         style={[
           strong ? typography.title : typography.secondary,
-          { color: tone === 'primary' ? colors.primary : colors.dark, flexShrink: 1, textAlign: 'right' },
+          { color: tone === 'primary' ? colors.primaryInk : colors.dark, flexShrink: 1, textAlign: 'right' },
         ]}
         numberOfLines={2}
       >

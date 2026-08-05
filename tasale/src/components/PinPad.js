@@ -42,8 +42,8 @@ export default function PinPad({ value, onChange, onComplete, error, label }) {
               height: 16,
               borderRadius: radii.pill,
               borderWidth: 1.5,
-              borderColor: error ? colors.accent : value.length > i ? colors.primary : colors.border,
-              backgroundColor: value.length > i ? (error ? colors.accent : colors.primary) : 'transparent',
+              borderColor: error ? colors.accent : value.length > i ? colors.primaryInk : colors.border,
+              backgroundColor: value.length > i ? (error ? colors.accent : colors.primaryInk) : 'transparent',
             }}
           />
         ))}

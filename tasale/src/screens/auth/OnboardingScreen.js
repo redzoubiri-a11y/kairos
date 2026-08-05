@@ -62,7 +62,7 @@ export default function OnboardingScreen({ navigation }) {
                 justifyContent: 'center',
               }}
             >
-              <Ionicons name={slide.icon} size={48} color={colors.primary} />
+              <Ionicons name={slide.icon} size={48} color={colors.primaryInk} />
             </View>
 
             <Text style={[typography.h2, { color: colors.dark, textAlign: 'center' }]}>
@@ -86,7 +86,7 @@ export default function OnboardingScreen({ navigation }) {
                 width: i === index ? 20 : 7,
                 height: 7,
                 borderRadius: 4,
-                backgroundColor: i === index ? colors.primary : colors.border,
+                backgroundColor: i === index ? colors.primaryInk : colors.border,
               }}
             />
           ))}

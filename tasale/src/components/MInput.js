@@ -32,7 +32,7 @@ export default function MInput({
   const [focused, setFocused] = useState(false);
 
   const forcedLtr = direction === 'ltr';
-  const borderColor = error ? colors.accent : focused ? colors.primary : colors.border;
+  const borderColor = error ? colors.accent : focused ? colors.primaryInk : colors.border;
 
   return (
     <View style={[{ gap: spacing.xs }, style]}>
@@ -64,7 +64,7 @@ export default function MInput({
             : null),
         }}
       >
-        {icon ? <Ionicons name={icon} size={18} color={focused ? colors.primary : colors.warmGray} /> : null}
+        {icon ? <Ionicons name={icon} size={18} color={focused ? colors.primaryInk : colors.warmGray} /> : null}
 
         <TextInput
           value={value}
@@ -129,7 +129,7 @@ export function MSelect({ label, value, options, onChange, placeholder }) {
           alignItems: 'center',
           justifyContent: 'space-between',
           borderWidth: 1,
-          borderColor: open ? colors.primary : colors.border,
+          borderColor: open ? colors.primaryInk : colors.border,
           borderRadius: radii.lg,
           paddingHorizontal: 14,
           minHeight: 46,
@@ -170,7 +170,7 @@ export function MSelect({ label, value, options, onChange, placeholder }) {
                 <Text
                   style={[
                     typography.body,
-                    { color: active ? colors.primary : colors.dark, textAlign: align },
+                    { color: active ? colors.primaryInk : colors.dark, textAlign: align },
                   ]}
                 >
                   {o.label}

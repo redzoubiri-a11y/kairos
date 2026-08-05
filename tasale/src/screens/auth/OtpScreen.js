@@ -83,7 +83,7 @@ export default function OtpScreen({ route, navigation }) {
             </Text>
           ) : (
             <Pressable onPress={resend} accessibilityRole="button">
-              <Text style={[typography.secondary, { color: colors.primary, textAlign: 'center' }]}>
+              <Text style={[typography.secondary, { color: colors.primaryInk, textAlign: 'center' }]}>
                 {t('auth.resend')}
               </Text>
             </Pressable>

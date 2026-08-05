@@ -103,7 +103,7 @@ export default function ReviewFormScreen({ route, navigation }) {
                 justifyContent: 'center',
               }}
             >
-              <Ionicons name="checkmark" size={36} color={colors.primary} />
+              <Ionicons name="checkmark" size={36} color={colors.primaryInk} />
             </View>
             <Text style={[typography.title, { color: colors.dark, textAlign: 'center' }]}>
               {t('reviews.submitted')}
@@ -202,7 +202,7 @@ export default function ReviewFormScreen({ route, navigation }) {
                     height: 66,
                     borderRadius: radii.lg,
                     borderWidth: 1,
-                    borderColor: uploading ? colors.primary : colors.border,
+                    borderColor: uploading ? colors.primaryInk : colors.border,
                     borderStyle: 'dashed',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -210,7 +210,7 @@ export default function ReviewFormScreen({ route, navigation }) {
                   }}
                 >
                   {uploading ? (
-                    <ActivityIndicator size="small" color={colors.primary} />
+                    <ActivityIndicator size="small" color={colors.primaryInk} />
                   ) : (
                     <>
                       <Ionicons name="camera-outline" size={18} color={colors.warmGray} />
@@ -231,7 +231,7 @@ export default function ReviewFormScreen({ route, navigation }) {
             <Ionicons
               name={consent ? 'checkbox' : 'square-outline'}
               size={20}
-              color={consent ? colors.primary : colors.warmGray}
+              color={consent ? colors.primaryInk : colors.warmGray}
             />
             <Text style={[typography.caption, { color: colors.dark, flex: 1, textAlign: align }]}>
               {t('reviews.consent')}

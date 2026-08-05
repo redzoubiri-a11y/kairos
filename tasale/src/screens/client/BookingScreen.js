@@ -146,7 +146,7 @@ export default function BookingScreen({ route, navigation }) {
                 justifyContent: 'center',
               }}
             >
-              <Ionicons name="checkmark" size={40} color={colors.primary} />
+              <Ionicons name="checkmark" size={40} color={colors.primaryInk} />
             </View>
 
             <Text style={[typography.h2, { color: colors.dark, textAlign: 'center' }]}>
@@ -269,7 +269,7 @@ export default function BookingScreen({ route, navigation }) {
                       gap: spacing.md,
                       backgroundColor: selected ? colors.primaryLight : colors.surface,
                       borderWidth: 1,
-                      borderColor: selected ? colors.primary : colors.border,
+                      borderColor: selected ? colors.primaryInk : colors.border,
                       borderRadius: radii.xl,
                       padding: spacing.lg,
                     }}
@@ -277,7 +277,7 @@ export default function BookingScreen({ route, navigation }) {
                     <Ionicons
                       name={selected ? 'radio-button-on' : 'radio-button-off'}
                       size={20}
-                      color={selected ? colors.primary : colors.border}
+                      color={selected ? colors.primaryInk : colors.border}
                     />
 
                     <View style={{ flex: 1, gap: 2 }}>
@@ -294,7 +294,7 @@ export default function BookingScreen({ route, navigation }) {
                       ) : null}
                     </View>
 
-                    <Text style={[typography.title, { fontSize: 15, color: colors.primary }]}>
+                    <Text style={[typography.title, { fontSize: 15, color: colors.primaryInk }]}>
                       {formatDA(tarif.price, t('common.currency'))}
                     </Text>
                   </Pressable>
@@ -383,7 +383,7 @@ export default function BookingScreen({ route, navigation }) {
         {step === 1 && selectedFormula ? (
           <View style={{ flex: 1 }}>
             <Text style={[typography.caption, { color: colors.warmGray }]}>{t('booking.amount')}</Text>
-            <Text style={[typography.title, { color: colors.primary }]}>
+            <Text style={[typography.title, { color: colors.primaryInk }]}>
               {formatDA(selectedFormula.price, t('common.currency'))}
             </Text>
           </View>

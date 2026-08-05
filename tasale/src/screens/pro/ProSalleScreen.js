@@ -249,14 +249,14 @@ export default function ProSalleScreen() {
                       borderRadius: radii.lg,
                       borderWidth: 1,
                       borderStyle: 'dashed',
-                      borderColor: uploading ? colors.primary : colors.border,
+                      borderColor: uploading ? colors.primaryInk : colors.border,
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: 4,
                     }}
                   >
                     {uploading ? (
-                      <ActivityIndicator size="small" color={colors.primary} />
+                      <ActivityIndicator size="small" color={colors.primaryInk} />
                     ) : (
                       <>
                         <Ionicons name="add" size={20} color={colors.warmGray} />

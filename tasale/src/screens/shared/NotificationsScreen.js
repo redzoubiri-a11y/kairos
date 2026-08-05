@@ -85,7 +85,7 @@ export default function NotificationsScreen({ navigation }) {
         right={
           unread > 0 ? (
             <Pressable onPress={markAll} hitSlop={8} accessibilityRole="button">
-              <Text style={[typography.caption, { color: colors.primary }]}>{t('notifications.markAllRead')}</Text>
+              <Text style={[typography.caption, { color: colors.primaryInk }]}>{t('notifications.markAllRead')}</Text>
             </Pressable>
           ) : null
         }
@@ -123,7 +123,7 @@ export default function NotificationsScreen({ navigation }) {
                   <Ionicons
                     name={TYPE_ICON[n.type] || 'notifications-outline'}
                     size={16}
-                    color={n.is_read ? colors.warmGray : colors.primary}
+                    color={n.is_read ? colors.warmGray : colors.primaryInk}
                   />
                 </View>
 

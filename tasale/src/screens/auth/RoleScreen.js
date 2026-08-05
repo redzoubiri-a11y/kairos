@@ -25,7 +25,7 @@ function RoleOption({ icon, title, body, badge, selected, onPress }) {
         alignItems: 'flex-start',
         backgroundColor: selected ? colors.primaryLight : colors.surface,
         borderWidth: 1,
-        borderColor: selected ? colors.primary : colors.border,
+        borderColor: selected ? colors.primaryInk : colors.border,
         borderRadius: radii.xl,
         padding: spacing.lg,
       }}
@@ -40,7 +40,7 @@ function RoleOption({ icon, title, body, badge, selected, onPress }) {
           justifyContent: 'center',
         }}
       >
-        <Ionicons name={icon} size={20} color={colors.primary} />
+        <Ionicons name={icon} size={20} color={colors.primaryInk} />
       </View>
 
       <View style={{ flex: 1, gap: 3 }}>
@@ -54,7 +54,7 @@ function RoleOption({ icon, title, body, badge, selected, onPress }) {
       <Ionicons
         name={selected ? 'radio-button-on' : 'radio-button-off'}
         size={19}
-        color={selected ? colors.primary : colors.border}
+        color={selected ? colors.primaryInk : colors.border}
       />
     </Pressable>
   );

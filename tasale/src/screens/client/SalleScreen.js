@@ -29,7 +29,7 @@ function QuickStat({ icon, value, label }) {
           marginBottom: 2,
         }}
       >
-        <Ionicons name={icon} size={16} color={colors.primary} />
+        <Ionicons name={icon} size={16} color={colors.primaryInk} />
       </View>
       <Text style={[typography.secondary, { color: colors.dark, fontWeight: '500' }]} numberOfLines={1}>
         {value}
@@ -178,7 +178,7 @@ export default function SalleScreen({ route, navigation }) {
             {salle.price_from != null ? (
               <View style={{ alignItems: 'flex-end' }}>
                 <Text style={[typography.caption, { color: colors.warmGray }]}>{t('common.from')}</Text>
-                <Text style={[typography.h3, { color: colors.primary }]}>
+                <Text style={[typography.h3, { color: colors.primaryInk }]}>
                   {formatDA(salle.price_from, t('common.currency'))}
                 </Text>
               </View>
@@ -234,7 +234,7 @@ export default function SalleScreen({ route, navigation }) {
                       borderRadius: radii.lg,
                     }}
                   >
-                    <Ionicons name={AMENITY_ICONS[a] || 'ellipse-outline'} size={18} color={colors.primary} />
+                    <Ionicons name={AMENITY_ICONS[a] || 'ellipse-outline'} size={18} color={colors.primaryInk} />
                     <Text style={[typography.caption, { color: colors.dark, textAlign: 'center' }]} numberOfLines={2}>
                       {t(`amenities.${a}`)}
                     </Text>
@@ -271,7 +271,7 @@ export default function SalleScreen({ route, navigation }) {
                           </Text>
                         ) : null}
                       </View>
-                      <Text style={[typography.title, { fontSize: 15, color: colors.primary }]}>
+                      <Text style={[typography.title, { fontSize: 15, color: colors.primaryInk }]}>
                         {formatDA(tarif.price, t('common.currency'))}
                       </Text>
                     </View>

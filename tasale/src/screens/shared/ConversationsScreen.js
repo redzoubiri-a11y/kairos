@@ -55,7 +55,7 @@ export default function ConversationsScreen({ navigation }) {
                     justifyContent: 'center',
                   }}
                 >
-                  <Text style={{ color: colors.primary, fontWeight: '500' }}>
+                  <Text style={{ color: colors.primaryInk, fontWeight: '500' }}>
                     {(c.title || '?').charAt(0).toUpperCase()}
                   </Text>
                 </View>

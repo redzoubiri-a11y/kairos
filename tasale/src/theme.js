@@ -46,10 +46,16 @@ export const lightColors = {
   logoBg: '#084F44',
   logoInk: '#D4A853',
 
-  // Marques de graphique. Les séries sont mono-teinte : l'identité est portée
-  // par les libellés de ligne, pas par la couleur, ce qui évite une palette
-  // catégorielle dont les teintes chaudes (terracotta/or) sont trop proches
-  // pour être distinguées (ΔE < 15 en vision normale).
+  // `primary` remplit les boutons, `primaryInk` écrit dessus les surfaces.
+  // Deux besoins opposés : un aplat veut être sombre pour porter du blanc,
+  // un texte veut se détacher du fond. Sur fond clair, la même teinte fait
+  // les deux (6,16:1 dans les deux sens) ; en thème sombre, non.
+  primaryInk: '#0B6E5F',
+
+  // Marques de graphique : même encre. Les séries sont mono-teinte —
+  // l'identité est portée par les libellés, pas par la couleur, ce qui évite
+  // une palette catégorielle dont les teintes chaudes (terracotta/or) sont
+  // trop proches pour être distinguées (ΔE < 15 en vision normale).
   chartInk: '#0B6E5F',
   chartGrid: 'rgba(26,26,26,0.08)',
 };
@@ -69,7 +75,12 @@ export const darkColors = {
   accentLight: 'rgba(217,78,59,0.16)',
   skeleton: '#333333',
 
-  // Émeraude éclairci : #0B6E5F ne tient que 2.83:1 sur fond sombre.
+  // Émeraude éclairci pour tout ce qui s'écrit sur une surface sombre :
+  // #0B6E5F n'y tient que 2,33:1, très en dessous du seuil de 4,5:1.
+  // #14A38C atteint 4,54:1. Les aplats de bouton gardent #0B6E5F, sur
+  // lequel le blanc reste à 6,16:1 — l'éclaircir le ferait tomber à 3,16:1.
+  // C'est un écart assumé au §3.5, qui suppose les accents inchangés.
+  primaryInk: '#14A38C',
   chartInk: '#14A38C',
   chartGrid: 'rgba(255,255,255,0.10)',
 

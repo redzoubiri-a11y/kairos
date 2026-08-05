@@ -73,7 +73,7 @@ const PRO_TAB_ICONS = {
 function makeTabOptions(icons, colors) {
   return ({ route }) => ({
     headerShown: false,
-    tabBarActiveTintColor: colors.primary,
+    tabBarActiveTintColor: colors.primaryInk,
     tabBarInactiveTintColor: colors.warmGray,
     // Sur natif, React Navigation ajoute lui-même l'encoche du bas : figer une
     // hauteur la casserait. Sur le web il n'y a pas d'encoche et la hauteur par
@@ -148,7 +148,7 @@ function RootNavigator() {
   if (loading) {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.cream }}>
-        <ActivityIndicator color={colors.primary} />
+        <ActivityIndicator color={colors.primaryInk} />
       </View>
     );
   }
@@ -197,7 +197,7 @@ function NavigationRoot() {
       card: colors.surface,
       text: colors.dark,
       border: colors.border,
-      primary: colors.primary,
+      primary: colors.primaryInk,
     },
   };
 

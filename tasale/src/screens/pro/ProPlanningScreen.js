@@ -96,7 +96,7 @@ export default function ProPlanningScreen({ navigation }) {
         {selected ? (
           <MCard style={{ gap: spacing.md }}>
             <View style={{ flexDirection: dir, alignItems: 'center', gap: spacing.sm }}>
-              <Ionicons name="calendar-outline" size={17} color={colors.primary} />
+              <Ionicons name="calendar-outline" size={17} color={colors.primaryInk} />
               <Text style={[typography.title, { fontSize: 15, color: colors.dark, flex: 1, textAlign: align }]}>
                 {formatLongDate(selected, list('months'))}
               </Text>

@@ -70,7 +70,7 @@ export default function SalleRow({ salle, onPress, onToggleFav, isFav }) {
 
         <View style={{ gap: spacing.xs }}>
           {salle.price_from != null ? (
-            <Text style={{ fontSize: 15, fontWeight: '500', color: colors.primary, textAlign: align }}>
+            <Text style={{ fontSize: 15, fontWeight: '500', color: colors.primaryInk, textAlign: align }}>
               {t('common.from')} {formatDA(salle.price_from, t('common.currency'))}
             </Text>
           ) : null}

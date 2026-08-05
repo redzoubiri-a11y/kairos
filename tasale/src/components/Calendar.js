@@ -38,7 +38,7 @@ export default function Calendar({
       case 'past':
         return { bg: 'transparent', fg: `${colors.warmGray}66`, border: 'transparent' };
       case 'booked':
-        return { bg: colors.successBg, fg: colors.primary, border: 'transparent' };
+        return { bg: colors.successBg, fg: colors.primaryInk, border: 'transparent' };
       case 'held':
         return { bg: colors.warningBg, fg: colors.goldText, border: 'transparent' };
       case 'blocked':

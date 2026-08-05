@@ -61,7 +61,7 @@ export default function Stepper({ steps, current }) {
                 typography.caption,
                 {
                   marginTop: 5,
-                  color: active ? colors.primary : colors.warmGray,
+                  color: active ? colors.primaryInk : colors.warmGray,
                   fontWeight: active ? '600' : '500',
                   textAlign: 'center',
                 },

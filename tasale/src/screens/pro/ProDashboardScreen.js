@@ -17,7 +17,7 @@ import * as api from '../../data';
 function AlertRow({ icon, tone, label, onPress }) {
   const { colors, typography, spacing, radii } = useTheme();
   const { dir, align } = useI18n();
-  const color = tone === 'danger' ? colors.accent : tone === 'gold' ? colors.goldText : colors.primary;
+  const color = tone === 'danger' ? colors.accent : tone === 'gold' ? colors.goldText : colors.primaryInk;
   const bg = tone === 'danger' ? colors.accentLight : tone === 'gold' ? colors.goldLight : colors.primaryLight;
 
   return (
@@ -128,7 +128,7 @@ export default function ProDashboardScreen({ navigation }) {
               setRefreshing(true);
               load();
             }}
-            tintColor={colors.primary}
+            tintColor={colors.primaryInk}
           />
         }
       >

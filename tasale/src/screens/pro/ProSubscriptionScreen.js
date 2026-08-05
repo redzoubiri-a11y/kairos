@@ -103,7 +103,7 @@ export default function ProSubscriptionScreen({ navigation }) {
           <View style={{ gap: spacing.sm }}>
             {FEATURES.map((f) => (
               <View key={f} style={{ flexDirection: dir, alignItems: 'center', gap: spacing.sm }}>
-                <Ionicons name="checkmark-circle" size={15} color={colors.primary} />
+                <Ionicons name="checkmark-circle" size={15} color={colors.primaryInk} />
                 <Text style={[typography.secondary, { color: colors.dark, flex: 1, textAlign: align }]}>
                   {t(`pro.features.${f}`)}
                 </Text>
@@ -121,7 +121,7 @@ export default function ProSubscriptionScreen({ navigation }) {
                 {t('pro.proNoCommitment')}
               </Text>
             </View>
-            <Text style={[typography.h3, { color: colors.primary }]}>
+            <Text style={[typography.h3, { color: colors.primaryInk }]}>
               {formatDA(SUBSCRIPTION_PRICE, t('common.currency'))}
             </Text>
           </View>
@@ -147,12 +147,12 @@ export default function ProSubscriptionScreen({ navigation }) {
                     paddingVertical: 7,
                     borderRadius: radii.pill,
                     borderWidth: 1,
-                    borderColor: active ? colors.primary : colors.border,
+                    borderColor: active ? colors.primaryInk : colors.border,
                     backgroundColor: active ? colors.primaryLight : colors.surface,
                     opacity: disabled ? 0.5 : 1,
                   }}
                 >
-                  <Text style={[typography.caption, { color: active ? colors.primary : colors.dark }]}>
+                  <Text style={[typography.caption, { color: active ? colors.primaryInk : colors.dark }]}>
                     {t(`pro.${m}`)}
                   </Text>
                   {disabled ? (
@@ -235,14 +235,14 @@ export default function ProSubscriptionScreen({ navigation }) {
                   padding: spacing.lg,
                   borderRadius: radii.xl,
                   borderWidth: 1,
-                  borderColor: active ? colors.primary : colors.border,
+                  borderColor: active ? colors.primaryInk : colors.border,
                   backgroundColor: active ? colors.primaryLight : colors.surface,
                 }}
               >
                 <Ionicons
                   name={active ? 'radio-button-on' : 'radio-button-off'}
                   size={19}
-                  color={active ? colors.primary : colors.border}
+                  color={active ? colors.primaryInk : colors.border}
                 />
                 <Text style={[typography.secondary, { color: colors.dark, flex: 1, textAlign: align }]}>
                   {t(`pro.${m}`)}

@@ -57,7 +57,7 @@ export default function MyReservationsScreen({ navigation }) {
               setRefreshing(true);
               load();
             }}
-            tintColor={colors.primary}
+            tintColor={colors.primaryInk}
           />
         }
       >

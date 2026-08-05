@@ -147,7 +147,7 @@ export default function HomeScreen({ navigation }) {
         </Pressable>
       </View>
 
-      <Body refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); load(); }} tintColor={colors.primary} />}>
+      <Body refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); load(); }} tintColor={colors.primaryInk} />}>
         <View style={{ gap: spacing.xs }}>
           <Text style={[typography.h2, { color: colors.dark }]}>
             {t('home.greeting')}

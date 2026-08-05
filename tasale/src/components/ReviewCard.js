@@ -35,7 +35,7 @@ export default function ReviewCard({ review }) {
             justifyContent: 'center',
           }}
         >
-          <Text style={{ color: colors.primary, fontWeight: '500', fontSize: 15 }}>{initial}</Text>
+          <Text style={{ color: colors.primaryInk, fontWeight: '500', fontSize: 15 }}>{initial}</Text>
         </View>
 
         <View style={{ flex: 1, gap: 3 }}>
@@ -72,8 +72,8 @@ export default function ReviewCard({ review }) {
           }}
         >
           <View style={{ flexDirection: dir, alignItems: 'center', gap: 5 }}>
-            <Ionicons name="return-down-forward-outline" size={13} color={colors.primary} />
-            <Text style={[typography.caption, { color: colors.primary, fontWeight: '600' }]}>
+            <Ionicons name="return-down-forward-outline" size={13} color={colors.primaryInk} />
+            <Text style={[typography.caption, { color: colors.primaryInk, fontWeight: '600' }]}>
               {t('reviews.ownerReply')}
             </Text>
           </View>

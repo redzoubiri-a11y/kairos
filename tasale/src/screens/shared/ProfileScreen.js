@@ -73,7 +73,7 @@ export default function ProfileScreen({ navigation }) {
                 justifyContent: 'center',
               }}
             >
-              <Text style={[typography.h3, { color: colors.primary }]}>
+              <Text style={[typography.h3, { color: colors.primaryInk }]}>
                 {(user?.full_name || '?').charAt(0).toUpperCase()}
               </Text>
             </View>

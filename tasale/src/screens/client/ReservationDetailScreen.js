@@ -158,7 +158,7 @@ export default function ReservationDetailScreen({ route, navigation }) {
               ) : null}
             </View>
 
-            <Text style={[typography.h3, { color: colors.primary, textAlign: align }]}>
+            <Text style={[typography.h3, { color: colors.primaryInk, textAlign: align }]}>
               {formatDA(resa.deposit_amount, t('common.currency'))}
             </Text>
 
@@ -206,8 +206,8 @@ export default function ReservationDetailScreen({ route, navigation }) {
                 backgroundColor: colors.successBg,
               }}
             >
-              <Ionicons name="checkmark-circle" size={16} color={colors.primary} />
-              <Text style={[typography.caption, { color: colors.primary }]}>{t('reservations.reviewDone')}</Text>
+              <Ionicons name="checkmark-circle" size={16} color={colors.primaryInk} />
+              <Text style={[typography.caption, { color: colors.primaryInk }]}>{t('reservations.reviewDone')}</Text>
             </View>
           ) : null}
 

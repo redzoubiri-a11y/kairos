@@ -1,7 +1,7 @@
 # Dharra — Livrable K : Vérification des sources (versets & hadiths)
 
 > Vérification des citations coraniques et prophétiques employées dans les livrables
-> (scripts ép. 2–4, calendrier F, lead magnet H). Contrôle effectué en **juillet 2026**
+> (scripts ép. 2–12, calendrier F, lead magnet H). Contrôle effectué en **juillet–août 2026**
 > contre des sources de référence : **quran.com**, **sunnah.com**, **dorar.net**, **hadeethenc.com**.
 > Statut : ✅ vérifié · ⚠️ nuance à connaître · ❗ à ne pas présenter comme du Sahîh.
 
@@ -108,6 +108,47 @@
 - **Réf. :** **al-Bukhârî, al-Adab al-Mufrad 716** ; authentifié par al-Albânî (Sahîh al-Jâmiʿ). ❗ Pas dans les deux Sahîh.
 - **Emploi :** Épisode 8 (protection contre le riyâ').
 
+### H11 — Se calmer dans la colère : s'asseoir puis s'allonger ⚠️ (Abû Dâwûd — sahîh, PAS dans les deux Sahîh) *(ajouté Arc 3)*
+- **Arabe :** إِذَا غَضِبَ أَحَدُكُمْ وَهُوَ قَائِمٌ فَلْيَجْلِسْ، فَإِنْ ذَهَبَ عَنْهُ الغَضَبُ وَإِلَّا فَلْيَضْطَجِعْ
+- **Sens :** « Si l'un de vous se met en colère alors qu'il est debout, qu'il s'asseye ; si la colère le quitte, tant mieux, sinon qu'il s'allonge. »
+- **Rapporteur :** Abû Dharr (رضي الله عنه).
+- **Réf. :** **Sunan Abî Dâwûd 4782** ; authentifié **sahîh** (cf. Ibn Hibbân 5688 ; al-Arnaʾût). ❗ Pas dans les deux Sahîh.
+- **Emploi :** Épisode 9 (protocole colère, temps 2).
+
+### H12 — La formule de refuge contre le Shaytân dans la colère ✅ (muttafaq ʿalayh) *(ajouté Arc 3)*
+- **Arabe :** إِنِّي لَأَعْلَمُ كَلِمَةً لَوْ قَالَهَا لَذَهَبَ عَنْهُ مَا يَجِدُ: أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ
+- **Sens :** « Je connais une parole qui, s'il la disait, ferait partir ce qu'il ressent : "Je cherche refuge en Allah contre le Shaytân banni." »
+- **Contexte :** deux hommes s'insultent devant le Prophète ﷺ ; le visage de l'un rougit de colère.
+- **Rapporteur :** Sulaymân b. Surad (رضي الله عنه).
+- **Réf. :** **Bukhârî 6115**, **Muslim 2610** (muttafaq ʿalayh).
+- **Emploi :** Épisode 9 (protocole colère, temps 1).
+
+### H13 — Le tawakkul comme les oiseaux ⚠️ (Tirmidhî — hasan sahîh, PAS dans les deux Sahîh) *(ajouté Arc 3)*
+- **Arabe :** لَوْ أَنَّكُمْ تَتَوَكَّلُونَ عَلَى اللَّهِ حَقَّ تَوَكُّلِهِ لَرَزَقَكُمْ كَمَا يَرْزُقُ الطَّيْرَ، تَغْدُو خِمَاصًا وَتَرُوحُ بِطَانًا
+- **Sens :** « Si vous vous en remettiez à Allah comme il se doit, Il vous nourrirait comme Il nourrit les oiseaux : ils partent le ventre vide et reviennent rassasiés. »
+- **Rapporteur :** ʿUmar b. al-Khattâb (رضي الله عنه).
+- **Réf. :** **Sunan at-Tirmidhî 2344** ; classé **hasan sahîh** par at-Tirmidhî (aussi Ibn Mâja, Ahmad). ❗ Pas dans les deux Sahîh.
+- **Emploi :** Épisode 10 (ridâ / tawakkul).
+
+### H14 — « La religion est facilité » ✅ (Bukhârî) *(ajouté Arc 3)*
+- **Arabe :** إِنَّ الدِّينَ يُسْرٌ، وَلَنْ يُشَادَّ الدِّينَ أَحَدٌ إِلَّا غَلَبَهُ، فَسَدِّدُوا وَقَارِبُوا
+- **Sens :** « La religion est facilité ; nul ne cherchera à en faire trop sans être vaincu. Visez juste, approchez-vous du but… »
+- **Rapporteur :** Abû Hurayra (رضي الله عنه).
+- **Réf. :** **Bukhârî 39** (Kitâb al-Îmân).
+- **Emploi :** Épisode 11 (parcours 30 jours / yusr + constance).
+
+### H15 — « Crains Allah où que tu sois » ⚠️ (Tirmidhî — hasan, PAS dans les deux Sahîh) *(ajouté Arc 3)*
+- **Arabe :** اتَّقِ اللَّهَ حَيْثُمَا كُنْتَ، وَأَتْبِعِ السَّيِّئَةَ الحَسَنَةَ تَمْحُهَا، وَخَالِقِ النَّاسَ بِخُلُقٍ حَسَنٍ
+- **Sens :** « Crains Allah où que tu sois ; fais suivre la mauvaise action d'une bonne qui l'efface ; et comporte-toi bien avec les gens. »
+- **Rapporteur :** Abû Dharr & Muʿâdh b. Jabal (رضي الله عنهما).
+- **Réf. :** **at-Tirmidhî** (n° 1987) ; classé **hasan** (« hasan sahîh » dans certaines copies) ; **Nawawî 40 n°18**. ❗ Pas dans les deux Sahîh.
+- **Emploi :** Épisode 12 (finale — ihsân / taqwâ dans le secret).
+
+> ⚠️ **Note colère & ablutions (Épisode 9)** : la narration attribuant explicitement le **wudû** comme
+> remède à la colère (Abû Dâwûd, via ʿAtiyya as-Saʿdî) est **faible (daʿîf)**. Dans le script M, « faire
+> ses ablutions » est présenté comme **pratique apaisante générale** (temps 3), **sans** l'attribuer à un
+> hadith authentifié. Ne pas dire « le Prophète ﷺ a ordonné le wudû pour la colère ».
+
 ---
 
 ## 3. Concepts cités sans attribution directe (aucune correction requise)
@@ -122,8 +163,10 @@ mais bon à connaître pour la solidité :
 
 ## 4. Règles de citation à tenir en production (récap QA — kit G)
 1. **Verset** → toujours « Allah dit dans la sourate… (n° sourate:verset) », voyellisé, voix humaine.
-2. **Hadith des deux Sahîh** (H1–H5) → « rapporté par al-Bukhârî et Muslim » possible.
-3. **Hadith H6 (Ahmad)** → dire « rapporté par Ahmad, authentifié (hasan/sahîh) » — **jamais** « muttafaq ʿalayh ».
+2. **Hadith des deux Sahîh** (H1–H5, H7, H12, H14 — Bukhârî et/ou Muslim) → attribution « rapporté par al-Bukhârî / Muslim » possible.
+3. **Hadiths hors des deux Sahîh** (H6 Ahmad ; H8 al-Hâkim ; H10 al-Adab al-Mufrad ; H11 Abû Dâwûd ; H13 & H15 at-Tirmidhî) → dire « rapporté par…, authentifié (hasan/sahîh) » — **jamais** « muttafaq ʿalayh ».
+   ⚠️ **H15** (« اتق الله حيثما كنت ») est **hasan**, pas sahîh dans toutes les copies → dire « hadith hasan rapporté par at-Tirmidhî ».
+   ⚠️ **Colère & wudû (ép. 9)** : narration **faible** → wudû présenté comme pratique apaisante, pas comme ordre prophétique authentifié.
 4. **Yûsuf 12:53** → attribuer au **Coran**, pas au Prophète Yûsuf (paroles de la femme d'al-ʿAzîz).
 5. Ne **jamais** faire réciter un verset/hadith par une voix IA douteuse (crédibilité).
 6. En cas de doute résiduel sur un numéro exact, la mention « muttafaq ʿalayh » / « rapporté par X »
@@ -132,15 +175,18 @@ mais bon à connaître pour la solidité :
 ---
 
 ## Bilan
-Toutes les citations des scripts ép. **2–8** et des livrables F/H sont **authentiques et vérifiées**.
+Toutes les citations des scripts ép. **2–12** (saison 1 complète) et des livrables F/H sont **authentiques et vérifiées**.
 Rappel de vigilance : hadiths **hors des deux Sahîh** (H6 riyâ' = Ahmad ; H8 « cinq avant cinq » = al-Hâkim ;
-H10 duʿâ shirk = al-Adab al-Mufrad) → les annoncer « rapporté par…, authentifié », jamais « muttafaq ʿalayh ».
+H10 duʿâ shirk = al-Adab al-Mufrad ; H11 colère/s'asseoir = Abû Dâwûd ; H13 oiseaux = at-Tirmidhî ;
+H15 « اتق الله حيثما كنت » = at-Tirmidhî, **hasan**) → les annoncer « rapporté par…, authentifié », jamais « muttafaq ʿalayh ».
+Point spécifique ép. 9 : la narration **wudû-contre-la-colère** est **faible** → à présenter comme pratique, non comme hadith authentifié.
 Deux points de vigilance à respecter en production : (a) l'attribution de **Yûsuf 12:53**
 (parole rapportée dans le Coran, pas du Prophète Yûsuf), et (b) le hadith du **riyâ'** (Ahmad,
 hasan/sahîh — pas des deux Sahîh, et « shirk asghar » plutôt que « khafî »). Corrections déjà
 appliquées dans `J` et `H`.
 
 ## Sources consultées
-- Coran : quran.com (12:53, 13:28), dawateislami.net, quranopedia.com
-- Hadith : sunnah.com (Bukhârî 1/50/6114/6464 ; Muslim 8/783/1907/2609/2999 ; Nawawî 40:1),
-  dorar.net, hadeethenc.com, mawdoo3.com (H1), abuaminaelias.com (H4/H6)
+- Coran : quran.com (12:53, 13:28, 26:88-89), dawateislami.net, quranopedia.com
+- Hadith : sunnah.com (Bukhârî 1/39/50/52/6114/6115/6464 ; Muslim 8/38/783/1599/1907/2609/2610/2999 ;
+  Abû Dâwûd 4782 ; Tirmidhî 1987/2344 ; Nawawî 40:1/18/21), dorar.net, hadeethenc.com,
+  hadithanswers.com, abuaminaelias.com, islamqa.info

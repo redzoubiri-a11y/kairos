@@ -1,0 +1,219 @@
+// Gabarits des documents PDF — planning mensuel et contrat de réservation
+// (§12 Phase 3, Annexe C).
+//
+// Ce module est volontairement pur : aucune dépendance à React Native ni à
+// Expo. Il se teste sans moteur de rendu et se prévisualise dans un simple
+// navigateur. L'écriture du fichier vit dans pdf.js.
+//
+// Toute valeur venant d'un utilisateur passe par `escapeHtml` : un nom de
+// client contenant « < » casserait la mise en page, et un message bien choisi
+// pourrait injecter du balisage dans le contrat.
+
+import { formatDA, formatLongDate, displayPhone, monthGrid } from '../lib/format';
+
+const ENTITIES = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+
+export function escapeHtml(value) {
+  if (value == null) return '';
+  return String(value).replace(/[&<>"']/g, (c) => ENTITIES[c]);
+}
+
+/** Feuille de style commune, alignée sur les tokens du design system (§3). */
+const STYLES = `
+  @page { margin: 18mm 15mm; }
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+         color: #1A1A1A; font-size: 12px; line-height: 1.5; margin: 0; }
+  .marque { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .sigle { width: 34px; height: 34px; border-radius: 10px; background: #084F44;
+           color: #D4A853; font-size: 19px; font-weight: 600;
+           display: flex; align-items: center; justify-content: center; }
+  .nom { font-size: 16px; font-weight: 600; }
+  h1 { font-size: 19px; font-weight: 600; margin: 18px 0 2px; }
+  .meta { color: #8B7E72; font-size: 11px; margin-bottom: 18px; }
+  h2 { font-size: 12px; font-weight: 600; text-transform: uppercase;
+       letter-spacing: .06em; color: #8B7E72; margin: 20px 0 8px; }
+  table { width: 100%; border-collapse: collapse; }
+  .infos td { padding: 5px 0; vertical-align: top; }
+  .infos td:first-child { color: #8B7E72; width: 38%; }
+  .grille td, .grille th { border: 1px solid #E8E4DF; padding: 5px 3px;
+                           text-align: center; font-size: 10px; height: 34px; }
+  .grille th { background: #FAFAF8; color: #8B7E72; font-weight: 600; height: auto; }
+  .hors { color: #C9C4BD; }
+  .reserve { background: rgba(11,110,95,.12); color: #084F44; font-weight: 600; }
+  .attente { background: rgba(212,168,83,.18); color: #8B6914; font-weight: 600; }
+  .bloque  { background: #F1EFEC; color: #8B7E72; }
+  .liste td { border-bottom: 1px solid #E8E4DF; padding: 7px 4px; font-size: 11px; }
+  .liste th { text-align: left; border-bottom: 1px solid #1A1A1A; padding: 6px 4px;
+              font-size: 10px; text-transform: uppercase; color: #8B7E72; }
+  .total { font-size: 15px; font-weight: 600; color: #0B6E5F; }
+  .clauses li { margin-bottom: 5px; }
+  .signature { margin-top: 26px; border: 1px solid #E8E4DF; border-radius: 8px;
+               padding: 12px 14px; background: #FAFAF8; }
+  .cachet { color: #0B6E5F; font-weight: 600; }
+  footer { margin-top: 26px; padding-top: 10px; border-top: 1px solid #E8E4DF;
+           color: #8B7E72; font-size: 10px; }
+`;
+
+function enTete(titre, sousTitre) {
+  return `
+    <div class="marque"><div class="sigle">T</div><div class="nom">Tasale</div></div>
+    <h1>${escapeHtml(titre)}</h1>
+    <div class="meta">${escapeHtml(sousTitre)}</div>`;
+}
+
+function document(titre, corps) {
+  return `<!doctype html><html lang="fr"><head><meta charset="utf-8">
+    <title>${escapeHtml(titre)}</title><style>${STYLES}</style></head>
+    <body>${corps}
+      <footer>Document généré par Tasale le ${escapeHtml(
+        new Date().toLocaleDateString('fr-FR')
+      )} — tasale.dz</footer>
+    </body></html>`;
+}
+
+// ── Contrat de réservation (Annexe C) ─────────────────────────────────────
+
+/**
+ * Contrat d'une réservation confirmée.
+ * `pro` porte le nom du propriétaire et son numéro CCP.
+ */
+export function buildContractHtml({ reservation, salle, pro, months, deposit, labels = {} }) {
+  // Les énumérations viennent de la base en anglais : sans libellés fournis,
+  // on retombe sur la valeur brute plutôt que d'afficher un vide.
+  const libelle = (dict, cle) => labels[dict]?.[cle] ?? cle;
+  const acompte = deposit ?? reservation.deposit_amount;
+  const solde = (reservation.total_amount || 0) - (acompte || 0);
+
+  const ligne = (libelle, valeur) =>
+    `<tr><td>${escapeHtml(libelle)}</td><td>${escapeHtml(valeur)}</td></tr>`;
+
+  const corps = `
+    ${enTete('Contrat de réservation', `Référence ${reservation.reference}`)}
+
+    <h2>Les parties</h2>
+    <table class="infos">
+      ${ligne('Salle', salle?.name)}
+      ${ligne('Adresse', salle?.address || salle?.city)}
+      ${ligne('Propriétaire', pro?.full_name)}
+      ${ligne('Client', reservation.client_name)}
+      ${ligne('Téléphone du client', displayPhone(reservation.client_phone))}
+    </table>
+
+    <h2>L'événement</h2>
+    <table class="infos">
+      ${ligne('Date', formatLongDate(reservation.event_date, months))}
+      ${ligne('Type', libelle('events', reservation.event_type))}
+      ${ligne('Invités attendus', `${reservation.guest_count}`)}
+      ${ligne('Formule', reservation.formula?.name || '—')}
+    </table>
+
+    <h2>Montants</h2>
+    <table class="infos">
+      <tr><td>Total</td><td class="total">${escapeHtml(formatDA(reservation.total_amount))}</td></tr>
+      ${acompte ? ligne('Acompte demandé', formatDA(acompte)) : ''}
+      ${acompte ? ligne('Solde à régler', formatDA(solde)) : ''}
+      ${acompte && pro?.ccp ? ligne('Compte CCP', pro.ccp) : ''}
+      ${ligne('Acompte reçu', reservation.deposit_paid ? 'Oui' : 'Non')}
+    </table>
+
+    <h2>Conditions</h2>
+    <ol class="clauses">
+      <li>La salle est réservée pour la seule date indiquée ci-dessus. Aucune
+          autre réservation ne peut y être confirmée le même jour.</li>
+      <li>L'acompte est réglé hors application, par versement CCP ou BaridiMob,
+          puis vérifié par le propriétaire.</li>
+      <li>Le solde est dû au plus tard le jour de l'événement.</li>
+      <li>Tant que la demande est en attente, le client peut l'annuler sans
+          frais. Après confirmation, l'annulation relève de l'accord des parties.</li>
+      <li>Tasale met les parties en relation et n'est pas partie au contrat.</li>
+    </ol>
+
+    <div class="signature">
+      ${
+        reservation.signed_at
+          ? `<div class="cachet">✓ Signé électroniquement par le propriétaire</div>
+             <div class="meta" style="margin:4px 0 0">
+               Le ${escapeHtml(new Date(reservation.signed_at).toLocaleString('fr-FR'))},
+               par saisie d'un code confidentiel à 4 chiffres. Référence ${escapeHtml(
+                 reservation.reference
+               )}.
+             </div>`
+          : `<div>Réservation non encore signée par le propriétaire.</div>`
+      }
+    </div>`;
+
+  return document(`Contrat ${reservation.reference}`, corps);
+}
+
+// ── Planning mensuel (§5.3) ───────────────────────────────────────────────
+
+const CLASSE_ETAT = { booked: 'reserve', held: 'attente', blocked: 'bloque' };
+
+export function buildPlanningHtml({
+  salle, year, month, availability = {}, byDay = {}, months, weekdays, labels = {},
+}) {
+  const libelle = (dict, cle) => labels[dict]?.[cle] ?? cle;
+  const cells = monthGrid(year, month);
+
+  const semaines = [];
+  for (let i = 0; i < cells.length; i += 7) semaines.push(cells.slice(i, i + 7));
+
+  const grille = `
+    <table class="grille">
+      <thead><tr>${weekdays.map((d) => `<th>${escapeHtml(d)}</th>`).join('')}</tr></thead>
+      <tbody>
+        ${semaines
+          .map(
+            (semaine) => `<tr>${semaine
+              .map((cell) => {
+                if (!cell.inMonth) return `<td class="hors">${cell.day}</td>`;
+                const etat = availability[cell.iso];
+                const resa = byDay[cell.iso];
+                const classe = CLASSE_ETAT[etat] || '';
+                const nom = resa ? `<br><span style="font-size:8px">${escapeHtml(
+                  (resa.client_name || '').split(' ')[0]
+                )}</span>` : '';
+                return `<td class="${classe}">${cell.day}${nom}</td>`;
+              })
+              .join('')}</tr>`
+          )
+          .join('')}
+      </tbody>
+    </table>`;
+
+  const reservations = Object.values(byDay).sort((a, b) =>
+    a.event_date < b.event_date ? -1 : 1
+  );
+
+  const liste = reservations.length
+    ? `<h2>Réservations du mois</h2>
+       <table class="liste">
+         <thead><tr><th>Date</th><th>Client</th><th>Type</th><th>Invités</th><th>Montant</th><th>Statut</th></tr></thead>
+         <tbody>
+           ${reservations
+             .map(
+               (r) => `<tr>
+                 <td>${escapeHtml(formatLongDate(r.event_date, months))}</td>
+                 <td>${escapeHtml(r.client_name)}</td>
+                 <td>${escapeHtml(libelle('events', r.event_type))}</td>
+                 <td>${escapeHtml(String(r.guest_count ?? ''))}</td>
+                 <td>${escapeHtml(formatDA(r.total_amount))}</td>
+                 <td>${escapeHtml(libelle('statuses', r.status))}</td>
+               </tr>`
+             )
+             .join('')}
+         </tbody>
+       </table>`
+    : '<h2>Réservations du mois</h2><p class="meta">Aucune réservation ce mois-ci.</p>';
+
+  const corps = `
+    ${enTete(`Planning — ${months[month]} ${year}`, salle?.name || '')}
+    ${grille}
+    <div class="meta" style="margin-top:8px">
+      Vert : confirmée · Or : en attente · Gris : bloqué
+    </div>
+    ${liste}`;
+
+  return document(`Planning ${months[month]} ${year}`, corps);
+}

@@ -10,6 +10,7 @@ export default {
     save: 'Enregistrer',
     saved: 'Enregistré',
     send: 'Envoyer',
+    exportPdf: 'PDF',
     close: 'Fermer',
     search: 'Rechercher',
     seeAll: 'Tout voir',
@@ -191,6 +192,7 @@ export default {
     ccpNumber: 'N° CCP',
     leaveReview: 'Laisser un avis',
     reviewDone: 'Avis déposé',
+    downloadContract: 'Télécharger le contrat',
     contactOwner: 'Contacter le propriétaire',
   },
   status: {

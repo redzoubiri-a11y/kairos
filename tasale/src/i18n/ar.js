@@ -10,6 +10,7 @@ export default {
     save: 'حفظ',
     saved: 'تم الحفظ',
     send: 'إرسال',
+    exportPdf: 'PDF',
     close: 'إغلاق',
     search: 'بحث',
     seeAll: 'عرض الكل',
@@ -191,6 +192,7 @@ export default {
     ccpNumber: 'رقم الحساب البريدي',
     leaveReview: 'ترك تقييم',
     reviewDone: 'تم التقييم',
+    downloadContract: 'تحميل العقد',
     contactOwner: 'التواصل مع صاحب القاعة',
   },
   status: {

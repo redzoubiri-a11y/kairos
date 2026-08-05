@@ -711,7 +711,7 @@ export async function proGetPlanning(year, month) {
     };
   });
 
-  return { availability, byDay, salleId: salle.id };
+  return { availability, byDay, salleId: salle.id, salleName: salle.name };
 }
 
 export async function proToggleBlockedDay(day) {

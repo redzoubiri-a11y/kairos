@@ -9,6 +9,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { useI18n } from '../../i18n';
 import { formatDA, formatLongDate, daysBetween, todayISO } from '../../lib/format';
 import { RESERVATION_STATUS, REVIEW_DELAY_HOURS } from '../../lib/constants';
+import { buildContractHtml, exportToPdf, pdfLabels } from '../../services/pdf';
 import * as api from '../../data';
 
 /** Confirmation multiplateforme : Alert n'existe pas sur le web. */
@@ -33,6 +34,7 @@ export default function ReservationDetailScreen({ route, navigation }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [busy, setBusy] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
   const load = useCallback(async () => {
     try {
@@ -66,6 +68,27 @@ export default function ReservationDetailScreen({ route, navigation }) {
       },
       { cancel: t('common.back'), confirm: t('common.confirm') }
     );
+  };
+
+  const downloadContract = async () => {
+    setExporting(true);
+    try {
+      await exportToPdf({
+        html: buildContractHtml({
+          reservation: resa,
+          salle: resa.salle,
+          // Le propriétaire n'est pas exposé au client : le contrat porte le
+          // nom de la salle, sans les coordonnées personnelles du gérant.
+          pro: { full_name: resa.salle?.name },
+          months: list('months'),
+          labels: pdfLabels(t),
+        }),
+      });
+    } catch {
+      // Impression annulée : rien à signaler.
+    } finally {
+      setExporting(false);
+    }
   };
 
   const declare = async () => {
@@ -175,6 +198,19 @@ export default function ReservationDetailScreen({ route, navigation }) {
         ) : null}
 
         <View style={{ gap: spacing.md }}>
+          {/* Annexe C — le contrat n'existe qu'une fois la réservation signée */}
+          {resa.status === RESERVATION_STATUS.CONFIRMED ||
+          resa.status === RESERVATION_STATUS.COMPLETED ? (
+            <MButton
+              label={t('reservations.downloadContract')}
+              variant="secondary"
+              icon="document-text-outline"
+              loading={exporting}
+              onPress={downloadContract}
+              full
+            />
+          ) : null}
+
           <MButton
             label={t('reservations.contactOwner')}
             variant="secondary"

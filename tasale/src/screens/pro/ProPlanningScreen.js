@@ -7,6 +7,7 @@ import MButton from '../../components/MButton';
 import { StatusBadge } from '../../components/ReservationCard';
 import { MCard, KeyValue, Divider, Loader, OfflineBanner } from '../../components/primitives';
 import { withCache, cacheKey } from '../../data/cache';
+import { buildPlanningHtml, exportToPdf, pdfLabels } from '../../services/pdf';
 import { useTheme } from '../../context/ThemeContext';
 import { useI18n } from '../../i18n';
 import { formatDA, formatLongDate, todayISO } from '../../lib/format';
@@ -23,6 +24,7 @@ export default function ProPlanningScreen({ navigation }) {
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
+  const [exporting, setExporting] = useState(false);
   // Horodatage de la copie locale, nul quand les données sont fraîches.
   const [staleSince, setStaleSince] = useState(null);
 
@@ -52,6 +54,28 @@ export default function ProPlanningScreen({ navigation }) {
     });
   };
 
+  const exportPlanning = async () => {
+    setExporting(true);
+    try {
+      await exportToPdf({
+        html: buildPlanningHtml({
+          salle: { name: planning.salleName },
+          year: cursor.year,
+          month: cursor.month,
+          availability: planning.availability,
+          byDay: planning.byDay,
+          months: list('months'),
+          weekdays: list('weekdays'),
+          labels: pdfLabels(t),
+        }),
+      });
+    } catch {
+      // Impression annulée ou indisponible : rien à signaler à l'utilisateur.
+    } finally {
+      setExporting(false);
+    }
+  };
+
   const toggleBlock = async () => {
     setBusy(true);
     try {
@@ -76,7 +100,20 @@ export default function ProPlanningScreen({ navigation }) {
 
   return (
     <Screen>
-      <Header title={t('pro.planningTitle')} bordered={false} />
+      <Header
+        title={t('pro.planningTitle')}
+        bordered={false}
+        right={
+          <MButton
+            label={t('common.exportPdf')}
+            variant="ghost"
+            size="sm"
+            icon="download-outline"
+            loading={exporting}
+            onPress={exportPlanning}
+          />
+        }
+      />
 
       <Body>
         <OfflineBanner at={staleSince} />

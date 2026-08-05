@@ -300,11 +300,17 @@ export async function toggleFavorite(salleId) {
 
 // ── Réservations pro ──────────────────────────────────────────────────────
 
-async function mySalleId() {
+async function mySalle() {
   const id = await currentUserId();
-  const row = unwrap(await supabase.from('salles').select('id').eq('owner_id', id).limit(1).maybeSingle());
+  const row = unwrap(
+    await supabase.from('salles').select('id, name').eq('owner_id', id).limit(1).maybeSingle()
+  );
   if (!row) throw new Error('NO_SALLE');
-  return row.id;
+  return row;
+}
+
+async function mySalleId() {
+  return (await mySalle()).id;
 }
 
 export async function proListReservations(filter = 'all') {
@@ -345,7 +351,8 @@ export async function proVerifyDeposit(id) {
 // ── Planning ──────────────────────────────────────────────────────────────
 
 export async function proGetPlanning(year, month) {
-  const salleId = await mySalleId();
+  const salle = await mySalle();
+  const salleId = salle.id;
   const availability = await getAvailability(salleId, year, month);
   const from = toISODate(new Date(year, month - 1, 1));
   const to = toISODate(new Date(year, month + 2, 0));
@@ -365,7 +372,7 @@ export async function proGetPlanning(year, month) {
   rows.forEach((r) => {
     byDay[r.event_date] = r;
   });
-  return { availability, byDay, salleId };
+  return { availability, byDay, salleId, salleName: salle.name };
 }
 
 export async function proToggleBlockedDay(day) {

@@ -130,6 +130,8 @@ export default {
     available: 'متاحة',
     unavailable: 'محجوزة',
     promo: '-10% هذا الشهر',
+    directions: 'الاتجاهات',
+    location: 'الموقع',
     contact: 'تواصل',
     clientPhotos: 'صور الزبائن ({{count}})',
     showAllReviews: 'عرض كل التقييمات ({{count}})',

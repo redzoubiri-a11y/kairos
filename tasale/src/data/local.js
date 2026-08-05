@@ -217,11 +217,12 @@ export async function registerSalle(payload) {
     description: payload.description || '',
     amenities: payload.amenities || [],
     photos: payload.photos || [],
+    latitude: payload.latitude ?? null,
+    longitude: payload.longitude ?? null,
     status: 'pending',
     is_premium: false,
     rating: null,
     reviews_count: 0,
-    distance_km: null,
     created_at: new Date().toISOString(),
   };
   db.salles.push(salle);
@@ -938,6 +939,8 @@ export async function createReview(payload) {
     rating_value: payload.rating_value ?? null,
     comment: payload.comment || '',
     photos: payload.photos || [],
+    latitude: payload.latitude ?? null,
+    longitude: payload.longitude ?? null,
     // §7.4 — badge "client confirmé" si la réservation est terminée
     is_verified: reservation.status === RESERVATION_STATUS.COMPLETED,
     status: REVIEW_STATUS.PENDING,

@@ -130,6 +130,8 @@ export default {
     available: 'Disponible',
     unavailable: 'Complet',
     promo: '-10% ce mois',
+    directions: 'Itinéraire',
+    location: 'Situation',
     contact: 'Contacter',
     clientPhotos: 'Photos des clients ({{count}})',
     showAllReviews: 'Voir les {{count}} avis',

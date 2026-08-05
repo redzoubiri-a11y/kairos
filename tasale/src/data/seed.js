@@ -1,4 +1,8 @@
 // Jeu de données de démonstration — salles des fêtes algériennes.
+//
+// Les coordonnées situent le quartier mentionné dans l'adresse, pas un
+// bâtiment : les salles sont fictives. Elles suffisent à calculer une
+// distance réaliste depuis la position de l'utilisateur.
 // Utilisé par l'adaptateur local quand Supabase n'est pas configuré.
 // Les photos viennent de photos.json ; à défaut, les cartes affichent un
 // dégradé déterministe (§4.1) et l'app reste utilisable hors ligne.
@@ -30,11 +34,12 @@ export const SEED_SALLES = [
       "Située au cœur de Bir Mourad Raïs, la salle El Widad accueille vos mariages et fiançailles depuis 2008. Grande piste de danse, éclairage scénique, loge climatisée pour la mariée et terrasse panoramique pour les photos.",
     amenities: ['clim', 'cuisine', 'sono', 'parking', 'terrasse', 'traiteur'],
     photos: photosOf('salle-001'),
+    latitude: 36.735,
+    longitude: 3.053,
     status: 'active',
     is_premium: true,
     rating: 4.8,
     reviews_count: 127,
-    distance_km: 3.2,
     created_at: '2026-01-12T09:00:00Z',
   },
   {
@@ -49,11 +54,12 @@ export const SEED_SALLES = [
       "Un décor mauresque authentique : zellige, plafonds sculptés et patio central. Idéal pour les fiançailles et les cérémonies intimistes. Notre chef propose un menu traditionnel algérois.",
     amenities: ['clim', 'cuisine', 'sono', 'parking', 'traiteur', 'wifi'],
     photos: photosOf('salle-002'),
+    latitude: 36.757,
+    longitude: 2.97,
     status: 'active',
     is_premium: false,
     rating: 4.6,
     reviews_count: 84,
-    distance_km: 8.7,
     created_at: '2026-02-03T09:00:00Z',
   },
   {
@@ -68,11 +74,12 @@ export const SEED_SALLES = [
       "La plus grande salle de l'Oranie. Deux niveaux, scène modulable, système son professionnel et parking sécurisé. Notre équipe gère votre événement de A à Z.",
     amenities: ['clim', 'cuisine', 'sono', 'parking', 'terrasse', 'pmr', 'traiteur', 'wifi'],
     photos: photosOf('salle-003'),
+    latitude: 35.702,
+    longitude: -0.61,
     status: 'active',
     is_premium: true,
     rating: 4.9,
     reviews_count: 203,
-    distance_km: 412,
     created_at: '2025-11-20T09:00:00Z',
   },
   {
@@ -87,11 +94,12 @@ export const SEED_SALLES = [
       "Salle familiale chaleureuse, rénovée en 2025. Parfaite pour les anniversaires et les petites réceptions. Cuisine équipée mise à disposition des traiteurs extérieurs.",
     amenities: ['clim', 'cuisine', 'parking', 'pmr'],
     photos: photosOf('salle-004'),
+    latitude: 36.34,
+    longitude: 6.62,
     status: 'active',
     is_premium: false,
     rating: 4.3,
     reviews_count: 41,
-    distance_km: 320,
     created_at: '2026-03-15T09:00:00Z',
   },
   {
@@ -106,11 +114,12 @@ export const SEED_SALLES = [
       "Entourée d'orangers, Dar El Ferah offre un cadre verdoyant unique dans la Mitidja. Jardin extérieur pour la cérémonie, salle climatisée pour le dîner.",
     amenities: ['clim', 'cuisine', 'sono', 'parking', 'terrasse', 'traiteur'],
     photos: photosOf('salle-005'),
+    latitude: 36.46,
+    longitude: 2.83,
     status: 'active',
     is_premium: false,
     rating: 4.7,
     reviews_count: 96,
-    distance_km: 47,
     created_at: '2026-01-28T09:00:00Z',
   },
   {
@@ -125,11 +134,12 @@ export const SEED_SALLES = [
       "Complexe moderne avec deux salles indépendantes, permettant d'accueillir simultanément la réception des hommes et celle des femmes selon la tradition.",
     amenities: ['clim', 'cuisine', 'sono', 'parking', 'pmr', 'wifi'],
     photos: photosOf('salle-006'),
+    latitude: 36.19,
+    longitude: 5.41,
     status: 'active',
     is_premium: true,
     rating: 4.5,
     reviews_count: 118,
-    distance_km: 300,
     created_at: '2025-12-05T09:00:00Z',
   },
   {
@@ -144,11 +154,12 @@ export const SEED_SALLES = [
       "Salle kabyle traditionnelle revisitée. Espace scénique pour les troupes folkloriques, vestiaires spacieux et service de décoration intégré.",
     amenities: ['clim', 'cuisine', 'sono', 'parking', 'terrasse'],
     photos: photosOf('salle-007'),
+    latitude: 36.715,
+    longitude: 4.045,
     status: 'active',
     is_premium: false,
     rating: 4.4,
     reviews_count: 63,
-    distance_km: 102,
     created_at: '2026-04-02T09:00:00Z',
   },
   {
@@ -163,11 +174,12 @@ export const SEED_SALLES = [
       "Vue directe sur la Méditerranée. Terrasse pour le cocktail au coucher du soleil, salle intérieure entièrement vitrée. Réservation conseillée 6 mois à l'avance.",
     amenities: ['clim', 'sono', 'parking', 'terrasse', 'traiteur', 'wifi'],
     photos: photosOf('salle-008'),
+    latitude: 36.9,
+    longitude: 7.755,
     status: 'active',
     is_premium: true,
     rating: 4.8,
     reviews_count: 152,
-    distance_km: 598,
     created_at: '2025-10-11T09:00:00Z',
   },
   {
@@ -182,11 +194,12 @@ export const SEED_SALLES = [
       "À dix minutes des ruines romaines, une salle à taille humaine pour vos fiançailles et anniversaires. Formule tout compris avec pâtisserie traditionnelle.",
     amenities: ['clim', 'cuisine', 'parking', 'terrasse'],
     photos: photosOf('salle-009'),
+    latitude: 36.59,
+    longitude: 2.448,
     status: 'active',
     is_premium: false,
     rating: 4.2,
     reviews_count: 29,
-    distance_km: 68,
     created_at: '2026-05-19T09:00:00Z',
   },
   {
@@ -201,11 +214,12 @@ export const SEED_SALLES = [
       "Salle de conférence et de réception au centre d'Alger. Équipement audiovisuel professionnel, régie, traduction simultanée disponible sur demande.",
     amenities: ['clim', 'sono', 'parking', 'pmr', 'wifi', 'traiteur'],
     photos: photosOf('salle-010'),
+    latitude: 36.764,
+    longitude: 3.056,
     status: 'active',
     is_premium: false,
     rating: 4.5,
     reviews_count: 77,
-    distance_km: 1.8,
     created_at: '2026-02-22T09:00:00Z',
   },
   {
@@ -220,12 +234,13 @@ export const SEED_SALLES = [
       "Salle récemment ouverte, à quinze minutes de la plage. Décoration moderne, cuisine attenante et espace enfants séparé.",
     amenities: ['clim', 'cuisine', 'parking'],
     photos: photosOf('salle-011'),
+    latitude: 36.766,
+    longitude: 3.477,
     // En attente de validation par l'équipe (§5.5) : invisible côté client
     status: 'pending',
     is_premium: false,
     rating: null,
     reviews_count: 0,
-    distance_km: 52,
     created_at: `${addDays(T, -1)}T11:00:00Z`,
   },
 ];

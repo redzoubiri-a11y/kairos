@@ -3,6 +3,7 @@ import { View, Text, ScrollView, Pressable, Image, useWindowDimensions } from 'r
 import { Ionicons } from '@expo/vector-icons';
 import { Screen, StickyBar } from '../../components/Screen';
 import SallePhoto from '../../components/SallePhoto';
+import SalleMap from '../../components/SalleMap';
 import MButton from '../../components/MButton';
 import ReviewCard, { RatingBreakdown } from '../../components/ReviewCard';
 import { MBadge, MChip, SectionTitle, Loader, ErrorState, Divider } from '../../components/primitives';
@@ -11,6 +12,8 @@ import { useI18n } from '../../i18n';
 import { useFavorites } from '../../context/FavoritesContext';
 import { formatDA } from '../../lib/format';
 import { AMENITY_ICONS, EVENT_TYPES } from '../../lib/constants';
+import { distanceKm, formatDistance } from '../../lib/geo';
+import { getUserPosition, getCachedPosition } from '../../services/location';
 import * as api from '../../data';
 
 function QuickStat({ icon, value, label }) {
@@ -58,6 +61,7 @@ export default function SalleScreen({ route, navigation }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showAllReviews, setShowAllReviews] = useState(false);
+  const [position, setPosition] = useState(getCachedPosition());
 
   const load = useCallback(async () => {
     try {
@@ -76,6 +80,13 @@ export default function SalleScreen({ route, navigation }) {
   useEffect(() => {
     load();
   }, [load]);
+
+  // La distance est un confort : on ne demande la position qu'une fois, et
+  // son absence ne bloque rien.
+  useEffect(() => {
+    if (position) return;
+    getUserPosition().then((p) => p && setPosition(p));
+  }, [position]);
 
   useEffect(() => {
     if (!salle) return;
@@ -204,7 +215,7 @@ export default function SalleScreen({ route, navigation }) {
             <QuickStat icon="car-outline" value={String(salle.parking_places || 0)} label={t('salle.parking')} />
             <QuickStat
               icon="location-outline"
-              value={salle.distance_km != null ? `${salle.distance_km} km` : '—'}
+              value={formatDistance(distanceKm(position, salle)) ?? '—'}
               label={t('salle.distance')}
             />
           </View>
@@ -219,7 +230,15 @@ export default function SalleScreen({ route, navigation }) {
             </View>
           ) : null}
 
-          {/* 5 — Équipements */}
+          {/* 5 — Situation (§1.3) */}
+          {salle.latitude != null ? (
+            <View>
+              <SectionTitle title={t('salle.location')} />
+              <SalleMap salle={salle} />
+            </View>
+          ) : null}
+
+          {/* 6 — Équipements */}
           {salle.amenities?.length ? (
             <View>
               <SectionTitle title={t('salle.amenities')} />

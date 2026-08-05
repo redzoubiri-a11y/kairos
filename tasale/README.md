@@ -97,6 +97,7 @@ psql "$DATABASE_URL" -f supabase/migrations/0003_storage.sql    # buckets d'imag
 psql "$DATABASE_URL" -f supabase/migrations/0004_cron.sql       # planification
 psql "$DATABASE_URL" -f supabase/migrations/0005_delivery.sql   # file d'expédition
 psql "$DATABASE_URL" -f supabase/migrations/0006_admin.sql      # console d'administration
+psql "$DATABASE_URL" -f supabase/migrations/0007_geo.sql        # position des salles
 ```
 
 `0003` suppose le schéma `storage` : il ne s'applique que sur Supabase.
@@ -152,7 +153,7 @@ puis rejouer `0004_cron.sql`.
 ## Tests
 
 ```bash
-npm test                                                    # 141 tests JS (jest-expo)
+npm test                                                    # 167 tests JS (jest-expo)
 psql "$DATABASE_URL" -f supabase/tests/business_rules.sql   # 17 assertions SQL
 psql "$DATABASE_URL" -f supabase/tests/lifecycle.sql        # 16 assertions SQL
 psql "$DATABASE_URL" -f supabase/tests/admin.sql            # 14 assertions SQL
@@ -165,6 +166,7 @@ psql "$DATABASE_URL" -f supabase/tests/admin.sql            # 14 assertions SQL
 | `src/lib/storage.test.js` (10) | Décodage base64 des images (les 256 valeurs d'octet), unicité et extension des chemins de destination |
 | `src/data/cache.test.js` (11) | Cache hors ligne : repli sur la dernière réponse connue, refus d'une donnée périmée, propagation de l'erreur quand aucun cache n'existe |
 | `src/services/pdfTemplates.test.js` (22) | Contrat et planning : montants et solde, mention de signature, échappement HTML d'un nom de client piégé, traduction des énumérations |
+| `src/lib/geo.test.js` (26) | Distance orthodromique vérifiée sur des écarts connus (Alger–Oran, un degré de latitude), tri par proximité, liens d'itinéraire par plateforme |
 | `src/theme.test.js` (13) | Contrastes calculés selon WCAG 2.1 : encre de marque ≥ 4,5:1 dans les deux thèmes, blanc lisible sur les aplats de bouton, thème clair verrouillé à l'identique |
 | `supabase/tests/business_rules.sql` (17) | Les mêmes règles §10, mais côté PostgreSQL : unicité du jour confirmé, PIN, délai d'avis, publication automatique, agrégats, absence de policy `DELETE` sur les avis |
 | `supabase/tests/admin.sql` (14) | Autorisations de la console : un client n'obtient pas les chiffres, un pro ne valide pas sa propre salle, un avis retiré reste en base |
@@ -250,7 +252,6 @@ applicative.
   l'historique s'affiche, et l'essai bascule automatiquement en abonnement
   actif à son terme ; le prélèvement CCP/BaridiMob suppose une intégration
   bancaire hors application.
-- **Cartographie.** La distance figure sur les fiches, sans carte Mapbox.
 
 ---
 
@@ -285,7 +286,7 @@ champs téléphone restent en LTR conformément au §4.4.
 
 ## Vérification effectuée
 
-- `npm test` — 141 tests au vert
+- `npm test` — 167 tests au vert
 - `npx expo export --platform web` — 753 modules, aucune erreur
 - Parcours pro complet en navigateur (Playwright) : connexion OTP → tableau de
   bord → confirmation d'une demande avec acompte et signature PIN → planning →

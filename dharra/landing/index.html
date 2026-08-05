@@ -341,46 +341,85 @@
   </main>
 
   <script>
-    // Capture mono-objectif. En prod : remplacer l'endpoint par le vrai
-    // fournisseur d'emailing / broadcast (ex. formulaire hébergé), et
-    // brancher le tag de source (?src=ep01) pour mesurer le CTR par épisode.
+    /* ============================================================
+       CONFIG — à remplir une seule fois après création MailerLite
+       ------------------------------------------------------------
+       1) EMAIL_ENDPOINT : l'URL "subscribe" du formulaire MailerLite.
+          MailerLite → Forms → (ton formulaire) → Embed → onglet
+          "Use your own HTML" → copie l'URL du <form action="...">.
+          Elle ressemble à :
+          https://assets.mailerlite.com/jsonp/XXXXXX/forms/YYYYYY/subscribe
+       2) WHATSAPP_URL   : le lien d'invitation de ton canal WhatsApp.
+       Tant qu'EMAIL_ENDPOINT est vide, la page fonctionne en mode
+       démo (affiche l'écran "merci" sans envoyer) — pratique pour
+       la prévisualisation avant branchement.
+       ============================================================ */
+    var EMAIL_ENDPOINT = "";                 // ← colle l'URL MailerLite ici
+    var WHATSAPP_URL   = "";                 // ← colle le lien du canal WhatsApp ici
+
     (function(){
       var form     = document.getElementById('capture');
       var reassure = document.getElementById('reassure');
       var thanks   = document.getElementById('thanks');
       var input    = document.getElementById('contact');
+      var button   = form.querySelector('button');
 
-      // Récupère le tag de source de l'URL (?src=...) pour l'attribution.
+      // Tag de source de l'URL (?src=ep01) pour l'attribution par épisode (KPI F.7).
       var params = new URLSearchParams(window.location.search);
       var src = params.get('src') || 'direct';
 
-      function looksValid(v){
-        v = (v || '').trim();
-        var isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-        var isPhone = /^[+]?[\d\s().-]{7,}$/.test(v);
-        return isEmail || isPhone;
+      // Renseigne le bouton WhatsApp de l'écran "merci" s'il est configuré.
+      document.querySelectorAll('[data-wa]').forEach(function(a){
+        if(WHATSAPP_URL){ a.href = WHATSAPP_URL; a.target = '_blank'; a.rel = 'noopener'; }
+      });
+
+      function isEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+      function isPhone(v){ return /^[+]?[\d\s().-]{7,}$/.test(v); }
+
+      function reveal(){
+        form.classList.add('hide');
+        reassure.classList.add('hide');
+        thanks.classList.add('show');
+        thanks.scrollIntoView({ behavior:'smooth', block:'center' });
       }
 
       form.addEventListener('submit', function(e){
         e.preventDefault();
-        var v = input.value;
-        if(!looksValid(v)){
+        var v = (input.value || '').trim();
+
+        // Un numéro seul ne peut pas déclencher l'email d'envoi du PDF :
+        // on oriente vers l'email OU vers le canal WhatsApp direct.
+        if(isPhone(v) && !isEmail(v)){
+          input.style.borderColor = 'var(--terre)';
+          input.setAttribute('placeholder', 'Mets ton email — ou rejoins WhatsApp ci-dessous 👇');
+          reveal();
+          return;
+        }
+        if(!isEmail(v)){
           input.style.borderColor = 'var(--terre)';
           input.focus();
           return;
         }
 
-        // TODO déploiement : POST { contact: v, source: src } vers le fournisseur.
-        // fetch('/api/subscribe', { method:'POST',
-        //   headers:{'Content-Type':'application/json'},
-        //   body: JSON.stringify({ contact: v, source: src }) });
-
-        try { console.info('[capture]', { contact: v, source: src }); } catch(_){}
-
-        form.classList.add('hide');
-        reassure.classList.add('hide');
-        thanks.classList.add('show');
-        thanks.scrollIntoView({ behavior:'smooth', block:'center' });
+        // Envoi réel vers MailerLite si configuré, sinon mode démo.
+        if(EMAIL_ENDPOINT){
+          button.disabled = true;
+          button.textContent = '…جارٍ الإرسال';
+          var body = new URLSearchParams();
+          body.set('fields[email]', v);
+          body.set('fields[source]', src);   // champ perso "source" (crée-le dans MailerLite)
+          body.set('ml-submit', '1');
+          body.set('anticsrf', 'true');
+          fetch(EMAIL_ENDPOINT, {
+            method: 'POST',
+            mode: 'no-cors',                  // MailerLite : réponse opaque, on affiche succès
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: body.toString()
+          }).then(reveal).catch(reveal);
+        } else {
+          try { console.info('[capture:demo]', { email: v, source: src }); } catch(_){}
+          reveal();
+        }
       });
 
       // Bouton de rappel : ramène au champ et le focus.

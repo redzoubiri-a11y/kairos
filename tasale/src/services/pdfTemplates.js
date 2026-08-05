@@ -146,6 +146,91 @@ export function buildContractHtml({ reservation, salle, pro, months, deposit, la
   return document(`Contrat ${reservation.reference}`, corps);
 }
 
+// ── Facture d'abonnement (§11.2) ──────────────────────────────────────────
+
+/**
+ * Facture d'un mois d'abonnement.
+ *
+ * L'abonnement se facture **par propriétaire**, pas par salle : le document
+ * énumère donc les salles couvertes pour que le montant soit lisible sans
+ * ambiguïté chez un propriétaire qui en gère plusieurs.
+ */
+export function buildInvoiceHtml({ invoice, pro, salles = [], labels = {} }) {
+  const numero = invoice.reference || String(invoice.id || '').toUpperCase();
+  const emise = invoice.issued_at ? new Date(invoice.issued_at) : null;
+
+  const ligne = (cle, valeur) =>
+    `<tr><td>${escapeHtml(cle)}</td><td>${escapeHtml(valeur)}</td></tr>`;
+
+  const etat =
+    labels.invoiceStatuses?.[invoice.status] ??
+    (invoice.status === 'paid' ? 'Payée' : 'En attente');
+
+  const couvertes = salles.length
+    ? `<h2>Salles couvertes</h2>
+       <table class="liste">
+         <thead><tr><th>Salle</th><th>Ville</th></tr></thead>
+         <tbody>
+           ${salles
+             .map(
+               (s) => `<tr><td>${escapeHtml(s.name)}</td><td>${escapeHtml(s.city)}</td></tr>`
+             )
+             .join('')}
+         </tbody>
+       </table>
+       <div class="meta" style="margin-top:6px">
+         L'abonnement couvre l'ensemble des salles du compte, quel qu'en soit
+         le nombre.
+       </div>`
+    : '';
+
+  const corps = `
+    ${enTete('Facture', `N° ${numero}`)}
+
+    <h2>Émetteur</h2>
+    <table class="infos">
+      ${ligne('Société', 'Tasale')}
+      ${ligne('Objet', "Abonnement à l'espace professionnel")}
+    </table>
+
+    <h2>Client</h2>
+    <table class="infos">
+      ${ligne('Nom', pro?.full_name)}
+      ${pro?.phone ? ligne('Téléphone', displayPhone(pro.phone)) : ''}
+      ${pro?.ccp ? ligne('Compte CCP', pro.ccp) : ''}
+    </table>
+
+    <h2>Détail</h2>
+    <table class="liste">
+      <thead><tr><th>Période</th><th>Description</th><th style="text-align:right">Montant</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>${escapeHtml(invoice.period)}</td>
+          <td>${escapeHtml(invoice.description)}</td>
+          <td style="text-align:right">${escapeHtml(formatDA(invoice.amount))}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table class="infos" style="margin-top:14px">
+      <tr><td>Total</td><td class="total">${escapeHtml(formatDA(invoice.amount))}</td></tr>
+      ${ligne('Statut', etat)}
+      ${emise ? ligne("Date d'émission", emise.toLocaleDateString('fr-FR')) : ''}
+    </table>
+
+    ${couvertes}
+
+    <div class="signature">
+      ${
+        invoice.amount === 0
+          ? "Période d'essai : aucun montant n'est dû."
+          : 'Règlement par versement CCP ou BaridiMob, hors application.'
+      }
+    </div>`;
+
+  return document(`Facture ${numero}`, corps);
+}
+
 // ── Planning mensuel (§5.3) ───────────────────────────────────────────────
 
 const CLASSE_ETAT = { booked: 'reserve', held: 'attente', blocked: 'bloque' };

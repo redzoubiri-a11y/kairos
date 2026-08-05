@@ -11,6 +11,9 @@ import { useTheme } from '../../context/ThemeContext';
 import { useI18n } from '../../i18n';
 import { formatDA } from '../../lib/format';
 import { PAYMENT_METHODS, SUBSCRIPTION_PRICE, TRIAL_DAYS } from '../../lib/constants';
+import { buildInvoiceHtml, exportToPdf, pdfLabels } from '../../services/pdf';
+import { useAuth } from '../../context/AuthContext';
+import { useProSalle } from '../../context/ProSalleContext';
 import * as api from '../../data';
 
 const FEATURES = ['f1', 'f2', 'f3', 'f4', 'f5', 'f6'];
@@ -18,8 +21,12 @@ const FEATURES = ['f1', 'f2', 'f3', 'f4', 'f5', 'f6'];
 export default function ProSubscriptionScreen({ navigation }) {
   const { colors, typography, spacing, radii } = useTheme();
   const { t, dir, align } = useI18n();
+  const { user } = useAuth();
+  const { salles } = useProSalle();
 
   const [sub, setSub] = useState(null);
+  // Identifiant de la facture en cours d'export, pour n'animer que sa ligne.
+  const [exporting, setExporting] = useState(null);
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -48,6 +55,26 @@ export default function ProSubscriptionScreen({ navigation }) {
       load();
     }, [load])
   );
+
+  const exportInvoice = async (invoice) => {
+    setExporting(invoice.id);
+    try {
+      await exportToPdf({
+        html: buildInvoiceHtml({
+          invoice,
+          pro: user,
+          // L'abonnement étant facturé par propriétaire, la facture énumère
+          // les salles couvertes.
+          salles,
+          labels: pdfLabels(t),
+        }),
+      });
+    } catch {
+      // Impression annulée ou indisponible : rien à signaler.
+    } finally {
+      setExporting(null);
+    }
+  };
 
   const savePayment = async () => {
     setSaving(true);
@@ -208,8 +235,19 @@ export default function ProSubscriptionScreen({ navigation }) {
                     size="sm"
                   />
 
-                  <Pressable hitSlop={6} accessibilityRole="button" accessibilityLabel="PDF">
-                    <Ionicons name="download-outline" size={16} color={colors.warmGray} />
+                  <Pressable
+                    hitSlop={6}
+                    onPress={() => exportInvoice(inv)}
+                    disabled={exporting != null}
+                    accessibilityRole="button"
+                    accessibilityLabel={t('pro.downloadInvoice', { period: inv.period })}
+                    accessibilityState={{ busy: exporting === inv.id }}
+                  >
+                    <Ionicons
+                      name={exporting === inv.id ? 'hourglass-outline' : 'download-outline'}
+                      size={16}
+                      color={colors.warmGray}
+                    />
                   </Pressable>
                 </View>
               </View>

@@ -126,6 +126,65 @@ describe('clés utilisées dans le code', () => {
   });
 });
 
+describe('textes en dur', () => {
+  /**
+   * Un libellé écrit en toutes lettres dans le JSX ne se traduit jamais :
+   * l'écran reste français en mode arabe. Les libellés d'accessibilité y
+   * échappaient le plus longtemps — personne ne les voit à l'écran, seuls les
+   * lecteurs d'écran les annoncent.
+   */
+  test('aucun accessibilityLabel littéral', () => {
+    const fautifs = [];
+    sourceFiles().forEach((file) => {
+      const code = fs.readFileSync(file, 'utf8');
+      for (const m of code.matchAll(/accessibilityLabel=(["'])((?:(?!\1).)*)\1/g)) {
+        fautifs.push(`${path.relative(SRC, file)} → ${m[2]}`);
+      }
+    });
+    expect(fautifs).toEqual([]);
+  });
+});
+
+describe('clés à valeur de liste', () => {
+  // Mois, jours, réponses rapides : `list()` les rend telles quelles. Une
+  // liste plus courte d'un côté tronque silencieusement l'affichage.
+  const listes = Object.keys(PLAT_FR).filter((k) => Array.isArray(PLAT_FR[k]));
+
+  test('le scan trouve bien des listes (garde-fou du test lui-même)', () => {
+    expect(listes.length).toBeGreaterThan(0);
+  });
+
+  test('même longueur dans les deux langues', () => {
+    const divergentes = listes
+      .filter((k) => Array.isArray(PLAT_AR[k]))
+      .filter((k) => PLAT_FR[k].length !== PLAT_AR[k].length)
+      .map((k) => `${k} (fr ${PLAT_FR[k].length} ≠ ar ${PLAT_AR[k].length})`);
+    expect(divergentes).toEqual([]);
+  });
+
+  test('aucune entrée vide', () => {
+    const vides = listes.flatMap((k) =>
+      [
+        ...(PLAT_FR[k] || []).map((v, i) => [`fr:${k}[${i}]`, v]),
+        ...(PLAT_AR[k] || []).map((v, i) => [`ar:${k}[${i}]`, v]),
+      ]
+        .filter(([, v]) => typeof v !== 'string' || v.trim() === '')
+        .map(([nom]) => nom)
+    );
+    expect(vides).toEqual([]);
+  });
+
+  // Ces deux listes sont choisies par une ternaire — `list(estPro ? a : b)` —
+  // que le scan littéral ne voit pas.
+  test('les réponses rapides existent pour les deux rôles', () => {
+    ['messages.quickClient', 'messages.quickPro'].forEach((cle) => {
+      expect(Array.isArray(PLAT_FR[cle])).toBe(true);
+      expect(Array.isArray(PLAT_AR[cle])).toBe(true);
+      expect(PLAT_FR[cle].length).toBeGreaterThan(0);
+    });
+  });
+});
+
 describe('familles construites dynamiquement', () => {
   // Ces clés sont formées à l'exécution — t(`events.${type}`) — et échappent au
   // scan littéral. On les confronte aux constantes métier plutôt qu'à une liste

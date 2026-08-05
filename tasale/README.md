@@ -154,7 +154,7 @@ puis rejouer `0004_cron.sql`.
 ## Tests
 
 ```bash
-npm test                                                    # 187 tests JS (jest-expo)
+npm test                                                    # 202 tests JS (jest-expo)
 psql "$DATABASE_URL" -f supabase/tests/business_rules.sql   # 17 assertions SQL
 psql "$DATABASE_URL" -f supabase/tests/lifecycle.sql        # 16 assertions SQL
 psql "$DATABASE_URL" -f supabase/tests/admin.sql            # 14 assertions SQL
@@ -175,12 +175,12 @@ psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/tests/_bootstrap_local.sql
 | Suite | Portée |
 |-------|--------|
 | `src/services/notify.test.js` (24) | Heures calmes 22 h–08 h, report au lendemain, quota journalier, blackout Ramadan, troncature à 160 caractères, priorités d'envoi |
-| `src/data/local.test.js` (71) | Backend local : authentification, disponibilités, création et annulation, signature PIN, acompte, avis et modération, quota SMS, photos, favoris, recherche, tableau de bord, planning, abonnement, messagerie, cloisonnement entre propriétaires |
+| `src/data/local.test.js` (72) | Backend local : authentification, disponibilités, création et annulation, signature PIN, acompte, avis et modération, quota SMS, photos, favoris, recherche, tableau de bord, planning, abonnement, messagerie, cloisonnement entre propriétaires |
 | `src/lib/storage.test.js` (10) | Décodage base64 des images (les 256 valeurs d'octet), unicité et extension des chemins de destination |
 | `src/data/cache.test.js` (11) | Cache hors ligne : repli sur la dernière réponse connue, refus d'une donnée périmée, propagation de l'erreur quand aucun cache n'existe |
-| `src/services/pdfTemplates.test.js` (22) | Contrat et planning : montants et solde, mention de signature, échappement HTML d'un nom de client piégé, traduction des énumérations |
+| `src/services/pdfTemplates.test.js` (31) | Contrat, planning et facture : montants et solde, mention de signature, salles couvertes par l'abonnement, échappement HTML d'un nom de client piégé, traduction des énumérations |
 | `src/lib/geo.test.js` (26) | Distance orthodromique vérifiée sur des écarts connus (Alger–Oran, un degré de latitude), tri par proximité, liens d'itinéraire par plateforme |
-| `src/i18n/i18n.test.js` (10) | Parité des clés français/arabe, jetons `{{x}}` cohérents, et surtout : chaque clé appelée dans le code existe bien — une clé absente s'afficherait telle quelle à l'écran, sans erreur |
+| `src/i18n/i18n.test.js` (15) | Parité des clés français/arabe, jetons `{{x}}` cohérents, listes de même longueur, aucun `accessibilityLabel` écrit en dur, et surtout : chaque clé appelée dans le code existe bien — une clé absente s'afficherait telle quelle à l'écran, sans erreur |
 | `src/theme.test.js` (13) | Contrastes calculés selon WCAG 2.1 : encre de marque ≥ 4,5:1 dans les deux thèmes, blanc lisible sur les aplats de bouton, thème clair verrouillé à l'identique |
 | `supabase/tests/business_rules.sql` (17) | Les mêmes règles §10, mais côté PostgreSQL : unicité du jour confirmé, PIN, délai d'avis, publication automatique, agrégats, absence de policy `DELETE` sur les avis |
 | `supabase/tests/admin.sql` (14) | Autorisations de la console : un client n'obtient pas les chiffres, un pro ne valide pas sa propre salle, un avis retiré reste en base |
@@ -252,6 +252,10 @@ applicative.
 - **§9 Endpoints** — équivalents en RPC Supabase
 - **§10 Règles métier** — les quatre familles de règles, testées
 - **§11 Paiement** — workflow d'acompte complet (demande → SMS CCP → déclaration → vérification), configuration de l'abonnement
+- **§12 Phase 3 — finitions** — export PDF (planning, contrat, **facture
+  d'abonnement**), mode hors ligne du planning, réponses rapides de la
+  messagerie adaptées au rôle et à la langue, filtres avancés, console
+  d'administration
 - **§12 Phase 4 — plusieurs salles par propriétaire** — un sélecteur en tête de
   l'espace pro, chaque écran cloisonné sur la salle choisie, choix mémorisé
   d'une session à l'autre. L'abonnement reste **par propriétaire** : ajouter
@@ -296,6 +300,12 @@ occupation) sont donc rendues en lignes libellées mono-teinte, l'identité
 étant portée par le texte. Sur fond sombre, l'émeraude passe à `#14A38C` :
 `#0B6E5F` n'atteint que 2,33:1 de contraste.
 
+**Impression web sans `expo-print`.** La version web d'`expo-print` ignore le
+HTML qu'on lui passe et appelle `window.print()` : elle imprime l'écran de
+l'application, pas le document. Le back-office pro tournant dans un navigateur,
+`exportToPdf` y monte le document dans un cadre hors écran et imprime celui-ci.
+Sur iOS et Android, `printToFileAsync` fait bien son travail et reste utilisé.
+
 **RTL sans redémarrage.** `I18nManager.forceRTL` impose un redémarrage natif.
 La direction est appliquée dans les styles (`dir`, `align`, `writing`), ce qui
 permet de basculer français/arabe instantanément, y compris sur le web. Les
@@ -305,14 +315,17 @@ champs téléphone restent en LTR conformément au §4.4.
 
 ## Vérification effectuée
 
-- `npm test` — 187 tests au vert
+- `npm test` — 202 tests au vert
 - `npx expo export --platform web` — 917 modules, aucune erreur
 - Parcours pro complet en navigateur (Playwright) : connexion OTP → tableau de
   bord → confirmation d'une demande avec acompte et signature PIN → planning →
   statistiques → abonnement
 - Parcours client complet : connexion → recherche → fiche salle → réservation
   en 4 étapes → écran de succès avec référence `TAS-2026-XXXX`
-- Bascule en arabe : accueil, recherche et barre d'onglets correctement inversés
+- Bascule en arabe : accueil, recherche, messagerie et barre d'onglets
+  correctement inversés, réponses rapides traduites
+- Export PDF vérifié dans le navigateur : le document produit est bien la
+  facture ou le planning, et non une capture de l'écran
 - Multi-salles en navigateur : le sélecteur n'apparaît qu'à partir de deux
   salles, le tableau de bord, le planning et « Ma salle » suivent la salle
   choisie, et celle-ci survit à un rechargement

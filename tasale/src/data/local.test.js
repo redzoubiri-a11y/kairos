@@ -539,6 +539,17 @@ describe('abonnement (§10.3)', () => {
     expect(sub.payment_method).toBe('ccp');
     expect(sub.payment_details.reference).toBe('0021458796');
   });
+
+  it('ne montre à chacun que ses propres factures', async () => {
+    await loginAs(PRO_PHONE);
+    const miennes = await api.listInvoices();
+    expect(miennes.length).toBeGreaterThan(0);
+    expect(miennes.every((f) => f.pro_id === 'user-pro-001')).toBe(true);
+
+    // Un autre propriétaire ne doit pas hériter de la facturation du premier.
+    await loginAs('0555 10 00 03');
+    expect(await api.listInvoices()).toEqual([]);
+  });
 });
 
 describe('messagerie (§9.5)', () => {

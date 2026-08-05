@@ -225,7 +225,7 @@ export default function ProSalleScreen() {
                     <Pressable
                       onPress={() => removePhoto(i)}
                       accessibilityRole="button"
-                      accessibilityLabel="Supprimer la photo"
+                      accessibilityLabel={t('common.removePhoto')}
                       style={{
                         position: 'absolute',
                         top: 4,

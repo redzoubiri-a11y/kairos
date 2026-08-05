@@ -30,6 +30,10 @@ export default {
     today: "Aujourd'hui",
     offlineSince: 'Hors ligne — données du {{date}}',
     none: 'Aucun',
+    // Libellés lus par les lecteurs d'écran sur des commandes sans texte.
+    prevMonth: 'Mois précédent',
+    nextMonth: 'Mois suivant',
+    removePhoto: 'Supprimer la photo',
   },
   nav: {
     home: 'Accueil',
@@ -254,6 +258,22 @@ export default {
     empty: 'Aucune conversation',
     placeholder: 'Écrire un message…',
     quickReplies: 'Réponses rapides',
+    // Une famille pose des questions, un propriétaire y répond : les deux
+    // rôles partagent cet écran mais pas les mêmes phrases.
+    quickClient: [
+      'La salle est-elle libre à cette date ?',
+      'Le traiteur est-il inclus ?',
+      'Quels sont vos horaires ?',
+      'Peut-on visiter la salle ?',
+      'Merci beaucoup !',
+    ],
+    quickPro: [
+      'Oui, la date est disponible.',
+      'Pouvez-vous préciser le nombre d’invités ?',
+      'Le traiteur est inclus dans la formule.',
+      'Vous pouvez visiter la salle cette semaine.',
+      'Merci de votre confiance.',
+    ],
   },
   profile: {
     title: 'Profil',
@@ -355,6 +375,7 @@ export default {
     edahabiaSoon: 'Bientôt disponible',
     configurePayment: 'Configurer le paiement',
     paymentConfigured: 'Paiement configuré',
+    downloadInvoice: 'Télécharger la facture — {{period}}',
     invoices: 'Historique de facturation',
     period: 'Période',
     invoiceStatusPaid: 'Payée',

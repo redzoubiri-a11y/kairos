@@ -6,7 +6,7 @@ import { useI18n } from '../i18n';
 /** Panneau modal remontant du bas — utilisé pour les confirmations et formulaires courts. */
 export default function MSheet({ visible, onClose, title, children, maxHeight = '86%' }) {
   const { colors, typography, spacing, radii, sizes } = useTheme();
-  const { dir } = useI18n();
+  const { t, dir } = useI18n();
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
@@ -38,7 +38,7 @@ export default function MSheet({ visible, onClose, title, children, maxHeight = 
             <Text style={[typography.title, { color: colors.dark, flex: 1 }]} numberOfLines={1}>
               {title}
             </Text>
-            <Pressable onPress={onClose} hitSlop={10} accessibilityRole="button" accessibilityLabel="Fermer">
+            <Pressable onPress={onClose} hitSlop={10} accessibilityRole="button" accessibilityLabel={t('common.close')}>
               <Ionicons name="close" size={22} color={colors.warmGray} />
             </Pressable>
           </View>

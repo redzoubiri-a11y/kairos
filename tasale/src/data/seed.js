@@ -644,6 +644,7 @@ export const SEED_SUBSCRIPTIONS = [
 export const SEED_INVOICES = [
   {
     id: 'inv-001',
+    pro_id: 'user-pro-001',
     period: 'Essai gratuit',
     description: '90 jours offerts à l’inscription',
     amount: 0,

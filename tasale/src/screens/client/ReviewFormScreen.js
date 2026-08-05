@@ -172,7 +172,7 @@ export default function ReviewFormScreen({ route, navigation }) {
                   <Pressable
                     onPress={() => setPhotos((list) => list.filter((x) => x !== uri))}
                     accessibilityRole="button"
-                    accessibilityLabel="Retirer la photo"
+                    accessibilityLabel={t('common.removePhoto')}
                     hitSlop={6}
                     style={{
                       position: 'absolute',

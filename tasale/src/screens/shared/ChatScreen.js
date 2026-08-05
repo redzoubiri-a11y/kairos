@@ -6,20 +6,18 @@ import { Loader, EmptyState } from '../../components/primitives';
 import { useTheme } from '../../context/ThemeContext';
 import { useI18n } from '../../i18n';
 import { useAuth } from '../../context/AuthContext';
+import { ROLES } from '../../lib/constants';
 import * as api from '../../data';
-
-const QUICK_REPLIES = [
-  'Bonjour, la salle est-elle disponible à cette date ?',
-  'Quels sont vos horaires ?',
-  'Le traiteur est-il inclus ?',
-  'Merci beaucoup !',
-];
 
 export default function ChatScreen({ route, navigation }) {
   const { reservationId, title } = route.params;
   const { colors, typography, spacing, radii } = useTheme();
-  const { t, dir, isRTL } = useI18n();
+  const { t, list, dir, isRTL } = useI18n();
   const { user } = useAuth();
+
+  // Les deux rôles partagent cet écran : le propriétaire répond, la famille
+  // demande. Les phrases suivent donc le rôle, et la langue courante.
+  const quickReplies = list(user?.role === ROLES.PRO ? 'messages.quickPro' : 'messages.quickClient');
 
   const [messages, setMessages] = useState([]);
   const [draft, setDraft] = useState('');
@@ -109,10 +107,11 @@ export default function ChatScreen({ route, navigation }) {
           }}
           style={{ flexGrow: 0 }}
         >
-          {QUICK_REPLIES.map((q) => (
+          {quickReplies.map((q) => (
             <Pressable
               key={q}
               onPress={() => send(q)}
+              disabled={sending}
               accessibilityRole="button"
               style={{
                 borderWidth: 1,

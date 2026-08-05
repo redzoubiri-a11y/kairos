@@ -1198,7 +1198,10 @@ export async function setPaymentMethod(method, details) {
 
 export async function listInvoices() {
   await load();
-  return clone(db.invoices);
+  const user = requireUser();
+  // Comme côté Supabase, où la policy RLS ne laisse passer que ses lignes :
+  // sans ce filtre, un pro verrait la facturation de tous les autres.
+  return clone(db.invoices.filter((i) => i.pro_id === user.id));
 }
 
 // ── Console d'administration (§2.1) ───────────────────────────────────────

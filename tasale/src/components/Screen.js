@@ -19,7 +19,7 @@ export function Screen({ children, edges = ['top'], style }) {
 /** En-tête d'écran avec retour optionnel et actions à droite. */
 export function Header({ title, subtitle, onBack, right, center = false, bordered = true }) {
   const { colors, typography, spacing } = useTheme();
-  const { dir, isRTL, align } = useI18n();
+  const { t, dir, isRTL, align } = useI18n();
 
   return (
     <View
@@ -39,7 +39,7 @@ export function Header({ title, subtitle, onBack, right, center = false, bordere
           onPress={onBack}
           hitSlop={10}
           accessibilityRole="button"
-          accessibilityLabel="Retour"
+          accessibilityLabel={t('common.back')}
           style={{ padding: 2 }}
         >
           <Ionicons name={isRTL ? 'arrow-forward' : 'arrow-back'} size={22} color={colors.dark} />

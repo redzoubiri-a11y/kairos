@@ -1,4 +1,9 @@
-import { escapeHtml, buildContractHtml, buildPlanningHtml } from './pdfTemplates';
+import {
+  escapeHtml,
+  buildContractHtml,
+  buildPlanningHtml,
+  buildInvoiceHtml,
+} from './pdfTemplates';
 import fr from '../i18n/fr';
 
 const months = fr.months;
@@ -220,5 +225,89 @@ describe('libellés traduits', () => {
   it('retombe sur la valeur brute plutôt que d’afficher un vide', () => {
     const html = buildContractHtml({ reservation, salle, pro, months });
     expect(html).toContain('mariage');
+  });
+});
+
+describe('facture d’abonnement', () => {
+  const invoice = {
+    id: 'inv-001',
+    pro_id: 'user-pro-001',
+    period: 'Septembre 2026',
+    description: 'Abonnement mensuel',
+    amount: 500,
+    status: 'paid',
+    issued_at: '2026-09-01T09:00:00Z',
+  };
+  const salles = [
+    { id: 'salle-001', name: 'Salle El Widad', city: 'Alger' },
+    { id: 'salle-002', name: 'Espace Andalous', city: 'Alger' },
+  ];
+  const labels = { invoiceStatuses: { paid: 'Payée', pending: 'En attente' } };
+
+  const html = buildInvoiceHtml({
+    invoice,
+    pro: { full_name: 'Karim Belkacem', phone: '+213555100001', ccp: '0021458796 clé 33' },
+    salles,
+    labels,
+  });
+
+  it('porte le numéro de facture', () => {
+    expect(html).toContain('INV-001');
+  });
+
+  it('affiche la période, la description et le montant', () => {
+    const texte = normaliser(html);
+    expect(texte).toContain('Septembre 2026');
+    expect(texte).toContain('Abonnement mensuel');
+    expect(texte).toContain('500 DA');
+  });
+
+  it('identifie le client et son CCP', () => {
+    expect(html).toContain('Karim Belkacem');
+    expect(html).toContain('0021458796 clé 33');
+  });
+
+  it('traduit le statut', () => {
+    expect(html).toContain('Payée');
+    expect(html).not.toContain('>paid<');
+  });
+
+  /**
+   * Le point de la facturation par propriétaire : le document doit montrer
+   * que les 500 DA couvrent toutes les salles, pas une seule.
+   */
+  it('énumère les salles couvertes', () => {
+    expect(html).toContain('Salle El Widad');
+    expect(html).toContain('Espace Andalous');
+    expect(html).toContain('quel qu');
+  });
+
+  it('omet la section des salles quand la liste est vide', () => {
+    const seul = buildInvoiceHtml({ invoice, pro: { full_name: 'X' } });
+    expect(seul).not.toContain('Salles couvertes');
+  });
+
+  it('signale qu’une période d’essai ne doit rien', () => {
+    const essai = buildInvoiceHtml({
+      invoice: { ...invoice, amount: 0, period: 'Essai gratuit' },
+      pro: { full_name: 'Karim Belkacem' },
+    });
+    expect(essai).toContain('aucun montant n');
+    expect(essai).not.toContain('Règlement par versement');
+  });
+
+  it('échappe les valeurs venant de l’utilisateur', () => {
+    const piege = buildInvoiceHtml({
+      invoice: { ...invoice, description: '<script>alert(1)</script>' },
+      pro: { full_name: 'Karim <b>Belkacem</b>' },
+    });
+    expect(piege).not.toContain('<script>');
+    expect(piege).toContain('&lt;script&gt;');
+    expect(piege).toContain('Karim &lt;b&gt;Belkacem&lt;/b&gt;');
+  });
+
+  it('reste lisible sans libellés traduits', () => {
+    const brut = buildInvoiceHtml({ invoice, pro: { full_name: 'Karim' } });
+    expect(brut).toContain('Payée');
   });
 });

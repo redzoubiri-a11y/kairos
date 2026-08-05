@@ -24,7 +24,7 @@ export default function Calendar({
   markers = {},
 }) {
   const { colors, typography, spacing, radii } = useTheme();
-  const { list, dir, isRTL } = useI18n();
+  const { t, list, dir, isRTL } = useI18n();
 
   const months = list('months');
   const weekdays = list('weekdays');
@@ -68,7 +68,7 @@ export default function Calendar({
           disabled={prevDisabled}
           hitSlop={8}
           accessibilityRole="button"
-          accessibilityLabel="Mois précédent"
+          accessibilityLabel={t('common.prevMonth')}
           style={{ padding: spacing.xs, opacity: prevDisabled ? 0.3 : 1 }}
         >
           <Ionicons name={isRTL ? 'chevron-forward' : 'chevron-back'} size={20} color={colors.dark} />
@@ -82,7 +82,7 @@ export default function Calendar({
           onPress={() => onChangeMonth(1)}
           hitSlop={8}
           accessibilityRole="button"
-          accessibilityLabel="Mois suivant"
+          accessibilityLabel={t('common.nextMonth')}
           style={{ padding: spacing.xs }}
         >
           <Ionicons name={isRTL ? 'chevron-back' : 'chevron-forward'} size={20} color={colors.dark} />

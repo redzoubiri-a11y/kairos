@@ -476,7 +476,11 @@ export const SEED_REVIEWS = [
     is_verified: true,
     status: 'pending',
     pro_reply: null,
-    created_at: `${addDays(T, -1)}T19:30:00Z`,
+    // Déposé il y a 2 h : franchement à l'intérieur de la fenêtre de
+    // modération de 24 h (§10.2). Une date fixe à J-1 tombait sur la
+    // frontière et faisait basculer l'avis en publication automatique selon
+    // l'heure d'exécution — l'écran « avis à modérer » se vidait tout seul.
+    created_at: new Date(Date.now() - 2 * 3600 * 1000).toISOString(),
   },
   {
     id: 'review-003',

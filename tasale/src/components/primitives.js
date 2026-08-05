@@ -256,6 +256,43 @@ export function ChipRow({ items, value, onChange, multi = false }) {
   );
 }
 
+// ── Bandeau hors ligne (§1.4) ─────────────────────────────────────────────
+
+/**
+ * Signale que l'écran affiche une copie locale. L'horodatage est explicite :
+ * un planning consulté sans réseau doit dire de quand il date, sinon le pro
+ * risque de confirmer une date sur une information périmée.
+ */
+export function OfflineBanner({ at }) {
+  const { colors, typography, spacing, radii } = useTheme();
+  const { t, list, dir } = useI18n();
+
+  if (!at) return null;
+
+  const d = new Date(at);
+  const jour = `${d.getDate()} ${list('monthsShort')[d.getMonth()]}`;
+  const heure = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+
+  return (
+    <View
+      style={{
+        flexDirection: dir,
+        alignItems: 'center',
+        gap: spacing.sm,
+        backgroundColor: colors.warningBg,
+        borderRadius: radii.lg,
+        paddingHorizontal: spacing.md,
+        paddingVertical: spacing.sm,
+      }}
+    >
+      <Ionicons name="cloud-offline-outline" size={15} color={colors.goldText} />
+      <Text style={[typography.caption, { color: colors.goldText, flex: 1 }]}>
+        {t('common.offlineSince', { date: `${jour} ${heure}` })}
+      </Text>
+    </View>
+  );
+}
+
 // ── Séparateur ────────────────────────────────────────────────────────────
 
 export function Divider({ spacingY = 0 }) {

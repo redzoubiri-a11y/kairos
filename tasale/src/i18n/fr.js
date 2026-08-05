@@ -27,6 +27,7 @@ export default {
     no: 'Non',
     optional: 'facultatif',
     today: "Aujourd'hui",
+    offlineSince: 'Hors ligne — données du {{date}}',
     none: 'Aucun',
   },
   nav: {
@@ -95,7 +96,7 @@ export default {
     autre: 'Autre',
   },
   search: {
-    resultsCount: '{{count}} salle trouvée{{s}}',
+    resultsCount: '{{count}} salle{{s}} trouvée{{s}}',
     resultsIn: '{{count}} salle{{s}} trouvée{{s}} à {{city}}',
     filterAll: 'Toutes',
     filterCapacity: '+300 pers.',
@@ -103,6 +104,8 @@ export default {
     filterCaterer: 'Traiteur inclus',
     empty: 'Aucune salle ne correspond à votre recherche',
     emptyHint: 'Essayez d’élargir vos filtres ou de changer de ville',
+    anyBudget: 'Tout budget',
+    under: 'Moins de {{amount}}',
     allCities: 'Toute l’Algérie',
   },
   salle: {
@@ -125,6 +128,7 @@ export default {
     unavailable: 'Complet',
     promo: '-10% ce mois',
     contact: 'Contacter',
+    clientPhotos: 'Photos des clients ({{count}})',
     showAllReviews: 'Voir les {{count}} avis',
   },
   amenities: {

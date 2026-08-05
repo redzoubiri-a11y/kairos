@@ -5,7 +5,8 @@ import { Screen, Header, Body } from '../../components/Screen';
 import Calendar, { CalendarLegend } from '../../components/Calendar';
 import MButton from '../../components/MButton';
 import { StatusBadge } from '../../components/ReservationCard';
-import { MCard, KeyValue, Divider, Loader } from '../../components/primitives';
+import { MCard, KeyValue, Divider, Loader, OfflineBanner } from '../../components/primitives';
+import { withCache, cacheKey } from '../../data/cache';
 import { useTheme } from '../../context/ThemeContext';
 import { useI18n } from '../../i18n';
 import { formatDA, formatLongDate, todayISO } from '../../lib/format';
@@ -22,10 +23,18 @@ export default function ProPlanningScreen({ navigation }) {
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
+  // Horodatage de la copie locale, nul quand les données sont fraîches.
+  const [staleSince, setStaleSince] = useState(null);
 
   const load = useCallback(async () => {
     try {
-      setPlanning(await api.proGetPlanning(cursor.year, cursor.month));
+      // §1.4 — le planning reste consultable sans connexion.
+      const { data, at } = await withCache(
+        cacheKey('planning', cursor.year, cursor.month),
+        () => api.proGetPlanning(cursor.year, cursor.month)
+      );
+      setPlanning(data);
+      setStaleSince(at);
     } finally {
       setLoading(false);
     }
@@ -70,6 +79,8 @@ export default function ProPlanningScreen({ navigation }) {
       <Header title={t('pro.planningTitle')} bordered={false} />
 
       <Body>
+        <OfflineBanner at={staleSince} />
+
         <MCard>
           <Calendar
             year={cursor.year}
@@ -138,6 +149,9 @@ export default function ProPlanningScreen({ navigation }) {
                     variant={state === 'blocked' ? 'primary' : 'ghost'}
                     onPress={toggleBlock}
                     loading={busy}
+                    // Hors ligne, la consultation est permise mais pas l'écriture :
+                    // bloquer un jour depuis une copie périmée corromprait le planning.
+                    disabled={!!staleSince}
                     full
                   />
                 ) : null}

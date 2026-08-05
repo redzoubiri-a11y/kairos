@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { View, Text, ScrollView, Pressable, useWindowDimensions } from 'react-native';
+import { View, Text, ScrollView, Pressable, Image, useWindowDimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Screen, StickyBar } from '../../components/Screen';
 import SallePhoto from '../../components/SallePhoto';
@@ -50,6 +50,9 @@ export default function SalleScreen({ route, navigation }) {
 
   const [salle, setSalle] = useState(null);
   const [reviews, setReviews] = useState([]);
+  // Galerie des clients : constituée sur l'ensemble des avis publiés, pour
+  // qu'un filtre par type d'événement ne la vide pas.
+  const [clientPhotos, setClientPhotos] = useState([]);
   const [reviewFilter, setReviewFilter] = useState('all');
   const [photoIndex, setPhotoIndex] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -62,6 +65,7 @@ export default function SalleScreen({ route, navigation }) {
       const [s, r] = await Promise.all([api.getSalle(id), api.getSalleReviews(id, {})]);
       setSalle(s);
       setReviews(r);
+      setClientPhotos(r.flatMap((review) => review.photos || []));
     } catch (e) {
       setError(e.message);
     } finally {
@@ -281,7 +285,28 @@ export default function SalleScreen({ route, navigation }) {
             </View>
           ) : null}
 
-          {/* 7 — Avis clients */}
+          {/* 7 — Galerie des photos clients (§7.3) */}
+          {clientPhotos.length ? (
+            <View>
+              <SectionTitle title={t('salle.clientPhotos', { count: clientPhotos.length })} />
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{ gap: spacing.sm, flexDirection: dir }}
+              >
+                {clientPhotos.map((uri) => (
+                  <Image
+                    key={uri}
+                    source={{ uri }}
+                    style={{ width: 118, height: 88, borderRadius: radii.lg }}
+                    resizeMode="cover"
+                  />
+                ))}
+              </ScrollView>
+            </View>
+          ) : null}
+
+          {/* 8 — Avis clients */}
           <View>
             <SectionTitle title={t('salle.reviews')} />
 

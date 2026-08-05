@@ -27,6 +27,7 @@ export default {
     no: 'لا',
     optional: 'اختياري',
     today: 'اليوم',
+    offlineSince: 'دون اتصال — بيانات {{date}}',
     none: 'لا شيء',
   },
   nav: {
@@ -103,6 +104,8 @@ export default {
     filterCaterer: 'خدمة الطعام',
     empty: 'لا توجد قاعة مطابقة لبحثكم',
     emptyHint: 'جرّبوا توسيع عوامل التصفية أو تغيير المدينة',
+    anyBudget: 'كل الميزانيات',
+    under: 'أقل من {{amount}}',
     allCities: 'كل الجزائر',
   },
   salle: {
@@ -125,6 +128,7 @@ export default {
     unavailable: 'محجوزة',
     promo: '-10% هذا الشهر',
     contact: 'تواصل',
+    clientPhotos: 'صور الزبائن ({{count}})',
     showAllReviews: 'عرض كل التقييمات ({{count}})',
   },
   amenities: {

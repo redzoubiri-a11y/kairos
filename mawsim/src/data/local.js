@@ -23,6 +23,7 @@ import {
   REVIEW_MODERATION_HOURS,
   TRIAL_DAYS,
   SUBSCRIPTION_PRICE,
+  SMS_MAX_PER_DAY,
   ROLES,
 } from '../lib/constants';
 
@@ -75,9 +76,30 @@ function requireUser() {
   return user;
 }
 
+/**
+ * Nombre de SMS déjà programmés pour un destinataire un jour donné.
+ * On compte sur le jour d'envoi effectif, pas sur le jour de création : un SMS
+ * produit à 23 h part le lendemain à 08 h et pèse sur le quota du lendemain.
+ */
+function smsScheduledOn(userId, day) {
+  return db.notifications.filter(
+    (n) => n.user_id === userId && n.channel === 'sms' && n.sent_at && n.sent_at.slice(0, 10) === day
+  ).length;
+}
+
 function pushNotifications(records) {
   records.forEach((r) => {
-    db.notifications.unshift({ id: uid('notif'), ...r });
+    const record = { ...r };
+    // §10.4 — plafond de 3 SMS par jour et par utilisateur. Le quota dépend de
+    // l'historique, il s'applique donc ici et non dans le moteur (qui est pur) :
+    // la notification reste tracée, mais ne partira pas.
+    if (record.channel === 'sms' && record.sent_at) {
+      const day = record.sent_at.slice(0, 10);
+      if (smsScheduledOn(record.user_id, day) >= SMS_MAX_PER_DAY) {
+        record.sent_at = null;
+      }
+    }
+    db.notifications.unshift({ id: uid('notif'), ...record });
   });
 }
 

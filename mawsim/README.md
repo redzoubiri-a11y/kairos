@@ -36,7 +36,10 @@ Le code SMS est toujours `123456`.
 |------|-----------|---------|
 | **Pro** | `0555 10 00 01` | Salle El Widad (Alger) — 7 réservations, 2 en attente, 1 avis à modérer, essai à J+45 |
 | **Client** | `0661 23 45 67` | Amina Cherif — 1 réservation confirmée, 1 événement passé à évaluer, 2 favoris |
+| *Autres pros* | `0555 10 00 02` … `0555 10 00 10` | Un propriétaire par salle du jeu de données |
 | *Nouveau compte* | tout autre numéro valide | Parcours d'inscription complet (client ou pro) |
+
+Le PIN de signature des comptes pro de démonstration est `1234`.
 
 Un numéro algérien valide commence par 05, 06 ou 07 suivi de 8 chiffres.
 « Réinitialiser les données de démo » dans le profil restaure l'état initial.
@@ -63,16 +66,23 @@ psql "$DATABASE_URL" -f supabase/migrations/0001_init.sql
 Puis activer l'authentification par téléphone (OTP SMS) dans le tableau de
 bord Supabase.
 
-### Vérifier les règles métier
+---
+
+## Tests
 
 ```bash
-psql "$DATABASE_URL" -f supabase/tests/business_rules.sql
+npm test                                            # 74 tests JS (jest-expo)
+psql "$DATABASE_URL" -f supabase/tests/business_rules.sql   # 17 assertions SQL
 ```
 
-17 assertions couvrent les règles du §10 : unicité du jour confirmé, blocage
-48 h d'une demande en attente, signature PIN, délai de 48 h avant avis,
-publication automatique à 24 h, recalcul de la note, agrégats du tableau de
-bord, impossibilité pour un pro de supprimer un avis.
+| Suite | Portée |
+|-------|--------|
+| `src/services/notify.test.js` (24) | Heures calmes 22 h–08 h, report au lendemain, quota journalier, blackout Ramadan, troncature à 160 caractères, priorités d'envoi |
+| `src/data/local.test.js` (50) | Backend local : authentification, disponibilités, création et annulation, signature PIN, acompte, avis et modération, quota SMS, favoris, recherche, tableau de bord, planning, abonnement, messagerie |
+| `supabase/tests/business_rules.sql` (17) | Les mêmes règles §10, mais côté PostgreSQL : unicité du jour confirmé, PIN, délai d'avis, publication automatique, agrégats, absence de policy `DELETE` sur les avis |
+
+Les règles critiques sont vérifiées **dans les deux implémentations**, ce qui
+garantit que passer du mode démo à Supabase ne change pas le comportement.
 
 ---
 
@@ -181,14 +191,17 @@ champs téléphone restent en LTR conformément au §4.4.
 
 ## Vérification effectuée
 
+- `npm test` — 74 tests au vert
 - `npx expo export --platform web` — 752 modules, aucune erreur
 - Parcours pro complet en navigateur (Playwright) : connexion OTP → tableau de
   bord → confirmation d'une demande avec acompte et signature PIN → planning →
   statistiques → abonnement
 - Parcours client complet : connexion → recherche → fiche salle → réservation
   en 4 étapes → écran de succès avec référence `MAW-2026-XXXX`
-- Zéro erreur console sur les deux parcours
+- Bascule en arabe : accueil, recherche et barre d'onglets correctement inversés
+- Zéro erreur console sur les trois parcours
 - Schéma appliqué sur PostgreSQL 16 : 22 policies RLS, 17 assertions métier au vert
 
 Non vérifié : rendu sur appareils iOS/Android réels (bundle web uniquement),
-et comportement contre une instance Supabase réelle.
+et comportement contre une instance Supabase réelle — `src/data/remote.js`
+n'est validé qu'indirectement, à travers le schéma que ses appels RPC ciblent.

@@ -230,26 +230,55 @@ export const SEED_TARIFS = SEED_SALLES.flatMap((s, i) => {
   ];
 });
 
+// Propriétaires : un par salle. Le premier est le compte de démonstration
+// documenté dans le README (0555 10 00 01), les autres rendent le jeu de
+// données cohérent — chaque salle, réservation et avis pointe vers un
+// utilisateur réel, ce qui permet de tester messagerie et notifications.
+const PRO_OWNERS = [
+  ['user-pro-001', 'salle-001', 'Karim Belkacem', '0021458796 clé 33'],
+  ['user-pro-002', 'salle-002', 'Samir Aït Ouali', '0034125870 clé 12'],
+  ['user-pro-003', 'salle-003', 'Mohamed Benali', '0045236981 clé 47'],
+  ['user-pro-004', 'salle-004', 'Hakim Zerrouki', '0056987412 clé 08'],
+  ['user-pro-005', 'salle-005', 'Rachid Amrani', '0067412589 clé 21'],
+  ['user-pro-006', 'salle-006', 'Djamel Kaci', '0078523691 clé 63'],
+  ['user-pro-007', 'salle-007', 'Mourad Ouyahia', '0089634127 clé 35'],
+  ['user-pro-008', 'salle-008', 'Tarek Boudjelal', '0090147852 clé 19'],
+  ['user-pro-009', 'salle-009', 'Nabil Hamdani', '0012369874 clé 52'],
+  ['user-pro-010', 'salle-010', 'Salim Merabet', '0023698741 clé 74'],
+];
+
+// Familles ayant réservé — référencées par les réservations et les avis.
+const CLIENT_ACCOUNTS = [
+  ['user-client-001', '+213661234567', 'Amina Cherif'],
+  ['user-client-002', '+213770998877', 'Yacine Haddad'],
+  ['user-client-003', '+213551443322', 'Farida Meziane'],
+  ['user-client-004', '+213556112233', 'Sofiane Bouzid'],
+  ['user-client-005', '+213779887766', 'Nadia Boumediene'],
+  ['user-client-006', '+213540332211', 'Riad Slimani'],
+  ['user-client-007', '+213661778899', 'Lounis Aïssani'],
+];
+
 export const SEED_USERS = [
-  {
-    id: 'user-pro-001',
-    phone: '+213555100001',
-    full_name: 'Karim Belkacem',
+  ...PRO_OWNERS.map(([id, salleId, name, ccp], i) => ({
+    id,
+    // 0555 10 00 01 … 0555 10 00 10
+    phone: `+2135551000${String(i + 1).padStart(2, '0')}`,
+    full_name: name,
     role: 'pro',
     preferred_language: 'fr',
-    salle_id: 'salle-001',
+    salle_id: salleId,
     pin: '1234',
-    ccp: '0021458796 clé 33',
+    ccp,
     created_at: '2026-01-12T09:00:00Z',
-  },
-  {
-    id: 'user-client-001',
-    phone: '+213661234567',
-    full_name: 'Amina Cherif',
+  })),
+  ...CLIENT_ACCOUNTS.map(([id, phone, name]) => ({
+    id,
+    phone,
+    full_name: name,
     role: 'client',
     preferred_language: 'fr',
     created_at: '2026-03-01T09:00:00Z',
-  },
+  })),
 ];
 
 // Réservations de démonstration réparties autour d'aujourd'hui,
@@ -492,12 +521,13 @@ export const SEED_BLOCKED_DAYS = [
   { salle_id: 'salle-001', day: addDays(T, 15) },
 ];
 
+// Le compte de démonstration est à mi-parcours de son essai (§5.7).
 export const SEED_SUBSCRIPTION = {
   id: 'sub-001',
   pro_id: 'user-pro-001',
   salle_id: 'salle-001',
   status: 'trial',
-  // 45 jours consommés sur 90 (§5.7)
+  // 45 jours consommés sur 90
   trial_started_at: addDays(T, -45),
   trial_ends_at: addDays(T, 45),
   current_period_start: null,
@@ -507,6 +537,26 @@ export const SEED_SUBSCRIPTION = {
   payment_details: null,
   created_at: `${addDays(T, -45)}T09:00:00Z`,
 };
+
+// Chaque salle a son abonnement : aucun parcours pro ne tombe sur un
+// abonnement absent, quel que soit le propriétaire connecté.
+export const SEED_SUBSCRIPTIONS = [
+  SEED_SUBSCRIPTION,
+  ...PRO_OWNERS.slice(1).map(([proId, salleId], i) => ({
+    id: `sub-${String(i + 2).padStart(3, '0')}`,
+    pro_id: proId,
+    salle_id: salleId,
+    status: 'trial',
+    trial_started_at: addDays(T, -20 - i * 5),
+    trial_ends_at: addDays(T, 70 - i * 5),
+    current_period_start: null,
+    current_period_end: null,
+    amount: 500,
+    payment_method: null,
+    payment_details: null,
+    created_at: `${addDays(T, -20 - i * 5)}T09:00:00Z`,
+  })),
+];
 
 export const SEED_INVOICES = [
   {
@@ -582,7 +632,7 @@ export function buildSeed() {
     notifications: SEED_NOTIFICATIONS.map((n) => ({ ...n })),
     favorites: SEED_FAVORITES.map((f) => ({ ...f })),
     blocked_days: SEED_BLOCKED_DAYS.map((b) => ({ ...b })),
-    subscriptions: [{ ...SEED_SUBSCRIPTION }],
+    subscriptions: SEED_SUBSCRIPTIONS.map((s) => ({ ...s })),
     invoices: SEED_INVOICES.map((i) => ({ ...i })),
     counters: { reservation: SEED_RESERVATIONS.length },
     session: null,

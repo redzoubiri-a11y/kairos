@@ -1,5 +1,6 @@
 import { createContext, useContext, useCallback, useEffect, useMemo, useState } from 'react';
 import * as api from '../data';
+import { setupPush } from '../services/push';
 import { ROLES } from '../lib/constants';
 
 const AuthContext = createContext(null);
@@ -22,6 +23,14 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     refresh().finally(() => setLoading(false));
   }, [refresh]);
+
+  // L'appareil s'enregistre dès qu'un compte est actif. L'échec est sans
+  // conséquence : la fonction renonce d'elle-même sur web, en simulateur ou
+  // sans projet EAS.
+  useEffect(() => {
+    if (!user) return;
+    setupPush().catch(() => {});
+  }, [user]);
 
   const value = useMemo(
     () => ({

@@ -38,6 +38,13 @@
     "plugins": [
       "expo-localization",
       [
+        "expo-notifications",
+        {
+          "icon": "./assets/adaptive-icon.png",
+          "color": "#084F44"
+        }
+      ],
+      [
         "expo-image-picker",
         {
           "photosPermission": "Tasale accède à vos photos pour illustrer votre salle et vos avis."

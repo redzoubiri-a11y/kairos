@@ -11,7 +11,12 @@ import { I18nProvider, useI18n } from './src/i18n';
 import { AuthProvider, useAuth } from './src/context/AuthContext';
 import { FavoritesProvider } from './src/context/FavoritesContext';
 import { linking } from './src/linking';
+import { configureForegroundBehaviour } from './src/services/push';
 import { ROLES } from './src/lib/constants';
+
+// Comportement des notifications reçues app ouverte — à déclarer une seule
+// fois, avant tout rendu.
+configureForegroundBehaviour();
 
 // Authentification
 import OnboardingScreen from './src/screens/auth/OnboardingScreen';

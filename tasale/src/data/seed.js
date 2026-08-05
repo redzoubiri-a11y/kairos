@@ -1,8 +1,19 @@
 // Jeu de données de démonstration — salles des fêtes algériennes.
 // Utilisé par l'adaptateur local quand Supabase n'est pas configuré.
-// Aucune photo distante : les cartes affichent un dégradé déterministe (§4.1).
+// Les photos viennent de photos.json ; à défaut, les cartes affichent un
+// dégradé déterministe (§4.1) et l'app reste utilisable hors ligne.
 
 import { toISODate, addDays, todayISO } from '../lib/format';
+import photoManifest from './photos.json';
+
+/**
+ * Photos réelles des salles de démonstration, renseignées dans photos.json.
+ * Le fichier est vide par défaut : les salles s'affichent alors avec le
+ * dégradé de repli (§4.1), et l'app reste utilisable hors ligne.
+ */
+function photosOf(salleId) {
+  return photoManifest?.salles?.[salleId]?.urls ?? [];
+}
 
 const T = todayISO();
 
@@ -18,7 +29,7 @@ export const SEED_SALLES = [
     description:
       "Située au cœur de Bir Mourad Raïs, la salle El Widad accueille vos mariages et fiançailles depuis 2008. Grande piste de danse, éclairage scénique, loge climatisée pour la mariée et terrasse panoramique pour les photos.",
     amenities: ['clim', 'cuisine', 'sono', 'parking', 'terrasse', 'traiteur'],
-    photos: [],
+    photos: photosOf('salle-001'),
     status: 'active',
     is_premium: true,
     rating: 4.8,
@@ -37,7 +48,7 @@ export const SEED_SALLES = [
     description:
       "Un décor mauresque authentique : zellige, plafonds sculptés et patio central. Idéal pour les fiançailles et les cérémonies intimistes. Notre chef propose un menu traditionnel algérois.",
     amenities: ['clim', 'cuisine', 'sono', 'parking', 'traiteur', 'wifi'],
-    photos: [],
+    photos: photosOf('salle-002'),
     status: 'active',
     is_premium: false,
     rating: 4.6,
@@ -56,7 +67,7 @@ export const SEED_SALLES = [
     description:
       "La plus grande salle de l'Oranie. Deux niveaux, scène modulable, système son professionnel et parking sécurisé. Notre équipe gère votre événement de A à Z.",
     amenities: ['clim', 'cuisine', 'sono', 'parking', 'terrasse', 'pmr', 'traiteur', 'wifi'],
-    photos: [],
+    photos: photosOf('salle-003'),
     status: 'active',
     is_premium: true,
     rating: 4.9,
@@ -75,7 +86,7 @@ export const SEED_SALLES = [
     description:
       "Salle familiale chaleureuse, rénovée en 2025. Parfaite pour les anniversaires et les petites réceptions. Cuisine équipée mise à disposition des traiteurs extérieurs.",
     amenities: ['clim', 'cuisine', 'parking', 'pmr'],
-    photos: [],
+    photos: photosOf('salle-004'),
     status: 'active',
     is_premium: false,
     rating: 4.3,
@@ -94,7 +105,7 @@ export const SEED_SALLES = [
     description:
       "Entourée d'orangers, Dar El Ferah offre un cadre verdoyant unique dans la Mitidja. Jardin extérieur pour la cérémonie, salle climatisée pour le dîner.",
     amenities: ['clim', 'cuisine', 'sono', 'parking', 'terrasse', 'traiteur'],
-    photos: [],
+    photos: photosOf('salle-005'),
     status: 'active',
     is_premium: false,
     rating: 4.7,
@@ -113,7 +124,7 @@ export const SEED_SALLES = [
     description:
       "Complexe moderne avec deux salles indépendantes, permettant d'accueillir simultanément la réception des hommes et celle des femmes selon la tradition.",
     amenities: ['clim', 'cuisine', 'sono', 'parking', 'pmr', 'wifi'],
-    photos: [],
+    photos: photosOf('salle-006'),
     status: 'active',
     is_premium: true,
     rating: 4.5,
@@ -132,7 +143,7 @@ export const SEED_SALLES = [
     description:
       "Salle kabyle traditionnelle revisitée. Espace scénique pour les troupes folkloriques, vestiaires spacieux et service de décoration intégré.",
     amenities: ['clim', 'cuisine', 'sono', 'parking', 'terrasse'],
-    photos: [],
+    photos: photosOf('salle-007'),
     status: 'active',
     is_premium: false,
     rating: 4.4,
@@ -151,7 +162,7 @@ export const SEED_SALLES = [
     description:
       "Vue directe sur la Méditerranée. Terrasse pour le cocktail au coucher du soleil, salle intérieure entièrement vitrée. Réservation conseillée 6 mois à l'avance.",
     amenities: ['clim', 'sono', 'parking', 'terrasse', 'traiteur', 'wifi'],
-    photos: [],
+    photos: photosOf('salle-008'),
     status: 'active',
     is_premium: true,
     rating: 4.8,
@@ -170,7 +181,7 @@ export const SEED_SALLES = [
     description:
       "À dix minutes des ruines romaines, une salle à taille humaine pour vos fiançailles et anniversaires. Formule tout compris avec pâtisserie traditionnelle.",
     amenities: ['clim', 'cuisine', 'parking', 'terrasse'],
-    photos: [],
+    photos: photosOf('salle-009'),
     status: 'active',
     is_premium: false,
     rating: 4.2,
@@ -189,7 +200,7 @@ export const SEED_SALLES = [
     description:
       "Salle de conférence et de réception au centre d'Alger. Équipement audiovisuel professionnel, régie, traduction simultanée disponible sur demande.",
     amenities: ['clim', 'sono', 'parking', 'pmr', 'wifi', 'traiteur'],
-    photos: [],
+    photos: photosOf('salle-010'),
     status: 'active',
     is_premium: false,
     rating: 4.5,

@@ -28,6 +28,36 @@ d'environnement Supabase, l'application bascule sur un backend local
 (AsyncStorage) pré-rempli avec dix salles algériennes, des réservations, des
 avis et un abonnement en cours d'essai.
 
+### Photos des salles
+
+`src/data/photos.json` associe un identifiant de salle à une liste d'URL. Il
+est **vide par défaut** : les salles s'affichent alors avec un dégradé portant
+leur initiale, et l'app reste utilisable hors ligne. Renseignez-le pour voir
+de vraies photos :
+
+```json
+"salles": {
+  "salle-003": {
+    "credit": "Pexels — Prénom Nom",
+    "urls": ["https://images.pexels.com/photos/XXXXX/pexels-photo-XXXXX.jpeg?w=1200"]
+  }
+}
+```
+
+Le mélange fonctionne : une salle renseignée montre sa photo, les autres
+gardent leur dégradé.
+
+**Où prendre les images.** Uniquement des sources autorisant l'usage
+commercial — [Pexels](https://www.pexels.com/license/) et
+[Unsplash](https://unsplash.com/license) le permettent sans attribution — ou
+les photos que les propriétaires envoient eux-mêmes depuis l'app, ce qui est
+le fonctionnement prévu en production.
+
+Ne reprenez pas d'images d'Instagram, de Facebook, de Google Images ou des
+sites des salles : elles appartiennent à leurs auteurs, et leur réutilisation
+dans une application commerciale est une contrefaçon. Le risque est d'autant
+moins théorique que ce sont ces mêmes propriétaires que Tasale démarche.
+
 ### Comptes de démonstration
 
 Le code SMS est toujours `123456`.

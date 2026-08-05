@@ -408,6 +408,32 @@ describe('quota de SMS (§10.4)', () => {
   });
 });
 
+describe('photos des salles', () => {
+  it('expose toujours un tableau, même sans manifeste renseigné', async () => {
+    const rows = await api.listSalles({});
+    rows.forEach((s) => expect(Array.isArray(s.photos)).toBe(true));
+  });
+
+  it('reprend les URL déclarées dans photos.json', async () => {
+    // eslint-disable-next-line global-require
+    const manifeste = require('./photos.json');
+    const declarees = Object.entries(manifeste.salles || {});
+
+    if (declarees.length === 0) {
+      // Manifeste vide : toutes les salles retombent sur le dégradé
+      const rows = await api.listSalles({});
+      expect(rows.every((s) => s.photos.length === 0)).toBe(true);
+      return;
+    }
+
+    for (const [salleId, entree] of declarees) {
+      // eslint-disable-next-line no-await-in-loop
+      const salle = await api.getSalle(salleId);
+      expect(salle.photos).toEqual(entree.urls);
+    }
+  });
+});
+
 describe('favoris', () => {
   it('ajoute et retire une salle', async () => {
     await loginAs(CLIENT_PHONE);

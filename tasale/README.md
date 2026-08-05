@@ -57,29 +57,39 @@ définies, l'application utilise Supabase sans autre changement : les deux
 adaptateurs exposent la même interface (`src/data/index.js` choisit à
 l'import).
 
-Appliquer le schéma :
+Appliquer le schéma, dans l'ordre :
 
 ```bash
-psql "$DATABASE_URL" -f supabase/migrations/0001_init.sql
+psql "$DATABASE_URL" -f supabase/migrations/0001_init.sql       # tables, RLS, RPC
+psql "$DATABASE_URL" -f supabase/migrations/0002_lifecycle.sql  # tâches quotidiennes
+psql "$DATABASE_URL" -f supabase/migrations/0003_storage.sql    # buckets d'images
+psql "$DATABASE_URL" -f supabase/migrations/0004_cron.sql       # planification
 ```
 
-Puis activer l'authentification par téléphone (OTP SMS) dans le tableau de
-bord Supabase.
+`0003` suppose le schéma `storage` : il ne s'applique que sur Supabase.
+`0004` demande l'extension `pg_cron` (Database → Extensions) ; sans elle il
+n'échoue pas, il signale simplement qu'il n'a rien planifié.
+
+Reste à activer l'authentification par téléphone (OTP SMS) dans le tableau
+de bord — voir la réserve sur les fournisseurs SMS plus bas.
 
 ---
 
 ## Tests
 
 ```bash
-npm test                                            # 74 tests JS (jest-expo)
+npm test                                                    # 84 tests JS (jest-expo)
 psql "$DATABASE_URL" -f supabase/tests/business_rules.sql   # 17 assertions SQL
+psql "$DATABASE_URL" -f supabase/tests/lifecycle.sql        # 16 assertions SQL
 ```
 
 | Suite | Portée |
 |-------|--------|
 | `src/services/notify.test.js` (24) | Heures calmes 22 h–08 h, report au lendemain, quota journalier, blackout Ramadan, troncature à 160 caractères, priorités d'envoi |
 | `src/data/local.test.js` (50) | Backend local : authentification, disponibilités, création et annulation, signature PIN, acompte, avis et modération, quota SMS, favoris, recherche, tableau de bord, planning, abonnement, messagerie |
+| `src/lib/storage.test.js` (10) | Décodage base64 des images (les 256 valeurs d'octet), unicité et extension des chemins de destination |
 | `supabase/tests/business_rules.sql` (17) | Les mêmes règles §10, mais côté PostgreSQL : unicité du jour confirmé, PIN, délai d'avis, publication automatique, agrégats, absence de policy `DELETE` sur les avis |
+| `supabase/tests/lifecycle.sql` (16) | Clôture des événements passés, rappel J-1, demande d'avis à J+48 h, rappels et expiration d'essai — chaque tâche vérifiée aussi pour son idempotence |
 
 Les règles critiques sont vérifiées **dans les deux implémentations**, ce qui
 garantit que passer du mode démo à Supabase ne change pas le comportement.
@@ -145,15 +155,19 @@ applicative.
 
 - **Envoi réel des SMS/push.** Le moteur `services/notify.js` décide *quoi*
   envoyer, *par quel canal* et *à quelle heure* (les règles §6.3 et §10.4 sont
-  implémentées et les messages sont journalisés), mais aucun opérateur n'est
-  branché. Il reste à connecter Djezzy/Ooredoo et Firebase Cloud Messaging
-  dans un worker.
-- **Prélèvement de l'abonnement.** La méthode de paiement se configure et
-  l'historique s'affiche ; le prélèvement CCP/BaridiMob suppose une intégration
+  implémentées et les messages sont journalisés en base avec leur `sent_at`),
+  mais aucun opérateur n'est branché. Il reste un worker à écrire, qui lit la
+  table `notifications` et appelle Djezzy/Ooredoo et Firebase.
+- **Fournisseur OTP.** L'authentification par téléphone de Supabase n'accepte
+  qu'une liste fermée de fournisseurs — Twilio, MessageBird, Vonage,
+  TextLocal — dont aucun opérateur algérien. Passer par une route locale
+  suppose de réécrire `sendOtp`/`verifyOtp` en Edge Functions. **C'est le seul
+  point qui empêche réellement une mise en ligne.**
+- **Prélèvement de l'abonnement.** La méthode de paiement se configure,
+  l'historique s'affiche, et l'essai bascule automatiquement en abonnement
+  actif à son terme ; le prélèvement CCP/BaridiMob suppose une intégration
   bancaire hors application.
 - **Cartographie.** La distance figure sur les fiches, sans carte Mapbox.
-- **Upload des photos.** Les photos sont sélectionnées et affichées localement ;
-  leur envoi vers S3/R2 reste à câbler.
 - **Mode hors-ligne du planning pro** (§1.4) — le backend local fonctionne sans
   réseau, mais aucune synchronisation différée n'est implémentée pour Supabase.
 - **Console admin Tasale** (§2.1 `apps/admin`).
@@ -191,8 +205,8 @@ champs téléphone restent en LTR conformément au §4.4.
 
 ## Vérification effectuée
 
-- `npm test` — 74 tests au vert
-- `npx expo export --platform web` — 752 modules, aucune erreur
+- `npm test` — 84 tests au vert
+- `npx expo export --platform web` — 753 modules, aucune erreur
 - Parcours pro complet en navigateur (Playwright) : connexion OTP → tableau de
   bord → confirmation d'une demande avec acompte et signature PIN → planning →
   statistiques → abonnement
@@ -200,7 +214,10 @@ champs téléphone restent en LTR conformément au §4.4.
   en 4 étapes → écran de succès avec référence `TAS-2026-XXXX`
 - Bascule en arabe : accueil, recherche et barre d'onglets correctement inversés
 - Zéro erreur console sur les trois parcours
-- Schéma appliqué sur PostgreSQL 16 : 22 policies RLS, 17 assertions métier au vert
+- Schéma appliqué sur PostgreSQL 16 : 22 policies RLS, 33 assertions SQL au vert
+  (17 règles métier + 16 tâches de cycle de vie)
+- Icônes générées aux formats exigés : `icon.png` 1024² sans canal alpha comme
+  l'impose Apple, avant-plan adaptatif Android transparent, favicon, splash
 
 Non vérifié : rendu sur appareils iOS/Android réels (bundle web uniquement),
 et comportement contre une instance Supabase réelle — `src/data/remote.js`

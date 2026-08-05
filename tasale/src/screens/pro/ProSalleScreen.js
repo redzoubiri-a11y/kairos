@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { View, Text, Pressable, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, Pressable, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useFocusEffect } from '@react-navigation/native';
@@ -11,6 +11,7 @@ import { MChip, MCard, Loader, ErrorState } from '../../components/primitives';
 import { useTheme } from '../../context/ThemeContext';
 import { useI18n } from '../../i18n';
 import { CITIES, AMENITIES, AMENITY_ICONS, SALLE_MAX_PHOTOS } from '../../lib/constants';
+import { uploadImage, BUCKETS } from '../../lib/storage';
 import * as api from '../../data';
 
 const TABS = ['infos', 'photos', 'pricing'];
@@ -24,6 +25,7 @@ export default function ProSalleScreen() {
   const [tarifs, setTarifs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(null);
   const [saved, setSaved] = useState(false);
 
@@ -63,9 +65,26 @@ export default function ProSalleScreen() {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permission.granted) return;
 
-    const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], quality: 0.8 });
-    if (!result.canceled && result.assets?.[0]) {
-      set('photos', [...(salle.photos || []), result.assets[0].uri].slice(0, SALLE_MAX_PHOTOS));
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      quality: 0.8,
+      base64: true,
+    });
+    if (result.canceled || !result.assets?.[0]) return;
+
+    setUploading(true);
+    setError(null);
+    try {
+      const url = await uploadImage({
+        bucket: BUCKETS.SALLES,
+        prefix: salle.id,
+        asset: result.assets[0],
+      });
+      set('photos', [...(salle.photos || []), url].slice(0, SALLE_MAX_PHOTOS));
+    } catch (e) {
+      setError(e.message || t('common.error'));
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -221,21 +240,29 @@ export default function ProSalleScreen() {
                 {(salle.photos || []).length < SALLE_MAX_PHOTOS ? (
                   <Pressable
                     onPress={addPhoto}
+                    disabled={uploading}
                     accessibilityRole="button"
+                    accessibilityState={{ busy: uploading }}
                     style={{
                       width: '30%',
                       height: 90,
                       borderRadius: radii.lg,
                       borderWidth: 1,
                       borderStyle: 'dashed',
-                      borderColor: colors.border,
+                      borderColor: uploading ? colors.primary : colors.border,
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: 4,
                     }}
                   >
-                    <Ionicons name="add" size={20} color={colors.warmGray} />
-                    <Text style={{ fontSize: 10, color: colors.warmGray }}>{t('pro.addPhoto')}</Text>
+                    {uploading ? (
+                      <ActivityIndicator size="small" color={colors.primary} />
+                    ) : (
+                      <>
+                        <Ionicons name="add" size={20} color={colors.warmGray} />
+                        <Text style={{ fontSize: 10, color: colors.warmGray }}>{t('pro.addPhoto')}</Text>
+                      </>
+                    )}
                   </Pressable>
                 ) : null}
               </View>

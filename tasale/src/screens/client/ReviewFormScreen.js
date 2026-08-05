@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { View, Text, Pressable, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, Pressable, KeyboardAvoidingView, Platform, Image, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+import { uploadImage, BUCKETS } from '../../lib/storage';
 import { Screen, Header, Body, StickyBar } from '../../components/Screen';
 import MInput from '../../components/MInput';
 import MButton from '../../components/MButton';
@@ -24,6 +25,7 @@ export default function ReviewFormScreen({ route, navigation }) {
   const [comment, setComment] = useState('');
   const [photos, setPhotos] = useState([]);
   const [consent, setConsent] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(null);
   const [saving, setSaving] = useState(false);
   const [done, setDone] = useState(false);
@@ -36,9 +38,23 @@ export default function ReviewFormScreen({ route, navigation }) {
       mediaTypes: ['images'],
       quality: 0.7,
       allowsMultipleSelection: false,
+      base64: true,
     });
-    if (!result.canceled && result.assets?.[0]) {
-      setPhotos((list) => [...list, result.assets[0].uri].slice(0, REVIEW_MAX_PHOTOS));
+    if (result.canceled || !result.assets?.[0]) return;
+
+    setUploading(true);
+    setError(null);
+    try {
+      const url = await uploadImage({
+        bucket: BUCKETS.AVIS,
+        prefix: reservationId,
+        asset: result.assets[0],
+      });
+      setPhotos((list) => [...list, url].slice(0, REVIEW_MAX_PHOTOS));
+    } catch (e) {
+      setError(e.message || t('common.error'));
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -146,40 +162,61 @@ export default function ReviewFormScreen({ route, navigation }) {
               {t('reviews.photos')}
             </Text>
             <View style={{ flexDirection: dir, gap: spacing.sm, flexWrap: 'wrap' }}>
-              {photos.map((uri, i) => (
-                <View
-                  key={uri}
-                  style={{
-                    width: 66,
-                    height: 66,
-                    borderRadius: radii.lg,
-                    backgroundColor: colors.primaryLight,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <Text style={[typography.caption, { color: colors.primary }]}>{i + 1}</Text>
+              {photos.map((uri) => (
+                <View key={uri} style={{ width: 66, height: 66 }}>
+                  <Image
+                    source={{ uri }}
+                    style={{ width: '100%', height: '100%', borderRadius: radii.lg }}
+                    resizeMode="cover"
+                  />
+                  <Pressable
+                    onPress={() => setPhotos((list) => list.filter((x) => x !== uri))}
+                    accessibilityRole="button"
+                    accessibilityLabel="Retirer la photo"
+                    hitSlop={6}
+                    style={{
+                      position: 'absolute',
+                      top: 3,
+                      right: 3,
+                      width: 20,
+                      height: 20,
+                      borderRadius: radii.pill,
+                      backgroundColor: 'rgba(0,0,0,0.55)',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <Ionicons name="close" size={12} color="#FFFFFF" />
+                  </Pressable>
                 </View>
               ))}
 
               {photos.length < REVIEW_MAX_PHOTOS ? (
                 <Pressable
                   onPress={addPhoto}
+                  disabled={uploading}
                   accessibilityRole="button"
+                  accessibilityState={{ busy: uploading }}
                   style={{
                     width: 66,
                     height: 66,
                     borderRadius: radii.lg,
                     borderWidth: 1,
-                    borderColor: colors.border,
+                    borderColor: uploading ? colors.primary : colors.border,
                     borderStyle: 'dashed',
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: 2,
                   }}
                 >
-                  <Ionicons name="camera-outline" size={18} color={colors.warmGray} />
-                  <Text style={{ fontSize: 10, color: colors.warmGray }}>{t('reviews.addPhoto')}</Text>
+                  {uploading ? (
+                    <ActivityIndicator size="small" color={colors.primary} />
+                  ) : (
+                    <>
+                      <Ionicons name="camera-outline" size={18} color={colors.warmGray} />
+                      <Text style={{ fontSize: 10, color: colors.warmGray }}>{t('reviews.addPhoto')}</Text>
+                    </>
+                  )}
                 </Pressable>
               ) : null}
             </View>

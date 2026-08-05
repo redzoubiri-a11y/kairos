@@ -208,11 +208,31 @@ export const SEED_SALLES = [
     distance_km: 1.8,
     created_at: '2026-02-22T09:00:00Z',
   },
+  {
+    id: 'salle-011',
+    owner_id: 'user-pro-011',
+    name: 'Salle Ryad El Feth',
+    city: 'Boumerdès',
+    address: 'Route de Corso, Boumerdès',
+    capacity_max: 260,
+    parking_places: 30,
+    description:
+      "Salle récemment ouverte, à quinze minutes de la plage. Décoration moderne, cuisine attenante et espace enfants séparé.",
+    amenities: ['clim', 'cuisine', 'parking'],
+    photos: photosOf('salle-011'),
+    // En attente de validation par l'équipe (§5.5) : invisible côté client
+    status: 'pending',
+    is_premium: false,
+    rating: null,
+    reviews_count: 0,
+    distance_km: 52,
+    created_at: `${addDays(T, -1)}T11:00:00Z`,
+  },
 ];
 
 // §4.3.6 — trois formules par salle
 export const SEED_TARIFS = SEED_SALLES.flatMap((s, i) => {
-  const base = [35000, 30000, 55000, 25000, 38000, 42000, 33000, 48000, 28000, 40000][i];
+  const base = [35000, 30000, 55000, 25000, 38000, 42000, 33000, 48000, 28000, 40000, 32000][i];
   return [
     {
       id: `tarif-${s.id}-1`,
@@ -256,6 +276,7 @@ const PRO_OWNERS = [
   ['user-pro-008', 'salle-008', 'Tarek Boudjelal', '0090147852 clé 19'],
   ['user-pro-009', 'salle-009', 'Nabil Hamdani', '0012369874 clé 52'],
   ['user-pro-010', 'salle-010', 'Salim Merabet', '0023698741 clé 74'],
+  ['user-pro-011', 'salle-011', 'Farid Benhamou', '0034789612 clé 90'],
 ];
 
 // Familles ayant réservé — référencées par les réservations et les avis.
@@ -270,6 +291,14 @@ const CLIENT_ACCOUNTS = [
 ];
 
 export const SEED_USERS = [
+  {
+    id: 'user-admin-001',
+    phone: '+213555000000',
+    full_name: 'Équipe Tasale',
+    role: 'admin',
+    preferred_language: 'fr',
+    created_at: '2025-09-01T09:00:00Z',
+  },
   ...PRO_OWNERS.map(([id, salleId, name, ccp], i) => ({
     id,
     // 0555 10 00 01 … 0555 10 00 10
@@ -502,6 +531,27 @@ export const SEED_REVIEWS = [
     created_at: `${addDays(T, -40)}T15:00:00Z`,
   },
 ];
+
+// §7.2 — signalé par le propriétaire, en attente d'arbitrage par l'équipe
+SEED_REVIEWS.push({
+  id: 'review-004',
+  reservation_id: null,
+  client_id: 'user-client-007',
+  client_name: 'Lounis Aïssani',
+  salle_id: 'salle-003',
+  event_type: 'mariage',
+  rating_overall: 1,
+  rating_salle: 1,
+  rating_traiteur: 1,
+  rating_proprete: 1,
+  rating_value: 1,
+  comment: "Avis contesté par le propriétaire, qui affirme que ce client n'a jamais réservé chez lui.",
+  photos: [],
+  is_verified: false,
+  status: 'flagged',
+  pro_reply: null,
+  created_at: `${addDays(T, -3)}T14:00:00Z`,
+});
 
 export const SEED_MESSAGES = [
   {

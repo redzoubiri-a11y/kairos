@@ -605,3 +605,44 @@ export async function listInvoices() {
 export async function resetDemoData() {
   throw new Error('Indisponible en mode Supabase');
 }
+
+// ── Console d'administration (§2.1) ───────────────────────────────────────
+// Les contrôles de rôle vivent en base : les RPC sont `SECURITY DEFINER` et
+// vérifient `is_admin()`. Un client modifié ne peut pas les contourner.
+
+export async function adminGetOverview() {
+  const data = unwrap(await supabase.rpc('admin_overview'));
+  return Array.isArray(data) ? data[0] : data;
+}
+
+export async function adminListPendingSalles() {
+  return (
+    unwrap(
+      await supabase
+        .from('salles')
+        .select(`${SALLE_SELECT}, owner:users ( id, full_name, phone )`)
+        .eq('status', 'pending')
+        .order('created_at', { ascending: true })
+    ) || []
+  ).map(decorate);
+}
+
+export async function adminReviewSalle(salleId, approved) {
+  return unwrap(await supabase.rpc('admin_review_salle', { p_salle: salleId, p_approved: approved }));
+}
+
+export async function adminListFlaggedReviews() {
+  return (
+    unwrap(
+      await supabase
+        .from('reviews')
+        .select('*, salle:salles ( id, name, city )')
+        .eq('status', 'flagged')
+        .order('created_at', { ascending: true })
+    ) || []
+  );
+}
+
+export async function adminResolveReview(reviewId, action) {
+  return unwrap(await supabase.rpc('admin_resolve_review', { p_review: reviewId, p_action: action }));
+}

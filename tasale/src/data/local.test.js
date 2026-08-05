@@ -563,3 +563,89 @@ describe('messagerie (§9.5)', () => {
     expect(conv.unread).toBe(0);
   });
 });
+
+describe('console d’administration (§2.1)', () => {
+  const ADMIN_PHONE = '0555 00 00 00';
+
+  it('refuse les chiffres de la plateforme à un client', async () => {
+    await loginAs(CLIENT_PHONE);
+    await expect(api.adminGetOverview()).rejects.toMatchObject({ code: 'FORBIDDEN' });
+  });
+
+  it('refuse à un pro de valider une salle', async () => {
+    await loginAs(PRO_PHONE);
+    await expect(api.adminReviewSalle('salle-011', true)).rejects.toMatchObject({
+      code: 'FORBIDDEN',
+    });
+  });
+
+  it('laisse la salle en attente après une tentative refusée', async () => {
+    await loginAs(PRO_PHONE);
+    await api.adminReviewSalle('salle-011', true).catch(() => {});
+
+    await loginAs(ADMIN_PHONE);
+    const attente = await api.adminListPendingSalles();
+    expect(attente.some((s) => s.id === 'salle-011')).toBe(true);
+  });
+
+  it('expose les chiffres de la plateforme à l’administrateur', async () => {
+    await loginAs(ADMIN_PHONE);
+    const vue = await api.adminGetOverview();
+
+    expect(vue.salles.pending).toBe(1);
+    expect(vue.salles.active).toBe(10);
+    expect(vue.reviews.flagged).toBe(1);
+    expect(vue.users.total).toBeGreaterThan(0);
+  });
+
+  it('joint le propriétaire à chaque salle en attente', async () => {
+    await loginAs(ADMIN_PHONE);
+    const [salle] = await api.adminListPendingSalles();
+    expect(salle.owner.full_name).toBe('Farid Benhamou');
+  });
+
+  it('publie la salle validée et prévient son propriétaire', async () => {
+    await loginAs(ADMIN_PHONE);
+    const salle = await api.adminReviewSalle('salle-011', true);
+    expect(salle.status).toBe('active');
+    expect(await api.adminListPendingSalles()).toHaveLength(0);
+
+    // Elle devient visible côté client
+    const publiques = await api.listSalles({ city: 'Boumerdès' });
+    expect(publiques.some((s) => s.id === 'salle-011')).toBe(true);
+
+    await loginAs('0555 10 00 11');
+    const notifs = await api.listNotifications();
+    expect(notifs.some((n) => n.type === 'salle_approved')).toBe(true);
+  });
+
+  it('garde hors ligne une salle refusée', async () => {
+    await loginAs(ADMIN_PHONE);
+    const salle = await api.adminReviewSalle('salle-011', false);
+    expect(salle.status).toBe('inactive');
+
+    const publiques = await api.listSalles({ city: 'Boumerdès' });
+    expect(publiques.some((s) => s.id === 'salle-011')).toBe(false);
+  });
+
+  it('republie un avis signalé à tort', async () => {
+    await loginAs(ADMIN_PHONE);
+    const [signale] = await api.adminListFlaggedReviews();
+    expect(signale.salle.name).toBe('Palais Ryad');
+
+    const arbitre = await api.adminResolveReview(signale.id, 'restore');
+    expect(arbitre.status).toBe('approved');
+    expect(await api.adminListFlaggedReviews()).toHaveLength(0);
+  });
+
+  it('retire un avis sans le supprimer', async () => {
+    await loginAs(ADMIN_PHONE);
+    const [signale] = await api.adminListFlaggedReviews();
+    const arbitre = await api.adminResolveReview(signale.id, 'remove');
+
+    expect(arbitre.status).toBe('rejected');
+    expect(arbitre.moderated_at).toBeTruthy();
+    // Retiré du public, mais conservé pour traçabilité
+    expect(await api.getSalleReviews('salle-003', {})).toHaveLength(0);
+  });
+});

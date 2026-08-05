@@ -1151,3 +1151,125 @@ export async function listInvoices() {
   await load();
   return clone(db.invoices);
 }
+
+// ── Console d'administration (§2.1) ───────────────────────────────────────
+
+function requireAdmin() {
+  const user = requireUser();
+  if (user.role !== ROLES.ADMIN) {
+    const err = new Error('FORBIDDEN');
+    err.code = 'FORBIDDEN';
+    throw err;
+  }
+  return user;
+}
+
+/** Chiffres de la plateforme, pas d'une salle en particulier. */
+export async function adminGetOverview() {
+  await load();
+  requireAdmin();
+
+  const actives = db.salles.filter((s) => s.status === 'active');
+  const enAttente = db.salles.filter((s) => s.status === 'pending');
+  const abonnements = db.subscriptions;
+  const payants = abonnements.filter((s) => s.status === SUBSCRIPTION_STATUS.ACTIVE);
+
+  const signales = db.reviews.filter((r) => r.status === REVIEW_STATUS.FLAGGED);
+  const thisMonth = todayISO().slice(0, 7);
+
+  return {
+    salles: { active: actives.length, pending: enAttente.length },
+    users: {
+      total: db.users.length,
+      clients: db.users.filter((u) => u.role === ROLES.CLIENT).length,
+      pros: db.users.filter((u) => u.role === ROLES.PRO).length,
+    },
+    reservations: {
+      total: db.reservations.length,
+      thisMonth: db.reservations.filter((r) => r.event_date.slice(0, 7) === thisMonth).length,
+      confirmed: db.reservations.filter((r) => r.status === RESERVATION_STATUS.CONFIRMED).length,
+    },
+    reviews: {
+      total: db.reviews.length,
+      flagged: signales.length,
+    },
+    subscriptions: {
+      trial: abonnements.filter((s) => s.status === SUBSCRIPTION_STATUS.TRIAL).length,
+      active: payants.length,
+      // Revenu récurrent mensuel : seuls les abonnements payants comptent
+      mrr: payants.length * SUBSCRIPTION_PRICE,
+    },
+  };
+}
+
+/** §5.5 — les salles inscrites attendent une validation avant publication. */
+export async function adminListPendingSalles() {
+  await load();
+  requireAdmin();
+
+  return db.salles
+    .filter((s) => s.status === 'pending')
+    .map((s) => ({
+      ...decorateSalle(s),
+      owner: clone(db.users.find((u) => u.id === s.owner_id)) || null,
+    }))
+    .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+}
+
+export async function adminReviewSalle(salleId, approved) {
+  await load();
+  requireAdmin();
+
+  const salle = db.salles.find((s) => s.id === salleId);
+  if (!salle) throw new Error('SALLE_NOT_FOUND');
+
+  salle.status = approved ? 'active' : 'inactive';
+
+  pushNotifications(
+    buildNotifications({
+      type: approved ? 'salle_approved' : 'salle_rejected',
+      userId: salle.owner_id,
+      title: approved ? 'Votre salle est en ligne' : 'Votre salle n’a pas été validée',
+      body: approved
+        ? `${salle.name} est désormais visible par les familles.`
+        : `${salle.name} n’a pas pu être validée. Contactez le support pour en connaître la raison.`,
+      data: { salle_id: salle.id },
+    })
+  );
+
+  persist();
+  return decorateSalle(salle);
+}
+
+/** §7.2 — arbitrage des avis signalés par les propriétaires. */
+export async function adminListFlaggedReviews() {
+  await load();
+  requireAdmin();
+
+  return db.reviews
+    .filter((r) => r.status === REVIEW_STATUS.FLAGGED)
+    .map((r) => ({
+      ...clone(r),
+      salle: clone(db.salles.find((s) => s.id === r.salle_id)) || null,
+    }))
+    .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+}
+
+/**
+ * `restore` republie l'avis, `remove` le retire définitivement.
+ * L'avis n'est jamais supprimé de la base : seul son statut change, pour
+ * qu'un signalement abusif reste traçable.
+ */
+export async function adminResolveReview(reviewId, action) {
+  await load();
+  requireAdmin();
+
+  const review = db.reviews.find((r) => r.id === reviewId);
+  if (!review) throw new Error('REVIEW_NOT_FOUND');
+
+  review.status = action === 'restore' ? REVIEW_STATUS.APPROVED : REVIEW_STATUS.REJECTED;
+  review.moderated_at = new Date().toISOString();
+
+  persist();
+  return clone(review);
+}

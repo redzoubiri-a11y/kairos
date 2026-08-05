@@ -45,6 +45,11 @@ import ProSubscriptionScreen from './src/screens/pro/ProSubscriptionScreen';
 import ProReviewsScreen from './src/screens/pro/ProReviewsScreen';
 import ProMoreScreen from './src/screens/pro/ProMoreScreen';
 
+// Admin
+import AdminDashboardScreen from './src/screens/admin/AdminDashboardScreen';
+import AdminSallesScreen from './src/screens/admin/AdminSallesScreen';
+import AdminReviewsScreen from './src/screens/admin/AdminReviewsScreen';
+
 // Partagés
 import NotificationsScreen from './src/screens/shared/NotificationsScreen';
 import ConversationsScreen from './src/screens/shared/ConversationsScreen';
@@ -59,6 +64,13 @@ const CLIENT_TAB_ICONS = {
   Recherche: 'search',
   Favoris: 'heart',
   Resa: 'calendar',
+  Profil: 'person',
+};
+
+const ADMIN_TAB_ICONS = {
+  AdminDashboard: 'speedometer',
+  AdminSalles: 'business',
+  AdminReviews: 'flag',
   Profil: 'person',
 };
 
@@ -126,6 +138,20 @@ function ProTabs() {
   );
 }
 
+function AdminTabs() {
+  const { colors } = useTheme();
+  const { t } = useI18n();
+
+  return (
+    <Tab.Navigator screenOptions={makeTabOptions(ADMIN_TAB_ICONS, colors)}>
+      <Tab.Screen name="AdminDashboard" component={AdminDashboardScreen} options={{ title: t('nav.dashboardTab') }} />
+      <Tab.Screen name="AdminSalles" component={AdminSallesScreen} options={{ title: t('nav.adminSalles') }} />
+      <Tab.Screen name="AdminReviews" component={AdminReviewsScreen} options={{ title: t('nav.adminReviews') }} />
+      <Tab.Screen name="Profil" component={ProfileScreen} options={{ title: t('nav.profile') }} />
+    </Tab.Navigator>
+  );
+}
+
 /** Écrans empilés accessibles depuis les deux espaces. */
 function sharedScreens() {
   return (
@@ -165,6 +191,12 @@ function RootNavigator() {
         <>
           <Stack.Screen name="Role" component={RoleScreen} />
           <Stack.Screen name="ProOnboarding" component={ProOnboardingScreen} />
+        </>
+      ) : user.role === ROLES.ADMIN ? (
+        <>
+          <Stack.Screen name="AdminTabs" component={AdminTabs} />
+          <Stack.Screen name="Salle" component={SalleScreen} />
+          <Stack.Screen name="Notifications" component={NotificationsScreen} />
         </>
       ) : user.role === ROLES.PRO ? (
         <>

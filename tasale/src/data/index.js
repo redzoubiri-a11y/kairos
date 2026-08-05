@@ -77,3 +77,10 @@ export const listInvoices = impl.listInvoices;
 
 // Démo
 export const resetDemoData = impl.resetDemoData;
+
+// Administration
+export const adminGetOverview = impl.adminGetOverview;
+export const adminListPendingSalles = impl.adminListPendingSalles;
+export const adminReviewSalle = impl.adminReviewSalle;
+export const adminListFlaggedReviews = impl.adminListFlaggedReviews;
+export const adminResolveReview = impl.adminResolveReview;

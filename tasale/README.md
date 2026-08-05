@@ -67,6 +67,7 @@ Le code SMS est toujours `123456`.
 | **Pro** | `0555 10 00 01` | Salle El Widad (Alger) — 7 réservations, 2 en attente, 1 avis à modérer, essai à J+45 |
 | **Client** | `0661 23 45 67` | Amina Cherif — 1 réservation confirmée, 1 événement passé à évaluer, 2 favoris |
 | *Autres pros* | `0555 10 00 02` … `0555 10 00 10` | Un propriétaire par salle du jeu de données |
+| **Admin** | `0555 00 00 00` | Équipe Tasale — 1 salle à valider, 1 avis signalé |
 | *Nouveau compte* | tout autre numéro valide | Parcours d'inscription complet (client ou pro) |
 
 Le PIN de signature des comptes pro de démonstration est `1234`.
@@ -95,6 +96,7 @@ psql "$DATABASE_URL" -f supabase/migrations/0002_lifecycle.sql  # tâches quotid
 psql "$DATABASE_URL" -f supabase/migrations/0003_storage.sql    # buckets d'images
 psql "$DATABASE_URL" -f supabase/migrations/0004_cron.sql       # planification
 psql "$DATABASE_URL" -f supabase/migrations/0005_delivery.sql   # file d'expédition
+psql "$DATABASE_URL" -f supabase/migrations/0006_admin.sql      # console d'administration
 ```
 
 `0003` suppose le schéma `storage` : il ne s'applique que sur Supabase.
@@ -150,9 +152,10 @@ puis rejouer `0004_cron.sql`.
 ## Tests
 
 ```bash
-npm test                                                    # 132 tests JS (jest-expo)
+npm test                                                    # 141 tests JS (jest-expo)
 psql "$DATABASE_URL" -f supabase/tests/business_rules.sql   # 17 assertions SQL
 psql "$DATABASE_URL" -f supabase/tests/lifecycle.sql        # 16 assertions SQL
+psql "$DATABASE_URL" -f supabase/tests/admin.sql            # 14 assertions SQL
 ```
 
 | Suite | Portée |
@@ -164,6 +167,7 @@ psql "$DATABASE_URL" -f supabase/tests/lifecycle.sql        # 16 assertions SQL
 | `src/services/pdfTemplates.test.js` (22) | Contrat et planning : montants et solde, mention de signature, échappement HTML d'un nom de client piégé, traduction des énumérations |
 | `src/theme.test.js` (13) | Contrastes calculés selon WCAG 2.1 : encre de marque ≥ 4,5:1 dans les deux thèmes, blanc lisible sur les aplats de bouton, thème clair verrouillé à l'identique |
 | `supabase/tests/business_rules.sql` (17) | Les mêmes règles §10, mais côté PostgreSQL : unicité du jour confirmé, PIN, délai d'avis, publication automatique, agrégats, absence de policy `DELETE` sur les avis |
+| `supabase/tests/admin.sql` (14) | Autorisations de la console : un client n'obtient pas les chiffres, un pro ne valide pas sa propre salle, un avis retiré reste en base |
 | `supabase/tests/lifecycle.sql` (16) | Clôture des événements passés, rappel J-1, demande d'avis à J+48 h, rappels et expiration d'essai — chaque tâche vérifiée aussi pour son idempotence |
 
 Les règles critiques sont vérifiées **dans les deux implémentations**, ce qui
@@ -247,7 +251,6 @@ applicative.
   actif à son terme ; le prélèvement CCP/BaridiMob suppose une intégration
   bancaire hors application.
 - **Cartographie.** La distance figure sur les fiches, sans carte Mapbox.
-- **Console admin Tasale** (§2.1 `apps/admin`).
 
 ---
 
@@ -282,7 +285,7 @@ champs téléphone restent en LTR conformément au §4.4.
 
 ## Vérification effectuée
 
-- `npm test` — 132 tests au vert
+- `npm test` — 141 tests au vert
 - `npx expo export --platform web` — 753 modules, aucune erreur
 - Parcours pro complet en navigateur (Playwright) : connexion OTP → tableau de
   bord → confirmation d'une demande avec acompte et signature PIN → planning →

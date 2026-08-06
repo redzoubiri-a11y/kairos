@@ -75,3 +75,13 @@ export const SALLE_MAX_PHOTOS = 10;
 export const SMS_QUIET_START = 22;
 export const SMS_QUIET_END = 8;
 export const SMS_MAX_PER_DAY = 3;
+
+/**
+ * Préfixe des clés AsyncStorage.
+ *
+ * Il conserve l'orthographe d'origine « tasale » alors que la marque s'écrit
+ * désormais Tasalle. Ces clés ne sont jamais vues par personne, et les
+ * renommer viderait ce qui est déjà enregistré sur les appareils — session,
+ * langue, thème, planning hors ligne — pour un gain purement cosmétique.
+ */
+export const STORAGE_PREFIX = 'tasale.';

@@ -2,9 +2,9 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as api from '../data';
 import { useAuth } from './AuthContext';
-import { ROLES } from '../lib/constants';
+import { ROLES, STORAGE_PREFIX } from '../lib/constants';
 
-const STORAGE_KEY = 'tasale.salleCourante';
+const STORAGE_KEY = `${STORAGE_PREFIX}salleCourante`;
 
 const ProSalleContext = createContext(null);
 

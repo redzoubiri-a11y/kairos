@@ -10,7 +10,7 @@ insert into auth.users (id) values ('99999999-9999-9999-9999-999999999999')
 on conflict do nothing;
 
 insert into users (id, phone, full_name, role) values
-    ('99999999-9999-9999-9999-999999999999', '+213555000000', 'Équipe Tasale', 'admin')
+    ('99999999-9999-9999-9999-999999999999', '+213555000000', 'Équipe Tasalle', 'admin')
 on conflict (id) do update set role = 'admin';
 
 -- Une salle en attente de validation

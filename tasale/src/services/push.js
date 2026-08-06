@@ -57,7 +57,7 @@ export async function registerForPush() {
 
     if (Platform.OS === 'android') {
       await Notifications.setNotificationChannelAsync('default', {
-        name: 'Tasale',
+        name: 'Tasalle',
         importance: Notifications.AndroidImportance.DEFAULT,
         lightColor: '#0B6E5F',
       });

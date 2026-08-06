@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════════════════════════
--- Tasale — un propriétaire, plusieurs salles (§12 Phase 4)
+-- Tasalle — un propriétaire, plusieurs salles (§12 Phase 4)
 --
 -- Le modèle initial supposait une salle par propriétaire : l'abonnement y
 -- était rattaché par une contrainte `unique (salle_id)`, et pro_dashboard()

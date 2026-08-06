@@ -25,7 +25,7 @@ type HookPayload = {
 
 /** Message d'OTP, bilingue et tenant dans un seul SMS. */
 function otpMessage(otp: string): string {
-  return `Tasale : votre code de verification est ${otp}. Valable 10 minutes. Ne le communiquez a personne.`;
+  return `Tasalle : votre code de verification est ${otp}. Valable 10 minutes. Ne le communiquez a personne.`;
 }
 
 Deno.serve(async (request) => {

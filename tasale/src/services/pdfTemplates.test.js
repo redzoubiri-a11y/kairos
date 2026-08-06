@@ -251,6 +251,12 @@ describe('facture d’abonnement', () => {
     labels,
   });
 
+  it('porte la marque en en-tête', () => {
+    // Garde-fou du renommage : la marque vit aussi dans les documents.
+    expect(html).toContain('TASALLE');
+    expect(html).toContain('class="sigle"');
+  });
+
   it('porte le numéro de facture', () => {
     expect(html).toContain('INV-001');
   });

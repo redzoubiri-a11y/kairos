@@ -10,8 +10,9 @@
 // rejouer à l'aveugle risquerait de confirmer deux réservations le même jour.
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { STORAGE_PREFIX } from '../lib/constants';
 
-const PREFIX = 'tasale.cache.';
+const PREFIX = `${STORAGE_PREFIX}cache.`;
 
 /** Durée au-delà de laquelle une donnée en cache est jugée trop vieille. */
 export const MAX_AGE_MS = 7 * 24 * 3600 * 1000;

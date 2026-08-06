@@ -25,9 +25,10 @@ import {
   SUBSCRIPTION_PRICE,
   SMS_MAX_PER_DAY,
   ROLES,
+  STORAGE_PREFIX,
 } from '../lib/constants';
 
-const STORAGE_KEY = 'tasale.db.v1';
+const STORAGE_KEY = `${STORAGE_PREFIX}db.v1`;
 export const DEMO_OTP = '123456';
 
 let db = null;
@@ -423,7 +424,7 @@ export async function createReservation(payload) {
       title: 'Demande transmise',
       body: `Votre demande pour ${salle.name} le ${reservation.event_date} a été transmise. Réf. ${reservation.reference}.`,
       data: { reservation_id: reservation.id },
-      smsText: `Tasale : Votre demande pour ${salle.name} le ${reservation.event_date} a bien été transmise. Réf : ${reservation.reference}.`,
+      smsText: `Tasalle : Votre demande pour ${salle.name} le ${reservation.event_date} a bien été transmise. Réf : ${reservation.reference}.`,
     })
   );
   pushNotifications(

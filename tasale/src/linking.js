@@ -4,10 +4,10 @@ import * as Linking from 'expo-linking';
  * Synchronise l'URL avec la navigation.
  * Sur le web, cela rend le bouton « précédent » du navigateur fonctionnel et
  * les écrans partageables — indispensable pour le back-office pro (§5).
- * Sur mobile, cela active les liens `tasale://`.
+ * Sur mobile, cela active les liens `tasalle://`.
  */
 export const linking = {
-  prefixes: [Linking.createURL('/'), 'https://tasale.dz', 'tasale://'],
+  prefixes: [Linking.createURL('/'), 'https://tasalle.dz', 'tasalle://'],
   config: {
     screens: {
       // Authentification

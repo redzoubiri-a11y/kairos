@@ -117,7 +117,7 @@ describe('format des SMS (§1.4 — 160 caractères)', () => {
       SMS_TEMPLATES.reminder_24h({ type: 'mariage', salle: 'Palais Ryad', heure: '19h00' }),
       SMS_TEMPLATES.reservation_new({ client: 'Nadia Boumediene', date: '15 Août 2026' }),
       SMS_TEMPLATES.review_request({
-        type: 'mariage', salle: 'Salle El Widad', lien: 'https://tasale.dz/a/1234',
+        type: 'mariage', salle: 'Salle El Widad', lien: 'https://tasalle.dz/a/1234',
       }),
       SMS_TEMPLATES.reservation_cancelled({
         salle: 'Espace Andalous', date: '15 Août 2026', ref: 'TAS-2026-0001',

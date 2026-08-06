@@ -32,7 +32,7 @@ async function sendPush(tokens: string[], notification: Notification) {
   const messages = tokens.map((to) => ({
     to,
     sound: 'default',
-    title: notification.title ?? 'Tasale',
+    title: notification.title ?? 'Tasalle',
     body: notification.body ?? '',
     data: notification.data ?? {},
   }));

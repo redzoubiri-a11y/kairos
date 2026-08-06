@@ -3,8 +3,9 @@ import { I18nManager } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import fr from './fr';
 import ar from './ar';
+import { STORAGE_PREFIX } from '../lib/constants';
 
-const STORAGE_KEY = 'tasale.lang';
+const STORAGE_KEY = `${STORAGE_PREFIX}lang`;
 const DICTS = { fr, ar };
 
 const I18nContext = createContext(null);

@@ -3,7 +3,7 @@ import { View, Text, ScrollView, useWindowDimensions, Pressable } from 'react-na
 import { Ionicons } from '@expo/vector-icons';
 import { Screen } from '../../components/Screen';
 import MButton from '../../components/MButton';
-import TasaleLogo from '../../components/TasaleLogo';
+import TasalleLogo from '../../components/TasalleLogo';
 import { useTheme } from '../../context/ThemeContext';
 import { useI18n } from '../../i18n';
 
@@ -15,7 +15,7 @@ const SLIDES = [
 
 export default function OnboardingScreen({ navigation }) {
   const { colors, typography, spacing, radii } = useTheme();
-  const { t, isRTL } = useI18n();
+  const { t, isRTL, dir } = useI18n();
   const { width } = useWindowDimensions();
   const scrollRef = useRef(null);
   const [index, setIndex] = useState(0);
@@ -32,8 +32,8 @@ export default function OnboardingScreen({ navigation }) {
 
   return (
     <Screen>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: spacing.lg }}>
-        <TasaleLogo size={32} />
+      <View style={{ flexDirection: dir, justifyContent: 'space-between', alignItems: 'center', padding: spacing.lg }}>
+        <TasalleLogo size={32} />
         <Pressable onPress={() => navigation.replace('Phone')} hitSlop={8} accessibilityRole="button">
           <Text style={[typography.secondary, { color: colors.warmGray }]}>{t('onboarding.skip')}</Text>
         </Pressable>

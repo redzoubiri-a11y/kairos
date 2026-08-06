@@ -1,4 +1,4 @@
-// Config Metro propre à Tasale.
+// Config Metro propre à Tasalle.
 // Indispensable : sans ce fichier, Metro remonte l'arborescence et récupère
 // la configuration du projet MIDA situé à la racine du dépôt.
 const { getDefaultConfig } = require('expo/metro-config');

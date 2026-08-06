@@ -2,8 +2,9 @@ import { createContext, useContext, useEffect, useMemo, useState, useCallback } 
 import { useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { lightColors, darkColors, typography, spacing, radii, shadows, sizes } from '../theme';
+import { STORAGE_PREFIX } from '../lib/constants';
 
-const STORAGE_KEY = 'tasale.theme';
+const STORAGE_KEY = `${STORAGE_PREFIX}theme`;
 
 const ThemeContext = createContext(null);
 

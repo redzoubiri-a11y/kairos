@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// Tasale — Design System (spécifications §3)
+// Tasalle — Design System (spécifications §3)
 // Toutes les valeurs de style de l'application viennent d'ici.
 // Aucune couleur ni taille en dur ailleurs dans le code.
 // ─────────────────────────────────────────────────────────────
@@ -41,10 +41,20 @@ export const lightColors = {
   overlay: 'rgba(0,0,0,0.55)',
   skeleton: '#EFEBE5',
 
-  // Logo : carré uni émeraude profond, initiale or. 4,31:1 entre les deux,
-  // au-dessus du seuil AA pour un glyphe de cette taille.
-  logoBg: '#084F44',
-  logoInk: '#D4A853',
+  // Logo : monogramme TS et filet circulaire dans l'or de la marque, sur fond
+  // libre — le mot-symbole ne porte plus de pavé coloré.
+  //
+  // Cet or ne fait que 2,63:1 sur blanc. C'est délibéré et sans conséquence :
+  // WCAG 2.1 exempte les logotypes du critère de contraste (1.4.3). Il ne doit
+  // en revanche JAMAIS servir de couleur de texte d'interface — `goldText`
+  // (#8B6914, 5,09:1) est là pour ça.
+  logoInk: '#BE9A5E',
+  // Le mot-symbole reste dans l'encre du texte : c'est lui qui porte la
+  // lisibilité de la marque, et il passe partout.
+  logoWordmark: '#1A1A1A',
+  // Fond des icônes d'application et de l'écran de lancement : le crème du
+  // document de marque, que les écrans de l'app n'utilisent plus.
+  logoCanvas: '#F1EFEA',
 
   // `primary` remplit les boutons, `primaryInk` écrit dessus les surfaces.
   // Deux besoins opposés : un aplat veut être sombre pour porter du blanc,
@@ -84,9 +94,12 @@ export const darkColors = {
   chartInk: '#14A38C',
   chartGrid: 'rgba(255,255,255,0.10)',
 
-  // Le logo garde ses couleurs : c'est une marque, pas un élément d'interface.
-  logoBg: '#084F44',
-  logoInk: '#D4A853',
+  // Le mot-symbole s'inverse : noir sur crème devient blanc sur fond sombre.
+  // Le monogramme, lui, garde son or — il y gagne même (6,61:1).
+  logoWordmark: '#FFFFFF',
+  logoCanvas: '#1A1A1A',
+  // `logoInk` n'est pas redéfini : le monogramme garde le même or dans les
+  // deux thèmes, comme toute marque.
 };
 
 // §3.2 — Typographie (police système uniquement)

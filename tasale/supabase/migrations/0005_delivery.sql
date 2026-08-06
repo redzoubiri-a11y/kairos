@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════════════════════════
--- Tasale — expédition des notifications
+-- Tasalle — expédition des notifications
 --
 -- Jusqu'ici les notifications étaient écrites en base avec leur `sent_at`
 -- (l'heure à laquelle elles *doivent* partir, après application des règles

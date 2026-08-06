@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════════════════════════
--- Tasale — planification quotidienne
+-- Tasalle — planification quotidienne
 --
 -- `pg_cron` doit d'abord être activé dans le tableau de bord Supabase
 -- (Database → Extensions). Le bloc ci-dessous ne fait rien si l'extension

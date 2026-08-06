@@ -1,6 +1,7 @@
 export default {
   common: {
-    appName: 'Tasale',
+    appName: 'Tasalle',
+    country: 'الجزائر',
     tagline: 'احتفالاتكم، شغفنا',
     next: 'متابعة',
     back: 'رجوع',
@@ -55,7 +56,7 @@ export default {
     reviews: 'التقييمات',
   },
   auth: {
-    welcome: 'مرحباً بكم في Tasale',
+    welcome: 'مرحباً بكم في Tasalle',
     subtitle: 'ابحثوا واحجزوا قاعة الحفلات المثالية في الجزائر',
     phone: 'رقم الهاتف',
     phoneHint: 'سنرسل لكم رمز التحقق عبر رسالة قصيرة',
@@ -389,7 +390,7 @@ export default {
     onboardingTitle: 'سجّلوا قاعتكم',
     onboardingSubtitle: '3 أشهر مجاناً، ثم 500 دج شهرياً. بدون التزام.',
     onboardingDone: 'تم تسجيل قاعتكم!',
-    onboardingDoneBody: 'ستكون مرئية بعد مصادقة فريق Tasale (خلال 24 ساعة).',
+    onboardingDoneBody: 'ستكون مرئية بعد مصادقة فريق Tasalle (خلال 24 ساعة).',
     features: {
       f1: 'حجوزات غير محدودة',
       f2: 'روزنامة تفاعلية',

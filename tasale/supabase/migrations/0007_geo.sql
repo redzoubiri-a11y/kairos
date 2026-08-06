@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════════════════════════
--- Tasale — position des salles (§1.3, Annexe A)
+-- Tasalle — position des salles (§1.3, Annexe A)
 --
 -- La fiche affichait jusqu'ici une distance figée, sans rapport avec la
 -- position de l'utilisateur. Ces deux colonnes permettent de la calculer.

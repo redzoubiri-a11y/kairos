@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════════════════════════
--- Tasale — console d'administration (§2.1)
+-- Tasalle — console d'administration (§2.1)
 --
 -- Deux boucles restaient ouvertes : une salle inscrite gardait le statut
 -- « pending » sans que personne ne puisse la valider (§5.5), et un avis

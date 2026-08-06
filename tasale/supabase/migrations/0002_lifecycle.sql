@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════════════════════════
--- Tasale — cycle de vie automatique
+-- Tasalle — cycle de vie automatique
 --
 -- Sans ces tâches, rien n'avance tout seul : une réservation passée reste
 -- « confirmée », aucune demande d'avis ne part (§7.1), aucun rappel n'est

@@ -1,6 +1,7 @@
 export default {
   common: {
-    appName: 'Tasale',
+    appName: 'Tasalle',
+    country: 'Algérie',
     tagline: 'Vos célébrations, notre passion',
     next: 'Continuer',
     back: 'Retour',
@@ -55,7 +56,7 @@ export default {
     reviews: 'Avis',
   },
   auth: {
-    welcome: 'Bienvenue sur Tasale',
+    welcome: 'Bienvenue sur Tasalle',
     subtitle: 'Trouvez et réservez la salle des fêtes idéale en Algérie',
     phone: 'Numéro de téléphone',
     phoneHint: 'Nous vous enverrons un code de vérification par SMS',
@@ -390,7 +391,7 @@ export default {
     onboardingTitle: 'Inscrivez votre salle',
     onboardingSubtitle: '3 mois offerts, puis 500 DA/mois. Sans engagement.',
     onboardingDone: 'Votre salle est enregistrée !',
-    onboardingDoneBody: 'Elle sera visible après validation par l’équipe Tasale (sous 24 h).',
+    onboardingDoneBody: 'Elle sera visible après validation par l’équipe Tasalle (sous 24 h).',
     features: {
       f1: 'Réservations illimitées',
       f2: 'Planning interactif',

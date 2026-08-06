@@ -311,7 +311,7 @@ export const SEED_USERS = [
   {
     id: 'user-admin-001',
     phone: '+213555000000',
-    full_name: 'Équipe Tasale',
+    full_name: 'Équipe Tasalle',
     role: 'admin',
     preferred_language: 'fr',
     created_at: '2025-09-01T09:00:00Z',

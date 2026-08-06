@@ -3,7 +3,7 @@ import { View, Text, KeyboardAvoidingView, Platform } from 'react-native';
 import { Screen, Header } from '../../components/Screen';
 import MInput from '../../components/MInput';
 import MButton from '../../components/MButton';
-import TasaleLogo from '../../components/TasaleLogo';
+import TasalleLogo from '../../components/TasalleLogo';
 import { useTheme } from '../../context/ThemeContext';
 import { useI18n } from '../../i18n';
 import { isValidPhone } from '../../lib/format';
@@ -42,11 +42,18 @@ export default function PhoneScreen({ navigation }) {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={{ flex: 1, padding: spacing.xl, gap: spacing.xxl }}
       >
-        <View style={{ gap: spacing.lg }}>
-          <TasaleLogo size={44} />
+        {/* Première page de l'application : la marque y est donnée en entier,
+            dans la composition du document de référence. Ailleurs, l'en-tête
+            se contente du monogramme. */}
+        <View style={{ gap: spacing.xxl, alignItems: 'center' }}>
+          <TasalleLogo size={72} stacked />
           <View style={{ gap: spacing.xs }}>
-            <Text style={[typography.h2, { color: colors.dark }]}>{t('auth.welcome')}</Text>
-            <Text style={[typography.body, { color: colors.warmGray }]}>{t('auth.subtitle')}</Text>
+            <Text style={[typography.h2, { color: colors.dark, textAlign: 'center' }]}>
+              {t('auth.welcome')}
+            </Text>
+            <Text style={[typography.body, { color: colors.warmGray, textAlign: 'center' }]}>
+              {t('auth.subtitle')}
+            </Text>
           </View>
         </View>
 

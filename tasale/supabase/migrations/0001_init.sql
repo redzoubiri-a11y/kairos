@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════════════════════════
--- Tasale — schéma initial
+-- Tasalle — schéma initial
 -- Correspond aux spécifications §8 (modèle de données), §8.2 (index),
 -- §9 (endpoints, ici exposés en RPC) et §10 (règles métier, appliquées en base).
 --

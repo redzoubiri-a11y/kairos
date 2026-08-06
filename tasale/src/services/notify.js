@@ -60,17 +60,17 @@ export function clampSms(text) {
 // §6.2 — Templates SMS (160 caractères max)
 export const SMS_TEMPLATES = {
   reservation_confirmed: ({ salle, date, ref }) =>
-    clampSms(`🎉 Tasale : Votre réservation à ${salle} le ${date} est confirmée ! N° ${ref}. À très bientôt !`),
+    clampSms(`🎉 Tasalle : Votre réservation à ${salle} le ${date} est confirmée ! N° ${ref}. À très bientôt !`),
   deposit_requested: ({ pro, amount, ccp, ref }) =>
-    clampSms(`💰 Tasale : ${pro} demande un acompte de ${amount} DA. CCP : ${ccp}. Réf : ${ref}. Merci !`),
+    clampSms(`💰 Tasalle : ${pro} demande un acompte de ${amount} DA. CCP : ${ccp}. Réf : ${ref}. Merci !`),
   reminder_24h: ({ type, salle, heure }) =>
-    clampSms(`📅 Tasale : Rappel — Votre ${type} à ${salle} est demain à ${heure}. Bonne fête !`),
+    clampSms(`📅 Tasalle : Rappel — Votre ${type} à ${salle} est demain à ${heure}. Bonne fête !`),
   reservation_new: ({ client, date }) =>
-    clampSms(`📨 Tasale : Nouvelle demande de ${client} pour le ${date}. Ouvrez l'app pour répondre.`),
+    clampSms(`📨 Tasalle : Nouvelle demande de ${client} pour le ${date}. Ouvrez l'app pour répondre.`),
   review_request: ({ type, salle, lien }) =>
-    clampSms(`🎉 Tasale : Votre ${type} s'est bien passé ? Partagez votre avis sur ${salle} : ${lien}`),
+    clampSms(`🎉 Tasalle : Votre ${type} s'est bien passé ? Partagez votre avis sur ${salle} : ${lien}`),
   reservation_cancelled: ({ salle, date, ref }) =>
-    clampSms(`❌ Tasale : Votre demande pour ${salle} le ${date} n'a pas pu être retenue. Réf : ${ref}.`),
+    clampSms(`❌ Tasalle : Votre demande pour ${salle} le ${date} n'a pas pu être retenue. Réf : ${ref}.`),
 };
 
 // §6.3 — Priorité par type d'événement

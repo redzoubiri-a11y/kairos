@@ -3,7 +3,7 @@ import { View, Text, Pressable, RefreshControl, useWindowDimensions } from 'reac
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import { Screen, Body } from '../../components/Screen';
-import TasaleLogo from '../../components/TasaleLogo';
+import TasalleLogo from '../../components/TasalleLogo';
 import SalleCard from '../../components/SalleCard';
 import { SectionTitle, Loader, ErrorState, MCard } from '../../components/primitives';
 import { useTheme } from '../../context/ThemeContext';
@@ -117,7 +117,7 @@ export default function HomeScreen({ navigation }) {
           paddingVertical: spacing.md,
         }}
       >
-        <TasaleLogo size={34} />
+        <TasalleLogo size={34} />
 
         <Pressable
           onPress={() => navigation.navigate('Notifications')}

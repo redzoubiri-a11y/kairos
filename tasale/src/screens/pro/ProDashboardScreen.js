@@ -3,7 +3,7 @@ import { View, Text, RefreshControl, useWindowDimensions, Pressable } from 'reac
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import { Screen, Body } from '../../components/Screen';
-import TasaleLogo from '../../components/TasaleLogo';
+import TasalleLogo from '../../components/TasalleLogo';
 import KpiCard from '../../components/KpiCard';
 import ReservationCard from '../../components/ReservationCard';
 import { RevenueBars } from '../../components/charts';
@@ -108,7 +108,7 @@ export default function ProDashboardScreen({ navigation }) {
           gap: spacing.sm,
         }}
       >
-        <TasaleLogo size={32} showText={false} />
+        <TasalleLogo size={32} showText={false} />
         {/* À plusieurs salles, le sélecteur juste en dessous porte déjà le nom
             de la salle : l'en-tête identifie alors le compte, pas la salle. */}
         <View style={{ flex: 1 }}>

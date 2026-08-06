@@ -1,6 +1,8 @@
-# Tasale
+# Tasalle
 
 > Vos célébrations, notre passion — احتفالاتكم، شغفنا
+>
+> **Tasalle · Algérie**
 
 Application de réservation de salles des fêtes en Algérie, développée d'après
 les *Spécifications Techniques Complètes v1.0.0*.
@@ -56,7 +58,7 @@ le fonctionnement prévu en production.
 Ne reprenez pas d'images d'Instagram, de Facebook, de Google Images ou des
 sites des salles : elles appartiennent à leurs auteurs, et leur réutilisation
 dans une application commerciale est une contrefaçon. Le risque est d'autant
-moins théorique que ce sont ces mêmes propriétaires que Tasale démarche.
+moins théorique que ce sont ces mêmes propriétaires que Tasalle démarche.
 
 ### Comptes de démonstration
 
@@ -67,7 +69,7 @@ Le code SMS est toujours `123456`.
 | **Pro** | `0555 10 00 01` | Karim Belkacem — **deux salles** : El Widad (7 réservations, 2 en attente, 1 avis à modérer) et Espace Andalous (vide). Essai à J+45, un seul pour les deux |
 | **Client** | `0661 23 45 67` | Amina Cherif — 1 réservation confirmée, 1 événement passé à évaluer, 2 favoris |
 | *Autres pros* | `0555 10 00 02` … `0555 10 00 11` | Propriétaires mono-salle : le sélecteur de salle ne s'affiche pas chez eux |
-| **Admin** | `0555 00 00 00` | Équipe Tasale — 1 salle à valider, 1 avis signalé |
+| **Admin** | `0555 00 00 00` | Équipe Tasalle — 1 salle à valider, 1 avis signalé |
 | *Nouveau compte* | tout autre numéro valide | Parcours d'inscription complet (client ou pro) |
 
 Le PIN de signature des comptes pro de démonstration est `1234`.
@@ -181,7 +183,7 @@ psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/tests/_bootstrap_local.sql
 | `src/services/pdfTemplates.test.js` (31) | Contrat, planning et facture : montants et solde, mention de signature, salles couvertes par l'abonnement, échappement HTML d'un nom de client piégé, traduction des énumérations |
 | `src/lib/geo.test.js` (26) | Distance orthodromique vérifiée sur des écarts connus (Alger–Oran, un degré de latitude), tri par proximité, liens d'itinéraire par plateforme |
 | `src/i18n/i18n.test.js` (15) | Parité des clés français/arabe, jetons `{{x}}` cohérents, listes de même longueur, aucun `accessibilityLabel` écrit en dur, et surtout : chaque clé appelée dans le code existe bien — une clé absente s'afficherait telle quelle à l'écran, sans erreur |
-| `src/theme.test.js` (13) | Contrastes calculés selon WCAG 2.1 : encre de marque ≥ 4,5:1 dans les deux thèmes, blanc lisible sur les aplats de bouton, thème clair verrouillé à l'identique |
+| `src/theme.test.js` (15) | Contrastes calculés selon WCAG 2.1 : encre de marque ≥ 4,5:1 dans les deux thèmes, blanc lisible sur les aplats de bouton, thème clair verrouillé à l'identique, et l'or du logo verrouillé **sous** le seuil — pour qu'il ne devienne jamais une couleur de texte |
 | `supabase/tests/business_rules.sql` (17) | Les mêmes règles §10, mais côté PostgreSQL : unicité du jour confirmé, PIN, délai d'avis, publication automatique, agrégats, absence de policy `DELETE` sur les avis |
 | `supabase/tests/admin.sql` (14) | Autorisations de la console : un client n'obtient pas les chiffres, un pro ne valide pas sa propre salle, un avis retiré reste en base |
 | `supabase/tests/lifecycle.sql` (16) | Clôture des événements passés, rappel J-1, demande d'avis à J+48 h, rappels et expiration d'essai — chaque tâche vérifiée aussi pour son idempotence |
@@ -291,6 +293,23 @@ n'est pas une application web native.
 **Supabase plutôt qu'une API maison.** Les spécifications décrivent PostgreSQL,
 JWT et des rôles — exactement ce que Supabase fournit, avec en plus
 l'authentification OTP SMS et le RLS. Les endpoints §9 deviennent des RPC.
+
+**L'or de la marque n'est pas une couleur d'interface.** Le monogramme et le
+filet circulaire sont dans l'or du document de marque, `#BE9A5E`, qui ne fait
+que 2,63:1 sur blanc. WCAG 2.1 exempte les logotypes de son critère de
+contraste (1.4.3), donc c'est admis — pour le logo seul. Partout ailleurs,
+l'or lisible est `goldText` (`#8B6914`, 5,09:1). Un test fige cette frontière
+dans les deux sens, de sorte que promouvoir `logoInk` en couleur de texte
+échoue au lieu de passer inaperçu.
+
+**Le monogramme est tracé, pas composé.** Le T et le S se chevauchent : le S
+descend sous la ligne du T et mord sur son pied. Un interlettrage négatif les
+laisserait côte à côte, alors le composant les pose séparément dans un SVG de
+100 × 100. Le générateur d'icônes (`assets/`) reprend exactement les mêmes
+proportions, pour que la marque de l'application et celle des stores soient
+la même. Les lettres s'appuient encore sur le serif du système : les fondre
+en tracés — ou embarquer la fonte du document de marque — reste à faire si
+l'on veut une identité au pixel près sur les trois plateformes.
 
 **Couleurs des graphiques.** La palette de marque ne peut pas servir de palette
 catégorielle : terracotta `#C8956C` et or `#D4A853` ne sont séparés que de

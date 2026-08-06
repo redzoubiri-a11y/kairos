@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════════════════════════
--- Tasale — stockage des images
+-- Tasalle — stockage des images
 --
 -- Le schéma `storage` n'existe que sur Supabase. Sur une instance PostgreSQL
 -- nue, ce fichier ne fait rien et le signale, pour que la chaîne complète des

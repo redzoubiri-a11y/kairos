@@ -72,13 +72,30 @@ describe('contraste du thème sombre', () => {
 });
 
 describe('logo', () => {
-  it('l’initiale se détache de son aplat', () => {
-    // Glyphe de grande taille : le seuil des gros textes s'applique.
-    expect(contrast(lightColors.logoInk, lightColors.logoBg)).toBeGreaterThanOrEqual(AA_COMPOSANT);
+  it('le monogramme garde le même or dans les deux thèmes', () => {
+    // Une marque ne change pas de couleur avec l'apparence de l'interface.
+    expect(darkColors.logoInk).toBe(lightColors.logoInk);
   });
 
-  it('garde les mêmes couleurs dans les deux thèmes', () => {
-    expect(darkColors.logoBg).toBe(lightColors.logoBg);
-    expect(darkColors.logoInk).toBe(lightColors.logoInk);
+  it('le mot-symbole s’inverse pour rester lisible', () => {
+    expect(contrast(lightColors.logoWordmark, lightColors.cream)).toBeGreaterThanOrEqual(AA_TEXTE);
+    expect(contrast(darkColors.logoWordmark, darkColors.cream)).toBeGreaterThanOrEqual(AA_TEXTE);
+  });
+
+  /**
+   * L'or de la marque ne passe aucun seuil sur fond clair (2,63:1). C'est
+   * admis pour un logotype, que WCAG 2.1 exempte explicitement (1.4.3) — mais
+   * seulement pour lui. Ce test fige la frontière : si quelqu'un promeut
+   * `logoInk` en couleur de texte, la marge dont il croit disposer n'existe
+   * pas, et `goldText` est là pour ça.
+   */
+  it('l’or de la marque ne peut pas servir de couleur de texte', () => {
+    expect(contrast(lightColors.logoInk, lightColors.cream)).toBeLessThan(AA_COMPOSANT);
+    expect(contrast(lightColors.goldText, lightColors.cream)).toBeGreaterThanOrEqual(AA_TEXTE);
+  });
+
+  it('le monogramme ressort sur le fond des icônes', () => {
+    // Filet et lettres sur le crème de marque : seuil des composants.
+    expect(contrast(lightColors.logoInk, darkColors.cream)).toBeGreaterThanOrEqual(AA_COMPOSANT);
   });
 });

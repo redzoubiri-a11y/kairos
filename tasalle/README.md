@@ -157,11 +157,12 @@ puis rejouer `0004_cron.sql`.
 ## Tests
 
 ```bash
-npm test                                                    # 200 tests JS (jest-expo)
+npm test                                                    # 203 tests JS (jest-expo)
 psql "$DATABASE_URL" -f supabase/tests/business_rules.sql   # 17 assertions SQL
 psql "$DATABASE_URL" -f supabase/tests/lifecycle.sql        # 16 assertions SQL
 psql "$DATABASE_URL" -f supabase/tests/admin.sql            # 14 assertions SQL
 psql "$DATABASE_URL" -f supabase/tests/multi_salles.sql     # 10 assertions SQL
+node scripts/edge/run.mjs                                   # 28 vérifications des fonctions Edge
 ```
 
 Les suites SQL tournent aussi sur un PostgreSQL nu, sans projet Supabase :
@@ -184,7 +185,7 @@ psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/tests/_bootstrap_local.sql
 | `src/services/pdfTemplates.test.js` (31) | Contrat, planning et facture : montants et solde, mention de signature, salles couvertes par l'abonnement, échappement HTML d'un nom de client piégé, traduction des énumérations |
 | `src/lib/geo.test.js` (26) | Distance orthodromique vérifiée sur des écarts connus (Alger–Oran, un degré de latitude), tri par proximité, liens d'itinéraire par plateforme |
 | `src/i18n/i18n.test.js` (7) | Chaque clé appelée dans le code existe — une clé absente s'afficherait telle quelle à l'écran, sans erreur — et aucun libellé n'est écrit en dur dans le JSX |
-| `src/theme.test.js` (18) | Contrastes calculés selon WCAG 2.1 : encre de marque ≥ 4,5:1 dans les deux thèmes, libellé lisible sur les aplats — y compris après l'inversion des rôles en thème sombre — rouge d'erreur tenant dans ses deux emplois, et l'or de marque verrouillé **sous** le seuil, pour qu'il ne devienne jamais une couleur de texte |
+| `src/theme.test.js` (21) | Contrastes calculés selon WCAG 2.1 : encre de marque ≥ 4,5:1 dans les deux thèmes, libellé lisible sur les aplats — y compris après l'inversion des rôles en thème sombre — rouge d'erreur tenant dans ses deux emplois, et l'or de marque verrouillé **sous** le seuil, pour qu'il ne devienne jamais une couleur de texte |
 | `supabase/tests/business_rules.sql` (17) | Les mêmes règles §10, mais côté PostgreSQL : unicité du jour confirmé, PIN, délai d'avis, publication automatique, agrégats, absence de policy `DELETE` sur les avis |
 | `supabase/tests/admin.sql` (14) | Autorisations de la console : un client n'obtient pas les chiffres, un pro ne valide pas sa propre salle, un avis retiré reste en base |
 | `supabase/tests/lifecycle.sql` (16) | Clôture des événements passés, rappel J-1, demande d'avis à J+48 h, rappels et expiration d'essai — chaque tâche vérifiée aussi pour son idempotence |
@@ -270,10 +271,18 @@ applicative.
   hook OTP, worker d'expédition, adaptateur de fournisseur — mais aucun compte
   opérateur n'est ouvert. Il reste à souscrire chez un opérateur algérien (ou
   Twilio) et à renseigner `SMS_PROVIDER` et ses variables. Aucun code à écrire.
-- **Fonctions Edge non exécutées.** `send-sms-hook` et `dispatch-notifications`
-  sont écrites mais n'ont jamais tourné : cet environnement n'a pas Deno et le
-  proxy bloque les hôtes externes. Elles demandent une première exécution
-  attentive.
+- **Fonctions Edge jamais déployées.** `send-sms-hook` et
+  `dispatch-notifications` s'exécutent et sont vérifiées par
+  `scripts/edge/run.mjs` (28 contrôles), mais sous Node avec des adaptateurs
+  pour `Deno.env` et `Deno.serve` — Deno n'étant pas installable ici. La
+  logique est établie ; la compatibilité avec le runtime Deno lui-même reste à
+  confirmer par un premier déploiement attentif.
+- **Tuiles Mapbox jamais vues.** Le chemin complet est vérifié — URL construite
+  avec les bonnes coordonnées et le bon marqueur, chargement de l'image, place
+  dans la fiche, et repli quand la requête échoue — mais avec une tuile servie
+  localement : `api.mapbox.com` est inaccessible depuis cet environnement et
+  aucun jeton n'est disponible. Seul le rendu des vraies tuiles reste à
+  observer.
 - **Prélèvement de l'abonnement.** La méthode de paiement se configure,
   l'historique s'affiche, et l'essai bascule automatiquement en abonnement
   actif à son terme ; le prélèvement CCP/BaridiMob suppose une intégration
@@ -349,7 +358,7 @@ seconde langue possible sans rouvrir chaque écran.
 
 ## Vérification effectuée
 
-- `npm test` — 200 tests au vert
+- `npm test` — 203 tests au vert
 - `npx expo export --platform web` — 917 modules, aucune erreur
 - Parcours pro complet en navigateur (Playwright) : connexion OTP → tableau de
   bord → confirmation d'une demande avec acompte et signature PIN → planning →

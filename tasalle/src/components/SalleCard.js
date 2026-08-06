@@ -26,7 +26,7 @@ function RatingOverlay({ rating }) {
         paddingVertical: 3,
       }}
     >
-      <Ionicons name="star" size={11} color={colors.gold} />
+      <Ionicons name="star" size={11} color={colors.goldMark} />
       <Text style={{ fontSize: 11, fontWeight: '500', color: '#1A1A1A' }}>{Number(rating).toFixed(1)}</Text>
     </View>
   );

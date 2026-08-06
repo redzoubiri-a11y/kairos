@@ -12,7 +12,7 @@ export function Stars({ value = 0, size = 14, showValue = false, count }) {
       <View style={{ flexDirection: 'row', gap: 1 }}>
         {[1, 2, 3, 4, 5].map((i) => {
           const name = rounded >= i ? 'star' : rounded >= i - 0.5 ? 'star-half' : 'star-outline';
-          return <Ionicons key={i} name={name} size={size} color={colors.gold} />;
+          return <Ionicons key={i} name={name} size={size} color={colors.goldMark} />;
         })}
       </View>
       {showValue ? (
@@ -44,7 +44,7 @@ export function StarPicker({ value = 0, onChange, size = 30, label }) {
             <Ionicons
               name={value >= i ? 'star' : 'star-outline'}
               size={size}
-              color={value >= i ? colors.gold : colors.border}
+              color={value >= i ? colors.goldMark : colors.border}
             />
           </Pressable>
         ))}

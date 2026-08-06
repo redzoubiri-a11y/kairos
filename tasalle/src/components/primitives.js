@@ -189,7 +189,7 @@ export function ErrorState({ message, onRetry }) {
 export function ProgressBar({ percent, tone = 'primary', height = 8, showLabel = false }) {
   const { colors, typography, radii, spacing } = useTheme();
   const value = Math.max(0, Math.min(100, Number(percent) || 0));
-  const fill = tone === 'gold' ? colors.gold : tone === 'secondary' ? colors.secondary : colors.primaryInk;
+  const fill = tone === 'gold' ? colors.goldMark : tone === 'secondary' ? colors.secondary : colors.primaryInk;
 
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, flex: 1 }}>

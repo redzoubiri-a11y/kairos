@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { View, Text, Image, Pressable, Linking, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../context/ThemeContext';
@@ -10,13 +11,18 @@ const MAPBOX_TOKEN = process.env.EXPO_PUBLIC_MAPBOX_TOKEN || null;
  * Situation de la salle (§1.3, Annexe A).
  *
  * Avec un jeton Mapbox, une vignette cartographique. Sans jeton — le cas par
- * défaut — un repli qui affiche l'adresse. Dans les deux cas le bouton
+ * défaut — un repli qui affiche la ville. Dans les deux cas le bouton
  * d'itinéraire fonctionne : il ouvre l'application de cartes de l'appareil,
  * qui n'exige aucune clé d'API. Le §1.3 prévoit explicitement ce repli.
+ *
+ * Le même repli couvre l'échec de chargement de la tuile. Sans lui, une
+ * coupure réseau — le §1.4 rappelle qu'elles sont fréquentes — laissait le
+ * bloc « Situation » sans visuel, alors que le repli était déjà écrit.
  */
 export default function SalleMap({ salle }) {
   const { colors, typography, spacing, radii } = useTheme();
   const { t } = useI18n();
+  const [tuileEnEchec, setTuileEnEchec] = useState(false);
 
   if (!hasCoords(salle)) return null;
 
@@ -46,10 +52,16 @@ export default function SalleMap({ salle }) {
         backgroundColor: colors.surface,
       }}
     >
-      {vignette ? (
-        <Image source={{ uri: vignette }} style={{ width: '100%', height: 160 }} resizeMode="cover" />
+      {vignette && !tuileEnEchec ? (
+        <Image
+          source={{ uri: vignette }}
+          style={{ width: '100%', height: 160 }}
+          resizeMode="cover"
+          onError={() => setTuileEnEchec(true)}
+        />
       ) : (
-        // Repli sans jeton : une bande sobre plutôt qu'une fausse carte
+        // Repli — pas de jeton, ou tuile inaccessible : une bande sobre
+        // plutôt qu'une fausse carte ou un trou dans la mise en page
         <View
           style={{
             height: 96,

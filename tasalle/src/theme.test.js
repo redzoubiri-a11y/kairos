@@ -51,6 +51,27 @@ describe('contraste du thème clair', () => {
     expect(contrast(lightColors.secondary, lightColors.surface)).toBeGreaterThanOrEqual(AA_TEXTE);
   });
 
+  /**
+   * Trois ors, trois emplois, et une frontière que ce test tient :
+   *   gold      — décor et logo. Sous tous les seuils, exempté à ce titre.
+   *   goldMark  — objets graphiques porteurs d'information (étoiles de
+   *               notation, barres). WCAG 2.1 §1.4.11 exige 3:1.
+   *   goldText  — texte. 4,5:1.
+   * Le glissement facile est d'utiliser `gold` pour une étoile ou une barre,
+   * parce que c'est « la couleur de la marque » : la note conviendrait alors
+   * à 2,63:1.
+   */
+  it('l’or des objets graphiques atteint le seuil des composants', () => {
+    expect(contrast(lightColors.goldMark, lightColors.surface)).toBeGreaterThanOrEqual(AA_COMPOSANT);
+    // Y compris sur le fond pâle des puces et vignettes, où il est le plus mis
+    // à l'épreuve.
+    expect(contrast(lightColors.goldMark, lightColors.goldLight)).toBeGreaterThanOrEqual(AA_COMPOSANT);
+  });
+
+  it('l’or de marque ne conviendrait pas à ce rôle', () => {
+    expect(contrast(lightColors.gold, lightColors.surface)).toBeLessThan(AA_COMPOSANT);
+  });
+
   it('les fonds pâles laissent lire l’encre de marque', () => {
     expect(contrast(lightColors.primaryInk, lightColors.primaryLight)).toBeGreaterThanOrEqual(AA_TEXTE);
   });
@@ -82,6 +103,11 @@ describe('contraste du thème sombre', () => {
 
   it('un libellé blanc en dur y serait illisible', () => {
     expect(contrast('#FFFFFF', darkColors.primary)).toBeLessThan(AA_COMPOSANT);
+  });
+
+  it('l’or des objets graphiques tient aussi sur fond sombre', () => {
+    expect(contrast(darkColors.goldMark, darkColors.surface)).toBeGreaterThanOrEqual(AA_COMPOSANT);
+    expect(contrast(darkColors.goldMark, darkColors.cream)).toBeGreaterThanOrEqual(AA_COMPOSANT);
   });
 
   it('les marques de graphique se détachent de la surface', () => {

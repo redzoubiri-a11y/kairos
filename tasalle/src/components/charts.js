@@ -173,7 +173,7 @@ export function RevenueLine({ data, height = 150 }) {
  */
 export function BreakdownBars({ rows, tone = 'primary', suffix = '%' }) {
   const { colors, typography, spacing, radii } = useTheme();
-  const fill = tone === 'gold' ? colors.gold : tone === 'secondary' ? colors.secondary : colors.chartInk;
+  const fill = tone === 'gold' ? colors.goldMark : tone === 'secondary' ? colors.secondary : colors.chartInk;
 
   if (!rows?.length) return null;
 

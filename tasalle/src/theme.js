@@ -29,6 +29,11 @@ export const lightColors = {
   gold: '#BE9A5E',
   goldLight: '#FAF5EC',
   goldText: '#8B6914',
+  // Or des objets graphiques porteurs d'information — les étoiles de notation
+  // au premier chef. `gold` ne fait que 2,63:1 sur blanc, sous le seuil de
+  // 3:1 que WCAG 2.1 (1.4.11) demande à un élément non textuel dont la forme
+  // véhicule une donnée. Celui-ci atteint 3,49:1 tout en restant de l'or.
+  goldMark: '#A8834A',
 
   // Accents — le rouge d'erreur est assombri de #D94E3B à #C0392B : l'ancien
   // ne faisait que 4,12:1, sous le seuil, aussi bien en texte sur blanc qu'en
@@ -109,6 +114,9 @@ export const darkColors = {
   onPrimary: '#1A1A1A',
   primaryInk: '#BE9A5E',
   secondary: '#C9A96A',
+  // Sur fond sombre, l'or de marque dépasse largement le seuil : les étoiles
+  // reprennent la teinte pleine.
+  goldMark: '#BE9A5E',
   chartInk: '#BE9A5E',
   chartGrid: 'rgba(255,255,255,0.10)',
 

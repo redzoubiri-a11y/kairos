@@ -15,7 +15,7 @@ export default function KpiCard({ label, value, delta, deltaSuffix = '%', icon, 
   const deltaColor = up ? colors.primaryInk : colors.accent;
 
   const iconTone =
-    tone === 'gold' ? colors.gold : tone === 'secondary' ? colors.secondary : colors.primaryInk;
+    tone === 'gold' ? colors.goldMark : tone === 'secondary' ? colors.secondary : colors.primaryInk;
   const iconBg =
     tone === 'gold' ? colors.goldLight : tone === 'secondary' ? colors.secondaryLight : colors.primaryLight;
 

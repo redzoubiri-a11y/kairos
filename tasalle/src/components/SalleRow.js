@@ -53,7 +53,7 @@ export default function SalleRow({ salle, onPress, onToggleFav, isFav }) {
 
           {salle.rating != null ? (
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-              <Ionicons name="star" size={12} color={colors.gold} />
+              <Ionicons name="star" size={12} color={colors.goldMark} />
               <Text style={[typography.caption, { color: colors.dark }]}>
                 {Number(salle.rating).toFixed(1)}
               </Text>

@@ -157,13 +157,27 @@ puis rejouer `0004_cron.sql`.
 ## Tests
 
 ```bash
-npm test                                                    # 203 tests JS (jest-expo)
-psql "$DATABASE_URL" -f supabase/tests/business_rules.sql   # 17 assertions SQL
-psql "$DATABASE_URL" -f supabase/tests/lifecycle.sql        # 16 assertions SQL
-psql "$DATABASE_URL" -f supabase/tests/admin.sql            # 14 assertions SQL
-psql "$DATABASE_URL" -f supabase/tests/multi_salles.sql     # 10 assertions SQL
-node scripts/edge/run.mjs                                   # 28 vérifications des fonctions Edge
+npm test                        # 203 tests JS (jest-expo)
+npm run test:sql                # 59 assertions SQL, sur une base neuve
+npm run test:edge               # 28 vérifications des fonctions Edge
 ```
+
+`test:sql` attend une base vide dans `DATABASE_URL` ; il y applique le
+préambule, les neuf migrations puis les quatre suites.
+
+```bash
+createdb tasalle_test && DATABASE_URL=postgres:///tasalle_test npm run test:sql
+```
+
+**Pourquoi passer par un script.** `psql` sort en 0 même quand une assertion
+vaut faux : lancées à la main, les suites SQL n'étaient qu'un affichage à
+relire. Le script compte les deux formes d'assertion — colonne booléenne et
+`raise notice` — et échoue sur la moindre. Il lit stdout **et** stderr, faute
+de quoi les onze contrôles qui interceptent une exception passaient inaperçus.
+
+Les trois commandes tournent en intégration continue à chaque poussée touchant
+`tasalle/` (`.github/workflows/tasalle.yml`), avec en plus le bundle web — la
+seule vérification qui compile réellement tous les écrans.
 
 Les suites SQL tournent aussi sur un PostgreSQL nu, sans projet Supabase :
 `supabase/tests/_bootstrap_local.sql` recrée d'abord le schéma `auth`, la
@@ -186,7 +200,7 @@ psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/tests/_bootstrap_local.sql
 | `src/lib/geo.test.js` (26) | Distance orthodromique vérifiée sur des écarts connus (Alger–Oran, un degré de latitude), tri par proximité, liens d'itinéraire par plateforme |
 | `src/i18n/i18n.test.js` (7) | Chaque clé appelée dans le code existe — une clé absente s'afficherait telle quelle à l'écran, sans erreur — et aucun libellé n'est écrit en dur dans le JSX |
 | `src/theme.test.js` (21) | Contrastes calculés selon WCAG 2.1 : encre de marque ≥ 4,5:1 dans les deux thèmes, libellé lisible sur les aplats — y compris après l'inversion des rôles en thème sombre — rouge d'erreur tenant dans ses deux emplois, et l'or de marque verrouillé **sous** le seuil, pour qu'il ne devienne jamais une couleur de texte |
-| `supabase/tests/business_rules.sql` (17) | Les mêmes règles §10, mais côté PostgreSQL : unicité du jour confirmé, PIN, délai d'avis, publication automatique, agrégats, absence de policy `DELETE` sur les avis |
+| `supabase/tests/business_rules.sql` (19) | Les mêmes règles §10, mais côté PostgreSQL : unicité du jour confirmé, PIN, délai d'avis, publication automatique, agrégats, absence de policy `DELETE` sur les avis, et l'index d'unicité attaqué directement — la vérification applicative et l'index protègent deux chemins différents, seul le premier était couvert |
 | `supabase/tests/admin.sql` (14) | Autorisations de la console : un client n'obtient pas les chiffres, un pro ne valide pas sa propre salle, un avis retiré reste en base |
 | `supabase/tests/lifecycle.sql` (16) | Clôture des événements passés, rappel J-1, demande d'avis à J+48 h, rappels et expiration d'essai — chaque tâche vérifiée aussi pour son idempotence |
 | `supabase/tests/multi_salles.sql` (10) | Un propriétaire ne lit ni ne modifie la salle d'un autre, un seul abonnement par propriétaire, le tableau de bord et les statistiques restent cloisonnés par salle |
@@ -358,7 +372,7 @@ seconde langue possible sans rouvrir chaque écran.
 
 ## Vérification effectuée
 
-- `npm test` — 203 tests au vert
+- `npm test` — 203 tests au vert, `npm run test:sql` — 59 assertions, `npm run test:edge` — 28 vérifications
 - `npx expo export --platform web` — 917 modules, aucune erreur
 - Parcours pro complet en navigateur (Playwright) : connexion OTP → tableau de
   bord → confirmation d'une demande avec acompte et signature PIN → planning →

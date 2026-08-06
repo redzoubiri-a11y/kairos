@@ -188,3 +188,53 @@ select 'T17 pas de policy DELETE sur reviews' as test,
        count(*) = 0 as ok
 from pg_policies
 where tablename = 'reviews' and cmd = 'DELETE';
+
+-- ── 9. L'unicité du jour confirmé tient en base (§10.1) ───────────────────
+--
+-- `DAY_TAKEN` est levé à deux endroits : une vérification applicative au
+-- moment de la demande, et l'index partiel `uniq_confirmed_day` au moment de
+-- la confirmation. Seule la première était éprouvée (T9), alors que c'est la
+-- seconde qui tient en cas de course — deux propriétaires confirmant le même
+-- jour à la même seconde. On l'attaque donc directement, hors des RPC.
+
+do $$
+declare v_jour date := current_date + 120;
+begin
+    insert into reservations
+        (id, salle_id, client_id, event_date, event_type, guest_count,
+         total_amount, status, reference, client_name, client_phone)
+    values ('cccccccc-cccc-cccc-cccc-cccccccccc01',
+            'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+            '22222222-2222-2222-2222-222222222222', v_jour, 'mariage', 100,
+            35000, 'confirmed', 'TAS-TEST-0001', 'Client A', '+213661111111');
+
+    begin
+        insert into reservations
+            (id, salle_id, client_id, event_date, event_type, guest_count,
+             total_amount, status, reference, client_name, client_phone)
+        values ('cccccccc-cccc-cccc-cccc-cccccccccc02',
+                'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+                '33333333-3333-3333-3333-333333333333', v_jour, 'fiancailles', 80,
+                35000, 'confirmed', 'TAS-TEST-0002', 'Client B', '+213662222222');
+        raise notice 'T18 index d''unicité du jour ..... ÉCHEC (second insert accepté)';
+    exception when unique_violation then
+        raise notice 'T18 index d''unicité du jour ..... OK';
+    when others then
+        raise notice 'T18 index d''unicité du jour ..... ÉCHEC (%)', sqlerrm;
+    end;
+
+    -- Le même jour reste libre pour une demande en attente : la contrainte ne
+    -- porte que sur les réservations confirmées.
+    begin
+        insert into reservations
+            (id, salle_id, client_id, event_date, event_type, guest_count,
+             total_amount, status, reference, client_name, client_phone)
+        values ('cccccccc-cccc-cccc-cccc-cccccccccc03',
+                'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+                '33333333-3333-3333-3333-333333333333', v_jour, 'anniversaire', 50,
+                35000, 'pending', 'TAS-TEST-0003', 'Client C', '+213663333333');
+        raise notice 'T19 une demande reste possible .. OK';
+    exception when others then
+        raise notice 'T19 une demande reste possible .. ÉCHEC (%)', sqlerrm;
+    end;
+end $$;

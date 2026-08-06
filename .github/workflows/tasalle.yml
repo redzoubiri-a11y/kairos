@@ -1,0 +1,89 @@
+name: Tasalle
+
+# Le dépôt héberge deux applications ; ce workflow ne concerne que Tasalle et
+# ne se déclenche que si quelque chose y a bougé.
+on:
+  push:
+    branches: ['**']
+    paths: ['tasalle/**', '.github/workflows/tasalle.yml']
+  pull_request:
+    paths: ['tasalle/**', '.github/workflows/tasalle.yml']
+
+defaults:
+  run:
+    working-directory: tasalle
+
+jobs:
+  tests-js:
+    name: Tests JS et bundle web
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: tasalle/package-lock.json
+
+      - run: npm ci
+
+      - name: Tests unitaires
+        run: npm test
+
+      # Le bundle web est la seule vérification qui compile réellement tous les
+      # écrans : une erreur d'import ou de syntaxe y apparaît là où les tests,
+      # qui ne montent pas l'arbre de composants, ne la voient pas.
+      - name: Bundle web
+        run: npx expo export --platform web --output-dir /tmp/web
+
+  tests-sql:
+    name: Schéma et règles métier
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: tasalle_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Client PostgreSQL
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      # Applique le préambule, les neuf migrations et les quatre suites sur une
+      # base neuve. Le script échoue sur la moindre assertion fausse — psql,
+      # lui, sort en 0 même dans ce cas.
+      - name: Migrations et assertions SQL
+        run: node scripts/sql-tests.mjs
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/tasalle_test
+
+  tests-edge:
+    name: Fonctions Edge
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: tasalle/package-lock.json
+
+      - run: npm ci
+
+      # Les fonctions sont écrites pour Deno ; elles tournent ici sous Node avec
+      # des adaptateurs. Voir scripts/edge/README.md pour la portée exacte.
+      - name: Hook SMS et expédition des notifications
+        run: node scripts/edge/run.mjs

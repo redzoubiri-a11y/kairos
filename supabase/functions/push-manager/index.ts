@@ -52,12 +52,73 @@ serve(async (req) => {
   }
 
   try {
-    const { restaurant_id, user_id, title, body, data } = await req.json();
-
-    if (!title || !body) {
+    // ── 1. Auth : le caller doit être authentifié ────────────────────────────
+    const jwt = (req.headers.get("Authorization") ?? "").replace("Bearer ", "").trim();
+    if (!jwt) {
       return new Response(
-        JSON.stringify({ ok: false, error: "title et body requis" }),
+        JSON.stringify({ ok: false, error: "Non autorisé." }),
+        { status: 401, headers: { ...CORS, "Content-Type": "application/json" } },
+      );
+    }
+    const { data: { user: caller }, error: authErr } = await admin.auth.getUser(jwt);
+    if (authErr || !caller) {
+      return new Response(
+        JSON.stringify({ ok: false, error: "Non autorisé." }),
+        { status: 401, headers: { ...CORS, "Content-Type": "application/json" } },
+      );
+    }
+
+    const { reservation_id, restaurant_id, user_id, title, body, data } = await req.json();
+
+    if (!reservation_id || !title || !body) {
+      return new Response(
+        JSON.stringify({ ok: false, error: "reservation_id, title et body requis" }),
         { status: 400, headers: { ...CORS, "Content-Type": "application/json" } },
+      );
+    }
+
+    // ── 2. La cible (restaurant_id / user_id) doit correspondre à la résa ────
+    const { data: resa } = await admin
+      .from("reservations")
+      .select("id, user_id, restaurant_id")
+      .eq("id", reservation_id)
+      .maybeSingle();
+    if (!resa) {
+      return new Response(
+        JSON.stringify({ ok: false, error: "Réservation introuvable." }),
+        { status: 404, headers: { ...CORS, "Content-Type": "application/json" } },
+      );
+    }
+    if ((restaurant_id && restaurant_id !== resa.restaurant_id) || (user_id && user_id !== resa.user_id)) {
+      return new Response(
+        JSON.stringify({ ok: false, error: "Cible invalide pour cette réservation." }),
+        { status: 400, headers: { ...CORS, "Content-Type": "application/json" } },
+      );
+    }
+
+    // ── 3. Le caller doit être le client de la résa OU le owner du restaurant
+    const { data: callerUser } = await admin
+      .from("users")
+      .select("id")
+      .eq("auth_id", caller.id)
+      .maybeSingle();
+    const isReservationOwner = callerUser?.id === resa.user_id;
+
+    let isRestaurantOwner = false;
+    if (!isReservationOwner) {
+      const { data: ownerRow } = await admin
+        .from("restaurant_owners")
+        .select("id")
+        .eq("auth_id", caller.id)
+        .eq("restaurant_id", resa.restaurant_id)
+        .maybeSingle();
+      isRestaurantOwner = !!ownerRow;
+    }
+
+    if (!isReservationOwner && !isRestaurantOwner) {
+      return new Response(
+        JSON.stringify({ ok: false, error: "Accès refusé." }),
+        { status: 403, headers: { ...CORS, "Content-Type": "application/json" } },
       );
     }
 

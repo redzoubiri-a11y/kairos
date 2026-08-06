@@ -123,6 +123,7 @@ export default function useDashboard() {
             ).catch(() => {});
             supabase.functions.invoke('push-manager', {
               body: {
+                reservation_id: resa.id,
                 user_id: resa.user_id,
                 title: 'Réservation confirmée ✅',
                 body: `Votre table chez ${restaurant?.name} le ${formatDate(resa.date)} à ${resa.time_slot?.slice(0,5)} est confirmée.`,
@@ -159,6 +160,7 @@ export default function useDashboard() {
             ).catch(() => {});
             supabase.functions.invoke('push-manager', {
               body: {
+                reservation_id: resa.id,
                 user_id: resa.user_id,
                 title: 'Réservation annulée ❌',
                 body: `Votre réservation chez ${restaurant?.name} le ${formatDate(resa.date)} n'a pas pu être confirmée.`,

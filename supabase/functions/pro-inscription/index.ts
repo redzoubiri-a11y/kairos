@@ -55,8 +55,15 @@ serve(async (req) => {
 
     if (!reqRow) throw new Error("Demande introuvable");
 
-    const approveUrl = `${FUNCTIONS_URL}/approve-pro?id=${reqRow.id}&step=confirm`;
-    const rejectUrl  = `${FUNCTIONS_URL}/reject-pro?id=${reqRow.id}&step=confirm`;
+    // Jeton admin dédié : jamais renvoyé au client, seulement à l'email admin.
+    const adminToken = crypto.randomUUID();
+    const { error: tokenErr } = await admin
+      .from("pro_request_admin_tokens")
+      .upsert({ request_id: reqRow.id, token: adminToken });
+    if (tokenErr) throw new Error(tokenErr.message);
+
+    const approveUrl = `${FUNCTIONS_URL}/approve-pro?id=${reqRow.id}&token=${adminToken}&step=confirm`;
+    const rejectUrl  = `${FUNCTIONS_URL}/reject-pro?id=${reqRow.id}&token=${adminToken}&step=confirm`;
 
     // Email to admin with approve/reject buttons
     await sendEmail(

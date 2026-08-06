@@ -185,6 +185,7 @@ export default function useReservationForm(restaurant, onSuccess, existingResa =
           });
           supabase.functions.invoke('push-manager', {
             body: {
+              reservation_id: existingResa.id,
               user_id: uid,
               title: 'Réservation modifiée ✅',
               body:  `Chez ${restaurant.name} · ${formatDateLong(date)} à ${heure} pour ${adults} personne${adults > 1 ? 's' : ''}.`,
@@ -212,6 +213,7 @@ export default function useReservationForm(restaurant, onSuccess, existingResa =
           }
           supabase.functions.invoke('push-manager', {
             body: {
+              reservation_id: existingResa.id,
               restaurant_id: restaurant.id,
               title: 'Réservation modifiée',
               body:  `${formatDateLong(date)} à ${heure} · ${adults} couvert${adults > 1 ? 's' : ''}.`,
@@ -219,7 +221,7 @@ export default function useReservationForm(restaurant, onSuccess, existingResa =
           });
         } catch (_) {}
       } else {
-        const { error: resaErr } = await supabase.from('reservations').insert({
+        const { data: newResa, error: resaErr } = await supabase.from('reservations').insert({
           user_id:       uid,
           restaurant_id: restaurant.id,
           date,
@@ -228,7 +230,7 @@ export default function useReservationForm(restaurant, onSuccess, existingResa =
           nb_children:   children,
           notes:         noteText,
           status:        'pending',
-        });
+        }).select('id').single();
         if (resaErr) { setError(resaErr.message); return; }
         try {
           await supabase.from('notifications').insert({
@@ -240,6 +242,7 @@ export default function useReservationForm(restaurant, onSuccess, existingResa =
           });
           supabase.functions.invoke('push-manager', {
             body: {
+              reservation_id: newResa.id,
               user_id: uid,
               title: 'Demande envoyée ✅',
               body:  `Chez ${restaurant.name} · ${formatDateLong(date)} à ${heure} pour ${adults} personne${adults > 1 ? 's' : ''}. En attente de confirmation.`,
@@ -267,6 +270,7 @@ export default function useReservationForm(restaurant, onSuccess, existingResa =
           }
           supabase.functions.invoke('push-manager', {
             body: {
+              reservation_id: newResa.id,
               restaurant_id: restaurant.id,
               title: 'Nouvelle réservation 📅',
               body:  `Demande pour le ${formatDateLong(date)} à ${heure} · ${adults} couvert${adults > 1 ? 's' : ''}.`,

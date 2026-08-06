@@ -113,7 +113,7 @@ export default function useComptoir() {
             });
           } catch (_) {}
           supabase.functions.invoke('push-manager', {
-            body: { user_id: resa.user_id, title: notifTitle, body: notifBody },
+            body: { reservation_id: resa.id, user_id: resa.user_id, title: notifTitle, body: notifBody },
           }).catch(() => {});
         }
       })},
@@ -140,6 +140,7 @@ export default function useComptoir() {
           } catch (_) {}
           supabase.functions.invoke('push-manager', {
             body: {
+              reservation_id: resa.id,
               user_id: resa.user_id,
               title:   notifTitle,
               body:    notifBody,
@@ -183,7 +184,7 @@ export default function useComptoir() {
             });
           } catch (_) {}
           supabase.functions.invoke('push-manager', {
-            body: { user_id: resa.user_id, title: notifTitle, body: notifBody },
+            body: { reservation_id: resa.id, user_id: resa.user_id, title: notifTitle, body: notifBody },
           }).catch(() => {});
         }
       })},

@@ -69,7 +69,7 @@ for (const m of migrations) {
 
 // L'ordre compte : multi_salles.sql réutilise le jeu d'essai de
 // business_rules.sql plutôt que de le recréer.
-const SUITES = ['business_rules', 'lifecycle', 'admin', 'multi_salles'];
+const SUITES = ['business_rules', 'lifecycle', 'admin', 'multi_salles', 'promo_codes'];
 
 let totalOk = 0;
 let totalKo = 0;

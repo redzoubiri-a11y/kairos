@@ -317,3 +317,30 @@ describe('facture d’abonnement', () => {
     expect(brut).toContain('Payée');
   });
 });
+
+describe('remise dans le contrat', () => {
+  const remise = {
+    ...reservation,
+    total_amount: 31500,
+    discount_amount: 3500,
+    promo_code: 'RENTREE10',
+  };
+
+  it('détaille formule, remise et total', () => {
+    const texte = normaliser(buildContractHtml({ reservation: remise, salle, pro, months }));
+    expect(texte).toContain('35 000 DA'); // formule avant remise
+    expect(texte).toContain('3 500 DA');  // remise
+    expect(texte).toContain('31 500 DA'); // net à régler
+    expect(texte).toContain('RENTREE10');
+  });
+
+  it('n’ajoute rien quand il n’y a pas de remise', () => {
+    const html = buildContractHtml({ reservation, salle, pro, months });
+    expect(html).not.toContain('Remise');
+  });
+
+  it('nomme la remise même sans code lisible', () => {
+    const anonyme = { ...remise, promo_code: null };
+    expect(buildContractHtml({ reservation: anonyme, salle, pro, months })).toContain('Remise');
+  });
+});

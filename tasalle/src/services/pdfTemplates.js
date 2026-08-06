@@ -125,6 +125,20 @@ export function buildContractHtml({ reservation, salle, pro, months, deposit, la
 
     <h2>Montants</h2>
     <table class="infos">
+      ${
+        // Sans la ligne de remise, le client verrait un total inférieur au
+        // tarif affiché sans explication.
+        reservation.discount_amount > 0
+          ? ligne(
+              'Formule',
+              formatDA((reservation.total_amount || 0) + reservation.discount_amount)
+            ) +
+            ligne(
+              `Remise${reservation.promo_code ? ` (${reservation.promo_code})` : ''}`,
+              `− ${formatDA(reservation.discount_amount)}`
+            )
+          : ''
+      }
       <tr><td>Total</td><td class="total">${escapeHtml(formatDA(reservation.total_amount))}</td></tr>
       ${acompte ? ligne('Acompte demandé', formatDA(acompte)) : ''}
       ${acompte ? ligne('Solde à régler', formatDA(solde)) : ''}

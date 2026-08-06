@@ -44,6 +44,7 @@ import ProSalleScreen from './src/screens/pro/ProSalleScreen';
 import ProStatsScreen from './src/screens/pro/ProStatsScreen';
 import ProSubscriptionScreen from './src/screens/pro/ProSubscriptionScreen';
 import ProReviewsScreen from './src/screens/pro/ProReviewsScreen';
+import ProPromoScreen from './src/screens/pro/ProPromoScreen';
 import ProMoreScreen from './src/screens/pro/ProMoreScreen';
 
 // Admin
@@ -205,6 +206,7 @@ function RootNavigator() {
           <Stack.Screen name="ProStats" component={ProStatsScreen} />
           <Stack.Screen name="ProSubscription" component={ProSubscriptionScreen} />
           <Stack.Screen name="ProReviews" component={ProReviewsScreen} />
+          <Stack.Screen name="ProPromo" component={ProPromoScreen} />
           <Stack.Screen name="Profil" component={ProfileScreen} />
           {sharedScreens()}
         </>

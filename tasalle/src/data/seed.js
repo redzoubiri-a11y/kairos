@@ -638,6 +638,62 @@ export const SEED_SUBSCRIPTIONS = [
   })),
 ];
 
+export const SEED_PROMO_CODES = [
+  {
+    id: 'promo-001',
+    salle_id: 'salle-001',
+    code: 'RENTREE10',
+    kind: 'percent',
+    value: 10,
+    starts_on: addDays(T, -10),
+    ends_on: addDays(T, 60),
+    max_uses: 20,
+    used_count: 3,
+    active: true,
+    created_at: addDays(T, -10),
+  },
+  {
+    id: 'promo-002',
+    salle_id: 'salle-001',
+    code: 'FIANCAILLES5000',
+    kind: 'amount',
+    value: 5000,
+    starts_on: null,
+    ends_on: null,
+    max_uses: null,
+    used_count: 0,
+    active: true,
+    created_at: addDays(T, -4),
+  },
+  {
+    // Épuisé : sert à montrer l'état à l'écran sans manipulation.
+    id: 'promo-003',
+    salle_id: 'salle-001',
+    code: 'PRINTEMPS',
+    kind: 'percent',
+    value: 15,
+    starts_on: addDays(T, -120),
+    ends_on: addDays(T, -30),
+    max_uses: 5,
+    used_count: 5,
+    active: false,
+    created_at: addDays(T, -120),
+  },
+  {
+    id: 'promo-004',
+    salle_id: 'salle-002',
+    code: 'ANDALOUS20',
+    kind: 'percent',
+    value: 20,
+    starts_on: null,
+    ends_on: addDays(T, 30),
+    max_uses: 10,
+    used_count: 0,
+    active: true,
+    created_at: addDays(T, -2),
+  },
+];
+
 export const SEED_INVOICES = [
   {
     id: 'inv-001',
@@ -715,6 +771,7 @@ export function buildSeed() {
     blocked_days: SEED_BLOCKED_DAYS.map((b) => ({ ...b })),
     subscriptions: SEED_SUBSCRIPTIONS.map((s) => ({ ...s })),
     invoices: SEED_INVOICES.map((i) => ({ ...i })),
+    promo_codes: SEED_PROMO_CODES.map((p) => ({ ...p })),
     counters: { reservation: SEED_RESERVATIONS.length },
     session: null,
   };

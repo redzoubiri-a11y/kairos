@@ -27,6 +27,7 @@ import {
   ROLES,
   STORAGE_PREFIX,
 } from '../lib/constants';
+import { normalizePromoCode, checkPromo, validatePromoPayload } from '../lib/promo';
 
 const STORAGE_KEY = `${STORAGE_PREFIX}db.v1`;
 export const DEMO_OTP = '123456';
@@ -388,6 +389,24 @@ export async function createReservation(payload) {
   }
 
   const tarif = db.tarifs.find((t) => t.id === payload.formula_id);
+  const montant = tarif ? tarif.price : 0;
+
+  // §12 Phase 4 — le code est revalidé ici, jamais repris tel que l'écran l'a
+  // calculé : entre la saisie et l'envoi, le quota a pu être épuisé.
+  let promo = null;
+  let remise = 0;
+  if (payload.promo_code) {
+    promo = findPromo(payload.salle_id, payload.promo_code);
+    const verdict = checkPromo(promo, { amount: montant });
+    if (!verdict.ok) {
+      const err = new Error('PROMO_REFUSED');
+      err.code = 'PROMO_REFUSED';
+      err.reason = verdict.reason;
+      throw err;
+    }
+    remise = verdict.discount;
+  }
+
   db.counters.reservation += 1;
 
   const reservation = {
@@ -401,7 +420,12 @@ export async function createReservation(payload) {
     event_type: payload.event_type,
     guest_count: Number(payload.guest_count) || 0,
     formula_id: payload.formula_id,
-    total_amount: tarif ? tarif.price : 0,
+    promo_code_id: promo ? promo.id : null,
+    promo_code: promo ? promo.code : null,
+    discount_amount: remise,
+    // `total_amount` est le montant réellement dû : c'est lui que suivent les
+    // revenus du tableau de bord, l'acompte et le contrat.
+    total_amount: montant - remise,
     deposit_amount: null,
     deposit_paid: false,
     deposit_paid_at: null,
@@ -414,6 +438,11 @@ export async function createReservation(payload) {
     updated_at: new Date().toISOString(),
   };
   db.reservations.unshift(reservation);
+
+  // Le compteur avance à la demande, pas à la confirmation : sinon dix
+  // familles pourraient réserver le même jour avec un code limité à une
+  // utilisation, et neuf seraient déçues après coup.
+  if (promo) promo.used_count = (promo.used_count ?? 0) + 1;
 
   // Notifications client + pro (§4.4 « Après envoi »)
   pushNotifications(
@@ -483,6 +512,14 @@ export async function cancelReservation(id) {
   }
   r.status = RESERVATION_STATUS.CANCELLED;
   r.updated_at = new Date().toISOString();
+
+  // La place reprise sur le quota est rendue : sans cela, une demande créée
+  // puis annulée consommerait une utilisation pour rien, et quelques
+  // allers-retours suffiraient à épuiser un code.
+  if (r.promo_code_id) {
+    const promo = db.promo_codes.find((p) => p.id === r.promo_code_id);
+    if (promo) promo.used_count = Math.max(0, (promo.used_count ?? 0) - 1);
+  }
 
   const salle = db.salles.find((s) => s.id === r.salle_id);
   if (salle) {
@@ -1202,6 +1239,113 @@ export async function listInvoices() {
   // Comme côté Supabase, où la policy RLS ne laisse passer que ses lignes :
   // sans ce filtre, un pro verrait la facturation de tous les autres.
   return clone(db.invoices.filter((i) => i.pro_id === user.id));
+}
+
+// ── Codes promotionnels (§12 Phase 4) ─────────────────────────────────────
+
+function findPromo(salleId, code) {
+  const cible = normalizePromoCode(code);
+  return db.promo_codes.find((p) => p.salle_id === salleId && p.code === cible) || null;
+}
+
+/**
+ * Vérifie un code saisi par un client, sans rien consommer.
+ * Sert à l'aperçu de la remise avant l'envoi de la demande.
+ */
+export async function checkPromoCode(salleId, code, amount) {
+  await load();
+  const promo = findPromo(salleId, code);
+  const verdict = checkPromo(promo, { amount });
+  if (!verdict.ok) {
+    const err = new Error('PROMO_REFUSED');
+    err.code = 'PROMO_REFUSED';
+    err.reason = verdict.reason;
+    throw err;
+  }
+  return { code: promo.code, kind: promo.kind, value: promo.value, ...verdict };
+}
+
+export async function proListPromoCodes(salleId) {
+  await load();
+  const { salle } = proSalle(salleId);
+  return db.promo_codes
+    .filter((p) => p.salle_id === salle.id)
+    .map((p) => clone(p))
+    .sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
+}
+
+export async function proCreatePromoCode(salleId, payload) {
+  await load();
+  const { salle } = proSalle(salleId);
+
+  const verdict = validatePromoPayload(payload);
+  if (!verdict.ok) {
+    const err = new Error('PROMO_INVALID');
+    err.code = 'PROMO_INVALID';
+    err.reason = verdict.reason;
+    throw err;
+  }
+
+  // Deux salles peuvent porter le même code ; une seule fois chacune.
+  if (findPromo(salle.id, verdict.code)) {
+    const err = new Error('PROMO_DUPLICATE');
+    err.code = 'PROMO_DUPLICATE';
+    throw err;
+  }
+
+  const promo = {
+    id: uid('promo'),
+    salle_id: salle.id,
+    code: verdict.code,
+    kind: verdict.kind,
+    value: verdict.value,
+    starts_on: payload.starts_on || null,
+    ends_on: payload.ends_on || null,
+    max_uses: payload.max_uses === '' || payload.max_uses == null ? null : Number(payload.max_uses),
+    used_count: 0,
+    active: true,
+    created_at: new Date().toISOString(),
+  };
+  db.promo_codes.unshift(promo);
+  persist();
+  return clone(promo);
+}
+
+export async function proUpdatePromoCode(id, patch) {
+  await load();
+  const promo = db.promo_codes.find((p) => p.id === id);
+  if (!promo) throw new Error('PROMO_NOT_FOUND');
+  assertOwns(promo.salle_id);
+
+  // Le code lui-même ne se modifie pas : il circule déjà chez des clients, et
+  // le renommer invaliderait ce qu'ils ont noté. On désactive, on recrée.
+  if (patch.active != null) promo.active = Boolean(patch.active);
+  if (patch.ends_on !== undefined) promo.ends_on = patch.ends_on || null;
+  if (patch.max_uses !== undefined) {
+    promo.max_uses = patch.max_uses === '' || patch.max_uses == null ? null : Number(patch.max_uses);
+  }
+
+  persist();
+  return clone(promo);
+}
+
+export async function proDeletePromoCode(id) {
+  await load();
+  const promo = db.promo_codes.find((p) => p.id === id);
+  if (!promo) throw new Error('PROMO_NOT_FOUND');
+  assertOwns(promo.salle_id);
+
+  // Un code déjà utilisé est conservé : les réservations qui le portent
+  // doivent rester lisibles. Il est seulement retiré de la circulation.
+  if ((promo.used_count ?? 0) > 0) {
+    promo.active = false;
+    persist();
+    return { deleted: false, deactivated: true };
+  }
+
+  db.promo_codes = db.promo_codes.filter((p) => p.id !== id);
+  persist();
+  return { deleted: true, deactivated: false };
 }
 
 // ── Console d'administration (§2.1) ───────────────────────────────────────

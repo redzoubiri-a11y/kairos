@@ -6,6 +6,7 @@ import Calendar, { CalendarLegend } from '../../components/Calendar';
 import Stepper from '../../components/Stepper';
 import MInput from '../../components/MInput';
 import MButton from '../../components/MButton';
+import PromoField from '../../components/PromoField';
 import { MChip, Loader, ErrorState, KeyValue } from '../../components/primitives';
 import { useTheme } from '../../context/ThemeContext';
 import { useI18n } from '../../i18n';
@@ -41,6 +42,8 @@ export default function BookingScreen({ route, navigation }) {
     client_message: '',
   });
   const [fieldErrors, setFieldErrors] = useState({});
+  // Code promo vérifié par le serveur : { code, discount, total }
+  const [promo, setPromo] = useState(null);
 
   const load = useCallback(async () => {
     try {
@@ -84,6 +87,17 @@ export default function BookingScreen({ route, navigation }) {
     return Object.keys(errs).length === 0;
   };
 
+  /**
+   * Changer de formule change le montant, donc la remise : un code appliqué
+   * sur une formule à 35 000 DA n'est plus le même sur une à 74 900. On le
+   * retire pour forcer une nouvelle vérification plutôt que d'afficher une
+   * remise périmée.
+   */
+  const choisirFormule = (id) => {
+    if (id !== formulaId) setPromo(null);
+    setFormulaId(id);
+  };
+
   const submit = async () => {
     if (!validateInfos()) return;
     setSubmitting(true);
@@ -98,11 +112,18 @@ export default function BookingScreen({ route, navigation }) {
         client_name: form.client_name.trim(),
         client_phone: form.client_phone,
         client_message: form.client_message.trim(),
+        promo_code: promo?.code || null,
       });
       setCreated(reservation);
       setStep(3);
     } catch (e) {
-      setError(e.code === 'DAY_TAKEN' ? t('booking.dayTaken') : e.message || t('common.error'));
+      if (e.code === 'PROMO_REFUSED') {
+        // Le quota a pu s'épuiser entre la vérification et l'envoi.
+        setPromo(null);
+        setError(t(`booking.promoErrors.${e.reason || 'unknown'}`));
+      } else {
+        setError(e.code === 'DAY_TAKEN' ? t('booking.dayTaken') : e.message || t('common.error'));
+      }
     } finally {
       setSubmitting(false);
     }
@@ -260,7 +281,7 @@ export default function BookingScreen({ route, navigation }) {
                 return (
                   <Pressable
                     key={tarif.id}
-                    onPress={() => setFormulaId(tarif.id)}
+                    onPress={() => choisirFormule(tarif.id)}
                     accessibilityRole="radio"
                     accessibilityState={{ selected }}
                     style={{
@@ -356,6 +377,13 @@ export default function BookingScreen({ route, navigation }) {
                 hint={`${t('salle.capacity')} : ${salle.capacity_max}`}
               />
 
+              <PromoField
+                salleId={salleId}
+                amount={selectedFormula?.price || 0}
+                applied={promo}
+                onApplied={setPromo}
+              />
+
               <MInput
                 label={t('booking.messageToOwner')}
                 value={form.client_message}
@@ -389,14 +417,35 @@ export default function BookingScreen({ route, navigation }) {
           </View>
         ) : null}
 
+        {step === 2 && promo ? (
+          <View style={{ flex: 1 }}>
+            <Text style={[typography.caption, { color: colors.warmGray }]}>
+              {t('booking.amount')}
+            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: spacing.sm }}>
+              <Text
+                style={[
+                  typography.caption,
+                  { color: colors.warmGray, textDecorationLine: 'line-through' },
+                ]}
+              >
+                {formatDA(selectedFormula?.price, t('common.currency'))}
+              </Text>
+              <Text style={[typography.title, { color: colors.primaryInk }]}>
+                {formatDA(promo.total, t('common.currency'))}
+              </Text>
+            </View>
+          </View>
+        ) : null}
+
         <MButton
           label={step === 2 ? t('booking.sendRequest') : t('common.next')}
           size="lg"
-          full={step !== 0 && step !== 1}
+          full={step !== 0 && step !== 1 && !(step === 2 && promo)}
           loading={submitting}
           disabled={(step === 0 && !date) || (step === 1 && !formulaId)}
           onPress={() => (step === 2 ? submit() : setStep((s) => s + 1))}
-          style={{ flex: step === 0 || step === 1 ? 1 : undefined }}
+          style={{ flex: step === 0 || step === 1 || (step === 2 && promo) ? 1 : undefined }}
         />
       </StickyBar>
     </Screen>

@@ -759,3 +759,158 @@ describe('multi-salles (§12 Phase 4)', () => {
     expect((await api.proListSalles())).toHaveLength(3);
   });
 });
+
+describe('codes promotionnels (§12 Phase 4)', () => {
+  const demande = (day, extra = {}) => ({
+    salle_id: SALLE,
+    event_date: day,
+    event_type: 'mariage',
+    guest_count: 200,
+    formula_id: 'tarif-salle-001-1',
+    client_name: 'Amina Cherif',
+    client_phone: CLIENT_PHONE,
+    ...extra,
+  });
+
+  it('rend la remise sans rien consommer', async () => {
+    await loginAs(CLIENT_PHONE);
+    const avant = await api.checkPromoCode(SALLE, 'RENTREE10', 35000);
+    expect(avant).toMatchObject({ code: 'RENTREE10', discount: 3500, total: 31500 });
+
+    // Deux aperçus de suite ne doivent pas entamer le quota
+    await api.checkPromoCode(SALLE, 'RENTREE10', 35000);
+    await loginAs(PRO_PHONE);
+    const codes = await api.proListPromoCodes(SALLE);
+    expect(codes.find((c) => c.code === 'RENTREE10').used_count).toBe(3);
+  });
+
+  it('accepte le code quelle que soit la casse saisie', async () => {
+    await loginAs(CLIENT_PHONE);
+    expect((await api.checkPromoCode(SALLE, ' rentree10 ', 35000)).discount).toBe(3500);
+  });
+
+  it('refuse un code d’une autre salle', async () => {
+    await loginAs(CLIENT_PHONE);
+    // ANDALOUS20 appartient à salle-002
+    await expect(api.checkPromoCode(SALLE, 'ANDALOUS20', 35000)).rejects.toMatchObject({
+      reason: 'unknown',
+    });
+  });
+
+  it('refuse un code épuisé', async () => {
+    await loginAs(CLIENT_PHONE);
+    await expect(api.checkPromoCode(SALLE, 'PRINTEMPS', 35000)).rejects.toMatchObject({
+      code: 'PROMO_REFUSED',
+    });
+  });
+
+  it('applique la remise au montant de la réservation', async () => {
+    await loginAs(CLIENT_PHONE);
+    const resa = await api.createReservation(demande(addDays(T, 150), { promo_code: 'RENTREE10' }));
+    expect(resa.discount_amount).toBe(3500);
+    expect(resa.total_amount).toBe(31500);
+    expect(resa.promo_code).toBe('RENTREE10');
+  });
+
+  it('consomme une utilisation à la demande', async () => {
+    await loginAs(PRO_PHONE);
+    const avant = (await api.proListPromoCodes(SALLE)).find((c) => c.code === 'RENTREE10').used_count;
+
+    await loginAs(CLIENT_PHONE);
+    await api.createReservation(demande(addDays(T, 151), { promo_code: 'RENTREE10' }));
+
+    await loginAs(PRO_PHONE);
+    const apres = (await api.proListPromoCodes(SALLE)).find((c) => c.code === 'RENTREE10').used_count;
+    expect(apres).toBe(avant + 1);
+  });
+
+  /**
+   * Sans restitution, quelques demandes créées puis annulées suffiraient à
+   * épuiser un code pour tout le monde.
+   */
+  it('rend l’utilisation quand la demande est annulée', async () => {
+    await loginAs(CLIENT_PHONE);
+    const resa = await api.createReservation(demande(addDays(T, 152), { promo_code: 'RENTREE10' }));
+
+    await loginAs(PRO_PHONE);
+    const pendant = (await api.proListPromoCodes(SALLE)).find((c) => c.code === 'RENTREE10').used_count;
+
+    await loginAs(CLIENT_PHONE);
+    await api.cancelReservation(resa.id);
+
+    await loginAs(PRO_PHONE);
+    const apres = (await api.proListPromoCodes(SALLE)).find((c) => c.code === 'RENTREE10').used_count;
+    expect(apres).toBe(pendant - 1);
+  });
+
+  it('refuse la demande si le code est devenu invalide entre-temps', async () => {
+    await loginAs(CLIENT_PHONE);
+    await expect(
+      api.createReservation(demande(addDays(T, 153), { promo_code: 'PRINTEMPS' }))
+    ).rejects.toMatchObject({ code: 'PROMO_REFUSED' });
+  });
+
+  it('laisse la demande passer sans code', async () => {
+    await loginAs(CLIENT_PHONE);
+    const resa = await api.createReservation(demande(addDays(T, 154)));
+    expect(resa.discount_amount).toBe(0);
+    expect(resa.total_amount).toBe(35000);
+  });
+
+  it('crée un code et le rend utilisable aussitôt', async () => {
+    await loginAs(PRO_PHONE);
+    await api.proCreatePromoCode(SALLE, { code: 'nouveau25', kind: 'percent', value: 25 });
+
+    await loginAs(CLIENT_PHONE);
+    expect((await api.checkPromoCode(SALLE, 'NOUVEAU25', 40000)).discount).toBe(10000);
+  });
+
+  it('refuse deux fois le même code sur une salle', async () => {
+    await loginAs(PRO_PHONE);
+    await expect(
+      api.proCreatePromoCode(SALLE, { code: 'RENTREE10', kind: 'percent', value: 5 })
+    ).rejects.toMatchObject({ code: 'PROMO_DUPLICATE' });
+  });
+
+  it('accepte le même code sur deux salles différentes', async () => {
+    await loginAs(PRO_PHONE);
+    const cree = await api.proCreatePromoCode('salle-002', {
+      code: 'RENTREE10',
+      kind: 'amount',
+      value: 2000,
+    });
+    expect(cree.salle_id).toBe('salle-002');
+  });
+
+  it('refuse une saisie invalide en nommant la raison', async () => {
+    await loginAs(PRO_PHONE);
+    await expect(
+      api.proCreatePromoCode(SALLE, { code: 'XX', kind: 'percent', value: 10 })
+    ).rejects.toMatchObject({ reason: 'code_too_short' });
+    await expect(
+      api.proCreatePromoCode(SALLE, { code: 'TROPCHER', kind: 'percent', value: 150 })
+    ).rejects.toMatchObject({ reason: 'percent_over_100' });
+  });
+
+  it('désactive un code plutôt que de le supprimer s’il a servi', async () => {
+    await loginAs(PRO_PHONE);
+    const resultat = await api.proDeletePromoCode('promo-001');
+    expect(resultat).toEqual({ deleted: false, deactivated: true });
+    expect((await api.proListPromoCodes(SALLE)).find((c) => c.id === 'promo-001').active).toBe(false);
+  });
+
+  it('supprime un code jamais utilisé', async () => {
+    await loginAs(PRO_PHONE);
+    const cree = await api.proCreatePromoCode(SALLE, { code: 'JAMAIS', kind: 'percent', value: 5 });
+    expect(await api.proDeletePromoCode(cree.id)).toEqual({ deleted: true, deactivated: false });
+    expect((await api.proListPromoCodes(SALLE)).some((c) => c.id === cree.id)).toBe(false);
+  });
+
+  it('empêche un propriétaire de toucher au code d’un autre', async () => {
+    await loginAs('0555 10 00 03'); // propriétaire de salle-003
+    await expect(api.proUpdatePromoCode('promo-001', { active: false })).rejects.toMatchObject({
+      code: 'FORBIDDEN',
+    });
+    await expect(api.proListPromoCodes(SALLE)).rejects.toMatchObject({ code: 'FORBIDDEN' });
+  });
+});

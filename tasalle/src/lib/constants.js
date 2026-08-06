@@ -85,3 +85,7 @@ export const SMS_MAX_PER_DAY = 3;
  * langue, thème, planning hors ligne — pour un gain purement cosmétique.
  */
 export const STORAGE_PREFIX = 'tasale.';
+
+// §12 Phase 4 — codes promotionnels
+export const PROMO_KINDS = { PERCENT: 'percent', AMOUNT: 'amount' };
+export const PROMO_CODE_MAX_LENGTH = 24;

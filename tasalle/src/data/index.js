@@ -50,6 +50,13 @@ export const proToggleBlockedDay = impl.proToggleBlockedDay;
 export const proGetDashboard = impl.proGetDashboard;
 export const proGetStats = impl.proGetStats;
 export const proListSalles = impl.proListSalles;
+
+// Codes promotionnels (§12 Phase 4)
+export const checkPromoCode = impl.checkPromoCode;
+export const proListPromoCodes = impl.proListPromoCodes;
+export const proCreatePromoCode = impl.proCreatePromoCode;
+export const proUpdatePromoCode = impl.proUpdatePromoCode;
+export const proDeletePromoCode = impl.proDeletePromoCode;
 export const proGetSalle = impl.proGetSalle;
 export const proUpdateSalle = impl.proUpdateSalle;
 export const proUpdateTarifs = impl.proUpdateTarifs;

@@ -4,6 +4,7 @@
 // côté base via des fonctions SQL `SECURITY DEFINER` + RLS.
 
 import { supabase } from './client';
+import { validatePromoPayload } from '../lib/promo';
 import { normalizePhone, todayISO, toISODate, addDays } from '../lib/format';
 import {
   RESERVATION_STATUS,
@@ -227,9 +228,121 @@ export async function createReservation(payload) {
       p_client_name: payload.client_name,
       p_client_phone: normalizePhone(payload.client_phone),
       p_message: payload.client_message || '',
+      p_promo_code: payload.promo_code || null,
     })
   );
   return Array.isArray(row) ? row[0] : row;
+}
+
+// ── Codes promotionnels (§12 Phase 4) ─────────────────────────────────────
+
+/**
+ * Verdict sur un code saisi, rendu par la base.
+ *
+ * La table n'est pas lisible par les clients : un code se saisit, il ne se
+ * découvre pas en listant. La RPC ne révèle donc que le verdict.
+ */
+export async function checkPromoCode(salleId, code, amount) {
+  const verdict = unwrap(
+    await supabase.rpc('check_promo_code', { p_salle: salleId, p_code: code, p_amount: amount })
+  );
+  if (!verdict?.ok) {
+    const err = new Error('PROMO_REFUSED');
+    err.code = 'PROMO_REFUSED';
+    err.reason = verdict?.reason || 'unknown';
+    throw err;
+  }
+  return verdict;
+}
+
+export async function proListPromoCodes(salleId) {
+  const cible = await mySalle(salleId);
+  return (
+    unwrap(
+      await supabase
+        .from('promo_codes')
+        .select('*')
+        .eq('salle_id', cible)
+        .order('created_at', { ascending: false })
+    ) || []
+  );
+}
+
+export async function proCreatePromoCode(salleId, payload) {
+  const cible = await mySalle(salleId);
+
+  const verdict = validatePromoPayload(payload);
+  if (!verdict.ok) {
+    const err = new Error('PROMO_INVALID');
+    err.code = 'PROMO_INVALID';
+    err.reason = verdict.reason;
+    throw err;
+  }
+
+  const { data, error } = await supabase
+    .from('promo_codes')
+    .insert({
+      salle_id: cible,
+      code: verdict.code,
+      kind: verdict.kind,
+      value: verdict.value,
+      starts_on: payload.starts_on || null,
+      ends_on: payload.ends_on || null,
+      max_uses:
+        payload.max_uses === '' || payload.max_uses == null ? null : Number(payload.max_uses),
+    })
+    .select()
+    .single();
+
+  // L'index unique par salle porte la règle ; on la traduit en message.
+  if (error?.code === '23505') {
+    const err = new Error('PROMO_DUPLICATE');
+    err.code = 'PROMO_DUPLICATE';
+    throw err;
+  }
+  if (error) throw error;
+  return data;
+}
+
+export async function proUpdatePromoCode(id, patch) {
+  // Le code lui-même n'est pas modifiable : il circule déjà chez des clients.
+  const champs = {};
+  if (patch.active != null) champs.active = Boolean(patch.active);
+  if (patch.ends_on !== undefined) champs.ends_on = patch.ends_on || null;
+  if (patch.max_uses !== undefined) {
+    champs.max_uses = patch.max_uses === '' || patch.max_uses == null ? null : Number(patch.max_uses);
+  }
+
+  // La policy RLS filtre sur le propriétaire : la ligne d'un autre ne revient
+  // simplement pas, d'où le FORBIDDEN.
+  const row = unwrap(await supabase.from('promo_codes').update(champs).eq('id', id).select().maybeSingle());
+  if (!row) {
+    const err = new Error('FORBIDDEN');
+    err.code = 'FORBIDDEN';
+    throw err;
+  }
+  return row;
+}
+
+export async function proDeletePromoCode(id) {
+  const promo = unwrap(
+    await supabase.from('promo_codes').select('id, used_count').eq('id', id).maybeSingle()
+  );
+  if (!promo) {
+    const err = new Error('FORBIDDEN');
+    err.code = 'FORBIDDEN';
+    throw err;
+  }
+
+  // Un code déjà utilisé reste en base : les réservations qui le portent
+  // doivent rester lisibles. Il est seulement retiré de la circulation.
+  if ((promo.used_count ?? 0) > 0) {
+    await proUpdatePromoCode(id, { active: false });
+    return { deleted: false, deactivated: true };
+  }
+
+  unwrap(await supabase.from('promo_codes').delete().eq('id', id));
+  return { deleted: true, deactivated: false };
 }
 
 const RESA_SELECT = `

@@ -34,6 +34,11 @@ export default function ProMoreScreen({ navigation }) {
       <Body>
         <MCard style={{ paddingVertical: 0 }}>
           <Row icon="bar-chart-outline" label={t('pro.statsTitle')} onPress={() => navigation.navigate('ProStats')} />
+          <Row
+            icon="pricetag-outline"
+            label={t('pro.promoTitle')}
+            onPress={() => navigation.navigate('ProPromo')}
+          />
           <Divider />
           <Row
             icon="star-outline"

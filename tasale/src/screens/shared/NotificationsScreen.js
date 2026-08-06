@@ -36,7 +36,7 @@ const RESERVATION_TYPES = [
 
 export default function NotificationsScreen({ navigation }) {
   const { colors, typography, spacing, radii } = useTheme();
-  const { t, list, dir, align } = useI18n();
+  const { t, list } = useI18n();
 
   const [rows, setRows] = useState([]);
   const [filter, setFilter] = useState('all');
@@ -91,7 +91,7 @@ export default function NotificationsScreen({ navigation }) {
         }
       />
 
-      <View style={{ flexDirection: dir, gap: spacing.sm, paddingHorizontal: spacing.lg, paddingTop: spacing.md }}>
+      <View style={{ flexDirection: 'row', gap: spacing.sm, paddingHorizontal: spacing.lg, paddingTop: spacing.md }}>
         <MChip label={t('notifications.filterAll')} active={filter === 'all'} onPress={() => setFilter('all')} />
         <MChip
           label={t('notifications.filterReservations')}
@@ -109,7 +109,7 @@ export default function NotificationsScreen({ navigation }) {
         ) : (
           filtered.map((n) => (
             <MCard key={n.id} onPress={() => open(n)}>
-              <View style={{ flexDirection: dir, gap: spacing.md, alignItems: 'flex-start' }}>
+              <View style={{ flexDirection: 'row', gap: spacing.md, alignItems: 'flex-start' }}>
                 <View
                   style={{
                     width: 34,
@@ -131,13 +131,13 @@ export default function NotificationsScreen({ navigation }) {
                   <Text
                     style={[
                       typography.secondary,
-                      { color: colors.dark, fontWeight: n.is_read ? '400' : '600', textAlign: align },
+                      { color: colors.dark, fontWeight: n.is_read ? '400' : '600', textAlign: 'left' },
                     ]}
                   >
                     {n.title}
                   </Text>
-                  <Text style={[typography.caption, { color: colors.warmGray, textAlign: align }]}>{n.body}</Text>
-                  <Text style={[typography.caption, { color: colors.warmGray, opacity: 0.7, textAlign: align }]}>
+                  <Text style={[typography.caption, { color: colors.warmGray, textAlign: 'left' }]}>{n.body}</Text>
+                  <Text style={[typography.caption, { color: colors.warmGray, opacity: 0.7, textAlign: 'left' }]}>
                     {timeAgo(n.created_at, t, list('monthsShort'))}
                   </Text>
                 </View>

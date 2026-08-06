@@ -16,7 +16,7 @@ const MAPBOX_TOKEN = process.env.EXPO_PUBLIC_MAPBOX_TOKEN || null;
  */
 export default function SalleMap({ salle }) {
   const { colors, typography, spacing, radii } = useTheme();
-  const { t, dir, align } = useI18n();
+  const { t } = useI18n();
 
   if (!hasCoords(salle)) return null;
 
@@ -65,7 +65,7 @@ export default function SalleMap({ salle }) {
       )}
 
       <View style={{ padding: spacing.lg, gap: spacing.md }}>
-        <Text style={[typography.secondary, { color: colors.dark, textAlign: align }]}>
+        <Text style={[typography.secondary, { color: colors.dark, textAlign: 'left' }]}>
           {salle.address || salle.city}
         </Text>
 
@@ -73,7 +73,7 @@ export default function SalleMap({ salle }) {
           onPress={ouvrirItineraire}
           accessibilityRole="button"
           style={({ pressed }) => ({
-            flexDirection: dir,
+            flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'center',
             gap: spacing.sm,

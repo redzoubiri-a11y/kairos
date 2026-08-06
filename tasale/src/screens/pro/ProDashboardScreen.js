@@ -19,7 +19,6 @@ import * as api from '../../data';
 
 function AlertRow({ icon, tone, label, onPress }) {
   const { colors, typography, spacing, radii } = useTheme();
-  const { dir, align } = useI18n();
   const color = tone === 'danger' ? colors.accent : tone === 'gold' ? colors.goldText : colors.primaryInk;
   const bg = tone === 'danger' ? colors.accentLight : tone === 'gold' ? colors.goldLight : colors.primaryLight;
 
@@ -29,7 +28,7 @@ function AlertRow({ icon, tone, label, onPress }) {
       disabled={!onPress}
       accessibilityRole={onPress ? 'button' : undefined}
       style={{
-        flexDirection: dir,
+        flexDirection: 'row',
         alignItems: 'center',
         gap: spacing.md,
         backgroundColor: bg,
@@ -38,7 +37,7 @@ function AlertRow({ icon, tone, label, onPress }) {
       }}
     >
       <Ionicons name={icon} size={16} color={color} />
-      <Text style={[typography.caption, { color, flex: 1, textAlign: align }]}>{label}</Text>
+      <Text style={[typography.caption, { color, flex: 1, textAlign: 'left' }]}>{label}</Text>
       {onPress ? <Ionicons name="chevron-forward" size={14} color={color} /> : null}
     </Pressable>
   );
@@ -46,7 +45,7 @@ function AlertRow({ icon, tone, label, onPress }) {
 
 export default function ProDashboardScreen({ navigation }) {
   const { colors, typography, spacing } = useTheme();
-  const { t, dir } = useI18n();
+  const { t } = useI18n();
   const { width } = useWindowDimensions();
   const { currentId, isMulti, salles } = useProSalle();
   const { user } = useAuth();
@@ -100,7 +99,7 @@ export default function ProDashboardScreen({ navigation }) {
     <Screen>
       <View
         style={{
-          flexDirection: dir,
+          flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-between',
           paddingHorizontal: spacing.lg,
@@ -142,7 +141,7 @@ export default function ProDashboardScreen({ navigation }) {
         }
       >
         {/* KPI (§5.2) */}
-        <View style={{ flexDirection: dir, flexWrap: 'wrap', gap: spacing.md }}>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md }}>
           <KpiCard
             label={t('pro.kpiReservations')}
             value={String(kpis.reservations.value)}

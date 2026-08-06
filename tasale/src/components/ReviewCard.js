@@ -9,7 +9,7 @@ import { timeAgo } from '../lib/format';
 /** Avis client — §7.3 (badge vérifié, réponse du propriétaire encadrée). */
 export default function ReviewCard({ review }) {
   const { colors, typography, spacing, radii } = useTheme();
-  const { t, list, dir, align } = useI18n();
+  const { t, list } = useI18n();
 
   const initial = (review.client_name || '?').trim().charAt(0).toUpperCase();
 
@@ -24,7 +24,7 @@ export default function ReviewCard({ review }) {
         gap: spacing.md,
       }}
     >
-      <View style={{ flexDirection: dir, gap: spacing.md, alignItems: 'flex-start' }}>
+      <View style={{ flexDirection: 'row', gap: spacing.md, alignItems: 'flex-start' }}>
         <View
           style={{
             width: 36,
@@ -39,7 +39,7 @@ export default function ReviewCard({ review }) {
         </View>
 
         <View style={{ flex: 1, gap: 3 }}>
-          <View style={{ flexDirection: dir, alignItems: 'center', gap: spacing.sm, flexWrap: 'wrap' }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, flexWrap: 'wrap' }}>
             <Text style={[typography.secondary, { color: colors.dark, fontWeight: '500' }]}>
               {review.client_name || '—'}
             </Text>
@@ -48,7 +48,7 @@ export default function ReviewCard({ review }) {
             ) : null}
           </View>
 
-          <View style={{ flexDirection: dir, alignItems: 'center', gap: spacing.sm }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
             <Stars value={review.rating_overall} size={12} />
             <Text style={[typography.caption, { color: colors.warmGray }]}>
               {timeAgo(review.created_at, t, list('monthsShort'))}
@@ -59,7 +59,7 @@ export default function ReviewCard({ review }) {
       </View>
 
       {review.comment ? (
-        <Text style={[typography.secondary, { color: colors.dark, textAlign: align }]}>{review.comment}</Text>
+        <Text style={[typography.secondary, { color: colors.dark, textAlign: 'left' }]}>{review.comment}</Text>
       ) : null}
 
       {review.pro_reply ? (
@@ -71,13 +71,13 @@ export default function ReviewCard({ review }) {
             gap: 4,
           }}
         >
-          <View style={{ flexDirection: dir, alignItems: 'center', gap: 5 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
             <Ionicons name="return-down-forward-outline" size={13} color={colors.primaryInk} />
             <Text style={[typography.caption, { color: colors.primaryInk, fontWeight: '600' }]}>
               {t('reviews.ownerReply')}
             </Text>
           </View>
-          <Text style={[typography.caption, { color: colors.dark, textAlign: align }]}>{review.pro_reply}</Text>
+          <Text style={[typography.caption, { color: colors.dark, textAlign: 'left' }]}>{review.pro_reply}</Text>
         </View>
       ) : null}
     </View>
@@ -87,7 +87,7 @@ export default function ReviewCard({ review }) {
 /** Répartition des notes 5→1 en barres (§7.3). */
 export function RatingBreakdown({ reviews }) {
   const { colors, typography, spacing } = useTheme();
-  const { t, dir } = useI18n();
+  const { t } = useI18n();
 
   if (!reviews?.length) return null;
 
@@ -101,7 +101,7 @@ export function RatingBreakdown({ reviews }) {
 
   return (
     <View style={{ gap: spacing.md }}>
-      <View style={{ flexDirection: dir, alignItems: 'center', gap: spacing.lg }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.lg }}>
         <View style={{ alignItems: 'center' }}>
           <Text style={[typography.h1, { color: colors.dark }]}>{average.toFixed(1)}</Text>
           <Stars value={average} size={13} />
@@ -112,7 +112,7 @@ export function RatingBreakdown({ reviews }) {
 
         <View style={{ flex: 1, gap: 5 }}>
           {counts.map(({ star, count }) => (
-            <View key={star} style={{ flexDirection: dir, alignItems: 'center', gap: spacing.sm }}>
+            <View key={star} style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
               <Text style={[typography.caption, { color: colors.warmGray, width: 12 }]}>{star}</Text>
               <ProgressBar percent={(count / total) * 100} height={6} />
               <Text style={[typography.caption, { color: colors.warmGray, width: 20, textAlign: 'right' }]}>

@@ -17,7 +17,7 @@ import * as api from '../../data';
 export default function BookingScreen({ route, navigation }) {
   const { salleId } = route.params;
   const { colors, typography, spacing, radii } = useTheme();
-  const { t, list, dir, align } = useI18n();
+  const { t, list } = useI18n();
   const { user } = useAuth();
 
   const today = new Date();
@@ -166,7 +166,7 @@ export default function BookingScreen({ route, navigation }) {
               padding: spacing.lg,
             }}
           >
-            <Text style={[typography.caption, { color: colors.warmGray, marginBottom: spacing.sm, textAlign: align }]}>
+            <Text style={[typography.caption, { color: colors.warmGray, marginBottom: spacing.sm, textAlign: 'left' }]}>
               {t('booking.recap')}
             </Text>
             <KeyValue label={t('booking.hall')} value={salle.name} />
@@ -221,10 +221,10 @@ export default function BookingScreen({ route, navigation }) {
           {step === 0 ? (
             <View style={{ gap: spacing.lg }}>
               <View style={{ gap: spacing.xs }}>
-                <Text style={[typography.h3, { color: colors.dark, textAlign: align }]}>
+                <Text style={[typography.h3, { color: colors.dark, textAlign: 'left' }]}>
                   {t('booking.pickDate')}
                 </Text>
-                <Text style={[typography.caption, { color: colors.warmGray, textAlign: align }]}>
+                <Text style={[typography.caption, { color: colors.warmGray, textAlign: 'left' }]}>
                   {t('booking.pickDateHint')}
                 </Text>
               </View>
@@ -251,7 +251,7 @@ export default function BookingScreen({ route, navigation }) {
           {/* Étape 2 — formule */}
           {step === 1 ? (
             <View style={{ gap: spacing.lg }}>
-              <Text style={[typography.h3, { color: colors.dark, textAlign: align }]}>
+              <Text style={[typography.h3, { color: colors.dark, textAlign: 'left' }]}>
                 {t('booking.pickFormula')}
               </Text>
 
@@ -264,7 +264,7 @@ export default function BookingScreen({ route, navigation }) {
                     accessibilityRole="radio"
                     accessibilityState={{ selected }}
                     style={{
-                      flexDirection: dir,
+                      flexDirection: 'row',
                       alignItems: 'center',
                       gap: spacing.md,
                       backgroundColor: selected ? colors.primaryLight : colors.surface,
@@ -281,14 +281,14 @@ export default function BookingScreen({ route, navigation }) {
                     />
 
                     <View style={{ flex: 1, gap: 2 }}>
-                      <View style={{ flexDirection: dir, alignItems: 'center', gap: 5 }}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
                         <Text style={[typography.secondary, { color: colors.dark, fontWeight: '500' }]}>
                           {tarif.name}
                         </Text>
                         {i === salle.tarifs.length - 1 ? <Text>⭐</Text> : null}
                       </View>
                       {tarif.description ? (
-                        <Text style={[typography.caption, { color: colors.warmGray, textAlign: align }]}>
+                        <Text style={[typography.caption, { color: colors.warmGray, textAlign: 'left' }]}>
                           {tarif.description}
                         </Text>
                       ) : null}
@@ -306,7 +306,7 @@ export default function BookingScreen({ route, navigation }) {
           {/* Étape 3 — informations */}
           {step === 2 ? (
             <View style={{ gap: spacing.lg }}>
-              <Text style={[typography.h3, { color: colors.dark, textAlign: align }]}>
+              <Text style={[typography.h3, { color: colors.dark, textAlign: 'left' }]}>
                 {t('booking.yourInfos')}
               </Text>
 
@@ -330,10 +330,10 @@ export default function BookingScreen({ route, navigation }) {
               />
 
               <View style={{ gap: spacing.sm }}>
-                <Text style={[typography.caption, { color: colors.warmGray, textAlign: align }]}>
+                <Text style={[typography.caption, { color: colors.warmGray, textAlign: 'left' }]}>
                   {t('booking.eventType')}
                 </Text>
-                <View style={{ flexDirection: dir, flexWrap: 'wrap', gap: spacing.sm }}>
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
                   {EVENT_TYPES.map((type) => (
                     <MChip
                       key={type}

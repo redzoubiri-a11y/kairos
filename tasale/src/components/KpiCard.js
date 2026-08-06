@@ -9,7 +9,6 @@ import { useI18n } from '../i18n';
  */
 export default function KpiCard({ label, value, delta, deltaSuffix = '%', icon, tone = 'neutral', width }) {
   const { colors, typography, spacing, radii } = useTheme();
-  const { dir, align } = useI18n();
 
   const hasDelta = delta != null && delta !== 0;
   const up = Number(delta) > 0;
@@ -32,8 +31,8 @@ export default function KpiCard({ label, value, delta, deltaSuffix = '%', icon, 
         gap: spacing.sm,
       }}
     >
-      <View style={{ flexDirection: dir, alignItems: 'center', justifyContent: 'space-between' }}>
-        <Text style={[typography.caption, { color: colors.warmGray, flex: 1, textAlign: align }]} numberOfLines={2}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Text style={[typography.caption, { color: colors.warmGray, flex: 1, textAlign: 'left' }]} numberOfLines={2}>
           {label}
         </Text>
         {icon ? (
@@ -52,12 +51,12 @@ export default function KpiCard({ label, value, delta, deltaSuffix = '%', icon, 
         ) : null}
       </View>
 
-      <Text style={[typography.h2, { color: colors.dark, textAlign: align }]} numberOfLines={1}>
+      <Text style={[typography.h2, { color: colors.dark, textAlign: 'left' }]} numberOfLines={1}>
         {value}
       </Text>
 
       {hasDelta ? (
-        <View style={{ flexDirection: dir, alignItems: 'center', gap: 3 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
           <Ionicons name={up ? 'arrow-up' : 'arrow-down'} size={11} color={deltaColor} />
           <Text style={[typography.caption, { color: deltaColor }]}>
             {up ? '+' : ''}

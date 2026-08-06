@@ -59,7 +59,7 @@ export async function registerForPush() {
       await Notifications.setNotificationChannelAsync('default', {
         name: 'Tasalle',
         importance: Notifications.AndroidImportance.DEFAULT,
-        lightColor: '#0B6E5F',
+        lightColor: '#BE9A5E',
       });
     }
 

@@ -65,7 +65,7 @@ function FavButton({ active, onPress }) {
  */
 export default function SalleCard({ salle, onPress, onToggleFav, isFav, width }) {
   const { colors, typography, spacing, radii, sizes } = useTheme();
-  const { t, dir, align } = useI18n();
+  const { t } = useI18n();
 
   return (
     <Pressable
@@ -87,22 +87,22 @@ export default function SalleCard({ salle, onPress, onToggleFav, isFav, width })
       </SallePhoto>
 
       <View style={{ padding: spacing.md, gap: spacing.xs }}>
-        <Text style={[typography.title, { fontSize: 15, color: colors.dark, textAlign: align }]} numberOfLines={1}>
+        <Text style={[typography.title, { fontSize: 15, color: colors.dark, textAlign: 'left' }]} numberOfLines={1}>
           {salle.name}
         </Text>
 
-        <Text style={[typography.caption, { color: colors.warmGray, textAlign: align }]} numberOfLines={1}>
+        <Text style={[typography.caption, { color: colors.warmGray, textAlign: 'left' }]} numberOfLines={1}>
           {salle.city} · {t('salle.places', { count: salle.capacity_max })}
           {salle.reviews_count ? ` · ${t('salle.reviewsCount', { count: salle.reviews_count })}` : ''}
         </Text>
 
         {salle.price_from != null ? (
-          <Text style={{ fontSize: 15, fontWeight: '500', color: colors.primaryInk, textAlign: align }}>
+          <Text style={{ fontSize: 15, fontWeight: '500', color: colors.primaryInk, textAlign: 'left' }}>
             {t('common.from')} {formatDA(salle.price_from, t('common.currency'))}
           </Text>
         ) : null}
 
-        <View style={{ flexDirection: dir, gap: spacing.xs, flexWrap: 'wrap', marginTop: 2 }}>
+        <View style={{ flexDirection: 'row', gap: spacing.xs, flexWrap: 'wrap', marginTop: 2 }}>
           <MBadge label={t('salle.available')} tone="success" size="sm" />
           {salle.is_premium ? <MBadge label={t('salle.premium')} tone="gold" size="sm" /> : null}
         </View>

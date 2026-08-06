@@ -20,7 +20,7 @@ const FEATURES = ['f1', 'f2', 'f3', 'f4', 'f5', 'f6'];
 
 export default function ProSubscriptionScreen({ navigation }) {
   const { colors, typography, spacing, radii } = useTheme();
-  const { t, dir, align } = useI18n();
+  const { t } = useI18n();
   const { user } = useAuth();
   const { salles } = useProSalle();
 
@@ -113,7 +113,7 @@ export default function ProSubscriptionScreen({ navigation }) {
       <Body>
         {/* Panneau essai gratuit (§5.7) */}
         <MCard style={{ gap: spacing.md }}>
-          <View style={{ flexDirection: dir, alignItems: 'center', justifyContent: 'space-between' }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
             <Text style={[typography.title, { color: colors.dark }]}>{t('pro.trialPanel')}</Text>
             <MBadge label={t('pro.trialProgress', { used: sub.daysUsed, total: sub.trialTotal })} tone="gold" />
           </View>
@@ -123,15 +123,15 @@ export default function ProSubscriptionScreen({ navigation }) {
 
           <Divider />
 
-          <Text style={[typography.caption, { color: colors.warmGray, textAlign: align }]}>
+          <Text style={[typography.caption, { color: colors.warmGray, textAlign: 'left' }]}>
             {t('pro.trialIncluded')}
           </Text>
 
           <View style={{ gap: spacing.sm }}>
             {FEATURES.map((f) => (
-              <View key={f} style={{ flexDirection: dir, alignItems: 'center', gap: spacing.sm }}>
+              <View key={f} style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
                 <Ionicons name="checkmark-circle" size={15} color={colors.primaryInk} />
-                <Text style={[typography.secondary, { color: colors.dark, flex: 1, textAlign: align }]}>
+                <Text style={[typography.secondary, { color: colors.dark, flex: 1, textAlign: 'left' }]}>
                   {t(`pro.features.${f}`)}
                 </Text>
               </View>
@@ -141,10 +141,10 @@ export default function ProSubscriptionScreen({ navigation }) {
 
         {/* Passage Pro (§5.7) */}
         <MCard style={{ gap: spacing.md }}>
-          <View style={{ flexDirection: dir, alignItems: 'flex-start', justifyContent: 'space-between' }}>
+          <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' }}>
             <View style={{ flex: 1 }}>
-              <Text style={[typography.title, { color: colors.dark, textAlign: align }]}>{t('pro.goPro')}</Text>
-              <Text style={[typography.caption, { color: colors.warmGray, textAlign: align }]}>
+              <Text style={[typography.title, { color: colors.dark, textAlign: 'left' }]}>{t('pro.goPro')}</Text>
+              <Text style={[typography.caption, { color: colors.warmGray, textAlign: 'left' }]}>
                 {t('pro.proNoCommitment')}
               </Text>
             </View>
@@ -155,11 +155,11 @@ export default function ProSubscriptionScreen({ navigation }) {
 
           <Divider />
 
-          <Text style={[typography.caption, { color: colors.warmGray, textAlign: align }]}>
+          <Text style={[typography.caption, { color: colors.warmGray, textAlign: 'left' }]}>
             {t('pro.paymentMethods')}
           </Text>
 
-          <View style={{ flexDirection: dir, gap: spacing.sm, flexWrap: 'wrap' }}>
+          <View style={{ flexDirection: 'row', gap: spacing.sm, flexWrap: 'wrap' }}>
             {PAYMENT_METHODS.map((m) => {
               const disabled = m === 'edahabia';
               const active = sub.payment_method === m;
@@ -167,7 +167,7 @@ export default function ProSubscriptionScreen({ navigation }) {
                 <View
                   key={m}
                   style={{
-                    flexDirection: dir,
+                    flexDirection: 'row',
                     alignItems: 'center',
                     gap: 5,
                     paddingHorizontal: 12,
@@ -210,17 +210,17 @@ export default function ProSubscriptionScreen({ navigation }) {
                 {i > 0 ? <Divider /> : null}
                 <View
                   style={{
-                    flexDirection: dir,
+                    flexDirection: 'row',
                     alignItems: 'center',
                     gap: spacing.md,
                     padding: spacing.lg,
                   }}
                 >
                   <View style={{ flex: 1, gap: 2 }}>
-                    <Text style={[typography.secondary, { color: colors.dark, textAlign: align }]}>
+                    <Text style={[typography.secondary, { color: colors.dark, textAlign: 'left' }]}>
                       {inv.period}
                     </Text>
-                    <Text style={[typography.caption, { color: colors.warmGray, textAlign: align }]}>
+                    <Text style={[typography.caption, { color: colors.warmGray, textAlign: 'left' }]}>
                       {inv.description}
                     </Text>
                   </View>
@@ -267,7 +267,7 @@ export default function ProSubscriptionScreen({ navigation }) {
                 accessibilityRole="radio"
                 accessibilityState={{ selected: active }}
                 style={{
-                  flexDirection: dir,
+                  flexDirection: 'row',
                   alignItems: 'center',
                   gap: spacing.md,
                   padding: spacing.lg,
@@ -282,7 +282,7 @@ export default function ProSubscriptionScreen({ navigation }) {
                   size={19}
                   color={active ? colors.primaryInk : colors.border}
                 />
-                <Text style={[typography.secondary, { color: colors.dark, flex: 1, textAlign: align }]}>
+                <Text style={[typography.secondary, { color: colors.dark, flex: 1, textAlign: 'left' }]}>
                   {t(`pro.${m}`)}
                 </Text>
               </Pressable>

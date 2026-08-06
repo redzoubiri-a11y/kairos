@@ -28,13 +28,31 @@ describe('contraste du thème clair', () => {
     expect(contrast(lightColors.primaryInk, lightColors.surface)).toBeGreaterThanOrEqual(AA_TEXTE);
   });
 
-  it('le blanc reste lisible sur les boutons pleins', () => {
-    expect(contrast('#FFFFFF', lightColors.primary)).toBeGreaterThanOrEqual(AA_TEXTE);
+  it('le libellé des boutons pleins est lisible', () => {
+    expect(contrast(lightColors.onPrimary, lightColors.primary)).toBeGreaterThanOrEqual(AA_TEXTE);
   });
 
-  it('l’encre vaut la couleur primaire : le thème clair ne dévie pas', () => {
-    // Le correctif de lisibilité ne devait toucher que le thème sombre.
-    expect(lightColors.primaryInk).toBe(lightColors.primary);
+  /**
+   * L'or de la marque ne peut pas remplir un bouton : le blanc n'y tiendrait
+   * que 2,63:1. C'est la raison d'être des trois jetons — `primary` remplit
+   * (noir), `primaryInk` écrit (or profond), `gold` décore.
+   */
+  it('l’or de marque en aplat porterait un libellé illisible', () => {
+    expect(contrast('#FFFFFF', lightColors.gold)).toBeLessThan(AA_COMPOSANT);
+  });
+
+  it('le rouge d’erreur tient dans ses deux rôles', () => {
+    // Texte sur blanc et aplat portant du blanc : les deux au-dessus du seuil.
+    expect(contrast(lightColors.accent, lightColors.surface)).toBeGreaterThanOrEqual(AA_TEXTE);
+    expect(contrast('#FFFFFF', lightColors.accent)).toBeGreaterThanOrEqual(AA_TEXTE);
+  });
+
+  it('le secondaire est assez sombre pour servir de texte', () => {
+    expect(contrast(lightColors.secondary, lightColors.surface)).toBeGreaterThanOrEqual(AA_TEXTE);
+  });
+
+  it('les fonds pâles laissent lire l’encre de marque', () => {
+    expect(contrast(lightColors.primaryInk, lightColors.primaryLight)).toBeGreaterThanOrEqual(AA_TEXTE);
   });
 });
 
@@ -44,7 +62,6 @@ describe('contraste du thème sombre', () => {
   });
 
   it('l’encre de marque est lisible sur les cartes', () => {
-    // C'est précisément le défaut corrigé : #0B6E5F n'y tenait que 2,33:1.
     expect(contrast(darkColors.primaryInk, darkColors.surface)).toBeGreaterThanOrEqual(AA_TEXTE);
   });
 
@@ -52,14 +69,19 @@ describe('contraste du thème sombre', () => {
     expect(contrast(darkColors.primaryInk, darkColors.cream)).toBeGreaterThanOrEqual(AA_TEXTE);
   });
 
-  it('la couleur primaire brute serait insuffisante en texte', () => {
-    // Documente la raison d'être du token : sans lui, on repasse sous le seuil.
-    expect(contrast(darkColors.primary, darkColors.surface)).toBeLessThan(AA_TEXTE);
+  /**
+   * Les rôles s'inversent d'un thème à l'autre : sur fond sombre l'aplat noir
+   * disparaîtrait, c'est donc l'or qui remplit et le noir qui s'y inscrit.
+   * `onPrimary` existe pour que le libellé suive, au lieu d'être blanc en dur
+   * — ce qui donnerait 2,63:1 sur l'or.
+   */
+  it('le libellé des boutons pleins suit l’inversion', () => {
+    expect(contrast(darkColors.onPrimary, darkColors.primary)).toBeGreaterThanOrEqual(AA_TEXTE);
+    expect(darkColors.onPrimary).not.toBe(lightColors.onPrimary);
   });
 
-  it('le blanc reste lisible sur les boutons pleins', () => {
-    // L'aplat garde #0B6E5F : l'éclaircir ferait tomber le blanc à 3,16:1.
-    expect(contrast('#FFFFFF', darkColors.primary)).toBeGreaterThanOrEqual(AA_TEXTE);
+  it('un libellé blanc en dur y serait illisible', () => {
+    expect(contrast('#FFFFFF', darkColors.primary)).toBeLessThan(AA_COMPOSANT);
   });
 
   it('les marques de graphique se détachent de la surface', () => {

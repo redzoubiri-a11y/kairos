@@ -21,7 +21,6 @@ const BUDGETS = [40000, 60000, 90000];
  */
 function FilterRow({ children }) {
   const { spacing } = useTheme();
-  const { isRTL } = useI18n();
 
   return (
     <ScrollView
@@ -32,7 +31,7 @@ function FilterRow({ children }) {
         gap: spacing.sm,
         paddingHorizontal: spacing.lg,
         alignItems: 'center',
-        flexDirection: isRTL ? 'row-reverse' : 'row',
+        flexDirection: 'row',
       }}
     >
       {children}
@@ -42,7 +41,7 @@ function FilterRow({ children }) {
 
 export default function SearchScreen({ navigation, route }) {
   const { colors, typography, spacing } = useTheme();
-  const { t, dir, isRTL } = useI18n();
+  const { t } = useI18n();
   const { isFav, toggle } = useFavorites();
 
   const [query, setQuery] = useState(route.params?.query || '');
@@ -146,7 +145,7 @@ export default function SearchScreen({ navigation, route }) {
         contentContainerStyle={{ padding: spacing.lg, gap: spacing.md, paddingBottom: spacing.xxxl }}
         showsVerticalScrollIndicator={false}
       >
-        <Text style={[typography.caption, { color: colors.warmGray, textAlign: isRTL ? 'right' : 'left' }]}>
+        <Text style={[typography.caption, { color: colors.warmGray, textAlign: 'left' }]}>
           {countLabel}
         </Text>
 
@@ -168,7 +167,7 @@ export default function SearchScreen({ navigation, route }) {
           ))
         )}
         <View style={{ height: spacing.lg }} />
-        <View style={{ flexDirection: dir }} />
+        <View style={{ flexDirection: 'row' }} />
       </ScrollView>
     </Screen>
   );

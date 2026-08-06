@@ -24,7 +24,7 @@ export default function Calendar({
   markers = {},
 }) {
   const { colors, typography, spacing, radii } = useTheme();
-  const { t, list, dir, isRTL } = useI18n();
+  const { t, list } = useI18n();
 
   const months = list('months');
   const weekdays = list('weekdays');
@@ -32,7 +32,7 @@ export default function Calendar({
 
   const stateStyle = (state, isSelected) => {
     if (isSelected) {
-      return { bg: colors.primary, fg: '#FFFFFF', border: colors.primary };
+      return { bg: colors.primary, fg: colors.onPrimary, border: colors.primary };
     }
     switch (state) {
       case 'past':
@@ -62,7 +62,7 @@ export default function Calendar({
   return (
     <View style={{ gap: spacing.md }}>
       {/* En-tête mois */}
-      <View style={{ flexDirection: dir, alignItems: 'center', justifyContent: 'space-between' }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <Pressable
           onPress={() => !prevDisabled && onChangeMonth(-1)}
           disabled={prevDisabled}
@@ -71,7 +71,7 @@ export default function Calendar({
           accessibilityLabel={t('common.prevMonth')}
           style={{ padding: spacing.xs, opacity: prevDisabled ? 0.3 : 1 }}
         >
-          <Ionicons name={isRTL ? 'chevron-forward' : 'chevron-back'} size={20} color={colors.dark} />
+          <Ionicons name={'chevron-back'} size={20} color={colors.dark} />
         </Pressable>
 
         <Text style={[typography.title, { color: colors.dark }]}>
@@ -85,12 +85,12 @@ export default function Calendar({
           accessibilityLabel={t('common.nextMonth')}
           style={{ padding: spacing.xs }}
         >
-          <Ionicons name={isRTL ? 'chevron-back' : 'chevron-forward'} size={20} color={colors.dark} />
+          <Ionicons name={'chevron-forward'} size={20} color={colors.dark} />
         </Pressable>
       </View>
 
       {/* Jours de la semaine */}
-      <View style={{ flexDirection: dir }}>
+      <View style={{ flexDirection: 'row' }}>
         {weekdays.map((d) => (
           <Text
             key={d}
@@ -102,7 +102,7 @@ export default function Calendar({
       </View>
 
       {/* Grille */}
-      <View style={{ flexDirection: dir, flexWrap: 'wrap' }}>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
         {cells.map((cell) => {
           const state = cell.inMonth ? availability[cell.iso] || 'available' : 'past';
           const isSelected = selected === cell.iso && cell.inMonth;
@@ -144,7 +144,7 @@ export default function Calendar({
                       width: 4,
                       height: 4,
                       borderRadius: 2,
-                      backgroundColor: isSelected ? '#FFFFFF' : colors.secondary,
+                      backgroundColor: isSelected ? colors.onPrimary : colors.secondary,
                       marginTop: 2,
                     }}
                   />
@@ -161,7 +161,6 @@ export default function Calendar({
 /** Légende du calendrier (§4.4 étape 1). */
 export function CalendarLegend({ items }) {
   const { colors, typography, spacing, radii } = useTheme();
-  const { dir } = useI18n();
 
   const TONES = {
     available: { bg: colors.surface, border: colors.border },
@@ -171,11 +170,11 @@ export function CalendarLegend({ items }) {
   };
 
   return (
-    <View style={{ flexDirection: dir, flexWrap: 'wrap', gap: spacing.md }}>
+    <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md }}>
       {items.map((item) => {
         const tone = TONES[item.state] || TONES.available;
         return (
-          <View key={item.state} style={{ flexDirection: dir, alignItems: 'center', gap: 6 }}>
+          <View key={item.state} style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
             <View
               style={{
                 width: 12,

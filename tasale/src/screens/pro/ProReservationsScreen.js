@@ -20,7 +20,7 @@ const FILTERS = ['all', 'pending', 'confirmed', 'cancelled', 'past'];
 
 export default function ProReservationsScreen({ route, navigation }) {
   const { colors, typography, spacing } = useTheme();
-  const { t, list, dir, isRTL, align } = useI18n();
+  const { t, list } = useI18n();
   const { currentId } = useProSalle();
 
   const [filter, setFilter] = useState(route.params?.filter || 'all');
@@ -133,7 +133,7 @@ export default function ProReservationsScreen({ route, navigation }) {
         contentContainerStyle={{
           gap: spacing.sm,
           paddingHorizontal: spacing.lg,
-          flexDirection: isRTL ? 'row-reverse' : 'row',
+          flexDirection: 'row',
         }}
         style={{ flexGrow: 0 }}
       >
@@ -161,7 +161,7 @@ export default function ProReservationsScreen({ route, navigation }) {
                 <Divider />
 
                 {resa.deposit_amount ? (
-                  <Text style={[typography.caption, { color: colors.warmGray, textAlign: align }]}>
+                  <Text style={[typography.caption, { color: colors.warmGray, textAlign: 'left' }]}>
                     {t('reservations.depositAmount', {
                       amount: formatDA(resa.deposit_amount, t('common.currency')),
                     })}
@@ -169,7 +169,7 @@ export default function ProReservationsScreen({ route, navigation }) {
                   </Text>
                 ) : null}
 
-                <View style={{ flexDirection: dir, gap: spacing.sm, flexWrap: 'wrap' }}>
+                <View style={{ flexDirection: 'row', gap: spacing.sm, flexWrap: 'wrap' }}>
                   {resa.status === RESERVATION_STATUS.PENDING ? (
                     <>
                       <MButton label={t('common.confirm')} size="sm" onPress={() => openConfirm(resa)} />
@@ -283,7 +283,7 @@ export default function ProReservationsScreen({ route, navigation }) {
 
       {/* Refus */}
       <MSheet visible={!!refusing} onClose={() => setRefusing(null)} title={t('pro.refuseTitle')}>
-        <Text style={[typography.secondary, { color: colors.warmGray, textAlign: align }]}>
+        <Text style={[typography.secondary, { color: colors.warmGray, textAlign: 'left' }]}>
           {t('pro.refuseHint')}
         </Text>
         <MInput label={t('pro.refuseReason')} value={reason} onChangeText={setReason} multiline />

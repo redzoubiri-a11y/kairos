@@ -26,7 +26,7 @@ function confirmer(titre, message, onConfirm, labels) {
 
 export default function AdminSallesScreen() {
   const { colors, typography, spacing, radii } = useTheme();
-  const { t, list, dir, align } = useI18n();
+  const { t, list } = useI18n();
 
   const [salles, setSalles] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -98,17 +98,17 @@ export default function AdminSallesScreen() {
 
               <View style={{ padding: spacing.lg, gap: spacing.md }}>
                 <View style={{ gap: 2 }}>
-                  <Text style={[typography.title, { color: colors.dark, textAlign: align }]}>
+                  <Text style={[typography.title, { color: colors.dark, textAlign: 'left' }]}>
                     {salle.name}
                   </Text>
-                  <Text style={[typography.caption, { color: colors.warmGray, textAlign: align }]}>
+                  <Text style={[typography.caption, { color: colors.warmGray, textAlign: 'left' }]}>
                     {salle.city} · {t('admin.submittedOn', { date: dateDepot(salle.created_at) })}
                   </Text>
                 </View>
 
                 {salle.description ? (
                   <Text
-                    style={[typography.caption, { color: colors.warmGray, textAlign: align }]}
+                    style={[typography.caption, { color: colors.warmGray, textAlign: 'left' }]}
                     numberOfLines={4}
                   >
                     {salle.description}
@@ -134,7 +134,7 @@ export default function AdminSallesScreen() {
                 {!salle.photos?.length ? (
                   <View
                     style={{
-                      flexDirection: dir,
+                      flexDirection: 'row',
                       alignItems: 'center',
                       gap: spacing.sm,
                       backgroundColor: colors.warningBg,

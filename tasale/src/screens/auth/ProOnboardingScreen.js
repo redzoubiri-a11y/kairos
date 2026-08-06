@@ -17,7 +17,7 @@ const STEPS = ['Salle', 'Tarifs', 'PIN'];
 /** Inscription pro — création de la salle, des formules et du PIN de signature. */
 export default function ProOnboardingScreen({ navigation }) {
   const { colors, typography, spacing, radii } = useTheme();
-  const { t, dir } = useI18n();
+  const { t } = useI18n();
   const { registerSalle } = useAuth();
 
   const [step, setStep] = useState(0);
@@ -122,7 +122,7 @@ export default function ProOnboardingScreen({ navigation }) {
               />
               <MInput label={t('pro.address')} value={form.address} onChangeText={(v) => set('address', v)} />
 
-              <View style={{ flexDirection: dir, gap: spacing.md }}>
+              <View style={{ flexDirection: 'row', gap: spacing.md }}>
                 <MInput
                   label={t('pro.capacity')}
                   value={form.capacity_max}
@@ -150,7 +150,7 @@ export default function ProOnboardingScreen({ navigation }) {
 
               <View style={{ gap: spacing.sm }}>
                 <Text style={[typography.caption, { color: colors.warmGray }]}>{t('salle.amenities')}</Text>
-                <View style={{ flexDirection: dir, flexWrap: 'wrap', gap: spacing.sm }}>
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
                   {AMENITIES.map((a) => (
                     <MChip
                       key={a}
@@ -214,7 +214,7 @@ export default function ProOnboardingScreen({ navigation }) {
                   borderColor: colors.gold,
                   borderRadius: radii.xl,
                   padding: spacing.lg,
-                  flexDirection: dir,
+                  flexDirection: 'row',
                   gap: spacing.md,
                   alignItems: 'center',
                 }}

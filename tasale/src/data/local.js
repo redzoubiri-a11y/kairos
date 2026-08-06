@@ -169,7 +169,6 @@ export async function verifyOtp(phone, code) {
       phone: normalized,
       full_name: null,
       role: null,
-      preferred_language: 'fr',
       created_at: new Date().toISOString(),
     };
     db.users.push(user);

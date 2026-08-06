@@ -1,6 +1,6 @@
 # Tasalle
 
-> Vos célébrations, notre passion — احتفالاتكم، شغفنا
+> Vos célébrations, notre passion
 >
 > **Tasalle · Algérie**
 
@@ -101,6 +101,7 @@ psql "$DATABASE_URL" -f supabase/migrations/0005_delivery.sql   # file d'expédi
 psql "$DATABASE_URL" -f supabase/migrations/0006_admin.sql      # console d'administration
 psql "$DATABASE_URL" -f supabase/migrations/0007_geo.sql        # position des salles
 psql "$DATABASE_URL" -f supabase/migrations/0008_multi_salles.sql # plusieurs salles par propriétaire
+psql "$DATABASE_URL" -f supabase/migrations/0009_francais_seul.sql # retrait de la préférence de langue
 ```
 
 `0003` suppose le schéma `storage` : il ne s'applique que sur Supabase.
@@ -156,7 +157,7 @@ puis rejouer `0004_cron.sql`.
 ## Tests
 
 ```bash
-npm test                                                    # 202 tests JS (jest-expo)
+npm test                                                    # 200 tests JS (jest-expo)
 psql "$DATABASE_URL" -f supabase/tests/business_rules.sql   # 17 assertions SQL
 psql "$DATABASE_URL" -f supabase/tests/lifecycle.sql        # 16 assertions SQL
 psql "$DATABASE_URL" -f supabase/tests/admin.sql            # 14 assertions SQL
@@ -182,8 +183,8 @@ psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/tests/_bootstrap_local.sql
 | `src/data/cache.test.js` (11) | Cache hors ligne : repli sur la dernière réponse connue, refus d'une donnée périmée, propagation de l'erreur quand aucun cache n'existe |
 | `src/services/pdfTemplates.test.js` (31) | Contrat, planning et facture : montants et solde, mention de signature, salles couvertes par l'abonnement, échappement HTML d'un nom de client piégé, traduction des énumérations |
 | `src/lib/geo.test.js` (26) | Distance orthodromique vérifiée sur des écarts connus (Alger–Oran, un degré de latitude), tri par proximité, liens d'itinéraire par plateforme |
-| `src/i18n/i18n.test.js` (15) | Parité des clés français/arabe, jetons `{{x}}` cohérents, listes de même longueur, aucun `accessibilityLabel` écrit en dur, et surtout : chaque clé appelée dans le code existe bien — une clé absente s'afficherait telle quelle à l'écran, sans erreur |
-| `src/theme.test.js` (15) | Contrastes calculés selon WCAG 2.1 : encre de marque ≥ 4,5:1 dans les deux thèmes, blanc lisible sur les aplats de bouton, thème clair verrouillé à l'identique, et l'or du logo verrouillé **sous** le seuil — pour qu'il ne devienne jamais une couleur de texte |
+| `src/i18n/i18n.test.js` (7) | Chaque clé appelée dans le code existe — une clé absente s'afficherait telle quelle à l'écran, sans erreur — et aucun libellé n'est écrit en dur dans le JSX |
+| `src/theme.test.js` (18) | Contrastes calculés selon WCAG 2.1 : encre de marque ≥ 4,5:1 dans les deux thèmes, libellé lisible sur les aplats — y compris après l'inversion des rôles en thème sombre — rouge d'erreur tenant dans ses deux emplois, et l'or de marque verrouillé **sous** le seuil, pour qu'il ne devienne jamais une couleur de texte |
 | `supabase/tests/business_rules.sql` (17) | Les mêmes règles §10, mais côté PostgreSQL : unicité du jour confirmé, PIN, délai d'avis, publication automatique, agrégats, absence de policy `DELETE` sur les avis |
 | `supabase/tests/admin.sql` (14) | Autorisations de la console : un client n'obtient pas les chiffres, un pro ne valide pas sa propre salle, un avis retiré reste en base |
 | `supabase/tests/lifecycle.sql` (16) | Clôture des événements passés, rappel J-1, demande d'avis à J+48 h, rappels et expiration d'essai — chaque tâche vérifiée aussi pour son idempotence |
@@ -201,7 +202,7 @@ tasale/
 ├── App.js                    Navigation : auth → inscription → onglets client ou pro
 ├── src/
 │   ├── theme.js              Tokens du design system (§3), clair + sombre
-│   ├── i18n/                 Français / arabe avec direction RTL (§1.4)
+│   ├── i18n/                 Tous les textes de l'interface, en français
 │   ├── lib/                  Constantes métier, formatage DA et calendrier
 │   ├── data/
 │   │   ├── index.js          Sélection de l'adaptateur
@@ -256,7 +257,7 @@ applicative.
 - **§11 Paiement** — workflow d'acompte complet (demande → SMS CCP → déclaration → vérification), configuration de l'abonnement
 - **§12 Phase 3 — finitions** — export PDF (planning, contrat, **facture
   d'abonnement**), mode hors ligne du planning, réponses rapides de la
-  messagerie adaptées au rôle et à la langue, filtres avancés, console
+  messagerie adaptées au rôle, filtres avancés, console
   d'administration
 - **§12 Phase 4 — plusieurs salles par propriétaire** — un sélecteur en tête de
   l'espace pro, chaque écran cloisonné sur la salle choisie, choix mémorisé
@@ -311,13 +312,20 @@ la même. Les lettres s'appuient encore sur le serif du système : les fondre
 en tracés — ou embarquer la fonte du document de marque — reste à faire si
 l'on veut une identité au pixel près sur les trois plateformes.
 
-**Couleurs des graphiques.** La palette de marque ne peut pas servir de palette
-catégorielle : terracotta `#C8956C` et or `#D4A853` ne sont séparés que de
-ΔE 6,8 en vision normale — un lecteur sans déficience de la vision des
-couleurs ne les distingue pas. Les répartitions (types d'événements, sources,
-occupation) sont donc rendues en lignes libellées mono-teinte, l'identité
-étant portée par le texte. Sur fond sombre, l'émeraude passe à `#14A38C` :
-`#0B6E5F` n'atteint que 2,33:1 de contraste.
+**La palette est celle du logo.** L'émeraude du cahier des charges a été
+écartée : la marque ne la porte pas. Restent le noir du mot-symbole et l'or.
+
+L'or ne peut pas tout faire — `#BE9A5E` ne fait que 2,63:1 sur blanc. D'où
+trois jetons là où le vert n'en demandait qu'un : `primary` remplit les aplats
+(noir, blanc dessus à 17,4:1), `primaryInk` écrit (or profond `#8B6914`,
+5,09:1), `gold` décore. En thème sombre les rôles s'inversent — un aplat noir
+y disparaîtrait, c'est donc l'or qui remplit et le noir qui s'y inscrit — d'où
+le jeton `onPrimary`, sans lequel le libellé serait resté blanc en dur, à
+2,63:1 sur l'or.
+
+Les répartitions restent rendues en lignes libellées mono-teinte : les teintes
+chaudes de la marque sont trop proches (ΔE < 15) pour qu'une palette
+catégorielle soit lisible.
 
 **Impression web sans `expo-print`.** La version web d'`expo-print` ignore le
 HTML qu'on lui passe et appelle `window.print()` : elle imprime l'écran de
@@ -325,24 +333,29 @@ l'application, pas le document. Le back-office pro tournant dans un navigateur,
 `exportToPdf` y monte le document dans un cadre hors écran et imprime celui-ci.
 Sur iOS et Android, `printToFileAsync` fait bien son travail et reste utilisé.
 
-**RTL sans redémarrage.** `I18nManager.forceRTL` impose un redémarrage natif.
-La direction est appliquée dans les styles (`dir`, `align`, `writing`), ce qui
-permet de basculer français/arabe instantanément, y compris sur le web. Les
-champs téléphone restent en LTR conformément au §4.4.
+**Français seul.** Le cahier des charges prévoyait une interface bilingue
+français/arabe avec sens de lecture inversé (§1.4). C'est écarté : l'app
+s'adresse à un public francophone, et une seconde langue sans personne pour la
+lire coûte à chaque écran sans rien apporter. Le dictionnaire arabe, le
+sélecteur de langue, la colonne `preferred_language` et toute la mécanique RTL
+— `dir`, `align`, `isRTL` — ont été retirés, soit 254 substitutions dans
+55 fichiers.
+
+Le passage par `t()` est conservé malgré la langue unique : il garde tous les
+textes visibles dans un seul fichier, ce qu'un test vérifie, et rendrait une
+seconde langue possible sans rouvrir chaque écran.
 
 ---
 
 ## Vérification effectuée
 
-- `npm test` — 202 tests au vert
+- `npm test` — 200 tests au vert
 - `npx expo export --platform web` — 917 modules, aucune erreur
 - Parcours pro complet en navigateur (Playwright) : connexion OTP → tableau de
   bord → confirmation d'une demande avec acompte et signature PIN → planning →
   statistiques → abonnement
 - Parcours client complet : connexion → recherche → fiche salle → réservation
   en 4 étapes → écran de succès avec référence `TAS-2026-XXXX`
-- Bascule en arabe : accueil, recherche, messagerie et barre d'onglets
-  correctement inversés, réponses rapides traduites
 - Export PDF vérifié dans le navigateur : le document produit est bien la
   facture ou le planning, et non une capture de l'écran
 - Multi-salles en navigateur : le sélecteur n'apparaît qu'à partir de deux

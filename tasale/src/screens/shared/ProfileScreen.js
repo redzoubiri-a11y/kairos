@@ -14,17 +14,16 @@ import * as api from '../../data';
 
 function Row({ icon, label, value, onPress, danger }) {
   const { colors, typography, spacing } = useTheme();
-  const { dir, align } = useI18n();
 
   return (
     <Pressable
       onPress={onPress}
       disabled={!onPress}
       accessibilityRole={onPress ? 'button' : undefined}
-      style={{ flexDirection: dir, alignItems: 'center', gap: spacing.md, paddingVertical: spacing.md }}
+      style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingVertical: spacing.md }}
     >
       <Ionicons name={icon} size={18} color={danger ? colors.accent : colors.warmGray} />
-      <Text style={[typography.secondary, { color: danger ? colors.accent : colors.dark, flex: 1, textAlign: align }]}>
+      <Text style={[typography.secondary, { color: danger ? colors.accent : colors.dark, flex: 1, textAlign: 'left' }]}>
         {label}
       </Text>
       {value ? <Text style={[typography.caption, { color: colors.warmGray }]}>{value}</Text> : null}
@@ -35,7 +34,7 @@ function Row({ icon, label, value, onPress, danger }) {
 
 export default function ProfileScreen({ navigation }) {
   const { colors, typography, spacing, radii, mode, setThemeMode } = useTheme();
-  const { t, lang, setLang, dir } = useI18n();
+  const { t } = useI18n();
   const { user, logout, isPro } = useAuth();
   const [resetting, setResetting] = useState(false);
 
@@ -62,7 +61,7 @@ export default function ProfileScreen({ navigation }) {
       <Body>
         {/* Identité */}
         <MCard>
-          <View style={{ flexDirection: dir, alignItems: 'center', gap: spacing.lg }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.lg }}>
             <View
               style={{
                 width: 54,
@@ -89,16 +88,8 @@ export default function ProfileScreen({ navigation }) {
 
         {/* Préférences */}
         <MCard style={{ gap: spacing.md }}>
-          <Text style={[typography.caption, { color: colors.warmGray }]}>{t('profile.language')}</Text>
-          <View style={{ flexDirection: dir, gap: spacing.sm }}>
-            <MChip label="Français" active={lang === 'fr'} onPress={() => setLang('fr')} />
-            <MChip label="العربية" active={lang === 'ar'} onPress={() => setLang('ar')} />
-          </View>
-
-          <Divider />
-
           <Text style={[typography.caption, { color: colors.warmGray }]}>{t('profile.theme')}</Text>
-          <View style={{ flexDirection: dir, gap: spacing.sm }}>
+          <View style={{ flexDirection: 'row', gap: spacing.sm }}>
             <MChip label={t('profile.themeSystem')} active={mode === 'system'} onPress={() => setThemeMode('system')} />
             <MChip label={t('profile.themeLight')} active={mode === 'light'} onPress={() => setThemeMode('light')} />
             <MChip label={t('profile.themeDark')} active={mode === 'dark'} onPress={() => setThemeMode('dark')} />
@@ -125,7 +116,7 @@ export default function ProfileScreen({ navigation }) {
         {/* Devenir pro */}
         {user?.role === ROLES.CLIENT ? (
           <MCard style={{ gap: spacing.md }}>
-            <View style={{ flexDirection: dir, alignItems: 'center', gap: spacing.md }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
               <Ionicons name="business-outline" size={20} color={colors.gold} />
               <Text style={[typography.title, { fontSize: 15, color: colors.dark, flex: 1 }]}>
                 {t('profile.becomePro')}

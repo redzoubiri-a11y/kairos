@@ -65,7 +65,7 @@ export default function TasalleLogo({
   tone = 'default',
 }) {
   const { colors, typography, spacing } = useTheme();
-  const { t, dir } = useI18n();
+  const { t } = useI18n();
 
   const onDark = tone === 'onDark';
   const encre = onDark ? '#FFFFFF' : colors.logoWordmark;
@@ -113,7 +113,7 @@ export default function TasalleLogo({
   }
 
   return (
-    <View style={{ flexDirection: dir, alignItems: 'center', gap: spacing.sm }}>
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
       <TasalleMark size={size} />
       <View>
         <Text style={[typography.title, { color: encre, letterSpacing: 1.4 }]}>

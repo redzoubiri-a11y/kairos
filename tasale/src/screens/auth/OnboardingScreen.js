@@ -15,7 +15,7 @@ const SLIDES = [
 
 export default function OnboardingScreen({ navigation }) {
   const { colors, typography, spacing, radii } = useTheme();
-  const { t, isRTL, dir } = useI18n();
+  const { t } = useI18n();
   const { width } = useWindowDimensions();
   const scrollRef = useRef(null);
   const [index, setIndex] = useState(0);
@@ -32,7 +32,7 @@ export default function OnboardingScreen({ navigation }) {
 
   return (
     <Screen>
-      <View style={{ flexDirection: dir, justifyContent: 'space-between', alignItems: 'center', padding: spacing.lg }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: spacing.lg }}>
         <TasalleLogo size={32} />
         <Pressable onPress={() => navigation.replace('Phone')} hitSlop={8} accessibilityRole="button">
           <Text style={[typography.secondary, { color: colors.warmGray }]}>{t('onboarding.skip')}</Text>
@@ -78,7 +78,7 @@ export default function OnboardingScreen({ navigation }) {
       </ScrollView>
 
       <View style={{ padding: spacing.xl, gap: spacing.xl }}>
-        <View style={{ flexDirection: isRTL ? 'row-reverse' : 'row', justifyContent: 'center', gap: 6 }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 6 }}>
           {SLIDES.map((s, i) => (
             <View
               key={s.key}

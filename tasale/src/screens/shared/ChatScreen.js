@@ -12,7 +12,7 @@ import * as api from '../../data';
 export default function ChatScreen({ route, navigation }) {
   const { reservationId, title } = route.params;
   const { colors, typography, spacing, radii } = useTheme();
-  const { t, list, dir, isRTL } = useI18n();
+  const { t, list } = useI18n();
   const { user } = useAuth();
 
   // Les deux rôles partagent cet écran : le propriétaire répond, la famille
@@ -76,7 +76,7 @@ export default function ChatScreen({ route, navigation }) {
                 <View
                   key={m.id}
                   style={{
-                    alignSelf: mine ? (isRTL ? 'flex-start' : 'flex-end') : isRTL ? 'flex-end' : 'flex-start',
+                    alignSelf: mine ? 'flex-end' : 'flex-start',
                     maxWidth: '82%',
                     backgroundColor: mine ? colors.primary : colors.surface,
                     borderWidth: mine ? 0 : 1,
@@ -103,7 +103,7 @@ export default function ChatScreen({ route, navigation }) {
             gap: spacing.sm,
             paddingHorizontal: spacing.lg,
             paddingBottom: spacing.sm,
-            flexDirection: isRTL ? 'row-reverse' : 'row',
+            flexDirection: 'row',
           }}
           style={{ flexGrow: 0 }}
         >
@@ -131,7 +131,7 @@ export default function ChatScreen({ route, navigation }) {
 
         <View
           style={{
-            flexDirection: dir,
+            flexDirection: 'row',
             alignItems: 'center',
             gap: spacing.sm,
             padding: spacing.md,

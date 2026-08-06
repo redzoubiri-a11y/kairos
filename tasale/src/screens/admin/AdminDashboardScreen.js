@@ -12,7 +12,6 @@ import * as api from '../../data';
 /** Ligne d'alerte cliquable vers la file correspondante. */
 function Todo({ icon, label, count, tone, onPress }) {
   const { colors, typography, spacing, radii } = useTheme();
-  const { dir, align } = useI18n();
 
   if (!count) return null;
   const color = tone === 'danger' ? colors.accent : colors.goldText;
@@ -20,7 +19,7 @@ function Todo({ icon, label, count, tone, onPress }) {
 
   return (
     <MCard onPress={onPress} style={{ backgroundColor: bg, borderColor: 'transparent' }}>
-      <View style={{ flexDirection: dir, alignItems: 'center', gap: spacing.md }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
         <View
           style={{
             width: 30,
@@ -33,7 +32,7 @@ function Todo({ icon, label, count, tone, onPress }) {
         >
           <Text style={{ fontSize: 15 }}>{icon}</Text>
         </View>
-        <Text style={[typography.secondary, { color, flex: 1, textAlign: align }]}>{label}</Text>
+        <Text style={[typography.secondary, { color, flex: 1, textAlign: 'left' }]}>{label}</Text>
         <Text style={[typography.h3, { color }]}>{count}</Text>
       </View>
     </MCard>
@@ -42,7 +41,7 @@ function Todo({ icon, label, count, tone, onPress }) {
 
 export default function AdminDashboardScreen({ navigation }) {
   const { colors, typography, spacing } = useTheme();
-  const { t, dir } = useI18n();
+  const { t } = useI18n();
   const { width } = useWindowDimensions();
 
   const [data, setData] = useState(null);
@@ -125,7 +124,7 @@ export default function AdminDashboardScreen({ navigation }) {
 
         <View>
           <SectionTitle title={t('admin.overview')} />
-          <View style={{ flexDirection: dir, flexWrap: 'wrap', gap: spacing.md }}>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md }}>
             <KpiCard
               label={t('admin.sallesActive')}
               value={String(data.salles.active)}

@@ -10,7 +10,7 @@ import * as api from '../../data';
 
 export default function ConversationsScreen({ navigation }) {
   const { colors, typography, spacing, radii } = useTheme();
-  const { t, list, dir, align } = useI18n();
+  const { t, list } = useI18n();
 
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -44,7 +44,7 @@ export default function ConversationsScreen({ navigation }) {
               key={c.reservation_id}
               onPress={() => navigation.navigate('Chat', { reservationId: c.reservation_id, title: c.title })}
             >
-              <View style={{ flexDirection: dir, gap: spacing.md, alignItems: 'center' }}>
+              <View style={{ flexDirection: 'row', gap: spacing.md, alignItems: 'center' }}>
                 <View
                   style={{
                     width: 38,
@@ -62,12 +62,12 @@ export default function ConversationsScreen({ navigation }) {
 
                 <View style={{ flex: 1, gap: 2 }}>
                   <Text
-                    style={[typography.secondary, { color: colors.dark, fontWeight: '500', textAlign: align }]}
+                    style={[typography.secondary, { color: colors.dark, fontWeight: '500', textAlign: 'left' }]}
                     numberOfLines={1}
                   >
                     {c.title}
                   </Text>
-                  <Text style={[typography.caption, { color: colors.warmGray, textAlign: align }]} numberOfLines={1}>
+                  <Text style={[typography.caption, { color: colors.warmGray, textAlign: 'left' }]} numberOfLines={1}>
                     {c.last_message || c.subtitle}
                   </Text>
                 </View>

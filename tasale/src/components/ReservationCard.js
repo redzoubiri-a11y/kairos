@@ -24,7 +24,7 @@ export function StatusBadge({ status, size }) {
  */
 export default function ReservationCard({ reservation, onPress, perspective = 'client', children }) {
   const { colors, typography, spacing, radii } = useTheme();
-  const { t, list, dir, align } = useI18n();
+  const { t, list } = useI18n();
 
   const title =
     perspective === 'pro' ? reservation.client_name || '—' : reservation.salle?.name || '—';
@@ -47,7 +47,7 @@ export default function ReservationCard({ reservation, onPress, perspective = 'c
         opacity: pressed && onPress ? 0.92 : 1,
       })}
     >
-      <View style={{ flexDirection: dir, alignItems: 'flex-start', gap: spacing.md }}>
+      <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: spacing.md }}>
         <View
           style={{
             width: 40,
@@ -62,10 +62,10 @@ export default function ReservationCard({ reservation, onPress, perspective = 'c
         </View>
 
         <View style={{ flex: 1, gap: 2 }}>
-          <Text style={[typography.title, { fontSize: 15, color: colors.dark, textAlign: align }]} numberOfLines={1}>
+          <Text style={[typography.title, { fontSize: 15, color: colors.dark, textAlign: 'left' }]} numberOfLines={1}>
             {title}
           </Text>
-          <Text style={[typography.caption, { color: colors.warmGray, textAlign: align }]} numberOfLines={1}>
+          <Text style={[typography.caption, { color: colors.warmGray, textAlign: 'left' }]} numberOfLines={1}>
             {t(`events.${reservation.event_type}`)}
             {subtitle ? ` · ${subtitle}` : ''}
           </Text>
@@ -74,8 +74,8 @@ export default function ReservationCard({ reservation, onPress, perspective = 'c
         <StatusBadge status={reservation.status} size="sm" />
       </View>
 
-      <View style={{ flexDirection: dir, alignItems: 'center', gap: spacing.lg, flexWrap: 'wrap' }}>
-        <View style={{ flexDirection: dir, alignItems: 'center', gap: 5 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.lg, flexWrap: 'wrap' }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
           <Ionicons name="calendar-outline" size={13} color={colors.warmGray} />
           <Text style={[typography.caption, { color: colors.dark }]}>
             {formatLongDate(reservation.event_date, list('months'))}
@@ -83,7 +83,7 @@ export default function ReservationCard({ reservation, onPress, perspective = 'c
         </View>
 
         {reservation.total_amount ? (
-          <View style={{ flexDirection: dir, alignItems: 'center', gap: 5 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
             <Ionicons name="pricetag-outline" size={13} color={colors.warmGray} />
             <Text style={[typography.caption, { color: colors.dark }]}>
               {formatDA(reservation.total_amount, t('common.currency'))}

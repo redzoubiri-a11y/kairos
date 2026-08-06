@@ -20,7 +20,7 @@ const TABS = ['infos', 'photos', 'pricing'];
 
 export default function ProSalleScreen() {
   const { colors, typography, spacing, radii } = useTheme();
-  const { t, dir, align } = useI18n();
+  const { t } = useI18n();
   const { currentId } = useProSalle();
 
   const [tab, setTab] = useState('infos');
@@ -143,7 +143,7 @@ export default function ProSalleScreen() {
 
       <SalleSwitcher />
 
-      <View style={{ flexDirection: dir, gap: spacing.sm, paddingHorizontal: spacing.lg }}>
+      <View style={{ flexDirection: 'row', gap: spacing.sm, paddingHorizontal: spacing.lg }}>
         {TABS.map((key) => (
           <MChip
             key={key}
@@ -167,7 +167,7 @@ export default function ProSalleScreen() {
               />
               <MInput label={t('pro.address')} value={salle.address} onChangeText={(v) => set('address', v)} />
 
-              <View style={{ flexDirection: dir, gap: spacing.md }}>
+              <View style={{ flexDirection: 'row', gap: spacing.md }}>
                 <MInput
                   label={t('pro.capacity')}
                   value={String(salle.capacity_max ?? '')}
@@ -194,10 +194,10 @@ export default function ProSalleScreen() {
               />
 
               <View style={{ gap: spacing.sm }}>
-                <Text style={[typography.caption, { color: colors.warmGray, textAlign: align }]}>
+                <Text style={[typography.caption, { color: colors.warmGray, textAlign: 'left' }]}>
                   {t('salle.amenities')}
                 </Text>
-                <View style={{ flexDirection: dir, flexWrap: 'wrap', gap: spacing.sm }}>
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
                   {AMENITIES.map((a) => (
                     <MChip
                       key={a}
@@ -214,11 +214,11 @@ export default function ProSalleScreen() {
 
           {tab === 'photos' ? (
             <>
-              <Text style={[typography.caption, { color: colors.warmGray, textAlign: align }]}>
+              <Text style={[typography.caption, { color: colors.warmGray, textAlign: 'left' }]}>
                 {t('pro.photosHint')}
               </Text>
 
-              <View style={{ flexDirection: dir, flexWrap: 'wrap', gap: spacing.md }}>
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md }}>
                 {(salle.photos || []).map((uri, i) => (
                   <View key={`${uri}-${i}`} style={{ width: '30%' }}>
                     <SallePhoto salle={salle} index={i} height={90} radius={radii.lg} />
@@ -279,7 +279,7 @@ export default function ProSalleScreen() {
             <>
               {tarifs.map((tarif, i) => (
                 <MCard key={tarif.id || i} style={{ gap: spacing.md }}>
-                  <View style={{ flexDirection: dir, alignItems: 'center', justifyContent: 'space-between' }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                     <Text style={[typography.caption, { color: colors.warmGray }]}>
                       {t('salle.formulas')} {i + 1}
                     </Text>

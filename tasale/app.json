@@ -36,12 +36,11 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-localization",
       [
         "expo-notifications",
         {
           "icon": "./assets/adaptive-icon.png",
-          "color": "#084F44"
+          "color": "#BE9A5E"
         }
       ],
       [

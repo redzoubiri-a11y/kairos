@@ -15,14 +15,14 @@ import * as api from '../../data';
 
 function SearchBar({ onPress }) {
   const { colors, typography, spacing, radii } = useTheme();
-  const { t, dir, align } = useI18n();
+  const { t } = useI18n();
 
   return (
     <Pressable
       onPress={onPress}
       accessibilityRole="search"
       style={{
-        flexDirection: dir,
+        flexDirection: 'row',
         alignItems: 'center',
         gap: spacing.sm,
         backgroundColor: colors.surface,
@@ -34,7 +34,7 @@ function SearchBar({ onPress }) {
       }}
     >
       <Ionicons name="search-outline" size={18} color={colors.warmGray} />
-      <Text style={[typography.body, { color: `${colors.warmGray}CC`, flex: 1, textAlign: align }]} numberOfLines={1}>
+      <Text style={[typography.body, { color: `${colors.warmGray}CC`, flex: 1, textAlign: 'left' }]} numberOfLines={1}>
         {t('home.searchPlaceholder')}
       </Text>
     </Pressable>
@@ -71,7 +71,7 @@ function CategoryTile({ type, onPress, width }) {
 
 export default function HomeScreen({ navigation }) {
   const { colors, typography, spacing } = useTheme();
-  const { t, dir } = useI18n();
+  const { t } = useI18n();
   const { user } = useAuth();
   const { isFav, toggle } = useFavorites();
   const { width } = useWindowDimensions();
@@ -110,7 +110,7 @@ export default function HomeScreen({ navigation }) {
     <Screen>
       <View
         style={{
-          flexDirection: dir,
+          flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-between',
           paddingHorizontal: spacing.lg,
@@ -160,7 +160,7 @@ export default function HomeScreen({ navigation }) {
 
         <View>
           <SectionTitle title={t('home.categories')} />
-          <View style={{ flexDirection: dir, gap: spacing.sm }}>
+          <View style={{ flexDirection: 'row', gap: spacing.sm }}>
             {EVENT_TYPES.filter((x) => x !== 'autre').map((type) => (
               <CategoryTile
                 key={type}
@@ -184,7 +184,7 @@ export default function HomeScreen({ navigation }) {
           ) : error ? (
             <ErrorState message={error} onRetry={load} />
           ) : (
-            <View style={{ flexDirection: dir, flexWrap: 'wrap', gap: spacing.md }}>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md }}>
               {salles.map((salle) => (
                 <SalleCard
                   key={salle.id}
@@ -200,7 +200,7 @@ export default function HomeScreen({ navigation }) {
         </View>
 
         <MCard onPress={() => navigation.navigate('Recherche')} style={{ gap: spacing.sm }}>
-          <View style={{ flexDirection: dir, alignItems: 'center', gap: spacing.md }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
             <Ionicons name="compass-outline" size={22} color={colors.secondary} />
             <View style={{ flex: 1 }}>
               <Text style={[typography.title, { fontSize: 15, color: colors.dark }]}>

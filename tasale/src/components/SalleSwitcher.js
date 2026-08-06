@@ -12,7 +12,7 @@ import { useProSalle } from '../context/ProSalleContext';
  */
 export default function SalleSwitcher() {
   const { colors, typography, spacing, radii } = useTheme();
-  const { t, dir, align } = useI18n();
+  const { t } = useI18n();
   const { salles, current, select, isMulti } = useProSalle();
   const [open, setOpen] = useState(false);
 
@@ -26,7 +26,7 @@ export default function SalleSwitcher() {
         accessibilityLabel={t('pro.switchSalle')}
         accessibilityState={{ expanded: open }}
         style={{
-          flexDirection: dir,
+          flexDirection: 'row',
           alignItems: 'center',
           gap: spacing.sm,
           backgroundColor: colors.surface,
@@ -39,7 +39,7 @@ export default function SalleSwitcher() {
       >
         <Ionicons name="business-outline" size={15} color={colors.primaryInk} />
         <Text
-          style={[typography.secondary, { color: colors.dark, flex: 1, textAlign: align }]}
+          style={[typography.secondary, { color: colors.dark, flex: 1, textAlign: 'left' }]}
           numberOfLines={1}
         >
           {current.name}
@@ -73,7 +73,7 @@ export default function SalleSwitcher() {
                 accessibilityRole="button"
                 accessibilityState={{ selected: actif }}
                 style={{
-                  flexDirection: dir,
+                  flexDirection: 'row',
                   alignItems: 'center',
                   gap: spacing.sm,
                   paddingHorizontal: spacing.md,
@@ -85,13 +85,13 @@ export default function SalleSwitcher() {
                   <Text
                     style={[
                       typography.secondary,
-                      { color: actif ? colors.primaryInk : colors.dark, textAlign: align },
+                      { color: actif ? colors.primaryInk : colors.dark, textAlign: 'left' },
                     ]}
                     numberOfLines={1}
                   >
                     {salle.name}
                   </Text>
-                  <Text style={[typography.caption, { color: colors.warmGray, textAlign: align }]}>
+                  <Text style={[typography.caption, { color: colors.warmGray, textAlign: 'left' }]}>
                     {salle.city}
                   </Text>
                 </View>

@@ -12,7 +12,6 @@ import { ROLES } from '../../lib/constants';
 
 function RoleOption({ icon, title, body, badge, selected, onPress }) {
   const { colors, typography, spacing, radii } = useTheme();
-  const { dir, align } = useI18n();
 
   return (
     <Pressable
@@ -20,7 +19,7 @@ function RoleOption({ icon, title, body, badge, selected, onPress }) {
       accessibilityRole="radio"
       accessibilityState={{ selected }}
       style={{
-        flexDirection: dir,
+        flexDirection: 'row',
         gap: spacing.md,
         alignItems: 'flex-start',
         backgroundColor: selected ? colors.primaryLight : colors.surface,
@@ -44,11 +43,11 @@ function RoleOption({ icon, title, body, badge, selected, onPress }) {
       </View>
 
       <View style={{ flex: 1, gap: 3 }}>
-        <View style={{ flexDirection: dir, alignItems: 'center', gap: spacing.sm, flexWrap: 'wrap' }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, flexWrap: 'wrap' }}>
           <Text style={[typography.title, { fontSize: 15, color: colors.dark }]}>{title}</Text>
           {badge ? <MBadge label={badge} tone="gold" size="sm" /> : null}
         </View>
-        <Text style={[typography.caption, { color: colors.warmGray, textAlign: align }]}>{body}</Text>
+        <Text style={[typography.caption, { color: colors.warmGray, textAlign: 'left' }]}>{body}</Text>
       </View>
 
       <Ionicons

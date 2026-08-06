@@ -1,6 +1,8 @@
 // Géolocalisation — distances et liens de cartographie.
 // Module pur : aucune dépendance à React Native, donc testable directement.
 
+import { lightColors } from '../theme';
+
 const RAYON_TERRE_KM = 6371;
 
 const enRadians = (deg) => (deg * Math.PI) / 180;
@@ -82,7 +84,9 @@ export function directionsUrl({ latitude, longitude, label, platform }) {
 export function staticMapUrl({ latitude, longitude, token, width = 640, height = 320, zoom = 14 }) {
   if (!token || !hasCoords({ latitude, longitude })) return null;
 
-  const marqueur = `pin-l+0B6E5F(${longitude},${latitude})`;
+  // La couleur vient du thème, pas d'un littéral : un changement de palette
+  // avait déjà laissé l'épingle à l'ancienne teinte.
+  const marqueur = `pin-l+${lightColors.primaryInk.slice(1)}(${longitude},${latitude})`;
   return (
     'https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/' +
     `${marqueur}/${longitude},${latitude},${zoom},0/${width}x${height}@2x` +

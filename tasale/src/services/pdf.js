@@ -14,7 +14,8 @@ export {
 
 /**
  * Traduit les énumérations de la base pour les gabarits, qui restent purs.
- * `t` vient de useI18n : les documents suivent donc la langue de l'app.
+ * `t` vient de useI18n : les libellés des documents restent au même endroit
+ * que ceux de l'interface.
  */
 export function pdfLabels(t) {
   const events = {};

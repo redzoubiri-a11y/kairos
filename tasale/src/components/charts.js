@@ -173,7 +173,6 @@ export function RevenueLine({ data, height = 150 }) {
  */
 export function BreakdownBars({ rows, tone = 'primary', suffix = '%' }) {
   const { colors, typography, spacing, radii } = useTheme();
-  const { dir } = useI18n();
   const fill = tone === 'gold' ? colors.gold : tone === 'secondary' ? colors.secondary : colors.chartInk;
 
   if (!rows?.length) return null;
@@ -182,7 +181,7 @@ export function BreakdownBars({ rows, tone = 'primary', suffix = '%' }) {
     <View style={{ gap: spacing.md }}>
       {rows.map((r) => (
         <View key={r.key} style={{ gap: 5 }}>
-          <View style={{ flexDirection: dir, justifyContent: 'space-between', gap: spacing.sm }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: spacing.sm }}>
             <Text style={[typography.secondary, { color: colors.dark, flexShrink: 1 }]} numberOfLines={1}>
               {r.label}
             </Text>

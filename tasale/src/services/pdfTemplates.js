@@ -47,17 +47,17 @@ const STYLES = `
                            text-align: center; font-size: 10px; height: 34px; }
   .grille th { background: #FAFAF8; color: #8B7E72; font-weight: 600; height: auto; }
   .hors { color: #C9C4BD; }
-  .reserve { background: rgba(11,110,95,.12); color: #084F44; font-weight: 600; }
-  .attente { background: rgba(212,168,83,.18); color: #8B6914; font-weight: 600; }
+  .reserve { background: rgba(139,105,20,.12); color: #6B510F; font-weight: 600; }
+  .attente { background: rgba(190,154,94,.20); color: #8B6914; font-weight: 600; }
   .bloque  { background: #F1EFEC; color: #8B7E72; }
   .liste td { border-bottom: 1px solid #E8E4DF; padding: 7px 4px; font-size: 11px; }
   .liste th { text-align: left; border-bottom: 1px solid #1A1A1A; padding: 6px 4px;
               font-size: 10px; text-transform: uppercase; color: #8B7E72; }
-  .total { font-size: 15px; font-weight: 600; color: #0B6E5F; }
+  .total { font-size: 15px; font-weight: 600; color: #8B6914; }
   .clauses li { margin-bottom: 5px; }
   .signature { margin-top: 26px; border: 1px solid #E8E4DF; border-radius: 8px;
                padding: 12px 14px; background: #FAFAF8; }
-  .cachet { color: #0B6E5F; font-weight: 600; }
+  .cachet { color: #8B6914; font-weight: 600; }
   footer { margin-top: 26px; padding-top: 10px; border-top: 1px solid #E8E4DF;
            color: #8B7E72; font-size: 10px; }
 `;
@@ -303,7 +303,7 @@ export function buildPlanningHtml({
     ${enTete(`Planning — ${months[month]} ${year}`, salle?.name || '')}
     ${grille}
     <div class="meta" style="margin-top:8px">
-      Vert : confirmée · Or : en attente · Gris : bloqué
+      Or foncé : confirmée · Or clair : en attente · Gris : bloqué
     </div>
     ${liste}`;
 

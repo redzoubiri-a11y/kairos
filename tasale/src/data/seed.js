@@ -313,7 +313,6 @@ export const SEED_USERS = [
     phone: '+213555000000',
     full_name: 'Équipe Tasalle',
     role: 'admin',
-    preferred_language: 'fr',
     created_at: '2025-09-01T09:00:00Z',
   },
   ...PRO_OWNERS.map(([id, name, ccp], i) => ({
@@ -322,7 +321,6 @@ export const SEED_USERS = [
     phone: `+2135551000${String(i + 1).padStart(2, '0')}`,
     full_name: name,
     role: 'pro',
-    preferred_language: 'fr',
     pin: '1234',
     ccp,
     created_at: '2026-01-12T09:00:00Z',
@@ -332,7 +330,6 @@ export const SEED_USERS = [
     phone,
     full_name: name,
     role: 'client',
-    preferred_language: 'fr',
     created_at: '2026-03-01T09:00:00Z',
   })),
 ];

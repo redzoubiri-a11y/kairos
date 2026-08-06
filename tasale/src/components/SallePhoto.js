@@ -2,14 +2,18 @@ import { View, Text, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../context/ThemeContext';
 
-/** Palettes de repli — dégradés déterministes quand la salle n'a pas de photo (§4.1). */
+/**
+ * Palettes de repli — dégradés déterministes quand la salle n'a pas de photo
+ * (§4.1). Tous dans la gamme chaude de la marque : un bleu franc, hérité de
+ * l'ancienne palette, jurait au milieu des cartes.
+ */
 const GRADIENTS = [
-  ['#0B6E5F', '#0F8F7A'],
+  ['#8B6914', '#BE9A5E'],
   ['#C8956C', '#E0B48F'],
-  ['#D4A853', '#E8C989'],
-  ['#084F44', '#0B6E5F'],
-  ['#8B7E72', '#B5A99C'],
-  ['#3B82F6', '#6BA3F8'],
+  ['#BE9A5E', '#E8C989'],
+  ['#3A2E14', '#8C6D4A'],
+  ['#6B5B4A', '#A89684'],
+  ['#5C4A2E', '#A8834A'],
 ];
 
 function hashOf(str) {

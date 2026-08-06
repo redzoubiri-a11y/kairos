@@ -18,7 +18,7 @@ const CRITERIA = ['salle', 'traiteur', 'proprete', 'value'];
 export default function ReviewFormScreen({ route, navigation }) {
   const { reservationId, salleName } = route.params;
   const { colors, typography, spacing, radii } = useTheme();
-  const { t, dir, align } = useI18n();
+  const { t } = useI18n();
 
   const [overall, setOverall] = useState(0);
   const [criteria, setCriteria] = useState({ salle: 0, traiteur: 0, proprete: 0, value: 0 });
@@ -121,7 +121,7 @@ export default function ReviewFormScreen({ route, navigation }) {
 
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
         <Body bottomInset={80}>
-          <Text style={[typography.secondary, { color: colors.warmGray, textAlign: align }]}>
+          <Text style={[typography.secondary, { color: colors.warmGray, textAlign: 'left' }]}>
             {t('reviews.subtitle', { salle: salleName || '' })}
           </Text>
 
@@ -131,13 +131,13 @@ export default function ReviewFormScreen({ route, navigation }) {
           </MCard>
 
           <MCard style={{ gap: spacing.md }}>
-            <Text style={[typography.title, { fontSize: 15, color: colors.dark, textAlign: align }]}>
+            <Text style={[typography.title, { fontSize: 15, color: colors.dark, textAlign: 'left' }]}>
               {t('reviews.criteria')}
             </Text>
             {CRITERIA.map((key, i) => (
               <View key={key} style={{ gap: spacing.sm }}>
                 {i > 0 ? <Divider /> : null}
-                <View style={{ flexDirection: dir, alignItems: 'center', justifyContent: 'space-between' }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                   <Text style={[typography.secondary, { color: colors.dark }]}>{t(`reviews.${key}`)}</Text>
                   <StarPicker
                     value={criteria[key]}
@@ -158,10 +158,10 @@ export default function ReviewFormScreen({ route, navigation }) {
           />
 
           <View style={{ gap: spacing.sm }}>
-            <Text style={[typography.caption, { color: colors.warmGray, textAlign: align }]}>
+            <Text style={[typography.caption, { color: colors.warmGray, textAlign: 'left' }]}>
               {t('reviews.photos')}
             </Text>
-            <View style={{ flexDirection: dir, gap: spacing.sm, flexWrap: 'wrap' }}>
+            <View style={{ flexDirection: 'row', gap: spacing.sm, flexWrap: 'wrap' }}>
               {photos.map((uri) => (
                 <View key={uri} style={{ width: 66, height: 66 }}>
                   <Image
@@ -226,14 +226,14 @@ export default function ReviewFormScreen({ route, navigation }) {
             onPress={() => setConsent((v) => !v)}
             accessibilityRole="checkbox"
             accessibilityState={{ checked: consent }}
-            style={{ flexDirection: dir, alignItems: 'flex-start', gap: spacing.sm }}
+            style={{ flexDirection: 'row', alignItems: 'flex-start', gap: spacing.sm }}
           >
             <Ionicons
               name={consent ? 'checkbox' : 'square-outline'}
               size={20}
               color={consent ? colors.primaryInk : colors.warmGray}
             />
-            <Text style={[typography.caption, { color: colors.dark, flex: 1, textAlign: align }]}>
+            <Text style={[typography.caption, { color: colors.dark, flex: 1, textAlign: 'left' }]}>
               {t('reviews.consent')}
             </Text>
           </Pressable>

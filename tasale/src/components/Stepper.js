@@ -6,19 +6,18 @@ import { useI18n } from '../i18n';
 /** Timeline du parcours de réservation — §4.4 (Date → Formule → Infos → Envoi). */
 export default function Stepper({ steps, current }) {
   const { colors, typography, spacing, radii } = useTheme();
-  const { dir } = useI18n();
 
   return (
-    <View style={{ flexDirection: dir, alignItems: 'flex-start', paddingHorizontal: spacing.xs }}>
+    <View style={{ flexDirection: 'row', alignItems: 'flex-start', paddingHorizontal: spacing.xs }}>
       {steps.map((label, i) => {
         const done = i < current;
         const active = i === current;
         const bg = done || active ? colors.primary : colors.surface;
-        const fg = done || active ? '#FFFFFF' : colors.warmGray;
+        const fg = done || active ? colors.onPrimary : colors.warmGray;
 
         return (
           <View key={label} style={{ flex: 1, alignItems: 'center' }}>
-            <View style={{ flexDirection: dir, alignItems: 'center', width: '100%' }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', width: '100%' }}>
               {/* trait gauche */}
               <View
                 style={{

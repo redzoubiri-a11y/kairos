@@ -28,7 +28,7 @@ function confirmAction(title, message, onConfirm, labels) {
 export default function ReservationDetailScreen({ route, navigation }) {
   const { id } = route.params;
   const { colors, typography, spacing, radii } = useTheme();
-  const { t, list, dir, align } = useI18n();
+  const { t, list } = useI18n();
 
   const [resa, setResa] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -133,7 +133,7 @@ export default function ReservationDetailScreen({ route, navigation }) {
       <Header title={resa.reference} subtitle={resa.salle?.name} onBack={navigation.goBack} />
 
       <Body>
-        <View style={{ flexDirection: dir, alignItems: 'center', justifyContent: 'space-between' }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <Text style={[typography.h3, { color: colors.dark }]}>{t(`events.${resa.event_type}`)}</Text>
           <StatusBadge status={resa.status} />
         </View>
@@ -157,10 +157,10 @@ export default function ReservationDetailScreen({ route, navigation }) {
 
         {resa.client_message ? (
           <MCard>
-            <Text style={[typography.caption, { color: colors.warmGray, marginBottom: 4, textAlign: align }]}>
+            <Text style={[typography.caption, { color: colors.warmGray, marginBottom: 4, textAlign: 'left' }]}>
               {t('booking.messageToOwner')}
             </Text>
-            <Text style={[typography.secondary, { color: colors.dark, textAlign: align }]}>
+            <Text style={[typography.secondary, { color: colors.dark, textAlign: 'left' }]}>
               {resa.client_message}
             </Text>
           </MCard>
@@ -169,7 +169,7 @@ export default function ReservationDetailScreen({ route, navigation }) {
         {/* §11.1 — parcours d'acompte */}
         {resa.deposit_amount ? (
           <MCard style={{ gap: spacing.md }}>
-            <View style={{ flexDirection: dir, alignItems: 'center', gap: spacing.sm }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
               <Ionicons name="cash-outline" size={18} color={colors.gold} />
               <Text style={[typography.title, { fontSize: 15, color: colors.dark, flex: 1 }]}>
                 {t('reservations.depositRequested')}
@@ -181,7 +181,7 @@ export default function ReservationDetailScreen({ route, navigation }) {
               ) : null}
             </View>
 
-            <Text style={[typography.h3, { color: colors.primaryInk, textAlign: align }]}>
+            <Text style={[typography.h3, { color: colors.primaryInk, textAlign: 'left' }]}>
               {formatDA(resa.deposit_amount, t('common.currency'))}
             </Text>
 
@@ -234,7 +234,7 @@ export default function ReservationDetailScreen({ route, navigation }) {
           {resa.has_review ? (
             <View
               style={{
-                flexDirection: dir,
+                flexDirection: 'row',
                 alignItems: 'center',
                 gap: spacing.sm,
                 padding: spacing.md,

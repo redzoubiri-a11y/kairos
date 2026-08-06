@@ -18,7 +18,7 @@ import * as api from '../../data';
 
 export default function ProPlanningScreen({ navigation }) {
   const { colors, typography, spacing } = useTheme();
-  const { t, list, dir, align } = useI18n();
+  const { t, list } = useI18n();
   const { currentId } = useProSalle();
 
   const today = new Date();
@@ -149,9 +149,9 @@ export default function ProPlanningScreen({ navigation }) {
         {/* Panneau de détail du jour sélectionné (§5.3) */}
         {selected ? (
           <MCard style={{ gap: spacing.md }}>
-            <View style={{ flexDirection: dir, alignItems: 'center', gap: spacing.sm }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
               <Ionicons name="calendar-outline" size={17} color={colors.primaryInk} />
-              <Text style={[typography.title, { fontSize: 15, color: colors.dark, flex: 1, textAlign: align }]}>
+              <Text style={[typography.title, { fontSize: 15, color: colors.dark, flex: 1, textAlign: 'left' }]}>
                 {formatLongDate(selected, list('months'))}
               </Text>
               {resa ? <StatusBadge status={resa.status} size="sm" /> : null}
@@ -182,7 +182,7 @@ export default function ProPlanningScreen({ navigation }) {
               </>
             ) : (
               <>
-                <Text style={[typography.secondary, { color: colors.warmGray, textAlign: align }]}>
+                <Text style={[typography.secondary, { color: colors.warmGray, textAlign: 'left' }]}>
                   {t('pro.dayFree')}
                 </Text>
 

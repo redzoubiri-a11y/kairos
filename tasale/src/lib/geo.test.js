@@ -1,3 +1,4 @@
+import { lightColors } from '../theme';
 import {
   hasCoords,
   distanceKm,
@@ -150,7 +151,10 @@ describe('vignette cartographique', () => {
   it('compose une URL Mapbox avec le marqueur aux couleurs de la marque', () => {
     const url = staticMapUrl({ ...ALGER, token: 'pk.test' });
     expect(url).toContain('api.mapbox.com');
-    expect(url).toContain('pin-l+0B6E5F');
+    // On vérifie le câblage au thème, pas une teinte recopiée : c'est ce lien
+    // qui manquait quand la palette a changé.
+    expect(url).toContain(`pin-l+${lightColors.primaryInk.slice(1)}`);
+    expect(lightColors.primaryInk).toMatch(/^#[0-9A-F]{6}$/i);
     expect(url).toContain('access_token=pk.test');
   });
 

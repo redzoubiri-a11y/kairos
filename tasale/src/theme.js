@@ -5,21 +5,35 @@
 // ─────────────────────────────────────────────────────────────
 
 // §3.1 — Tokens de couleur (thème clair)
+//
+// La palette est celle du logo : noir et or. L'émeraude d'origine du cahier
+// des charges a été écartée — la marque ne la porte pas.
+//
+// L'or de marque, #BE9A5E, ne peut pas tout faire : il ne fait que 2,63:1 sur
+// blanc. Il décore, il n'écrit pas. D'où trois jetons distincts là où le vert
+// n'en demandait qu'un :
+//   · `primary`    — les aplats. Le noir du mot-symbole, blanc dessus à 17,4:1.
+//   · `primaryInk` — ce qui s'écrit : or profond #8B6914, 5,09:1 sur blanc.
+//   · `gold`       — l'or de marque lui-même, décor et logo uniquement.
 export const lightColors = {
-  // Primaires
-  primary: '#0B6E5F',
-  primaryLight: '#E8F5F2',
-  primaryDark: '#084F44',
+  // Primaires — le noir du mot-symbole
+  primary: '#1A1A1A',
+  primaryLight: '#F7F2E8',
+  primaryDark: '#000000',
+  /** Ce qui s'inscrit sur un aplat primaire. */
+  onPrimary: '#FFFFFF',
 
-  // Secondaires
-  secondary: '#C8956C',
-  secondaryLight: '#FBF3EC',
-  gold: '#D4A853',
-  goldLight: '#FDF8EC',
+  // Secondaires — brun doré, assez sombre pour servir aussi de texte (4,77:1)
+  secondary: '#8C6D4A',
+  secondaryLight: '#F6F0E7',
+  gold: '#BE9A5E',
+  goldLight: '#FAF5EC',
   goldText: '#8B6914',
 
-  // Accents
-  accent: '#D94E3B',
+  // Accents — le rouge d'erreur est assombri de #D94E3B à #C0392B : l'ancien
+  // ne faisait que 4,12:1, sous le seuil, aussi bien en texte sur blanc qu'en
+  // aplat portant du blanc. Le nouveau tient 5,44:1 dans les deux rôles.
+  accent: '#C0392B',
   accentLight: '#FDECEA',
   info: '#3B82F6',
 
@@ -34,9 +48,9 @@ export const lightColors = {
   surfaceElevated: '#FAFAF8',
 
   // Dérivés (badges, overlays)
-  successBg: 'rgba(11,110,95,0.12)',
-  warningBg: 'rgba(212,168,83,0.15)',
-  dangerBg: 'rgba(217,78,59,0.12)',
+  successBg: 'rgba(139,105,20,0.10)',
+  warningBg: 'rgba(190,154,94,0.18)',
+  dangerBg: 'rgba(192,57,43,0.12)',
   infoBg: 'rgba(59,130,246,0.12)',
   overlay: 'rgba(0,0,0,0.55)',
   skeleton: '#EFEBE5',
@@ -56,17 +70,15 @@ export const lightColors = {
   // document de marque, que les écrans de l'app n'utilisent plus.
   logoCanvas: '#F1EFEA',
 
-  // `primary` remplit les boutons, `primaryInk` écrit dessus les surfaces.
-  // Deux besoins opposés : un aplat veut être sombre pour porter du blanc,
-  // un texte veut se détacher du fond. Sur fond clair, la même teinte fait
-  // les deux (6,16:1 dans les deux sens) ; en thème sombre, non.
-  primaryInk: '#0B6E5F',
+  // L'or qui s'écrit : texte, icônes, onglet actif, montants. 5,09:1 sur
+  // blanc, là où l'or de marque n'atteint que 2,63:1.
+  primaryInk: '#8B6914',
 
   // Marques de graphique : même encre. Les séries sont mono-teinte —
   // l'identité est portée par les libellés, pas par la couleur, ce qui évite
-  // une palette catégorielle dont les teintes chaudes (terracotta/or) sont
+  // une palette catégorielle dont les teintes chaudes (or, brun doré) sont
   // trop proches pour être distinguées (ΔE < 15 en vision normale).
-  chartInk: '#0B6E5F',
+  chartInk: '#8B6914',
   chartGrid: 'rgba(26,26,26,0.08)',
 };
 
@@ -79,19 +91,25 @@ export const darkColors = {
   border: '#3A3A3A',
   cream: '#1A1A1A',
   warmGray: '#A9A099',
-  primaryLight: 'rgba(11,110,95,0.22)',
-  secondaryLight: 'rgba(200,149,108,0.16)',
-  goldLight: 'rgba(212,168,83,0.14)',
-  accentLight: 'rgba(217,78,59,0.16)',
+  primaryLight: 'rgba(190,154,94,0.20)',
+  secondaryLight: 'rgba(190,154,94,0.14)',
+  goldLight: 'rgba(190,154,94,0.14)',
+  accentLight: 'rgba(192,57,43,0.20)',
+  successBg: 'rgba(190,154,94,0.18)',
+  warningBg: 'rgba(190,154,94,0.18)',
   skeleton: '#333333',
 
-  // Émeraude éclairci pour tout ce qui s'écrit sur une surface sombre :
-  // #0B6E5F n'y tient que 2,33:1, très en dessous du seuil de 4,5:1.
-  // #14A38C atteint 4,54:1. Les aplats de bouton gardent #0B6E5F, sur
-  // lequel le blanc reste à 6,16:1 — l'éclaircir le ferait tomber à 3,16:1.
-  // C'est un écart assumé au §3.5, qui suppose les accents inchangés.
-  primaryInk: '#14A38C',
-  chartInk: '#14A38C',
+  // Les rôles s'inversent. En thème clair l'aplat est noir et l'or écrit ;
+  // sur fond sombre un aplat noir disparaîtrait, alors c'est l'or de marque
+  // qui remplit — et le noir qui s'y inscrit (6,61:1). L'or devient aussi
+  // lisible en texte (6,61:1 sur le fond, 5,45:1 sur les cartes), ce qu'il
+  // n'est pas sur blanc.
+  primary: '#BE9A5E',
+  primaryDark: '#A8834A',
+  onPrimary: '#1A1A1A',
+  primaryInk: '#BE9A5E',
+  secondary: '#C9A96A',
+  chartInk: '#BE9A5E',
   chartGrid: 'rgba(255,255,255,0.10)',
 
   // Le mot-symbole s'inverse : noir sur crème devient blanc sur fond sombre.

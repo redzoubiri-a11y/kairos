@@ -12,7 +12,7 @@ import * as api from '../../data';
 
 export default function AdminReviewsScreen() {
   const { colors, typography, spacing } = useTheme();
-  const { t, list, dir, align } = useI18n();
+  const { t, list } = useI18n();
 
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -71,9 +71,9 @@ export default function AdminReviewsScreen() {
         ) : (
           reviews.map((review) => (
             <View key={review.id} style={{ gap: spacing.sm }}>
-              <View style={{ flexDirection: dir, alignItems: 'center', gap: spacing.sm }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
                 <Ionicons name="flag" size={14} color={colors.accent} />
-                <Text style={[typography.caption, { color: colors.accent, flex: 1, textAlign: align }]}>
+                <Text style={[typography.caption, { color: colors.accent, flex: 1, textAlign: 'left' }]}>
                   {review.salle?.name} · {t('admin.flaggedOn', { date: dateDepot(review.created_at) })}
                 </Text>
               </View>
@@ -98,7 +98,7 @@ export default function AdminReviewsScreen() {
                   />
                 </ButtonRow>
 
-                <Text style={[typography.caption, { color: colors.warmGray, textAlign: align }]}>
+                <Text style={[typography.caption, { color: colors.warmGray, textAlign: 'left' }]}>
                   {t('admin.removeHint')}
                 </Text>
               </MCard>

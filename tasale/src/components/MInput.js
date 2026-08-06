@@ -28,7 +28,6 @@ export default function MInput({
   style,
 }) {
   const { colors, typography, spacing, radii } = useTheme();
-  const { align, isRTL } = useI18n();
   const [focused, setFocused] = useState(false);
 
   const forcedLtr = direction === 'ltr';
@@ -37,12 +36,12 @@ export default function MInput({
   return (
     <View style={[{ gap: spacing.xs }, style]}>
       {label ? (
-        <Text style={[typography.caption, { color: colors.warmGray, textAlign: align }]}>{label}</Text>
+        <Text style={[typography.caption, { color: colors.warmGray, textAlign: 'left' }]}>{label}</Text>
       ) : null}
 
       <View
         style={{
-          flexDirection: forcedLtr ? 'row' : isRTL ? 'row-reverse' : 'row',
+          flexDirection: forcedLtr ? 'row' : 'row',
           alignItems: multiline ? 'flex-start' : 'center',
           gap: spacing.sm,
           borderWidth: 1,
@@ -86,7 +85,6 @@ export default function MInput({
               flex: 1,
               color: colors.dark,
               paddingVertical: multiline ? 0 : 12,
-              textAlign: forcedLtr ? 'left' : align,
               textAlignVertical: multiline ? 'top' : 'center',
               minHeight: multiline ? 72 : undefined,
               // Retire le contour bleu par défaut sur le web
@@ -99,9 +97,9 @@ export default function MInput({
       </View>
 
       {error ? (
-        <Text style={[typography.caption, { color: colors.accent, textAlign: align }]}>{error}</Text>
+        <Text style={[typography.caption, { color: colors.accent, textAlign: 'left' }]}>{error}</Text>
       ) : hint ? (
-        <Text style={[typography.caption, { color: colors.warmGray, textAlign: align }]}>{hint}</Text>
+        <Text style={[typography.caption, { color: colors.warmGray, textAlign: 'left' }]}>{hint}</Text>
       ) : null}
     </View>
   );
@@ -110,7 +108,6 @@ export default function MInput({
 /** Sélecteur simple sous forme de liste déroulante compacte. */
 export function MSelect({ label, value, options, onChange, placeholder }) {
   const { colors, typography, spacing, radii } = useTheme();
-  const { align, dir } = useI18n();
   const [open, setOpen] = useState(false);
 
   const selected = options.find((o) => o.value === value);
@@ -118,14 +115,14 @@ export function MSelect({ label, value, options, onChange, placeholder }) {
   return (
     <View style={{ gap: spacing.xs }}>
       {label ? (
-        <Text style={[typography.caption, { color: colors.warmGray, textAlign: align }]}>{label}</Text>
+        <Text style={[typography.caption, { color: colors.warmGray, textAlign: 'left' }]}>{label}</Text>
       ) : null}
 
       <Pressable
         onPress={() => setOpen((v) => !v)}
         accessibilityRole="button"
         style={{
-          flexDirection: dir,
+          flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-between',
           borderWidth: 1,
@@ -170,7 +167,7 @@ export function MSelect({ label, value, options, onChange, placeholder }) {
                 <Text
                   style={[
                     typography.body,
-                    { color: active ? colors.primaryInk : colors.dark, textAlign: align },
+                    { color: active ? colors.primaryInk : colors.dark, textAlign: 'left' },
                   ]}
                 >
                   {o.label}

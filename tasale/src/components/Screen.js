@@ -19,12 +19,12 @@ export function Screen({ children, edges = ['top'], style }) {
 /** En-tête d'écran avec retour optionnel et actions à droite. */
 export function Header({ title, subtitle, onBack, right, center = false, bordered = true }) {
   const { colors, typography, spacing } = useTheme();
-  const { t, dir, isRTL, align } = useI18n();
+  const { t } = useI18n();
 
   return (
     <View
       style={{
-        flexDirection: dir,
+        flexDirection: 'row',
         alignItems: 'center',
         gap: spacing.md,
         paddingHorizontal: spacing.lg,
@@ -42,20 +42,20 @@ export function Header({ title, subtitle, onBack, right, center = false, bordere
           accessibilityLabel={t('common.back')}
           style={{ padding: 2 }}
         >
-          <Ionicons name={isRTL ? 'arrow-forward' : 'arrow-back'} size={22} color={colors.dark} />
+          <Ionicons name={'arrow-back'} size={22} color={colors.dark} />
         </Pressable>
       ) : null}
 
       <View style={{ flex: 1 }}>
         <Text
-          style={[typography.title, { color: colors.dark, textAlign: center ? 'center' : align }]}
+          style={[typography.title, { color: colors.dark, textAlign: center ? 'center' : 'left' }]}
           numberOfLines={1}
         >
           {title}
         </Text>
         {subtitle ? (
           <Text
-            style={[typography.caption, { color: colors.warmGray, textAlign: center ? 'center' : align }]}
+            style={[typography.caption, { color: colors.warmGray, textAlign: center ? 'center' : 'left' }]}
             numberOfLines={1}
           >
             {subtitle}
@@ -90,12 +90,11 @@ export function Body({ children, contentStyle, bottomInset = 0, refreshControl }
 /** Barre d'action collée en bas (§4.3 « sticky bottom bar »). */
 export function StickyBar({ children }) {
   const { colors, spacing, shadows } = useTheme();
-  const { dir } = useI18n();
 
   return (
     <View
       style={{
-        flexDirection: dir,
+        flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         gap: spacing.md,

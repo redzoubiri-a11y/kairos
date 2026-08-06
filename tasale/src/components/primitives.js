@@ -16,14 +16,13 @@ const BADGE_TONES = {
 
 export function MBadge({ label, tone = 'neutral', icon, size = 'md' }) {
   const { colors, radii } = useTheme();
-  const { dir } = useI18n();
   const t = (BADGE_TONES[tone] || BADGE_TONES.neutral)(colors);
   const small = size === 'sm';
 
   return (
     <View
       style={{
-        flexDirection: dir,
+        flexDirection: 'row',
         alignItems: 'center',
         gap: 4,
         backgroundColor: t.bg,
@@ -45,7 +44,6 @@ export function MBadge({ label, tone = 'neutral', icon, size = 'md' }) {
 
 export function MChip({ label, active, onPress, icon }) {
   const { colors, radii } = useTheme();
-  const { dir } = useI18n();
 
   return (
     <Pressable
@@ -53,7 +51,7 @@ export function MChip({ label, active, onPress, icon }) {
       accessibilityRole="button"
       accessibilityState={{ selected: !!active }}
       style={({ pressed }) => ({
-        flexDirection: dir,
+        flexDirection: 'row',
         alignItems: 'center',
         gap: 6,
         backgroundColor: active ? colors.primary : colors.surface,
@@ -65,8 +63,8 @@ export function MChip({ label, active, onPress, icon }) {
         opacity: pressed ? 0.8 : 1,
       })}
     >
-      {icon ? <Ionicons name={icon} size={13} color={active ? '#FFFFFF' : colors.warmGray} /> : null}
-      <Text style={{ fontSize: 13, fontWeight: '500', color: active ? '#FFFFFF' : colors.dark }}>
+      {icon ? <Ionicons name={icon} size={13} color={active ? colors.onPrimary : colors.warmGray} /> : null}
+      <Text style={{ fontSize: 13, fontWeight: '500', color: active ? colors.onPrimary : colors.dark }}>
         {label}
       </Text>
     </Pressable>
@@ -101,12 +99,11 @@ export function MCard({ children, onPress, style, padded = true, elevated = fals
 
 export function SectionTitle({ title, action, onAction }) {
   const { colors, typography, spacing } = useTheme();
-  const { dir } = useI18n();
 
   return (
     <View
       style={{
-        flexDirection: dir,
+        flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         marginBottom: spacing.md,
@@ -191,12 +188,11 @@ export function ErrorState({ message, onRetry }) {
 
 export function ProgressBar({ percent, tone = 'primary', height = 8, showLabel = false }) {
   const { colors, typography, radii, spacing } = useTheme();
-  const { dir } = useI18n();
   const value = Math.max(0, Math.min(100, Number(percent) || 0));
   const fill = tone === 'gold' ? colors.gold : tone === 'secondary' ? colors.secondary : colors.primaryInk;
 
   return (
-    <View style={{ flexDirection: dir, alignItems: 'center', gap: spacing.sm, flex: 1 }}>
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, flex: 1 }}>
       <View
         style={{
           flex: 1,
@@ -223,7 +219,6 @@ export function ProgressBar({ percent, tone = 'primary', height = 8, showLabel =
 
 export function ChipRow({ items, value, onChange, multi = false }) {
   const { spacing } = useTheme();
-  const { isRTL } = useI18n();
 
   const isActive = (v) => (multi ? (value || []).includes(v) : value === v);
 
@@ -234,7 +229,7 @@ export function ChipRow({ items, value, onChange, multi = false }) {
       contentContainerStyle={{
         gap: spacing.sm,
         paddingHorizontal: spacing.lg,
-        flexDirection: isRTL ? 'row-reverse' : 'row',
+        flexDirection: 'row',
       }}
     >
       {items.map((item) => (
@@ -265,7 +260,7 @@ export function ChipRow({ items, value, onChange, multi = false }) {
  */
 export function OfflineBanner({ at }) {
   const { colors, typography, spacing, radii } = useTheme();
-  const { t, list, dir } = useI18n();
+  const { t, list } = useI18n();
 
   if (!at) return null;
 
@@ -276,7 +271,7 @@ export function OfflineBanner({ at }) {
   return (
     <View
       style={{
-        flexDirection: dir,
+        flexDirection: 'row',
         alignItems: 'center',
         gap: spacing.sm,
         backgroundColor: colors.warningBg,
@@ -304,10 +299,9 @@ export function Divider({ spacingY = 0 }) {
 
 export function KeyValue({ label, value, strong = false, tone }) {
   const { colors, typography, spacing } = useTheme();
-  const { dir } = useI18n();
 
   return (
-    <View style={{ flexDirection: dir, justifyContent: 'space-between', gap: spacing.lg, paddingVertical: 5 }}>
+    <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: spacing.lg, paddingVertical: 5 }}>
       <Text style={[typography.secondary, { color: colors.warmGray }]}>{label}</Text>
       <Text
         style={[

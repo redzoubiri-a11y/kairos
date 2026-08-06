@@ -47,7 +47,7 @@ function QuickStat({ icon, value, label }) {
 export default function SalleScreen({ route, navigation }) {
   const { id } = route.params;
   const { colors, typography, spacing, radii, sizes } = useTheme();
-  const { t, dir, align } = useI18n();
+  const { t } = useI18n();
   const { isFav, toggle } = useFavorites();
   const { width } = useWindowDimensions();
 
@@ -178,13 +178,13 @@ export default function SalleScreen({ route, navigation }) {
 
         <View style={{ padding: spacing.lg, gap: spacing.xl }}>
           {/* 2 — En-tête */}
-          <View style={{ flexDirection: dir, alignItems: 'flex-start', gap: spacing.lg }}>
+          <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: spacing.lg }}>
             <View style={{ flex: 1, gap: spacing.xs }}>
-              <Text style={[typography.h2, { color: colors.dark, textAlign: align }]}>{salle.name}</Text>
-              <Text style={[typography.secondary, { color: colors.warmGray, textAlign: align }]}>
+              <Text style={[typography.h2, { color: colors.dark, textAlign: 'left' }]}>{salle.name}</Text>
+              <Text style={[typography.secondary, { color: colors.warmGray, textAlign: 'left' }]}>
                 {salle.address || salle.city}
               </Text>
-              <View style={{ flexDirection: dir, gap: spacing.xs, marginTop: 2 }}>
+              <View style={{ flexDirection: 'row', gap: spacing.xs, marginTop: 2 }}>
                 <MBadge label={t('salle.available')} tone="success" size="sm" />
                 {salle.is_premium ? <MBadge label={t('salle.premium')} tone="gold" size="sm" /> : null}
               </View>
@@ -203,7 +203,7 @@ export default function SalleScreen({ route, navigation }) {
           {/* 3 — Stats rapides */}
           <View
             style={{
-              flexDirection: dir,
+              flexDirection: 'row',
               backgroundColor: colors.surface,
               borderWidth: 1,
               borderColor: colors.border,
@@ -224,7 +224,7 @@ export default function SalleScreen({ route, navigation }) {
           {salle.description ? (
             <View>
               <SectionTitle title={t('salle.description')} />
-              <Text style={[typography.body, { color: colors.warmGray, textAlign: align }]}>
+              <Text style={[typography.body, { color: colors.warmGray, textAlign: 'left' }]}>
                 {salle.description}
               </Text>
             </View>
@@ -242,7 +242,7 @@ export default function SalleScreen({ route, navigation }) {
           {salle.amenities?.length ? (
             <View>
               <SectionTitle title={t('salle.amenities')} />
-              <View style={{ flexDirection: dir, flexWrap: 'wrap', gap: spacing.md }}>
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md }}>
                 {salle.amenities.map((a) => (
                   <View
                     key={a}
@@ -283,13 +283,13 @@ export default function SalleScreen({ route, navigation }) {
                 {salle.tarifs.map((tarif, i) => (
                   <View key={tarif.id}>
                     {i > 0 ? <Divider /> : null}
-                    <View style={{ flexDirection: dir, alignItems: 'center', gap: spacing.md, paddingVertical: spacing.md }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingVertical: spacing.md }}>
                       <View style={{ flex: 1, gap: 2 }}>
-                        <Text style={[typography.secondary, { color: colors.dark, fontWeight: '500', textAlign: align }]}>
+                        <Text style={[typography.secondary, { color: colors.dark, fontWeight: '500', textAlign: 'left' }]}>
                           {tarif.name}
                         </Text>
                         {tarif.description ? (
-                          <Text style={[typography.caption, { color: colors.warmGray, textAlign: align }]}>
+                          <Text style={[typography.caption, { color: colors.warmGray, textAlign: 'left' }]}>
                             {tarif.description}
                           </Text>
                         ) : null}
@@ -311,7 +311,7 @@ export default function SalleScreen({ route, navigation }) {
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{ gap: spacing.sm, flexDirection: dir }}
+                contentContainerStyle={{ gap: spacing.sm, flexDirection: 'row' }}
               >
                 {clientPhotos.map((uri) => (
                   <Image
@@ -330,7 +330,7 @@ export default function SalleScreen({ route, navigation }) {
             <SectionTitle title={t('salle.reviews')} />
 
             {reviews.length === 0 && reviewFilter === 'all' ? (
-              <Text style={[typography.secondary, { color: colors.warmGray, textAlign: align }]}>
+              <Text style={[typography.secondary, { color: colors.warmGray, textAlign: 'left' }]}>
                 {t('salle.noReviews')}
               </Text>
             ) : (
@@ -340,7 +340,7 @@ export default function SalleScreen({ route, navigation }) {
                 <ScrollView
                   horizontal
                   showsHorizontalScrollIndicator={false}
-                  contentContainerStyle={{ gap: spacing.sm, flexDirection: dir }}
+                  contentContainerStyle={{ gap: spacing.sm, flexDirection: 'row' }}
                 >
                   <MChip
                     label={t('reviews.filterAll')}

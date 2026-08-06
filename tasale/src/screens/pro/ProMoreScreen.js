@@ -8,16 +8,15 @@ import { useAuth } from '../../context/AuthContext';
 
 function Row({ icon, label, onPress }) {
   const { colors, typography, spacing } = useTheme();
-  const { dir, align } = useI18n();
 
   return (
     <Pressable
       onPress={onPress}
       accessibilityRole="button"
-      style={{ flexDirection: dir, alignItems: 'center', gap: spacing.md, paddingVertical: spacing.md }}
+      style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingVertical: spacing.md }}
     >
       <Ionicons name={icon} size={18} color={colors.warmGray} />
-      <Text style={[typography.secondary, { color: colors.dark, flex: 1, textAlign: align }]}>{label}</Text>
+      <Text style={[typography.secondary, { color: colors.dark, flex: 1, textAlign: 'left' }]}>{label}</Text>
       <Ionicons name="chevron-forward" size={16} color={colors.warmGray} />
     </Pressable>
   );

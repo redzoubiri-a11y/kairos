@@ -11,7 +11,7 @@ import * as api from '../../data';
 
 export default function MyReservationsScreen({ navigation }) {
   const { colors, spacing } = useTheme();
-  const { t, dir } = useI18n();
+  const { t } = useI18n();
 
   const [tab, setTab] = useState('upcoming');
   const [rows, setRows] = useState([]);
@@ -44,7 +44,7 @@ export default function MyReservationsScreen({ navigation }) {
     <Screen>
       <Header title={t('reservations.title')} bordered={false} />
 
-      <View style={{ flexDirection: dir, gap: spacing.sm, paddingHorizontal: spacing.lg }}>
+      <View style={{ flexDirection: 'row', gap: spacing.sm, paddingHorizontal: spacing.lg }}>
         <MChip label={t('reservations.upcoming')} active={tab === 'upcoming'} onPress={() => setTab('upcoming')} />
         <MChip label={t('reservations.past')} active={tab === 'past'} onPress={() => setTab('past')} />
       </View>

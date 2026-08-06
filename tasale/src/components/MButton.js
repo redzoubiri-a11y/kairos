@@ -15,7 +15,7 @@ function variantStyle(variant, colors) {
       return { bg: colors.goldLight, fg: colors.goldText, border: colors.gold };
     case 'primary':
     default:
-      return { bg: colors.primary, fg: '#FFFFFF', border: colors.primary };
+      return { bg: colors.primary, fg: colors.onPrimary, border: colors.primary };
   }
 }
 

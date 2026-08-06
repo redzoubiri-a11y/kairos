@@ -16,7 +16,7 @@ import * as api from '../../data';
 
 export default function ProReviewsScreen({ navigation }) {
   const { colors, typography, spacing, radii } = useTheme();
-  const { t, dir, align } = useI18n();
+  const { t } = useI18n();
 
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -70,14 +70,14 @@ export default function ProReviewsScreen({ navigation }) {
               <ReviewCard review={review} />
 
               <MCard style={{ gap: spacing.md }}>
-                <View style={{ flexDirection: dir, alignItems: 'center', gap: spacing.sm }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
                   <Ionicons name="time-outline" size={14} color={colors.goldText} />
-                  <Text style={[typography.caption, { color: colors.goldText, flex: 1, textAlign: align }]}>
+                  <Text style={[typography.caption, { color: colors.goldText, flex: 1, textAlign: 'left' }]}>
                     {t('pro.autoPublish', { h: hoursLeft(review) })}
                   </Text>
                 </View>
 
-                <View style={{ flexDirection: dir, gap: spacing.sm, flexWrap: 'wrap' }}>
+                <View style={{ flexDirection: 'row', gap: spacing.sm, flexWrap: 'wrap' }}>
                   <MButton
                     label={t('pro.approve')}
                     size="sm"
@@ -115,7 +115,7 @@ export default function ProReviewsScreen({ navigation }) {
               padding: spacing.md,
             }}
           >
-            <Text style={[typography.caption, { color: colors.warmGray, textAlign: align }]}>
+            <Text style={[typography.caption, { color: colors.warmGray, textAlign: 'left' }]}>
               {replying.comment}
             </Text>
           </View>

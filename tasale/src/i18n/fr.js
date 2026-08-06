@@ -279,7 +279,6 @@ export default {
   profile: {
     title: 'Profil',
     account: 'Mon compte',
-    language: 'Langue',
     theme: 'Apparence',
     themeSystem: 'Système',
     themeLight: 'Clair',

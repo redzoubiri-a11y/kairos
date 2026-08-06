@@ -13,6 +13,10 @@
 -- propres restaurants.
 -- ============================================================
 
+-- La policy est évaluée pour chaque ligne lue : la jointure passe par
+-- users.phone, qui n'était indexé nulle part.
+CREATE INDEX IF NOT EXISTS idx_users_phone ON users(phone);
+
 DROP POLICY IF EXISTS cp_owner_select ON customer_profiles;
 
 CREATE POLICY cp_owner_select ON customer_profiles FOR SELECT
@@ -22,7 +26,9 @@ CREATE POLICY cp_owner_select ON customer_profiles FOR SELECT
       FROM restaurant_owners ro
       JOIN reservations r ON r.restaurant_id = ro.restaurant_id
       JOIN users u ON u.id = r.user_id
-      WHERE ro.auth_id = auth.uid()
+      -- (SELECT auth.uid()) plutôt que auth.uid() : Postgres l'évalue alors
+      -- une seule fois (InitPlan) au lieu d'une fois par ligne candidate.
+      WHERE ro.auth_id = (SELECT auth.uid())
         AND u.phone = customer_profiles.phone
     )
   );

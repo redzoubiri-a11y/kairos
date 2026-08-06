@@ -8,7 +8,7 @@ import { colors, typography, spacing, radius } from '../src/theme';
 import MLoader from '../src/components/MLoader';
 import useProInfo, { CUISINE_OPTIONS, OCCASION_OPTIONS } from '../src/hooks/useProInfo';
 
-const PRO_ACCENT = '#c8975a';
+const PRO_ACCENT = colors.gold;
 
 function Skeleton() {
   return (

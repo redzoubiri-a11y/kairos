@@ -19,7 +19,7 @@ Une seule base de code sert les deux publics :
 ## Démarrage
 
 ```bash
-cd tasale
+cd tasalle
 npm install
 npm start          # Expo : QR code pour iOS/Android
 npm run web        # back-office pro dans le navigateur
@@ -171,7 +171,7 @@ que Supabase fournit d'office. À appliquer avant les migrations, et seulement
 en local.
 
 ```bash
-createdb tasale && export DATABASE_URL=postgres:///tasale
+createdb tasalle && export DATABASE_URL=postgres:///tasalle
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/tests/_bootstrap_local.sql
 ```
 
@@ -198,7 +198,7 @@ garantit que passer du mode démo à Supabase ne change pas le comportement.
 ## Architecture
 
 ```
-tasale/
+tasalle/
 ├── App.js                    Navigation : auth → inscription → onglets client ou pro
 ├── src/
 │   ├── theme.js              Tokens du design system (§3), clair + sombre

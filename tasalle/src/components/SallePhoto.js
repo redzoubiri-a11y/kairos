@@ -43,7 +43,7 @@ export default function SallePhoto({ salle, index = 0, height, style, radius, ch
     );
   }
 
-  const pair = GRADIENTS[hashOf(salle?.id || salle?.name || 'tasale') % GRADIENTS.length];
+  const pair = GRADIENTS[hashOf(salle?.id || salle?.name || 'sans-nom') % GRADIENTS.length];
   const initial = (salle?.name || 'M').trim().charAt(0).toUpperCase();
 
   return (

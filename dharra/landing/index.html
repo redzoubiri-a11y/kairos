@@ -340,31 +340,80 @@
 
   </main>
 
+  <!-- ============================================================
+       Formulaire MailerLite RÉEL (invisible, hors écran) — sert de
+       moteur d'envoi fiable. Un simple fetch("...subscribe") échoue
+       silencieusement : MailerLite exige un jeton anti-CSRF que seul
+       leur script officiel (webforms.min.js) obtient via l'appel
+       "takel" ci-dessous. On garde donc leur vrai formulaire cité en
+       HTML/JS, masqué, et notre UI stylée le remplit puis le déclenche.
+       ============================================================ -->
+  <div id="mlb2-44560021" class="ml-form-embedContainer ml-subscribe-form ml-subscribe-form-44560021"
+       style="position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden;" aria-hidden="true">
+    <div class="ml-form-align-center">
+      <div class="ml-form-embedWrapper embedForm">
+        <div class="ml-form-embedBody ml-form-embedBodyDefault row-form">
+          <form class="ml-block-form" id="mlRealForm"
+                action="https://assets.mailerlite.com/jsonp/2560007/forms/195056649504818746/subscribe"
+                data-code="" method="post" target="_blank">
+            <div class="ml-form-formContent">
+              <div class="ml-form-fieldRow">
+                <div class="ml-field-group ml-field-email ml-validate-email ml-validate-required">
+                  <input aria-label="email" aria-required="true" type="email" class="form-control"
+                         name="fields[email]" id="mlRealEmail" placeholder="" autocomplete="email">
+                </div>
+              </div>
+              <div class="ml-form-fieldRow ml-last-item">
+                <div class="ml-field-group ml-field-video_source ml-validate-required">
+                  <input aria-label="video_source" aria-required="true" type="text" class="form-control"
+                         name="fields[video_source]" id="mlRealSource" placeholder="" autocomplete="">
+                </div>
+              </div>
+            </div>
+            <input type="hidden" name="ml-submit" value="1">
+            <div class="ml-form-embedSubmit">
+              <button type="submit" class="primary" id="mlRealSubmit">Subscribe</button>
+            </div>
+            <input type="hidden" name="anticsrf" value="true">
+          </form>
+        </div>
+        <div class="ml-form-successBody row-success" style="display: none">
+          <div class="ml-form-successContent"><h4>Thank you!</h4></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Callback officiel MailerLite, appelé par leur script après un envoi réussi.
+    function ml_webform_success_44560021(){
+      if (window.__mlDharraReveal) { window.__mlDharraReveal(); }
+    }
+  </script>
+  <script src="https://groot.mailerlite.com/js/w/webforms.min.js?v83147fa8ce2d95cb73ece7f28b469519" type="text/javascript"></script>
+  <script>
+    fetch("https://assets.mailerlite.com/jsonp/2560007/forms/195056649504818746/takel").catch(function(){});
+  </script>
+
   <script>
     /* ============================================================
        CONFIG — capture branchée sur MailerLite (compte Dharra)
        ------------------------------------------------------------
-       FORM_ACTION  : l'URL "subscribe" du formulaire MailerLite
-                      (MailerLite → Forms → Embed → onglet "HTML code").
-       FIELD_EMAIL  : nom du champ email dans le form MailerLite.
-       FIELD_SOURCE : nom du champ personnalisé "source"
-                      (nommé video_source côté MailerLite — "source" est
-                      un nom réservé par la plateforme).
        WHATSAPP_URL : le lien d'invitation du canal WhatsApp.
-       Tant que FORM_ACTION est vide, la page tourne en mode démo
-       (affiche "merci" sans envoyer) — pratique pour prévisualiser.
+       L'envoi passe par le vrai formulaire MailerLite caché ci-dessus
+       (voir bloc HTML juste avant) — plus fiable que le fetch direct.
        ============================================================ */
-    var FORM_ACTION  = "https://assets.mailerlite.com/jsonp/2560007/forms/195056649504818746/subscribe";
-    var FIELD_EMAIL  = "fields[email]";
-    var FIELD_SOURCE = "fields[video_source]";
     var WHATSAPP_URL = "https://whatsapp.com/channel/0029Vb8mUa1CnA7oE4VVcI1X"; // canal "ذرّة اليوم"
 
     (function(){
-      var form     = document.getElementById('capture');
-      var reassure = document.getElementById('reassure');
-      var thanks   = document.getElementById('thanks');
-      var input    = document.getElementById('contact');
-      var button   = form.querySelector('button');
+      var form       = document.getElementById('capture');
+      var reassure   = document.getElementById('reassure');
+      var thanks     = document.getElementById('thanks');
+      var input      = document.getElementById('contact');
+      var button     = form.querySelector('button');
+      var realForm   = document.getElementById('mlRealForm');
+      var realEmail  = document.getElementById('mlRealEmail');
+      var realSource = document.getElementById('mlRealSource');
+      var realSubmit = document.getElementById('mlRealSubmit');
 
       // Tag de source de l'URL (?src=ep01) pour l'attribution par épisode (KPI F.7).
       var params = new URLSearchParams(window.location.search);
@@ -378,12 +427,16 @@
       function isEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
       function isPhone(v){ return /^[+]?[\d\s().-]{7,}$/.test(v); }
 
+      var revealed = false;
       function reveal(){
+        if (revealed) return;
+        revealed = true;
         form.classList.add('hide');
         reassure.classList.add('hide');
         thanks.classList.add('show');
         thanks.scrollIntoView({ behavior:'smooth', block:'center' });
       }
+      window.__mlDharraReveal = reveal;
 
       form.addEventListener('submit', function(e){
         e.preventDefault();
@@ -403,25 +456,21 @@
           return;
         }
 
-        // Envoi réel vers MailerLite si configuré, sinon mode démo.
-        if(FORM_ACTION && FIELD_EMAIL){
-          button.disabled = true;
-          button.textContent = '…جارٍ الإرسال';
-          var body = new URLSearchParams();
-          body.set(FIELD_EMAIL, v);
-          if(FIELD_SOURCE){ body.set(FIELD_SOURCE, src); }
-          body.set('ml-submit', '1');
-          body.set('anticsrf', 'true');
-          fetch(FORM_ACTION, {
-            method: 'POST',
-            mode: 'no-cors',                  // MailerLite : réponse opaque, on affiche succès
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: body.toString()
-          }).then(reveal).catch(reveal);
-        } else {
-          try { console.info('[capture:demo]', { email: v, source: src }); } catch(_){}
-          reveal();
-        }
+        button.disabled = true;
+        button.textContent = '…جارٍ الإرسال';
+
+        // Remplit le vrai formulaire MailerLite (caché) et le déclenche —
+        // leur script (webforms.min.js) intercepte le submit, gère le
+        // jeton anti-CSRF, envoie, puis appelle ml_webform_success_44560021().
+        realEmail.value  = v;
+        realSource.value = src;
+        if (realForm.requestSubmit) { realForm.requestSubmit(realSubmit); }
+        else { realSubmit.click(); }
+
+        // Filet de sécurité : si le script MailerLite ne répond pas
+        // (bloqueur de pub, réseau lent…), on affiche quand même "merci"
+        // après quelques secondes plutôt que de laisser l'utilisateur bloqué.
+        setTimeout(reveal, 4000);
       });
 
       // Bouton de rappel : ramène au champ et le focus.

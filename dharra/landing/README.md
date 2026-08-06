@@ -6,8 +6,10 @@ laisser un **email** pour recevoir les 7 leviers (PDF + audio).
 
 ## 🟢 En ligne (déploiement de test)
 **https://transcendent-kulfi-bd5d74.netlify.app** — hébergé sur Netlify (compte
-red.zoubiri@gmail.com), capture branchée sur un Google Form réel (voir
-`SETUP_googleform.md`), testé et confirmé fonctionnel (email → Google Sheet).
+red.zoubiri@gmail.com), capture branchée sur MailerLite (compte "Dharra", voir
+`SETUP_mailerlite.md`). Formulaire "Dharra - 7 leviers" créé, groupe `7-leviers`,
+champ personnalisé `video_source` (nommé ainsi car "source" est réservé côté
+MailerLite). Double opt-in activé.
 
 > ⚠️ URL provisoire (sous-domaine Netlify aléatoire). À terme : brancher le domaine
 > `getdharra.com` sur ce même site Netlify (Domain management → Add custom domain),
@@ -28,17 +30,18 @@ red.zoubiri@gmail.com), capture branchée sur un Google Form réel (voir
 Chargement visé < 2 s : page unique, polices en `display=swap`, motif en SVG inline.
 
 ## Capture — état actuel
-- **Fait** : formulaire branché sur un Google Form réel (`FORM_ACTION` / `ENTRY_EMAIL` /
-  `ENTRY_SOURCE` renseignés dans `index.html`) → les emails arrivent dans un Google Sheet.
-  Le formulaire doit être **publié** côté Google (Réponses → accepter les réponses),
-  sinon les envois sont silencieusement ignorés.
-- **Reste à faire (2 TODO)** :
-  1. **Lien WhatsApp** — `WHATSAPP_URL` est vide ; renseigne le lien du canal pour activer
-     le bouton « rejoins le canal » de l'écran « merci ».
-  2. **Lien « الخصوصية »** (`[data-privacy]`) → page de confidentialité (RGPD/consentement).
-- **Automatisation de bienvenue (J+0/J+2/J+5)** : Google Form ne l'envoie pas automatiquement ;
-  le PDF est livré par le bouton de téléchargement de l'écran « merci ». Pour l'automatiser,
-  voir `SETUP_mailerlite.md` + `WELCOME_sequence.md` (déjà rédigés, à brancher plus tard).
+- **Fait** : formulaire branché sur MailerLite (`FORM_ACTION` / `FIELD_EMAIL` /
+  `FIELD_SOURCE` renseignés dans `index.html`) → les inscrits arrivent dans le groupe
+  `7-leviers`, avec `video_source` renseigné depuis le tag `?src=` de l'URL.
+- **Fait** : canal WhatsApp branché (`WHATSAPP_URL`) → bouton actif sur l'écran « merci ».
+- **Reste à faire** :
+  1. **Lien « الخصوصية »** (`[data-privacy]`) → page de confidentialité (RGPD/consentement).
+  2. **Automation de bienvenue** — créer le workflow dans MailerLite (Automations → trigger
+     "quand l'abonné rejoint le groupe 7-leviers") et y coller les 3 emails déjà rédigés dans
+     `WELCOME_sequence.md` (J+0 le PDF, J+2 relance, J+5 pont YouTube/WhatsApp/app).
+  3. **Double opt-in** est activé côté MailerLite : chaque inscrit reçoit d'abord un email
+     de confirmation avant d'entrer dans le groupe — c'est voulu (qualité de liste), mais à
+     garder en tête pour le KPI "ouverture séquence de bienvenue" (F.7).
 
 ## Attribution par épisode (KPI F.7)
 La page lit `?src=` dans l'URL et l'envoie avec le contact. Mettre en description YouTube

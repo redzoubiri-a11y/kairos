@@ -342,20 +342,21 @@
 
   <script>
     /* ============================================================
-       CONFIG — à remplir une seule fois après création du Google Form
+       CONFIG — capture branchée sur MailerLite (compte Dharra)
        ------------------------------------------------------------
-       Récupère ces 3 valeurs dans le "lien pré-rempli" du formulaire
-       (voir SETUP_googleform.md, étape 4). Exemples de format :
-         FORM_ACTION  : https://docs.google.com/forms/d/e/XXXXXXXX/formResponse
-         ENTRY_EMAIL  : entry.1111111111   (le champ "email")
-         ENTRY_SOURCE : entry.2222222222   (le champ "source", optionnel)
-       WHATSAPP_URL   : le lien d'invitation de ton canal WhatsApp.
+       FORM_ACTION  : l'URL "subscribe" du formulaire MailerLite
+                      (MailerLite → Forms → Embed → onglet "HTML code").
+       FIELD_EMAIL  : nom du champ email dans le form MailerLite.
+       FIELD_SOURCE : nom du champ personnalisé "source"
+                      (nommé video_source côté MailerLite — "source" est
+                      un nom réservé par la plateforme).
+       WHATSAPP_URL : le lien d'invitation du canal WhatsApp.
        Tant que FORM_ACTION est vide, la page tourne en mode démo
        (affiche "merci" sans envoyer) — pratique pour prévisualiser.
        ============================================================ */
-    var FORM_ACTION  = "https://docs.google.com/forms/d/e/1FAIpQLSfKTvc3CuAOb6Ki9OlHeXBXfi7YwngpnOrUBbjDtWlz9WlmdA/formResponse";
-    var ENTRY_EMAIL  = "entry.1066997734";   // champ "Email" du Google Form
-    var ENTRY_SOURCE = "entry.1399824547";   // champ "Source" (tag ?src=epNN)
+    var FORM_ACTION  = "https://assets.mailerlite.com/jsonp/2560007/forms/195056649504818746/subscribe";
+    var FIELD_EMAIL  = "fields[email]";
+    var FIELD_SOURCE = "fields[video_source]";
     var WHATSAPP_URL = "https://whatsapp.com/channel/0029Vb8mUa1CnA7oE4VVcI1X"; // canal "ذرّة اليوم"
 
     (function(){
@@ -402,16 +403,18 @@
           return;
         }
 
-        // Envoi réel vers le Google Form si configuré, sinon mode démo.
-        if(FORM_ACTION && ENTRY_EMAIL){
+        // Envoi réel vers MailerLite si configuré, sinon mode démo.
+        if(FORM_ACTION && FIELD_EMAIL){
           button.disabled = true;
           button.textContent = '…جارٍ الإرسال';
           var body = new URLSearchParams();
-          body.set(ENTRY_EMAIL, v);
-          if(ENTRY_SOURCE){ body.set(ENTRY_SOURCE, src); }
+          body.set(FIELD_EMAIL, v);
+          if(FIELD_SOURCE){ body.set(FIELD_SOURCE, src); }
+          body.set('ml-submit', '1');
+          body.set('anticsrf', 'true');
           fetch(FORM_ACTION, {
             method: 'POST',
-            mode: 'no-cors',                  // Google Form : réponse opaque, on affiche succès
+            mode: 'no-cors',                  // MailerLite : réponse opaque, on affiche succès
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: body.toString()
           }).then(reveal).catch(reveal);

@@ -1,7 +1,7 @@
 # Dharra — Livrable K : Vérification des sources (versets & hadiths)
 
 > Vérification des citations coraniques et prophétiques employées dans les livrables
-> (scripts ép. 2–12, calendrier F, lead magnet H). Contrôle effectué en **juillet–août 2026**
+> (scripts ép. 1–12, calendrier F, lead magnet H). Contrôle effectué en **juillet–août 2026**
 > contre des sources de référence : **quran.com**, **sunnah.com**, **dorar.net**, **hadeethenc.com**.
 > Statut : ✅ vérifié · ⚠️ nuance à connaître · ❗ à ne pas présenter comme du Sahîh.
 
@@ -29,6 +29,11 @@
 - **Arabe :** يَوْمَ لَا يَنفَعُ مَالٌ وَلَا بَنُونَ * إِلَّا مَنْ أَتَى اللَّهَ بِقَلْبٍ سَلِيمٍ
 - **Sens :** « Le Jour où ni les biens ni les enfants ne serviront, sauf celui qui vient à Allah avec un cœur sain. »
 - **Emploi :** Épisode 5 (le qalb salîm). Citation exacte, aucune réserve.
+
+### V4 — Sourate al-Anbiyâ' (21), verset 1 ✅ *(ajouté — script épisode 1 reconstitué)*
+- **Arabe :** اقْتَرَبَ لِلنَّاسِ حِسَابُهُمْ وَهُمْ فِي غَفْلَةٍ مُّعْرِضُونَ
+- **Sens :** « Le compte des gens approche, et eux, dans l'insouciance, s'en détournent. »
+- **Emploi :** Épisode 1 (pilote — la ghafla, l'insouciance). Citation exacte, aucune réserve.
 
 ---
 
@@ -175,7 +180,7 @@ mais bon à connaître pour la solidité :
 ---
 
 ## Bilan
-Toutes les citations des scripts ép. **2–12** (saison 1 complète) et des livrables F/H sont **authentiques et vérifiées**.
+Toutes les citations des scripts ép. **1–12** (saison 1 complète) et des livrables F/H sont **authentiques et vérifiées**.
 Rappel de vigilance : hadiths **hors des deux Sahîh** (H6 riyâ' = Ahmad ; H8 « cinq avant cinq » = al-Hâkim ;
 H10 duʿâ shirk = al-Adab al-Mufrad ; H11 colère/s'asseoir = Abû Dâwûd ; H13 oiseaux = at-Tirmidhî ;
 H15 « اتق الله حيثما كنت » = at-Tirmidhî, **hasan**) → les annoncer « rapporté par…, authentifié », jamais « muttafaq ʿalayh ».
@@ -186,7 +191,7 @@ hasan/sahîh — pas des deux Sahîh, et « shirk asghar » plutôt que « khaf�
 appliquées dans `J` et `H`.
 
 ## Sources consultées
-- Coran : quran.com (12:53, 13:28, 26:88-89), dawateislami.net, quranopedia.com
+- Coran : quran.com (12:53, 13:28, 21:1, 26:88-89), dawateislami.net, quranopedia.com
 - Hadith : sunnah.com (Bukhârî 1/39/50/52/6114/6115/6464 ; Muslim 8/38/783/1599/1907/2609/2610/2999 ;
   Abû Dâwûd 4782 ; Tirmidhî 1987/2344 ; Nawawî 40:1/18/21), dorar.net, hadeethenc.com,
   hadithanswers.com, abuaminaelias.com, islamqa.info

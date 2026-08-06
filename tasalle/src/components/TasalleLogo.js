@@ -1,26 +1,22 @@
-import { Platform, View, Text } from 'react-native';
-import Svg, { Circle, Text as SvgText } from 'react-native-svg';
+import { View, Text } from 'react-native';
+import Svg, { Circle, Path } from 'react-native-svg';
 import { useTheme } from '../context/ThemeContext';
 import { useI18n } from '../i18n';
+import {
+  MONOGRAMME_VIEWBOX,
+  MONOGRAMME_CERCLE,
+  MONOGRAMME_T,
+  MONOGRAMME_S,
+} from '../lib/monogramme';
 
 /**
  * Marque Tasalle — monogramme TS dans un filet circulaire, or sur fond libre.
  *
- * Le monogramme est tracé en SVG plutôt qu'en `<Text>` classique : la
- * superposition du T et du S demande un positionnement au sous-pixel que les
- * primitives de mise en page ne donnent pas.
- *
- * Les lettres restent latines dans les deux langues : la translittération
- * arabe de la marque n'est pas arrêtée.
+ * Les lettres sont des contours, pas du texte : une marque ne peut pas
+ * dépendre des polices installées sur l'appareil. Leur tracé vit dans
+ * lib/monogramme.js, que partagent aussi les documents PDF et le générateur
+ * d'icônes — trois rendus, un seul dessin.
  */
-
-// react-native-svg ne prend qu'une famille par plateforme, pas de pile de
-// repli comme en CSS. On nomme donc le serif de chacune.
-const SERIF = Platform.select({
-  ios: 'Times New Roman',
-  android: 'serif',
-  default: "Georgia, 'Times New Roman', serif",
-});
 
 /** Monogramme seul — utilisable comme avatar, favicon ou puce d'en-tête. */
 export function TasalleMark({ size = 40, color }) {
@@ -30,22 +26,19 @@ export function TasalleMark({ size = 40, color }) {
   // Repère de 100 × 100 : toutes les proportions sont relatives, la marque
   // reste donc nette à n'importe quelle taille.
   return (
-    <Svg width={size} height={size} viewBox="0 0 100 100">
+    <Svg width={size} height={size} viewBox={MONOGRAMME_VIEWBOX}>
       {/* Filet circulaire. Le rayon tient compte de l'épaisseur du trait pour
           que le cercle ne soit pas rogné par le bord du viewBox. */}
-      <Circle cx="50" cy="50" r="47.2" stroke={or} strokeWidth="1.6" fill="none" />
-
-      {/* T et S se chevauchent : le S descend sous la ligne du T et mord sur
-          son pied, comme dans le document de marque. Les deux glyphes sont
-          posés séparément — un simple interlettrage négatif les laisserait
-          côte à côte. Ces valeurs sont celles du générateur d'icônes, pour que
-          la marque à l'écran et celle des stores soient la même. */}
-      <SvgText x="43" y="64" fill={or} fontFamily={SERIF} fontSize="57" textAnchor="middle">
-        T
-      </SvgText>
-      <SvgText x="60" y="74" fill={or} fontFamily={SERIF} fontSize="48" textAnchor="middle">
-        S
-      </SvgText>
+      <Circle
+        cx={MONOGRAMME_CERCLE.cx}
+        cy={MONOGRAMME_CERCLE.cy}
+        r={MONOGRAMME_CERCLE.r}
+        stroke={or}
+        strokeWidth={MONOGRAMME_CERCLE.largeur}
+        fill="none"
+      />
+      <Path d={MONOGRAMME_T} fill={or} />
+      <Path d={MONOGRAMME_S} fill={or} />
     </Svg>
   );
 }

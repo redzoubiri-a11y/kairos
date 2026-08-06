@@ -10,6 +10,21 @@
 // pourrait injecter du balisage dans le contrat.
 
 import { formatDA, formatLongDate, displayPhone, monthGrid } from '../lib/format';
+import {
+  MONOGRAMME_VIEWBOX,
+  MONOGRAMME_CERCLE,
+  MONOGRAMME_T,
+  MONOGRAMME_S,
+} from '../lib/monogramme';
+
+/** Marque en SVG inline : le document ne dépend d'aucune police installée. */
+const MARQUE_OR = '#BE9A5E';
+const SIGLE = `<svg class="sigle" viewBox="${MONOGRAMME_VIEWBOX}" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="${MONOGRAMME_CERCLE.cx}" cy="${MONOGRAMME_CERCLE.cy}" r="${MONOGRAMME_CERCLE.r}"
+            stroke="${MARQUE_OR}" stroke-width="${MONOGRAMME_CERCLE.largeur}" fill="none"/>
+    <path d="${MONOGRAMME_T}" fill="${MARQUE_OR}"/>
+    <path d="${MONOGRAMME_S}" fill="${MARQUE_OR}"/>
+  </svg>`;
 
 const ENTITIES = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
 
@@ -27,14 +42,7 @@ const STYLES = `
   .marque { display: flex; align-items: center; gap: 11px; margin-bottom: 4px; }
   /* Monogramme TS dans son filet circulaire, repris du document de marque.
      L'or n'y sert qu'au logo — jamais au texte, où il serait illisible. */
-  .sigle { position: relative; width: 36px; height: 36px; border-radius: 50%;
-           border: 1px solid #BE9A5E; color: #BE9A5E;
-           font-family: Georgia, 'Times New Roman', serif; line-height: 1; }
-  /* Mêmes proportions que le monogramme de l'application : le S descend sous
-     la ligne du T et mord sur son pied. */
-  .sigle i { position: absolute; font-style: normal; left: 50%; top: 50%; }
-  .sigle .t { font-size: 19px; transform: translate(-66%, -66%); }
-  .sigle .s { font-size: 16px; transform: translate(-16%, -44%); }
+  .sigle { width: 36px; height: 36px; display: block; }
   .nom { font-size: 15px; font-weight: 600; letter-spacing: .16em; }
   h1 { font-size: 19px; font-weight: 600; margin: 18px 0 2px; }
   .meta { color: #8B7E72; font-size: 11px; margin-bottom: 18px; }
@@ -64,7 +72,7 @@ const STYLES = `
 
 function enTete(titre, sousTitre) {
   return `
-    <div class="marque"><div class="sigle"><i class="t">T</i><i class="s">S</i></div><div class="nom">TASALLE</div></div>
+    <div class="marque">${SIGLE}<div class="nom">TASALLE</div></div>
     <h1>${escapeHtml(titre)}</h1>
     <div class="meta">${escapeHtml(sousTitre)}</div>`;
 }

@@ -3,8 +3,8 @@
 -- 2026-08-06
 -- ============================================================
 -- Les liens d'approbation/refus n'étaient protégés que par
--- pro_requests.id, connu du demandeur lui-même (renvoyé par son
--- propre insert dans pro-inscription). N'importe quel utilisateur
+-- pro_requests.id, connu du demandeur lui-même : useProInscription
+-- le récupère depuis son propre insert. N'importe quel utilisateur
 -- pouvait donc appeler approve-pro sur sa propre demande et
 -- s'auto-promouvoir manager.
 --

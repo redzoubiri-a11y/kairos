@@ -13,6 +13,13 @@ const admin = createClient(SUPABASE_URL, SERVICE_KEY, {
   auth: { autoRefreshToken: false, persistSession: false },
 });
 
+function reply(body: object, status = 200) {
+  return new Response(
+    JSON.stringify(body),
+    { status, headers: { ...CORS, "Content-Type": "application/json" } },
+  );
+}
+
 async function sendExpoPush(
   tokens: string[],
   title: string,
@@ -47,54 +54,57 @@ async function sendExpoPush(
 }
 
 serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: CORS });
-  }
+  if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
 
   try {
-    const { restaurant_id, user_id, title, body, data } = await req.json();
+    const jwt = (req.headers.get("Authorization") ?? "").replace("Bearer ", "").trim();
+    if (!jwt) return reply({ ok: false, error: "Non autorisé." }, 401);
 
-    if (!title || !body) {
-      return new Response(
-        JSON.stringify({ ok: false, error: "title et body requis" }),
-        { status: 400, headers: { ...CORS, "Content-Type": "application/json" } },
-      );
+    // Auth et parsing du corps sont indépendants
+    const [{ data: { user: caller }, error: authErr }, payload] = await Promise.all([
+      admin.auth.getUser(jwt),
+      req.json(),
+    ]);
+    if (authErr || !caller) return reply({ ok: false, error: "Non autorisé." }, 401);
+
+    const { reservation_id, to, title, body, data } = payload;
+    if (!reservation_id || !title || !body) {
+      return reply({ ok: false, error: "reservation_id, title et body requis" }, 400);
+    }
+    if (to !== "client" && to !== "restaurant") {
+      return reply({ ok: false, error: "to doit valoir 'client' ou 'restaurant'" }, 400);
     }
 
-    const tokens: string[] = [];
+    // Le destinataire est dérivé de la réservation, jamais fourni par l'appelant.
+    const { data: resa } = await admin
+      .from("reservations")
+      .select("id, restaurant_id, users!user_id (auth_id, push_token)")
+      .eq("id", reservation_id)
+      .maybeSingle();
+    if (!resa) return reply({ ok: false, error: "Réservation introuvable." }, 404);
 
-    // Notifier le restaurateur (par restaurant_id)
-    if (restaurant_id) {
-      const { data: owner } = await admin
-        .from("restaurant_owners")
-        .select("push_token")
-        .eq("restaurant_id", restaurant_id)
-        .not("push_token", "is", null)
-        .maybeSingle();
-      if (owner?.push_token) tokens.push(owner.push_token);
-    }
+    const client = resa.users as { auth_id: string; push_token: string | null } | null;
 
-    // Notifier le client (par users.id)
-    if (user_id) {
-      const { data: user } = await admin
-        .from("users")
-        .select("push_token")
-        .eq("id", user_id)
-        .not("push_token", "is", null)
-        .maybeSingle();
-      if (user?.push_token) tokens.push(user.push_token);
-    }
+    const { data: owners } = await admin
+      .from("restaurant_owners")
+      .select("auth_id, push_token")
+      .eq("restaurant_id", resa.restaurant_id);
 
-    const pushResult = await sendExpoPush(tokens, title, body, data);
+    // Seuls le client de la réservation et les propriétaires du restaurant
+    // peuvent déclencher une notification sur cette réservation.
+    const isClient = client?.auth_id === caller.id;
+    const isOwner  = (owners ?? []).some(o => o.auth_id === caller.id);
+    if (!isClient && !isOwner) return reply({ ok: false, error: "Accès refusé." }, 403);
 
-    return new Response(
-      JSON.stringify({ ok: true, ...pushResult }),
-      { status: 200, headers: { ...CORS, "Content-Type": "application/json" } },
-    );
+    const token = to === "client"
+      ? client?.push_token
+      : (owners ?? []).find(o => o.push_token)?.push_token;
+
+    const pushResult = await sendExpoPush(token ? [token] : [], title, body, data);
+
+    return reply({ ok: true, ...pushResult });
   } catch (err) {
-    return new Response(
-      JSON.stringify({ ok: false, error: String(err) }),
-      { status: 500, headers: { ...CORS, "Content-Type": "application/json" } },
-    );
+    console.error("push-manager:", err);
+    return reply({ ok: false, error: "Erreur interne." }, 500);
   }
 });

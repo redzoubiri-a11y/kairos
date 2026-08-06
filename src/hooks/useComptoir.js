@@ -3,6 +3,7 @@ import { Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { supabase } from '../../supabase';
 import { colors } from '../theme';
+import { notifyClient } from '../utils/notify';
 
 export const STATUS_CFG = {
   pending:   { label: 'EN ATTENTE', color: colors.accent,    bg: colors.accentSoft, border: 'rgba(232,160,69,0.35)'  },
@@ -101,20 +102,11 @@ export default function useComptoir() {
         setReservations(prev => prev.map(r => r.id === resa.id ? { ...r, status: 'confirmed' } : r));
         if (resa.user_id) {
           const date = new Date(resa.date + 'T12:00:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
-          const notifTitle = 'Réservation confirmée ✓';
-          const notifBody  = `Votre réservation chez ${restaurant?.name} le ${date} à ${resa.time_slot?.slice(0, 5)} a été confirmée.`;
-          try {
-            await supabase.from('notifications').insert({
-              recipient_id:   resa.user_id,
-              recipient_type: 'user',
-              type:           'resa_confirmed',
-              title:          notifTitle,
-              body:           notifBody,
-            });
-          } catch (_) {}
-          supabase.functions.invoke('push-manager', {
-            body: { user_id: resa.user_id, title: notifTitle, body: notifBody },
-          }).catch(() => {});
+          notifyClient({
+            reservationId: resa.id, userId: resa.user_id, type: 'resa_confirmed',
+            title: 'Réservation confirmée ✓',
+            body:  `Votre réservation chez ${restaurant?.name} le ${date} à ${resa.time_slot?.slice(0, 5)} a été confirmée.`,
+          });
         }
       })},
     ]);
@@ -127,25 +119,12 @@ export default function useComptoir() {
         await supabase.from('reservations').update({ status: 'arrived' }).eq('id', resa.id);
         setReservations(prev => prev.map(r => r.id === resa.id ? { ...r, status: 'arrived' } : r));
         if (resa.user_id) {
-          const notifTitle = 'Comment était votre expérience ? ⭐';
-          const notifBody  = `Votre visite chez ${restaurant?.name} est terminée. Partagez votre avis !`;
-          try {
-            await supabase.from('notifications').insert({
-              recipient_id:   resa.user_id,
-              recipient_type: 'user',
-              type:           'review_request',
-              title:          notifTitle,
-              body:           notifBody,
-            });
-          } catch (_) {}
-          supabase.functions.invoke('push-manager', {
-            body: {
-              user_id: resa.user_id,
-              title:   notifTitle,
-              body:    notifBody,
-              data:    { type: 'review_request', reservationId: resa.id },
-            },
-          }).catch(() => {});
+          notifyClient({
+            reservationId: resa.id, userId: resa.user_id, type: 'review_request',
+            title: 'Comment était votre expérience ? ⭐',
+            body:  `Votre visite chez ${restaurant?.name} est terminée. Partagez votre avis !`,
+            data:  { type: 'review_request', reservationId: resa.id },
+          });
         }
       })},
     ]);
@@ -171,20 +150,11 @@ export default function useComptoir() {
         setReservations(prev => prev.map(r => r.id === resa.id ? { ...r, status: 'cancelled' } : r));
         if (resa.user_id) {
           const date = new Date(resa.date + 'T12:00:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
-          const notifTitle = 'Réservation annulée';
-          const notifBody  = `Votre réservation chez ${restaurant?.name} le ${date} à ${resa.time_slot?.slice(0, 5)} a été annulée par le restaurant.`;
-          try {
-            await supabase.from('notifications').insert({
-              recipient_id:   resa.user_id,
-              recipient_type: 'user',
-              type:           'resa_cancelled',
-              title:          notifTitle,
-              body:           notifBody,
-            });
-          } catch (_) {}
-          supabase.functions.invoke('push-manager', {
-            body: { user_id: resa.user_id, title: notifTitle, body: notifBody },
-          }).catch(() => {});
+          notifyClient({
+            reservationId: resa.id, userId: resa.user_id, type: 'resa_cancelled',
+            title: 'Réservation annulée',
+            body:  `Votre réservation chez ${restaurant?.name} le ${date} à ${resa.time_slot?.slice(0, 5)} a été annulée par le restaurant.`,
+          });
         }
       })},
     ]);

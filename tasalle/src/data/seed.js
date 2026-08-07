@@ -322,6 +322,8 @@ export const SEED_USERS = [
     full_name: name,
     role: 'pro',
     pin: '1234',
+    // Code de parrainage : lisible, sans caractères ambigus (ni 0/O ni 1/I/L).
+    referral_code: ['K7M2QP','S4TR9X','B6HJ3W','D9NF5K','G2PX8M','H5RQ4T','J8WM6B','L3KD7N','N6TF2H','P9XB5R','Q4MJ8W'][i],
     ccp,
     created_at: '2026-01-12T09:00:00Z',
   })),
@@ -772,6 +774,7 @@ export function buildSeed() {
     subscriptions: SEED_SUBSCRIPTIONS.map((s) => ({ ...s })),
     invoices: SEED_INVOICES.map((i) => ({ ...i })),
     promo_codes: SEED_PROMO_CODES.map((p) => ({ ...p })),
+    referrals: [],
     counters: { reservation: SEED_RESERVATIONS.length },
     session: null,
   };

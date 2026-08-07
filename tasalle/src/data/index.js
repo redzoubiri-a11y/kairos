@@ -57,6 +57,10 @@ export const proListPromoCodes = impl.proListPromoCodes;
 export const proCreatePromoCode = impl.proCreatePromoCode;
 export const proUpdatePromoCode = impl.proUpdatePromoCode;
 export const proDeletePromoCode = impl.proDeletePromoCode;
+
+// Parrainage (§12 Phase 4)
+export const getReferralSummary = impl.getReferralSummary;
+export const checkReferralCode = impl.checkReferralCode;
 export const proGetSalle = impl.proGetSalle;
 export const proUpdateSalle = impl.proUpdateSalle;
 export const proUpdateTarifs = impl.proUpdateTarifs;

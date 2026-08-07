@@ -26,8 +26,16 @@ import {
   SMS_MAX_PER_DAY,
   ROLES,
   STORAGE_PREFIX,
+  REFERRAL_STATUS,
 } from '../lib/constants';
 import { normalizePromoCode, checkPromo, validatePromoPayload } from '../lib/promo';
+import {
+  generateReferralCode,
+  normalizeReferralCode,
+  checkReferral,
+  referralGrant,
+  extendedDeadline,
+} from '../lib/referral';
 
 const STORAGE_KEY = `${STORAGE_PREFIX}db.v1`;
 export const DEMO_OTP = '123456';
@@ -43,11 +51,27 @@ function clone(value) {
   return value == null ? value : JSON.parse(JSON.stringify(value));
 }
 
+/**
+ * Complète une base enregistrée par une version antérieure.
+ *
+ * Les données de démonstration vivent dans AsyncStorage : un appareil qui
+ * avait déjà utilisé l'application relit sa propre copie, dépourvue des
+ * collections ajoutées depuis. Sans ce complément, le premier accès à une
+ * nouveauté — les codes promo, le parrainage — lit `undefined` et lève.
+ */
+function completerCollections(stockee) {
+  const neuve = buildSeed();
+  Object.keys(neuve).forEach((cle) => {
+    if (stockee[cle] === undefined) stockee[cle] = neuve[cle];
+  });
+  return stockee;
+}
+
 async function load() {
   if (db) return db;
   try {
     const raw = await AsyncStorage.getItem(STORAGE_KEY);
-    db = raw ? JSON.parse(raw) : buildSeed();
+    db = raw ? completerCollections(JSON.parse(raw)) : buildSeed();
   } catch {
     db = buildSeed();
   }
@@ -244,6 +268,37 @@ export async function registerSalle(payload) {
   // sinon un propriétaire à deux salles n'en garderait qu'une.
   user.pin = payload.pin || null;
   user.ccp = payload.ccp || null;
+
+  // Chaque propriétaire porte son propre code, attribué une fois.
+  if (!user.referral_code) user.referral_code = uniqueReferralCode();
+
+  // §12 Phase 4 — le lien de parrainage se noue ici, mais la récompense
+  // attend la validation de la salle : sans ce délai, quelques comptes
+  // fictifs suffiraient à s'offrir des mois d'abonnement.
+  if (payload.referral_code) {
+    const parrain = findByReferralCode(payload.referral_code);
+    const verdict = checkReferral({
+      parrain,
+      filleul: user,
+      dejaParraine: db.referrals.some((r) => r.referred_id === user.id),
+    });
+    if (!verdict.ok) {
+      const err = new Error('REFERRAL_REFUSED');
+      err.code = 'REFERRAL_REFUSED';
+      err.reason = verdict.reason;
+      throw err;
+    }
+    db.referrals.push({
+      id: uid('parr'),
+      referrer_id: parrain.id,
+      referred_id: user.id,
+      code: parrain.referral_code,
+      status: REFERRAL_STATUS.PENDING,
+      days_granted: 0,
+      rewarded_at: null,
+      created_at: new Date().toISOString(),
+    });
+  }
 
   // §10.3 — un seul essai par propriétaire : ajouter une deuxième salle ne
   // relance pas les 90 jours et ne double pas la facture.
@@ -1348,6 +1403,152 @@ export async function proDeletePromoCode(id) {
   return { deleted: true, deactivated: false };
 }
 
+// ── Parrainage entre propriétaires (§12 Phase 4) ──────────────────────────
+
+function uniqueReferralCode() {
+  // Une collision reste possible sur 31^6 : on retire jusqu'à en trouver un
+  // libre plutôt que d'espérer.
+  for (let i = 0; i < 50; i += 1) {
+    const code = generateReferralCode();
+    if (!db.users.some((u) => u.referral_code === code)) return code;
+  }
+  throw new Error('REFERRAL_CODE_EXHAUSTED');
+}
+
+function findByReferralCode(code) {
+  const cible = normalizeReferralCode(code);
+  if (!cible) return null;
+  return db.users.find((u) => u.referral_code === cible) || null;
+}
+
+/** Total de jours déjà gagnés par un parrain, tous filleuls confondus. */
+function referralDaysEarned(userId) {
+  return db.referrals
+    .filter((r) => r.referrer_id === userId && r.status === REFERRAL_STATUS.REWARDED)
+    .reduce((total, r) => total + (r.days_granted || 0), 0);
+}
+
+/** Ajoute des jours à l'abonnement d'un propriétaire. */
+function extendSubscription(userId, days) {
+  if (days <= 0) return 0;
+  const sub = db.subscriptions.find((x) => x.pro_id === userId);
+  if (!sub) return 0;
+
+  const cible = extendedDeadline({
+    trialEndsAt: sub.trial_ends_at,
+    periodEndsAt: sub.current_period_end,
+    days,
+    today: todayISO(),
+  });
+
+  if (sub.current_period_end) sub.current_period_end = cible;
+  else sub.trial_ends_at = cible;
+
+  return days;
+}
+
+/**
+ * Verse la récompense due au titre d'un filleul dont la salle vient d'être
+ * validée. Sans effet si le lien n'existe pas ou a déjà été honoré.
+ */
+function rewardReferral(filleulId) {
+  const lien = db.referrals.find(
+    (r) => r.referred_id === filleulId && r.status === REFERRAL_STATUS.PENDING
+  );
+  if (!lien) return;
+
+  const pourParrain = referralGrant(referralDaysEarned(lien.referrer_id));
+  const donnes = extendSubscription(lien.referrer_id, pourParrain);
+
+  // Le filleul reçoit sa part sans plafond : c'est sa seule occasion.
+  const pourFilleul = referralGrant(0);
+  extendSubscription(filleulId, pourFilleul);
+
+  lien.status = REFERRAL_STATUS.REWARDED;
+  lien.days_granted = donnes;
+  lien.rewarded_at = new Date().toISOString();
+
+  if (donnes > 0) {
+    pushNotifications(
+      buildNotifications({
+        type: 'referral_rewarded',
+        userId: lien.referrer_id,
+        title: 'Parrainage récompensé',
+        body: `Votre filleul est en ligne : ${donnes} jours d'abonnement vous sont offerts.`,
+        data: { referral_id: lien.id },
+      })
+    );
+  }
+  if (pourFilleul > 0) {
+    pushNotifications(
+      buildNotifications({
+        type: 'referral_rewarded',
+        userId: filleulId,
+        title: 'Bienvenue, offert',
+        body: `${pourFilleul} jours d'abonnement vous sont offerts grâce à votre parrain.`,
+        data: { referral_id: lien.id },
+      })
+    );
+  }
+}
+
+/** Tableau de parrainage du propriétaire connecté. */
+export async function getReferralSummary() {
+  await load();
+  const user = requireUser();
+
+  // Un propriétaire inscrit avant l'ouverture du parrainage n'a pas de code.
+  if (!user.referral_code) {
+    user.referral_code = uniqueReferralCode();
+    persist();
+  }
+
+  const filleuls = db.referrals
+    .filter((r) => r.referrer_id === user.id)
+    .map((r) => {
+      const u = db.users.find((x) => x.id === r.referred_id);
+      const salle = db.salles.find((s) => s.owner_id === r.referred_id);
+      return {
+        id: r.id,
+        name: u?.full_name || null,
+        salle_name: salle?.name || null,
+        status: r.status,
+        days_granted: r.days_granted,
+        created_at: r.created_at,
+      };
+    })
+    .sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
+
+  const gagnes = referralDaysEarned(user.id);
+
+  return {
+    code: user.referral_code,
+    filleuls,
+    daysEarned: gagnes,
+    daysRemaining: referralGrant(gagnes),
+    pendingCount: filleuls.filter((f) => f.status === REFERRAL_STATUS.PENDING).length,
+  };
+}
+
+/** Vérifie un code saisi à l'inscription, sans nouer le lien. */
+export async function checkReferralCode(code) {
+  await load();
+  const user = currentUser();
+  const parrain = findByReferralCode(code);
+  const verdict = checkReferral({
+    parrain,
+    filleul: user,
+    dejaParraine: user ? db.referrals.some((r) => r.referred_id === user.id) : false,
+  });
+  if (!verdict.ok) {
+    const err = new Error('REFERRAL_REFUSED');
+    err.code = 'REFERRAL_REFUSED';
+    err.reason = verdict.reason;
+    throw err;
+  }
+  return { ok: true, referrer_name: parrain.full_name };
+}
+
 // ── Console d'administration (§2.1) ───────────────────────────────────────
 
 function requireAdmin() {
@@ -1420,6 +1621,10 @@ export async function adminReviewSalle(salleId, approved) {
   if (!salle) throw new Error('SALLE_NOT_FOUND');
 
   salle.status = approved ? 'active' : 'inactive';
+
+  // La validation par l'humain est la barrière anti-abus du parrainage : la
+  // récompense ne part qu'ici, jamais à la simple création d'un compte.
+  if (approved) rewardReferral(salle.owner_id);
 
   pushNotifications(
     buildNotifications({

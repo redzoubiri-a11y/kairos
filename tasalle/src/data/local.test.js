@@ -914,3 +914,136 @@ describe('codes promotionnels (§12 Phase 4)', () => {
     await expect(api.proListPromoCodes(SALLE)).rejects.toMatchObject({ code: 'FORBIDDEN' });
   });
 });
+
+describe('parrainage entre propriétaires (§12 Phase 4)', () => {
+  const ADMIN = '0555 00 00 00';
+  const NOUVEAU = '0555 77 88 99';
+
+  /** Inscrit un nouveau propriétaire, éventuellement parrainé. */
+  const inscrire = async (phone, referral) => {
+    await loginAs(phone);
+    return api.registerSalle({
+      name: 'Salle du filleul',
+      city: 'Alger',
+      capacity_max: 200,
+      pin: '1234',
+      tarifs: [{ name: 'Formule', price: 40000 }],
+      ...(referral ? { referral_code: referral } : {}),
+    });
+  };
+
+  it('donne un code à chaque propriétaire', async () => {
+    await loginAs(PRO_PHONE);
+    const r = await api.getReferralSummary();
+    expect(r.code).toMatch(/^[2-9A-HJ-NP-Z]{6}$/);
+    expect(r.filleuls).toEqual([]);
+  });
+
+  it('accepte un code existant à l’inscription', async () => {
+    await loginAs(PRO_PHONE);
+    const { code } = await api.getReferralSummary();
+
+    await inscrire(NOUVEAU, code);
+
+    await loginAs(PRO_PHONE);
+    const r = await api.getReferralSummary();
+    expect(r.filleuls).toHaveLength(1);
+    expect(r.pendingCount).toBe(1);
+  });
+
+  /**
+   * La récompense attend la validation par l'admin : sans ce délai, quelques
+   * comptes fictifs suffiraient à s'offrir des mois d'abonnement.
+   */
+  it('ne récompense pas avant la validation de la salle', async () => {
+    await loginAs(PRO_PHONE);
+    const { code } = await api.getReferralSummary();
+    const avant = (await api.getSubscription()).trial_ends_at;
+
+    await inscrire(NOUVEAU, code);
+
+    await loginAs(PRO_PHONE);
+    expect((await api.getSubscription()).trial_ends_at).toBe(avant);
+    expect((await api.getReferralSummary()).daysEarned).toBe(0);
+  });
+
+  it('récompense les deux comptes quand la salle est validée', async () => {
+    await loginAs(PRO_PHONE);
+    const { code } = await api.getReferralSummary();
+    const echeanceParrain = (await api.getSubscription()).trial_ends_at;
+
+    const { salle } = await inscrire(NOUVEAU, code);
+    const echeanceFilleul = (await api.getSubscription()).trial_ends_at;
+
+    await loginAs(ADMIN);
+    await api.adminReviewSalle(salle.id, true);
+
+    await loginAs(PRO_PHONE);
+    const parrain = await api.getReferralSummary();
+    expect(parrain.daysEarned).toBe(30);
+    expect(parrain.filleuls[0].status).toBe('rewarded');
+    expect((await api.getSubscription()).trial_ends_at).toBe(addDays(echeanceParrain, 30));
+
+    await loginAs(NOUVEAU);
+    expect((await api.getSubscription()).trial_ends_at).toBe(addDays(echeanceFilleul, 30));
+  });
+
+  it('ne récompense pas une salle refusée', async () => {
+    await loginAs(PRO_PHONE);
+    const { code } = await api.getReferralSummary();
+    const { salle } = await inscrire(NOUVEAU, code);
+
+    await loginAs(ADMIN);
+    await api.adminReviewSalle(salle.id, false);
+
+    await loginAs(PRO_PHONE);
+    expect((await api.getReferralSummary()).daysEarned).toBe(0);
+  });
+
+  it('ne verse la récompense qu’une fois', async () => {
+    await loginAs(PRO_PHONE);
+    const { code } = await api.getReferralSummary();
+    const { salle } = await inscrire(NOUVEAU, code);
+
+    await loginAs(ADMIN);
+    await api.adminReviewSalle(salle.id, true);
+    // Une salle peut être dépubliée puis republiée : la récompense ne doit
+    // pas repartir à chaque passage.
+    await api.adminReviewSalle(salle.id, false);
+    await api.adminReviewSalle(salle.id, true);
+
+    await loginAs(PRO_PHONE);
+    expect((await api.getReferralSummary()).daysEarned).toBe(30);
+  });
+
+  it('refuse un code inconnu', async () => {
+    await loginAs(NOUVEAU);
+    await expect(api.checkReferralCode('ZZZZZZ')).rejects.toMatchObject({ reason: 'unknown' });
+  });
+
+  it('refuse l’auto-parrainage', async () => {
+    await loginAs(PRO_PHONE);
+    const { code } = await api.getReferralSummary();
+    await expect(api.checkReferralCode(code)).rejects.toMatchObject({ reason: 'self' });
+  });
+
+  it('nomme le parrain quand le code est valide', async () => {
+    await loginAs(PRO_PHONE);
+    const { code } = await api.getReferralSummary();
+    await loginAs(NOUVEAU);
+    expect(await api.checkReferralCode(code)).toMatchObject({ referrer_name: 'Karim Belkacem' });
+  });
+
+  it('prévient le parrain de sa récompense', async () => {
+    await loginAs(PRO_PHONE);
+    const { code } = await api.getReferralSummary();
+    const { salle } = await inscrire(NOUVEAU, code);
+
+    await loginAs(ADMIN);
+    await api.adminReviewSalle(salle.id, true);
+
+    await loginAs(PRO_PHONE);
+    const notifs = await api.listNotifications();
+    expect(notifs.some((n) => n.type === 'referral_rewarded')).toBe(true);
+  });
+});

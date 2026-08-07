@@ -89,3 +89,14 @@ export const STORAGE_PREFIX = 'tasale.';
 // §12 Phase 4 — codes promotionnels
 export const PROMO_KINDS = { PERCENT: 'percent', AMOUNT: 'amount' };
 export const PROMO_CODE_MAX_LENGTH = 24;
+
+// §12 Phase 4 — parrainage entre propriétaires
+export const REFERRAL_CODE_LENGTH = 6;
+/** Jours d'abonnement offerts, au parrain comme au filleul. */
+export const REFERRAL_DAYS = 30;
+/**
+ * Plafond de jours qu'un même parrain peut accumuler. Sans lui, l'engagement
+ * de Tasalle envers un parrain très actif serait sans limite.
+ */
+export const REFERRAL_MAX_DAYS = 365;
+export const REFERRAL_STATUS = { PENDING: 'pending', REWARDED: 'rewarded', REJECTED: 'rejected' };

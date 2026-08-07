@@ -1,0 +1,101 @@
+{
+  "title": "Évaluez la maturité de votre fonction achats",
+  "subtitle": "20 questions, 5 minutes, résultat immédiat. Vous obtenez un score par phase de la Méthode FZ et les deux ou trois chantiers à ouvrir en priorité.",
+  "start": "Commencer le diagnostic",
+  "note": "Aucune inscription requise. Le résultat s'affiche à l'écran.",
+  "scale": [
+    { "label": "Non, pas du tout", "value": 0 },
+    { "label": "En partie", "value": 1 },
+    { "label": "Oui, en grande partie", "value": 2 },
+    { "label": "Oui, systématiquement", "value": 3 }
+  ],
+  "phases": [
+    {
+      "key": "cadrage",
+      "title": "Cadrage",
+      "weakAdvice": "Vous pilotez sans carte. Avant toute optimisation, il faut savoir ce qui est acheté, par qui, à qui et en combien de temps — c'est le point de départ de toute intervention.",
+      "offer": "Diagnostic Achats & Supply Chain",
+      "questions": [
+        "Vos processus d'achat sont-ils décrits par écrit et à jour ?",
+        "Savez-vous, pour chaque famille d'achat, qui décide et qui engage la dépense ?",
+        "Disposez-vous d'une liste à jour des fournisseurs actifs, avec leur part dans vos dépenses ?",
+        "Le volume annuel d'achats est-il connu et suivi par famille ?",
+        "Le délai réel entre l'expression du besoin et la livraison est-il mesuré ?"
+      ]
+    },
+    {
+      "key": "diagnostic",
+      "title": "Diagnostic",
+      "weakAdvice": "Vous ne mesurez pas ce que la situation vous coûte. Tant que les pertes ne sont pas chiffrées, aucun arbitrage budgétaire ne peut être défendu devant la direction.",
+      "offer": "Diagnostic Achats & Supply Chain",
+      "questions": [
+        "Suivez-vous un indicateur de respect des délais par fournisseur ?",
+        "Le coût des ruptures — arrêt de production, vente perdue — est-il chiffré ?",
+        "Connaissez-vous la valeur du stock sans mouvement depuis douze mois ?",
+        "Les écarts entre le prix commandé et le prix facturé sont-ils contrôlés ?",
+        "Les surcoûts liés à l'import — surestaries, immobilisation, change — sont-ils suivis ?"
+      ]
+    },
+    {
+      "key": "restructuration",
+      "title": "Restructuration",
+      "weakAdvice": "Les outils de cadrage manquent. Sans grille d'évaluation, sans contrat-cadre et sans politique de stock, chaque commande se renégocie et chaque décision dépend de la personne présente ce jour-là.",
+      "offer": "Structuration de la fonction achats",
+      "questions": [
+        "Existe-t-il une grille d'évaluation et de sélection des fournisseurs ?",
+        "Les achats récurrents sont-ils couverts par des contrats-cadres ?",
+        "Une politique de stock — points de commande, seuils d'alerte — est-elle définie par famille ?",
+        "La mise en concurrence est-elle systématique au-delà d'un certain montant ?",
+        "Un tableau de bord achats est-il consulté régulièrement par la direction ?"
+      ]
+    },
+    {
+      "key": "transfert",
+      "title": "Transfert",
+      "weakAdvice": "Votre organisation repose sur des personnes plutôt que sur des processus. C'est le risque le plus coûteux à long terme : il ne se voit qu'au moment d'un départ.",
+      "offer": "Formation intra-entreprise",
+      "questions": [
+        "Les équipes achats ont-elles été formées à la négociation ces deux dernières années ?",
+        "Si un acheteur clé partait demain, le travail pourrait-il être repris sans perte ?",
+        "Les indicateurs achats sont-ils revus à une fréquence fixe et connue de tous ?",
+        "Les équipes maîtrisent-elles les Incoterms et la documentation d'import ?",
+        "Les bonnes pratiques sont-elles écrites et transmises aux nouveaux arrivants ?"
+      ]
+    }
+  ],
+  "bands": [
+    {
+      "max": 39,
+      "title": "Fonction achats à structurer",
+      "body": "Les fondations manquent. La bonne nouvelle est que les premiers gains sont généralement les plus rapides et les plus visibles : sur ce niveau de maturité, un diagnostic de quelques jours identifie presque toujours des pertes chiffrables."
+    },
+    {
+      "max": 64,
+      "title": "Bases en place, pilotage incomplet",
+      "body": "Les processus existent mais ne sont pas mesurés, ou l'inverse. C'est la situation la plus fréquente. L'enjeu n'est pas d'ajouter des outils, mais de relier ce qui existe à des indicateurs suivis."
+    },
+    {
+      "max": 84,
+      "title": "Fonction structurée, gains résiduels",
+      "body": "L'essentiel est en place. Les marges de progression se situent sur des sujets précis — souvent le stock, l'import ou la transmission des compétences — plutôt que sur une refonte d'ensemble."
+    },
+    {
+      "max": 100,
+      "title": "Fonction mature",
+      "body": "Rare à ce niveau. Si le score reflète la réalité du terrain, l'enjeu devient la pérennité : documenter, transmettre, et éviter que la performance ne repose sur quelques personnes."
+    }
+  ],
+  "resultTitle": "Votre score de maturité",
+  "resultPriority": "Vos chantiers prioritaires",
+  "resultNone": "Aucune phase ne ressort en faiblesse marquée. Le diagnostic détaillé permettra d'aller chercher les gains résiduels.",
+  "cta": "Discuter de ces résultats sur WhatsApp",
+  "restart": "Refaire le diagnostic",
+  "capture": {
+    "title": "Recevoir le détail par e-mail",
+    "body": "Le détail question par question, avec les priorités d'action, envoyé à votre adresse professionnelle.",
+    "button": "Recevoir le détail",
+    "consent": "J'accepte de recevoir ce diagnostic et d'être recontacté à ce sujet.",
+    "success": "Envoyé. Vérifiez votre boîte de réception.",
+    "note": "Adresse utilisée uniquement pour cet envoi et le suivi de votre demande."
+  }
+}

@@ -1,0 +1,809 @@
+<title>FZ Consulting — Maquette V1</title>
+<style>
+  /* ============================================================
+     FZ CONSULTING — maquette V1
+     Identité : encre marine, accent cuivre, serif de texte.
+     Parti pris assumé : thème clair unique. Un site de cabinet
+     ne s'affiche pas sur fond sombre (cf. plan, partie 6).
+     ============================================================ */
+  :root {
+    --ink:        #131A22;
+    --ink-2:      #46545F;
+    --ink-3:      #7C8892;
+    --paper:      #FFFFFF;
+    --wash:       #F4F5F3;
+    --wash-2:     #EAECE8;
+    --rule:       #DFE3E0;
+    --rule-2:     #C6CCC8;
+    --marine:     #16324F;
+    --marine-dk:  #0F2438;
+    --marine-soft:#E8EDF2;
+    --copper:     #A9713B;
+    --copper-dk:  #8A5A2C;
+
+    --serif: Charter, "Bitstream Charter", "Sitka Text", Cambria, Georgia, "Times New Roman", serif;
+    --sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+
+    --pad: 1.25rem;
+    --maxw: 1120px;
+  }
+  @media (min-width: 760px) { :root { --pad: 2rem; } }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body {
+    margin: 0; background: var(--paper); color: var(--ink);
+    font-family: var(--sans); font-size: 17px; line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding-inline: var(--pad); }
+  :focus-visible { outline: 2px solid var(--copper); outline-offset: 3px; }
+
+  /* ---------- bandeau maquette ---------- */
+  .proto {
+    background: var(--ink); color: #EDEFEC; font-family: var(--mono);
+    font-size: .68rem; letter-spacing: .09em; text-transform: uppercase;
+    padding: .5rem var(--pad); text-align: center;
+  }
+  .proto b { color: #E3B277; font-weight: 500; }
+
+  /* ---------- en-tête ---------- */
+  header.site {
+    position: sticky; top: 0; z-index: 40; background: var(--paper);
+    border-bottom: 1px solid var(--rule);
+  }
+  .bar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; height: 4rem; }
+  .logo {
+    font-family: var(--serif); font-size: 1.22rem; letter-spacing: .01em;
+    text-decoration: none; color: var(--ink); white-space: nowrap;
+  }
+  .logo span { color: var(--copper); }
+  nav.main { display: none; }
+  @media (min-width: 860px) {
+    nav.main { display: flex; gap: 1.75rem; }
+    nav.main a {
+      font-size: .9rem; text-decoration: none; color: var(--ink-2);
+      padding-block: .2rem; border-bottom: 2px solid transparent;
+    }
+    nav.main a:hover { color: var(--ink); }
+    nav.main a[aria-current="page"] { color: var(--ink); border-bottom-color: var(--copper); }
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: .5rem; text-decoration: none;
+    font-family: var(--sans); font-size: .9rem; font-weight: 550; line-height: 1;
+    padding: .72rem 1.05rem; border-radius: 2px; border: 1px solid transparent;
+    cursor: pointer;
+  }
+  .btn-primary { background: var(--marine); color: #fff; }
+  .btn-primary:hover { background: var(--marine-dk); }
+  .btn-ghost { background: transparent; color: var(--ink); border-color: var(--rule-2); }
+  .btn-ghost:hover { border-color: var(--ink); }
+  .btn svg { width: 1.05em; height: 1.05em; flex: none; }
+  .bar .btn { padding: .58rem .85rem; font-size: .85rem; }
+  @media (max-width: 520px) { .bar .btn .lbl { display: none; } }
+
+  /* menu mobile */
+  nav.mobile { border-top: 1px solid var(--rule); background: var(--wash); }
+  @media (min-width: 860px) { nav.mobile { display: none; } }
+  nav.mobile ul { list-style: none; display: flex; margin: 0; padding: 0; overflow-x: auto; }
+  nav.mobile a {
+    display: block; padding: .7rem 1rem; font-size: .84rem; white-space: nowrap;
+    text-decoration: none; color: var(--ink-2); border-bottom: 2px solid transparent;
+  }
+  nav.mobile a[aria-current="page"] { color: var(--ink); border-bottom-color: var(--copper); background: var(--paper); }
+
+  /* ---------- structure de page ---------- */
+  .page { display: none; }
+  .page.on { display: block; }
+  section.band { padding-block: clamp(3rem, 8vw, 5.5rem); border-bottom: 1px solid var(--rule); }
+  section.band.wash { background: var(--wash); }
+  section.band:last-of-type { border-bottom: 0; }
+
+  .eyebrow {
+    font-family: var(--mono); font-size: .7rem; letter-spacing: .15em; text-transform: uppercase;
+    color: var(--ink-3); margin: 0 0 1rem;
+  }
+  h1 {
+    font-family: var(--serif); font-weight: 400; font-size: clamp(2.1rem, 5.6vw, 3.5rem);
+    line-height: 1.08; letter-spacing: -.015em; margin: 0 0 1.1rem; text-wrap: balance;
+  }
+  h2 {
+    font-family: var(--serif); font-weight: 400; font-size: clamp(1.6rem, 3.6vw, 2.3rem);
+    line-height: 1.15; letter-spacing: -.01em; margin: 0 0 1.4rem; text-wrap: balance;
+  }
+  h3 { font-size: 1.05rem; font-weight: 650; margin: 0 0 .5rem; letter-spacing: .005em; }
+  p { margin: 0 0 1rem; max-width: 62ch; }
+  .sub { font-family: var(--serif); font-size: clamp(1.08rem, 2.2vw, 1.28rem); line-height: 1.5; color: var(--ink-2); }
+  .cta-row { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: 1.6rem; }
+
+  /* ---------- accueil : promesse ---------- */
+  .hero { padding-block: clamp(3rem, 9vw, 6rem) clamp(2.5rem, 6vw, 4rem); }
+  .hero .note {
+    font-family: var(--mono); font-size: .72rem; color: var(--ink-3);
+    margin-top: 1.4rem; letter-spacing: .04em;
+  }
+
+  /* ---------- bandeau preuve ---------- */
+  .proof { display: grid; gap: 1.75rem; }
+  @media (min-width: 700px) { .proof { grid-template-columns: repeat(3, 1fr); gap: 2.5rem; } }
+  .proof .item { border-top: 2px solid var(--copper); padding-top: 1rem; }
+  .proof .v {
+    font-family: var(--serif); font-size: clamp(2.2rem, 5vw, 2.9rem); line-height: 1;
+    letter-spacing: -.02em; color: var(--copper); font-variant-numeric: tabular-nums;
+    display: block; margin-bottom: .45rem;
+  }
+  .proof .l { font-size: .92rem; color: var(--ink-2); max-width: 30ch; }
+
+  /* ---------- colonnes génériques ---------- */
+  .trio { display: grid; gap: 2rem; }
+  @media (min-width: 780px) { .trio { grid-template-columns: repeat(3, 1fr); gap: 2.5rem; } }
+  .duo { display: grid; gap: 2.5rem; }
+  @media (min-width: 820px) { .duo { grid-template-columns: 1fr 1fr; gap: 4rem; } }
+  .split { display: grid; gap: 2rem; }
+  @media (min-width: 900px) { .split { grid-template-columns: 22rem 1fr; gap: 4rem; align-items: start; } }
+
+  .sym { border-left: 2px solid var(--rule-2); padding-left: 1.1rem; }
+  .sym h3 { font-family: var(--serif); font-weight: 400; font-size: 1.22rem; margin-bottom: .4rem; }
+  .sym p { font-size: .95rem; color: var(--ink-2); margin: 0; }
+
+  /* ---------- méthode ---------- */
+  .phases { display: grid; gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+  @media (min-width: 780px) { .phases { grid-template-columns: repeat(4, 1fr); } }
+  .phase { background: var(--paper); padding: 1.5rem 1.25rem; }
+  .band.wash .phase { background: var(--paper); }
+  .phase .n { font-family: var(--mono); font-size: .68rem; letter-spacing: .12em; color: var(--copper); }
+  .phase h3 { margin: .45rem 0 .5rem; text-transform: uppercase; font-size: .95rem; letter-spacing: .04em; }
+  .phase p { font-size: .9rem; color: var(--ink-2); margin: 0 0 .85rem; }
+  .phase .deliv {
+    font-family: var(--mono); font-size: .72rem; line-height: 1.5; color: var(--ink-3);
+    border-top: 1px solid var(--rule); padding-top: .7rem;
+  }
+
+  /* ---------- cas clients ---------- */
+  .cases { display: grid; gap: 2rem; }
+  @media (min-width: 900px) { .cases.two { grid-template-columns: 1fr 1fr; gap: 2.5rem; } }
+  .case { border-top: 1px solid var(--rule-2); padding-top: 1.5rem; }
+  .case .tag {
+    font-family: var(--mono); font-size: .68rem; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--ink-3); display: flex; gap: .6rem; align-items: center; margin-bottom: 1rem;
+  }
+  .case .tag .ex {
+    color: var(--copper-dk); border: 1px solid var(--copper); border-radius: 2px;
+    padding: .1rem .35rem; font-size: .62rem;
+  }
+  .case .figure {
+    font-family: var(--serif); font-size: clamp(2.6rem, 7vw, 3.6rem); line-height: 1;
+    letter-spacing: -.03em; color: var(--copper); font-variant-numeric: tabular-nums;
+    display: block; margin-bottom: .4rem;
+  }
+  .case .figure-l { font-size: 1rem; color: var(--ink); font-weight: 600; margin-bottom: 1.3rem; }
+  .case dl { margin: 0; display: grid; grid-template-columns: 6.5rem 1fr; gap: .5rem 1rem; font-size: .93rem; }
+  .case dt {
+    font-family: var(--mono); font-size: .68rem; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--ink-3); padding-top: .22em;
+  }
+  .case dd { margin: 0; color: var(--ink-2); }
+  .case .link { display: inline-block; margin-top: 1.2rem; font-size: .9rem; color: var(--marine); }
+
+  /* ---------- offres ---------- */
+  .offers { display: grid; gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+  @media (min-width: 820px) { .offers { grid-template-columns: 1fr 1fr; } }
+  .offer { background: var(--paper); padding: 1.75rem 1.5rem; display: flex; flex-direction: column; }
+  .offer.lead { background: var(--marine-soft); }
+  .offer .kicker {
+    font-family: var(--mono); font-size: .66rem; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--copper-dk); margin-bottom: .6rem;
+  }
+  .offer h3 { font-family: var(--serif); font-weight: 400; font-size: 1.3rem; margin-bottom: .6rem; }
+  .offer p { font-size: .94rem; color: var(--ink-2); margin-bottom: 1rem; }
+  .offer .deliv { list-style: none; margin: 0 0 1.2rem; padding: 0; font-size: .89rem; color: var(--ink-2); }
+  .offer .deliv li { padding-left: 1rem; position: relative; margin-bottom: .3rem; }
+  .offer .deliv li::before { content: "—"; position: absolute; left: 0; color: var(--copper); }
+  .offer .foot {
+    margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--rule);
+    font-family: var(--mono); font-size: .74rem; color: var(--ink-3); display: flex;
+    justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+  }
+
+  .courses { display: grid; gap: 1.5rem; }
+  @media (min-width: 780px) { .courses { grid-template-columns: repeat(3, 1fr); gap: 2rem; } }
+  .course { border-top: 2px solid var(--marine); padding-top: 1rem; }
+  .course h3 { font-family: var(--serif); font-weight: 400; font-size: 1.25rem; }
+  .course ul { margin: .8rem 0 0; padding-left: 1.05rem; font-size: .9rem; color: var(--ink-2); }
+  .course li { margin-bottom: .25rem; }
+  .course li::marker { color: var(--ink-3); }
+  .course .fmt { font-family: var(--mono); font-size: .72rem; color: var(--ink-3); margin-top: .9rem; letter-spacing: .04em; }
+
+  .pricing { border: 1px solid var(--rule-2); background: var(--paper); padding: 1.5rem; }
+  .pricing table { width: 100%; border-collapse: collapse; font-size: .93rem; }
+  .pricing td { padding: .6rem 0; border-bottom: 1px solid var(--rule); vertical-align: baseline; }
+  .pricing tr:last-child td { border-bottom: 0; }
+  .pricing td.p {
+    text-align: right; font-family: var(--mono); font-size: .82rem; color: var(--ink-3);
+    white-space: nowrap; padding-left: 1rem;
+  }
+  .pricing td.p b { color: var(--copper-dk); font-weight: 500; }
+
+  /* ---------- Fatima ---------- */
+  .portrait {
+    background: var(--wash-2); border: 1px solid var(--rule); aspect-ratio: 4/5;
+    display: grid; place-items: center; font-family: var(--mono); font-size: .7rem;
+    color: var(--ink-3); letter-spacing: .1em; text-align: center; padding: 1rem;
+  }
+
+  /* ---------- contact ---------- */
+  form.contact { display: grid; gap: 1rem; max-width: 34rem; }
+  .field { display: grid; gap: .35rem; }
+  .field label { font-size: .85rem; font-weight: 550; }
+  .field input, .field select, .field textarea {
+    font-family: var(--sans); font-size: .95rem; color: var(--ink); background: var(--paper);
+    border: 1px solid var(--rule-2); border-radius: 2px; padding: .65rem .7rem; width: 100%;
+  }
+  .field textarea { min-height: 7rem; resize: vertical; }
+  .consent { display: grid; grid-template-columns: auto 1fr; gap: .6rem; align-items: start; font-size: .82rem; color: var(--ink-2); }
+  .consent input { margin-top: .25em; }
+  .sent {
+    display: none; border-left: 3px solid var(--marine); background: var(--marine-soft);
+    padding: 1rem 1.1rem; font-size: .93rem;
+  }
+  .sent.on { display: block; }
+  .coord { list-style: none; margin: 0; padding: 0; font-size: .95rem; }
+  .coord li { padding: .6rem 0; border-bottom: 1px solid var(--rule); display: grid; grid-template-columns: 6rem 1fr; gap: 1rem; }
+  .coord li:last-child { border-bottom: 0; }
+  .coord .k { font-family: var(--mono); font-size: .7rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); padding-top: .3em; }
+  .next { border: 1px solid var(--rule-2); padding: 1.25rem; background: var(--wash); }
+  .next ol { margin: 0; padding-left: 1.1rem; font-size: .93rem; color: var(--ink-2); }
+  .next li { margin-bottom: .4rem; }
+
+  /* ---------- pied ---------- */
+  footer.site { background: var(--ink); color: #C9D0CD; padding-block: 3rem 6.5rem; }
+  @media (min-width: 860px) { footer.site { padding-bottom: 3rem; } }
+  footer.site .cols { display: grid; gap: 2rem; }
+  @media (min-width: 780px) { footer.site .cols { grid-template-columns: 1.4fr 1fr 1fr; gap: 3rem; } }
+  footer.site .logo { color: #fff; }
+  footer.site p { font-size: .88rem; color: #97A19D; max-width: 34ch; }
+  footer.site h4 {
+    font-family: var(--mono); font-size: .68rem; letter-spacing: .13em; text-transform: uppercase;
+    color: #7E8985; margin: 0 0 .8rem; font-weight: 400;
+  }
+  footer.site ul { list-style: none; margin: 0; padding: 0; font-size: .89rem; }
+  footer.site li { margin-bottom: .45rem; }
+  footer.site a { color: #C9D0CD; text-decoration: none; }
+  footer.site a:hover { color: #fff; text-decoration: underline; }
+  footer.site .legal {
+    margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid #2A3138;
+    font-family: var(--mono); font-size: .68rem; color: #7E8985; letter-spacing: .05em;
+  }
+
+  /* ---------- barre WhatsApp mobile ---------- */
+  .wa-bar {
+    position: fixed; inset-inline: 0; bottom: 0; z-index: 50;
+    background: var(--paper); border-top: 1px solid var(--rule-2);
+    padding: .6rem var(--pad) calc(.6rem + env(safe-area-inset-bottom));
+  }
+  @media (min-width: 860px) { .wa-bar { display: none; } }
+  .wa-bar .btn { width: 100%; justify-content: center; }
+</style>
+
+<p class="proto">Maquette V1 — <b>contenus d'exemple à remplacer</b> — non publiable en l'état</p>
+
+<header class="site">
+  <div class="wrap bar">
+    <a class="logo" href="#/">FZ<span>&nbsp;/</span>&nbsp;Consulting</a>
+    <nav class="main" aria-label="Principal">
+      <a href="#/" data-route="/">Accueil</a>
+      <a href="#/offres" data-route="/offres">Offres</a>
+      <a href="#/resultats" data-route="/resultats">Résultats</a>
+      <a href="#/contact" data-route="/contact">Contact</a>
+    </nav>
+    <a class="btn btn-primary" href="https://wa.me/213000000000?text=Bonjour%20Fatima%2C%20je%20vous%20contacte%20au%20sujet%20de..." rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3.1.8.8-3-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.6-6.1c-.3-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.6.1a6.7 6.7 0 0 1-2-1.2 7.4 7.4 0 0 1-1.3-1.7c-.2-.3 0-.4.1-.6l.4-.5a1.8 1.8 0 0 0 .3-.4.5.5 0 0 0 0-.5c0-.1-.6-1.4-.8-1.9s-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 2.9 2.9 0 0 0-.9 2.2A5 5 0 0 0 8 12.3a11.4 11.4 0 0 0 4.4 3.9 14.8 14.8 0 0 0 1.5.5 3.5 3.5 0 0 0 1.6.1 2.7 2.7 0 0 0 1.7-1.2 2.1 2.1 0 0 0 .2-1.2c-.1-.2-.3-.2-.5-.3Z"/></svg>
+      <span class="lbl">WhatsApp</span>
+    </a>
+  </div>
+  <nav class="mobile" aria-label="Principal (mobile)">
+    <ul>
+      <li><a href="#/" data-route="/">Accueil</a></li>
+      <li><a href="#/offres" data-route="/offres">Offres</a></li>
+      <li><a href="#/resultats" data-route="/resultats">Résultats</a></li>
+      <li><a href="#/contact" data-route="/contact">Contact</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+
+<!-- ====================== ACCUEIL ====================== -->
+<div class="page on" id="p-/">
+
+  <section class="hero">
+    <div class="wrap">
+      <p class="eyebrow">Conseil &amp; formation · Achats · Supply chain · Commerce extérieur</p>
+      <h1>Structurer la fonction achats et supply chain des entreprises algériennes.</h1>
+      <p class="sub">Une méthode en quatre phases, des résultats mesurés avant et après.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://wa.me/213000000000?text=Bonjour%20Fatima%2C%20j%27ai%20vu%20votre%20site%20et%20je%20souhaite%20en%20discuter." rel="noopener">Parler à Fatima sur WhatsApp</a>
+        <a class="btn btn-ghost" href="#/resultats">Voir les résultats</a>
+      </div>
+      <p class="note">Premier échange de 20 minutes, sans engagement.</p>
+    </div>
+  </section>
+
+  <section class="band wash">
+    <div class="wrap proof">
+      <div class="item"><span class="v">500+</span><span class="l">professionnels formés en achats, négociation et supply chain</span></div>
+      <div class="item"><span class="v">&gt;90 %</span><span class="l">de satisfaction déclarée sur les formations dispensées</span></div>
+      <div class="item"><span class="v">XX ans</span><span class="l">en direction achats et supply chain — chiffre à confirmer</span></div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap">
+      <h2>Trois situations que nous rencontrons chaque semaine</h2>
+      <div class="trio" style="margin-top:2.5rem">
+        <div class="sym">
+          <h3>Les délais fournisseurs dérapent</h3>
+          <p>Personne ne sait dire, à un instant donné, où en est une commande — ni pourquoi elle a glissé de trois semaines.</p>
+        </div>
+        <div class="sym">
+          <h3>Le stock immobilise la trésorerie</h3>
+          <p>Des références dorment depuis dix-huit mois pendant que les articles critiques tombent en rupture.</p>
+        </div>
+        <div class="sym">
+          <h3>Les achats se font au coup par coup</h3>
+          <p>Pas de processus écrit, pas de grille d'évaluation fournisseurs, une dépendance forte à quelques personnes.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band wash">
+    <div class="wrap">
+      <p class="eyebrow">La méthode</p>
+      <h2>Quatre phases, un livrable à chacune</h2>
+      <p style="margin-bottom:2.5rem">Chaque intervention suit la même séquence. Vous savez à l'avance ce qui sera fait, ce qui sera livré, et à quel moment vos équipes reprennent la main.</p>
+      <div class="phases">
+        <div class="phase">
+          <span class="n">PHASE 1</span><h3>Cadrage</h3>
+          <p>Entretiens terrain et cartographie des flux existants, tels qu'ils fonctionnent réellement.</p>
+          <p class="deliv">Livrable — cartographie des flux</p>
+        </div>
+        <div class="phase">
+          <span class="n">PHASE 2</span><h3>Diagnostic</h3>
+          <p>Mesure des écarts entre la pratique et la cible, et chiffrage de ce que coûtent ces écarts.</p>
+          <p class="deliv">Livrable — chiffrage des pertes</p>
+        </div>
+        <div class="phase">
+          <span class="n">PHASE 3</span><h3>Restructuration</h3>
+          <p>Conception des processus cibles et des outils de pilotage, avec les équipes concernées.</p>
+          <p class="deliv">Livrable — processus + tableau de bord</p>
+        </div>
+        <div class="phase">
+          <span class="n">PHASE 4</span><h3>Transfert</h3>
+          <p>Montée en compétence des équipes et mise en place des indicateurs de suivi.</p>
+          <p class="deliv">Livrable — indicateurs + formation</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap">
+      <p class="eyebrow">Résultats</p>
+      <h2>Ce que ça change, en chiffres</h2>
+      <div class="cases two" style="margin-top:2.5rem">
+        <div class="case">
+          <p class="tag"><span class="ex">Exemple</span> PME industrielle · 80 salariés</p>
+          <span class="figure">−32 %</span>
+          <p class="figure-l">sur le délai moyen de commande</p>
+          <dl>
+            <dt>Contexte</dt><dd>Fonction achats non structurée, aucun suivi fournisseurs</dd>
+            <dt>Intervention</dt><dd>4 mois — processus fournisseurs et tableau de bord</dd>
+          </dl>
+        </div>
+        <div class="case">
+          <p class="tag"><span class="ex">Exemple</span> Distribution · 200 salariés</p>
+          <span class="figure">−XX %</span>
+          <p class="figure-l">de stock dormant en six mois</p>
+          <dl>
+            <dt>Contexte</dt><dd>À compléter après l'appel client</dd>
+            <dt>Intervention</dt><dd>À compléter après l'appel client</dd>
+          </dl>
+        </div>
+      </div>
+      <div class="cta-row"><a class="btn btn-ghost" href="#/resultats">Voir tous les cas</a></div>
+    </div>
+  </section>
+
+  <section class="band wash">
+    <div class="wrap">
+      <h2>Deux façons de travailler ensemble</h2>
+      <div class="duo" style="margin-top:2.5rem">
+        <div>
+          <p class="eyebrow">Conseil</p>
+          <h3 style="font-family:var(--serif);font-weight:400;font-size:1.35rem">Structurer, mesurer, transmettre</h3>
+          <p>Du diagnostic court à la refonte complète de la fonction achats, en passant par la gestion des stocks et la sécurisation des flux d'import.</p>
+          <a class="btn btn-ghost" href="#/offres">Voir les offres de conseil</a>
+        </div>
+        <div>
+          <p class="eyebrow">Formation</p>
+          <h3 style="font-family:var(--serif);font-weight:400;font-size:1.35rem">Achats, négociation, commerce extérieur</h3>
+          <p>Trois parcours en inter ou en intra-entreprise, construits sur des cas réels et non sur des supports théoriques. Plus de 500 professionnels déjà formés.</p>
+          <a class="btn btn-ghost" href="#/offres">Voir les parcours</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap split">
+      <div class="portrait">PORTRAIT<br>À FOURNIR</div>
+      <div>
+        <p class="eyebrow">Qui vous accompagne</p>
+        <h2>Fatima Z.</h2>
+        <p>Plus de XX années en direction des achats et de la supply chain, dans l'industrie et la distribution en Algérie. Formatrice depuis XXXX, plus de 500 professionnels accompagnés.</p>
+        <p>FZ Consulting prolonge l'activité du Cabinet Oceanic : la même approche terrain, une offre élargie au conseil en structuration achats et supply chain.</p>
+        <p style="font-family:var(--mono);font-size:.75rem;color:var(--ink-3)">Texte à valider — parcours, dates et références à compléter.</p>
+        <div class="cta-row"><a class="btn btn-ghost" href="#/contact">Prendre contact</a></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band wash">
+    <div class="wrap" style="text-align:center">
+      <h2 style="margin-inline:auto">Un point de 20 minutes, sans engagement.</h2>
+      <p style="margin-inline:auto">Décrivez votre situation en deux lignes. Si ce n'est pas notre sujet, nous vous le dirons tout de suite.</p>
+      <div class="cta-row" style="justify-content:center">
+        <a class="btn btn-primary" href="https://wa.me/213000000000?text=Bonjour%20Fatima%2C%20je%20souhaite%20un%20point%20de%2020%20minutes." rel="noopener">Écrire sur WhatsApp</a>
+        <a class="btn btn-ghost" href="#/contact">Passer par le formulaire</a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ====================== OFFRES ====================== -->
+<div class="page" id="p-/offres">
+  <section class="band">
+    <div class="wrap">
+      <p class="eyebrow">Offres</p>
+      <h1 style="font-size:clamp(1.9rem,4.6vw,2.9rem)">Conseil et formation</h1>
+      <p class="sub">Quatre missions de conseil à périmètre défini, trois parcours de formation. Chaque intervention suit les quatre phases de la méthode.</p>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap">
+      <h2>Conseil</h2>
+      <div class="offers" style="margin-top:2rem">
+        <div class="offer lead">
+          <p class="kicker">Offre d'entrée · prix fixe</p>
+          <h3>Diagnostic Achats &amp; Supply Chain</h3>
+          <p>Un état des lieux chiffré de votre fonction achats, livré sous forme de plan d'action priorisé. Sans engagement sur la suite.</p>
+          <ul class="deliv">
+            <li>Cartographie des flux existants</li>
+            <li>Chiffrage des pertes de performance</li>
+            <li>Plan d'action priorisé sur 12 mois</li>
+          </ul>
+          <div class="foot"><span>Durée fixe · [X] jours</span><span>À partir de [montant]</span></div>
+        </div>
+        <div class="offer">
+          <p class="kicker">Mission</p>
+          <h3>Structuration de la fonction achats</h3>
+          <p>Mise en place d'une fonction achats qui tient sans dépendre d'une seule personne.</p>
+          <ul class="deliv">
+            <li>Processus fournisseurs écrit et appliqué</li>
+            <li>Grille d'évaluation et de sélection</li>
+            <li>Tableau de bord de pilotage</li>
+          </ul>
+          <div class="foot"><span>[X] mois</span><span>[Fourchette] selon périmètre</span></div>
+        </div>
+        <div class="offer">
+          <p class="kicker">Mission</p>
+          <h3>Supply chain et gestion des stocks</h3>
+          <p>Libérer la trésorerie immobilisée sans créer de rupture sur les références critiques.</p>
+          <ul class="deliv">
+            <li>Politique de stock par famille</li>
+            <li>Indicateurs de rotation</li>
+            <li>Points de commande et seuils d'alerte</li>
+          </ul>
+          <div class="foot"><span>[X] mois</span><span>[Fourchette] selon périmètre</span></div>
+        </div>
+        <div class="offer">
+          <p class="kicker">Mission</p>
+          <h3>Commerce extérieur et import</h3>
+          <p>Sécuriser les flux d'import et réduire les immobilisations liées à la documentation.</p>
+          <ul class="deliv">
+            <li>Sécurisation des flux et des délais</li>
+            <li>Documentation et conformité</li>
+            <li>Relation transitaires et banques</li>
+          </ul>
+          <div class="foot"><span>[X] mois</span><span>[Fourchette] selon périmètre</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band wash">
+    <div class="wrap">
+      <h2>Formation</h2>
+      <p>Trois parcours construits sur des cas réels, disponibles en inter-entreprises ou en intra, dans vos locaux et sur vos propres dossiers.</p>
+      <div class="courses" style="margin-top:2.5rem">
+        <div class="course">
+          <h3>Achats</h3>
+          <ul>
+            <li>Structurer le processus d'achat</li>
+            <li>Sourcer et évaluer un fournisseur</li>
+            <li>Construire un cahier des charges</li>
+            <li>Piloter par les indicateurs</li>
+          </ul>
+          <p class="fmt">[X] jours · inter et intra</p>
+        </div>
+        <div class="course">
+          <h3>Négociation</h3>
+          <ul>
+            <li>Préparer : rapport de force et alternatives</li>
+            <li>Conduire l'entretien</li>
+            <li>Traiter les objections de prix</li>
+            <li>Sécuriser l'accord dans la durée</li>
+          </ul>
+          <p class="fmt">[X] jours · inter et intra</p>
+        </div>
+        <div class="course">
+          <h3>Commerce extérieur</h3>
+          <ul>
+            <li>Incoterms et répartition des risques</li>
+            <li>Documentation et domiciliation</li>
+            <li>Moyens de paiement à l'international</li>
+            <li>Transit, douane et litiges</li>
+          </ul>
+          <p class="fmt">[X] jours · inter et intra</p>
+        </div>
+      </div>
+      <p style="margin-top:2rem;font-size:.95rem">
+        Autres parcours — supply chain, gestion des stocks, SAP MM, gestion des ressources humaines —
+        <a href="#/contact" style="color:var(--marine)">disponibles sur demande</a>.
+      </p>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap">
+      <h2>Tarifs</h2>
+      <p>Les fourchettes sont affichées pour que vous sachiez, avant le premier échange, si nous sommes dans votre budget.</p>
+      <div class="pricing" style="margin-top:1.5rem;max-width:38rem">
+        <table>
+          <tr><td>Diagnostic Achats &amp; Supply Chain</td><td class="p">à partir de <b>[montant]</b></td></tr>
+          <tr><td>Mission de structuration</td><td class="p"><b>[fourchette]</b></td></tr>
+          <tr><td>Formation intra-entreprise</td><td class="p"><b>[montant]</b> / jour / groupe</td></tr>
+          <tr><td>Formation inter-entreprises</td><td class="p"><b>[montant]</b> / participant</td></tr>
+        </table>
+      </div>
+      <p style="margin-top:1rem;font-family:var(--mono);font-size:.75rem;color:var(--ink-3)">
+        Bloc masqué automatiquement tant que les montants ne sont pas renseignés — ne bloque pas la mise en ligne.
+      </p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://wa.me/213000000000?text=Bonjour%20Fatima%2C%20je%20souhaite%20un%20devis." rel="noopener">Demander un devis sur WhatsApp</a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ====================== RÉSULTATS ====================== -->
+<div class="page" id="p-/resultats">
+  <section class="band">
+    <div class="wrap">
+      <p class="eyebrow">Résultats</p>
+      <h1 style="font-size:clamp(1.9rem,4.6vw,2.9rem)">Ce qui a changé, et de combien</h1>
+      <p class="sub">Chaque mission se termine par une mesure. Voici trois interventions, leur point de départ et leur résultat.</p>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap cases">
+      <div class="case">
+        <p class="tag"><span class="ex">Exemple</span> PME industrielle · 80 salariés · Alger</p>
+        <span class="figure">−32 %</span>
+        <p class="figure-l">sur le délai moyen de commande, en 4 mois</p>
+        <dl>
+          <dt>Contexte</dt><dd>Fonction achats non structurée. Aucun suivi fournisseurs, délais subis, ruptures récurrentes sur les références critiques.</dd>
+          <dt>Intervention</dt><dd>Mise en place d'un processus fournisseurs et d'un tableau de bord. Phases 1 à 4 de la méthode.</dd>
+          <dt>Résultat</dt><dd>Délai moyen de commande réduit de 32 %. Trois fournisseurs critiques sécurisés par contrat-cadre.</dd>
+        </dl>
+        <a class="link" href="https://wa.me/213000000000?text=Bonjour%20Fatima%2C%20nous%20sommes%20dans%20une%20situation%20comparable." rel="noopener">Une situation comparable ? En parler sur WhatsApp →</a>
+      </div>
+
+      <div class="case">
+        <p class="tag"><span class="ex">À compléter</span> Cas n° 2 — appel client à réaliser</p>
+        <span class="figure">—</span>
+        <p class="figure-l">Le chiffre de résultat vient ici, et c'est l'élément le plus visible de la page</p>
+        <dl>
+          <dt>Contexte</dt><dd>Secteur, taille, situation de départ.</dd>
+          <dt>Intervention</dt><dd>Durée et ce qui a été mis en place.</dd>
+          <dt>Résultat</dt><dd>Ce qui a changé, et de combien. Au minimum un chiffre.</dd>
+        </dl>
+      </div>
+
+      <div class="case">
+        <p class="tag"><span class="ex">À compléter</span> Cas n° 3 — appel client à réaliser</p>
+        <span class="figure">—</span>
+        <p class="figure-l">Anonymisation possible : secteur et taille suffisent</p>
+        <dl>
+          <dt>Contexte</dt><dd>Un cas anonyme mais chiffré est plus convaincant qu'un témoignage nominatif vague.</dd>
+          <dt>Intervention</dt><dd>—</dd>
+          <dt>Résultat</dt><dd>—</dd>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="band wash">
+    <div class="wrap">
+      <h2>Du côté de la formation</h2>
+      <div class="proof" style="margin-top:2rem">
+        <div class="item"><span class="v">500+</span><span class="l">professionnels formés depuis le lancement de l'activité</span></div>
+        <div class="item"><span class="v">&gt;90 %</span><span class="l">de satisfaction déclarée à l'issue des sessions</span></div>
+        <div class="item"><span class="v">XX</span><span class="l">entreprises accompagnées en intra — à confirmer</span></div>
+      </div>
+      <p style="margin-top:2.5rem;font-family:var(--serif);font-size:1.2rem;line-height:1.5;max-width:48ch;border-left:3px solid var(--copper);padding-left:1.2rem">
+        « Verbatim d'un ancien participant, recueilli lors des appels du chantier 3. Les phrases exactes du client valent mieux que ce qu'on écrirait à sa place. »
+      </p>
+      <p style="font-family:var(--mono);font-size:.72rem;color:var(--ink-3)">— Prénom N., fonction, entreprise</p>
+    </div>
+  </section>
+</div>
+
+<!-- ====================== CONTACT ====================== -->
+<div class="page" id="p-/contact">
+  <section class="band">
+    <div class="wrap">
+      <p class="eyebrow">Contact</p>
+      <h1 style="font-size:clamp(1.9rem,4.6vw,2.9rem)">Parlons de votre situation</h1>
+      <p class="sub">Le plus simple est WhatsApp. Décrivez votre situation en deux lignes, la réponse arrive sous 24 heures ouvrées.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://wa.me/213000000000?text=Bonjour%20Fatima%2C%20je%20vous%20contacte%20au%20sujet%20de..." rel="noopener">Écrire sur WhatsApp</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap split">
+      <div>
+        <h3 style="margin-bottom:1rem">Ce qui se passe ensuite</h3>
+        <div class="next">
+          <ol>
+            <li>Réponse sous 24 heures ouvrées.</li>
+            <li>Un échange de 20 minutes pour comprendre la situation.</li>
+            <li>Si le sujet n'est pas le nôtre, nous vous le disons tout de suite.</li>
+            <li>Sinon, une proposition écrite sous une semaine.</li>
+          </ol>
+        </div>
+        <h3 style="margin:2rem 0 .5rem">Coordonnées</h3>
+        <ul class="coord">
+          <li><span class="k">WhatsApp</span><span>+213 [à renseigner]</span></li>
+          <li><span class="k">E-mail</span><span>contact@[domaine].com</span></li>
+          <li><span class="k">LinkedIn</span><span>[profil à renseigner]</span></li>
+          <li><span class="k">Ville</span><span>Alger, Algérie</span></li>
+        </ul>
+      </div>
+
+      <div>
+        <h3 style="margin-bottom:1rem">Ou par formulaire</h3>
+        <form class="contact" id="cform" novalidate>
+          <div class="field">
+            <label for="f-nom">Nom et prénom</label>
+            <input id="f-nom" name="nom" type="text" autocomplete="name" required>
+          </div>
+          <div class="field">
+            <label for="f-ent">Entreprise</label>
+            <input id="f-ent" name="entreprise" type="text" autocomplete="organization">
+          </div>
+          <div class="field">
+            <label for="f-con">E-mail ou téléphone</label>
+            <input id="f-con" name="contact" type="text" autocomplete="email" required>
+          </div>
+          <div class="field">
+            <label for="f-suj">Sujet</label>
+            <select id="f-suj" name="sujet">
+              <option>Diagnostic achats &amp; supply chain</option>
+              <option>Mission de conseil</option>
+              <option>Formation intra-entreprise</option>
+              <option>Formation inter-entreprises</option>
+              <option>Autre</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-msg">Votre situation en quelques lignes</label>
+            <textarea id="f-msg" name="message"></textarea>
+          </div>
+          <label class="consent">
+            <input type="checkbox" name="consent" required>
+            <span>J'accepte que ces informations soient utilisées pour répondre à ma demande. Voir la <a href="#/contact" style="color:var(--marine)">politique de confidentialité</a>.</span>
+          </label>
+          <div><button class="btn btn-primary" type="submit">Envoyer</button></div>
+          <p style="font-family:var(--mono);font-size:.7rem;color:var(--ink-3);margin:0">
+            Protégé contre les envois automatisés · Maquette : aucun message n'est réellement envoyé.
+          </p>
+        </form>
+        <div class="sent" id="csent">
+          <strong>Message reçu.</strong> Réponse sous 24 heures ouvrées.
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="cols">
+      <div>
+        <a class="logo" href="#/">FZ<span style="color:#A9713B">&nbsp;/</span>&nbsp;Consulting</a>
+        <p style="margin-top:.8rem">Conseil et formation en achats, supply chain et commerce extérieur. Alger, Algérie.</p>
+      </div>
+      <div>
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="#/">Accueil</a></li>
+          <li><a href="#/offres">Offres</a></li>
+          <li><a href="#/resultats">Résultats</a></li>
+          <li><a href="#/contact">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Informations</h4>
+        <ul>
+          <li><a href="#/contact">Mentions légales</a></li>
+          <li><a href="#/contact">Politique de confidentialité</a></li>
+          <li><a href="#/contact">LinkedIn</a></li>
+        </ul>
+      </div>
+    </div>
+    <p class="legal">© 2026 FZ Consulting — anciennement Cabinet Oceanic · Maquette V1, contenus d'exemple · Mentions légales et politique de confidentialité à rédiger avant mise en ligne</p>
+  </div>
+</footer>
+
+<div class="wa-bar">
+  <a class="btn btn-primary" href="https://wa.me/213000000000?text=Bonjour%20Fatima%2C%20je%20vous%20contacte%20au%20sujet%20de..." rel="noopener">
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3.1.8.8-3-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.6-6.1c-.3-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.6.1a6.7 6.7 0 0 1-2-1.2 7.4 7.4 0 0 1-1.3-1.7c-.2-.3 0-.4.1-.6l.4-.5a1.8 1.8 0 0 0 .3-.4.5.5 0 0 0 0-.5c0-.1-.6-1.4-.8-1.9s-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 2.9 2.9 0 0 0-.9 2.2A5 5 0 0 0 8 12.3a11.4 11.4 0 0 0 4.4 3.9 14.8 14.8 0 0 0 1.5.5 3.5 3.5 0 0 0 1.6.1 2.7 2.7 0 0 0 1.7-1.2 2.1 2.1 0 0 0 .2-1.2c-.1-.2-.3-.2-.5-.3Z"/></svg>
+    Parler à Fatima sur WhatsApp
+  </a>
+</div>
+
+<script>
+  (function () {
+    var TITLES = {
+      '/':           'FZ Consulting — Conseil et formation en achats et supply chain',
+      '/offres':     'Offres — FZ Consulting',
+      '/resultats':  'Résultats — FZ Consulting',
+      '/contact':    'Contact — FZ Consulting'
+    };
+
+    function route() {
+      var r = (location.hash || '#/').replace(/^#/, '');
+      if (!TITLES[r]) r = '/';
+
+      document.querySelectorAll('.page').forEach(function (p) {
+        p.classList.toggle('on', p.id === 'p-' + r);
+      });
+      document.querySelectorAll('[data-route]').forEach(function (a) {
+        if (a.dataset.route === r) { a.setAttribute('aria-current', 'page'); }
+        else { a.removeAttribute('aria-current'); }
+      });
+      document.title = TITLES[r];
+      window.scrollTo(0, 0);
+    }
+
+    window.addEventListener('hashchange', route);
+    route();
+
+    var form = document.getElementById('cform');
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      form.style.display = 'none';
+      document.getElementById('csent').classList.add('on');
+    });
+  })();
+</script>

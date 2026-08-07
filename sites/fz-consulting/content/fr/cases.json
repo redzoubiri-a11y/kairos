@@ -1,0 +1,44 @@
+{
+  "title": "Ce qui a changé, et de combien",
+  "subtitle": "Chaque mission se termine par une mesure. Voici trois interventions, leur point de départ et leur résultat.",
+  "cta": "Une situation comparable ? En parler sur WhatsApp",
+  "items": [
+    {
+      "draft": true,
+      "tag": "PME industrielle · 80 salariés · Alger",
+      "figure": "−32 %",
+      "figureLabel": "sur le délai moyen de commande, en 4 mois",
+      "context": "Fonction achats non structurée. Aucun suivi fournisseurs, délais subis, ruptures récurrentes sur les références critiques.",
+      "intervention": "Mise en place d'un processus fournisseurs et d'un tableau de bord. Phases 1 à 4 de la méthode.",
+      "result": "Délai moyen de commande réduit de 32 %. Trois fournisseurs critiques sécurisés par contrat-cadre."
+    },
+    {
+      "draft": true,
+      "tag": "Cas n° 2 — appel client à réaliser",
+      "figure": null,
+      "figureLabel": "Le chiffre de résultat vient ici, et c'est l'élément le plus visible de la page.",
+      "context": "Secteur, taille, situation de départ.",
+      "intervention": "Durée et ce qui a été mis en place.",
+      "result": "Ce qui a changé, et de combien. Au minimum un chiffre."
+    },
+    {
+      "draft": true,
+      "tag": "Cas n° 3 — appel client à réaliser",
+      "figure": null,
+      "figureLabel": "Anonymisation possible : secteur et taille suffisent.",
+      "context": "Un cas anonyme mais chiffré est plus convaincant qu'un témoignage nominatif vague.",
+      "intervention": "—",
+      "result": "—"
+    }
+  ],
+  "training": {
+    "title": "Du côté de la formation",
+    "stats": [
+      { "value": "500+", "label": "professionnels formés depuis le lancement de l'activité" },
+      { "value": ">90 %", "label": "de satisfaction déclarée à l'issue des sessions" },
+      { "value": "XX", "label": "entreprises accompagnées en intra — à confirmer" }
+    ],
+    "quote": null,
+    "quoteAuthor": null
+  }
+}

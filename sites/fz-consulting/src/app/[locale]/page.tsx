@@ -60,8 +60,22 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         </div>
       </section>
 
-      {/* 5 — résultats */}
+      {/* 4 bis — l'auto-diagnostic prolonge la méthode : mêmes quatre phases */}
       <section className="band">
+        <div className="wrap">
+          <p className="eyebrow">{home.diagnosticTeaser.eyebrow}</p>
+          <h2>{home.diagnosticTeaser.title}</h2>
+          <p>{home.diagnosticTeaser.body}</p>
+          <div className="cta-row">
+            <Link className="btn btn-primary" href={`${base}/diagnostic`}>
+              {home.diagnosticTeaser.cta}
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* 5 — résultats */}
+      <section className="band wash">
         <div className="wrap">
           <p className="eyebrow">{home.resultsIntro.eyebrow}</p>
           <h2>{home.resultsIntro.title}</h2>
@@ -79,7 +93,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       </section>
 
       {/* 6 — offres */}
-      <section className="band wash">
+      <section className="band">
         <div className="wrap">
           <h2>{home.offersIntro.title}</h2>
           <div className="duo mt">
@@ -98,7 +112,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       </section>
 
       {/* 7 — Fatima */}
-      <section className="band">
+      <section className="band wash">
         <div className="wrap split">
           <div className="portrait">
             {home.about.portrait ? (
@@ -127,7 +141,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       </section>
 
       {/* 8 — conversion */}
-      <section className="band wash">
+      <section className="band">
         <div className="wrap center">
           <h2>{home.closing.title}</h2>
           <p>{home.closing.body}</p>

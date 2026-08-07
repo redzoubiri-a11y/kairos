@@ -15,6 +15,7 @@ import homeFr from '@content/fr/home.json'
 import offersFr from '@content/fr/offers.json'
 import casesFr from '@content/fr/cases.json'
 import methodFr from '@content/fr/method.json'
+import diagnosticFr from '@content/fr/diagnostic.json'
 
 export const locales = ['fr'] as const
 export type Locale = (typeof locales)[number]
@@ -51,6 +52,7 @@ export type Home = {
   stats: Stat[]
   problems: { title: string; body: string }[]
   methodIntro: { eyebrow: string; title: string; body: string }
+  diagnosticTeaser: { eyebrow: string; title: string; body: string; cta: string }
   resultsIntro: { eyebrow: string; title: string; cta: string }
   offersIntro: {
     title: string
@@ -103,6 +105,37 @@ export type Cases = {
   cta: string
 }
 
+export type DiagPhase = {
+  key: string
+  title: string
+  weakAdvice: string
+  offer: string
+  questions: string[]
+}
+
+export type Diagnostic = {
+  title: string
+  subtitle: string
+  start: string
+  note: string
+  scale: { label: string; value: number }[]
+  phases: DiagPhase[]
+  bands: { max: number; title: string; body: string }[]
+  resultTitle: string
+  resultPriority: string
+  resultNone: string
+  cta: string
+  restart: string
+  capture: {
+    title: string
+    body: string
+    button: string
+    consent: string
+    success: string
+    note: string
+  }
+}
+
 /* ----------------------------------------------------------------- accès */
 
 const byLocale = {
@@ -112,6 +145,7 @@ const byLocale = {
     offers: offersFr as unknown as Offers,
     cases: casesFr as unknown as Cases,
     method: methodFr as unknown as Method,
+    diagnostic: diagnosticFr as unknown as Diagnostic,
   },
 } satisfies Record<Locale, unknown>
 

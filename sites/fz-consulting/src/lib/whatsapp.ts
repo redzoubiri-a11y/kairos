@@ -12,6 +12,7 @@ export const WA_MESSAGES = {
   offers: 'Bonjour Fatima, je souhaite un devis.',
   case: 'Bonjour Fatima, nous sommes dans une situation comparable.',
   meeting: 'Bonjour Fatima, je souhaite un point de 20 minutes.',
+  diagnostic: "Bonjour Fatima, je viens de faire l'auto-diagnostic et je souhaite en discuter.",
 } as const
 
 export type WaKey = keyof typeof WA_MESSAGES

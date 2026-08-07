@@ -29,6 +29,12 @@
     "title": "Quatre phases, un livrable à chacune",
     "body": "Chaque intervention suit la même séquence. Vous savez à l'avance ce qui sera fait, ce qui sera livré, et à quel moment vos équipes reprennent la main."
   },
+  "diagnosticTeaser": {
+    "eyebrow": "Auto-diagnostic",
+    "title": "Où en est votre fonction achats ?",
+    "body": "20 questions calées sur les quatre phases de la méthode. Résultat immédiat, score par phase, et les deux ou trois chantiers à ouvrir en priorité.",
+    "cta": "Faire le diagnostic — 5 minutes"
+  },
   "resultsIntro": {
     "eyebrow": "Résultats",
     "title": "Ce que ça change, en chiffres",

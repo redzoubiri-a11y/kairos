@@ -100,3 +100,19 @@ Trois protections cumulées dans `src/app/api/contact/route.ts` :
 
 Vercel, dépôt connecté, racine du projet `sites/fz-consulting`. Les variables
 d'environnement se déclarent dans les réglages du projet.
+
+## L'auto-diagnostic
+
+`/fr/diagnostic` — 20 questions réparties sur les quatre phases de la méthode.
+Score global, score par phase, et les chantiers prioritaires (phases sous 60 %),
+chacun renvoyant vers l'offre correspondante.
+
+- Les questions, l'échelle, les paliers de verdict et les conseils sont dans
+  `content/fr/diagnostic.json` — modifiables sans toucher au code.
+- Le seuil de faiblesse est `WEAK_BELOW` dans `src/lib/diagnostic.ts`.
+- `POST /api/diagnostic` reçoit le détail des réponses : la personne obtient son
+  diagnostic, le cabinet obtient un contact qualifié accompagné du problème
+  déjà posé. Ces réponses alimenteront le Baromètre annuel.
+
+Ajouter ou retirer une question ne demande qu'une ligne de JSON : le score se
+recalcule sur le maximum réellement atteignable.

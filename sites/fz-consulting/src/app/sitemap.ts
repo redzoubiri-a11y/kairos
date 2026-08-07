@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { getContent, locales } from '@/lib/content'
 
-const PATHS = ['', 'offres', 'resultats', 'contact']
+const PATHS = ['', 'offres', 'resultats', 'diagnostic', 'contact']
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const { site } = getContent('fr')

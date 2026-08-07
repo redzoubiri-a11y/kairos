@@ -165,7 +165,37 @@ export async function registerSalle(payload) {
     );
   }
 
+  // §12 Phase 4 — le lien de parrainage se noue ici ; la récompense attend la
+  // validation de la salle par un administrateur.
+  if (payload.referral_code) {
+    const { error } = await supabase.rpc('attach_referral', { p_code: payload.referral_code });
+    if (error) {
+      const err = new Error('REFERRAL_REFUSED');
+      err.code = 'REFERRAL_REFUSED';
+      // La base renvoie « REFERRAL_REFUSED: <raison> »
+      err.reason = String(error.message || '').split(': ').pop();
+      throw err;
+    }
+  }
+
   return { salle, user };
+}
+
+// ── Parrainage (§12 Phase 4) ──────────────────────────────────────────────
+
+export async function checkReferralCode(code) {
+  const verdict = unwrap(await supabase.rpc('check_referral_code', { p_code: code }));
+  if (!verdict?.ok) {
+    const err = new Error('REFERRAL_REFUSED');
+    err.code = 'REFERRAL_REFUSED';
+    err.reason = verdict?.reason || 'unknown';
+    throw err;
+  }
+  return verdict;
+}
+
+export async function getReferralSummary() {
+  return unwrap(await supabase.rpc('referral_summary'));
 }
 
 // ── Salles ────────────────────────────────────────────────────────────────

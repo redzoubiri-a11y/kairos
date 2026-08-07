@@ -25,6 +25,10 @@ export default function MInput({
   suffix,
   onSubmitEditing,
   returnKeyType,
+  onBlur,
+  // Les champs de code — promo, parrainage — ne doivent pas être « corrigés »
+  // par le clavier : il en ferait un mot.
+  autoCorrect,
   style,
 }) {
   const { colors, typography, spacing, radii } = useTheme();
@@ -71,7 +75,11 @@ export default function MInput({
           placeholder={placeholder}
           placeholderTextColor={`${colors.warmGray}80`}
           onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
+          onBlur={(e) => {
+            setFocused(false);
+            onBlur?.(e);
+          }}
+          autoCorrect={autoCorrect}
           multiline={multiline}
           keyboardType={keyboardType}
           autoCapitalize={autoCapitalize}

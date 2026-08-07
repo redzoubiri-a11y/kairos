@@ -39,6 +39,11 @@ export default function ProMoreScreen({ navigation }) {
             label={t('pro.promoTitle')}
             onPress={() => navigation.navigate('ProPromo')}
           />
+          <Row
+            icon="gift-outline"
+            label={t('pro.referralTitle')}
+            onPress={() => navigation.navigate('ProReferral')}
+          />
           <Divider />
           <Row
             icon="star-outline"

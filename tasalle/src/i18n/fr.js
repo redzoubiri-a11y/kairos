@@ -268,6 +268,10 @@ export default {
     email: 'E-mails',
     quietHours: 'Aucun SMS entre 22 h et 08 h',
   },
+  referral: {
+    shareMessage:
+      'Je gère ma salle des fêtes sur Tasalle. Inscris-toi avec mon code {{code}} : on gagne chacun un mois d’abonnement. https://tasalle.dz',
+  },
   messages: {
     title: 'Messages',
     empty: 'Aucune conversation',
@@ -307,6 +311,27 @@ export default {
     version: 'Version',
   },
   pro: {
+    referralTitle: 'Parrainage',
+    referralSubtitle: 'Invitez un confrère, gagnez des mois',
+    referralYourCode: 'Votre code',
+    referralShare: 'Partager mon code',
+    referralHow: 'Votre filleul saisit ce code à son inscription. Dès que sa salle est validée, vous gagnez {{days}} jours d’abonnement chacun.',
+    referralEarned: '{{days}} jours gagnés',
+    referralRemaining: 'Prochain filleul validé : +{{days}} jours',
+    referralCapReached: 'Plafond de parrainage atteint',
+    referralGuests: 'Vos filleuls',
+    referralEmpty: 'Aucun filleul pour l’instant',
+    referralPending: 'Salle en attente de validation',
+    referralRewarded: '+{{days}} jours',
+    referralRejected: 'Non retenu',
+    referralCodeLabel: 'Code de parrainage',
+    referralCodeHint: 'Facultatif — si un confrère vous a invité',
+    referralCodeValid: 'Parrainé par {{name}}',
+    referralErrors: {
+      unknown: 'Ce code de parrainage n’existe pas.',
+      self: 'Vous ne pouvez pas vous parrainer vous-même.',
+      already_referred: 'Votre compte a déjà un parrain.',
+    },
     promoTitle: 'Codes promo',
     promoSubtitle: 'Attirez des réservations sur vos dates creuses',
     promoNew: 'Nouveau code',

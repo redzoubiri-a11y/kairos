@@ -103,6 +103,7 @@ psql "$DATABASE_URL" -f supabase/migrations/0007_geo.sql        # position des s
 psql "$DATABASE_URL" -f supabase/migrations/0008_multi_salles.sql # plusieurs salles par propriétaire
 psql "$DATABASE_URL" -f supabase/migrations/0009_francais_seul.sql # retrait de la préférence de langue
 psql "$DATABASE_URL" -f supabase/migrations/0010_promo_codes.sql # codes promotionnels
+psql "$DATABASE_URL" -f supabase/migrations/0011_referrals.sql  # parrainage entre propriétaires
 ```
 
 `0003` suppose le schéma `storage` : il ne s'applique que sur Supabase.
@@ -158,8 +159,8 @@ puis rejouer `0004_cron.sql`.
 ## Tests
 
 ```bash
-npm test                        # 250 tests JS (jest-expo)
-npm run test:sql                # 78 assertions SQL, sur une base neuve
+npm test                        # 275 tests JS (jest-expo)
+npm run test:sql                # 97 assertions SQL, sur une base neuve
 npm run test:edge               # 28 vérifications des fonctions Edge
 ```
 
@@ -194,10 +195,11 @@ psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/tests/_bootstrap_local.sql
 | Suite | Portée |
 |-------|--------|
 | `src/services/notify.test.js` (24) | Heures calmes 22 h–08 h, report au lendemain, quota journalier, blackout Ramadan, troncature à 160 caractères, priorités d'envoi |
-| `src/data/local.test.js` (88) | Backend local : authentification, disponibilités, création et annulation, signature PIN, acompte, avis et modération, quota SMS, photos, favoris, recherche, tableau de bord, planning, abonnement, messagerie, cloisonnement entre propriétaires |
+| `src/data/local.test.js` (98) | Backend local : authentification, disponibilités, création et annulation, signature PIN, acompte, avis et modération, quota SMS, photos, favoris, recherche, tableau de bord, planning, abonnement, messagerie, cloisonnement entre propriétaires |
 | `src/lib/storage.test.js` (10) | Décodage base64 des images (les 256 valeurs d'octet), unicité et extension des chemins de destination |
 | `src/data/cache.test.js` (11) | Cache hors ligne : repli sur la dernière réponse connue, refus d'une donnée périmée, propagation de l'erreur quand aucun cache n'existe |
 | `src/services/pdfTemplates.test.js` (35) | Contrat, planning et facture : montants et solde, mention de signature, salles couvertes par l'abonnement, échappement HTML d'un nom de client piégé, traduction des énumérations |
+| `src/lib/referral.test.js` (15) | Règles du parrainage : plafond de récompense, report d'échéance qui ne fait pas perdre les jours restants, refus de l'auto-parrainage, alphabet sans caractères ambigus |
 | `src/lib/promo.test.js` (28) | Règles des codes promo : remise bornée au montant — un code de 50 000 DA sur une formule à 35 000 ne crée pas de total négatif — bornes de validité, quota, refus d'un code sans effet, contrôle de la saisie du propriétaire |
 | `src/lib/geo.test.js` (26) | Distance orthodromique vérifiée sur des écarts connus (Alger–Oran, un degré de latitude), tri par proximité, liens d'itinéraire par plateforme |
 | `src/i18n/i18n.test.js` (7) | Chaque clé appelée dans le code existe — une clé absente s'afficherait telle quelle à l'écran, sans erreur — et aucun libellé n'est écrit en dur dans le JSX |
@@ -205,6 +207,7 @@ psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/tests/_bootstrap_local.sql
 | `supabase/tests/business_rules.sql` (19) | Les mêmes règles §10, mais côté PostgreSQL : unicité du jour confirmé, PIN, délai d'avis, publication automatique, agrégats, absence de policy `DELETE` sur les avis, et l'index d'unicité attaqué directement — la vérification applicative et l'index protègent deux chemins différents, seul le premier était couvert |
 | `supabase/tests/admin.sql` (14) | Autorisations de la console : un client n'obtient pas les chiffres, un pro ne valide pas sa propre salle, un avis retiré reste en base |
 | `supabase/tests/lifecycle.sql` (16) | Clôture des événements passés, rappel J-1, demande d'avis à J+48 h, rappels et expiration d'essai — chaque tâche vérifiée aussi pour son idempotence |
+| `supabase/tests/referrals.sql` (19) | Récompense versée par la base à la validation par un administrateur, une seule fois, plafonnée ; auto-parrainage et filleul déjà rattaché refusés ; aucune écriture directe autorisée sur la table |
 | `supabase/tests/promo_codes.sql` (19) | La remise est recalculée en base, jamais reprise du client ; code d'une autre salle refusé ; quota consommé à la demande et rendu à l'annulation ; contraintes de table (pourcentage > 100, doublon insensible à la casse, dates inversées) ; aucune policy de lecture ouverte |
 | `supabase/tests/multi_salles.sql` (10) | Un propriétaire ne lit ni ne modifie la salle d'un autre, un seul abonnement par propriétaire, le tableau de bord et les statistiques restent cloisonnés par salle |
 
@@ -277,6 +280,9 @@ applicative.
   d'abonnement**), mode hors ligne du planning, réponses rapides de la
   messagerie adaptées au rôle, filtres avancés, console
   d'administration
+- **§12 Phase 4 — parrainage** — un propriétaire en parraine un autre ; tous
+  deux gagnent 30 jours d'abonnement, mais seulement à la validation de la
+  salle du filleul par un administrateur. Plafond de 365 jours par parrain
 - **§12 Phase 4 — codes promotionnels** — le propriétaire crée des codes pour
   ses salles (pourcentage ou montant fixe, période, quota) ; la famille en
   saisit un pendant la réservation et voit le total baisser. La remise est
@@ -380,7 +386,7 @@ seconde langue possible sans rouvrir chaque écran.
 
 ## Vérification effectuée
 
-- `npm test` — 250 tests au vert, `npm run test:sql` — 78 assertions, `npm run test:edge` — 28 vérifications
+- `npm test` — 275 tests au vert, `npm run test:sql` — 97 assertions, `npm run test:edge` — 28 vérifications
 - `npx expo export --platform web` — 917 modules, aucune erreur
 - Parcours pro complet en navigateur (Playwright) : connexion OTP → tableau de
   bord → confirmation d'une demande avec acompte et signature PIN → planning →

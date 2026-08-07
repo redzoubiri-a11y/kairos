@@ -11,6 +11,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { useI18n } from '../../i18n';
 import { useAuth } from '../../context/AuthContext';
 import { CITIES, AMENITIES, AMENITY_ICONS, TRIAL_DAYS } from '../../lib/constants';
+import * as api from '../../data';
 
 const STEPS = ['Salle', 'Tarifs', 'PIN'];
 
@@ -33,6 +34,7 @@ export default function ProOnboardingScreen({ navigation }) {
     description: '',
     amenities: ['clim', 'parking'],
     ccp: '',
+    referral_code: '',
   });
 
   const [tarifs, setTarifs] = useState([
@@ -42,6 +44,8 @@ export default function ProOnboardingScreen({ navigation }) {
   ]);
 
   const [pin, setPin] = useState('');
+  const [parrain, setParrain] = useState(null);
+  const [referralError, setReferralError] = useState(null);
 
   const set = (key, value) => {
     setForm((f) => ({ ...f, [key]: value }));
@@ -77,6 +81,24 @@ export default function ProOnboardingScreen({ navigation }) {
     setStep((s) => s + 1);
   };
 
+  /** Vérifie le code de parrainage dès que le champ perd le focus. */
+  const verifierParrainage = async () => {
+    const code = form.referral_code.trim();
+    if (!code) {
+      setParrain(null);
+      setReferralError(null);
+      return;
+    }
+    try {
+      const r = await api.checkReferralCode(code);
+      setParrain(r.referrer_name);
+      setReferralError(null);
+    } catch (e) {
+      setParrain(null);
+      setReferralError(t(`pro.referralErrors.${e.reason || 'unknown'}`));
+    }
+  };
+
   const submit = async (finalPin) => {
     setSaving(true);
     setError(null);
@@ -86,6 +108,9 @@ export default function ProOnboardingScreen({ navigation }) {
         capacity_max: Number(form.capacity_max) || 0,
         parking_places: Number(form.parking_places) || 0,
         pin: finalPin,
+        // Un code refusé n'est pas transmis : la salle doit pouvoir être
+        // créée même si le parrainage échoue.
+        referral_code: parrain ? form.referral_code.trim() : null,
         tarifs: tarifs
           .filter((x) => Number(x.price) > 0)
           .map((x) => ({ name: x.name, price: Number(x.price) })),
@@ -202,6 +227,32 @@ export default function ProOnboardingScreen({ navigation }) {
                 direction="ltr"
                 hint="Communiqué aux clients lors des demandes d'acompte"
               />
+
+              {/* §12 Phase 4 — le code est vérifié à la saisie plutôt qu'à
+                  l'envoi : découvrir un code erroné après avoir tout rempli
+                  serait décourageant. */}
+              <MInput
+                label={t('pro.referralCodeLabel')}
+                value={form.referral_code}
+                onChangeText={(v) => {
+                  set('referral_code', v.toUpperCase());
+                  setParrain(null);
+                  setReferralError(null);
+                }}
+                onBlur={verifierParrainage}
+                autoCapitalize="characters"
+                autoCorrect={false}
+                direction="ltr"
+                icon="gift-outline"
+                hint={parrain ? undefined : t('pro.referralCodeHint')}
+                error={referralError}
+              />
+
+              {parrain ? (
+                <Text style={[typography.caption, { color: colors.primaryInk, textAlign: 'left' }]}>
+                  {t('pro.referralCodeValid', { name: parrain })}
+                </Text>
+              ) : null}
             </>
           ) : null}
 

@@ -1,0 +1,72 @@
+{
+  "eyebrow": "Conseil & formation · Achats · Supply chain · Commerce extérieur",
+  "title": "Structurer la fonction achats et supply chain des entreprises algériennes.",
+  "subtitle": "Une méthode en quatre phases, des résultats mesurés avant et après.",
+  "ctaPrimary": "Parler à Fatima sur WhatsApp",
+  "ctaSecondary": "Voir les résultats",
+  "note": "Premier échange de 20 minutes, sans engagement.",
+  "stats": [
+    { "value": "500+", "label": "professionnels formés en achats, négociation et supply chain" },
+    { "value": ">90 %", "label": "de satisfaction déclarée sur les formations dispensées" },
+    { "value": "XX ans", "label": "en direction achats et supply chain — chiffre à confirmer" }
+  ],
+  "problems": [
+    {
+      "title": "Les délais fournisseurs dérapent",
+      "body": "Personne ne sait dire, à un instant donné, où en est une commande — ni pourquoi elle a glissé de trois semaines."
+    },
+    {
+      "title": "Le stock immobilise la trésorerie",
+      "body": "Des références dorment depuis dix-huit mois pendant que les articles critiques tombent en rupture."
+    },
+    {
+      "title": "Les achats se font au coup par coup",
+      "body": "Pas de processus écrit, pas de grille d'évaluation fournisseurs, une dépendance forte à quelques personnes."
+    }
+  ],
+  "methodIntro": {
+    "eyebrow": "La méthode",
+    "title": "Quatre phases, un livrable à chacune",
+    "body": "Chaque intervention suit la même séquence. Vous savez à l'avance ce qui sera fait, ce qui sera livré, et à quel moment vos équipes reprennent la main."
+  },
+  "resultsIntro": {
+    "eyebrow": "Résultats",
+    "title": "Ce que ça change, en chiffres",
+    "cta": "Voir tous les cas"
+  },
+  "offersIntro": {
+    "title": "Deux façons de travailler ensemble",
+    "columns": [
+      {
+        "eyebrow": "Conseil",
+        "title": "Structurer, mesurer, transmettre",
+        "body": "Du diagnostic court à la refonte complète de la fonction achats, en passant par la gestion des stocks et la sécurisation des flux d'import.",
+        "cta": "Voir les offres de conseil",
+        "href": "offres"
+      },
+      {
+        "eyebrow": "Formation",
+        "title": "Achats, négociation, commerce extérieur",
+        "body": "Trois parcours en inter ou en intra-entreprise, construits sur des cas réels et non sur des supports théoriques. Plus de 500 professionnels déjà formés.",
+        "cta": "Voir les parcours",
+        "href": "offres"
+      }
+    ]
+  },
+  "about": {
+    "eyebrow": "Qui vous accompagne",
+    "title": "Fatima Z.",
+    "paragraphs": [
+      "Plus de XX années en direction des achats et de la supply chain, dans l'industrie et la distribution en Algérie. Formatrice depuis XXXX, plus de 500 professionnels accompagnés.",
+      "FZ Consulting prolonge l'activité du Cabinet Oceanic : la même approche terrain, une offre élargie au conseil en structuration achats et supply chain."
+    ],
+    "cta": "Prendre contact",
+    "portrait": null
+  },
+  "closing": {
+    "title": "Un point de 20 minutes, sans engagement.",
+    "body": "Décrivez votre situation en deux lignes. Si ce n'est pas notre sujet, nous vous le dirons tout de suite.",
+    "ctaPrimary": "Écrire sur WhatsApp",
+    "ctaSecondary": "Passer par le formulaire"
+  }
+}

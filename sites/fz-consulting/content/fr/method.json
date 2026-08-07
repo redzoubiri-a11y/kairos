@@ -1,0 +1,30 @@
+{
+  "title": "La Méthode FZ",
+  "intro": "Quatre phases, un livrable à chacune.",
+  "phases": [
+    {
+      "n": "PHASE 1",
+      "title": "Cadrage",
+      "body": "Entretiens terrain et cartographie des flux existants, tels qu'ils fonctionnent réellement.",
+      "deliverable": "Livrable — cartographie des flux"
+    },
+    {
+      "n": "PHASE 2",
+      "title": "Diagnostic",
+      "body": "Mesure des écarts entre la pratique et la cible, et chiffrage de ce que coûtent ces écarts.",
+      "deliverable": "Livrable — chiffrage des pertes"
+    },
+    {
+      "n": "PHASE 3",
+      "title": "Restructuration",
+      "body": "Conception des processus cibles et des outils de pilotage, avec les équipes concernées.",
+      "deliverable": "Livrable — processus + tableau de bord"
+    },
+    {
+      "n": "PHASE 4",
+      "title": "Transfert",
+      "body": "Montée en compétence des équipes et mise en place des indicateurs de suivi.",
+      "deliverable": "Livrable — indicateurs + formation"
+    }
+  ]
+}

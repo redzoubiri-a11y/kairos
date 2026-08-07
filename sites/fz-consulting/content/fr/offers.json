@@ -1,0 +1,106 @@
+{
+  "title": "Conseil et formation",
+  "subtitle": "Quatre missions de conseil à périmètre défini, trois parcours de formation. Chaque intervention suit les quatre phases de la méthode.",
+  "consulting": {
+    "title": "Conseil",
+    "items": [
+      {
+        "lead": true,
+        "kicker": "Offre d'entrée · prix fixe",
+        "title": "Diagnostic Achats & Supply Chain",
+        "body": "Un état des lieux chiffré de votre fonction achats, livré sous forme de plan d'action priorisé. Sans engagement sur la suite.",
+        "deliverables": [
+          "Cartographie des flux existants",
+          "Chiffrage des pertes de performance",
+          "Plan d'action priorisé sur 12 mois"
+        ],
+        "duration": "Durée fixe · [X] jours",
+        "price": null
+      },
+      {
+        "kicker": "Mission",
+        "title": "Structuration de la fonction achats",
+        "body": "Mise en place d'une fonction achats qui tient sans dépendre d'une seule personne.",
+        "deliverables": [
+          "Processus fournisseurs écrit et appliqué",
+          "Grille d'évaluation et de sélection",
+          "Tableau de bord de pilotage"
+        ],
+        "duration": "[X] mois",
+        "price": null
+      },
+      {
+        "kicker": "Mission",
+        "title": "Supply chain et gestion des stocks",
+        "body": "Libérer la trésorerie immobilisée sans créer de rupture sur les références critiques.",
+        "deliverables": [
+          "Politique de stock par famille",
+          "Indicateurs de rotation",
+          "Points de commande et seuils d'alerte"
+        ],
+        "duration": "[X] mois",
+        "price": null
+      },
+      {
+        "kicker": "Mission",
+        "title": "Commerce extérieur et import",
+        "body": "Sécuriser les flux d'import et réduire les immobilisations liées à la documentation.",
+        "deliverables": [
+          "Sécurisation des flux et des délais",
+          "Documentation et conformité",
+          "Relation transitaires et banques"
+        ],
+        "duration": "[X] mois",
+        "price": null
+      }
+    ]
+  },
+  "training": {
+    "title": "Formation",
+    "intro": "Trois parcours construits sur des cas réels, disponibles en inter-entreprises ou en intra, dans vos locaux et sur vos propres dossiers.",
+    "items": [
+      {
+        "title": "Achats",
+        "items": [
+          "Structurer le processus d'achat",
+          "Sourcer et évaluer un fournisseur",
+          "Construire un cahier des charges",
+          "Piloter par les indicateurs"
+        ],
+        "format": "[X] jours · inter et intra"
+      },
+      {
+        "title": "Négociation",
+        "items": [
+          "Préparer : rapport de force et alternatives",
+          "Conduire l'entretien",
+          "Traiter les objections de prix",
+          "Sécuriser l'accord dans la durée"
+        ],
+        "format": "[X] jours · inter et intra"
+      },
+      {
+        "title": "Commerce extérieur",
+        "items": [
+          "Incoterms et répartition des risques",
+          "Documentation et domiciliation",
+          "Moyens de paiement à l'international",
+          "Transit, douane et litiges"
+        ],
+        "format": "[X] jours · inter et intra"
+      }
+    ],
+    "othersNote": "Autres parcours — supply chain, gestion des stocks, SAP MM, gestion des ressources humaines — disponibles sur demande."
+  },
+  "pricing": {
+    "title": "Tarifs",
+    "intro": "Les fourchettes sont affichées pour que vous sachiez, avant le premier échange, si nous sommes dans votre budget.",
+    "note": "Chaque ligne disparaît tant que son montant n'est pas renseigné. Le bloc entier disparaît si aucun montant ne l'est.",
+    "rows": [
+      { "label": "Diagnostic Achats & Supply Chain", "price": null },
+      { "label": "Mission de structuration", "price": null },
+      { "label": "Formation intra-entreprise", "price": null },
+      { "label": "Formation inter-entreprises", "price": null }
+    ]
+  }
+}

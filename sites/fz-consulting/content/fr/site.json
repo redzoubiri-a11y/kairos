@@ -1,0 +1,16 @@
+{
+  "name": "FZ Consulting",
+  "tagline": "Conseil et formation en achats, supply chain et commerce extérieur.",
+  "city": "Alger, Algérie",
+  "whatsapp": "213000000000",
+  "email": "contact@fz-consulting.com",
+  "linkedin": "https://www.linkedin.com/in/a-renseigner",
+  "baseUrl": "https://www.fz-consulting.com",
+  "responseTime": "Réponse sous 24 heures ouvrées.",
+  "nav": [
+    { "href": "", "label": "Accueil" },
+    { "href": "offres", "label": "Offres" },
+    { "href": "resultats", "label": "Résultats" },
+    { "href": "contact", "label": "Contact" }
+  ]
+}

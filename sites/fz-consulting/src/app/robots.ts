@@ -1,7 +1,6 @@
 import type { MetadataRoute } from 'next'
 import { getContent } from '@/lib/content'
-
-const DRAFT = process.env.NEXT_PUBLIC_DRAFT === '1'
+import { DRAFT } from '@/lib/draft'
 
 export default function robots(): MetadataRoute.Robots {
   const { site } = getContent('fr')

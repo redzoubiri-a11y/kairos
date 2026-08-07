@@ -6,9 +6,8 @@ import Footer from '@/components/Footer'
 import { WhatsAppButton } from '@/components/ui'
 import { getContent, isLocale, locales, dirOf, defaultLocale, type Locale } from '@/lib/content'
 import { waLink } from '@/lib/whatsapp'
+import { DRAFT } from '@/lib/draft'
 
-/** Bandeau « maquette » tant que les contenus ne sont pas validés. */
-const DRAFT = process.env.NEXT_PUBLIC_DRAFT === '1'
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }))

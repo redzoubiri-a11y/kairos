@@ -3,6 +3,7 @@ const prisma = require('../config/prisma');
 const ApiError = require('../utils/ApiError');
 const { signToken } = require('../middleware/auth');
 const { toPublicUser } = require('../utils/serialize');
+const documentService = require('./document.service');
 
 const USER_INCLUDE = {
   transporter: {
@@ -48,7 +49,7 @@ async function signup({ email, password, fullName, phone, role, company }) {
     include: USER_INCLUDE,
   });
 
-  return { token: signToken(user), user: toPublicUser(user) };
+  return { token: signToken(user), user: documentService.decorateUser(toPublicUser(user)) };
 }
 
 async function login({ email, password }) {
@@ -64,13 +65,13 @@ async function login({ email, password }) {
   if (!valid) throw ApiError.unauthorized('Email ou mot de passe incorrect');
   if (!user.isActive) throw ApiError.forbidden('Compte desactive');
 
-  return { token: signToken(user), user: toPublicUser(user) };
+  return { token: signToken(user), user: documentService.decorateUser(toPublicUser(user)) };
 }
 
 async function me(userId) {
   const user = await prisma.user.findUnique({ where: { id: userId }, include: USER_INCLUDE });
   if (!user) throw ApiError.notFound('Utilisateur introuvable');
-  return toPublicUser(user);
+  return documentService.decorateUser(toPublicUser(user));
 }
 
 async function updateProfile(userId, data) {
@@ -79,7 +80,7 @@ async function updateProfile(userId, data) {
     data,
     include: USER_INCLUDE,
   });
-  return toPublicUser(user);
+  return documentService.decorateUser(toPublicUser(user));
 }
 
 async function changePassword(userId, { currentPassword, newPassword }) {

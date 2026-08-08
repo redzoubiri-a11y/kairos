@@ -8,7 +8,6 @@ const rateLimit = require('express-rate-limit');
 const env = require('./config/env');
 const routes = require('./routes');
 const { notFoundHandler, errorHandler } = require('./middleware/errorHandler');
-const { uploadRoot } = require('./middleware/upload');
 
 const app = express();
 
@@ -35,8 +34,8 @@ app.use(
   })
 );
 
-// Uploaded documents (RC, patente, carte grise) served as static files.
-app.use(`/${env.uploadDir}`, express.static(uploadRoot, { maxAge: '1d' }));
+// Identity documents are deliberately NOT served statically: they are readable
+// only through GET /api/transporters/documents/:id, which checks the caller.
 
 app.use('/api', routes);
 app.get('/', (req, res) => res.json({ name: 'TruckSpot API', version: '1.0.0', docs: '/api/health' }));

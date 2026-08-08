@@ -1,6 +1,8 @@
+const crypto = require('crypto');
 const prisma = require('../config/prisma');
 const ApiError = require('../utils/ApiError');
-const { publicUrlFor } = require('../middleware/upload');
+const { driver } = require('./storage.service');
+const documentService = require('./document.service');
 
 const PROFILE_INCLUDE = {
   documents: { orderBy: { createdAt: 'desc' } },
@@ -18,7 +20,7 @@ async function create(userId, data) {
     prisma.transporterProfile.create({ data: { ...data, userId }, include: PROFILE_INCLUDE }),
   ]);
 
-  return profile;
+  return documentService.decorateProfile(profile);
 }
 
 async function getMine(userId) {
@@ -27,16 +29,17 @@ async function getMine(userId) {
     include: PROFILE_INCLUDE,
   });
   if (!profile) throw ApiError.notFound('Aucun profil transporteur pour ce compte');
-  return profile;
+  return documentService.decorateProfile(profile);
 }
 
 async function update(userId, data) {
   await getMine(userId);
-  return prisma.transporterProfile.update({
+  const profile = await prisma.transporterProfile.update({
     where: { userId },
     data,
     include: PROFILE_INCLUDE,
   });
+  return documentService.decorateProfile(profile);
 }
 
 async function uploadDocuments(userId, files, types) {
@@ -47,28 +50,32 @@ async function uploadDocuments(userId, files, types) {
     throw ApiError.badRequest('Un type de document est requis pour chaque fichier');
   }
 
-  const documents = await prisma.$transaction(
-    files.map((file, index) =>
-      prisma.transporterDocument.create({
-        data: {
-          transporterId: profile.id,
-          type: types[index],
-          fileUrl: publicUrlFor(file.filename),
-          originalName: file.originalname,
-          mimeType: file.mimetype,
-          sizeBytes: file.size,
-        },
-      })
-    )
-  );
+  // Written to storage first: a row pointing at a missing object would be worse
+  // than an orphan object nobody references.
+  const stored = [];
+  for (const [index, file] of files.entries()) {
+    const storageKey = await driver.save(file, `transporters/${profile.id}`);
+    stored.push({
+      id: crypto.randomUUID(),
+      transporterId: profile.id,
+      type: types[index],
+      storageKey,
+      originalName: file.originalname,
+      mimeType: file.mimetype,
+      sizeBytes: file.size,
+    });
+  }
 
-  // Any new document set sends the profile back to the moderation queue.
-  await prisma.transporterProfile.update({
-    where: { id: profile.id },
-    data: { verificationStatus: 'PENDING', rejectionReason: null },
-  });
+  const documents = await prisma.$transaction([
+    ...stored.map((data) => prisma.transporterDocument.create({ data })),
+    // Any new document set sends the profile back to the moderation queue.
+    prisma.transporterProfile.update({
+      where: { id: profile.id },
+      data: { verificationStatus: 'PENDING', rejectionReason: null },
+    }),
+  ]);
 
-  return documents;
+  return documentService.withUrls(documents.slice(0, stored.length));
 }
 
 module.exports = { create, getMine, update, uploadDocuments };

@@ -11,6 +11,11 @@ router.use(requireAuth);
 
 router.post('/create', validate(schemas.transporter.create), controller.create);
 router.get('/me', controller.getMine);
+router.get(
+  '/documents/:id',
+  validate(schemas.common.idParam, 'params'),
+  controller.getDocument
+);
 router.patch('/me', validate(schemas.transporter.update), controller.update);
 router.post(
   '/upload-docs',

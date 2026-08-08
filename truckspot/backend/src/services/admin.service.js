@@ -2,6 +2,7 @@ const prisma = require('../config/prisma');
 const ApiError = require('../utils/ApiError');
 const realtime = require('../websocket/realtime');
 const notificationService = require('./notification.service');
+const documentService = require('./document.service');
 
 const TRANSPORTER_INCLUDE = {
   user: { select: { id: true, fullName: true, email: true, phone: true, createdAt: true } },
@@ -34,7 +35,13 @@ async function listTransporters({ status, search, page = 1, limit = 20 } = {}) {
     }),
   ]);
 
-  return { items, total, page, limit, pages: Math.ceil(total / limit) || 1 };
+  return {
+    items: items.map(documentService.decorateProfile),
+    total,
+    page,
+    limit,
+    pages: Math.ceil(total / limit) || 1,
+  };
 }
 
 async function verifyTransporter(transporterId, { status, reason }) {
@@ -75,7 +82,7 @@ async function verifyTransporter(transporterId, { status, reason }) {
     data: { transporterId },
   });
 
-  return updated;
+  return documentService.decorateProfile(updated);
 }
 
 async function stats() {

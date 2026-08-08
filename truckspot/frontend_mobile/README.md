@@ -94,9 +94,20 @@ qui utilisent leur propre chaine Hermes.
 
 ## Build de production
 
+`eas.json` definit trois profils, chacun avec son `EXPO_PUBLIC_API_URL` :
+
+| Profil        | Sortie                | Usage                          |
+| ------------- | --------------------- | ------------------------------ |
+| `development` | client de dev         | Debug sur emulateur            |
+| `preview`     | APK Android           | Diffusion interne aux testeurs |
+| `production`  | AAB Android           | Publication sur le Play Store  |
+
+Ajustez l'URL de production dans `eas.json` avant le premier build.
+
 ```bash
 npm install -g eas-cli
 eas login
+eas build --platform android --profile preview
 eas build --platform android --profile production
 eas build --platform ios --profile production
 ```

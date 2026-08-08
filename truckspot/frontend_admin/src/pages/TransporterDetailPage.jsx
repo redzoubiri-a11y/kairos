@@ -5,7 +5,7 @@ import Button from '../components/Button';
 import EmptyState from '../components/EmptyState';
 import Modal from '../components/Modal';
 import Spinner from '../components/Spinner';
-import { getTransporter, verifyTransporter } from '../api/admin';
+import { fetchDocumentBlobUrl, getTransporter, verifyTransporter } from '../api/admin';
 import { toastError, toastSuccess } from '../store/uiStore';
 import {
   DOCUMENT_LABELS,
@@ -19,14 +19,45 @@ import {
 
 function DocumentCard({ document: doc }) {
   const [imageFailed, setImageFailed] = useState(false);
-  const renderInline = isImage(doc.mimeType) && !imageFailed;
+  const [blobUrl, setBlobUrl] = useState(null);
+
+  // The document route is authenticated: load the bytes, then hand the browser a
+  // blob URL. Revoked on unmount so the tab does not accumulate them.
+  useEffect(() => {
+    let revoked = false;
+    let url;
+
+    fetchDocumentBlobUrl(doc.id)
+      .then((next) => {
+        if (revoked) {
+          URL.revokeObjectURL(next);
+          return;
+        }
+        url = next;
+        setBlobUrl(next);
+      })
+      .catch(() => setImageFailed(true));
+
+    return () => {
+      revoked = true;
+      if (url) URL.revokeObjectURL(url);
+    };
+  }, [doc.id]);
+
+  const renderInline = isImage(doc.mimeType) && !imageFailed && blobUrl;
 
   return (
-    <a className="doc-card" href={doc.fileUrl} target="_blank" rel="noreferrer">
+    <a
+      className="doc-card"
+      href={blobUrl ?? undefined}
+      target="_blank"
+      rel="noreferrer"
+      aria-disabled={!blobUrl}
+    >
       <div className="doc-card__thumb">
         {renderInline ? (
           <img
-            src={doc.fileUrl}
+            src={blobUrl}
             alt={DOCUMENT_LABELS[doc.type] || doc.type}
             loading="lazy"
             onError={() => setImageFailed(true)}
@@ -37,7 +68,7 @@ function DocumentCard({ document: doc }) {
               <path d="M14 3H7a1.8 1.8 0 0 0-1.8 1.8v14.4A1.8 1.8 0 0 0 7 21h10a1.8 1.8 0 0 0 1.8-1.8V7.8Z" />
               <path d="M14 3v5h4.8" />
             </svg>
-            {imageFailed ? 'Aperçu indisponible' : 'Document'}
+            {imageFailed ? 'Aperçu indisponible' : blobUrl ? 'Document' : 'Chargement…'}
           </span>
         )}
       </div>
@@ -49,7 +80,7 @@ function DocumentCard({ document: doc }) {
         <span className="doc-card__sub">
           {doc.mimeType} · {formatBytes(doc.sizeBytes)}
         </span>
-        <span className="doc-card__link">Ouvrir le fichier →</span>
+        <span className="doc-card__link">{blobUrl ? 'Ouvrir le fichier →' : 'Chargement…'}</span>
       </div>
     </a>
   );

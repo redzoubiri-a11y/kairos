@@ -113,6 +113,7 @@ Base : `http://localhost:4000/api` — authentification par `Authorization: Bear
 | GET     | `/transporters/me`             | transporteur | Profil entreprise + documents            |
 | PATCH   | `/transporters/me`             | transporteur | Mise a jour de l'entreprise              |
 | POST    | `/transporters/upload-docs`    | transporteur | Envoi des documents (multipart)          |
+| GET     | `/transporters/documents/:id`  | proprietaire ou admin | Lecture d'un document justificatif |
 | POST    | `/trucks/create`               | transporteur | Ajout d'un camion                        |
 | GET     | `/trucks/mine`                 | transporteur | Flotte du transporteur                   |
 | GET     | `/trucks/available`            | authentifie  | Camions disponibles (filtres + geo)      |
@@ -179,17 +180,32 @@ Connexion Socket.IO sur l'origine du backend, JWT passe dans le handshake :
 `chat:message` et `chat:inbox` sont deliberement distincts : un destinataire deja present
 dans le salon afficherait sinon deux fois le meme message.
 
+## Confidentialite des pieces justificatives
+
+Les documents transmis par les transporteurs sont des pieces d'identite et d'entreprise.
+Ils ne sont jamais servis en statique et le bucket reste prive : l'API n'expose que
+`GET /api/transporters/documents/:id`, qui exige un jeton et n'autorise que le
+proprietaire du dossier ou un administrateur. Le driver `s3` repond par une redirection
+vers une URL signee valable cinq minutes. La cle de stockage interne n'est serialisee vers
+aucun client.
+
+Consequence cote back-office : un document ne peut pas etre pointe par un `<img src>`
+ordinaire. Le dashboard telecharge les octets avec le jeton puis construit une URL blob,
+liberee au demontage du composant.
+
 ## Verification
 
 ```bash
 cd truckspot/backend && npm test
 ```
 
-**57 tests d'integration** tournent contre une vraie base PostgreSQL et un vrai serveur
+**69 tests d'integration** tournent contre une vraie base PostgreSQL et un vrai serveur
 HTTP + Socket.IO, sans mock : authentification, cloisonnement des acces (un tiers ne peut
 lire ni une mission ni une conversation qui ne le concerne pas), recherche geographique,
 filtres de la carte, transitions de statut interdites, comptabilite du volume libre, chat
-temps reel (rejet d'un jeton invalide, absence de message en double) et moderation admin.
+temps reel (rejet d'un jeton invalide, absence de message en double), moderation admin et
+confidentialite des pieces justificatives (401 sans jeton, 403 pour un tiers, aucune
+lecture possible en statique).
 
 Le back-office a ete valide par 140 assertions sur les reponses reelles de l'API, plus un
 rendu de chaque page contre l'API en fonctionnement.
@@ -199,18 +215,29 @@ L'application mobile a ete validee par un export Expo complet du graphe de modul
 
 ## Deploiement
 
-**Backend — Railway ou Render.** Provisionner un PostgreSQL, definir `DATABASE_URL`,
-`JWT_SECRET`, `PUBLIC_URL`, `CORS_ORIGINS` et `NODE_ENV=production`. Le `Dockerfile`
-fourni applique les migrations au demarrage (`prisma migrate deploy`). Les documents sont
-stockes sur disque dans `UPLOAD_DIR` : montez un volume persistant, ou basculez vers un
-stockage objet avant la mise en production.
+Chaque application embarque son manifeste : le deploiement se fait sans recopier de
+commandes a la main.
 
-**Back-office — Vercel.** Racine `truckspot/frontend_admin`, commande `npm run build`,
-sortie `dist`, variable `VITE_API_URL` pointant sur l'API deployee.
+**Backend — Render.** `backend/render.yaml` est un blueprint complet (service web +
+PostgreSQL 16 gere, migrations au demarrage, sonde sur `/api/health`, `JWT_SECRET`
+genere). Render > New > Blueprint, puis renseigner les variables marquees `sync: false` :
+`PUBLIC_URL`, `CORS_ORIGINS` et les cinq variables `S3_*`.
 
-**Mobile — Expo EAS.** `eas build --platform android --profile production`. Definir
-`EXPO_PUBLIC_API_URL` sur l'API deployee et renseigner les cles Google Maps dans
-`app.json` avant le build.
+**Backend — Railway.** `backend/railway.json` construit via le `Dockerfile` et applique
+les migrations au demarrage. Ajouter un plugin PostgreSQL et les memes variables.
+
+> Sur Render comme sur Railway, le disque est **ephemere** : `STORAGE_DRIVER=s3` est
+> obligatoire, sinon les documents des transporteurs disparaissent au redeploiement
+> suivant. Le blueprint Render le force deja.
+
+**Back-office — Vercel.** `frontend_admin/vercel.json` fixe le framework, la sortie et la
+reecriture SPA. Definir la racine du projet sur `truckspot/frontend_admin` et la variable
+`VITE_API_URL` sur l'API deployee.
+
+**Mobile — Expo EAS.** `frontend_mobile/eas.json` definit trois profils (`development`,
+`preview` en APK, `production` en AAB), chacun avec son `EXPO_PUBLIC_API_URL`. Ajuster
+l'URL de production, renseigner les cles Google Maps dans `app.json`, puis
+`eas build --platform android --profile production`.
 
 Details par application dans `backend/README.md`, `frontend_admin/README.md` et
 `frontend_mobile/README.md`.

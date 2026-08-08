@@ -2,8 +2,18 @@
 require('dotenv').config();
 const bcrypt = require('bcryptjs');
 const { PrismaClient } = require('@prisma/client');
+const { driver } = require('../src/services/storage.service');
 
 const prisma = new PrismaClient();
+
+// Smallest valid PNG: enough for the viewer to render something without shipping
+// a binary fixture in the repository.
+const PLACEHOLDER_PNG_BASE64 =
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+
+function placeholderPng() {
+  return Buffer.from(PLACEHOLDER_PNG_BASE64, 'base64');
+}
 
 const CITIES = {
   Alger: { lat: 36.7538, lng: 3.0588 },
@@ -141,18 +151,26 @@ async function main() {
     transporters.push({ user, profile: user.transporter, trucks });
   }
 
-  // Documents for the two verified transporters plus the pending one.
+  // Real (tiny) files go through the storage driver so the document viewer of the
+  // back-office has something to display end to end.
   for (const t of transporters) {
-    await prisma.transporterDocument.createMany({
-      data: ['RC', 'PATENTE', 'CARTE_GRISE'].map((type) => ({
-        transporterId: t.profile.id,
-        type,
-        fileUrl: `https://placehold.co/800x1000/png?text=${type}`,
-        originalName: `${type.toLowerCase()}.png`,
-        mimeType: 'image/png',
-        sizeBytes: 128000,
-      })),
-    });
+    for (const type of ['RC', 'PATENTE', 'CARTE_GRISE']) {
+      const buffer = placeholderPng();
+      const storageKey = await driver.save(
+        { buffer, mimetype: 'image/png' },
+        `transporters/${t.profile.id}`
+      );
+      await prisma.transporterDocument.create({
+        data: {
+          transporterId: t.profile.id,
+          type,
+          storageKey,
+          originalName: `${type.toLowerCase()}.png`,
+          mimeType: 'image/png',
+          sizeBytes: buffer.length,
+        },
+      });
+    }
   }
 
   const [meddah, logitrans] = transporters;

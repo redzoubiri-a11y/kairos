@@ -75,9 +75,33 @@ aucun mock, aucune dependance de test supplementaire hormis `socket.io-client`.
 | `JWT_EXPIRES_IN`     | `7d`                    | Duree de validite des jetons                  |
 | `PUBLIC_URL`         | `http://localhost:4000` | Prefixe des URL de documents televerses       |
 | `CORS_ORIGINS`       | `*`                     | Origines autorisees, separees par des virgules|
-| `UPLOAD_DIR`         | `uploads`               | Dossier de stockage des documents             |
+| `UPLOAD_DIR`         | `uploads`               | Dossier local des documents (driver `local`)  |
 | `MAX_UPLOAD_BYTES`   | `5242880`               | Taille maximale par fichier                   |
 | `DISABLE_RATE_LIMIT` | `false`                 | A n'activer que pour des tests locaux         |
+| `STORAGE_DRIVER`     | `local`                 | `local` ou `s3`                               |
+| `S3_ENDPOINT`        | —                       | Requis hors AWS (R2, Scaleway, MinIO)         |
+| `S3_REGION`          | `auto`                  | Region du bucket                              |
+| `S3_BUCKET`          | —                       | Nom du bucket (driver `s3`)                   |
+| `S3_ACCESS_KEY_ID`   | —                       | Cle d'acces (driver `s3`)                     |
+| `S3_SECRET_ACCESS_KEY` | —                     | Cle secrete (driver `s3`)                     |
+
+## Stockage des documents
+
+Les pieces justificatives (RC, patente, carte grise, piece d'identite) passent par un
+driver de stockage interchangeable, choisi par `STORAGE_DRIVER` :
+
+- **`local`** — ecrit dans `UPLOAD_DIR`. Parfait en developpement, et valable en
+  production **uniquement** si l'hote dispose d'un volume persistant.
+- **`s3`** — tout bucket compatible S3 : AWS, Cloudflare R2, Scaleway, MinIO. C'est le
+  choix obligatoire sur Railway, Render ou Fly sans volume, dont le disque est efface a
+  chaque redeploiement.
+
+Ces documents sont des pieces d'identite : **ils ne sont jamais servis en statique**. Le
+bucket reste prive et l'API n'expose aucune URL directe. Un client recoit
+`GET /api/transporters/documents/:id`, qui verifie le jeton et n'autorise que le
+proprietaire du dossier ou un administrateur ; le driver `s3` repond par une redirection
+vers une URL signee valable cinq minutes. La cle de stockage n'est jamais serialisee vers
+le client.
 
 ## Architecture
 

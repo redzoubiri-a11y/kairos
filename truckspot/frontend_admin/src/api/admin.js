@@ -116,3 +116,12 @@ export async function setUserActive(id, isActive) {
   const { data } = await client.patch(`/admin/users/${id}/active`, { isActive });
   return data;
 }
+
+// Identity documents require a bearer token, so they cannot be pointed at from a
+// plain <img src>. Fetch the bytes and hand back a blob URL the caller must revoke.
+export async function fetchDocumentBlobUrl(documentId) {
+  const { data } = await client.get(`/transporters/documents/${documentId}`, {
+    responseType: 'blob',
+  });
+  return URL.createObjectURL(data);
+}

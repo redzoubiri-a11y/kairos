@@ -193,6 +193,23 @@ Consequence cote back-office : un document ne peut pas etre pointe par un `<img 
 ordinaire. Le dashboard telecharge les octets avec le jeton puis construit une URL blob,
 liberee au demontage du composant.
 
+## Integration continue
+
+`.github/workflows/truckspot.yml` se declenche a chaque push touchant `truckspot/`
+(le depot heberge d'autres projets, le filtre evite les executions inutiles) et lance
+trois jobs en parallele :
+
+| Job          | Contenu                                                                    |
+| ------------ | -------------------------------------------------------------------------- |
+| `backend`    | PostgreSQL 16 en service, migrations, controle de derive du schema, tests, seed |
+| `admin`      | `npm ci` puis build de production Vite                                      |
+| `mobile`     | `npm ci` puis bundle Expo du graphe de modules complet                      |
+
+Le controle de derive (`prisma migrate diff --exit-code`) echoue si `schema.prisma` a ete
+modifie sans migration correspondante — l'oubli le plus courant sur ce genre de projet. Il
+s'appuie sur une base fantome **distincte** de celle des tests, car Prisma la reinitialise
+pour rejouer les migrations.
+
 ## Verification
 
 ```bash

@@ -47,17 +47,22 @@ Verification : `curl http://localhost:4000/api/health`
 npm test
 ```
 
-57 tests d'integration repartis en cinq suites (`tests/`), executes avec le lanceur
+74 tests d'integration repartis en sept suites (`tests/`), executes avec le lanceur
 integre de Node contre une **vraie** base PostgreSQL et un vrai serveur HTTP + Socket.IO :
 aucun mock, aucune dependance de test supplementaire hormis `socket.io-client`.
 
-| Suite               | Couverture                                                              |
-| ------------------- | ----------------------------------------------------------------------- |
-| `auth.test.js`      | Inscription, connexion, non-enumeration des comptes, jetons, mot de passe |
-| `fleet.test.js`     | Camions, trajets, recherche geographique, filtres, cloisonnement         |
-| `missions.test.js`  | Cycle de vie, droits par role, comptabilite du volume libre, notifications |
-| `chat.test.js`      | Historique, accuses de lecture, salons Socket.IO, absence de doublon     |
-| `admin.test.js`     | Moderation, effets de la verification, statistiques, activation de compte |
+| Suite                 | Couverture                                                              |
+| --------------------- | ----------------------------------------------------------------------- |
+| `auth.test.js`        | Inscription, connexion, non-enumeration des comptes, jetons, mot de passe |
+| `fleet.test.js`       | Camions, trajets, recherche geographique, filtres, cloisonnement         |
+| `missions.test.js`    | Cycle de vie, droits par role, comptabilite du volume libre, notifications |
+| `chat.test.js`        | Historique, accuses de lecture, salons Socket.IO, absence de doublon     |
+| `admin.test.js`       | Moderation, effets de la verification, statistiques, activation de compte |
+| `documents.test.js`   | Envoi multipart, confidentialite des pieces, absence de service statique |
+| `storage-s3.test.js`  | Driver s3 face a un endpoint S3 minimal : signature SigV4, URL presignee |
+
+Ces tests tournent aussi en integration continue a chaque push
+(`.github/workflows/truckspot.yml`), contre un service PostgreSQL 16.
 
 > La suite **vide les tables** de la base pointee par `DATABASE_URL` avant de s'executer.
 > Utilisez une base dediee. Le lancement est refuse si `NODE_ENV=production`.
@@ -146,9 +151,14 @@ docker build -t truckspot-api .
 docker run -p 4000:4000 --env-file .env truckspot-api
 ```
 
-Sur Railway ou Render, connecter le depot, definir la racine sur `truckspot/backend`,
-provisionner un PostgreSQL et renseigner les variables ci-dessus.
+Deux manifestes evitent toute configuration manuelle :
 
-Les documents televerses sont ecrits sur le disque local. En production, montez un volume
-persistant sur `UPLOAD_DIR` ou remplacez `middleware/upload.js` par un stockage objet
-(S3, Cloudflare R2) — les conteneurs de ces plateformes ont un disque ephemere.
+- **`render.yaml`** — blueprint complet : service web, PostgreSQL 16 gere, migrations au
+  demarrage, sonde sur `/api/health`, `JWT_SECRET` genere. Il reste a renseigner les
+  variables marquees `sync: false` (`PUBLIC_URL`, `CORS_ORIGINS`, les cinq `S3_*`).
+- **`railway.json`** — construit via le `Dockerfile`, migrations au demarrage, sonde de
+  sante. Ajouter un plugin PostgreSQL et les memes variables.
+
+> Le disque de ces deux plateformes est **ephemere** : `STORAGE_DRIVER=s3` y est
+> obligatoire, faute de quoi les documents des transporteurs disparaissent au
+> redeploiement suivant. Le blueprint Render le force deja.

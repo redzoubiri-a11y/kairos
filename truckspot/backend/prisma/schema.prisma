@@ -1,0 +1,246 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CLIENT
+  TRANSPORTER
+  ADMIN
+}
+
+enum VerificationStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum DocumentType {
+  RC
+  PATENTE
+  CARTE_GRISE
+  ID_CARD
+}
+
+enum TruckType {
+  FOURGON
+  PLATEAU
+  BENNE
+  FRIGO
+  CITERNE
+  PORTE_CHAR
+  SEMI_REMORQUE
+}
+
+enum TripStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum MissionStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum NotificationType {
+  MISSION_CREATED
+  MISSION_ACCEPTED
+  MISSION_REJECTED
+  MISSION_STATUS
+  CHAT_MESSAGE
+  ACCOUNT_VERIFIED
+  ACCOUNT_REJECTED
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  fullName     String
+  phone        String?
+  role         Role     @default(CLIENT)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  transporter      TransporterProfile?
+  clientMissions   Mission[]           @relation("ClientMissions")
+  sentMessages     ChatMessage[]
+  notifications    Notification[]
+
+  @@index([role])
+  @@map("users")
+}
+
+model TransporterProfile {
+  id                 String             @id @default(uuid())
+  userId             String             @unique
+  companyName        String
+  city               String
+  address            String?
+  rcNumber           String?
+  nifNumber          String?
+  verificationStatus VerificationStatus @default(PENDING)
+  rejectionReason    String?
+  verifiedAt         DateTime?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  user      User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  documents TransporterDocument[]
+  trucks    Truck[]
+  trips     Trip[]
+  missions  Mission[]             @relation("TransporterMissions")
+
+  @@index([verificationStatus])
+  @@map("transporter_profiles")
+}
+
+model TransporterDocument {
+  id            String       @id @default(uuid())
+  transporterId String
+  type          DocumentType
+  fileUrl       String
+  originalName  String
+  mimeType      String
+  sizeBytes     Int
+  createdAt     DateTime     @default(now())
+
+  transporter TransporterProfile @relation(fields: [transporterId], references: [id], onDelete: Cascade)
+
+  @@index([transporterId, type])
+  @@map("transporter_documents")
+}
+
+model Truck {
+  id             String    @id @default(uuid())
+  transporterId  String
+  plateNumber    String    @unique
+  brand          String?
+  model          String?
+  type           TruckType
+  capacityKg     Int
+  volumeM3       Float
+  photoUrl       String?
+  latitude       Float?
+  longitude      Float?
+  lastPositionAt DateTime?
+  isAvailable    Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  transporter TransporterProfile @relation(fields: [transporterId], references: [id], onDelete: Cascade)
+  trips       Trip[]
+  missions    Mission[]
+
+  @@index([isAvailable])
+  @@index([latitude, longitude])
+  @@map("trucks")
+}
+
+model Trip {
+  id              String     @id @default(uuid())
+  transporterId   String
+  truckId         String
+  originCity      String
+  originLat       Float
+  originLng       Float
+  destinationCity String
+  destinationLat  Float
+  destinationLng  Float
+  departureAt     DateTime
+  arrivalAt       DateTime?
+  freeVolumeM3    Float
+  freeWeightKg    Int
+  pricePerM3      Float?
+  goodsTypes      String[]   @default([])
+  notes           String?
+  status          TripStatus @default(SCHEDULED)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  transporter TransporterProfile @relation(fields: [transporterId], references: [id], onDelete: Cascade)
+  truck       Truck              @relation(fields: [truckId], references: [id], onDelete: Cascade)
+  missions    Mission[]
+
+  @@index([status, departureAt])
+  @@index([originCity, destinationCity])
+  @@map("trips")
+}
+
+model Mission {
+  id            String        @id @default(uuid())
+  clientId      String
+  transporterId String
+  truckId       String?
+  tripId        String?
+  goodsType     String
+  volumeM3      Float
+  weightKg      Int
+  pickupCity    String
+  pickupLat     Float
+  pickupLng     Float
+  pickupAt      DateTime
+  dropoffCity   String
+  dropoffLat    Float
+  dropoffLng    Float
+  budgetDzd     Float?
+  description   String?
+  status        MissionStatus @default(PENDING)
+  statusReason  String?
+  acceptedAt    DateTime?
+  completedAt   DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  client      User               @relation("ClientMissions", fields: [clientId], references: [id], onDelete: Cascade)
+  transporter TransporterProfile @relation("TransporterMissions", fields: [transporterId], references: [id], onDelete: Cascade)
+  truck       Truck?             @relation(fields: [truckId], references: [id], onDelete: SetNull)
+  trip        Trip?              @relation(fields: [tripId], references: [id], onDelete: SetNull)
+  messages    ChatMessage[]
+
+  @@index([clientId, status])
+  @@index([transporterId, status])
+  @@map("missions")
+}
+
+model ChatMessage {
+  id        String    @id @default(uuid())
+  missionId String
+  senderId  String
+  content   String
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  mission Mission @relation(fields: [missionId], references: [id], onDelete: Cascade)
+  sender  User    @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@index([missionId, createdAt])
+  @@map("chat_messages")
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String
+  type      NotificationType
+  title     String
+  body      String
+  data      Json?
+  readAt    DateTime?
+  createdAt DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, readAt])
+  @@map("notifications")
+}

@@ -181,11 +181,15 @@ dans le salon afficherait sinon deux fois le meme message.
 
 ## Verification
 
-Le backend a ete valide de bout en bout contre une base PostgreSQL reelle : **83 assertions
-passantes** couvrant l'authentification, le cloisonnement des acces (un tiers ne peut lire
-ni une mission ni une conversation qui ne le concerne pas), la recherche geographique, les
-transitions de statut interdites, la comptabilite du volume libre, le chat Socket.IO
-(y compris le rejet d'un jeton invalide et l'absence de doublon) et les agregats admin.
+```bash
+cd truckspot/backend && npm test
+```
+
+**57 tests d'integration** tournent contre une vraie base PostgreSQL et un vrai serveur
+HTTP + Socket.IO, sans mock : authentification, cloisonnement des acces (un tiers ne peut
+lire ni une mission ni une conversation qui ne le concerne pas), recherche geographique,
+filtres de la carte, transitions de statut interdites, comptabilite du volume libre, chat
+temps reel (rejet d'un jeton invalide, absence de message en double) et moderation admin.
 
 Le back-office a ete valide par 140 assertions sur les reponses reelles de l'API, plus un
 rendu de chaque page contre l'API en fonctionnement.

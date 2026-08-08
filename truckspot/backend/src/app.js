@@ -22,7 +22,9 @@ app.use(
 );
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true }));
-app.use(morgan(env.isProduction ? 'combined' : 'dev'));
+if (env.nodeEnv !== 'test') {
+  app.use(morgan(env.isProduction ? 'combined' : 'dev'));
+}
 app.use(
   rateLimit({
     windowMs: 60 * 1000,

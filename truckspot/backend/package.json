@@ -15,7 +15,9 @@
     "prisma:deploy": "prisma migrate deploy",
     "prisma:studio": "prisma studio",
     "seed": "node prisma/seed.js",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "test": "node --test --test-concurrency=1 tests/*.test.js",
+    "test:watch": "node --test --watch --test-concurrency=1 tests/*.test.js"
   },
   "prisma": {
     "seed": "node prisma/seed.js"
@@ -36,6 +38,7 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.9",
-    "prisma": "^6.2.1"
+    "prisma": "^6.2.1",
+    "socket.io-client": "^4.8.1"
   }
 }

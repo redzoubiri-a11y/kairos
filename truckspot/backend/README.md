@@ -34,10 +34,35 @@ Verification : `curl http://localhost:4000/api/health`
 | ------------------------ | -------------------------------------------- |
 | `npm run dev`            | Serveur en rechargement automatique          |
 | `npm start`              | Serveur de production                        |
+| `npm test`               | Suite de tests d'integration                 |
+| `npm run test:watch`     | Tests en rechargement automatique            |
 | `npm run prisma:migrate` | Cree et applique une migration               |
 | `npm run prisma:deploy`  | Applique les migrations (production)         |
 | `npm run prisma:studio`  | Explorateur de base de donnees               |
 | `npm run seed`           | Remplit la base avec un jeu de demonstration |
+
+## Tests
+
+```bash
+npm test
+```
+
+57 tests d'integration repartis en cinq suites (`tests/`), executes avec le lanceur
+integre de Node contre une **vraie** base PostgreSQL et un vrai serveur HTTP + Socket.IO :
+aucun mock, aucune dependance de test supplementaire hormis `socket.io-client`.
+
+| Suite               | Couverture                                                              |
+| ------------------- | ----------------------------------------------------------------------- |
+| `auth.test.js`      | Inscription, connexion, non-enumeration des comptes, jetons, mot de passe |
+| `fleet.test.js`     | Camions, trajets, recherche geographique, filtres, cloisonnement         |
+| `missions.test.js`  | Cycle de vie, droits par role, comptabilite du volume libre, notifications |
+| `chat.test.js`      | Historique, accuses de lecture, salons Socket.IO, absence de doublon     |
+| `admin.test.js`     | Moderation, effets de la verification, statistiques, activation de compte |
+
+> La suite **vide les tables** de la base pointee par `DATABASE_URL` avant de s'executer.
+> Utilisez une base dediee. Le lancement est refuse si `NODE_ENV=production`.
+> La limitation de debit est desactivee pendant les tests (la suite cree bien plus de
+> comptes qu'un client reel).
 
 ## Variables d'environnement
 

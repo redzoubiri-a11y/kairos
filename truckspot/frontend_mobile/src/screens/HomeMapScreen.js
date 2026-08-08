@@ -12,11 +12,13 @@ import TripCard from '../components/TripCard';
 import ErrorBanner from '../components/ErrorBanner';
 import { useMapStore } from '../store/mapStore';
 import { useLocation } from '../hooks/useLocation';
-import { DEFAULT_REGION, TRUCK_TYPES, TRUCK_TYPE_LABELS } from '../utils/constants';
+import { ALGERIAN_CITIES, DEFAULT_REGION, GOODS_TYPES, TRUCK_TYPES, TRUCK_TYPE_LABELS } from '../utils/constants';
 import { formatDistance, formatVolume, formatWeight } from '../utils/format';
 import { colors, radii, shadows, spacing, typography } from '../theme';
 
 const TYPE_OPTIONS = [{ value: undefined, label: 'Tous' }, ...TRUCK_TYPES.map((t) => ({ value: t.value, label: t.label }))];
+const GOODS_OPTIONS = [{ value: undefined, label: 'Toutes' }, ...GOODS_TYPES.map((g) => ({ value: g, label: g }))];
+const CITY_OPTIONS = [{ value: undefined, label: 'Toutes' }, ...ALGERIAN_CITIES.map((c) => ({ value: c.name, label: c.name }))];
 
 export default function HomeMapScreen({ navigation }) {
   const mapRef = useRef(null);
@@ -29,6 +31,7 @@ export default function HomeMapScreen({ navigation }) {
   const selectedTruckId = useMapStore((s) => s.selectedTruckId);
   const setCenter = useMapStore((s) => s.setCenter);
   const setFilters = useMapStore((s) => s.setFilters);
+  const resetFilters = useMapStore((s) => s.resetFilters);
   const selectTruck = useMapStore((s) => s.selectTruck);
   const clearSelection = useMapStore((s) => s.clearSelection);
   const refresh = useMapStore((s) => s.refresh);
@@ -57,7 +60,9 @@ export default function HomeMapScreen({ navigation }) {
     }
   }, [coords, requestLocation]);
 
-  const activeFilterCount = [filters.minVolumeM3, filters.type].filter(Boolean).length;
+  const activeFilterCount = [filters.minVolumeM3, filters.type, filters.city, filters.goodsType].filter(
+    Boolean
+  ).length;
 
   return (
     <View style={styles.container}>
@@ -188,6 +193,22 @@ export default function HomeMapScreen({ navigation }) {
             style={styles.segments}
           />
 
+          <Text style={styles.filterLabel}>Marchandise acceptee</Text>
+          <SegmentedControl
+            options={GOODS_OPTIONS}
+            value={filters.goodsType}
+            onChange={(goodsType) => setFilters({ goodsType })}
+            style={styles.segments}
+          />
+
+          <Text style={styles.filterLabel}>Ville</Text>
+          <SegmentedControl
+            options={CITY_OPTIONS}
+            value={filters.city}
+            onChange={(city) => setFilters({ city })}
+            style={styles.segments}
+          />
+
           <Text style={styles.filterLabel}>Rayon de recherche</Text>
           <SegmentedControl
             options={[
@@ -202,6 +223,9 @@ export default function HomeMapScreen({ navigation }) {
           />
 
           <Button title="Voir les resultats" onPress={() => setFiltersOpen(false)} style={styles.sheetAction} />
+          {activeFilterCount > 0 ? (
+            <Button title="Reinitialiser les filtres" variant="ghost" onPress={resetFilters} />
+          ) : null}
         </ScrollView>
       </BottomSheet>
     </View>

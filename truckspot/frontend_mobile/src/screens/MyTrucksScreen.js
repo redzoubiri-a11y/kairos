@@ -13,9 +13,12 @@ import EmptyState from '../components/EmptyState';
 import Loader from '../components/Loader';
 import ErrorBanner from '../components/ErrorBanner';
 import { truckApi } from '../api/endpoints';
+import { emit } from '../api/socket';
+import { useLocationWatcher } from '../hooks/useLocation';
+import { useAuthStore } from '../store/authStore';
 import { TRUCK_TYPES, TRUCK_TYPE_LABELS } from '../utils/constants';
 import { formatVolume, formatWeight, formatRelative } from '../utils/format';
-import { colors, spacing, typography } from '../theme';
+import { colors, radii, spacing, typography } from '../theme';
 
 const TYPE_OPTIONS = TRUCK_TYPES.map((t) => ({ value: t.value, label: t.label }));
 
@@ -29,6 +32,42 @@ export default function MyTrucksScreen({ navigation }) {
   const [form, setForm] = useState(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({});
+  const [trackingTruckId, setTrackingTruckId] = useState(null);
+
+  const isVerified = useAuthStore((s) => s.user?.transporter?.verificationStatus === 'VERIFIED');
+
+  // Streams the driver position to the clients' map while tracking is on.
+  const publishPosition = useCallback(
+    ({ latitude, longitude }) => {
+      if (!trackingTruckId) return;
+      emit('truck:position', { truckId: trackingTruckId, latitude, longitude }, (ack) => {
+        if (ack?.ok) {
+          setTrucks((current) =>
+            current.map((t) => (t.id === trackingTruckId ? { ...t, ...ack.truck } : t))
+          );
+        } else {
+          setError(ack?.error ?? 'Position non transmise');
+          setTrackingTruckId(null);
+        }
+      });
+    },
+    [trackingTruckId]
+  );
+
+  useLocationWatcher(!!trackingTruckId, publishPosition);
+
+  const toggleTracking = (truck) => {
+    if (trackingTruckId === truck.id) {
+      setTrackingTruckId(null);
+      return;
+    }
+    if (!isVerified) {
+      setError('Votre compte doit etre verifie pour diffuser votre position.');
+      return;
+    }
+    setError(null);
+    setTrackingTruckId(truck.id);
+  };
 
   const load = useCallback(async () => {
     setError(null);
@@ -157,6 +196,15 @@ export default function MyTrucksScreen({ navigation }) {
                 ) : null}
               </View>
 
+              {trackingTruckId === item.id ? (
+                <View style={styles.tracking}>
+                  <View style={styles.trackingDot} />
+                  <Text style={styles.trackingText}>
+                    Position diffusee en direct aux clients
+                  </Text>
+                </View>
+              ) : null}
+
               <View style={styles.cardActions}>
                 <Button
                   title={item.isAvailable ? 'Rendre indisponible' : 'Rendre disponible'}
@@ -173,6 +221,15 @@ export default function MyTrucksScreen({ navigation }) {
                   fullWidth={false}
                 />
               </View>
+
+              <Button
+                title={trackingTruckId === item.id ? 'Arreter la diffusion' : 'Diffuser ma position'}
+                variant={trackingTruckId === item.id ? 'danger' : 'dark'}
+                size="sm"
+                icon={trackingTruckId === item.id ? 'stop-circle-outline' : 'navigate-outline'}
+                onPress={() => toggleTracking(item)}
+                style={styles.trackingButton}
+              />
             </Card>
           )}
           ListEmptyComponent={
@@ -271,6 +328,18 @@ const styles = StyleSheet.create({
     paddingTop: spacing.md,
   },
   cardAction: { flex: 1, marginRight: spacing.sm },
+  tracking: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.successSoft,
+    borderRadius: radii.sm,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    marginTop: spacing.md,
+  },
+  trackingDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.success, marginRight: spacing.sm },
+  trackingText: { ...typography.caption, color: colors.success, fontWeight: '600' },
+  trackingButton: { marginTop: spacing.sm },
   footer: {
     padding: spacing.lg,
     backgroundColor: colors.card,

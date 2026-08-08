@@ -56,7 +56,13 @@ export const useMapStore = create((set, get) => ({
         }),
       ]);
 
-      set({ trucks, trips: trips.items, loading: false });
+      // A truck carries no goods type of its own, only its trips do: filtering by
+      // marchandise must therefore keep the trucks backing a matching trip.
+      const visibleTrucks = filters.goodsType
+        ? trucks.filter((truck) => trips.items.some((trip) => trip.truck?.id === truck.id))
+        : trucks;
+
+      set({ trucks: visibleTrucks, trips: trips.items, loading: false });
     } catch (error) {
       set({ error: error.message, loading: false });
     }

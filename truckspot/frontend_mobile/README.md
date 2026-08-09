@@ -40,6 +40,30 @@ Les cles se creent depuis la console Google Cloud (API « Maps SDK for Android �
 « Maps SDK for iOS »). Sans cle, la carte s'affiche vide sur un build natif ; Expo Go
 sur Android utilise sa propre cle de developpement.
 
+## Notifications push
+
+L'appareil s'enregistre aupres de l'API a chaque etablissement de session
+(`src/api/push.js`) et se desinscrit a la deconnexion — avant l'effacement du jeton,
+puisque la route exige d'etre authentifie. Un tap sur une notification ouvre la mission
+concernee, y compris lorsque l'application etait fermee
+(`src/hooks/usePushResponse.js`).
+
+Deux prerequis avant que cela fonctionne :
+
+1. **`projectId` EAS** — renseignez `expo.extra.eas.projectId` dans `app.json`
+   (`eas init` le fait pour vous). Tant que le placeholder est en place, l'application
+   journalise un avertissement explicite et se contente des notifications in-app plutot
+   que d'echouer.
+2. **Un development build sur Android** — les notifications push distantes ont ete
+   retirees d'Expo Go avec le SDK 53 :
+
+   ```bash
+   eas build --platform android --profile development
+   ```
+
+   Dans Expo Go, les notifications in-app et la websocket continuent de fonctionner
+   normalement ; seules les notifications systeme sont indisponibles.
+
 ## Architecture
 
 ```

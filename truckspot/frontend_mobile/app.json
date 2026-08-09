@@ -11,7 +11,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#0B1220"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "dz.truckspot.app",
@@ -35,7 +37,8 @@
         "googleMaps": {
           "apiKey": "REPLACE_WITH_ANDROID_GOOGLE_MAPS_API_KEY"
         }
-      }
+      },
+      "useNextNotificationsApi": true
     },
     "web": {
       "bundler": "metro"
@@ -52,10 +55,20 @@
         {
           "photosPermission": "TruckSpot accede a vos photos pour televerser vos documents."
         }
+      ],
+      [
+        "expo-notifications",
+        {
+          "color": "#F4A521",
+          "defaultChannel": "default"
+        }
       ]
     ],
     "extra": {
-      "apiUrl": "http://10.0.2.2:4000"
+      "apiUrl": "http://10.0.2.2:4000",
+      "eas": {
+        "projectId": "REPLACE_WITH_EAS_PROJECT_ID"
+      }
     }
   }
 }

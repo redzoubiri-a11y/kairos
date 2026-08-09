@@ -47,7 +47,7 @@ Verification : `curl http://localhost:4000/api/health`
 npm test
 ```
 
-74 tests d'integration repartis en sept suites (`tests/`), executes avec le lanceur
+85 tests d'integration repartis en huit suites (`tests/`), executes avec le lanceur
 integre de Node contre une **vraie** base PostgreSQL et un vrai serveur HTTP + Socket.IO :
 aucun mock, aucune dependance de test supplementaire hormis `socket.io-client`.
 
@@ -60,6 +60,7 @@ aucun mock, aucune dependance de test supplementaire hormis `socket.io-client`.
 | `admin.test.js`       | Moderation, effets de la verification, statistiques, activation de compte |
 | `documents.test.js`   | Envoi multipart, confidentialite des pieces, absence de service statique |
 | `storage-s3.test.js`  | Driver s3 face a un endpoint S3 minimal : signature SigV4, URL presignee |
+| `push.test.js`        | Appareils, envoi Expo, purge des jetons morts, resilience aux pannes    |
 
 Ces tests tournent aussi en integration continue a chaque push
 (`.github/workflows/truckspot.yml`), contre un service PostgreSQL 16.
@@ -89,6 +90,9 @@ Ces tests tournent aussi en integration continue a chaque push
 | `S3_BUCKET`          | —                       | Nom du bucket (driver `s3`)                   |
 | `S3_ACCESS_KEY_ID`   | —                       | Cle d'acces (driver `s3`)                     |
 | `S3_SECRET_ACCESS_KEY` | —                     | Cle secrete (driver `s3`)                     |
+| `PUSH_ENABLED`       | `true`                  | Envoi des notifications push Expo             |
+| `EXPO_ACCESS_TOKEN`  | —                       | Jeton d'acces Expo, recommande en production  |
+| `EXPO_PUSH_URL`      | API publique Expo       | Surchargeable pour les tests                  |
 
 ## Stockage des documents
 
@@ -107,6 +111,26 @@ bucket reste prive et l'API n'expose aucune URL directe. Un client recoit
 proprietaire du dossier ou un administrateur ; le driver `s3` repond par une redirection
 vers une URL signee valable cinq minutes. La cle de stockage n'est jamais serialisee vers
 le client.
+
+## Notifications push
+
+Deux canaux complementaires, declenches par le meme appel a
+`notificationService.push()` :
+
+- **WebSocket** (`notification:new`) — application ouverte, livraison instantanee.
+- **Push Expo** — application fermee ou en arriere-plan.
+
+Un appareil s'enregistre via `POST /api/notifications/devices` avec son jeton Expo.
+Le jeton est unique en base : un telephone qui change de compte est simplement
+rattache au nouvel utilisateur, sans doublon.
+
+Trois garanties de robustesse, toutes couvertes par les tests :
+
+- L'envoi est **detache** du cycle requete/reponse. Creer une mission ne depend
+  jamais de la disponibilite du service Expo.
+- Un jeton refuse par Expo (`DeviceNotRegistered`) est **supprime de la base**,
+  au lieu d'etre reessaye a chaque notification.
+- Une panne d'Expo ne fait echouer ni l'action metier ni la notification in-app.
 
 ## Architecture
 

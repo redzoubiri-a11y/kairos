@@ -3,6 +3,10 @@ require('dotenv').config();
 // Must be set before `src/config/env` is first required: the suite issues far more
 // signups than a real client ever would.
 process.env.DISABLE_RATE_LIMIT = 'true';
+
+// Garde-fou : aucune suite ne doit joindre l'API Expo publique. push.test.js
+// reactive l'envoi apres avoir fait pointer EXPO_PUSH_URL sur un service local.
+process.env.PUSH_ENABLED = process.env.PUSH_ENABLED ?? 'false';
 process.env.NODE_ENV = process.env.NODE_ENV === 'production' ? 'production' : 'test';
 
 const http = require('http');

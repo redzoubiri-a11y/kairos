@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -26,6 +26,7 @@ import { useAuthStore } from '../store/authStore';
 import { useMissionStore } from '../store/missionStore';
 import { useNotificationStore } from '../store/notificationStore';
 import { useRealtime } from '../hooks/useRealtime';
+import { usePushResponse } from '../hooks/usePushResponse';
 import { colors } from '../theme';
 
 const Stack = createNativeStackNavigator();
@@ -99,14 +100,18 @@ export default function RootNavigator() {
   const role = useAuthStore((s) => s.user?.role);
   const bootstrap = useAuthStore((s) => s.bootstrap);
 
+  const navigationRef = useRef(null);
+  const [navigationReady, setNavigationReady] = useState(false);
+
   useRealtime();
+  usePushResponse(navigationRef, navigationReady && status === 'signedIn');
 
   useEffect(() => {
     bootstrap();
   }, [bootstrap]);
 
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef} onReady={() => setNavigationReady(true)}>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {status === 'loading' ? (
           <Stack.Screen name="Splash" component={SplashScreen} />

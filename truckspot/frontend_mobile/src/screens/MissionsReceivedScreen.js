@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import ScreenHeader from '../components/ScreenHeader';
@@ -28,6 +28,9 @@ export default function MissionsReceivedScreen({ navigation }) {
   const statusFilter = useMissionStore((s) => s.statusFilter);
   const setStatusFilter = useMissionStore((s) => s.setStatusFilter);
   const load = useMissionStore((s) => s.load);
+  const loadMore = useMissionStore((s) => s.loadMore);
+  const loadingMore = useMissionStore((s) => s.loadingMore);
+  const total = useMissionStore((s) => s.total);
   const updateStatus = useMissionStore((s) => s.updateStatus);
 
   const [acting, setActing] = useState(null);
@@ -53,7 +56,7 @@ export default function MissionsReceivedScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <ScreenHeader title="Missions recues" subtitle={`${items.length} demande(s)`} />
+      <ScreenHeader title="Missions recues" subtitle={`${total} demande(s)`} />
       <SegmentedControl options={FILTERS} value={statusFilter} onChange={setStatusFilter} />
 
       {loading && items.length === 0 ? (
@@ -66,6 +69,9 @@ export default function MissionsReceivedScreen({ navigation }) {
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={() => load({ refreshing: true })} />
           }
+          onEndReached={loadMore}
+          onEndReachedThreshold={0.4}
+          ListFooterComponent={loadingMore ? <ActivityIndicator style={styles.footer} color={colors.primary} /> : null}
           ListHeaderComponent={error ? <ErrorBanner message={error} onRetry={load} /> : null}
           renderItem={({ item }) => (
             <View>
@@ -116,6 +122,7 @@ export default function MissionsReceivedScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.cardMuted },
   list: { padding: spacing.lg, flexGrow: 1 },
+  footer: { paddingVertical: spacing.lg },
   quickActions: { flexDirection: 'row', marginTop: -spacing.sm, marginBottom: spacing.lg },
   quickAction: { flex: 1, marginRight: spacing.sm },
   quickActionLast: { marginRight: 0 },

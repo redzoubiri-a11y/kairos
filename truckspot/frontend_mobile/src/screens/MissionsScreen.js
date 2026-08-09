@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
-import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import ScreenHeader from '../components/ScreenHeader';
@@ -28,6 +28,9 @@ export default function MissionsScreen({ navigation }) {
   const statusFilter = useMissionStore((s) => s.statusFilter);
   const setStatusFilter = useMissionStore((s) => s.setStatusFilter);
   const load = useMissionStore((s) => s.load);
+  const loadMore = useMissionStore((s) => s.loadMore);
+  const loadingMore = useMissionStore((s) => s.loadingMore);
+  const total = useMissionStore((s) => s.total);
   const isTransporter = useAuthStore((s) => s.user?.role === 'TRANSPORTER');
 
   useEffect(() => {
@@ -42,7 +45,7 @@ export default function MissionsScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <ScreenHeader title="Mes missions" subtitle={`${items.length} mission(s)`} />
+      <ScreenHeader title="Mes missions" subtitle={`${total} mission(s)`} />
       <SegmentedControl options={FILTERS} value={statusFilter} onChange={setStatusFilter} />
 
       {loading && items.length === 0 ? (
@@ -55,6 +58,9 @@ export default function MissionsScreen({ navigation }) {
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={() => load({ refreshing: true })} />
           }
+          onEndReached={loadMore}
+          onEndReachedThreshold={0.4}
+          ListFooterComponent={loadingMore ? <ActivityIndicator style={styles.footer} color={colors.primary} /> : null}
           ListHeaderComponent={
             error ? (
               <View style={styles.errorWrap}>
@@ -91,5 +97,6 @@ export default function MissionsScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.cardMuted },
   list: { padding: spacing.lg, flexGrow: 1 },
+  footer: { paddingVertical: spacing.lg },
   errorWrap: { marginBottom: spacing.sm },
 });

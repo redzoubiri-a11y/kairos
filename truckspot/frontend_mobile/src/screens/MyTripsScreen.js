@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { Alert, FlatList, StyleSheet } from 'react-native';
+import { ActivityIndicator, Alert, FlatList, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import ScreenHeader from '../components/ScreenHeader';
@@ -11,22 +11,49 @@ import ErrorBanner from '../components/ErrorBanner';
 import { tripApi } from '../api/endpoints';
 import { colors, spacing } from '../theme';
 
+const PAGE_SIZE = 20;
+
 export default function MyTripsScreen({ navigation }) {
   const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [pagination, setPagination] = useState({ page: 1, pages: 1, total: 0 });
   const [error, setError] = useState(null);
 
   const load = useCallback(async () => {
     setError(null);
     try {
-      const { items } = await tripApi.list({ mine: 'true', limit: 50 });
-      setTrips(items);
+      const result = await tripApi.list({ mine: 'true', page: 1, limit: PAGE_SIZE });
+      setTrips(result.items);
+      setPagination({ page: result.page, pages: result.pages, total: result.total });
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
   }, []);
+
+  // Sans pagination, un transporteur actif ne voyait que ses premiers trajets.
+  const loadMore = useCallback(async () => {
+    if (loadingMore || pagination.page >= pagination.pages) return;
+    setLoadingMore(true);
+    try {
+      const result = await tripApi.list({
+        mine: 'true',
+        page: pagination.page + 1,
+        limit: PAGE_SIZE,
+      });
+      setTrips((current) => {
+        const known = new Set(current.map((t) => t.id));
+        return [...current, ...result.items.filter((t) => !known.has(t.id))];
+      });
+      setPagination({ page: result.page, pages: result.pages, total: result.total });
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [loadingMore, pagination]);
 
   useFocusEffect(
     useCallback(() => {
@@ -63,12 +90,17 @@ export default function MyTripsScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <ScreenHeader title="Mes trajets" subtitle={`${trips.length} trajet(s)`} />
+      <ScreenHeader title="Mes trajets" subtitle={`${pagination.total} trajet(s)`} />
       <FlatList
         data={trips}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}
         ListHeaderComponent={error ? <ErrorBanner message={error} onRetry={load} /> : null}
+        onEndReached={loadMore}
+        onEndReachedThreshold={0.4}
+        ListFooterComponent={
+          loadingMore ? <ActivityIndicator style={styles.footer} color={colors.primary} /> : null
+        }
         renderItem={({ item }) => (
           <>
             <TripCard trip={item} showStatus />
@@ -100,5 +132,6 @@ export default function MyTripsScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.cardMuted },
   list: { padding: spacing.lg, flexGrow: 1 },
+  footer: { paddingVertical: spacing.lg },
   cancel: { marginTop: -spacing.sm, marginBottom: spacing.lg },
 });

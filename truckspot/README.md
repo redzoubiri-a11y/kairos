@@ -226,7 +226,7 @@ trois jobs en parallele :
 | ------------ | -------------------------------------------------------------------------- |
 | `backend`    | PostgreSQL 16 en service, migrations, controle de derive du schema, tests, seed |
 | `admin`      | `npm ci`, les 40 tests du back-office, puis le build de production Vite      |
-| `mobile`     | `npm ci` puis bundle Expo du graphe de modules complet                      |
+| `mobile`     | `npm ci`, les 38 tests des stores, puis le bundle Expo du graphe complet     |
 
 Le controle de derive (`prisma migrate diff --exit-code`) echoue si `schema.prisma` a ete
 modifie sans migration correspondante — l'oubli le plus courant sur ce genre de projet. Il
@@ -253,8 +253,9 @@ garde ADMIN, le motif de refus obligatoire, la normalisation des erreurs du clie
 la pagination — `cd truckspot/frontend_admin && npm test`. Il a par ailleurs ete valide par
 140 assertions sur les reponses reelles de l'API et un rendu de chaque page.
 
-L'application mobile a ete validee par un export Expo complet du graphe de modules
-(1005 modules).
+L'application mobile dispose de **38 tests** sur ses stores (pagination, deduplication
+du chat, filtre marchandise, position temps reel) — `cd truckspot/frontend_mobile && npm test` —
+completes par un export Expo qui resout l'integralite du graphe de modules.
 
 ## Deploiement
 

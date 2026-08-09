@@ -225,7 +225,7 @@ trois jobs en parallele :
 | Job          | Contenu                                                                    |
 | ------------ | -------------------------------------------------------------------------- |
 | `backend`    | PostgreSQL 16 en service, migrations, controle de derive du schema, tests, seed |
-| `admin`      | `npm ci` puis build de production Vite                                      |
+| `admin`      | `npm ci`, les 40 tests du back-office, puis le build de production Vite      |
 | `mobile`     | `npm ci` puis bundle Expo du graphe de modules complet                      |
 
 Le controle de derive (`prisma migrate diff --exit-code`) echoue si `schema.prisma` a ete
@@ -248,8 +248,10 @@ confidentialite des pieces justificatives (401 sans jeton, 403 pour un tiers, au
 lecture possible en statique) et notifications push (purge des jetons obsoletes, panne
 d'Expo sans consequence sur l'action metier).
 
-Le back-office a ete valide par 140 assertions sur les reponses reelles de l'API, plus un
-rendu de chaque page contre l'API en fonctionnement.
+Le back-office dispose de sa propre suite : **40 tests** (Vitest + Testing Library) sur la
+garde ADMIN, le motif de refus obligatoire, la normalisation des erreurs du client HTTP et
+la pagination — `cd truckspot/frontend_admin && npm test`. Il a par ailleurs ete valide par
+140 assertions sur les reponses reelles de l'API et un rendu de chaque page.
 
 L'application mobile a ete validee par un export Expo complet du graphe de modules
 (1005 modules).

@@ -83,7 +83,7 @@ jobs:
         run: npm run seed
 
   admin:
-    name: Back-office — build
+    name: Back-office — tests et build
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -99,6 +99,7 @@ jobs:
           cache-dependency-path: truckspot/frontend_admin/package-lock.json
 
       - run: npm ci
+      - run: npm test
       - run: npm run build
 
   mobile:

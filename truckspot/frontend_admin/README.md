@@ -37,6 +37,36 @@ npm run build     # build de production dans dist/
 npm run preview   # prévisualise le build de production
 ```
 
+## Tests
+
+```bash
+npm test          # une passe
+npm run test:watch
+```
+
+40 tests (Vitest + Testing Library, environnement jsdom) portant sur ce qui casse
+silencieusement :
+
+| Fichier | Couverture |
+| --- | --- |
+| `pages/LoginPage.test.jsx` | Garde ADMIN : un client ou un transporteur est refuse et aucun jeton n'est stocke |
+| `pages/TransportersPage.test.jsx` | File de moderation, etats vide et erreur, motif de refus obligatoire |
+| `api/client.test.js` | Injection du jeton, normalisation des erreurs, purge de session sur 401, `cleanParams` |
+| `components/Pagination.test.jsx` | Tranches affichees, cas vide, bornes desactivees |
+| `utils.test.js` | Formatage et couverture des libelles face aux enums du backend |
+
+Deux points valent d'etre connus :
+
+- **La garde ADMIN n'est pas decorative.** Le serveur accepte volontairement la connexion
+  d'un client ou d'un transporteur — c'est bien cette verification cote console qui
+  bloque l'acces, d'ou trois tests dessus.
+- **Le motif de refus est impose avant l'appel.** Le serveur repond 400 sans motif ;
+  sans cette validation locale, l'administrateur recevrait une erreur brute sans savoir
+  quoi corriger.
+
+Ces tests tournent en integration continue a chaque push
+(`.github/workflows/truckspot.yml`), avant le build de production.
+
 ## Connexion
 
 L'accès est réservé aux comptes dont le rôle est `ADMIN` : toute autre connexion est

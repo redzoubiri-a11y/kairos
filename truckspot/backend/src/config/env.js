@@ -1,0 +1,34 @@
+require('dotenv').config();
+
+function required(name, fallback) {
+  const value = process.env[name] ?? fallback;
+  if (value === undefined || value === '') {
+    throw new Error(`Missing required environment variable: ${name}`);
+  }
+  return value;
+}
+
+const env = {
+  nodeEnv: process.env.NODE_ENV || 'development',
+  port: Number(process.env.PORT || 4000),
+  databaseUrl: required('DATABASE_URL'),
+  jwtSecret: required('JWT_SECRET'),
+  jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
+  corsOrigins: (process.env.CORS_ORIGINS || '*').split(',').map((o) => o.trim()),
+  uploadDir: process.env.UPLOAD_DIR || 'uploads',
+  maxUploadBytes: Number(process.env.MAX_UPLOAD_BYTES || 5 * 1024 * 1024),
+  publicUrl: process.env.PUBLIC_URL || `http://localhost:${process.env.PORT || 4000}`,
+  disableRateLimit: process.env.DISABLE_RATE_LIMIT === 'true',
+
+  // 'local' writes to UPLOAD_DIR, 's3' targets any S3-compatible bucket.
+  storageDriver: process.env.STORAGE_DRIVER === 's3' ? 's3' : 'local',
+  s3Endpoint: process.env.S3_ENDPOINT,
+  s3Region: process.env.S3_REGION || 'auto',
+  s3Bucket: process.env.S3_BUCKET,
+  s3AccessKeyId: process.env.S3_ACCESS_KEY_ID,
+  s3SecretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+};
+
+env.isProduction = env.nodeEnv === 'production';
+
+module.exports = env;

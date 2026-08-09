@@ -1,0 +1,21 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: truckspot-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: truckspot
+      POSTGRES_PASSWORD: truckspot
+      POSTGRES_DB: truckspot
+    ports:
+      - '5432:5432'
+    volumes:
+      - truckspot_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U truckspot']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  truckspot_pgdata:

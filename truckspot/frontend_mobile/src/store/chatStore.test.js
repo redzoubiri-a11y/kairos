@@ -16,9 +16,21 @@ function message(id, overrides = {}) {
 const INITIAL = useChatStore.getState();
 
 beforeEach(() => {
-  useChatStore.setState({ ...INITIAL, threads: {}, typingIn: null }, true);
+  useChatStore.setState({ ...INITIAL, threads: {}, hasMore: {}, typingIn: null }, true);
   chatApi.markRead.mockResolvedValue({ updated: 0 });
 });
+
+const PAGE_SIZE = 50;
+
+// Le serveur ne renvoie pas de total : seule une page pleine laisse supposer
+// qu'un debut de conversation reste a charger.
+function fullPage(prefix) {
+  return Array.from({ length: PAGE_SIZE }, (_, i) =>
+    message(`${prefix}${i}`, {
+      createdAt: new Date(Date.UTC(2026, 7, 9, 10, 0, 0) + i * 60_000).toISOString(),
+    })
+  );
+}
 
 describe('historique', () => {
   it('charge une conversation et la marque comme lue', async () => {
@@ -54,6 +66,96 @@ describe('historique', () => {
 
   it('renvoie une liste vide pour une conversation jamais ouverte', () => {
     expect(useChatStore.getState().messagesFor('inconnue')).toEqual([]);
+  });
+});
+
+describe('messages precedents', () => {
+  it('signale un debut de conversation a charger quand la page est pleine', async () => {
+    chatApi.history.mockResolvedValue(fullPage('a'));
+
+    await useChatStore.getState().loadHistory('mission-1');
+
+    expect(useChatStore.getState().hasMoreFor('mission-1')).toBe(true);
+  });
+
+  it('ne promet rien de plus quand la page est incomplete', async () => {
+    chatApi.history.mockResolvedValue([message('c1')]);
+
+    await useChatStore.getState().loadHistory('mission-1');
+
+    expect(useChatStore.getState().hasMoreFor('mission-1')).toBe(false);
+  });
+
+  // Le defaut corrige : le serveur acceptait deja un curseur `before`, mais rien
+  // ne s'en servait et le debut d'une longue conversation etait perdu.
+  it('prepend les plus anciens a partir du premier message affiche', async () => {
+    const affiches = fullPage('a');
+    useChatStore.setState({
+      threads: { 'mission-1': affiches },
+      hasMore: { 'mission-1': true },
+    });
+    chatApi.history.mockResolvedValue([message('vieux')]);
+
+    await useChatStore.getState().loadOlder('mission-1');
+
+    expect(chatApi.history).toHaveBeenCalledWith('mission-1', {
+      limit: PAGE_SIZE,
+      before: affiches[0].createdAt,
+    });
+    const thread = useChatStore.getState().messagesFor('mission-1');
+    expect(thread[0].id).toBe('vieux');
+    expect(thread).toHaveLength(PAGE_SIZE + 1);
+    expect(useChatStore.getState().hasMoreFor('mission-1')).toBe(false);
+  });
+
+  it('ne rappelle pas le serveur une fois le debut atteint', async () => {
+    useChatStore.setState({
+      threads: { 'mission-1': [message('c1')] },
+      hasMore: { 'mission-1': false },
+    });
+
+    await useChatStore.getState().loadOlder('mission-1');
+
+    expect(chatApi.history).not.toHaveBeenCalled();
+  });
+
+  it('ne demande rien sur une conversation jamais ouverte', async () => {
+    useChatStore.setState({ hasMore: { 'mission-1': true } });
+
+    await useChatStore.getState().loadOlder('mission-1');
+
+    expect(chatApi.history).not.toHaveBeenCalled();
+  });
+
+  it('ecarte un message deja affiche', async () => {
+    useChatStore.setState({
+      threads: { 'mission-1': [message('c2'), message('c3')] },
+      hasMore: { 'mission-1': true },
+    });
+    chatApi.history.mockResolvedValue([message('c1'), message('c2')]);
+
+    await useChatStore.getState().loadOlder('mission-1');
+
+    expect(useChatStore.getState().messagesFor('mission-1').map((m) => m.id)).toEqual([
+      'c1',
+      'c2',
+      'c3',
+    ]);
+  });
+
+  it('ne perd pas la conversation si la page precedente echoue', async () => {
+    useChatStore.setState({
+      threads: { 'mission-1': [message('c1')] },
+      hasMore: { 'mission-1': true },
+    });
+    chatApi.history.mockRejectedValue(new Error('Delai depasse'));
+
+    await useChatStore.getState().loadOlder('mission-1');
+
+    const state = useChatStore.getState();
+    expect(state.messagesFor('mission-1').map((m) => m.id)).toEqual(['c1']);
+    expect(state.error).toBe('Delai depasse');
+    expect(state.loadingOlder).toBe(false);
   });
 });
 
@@ -123,8 +225,12 @@ describe('envoi', () => {
 
   it('oublie une conversation a la demande', () => {
     useChatStore.getState().receive(message('c1'));
+    useChatStore.setState({ hasMore: { 'mission-1': true } });
+
     useChatStore.getState().clearThread('mission-1');
 
     expect(useChatStore.getState().messagesFor('mission-1')).toEqual([]);
+    // Sinon une conversation rouverte proposerait de charger un debut absent.
+    expect(useChatStore.getState().hasMoreFor('mission-1')).toBe(false);
   });
 });

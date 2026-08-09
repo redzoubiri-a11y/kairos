@@ -277,6 +277,10 @@ const common = {
   notificationQuery: z
     .object({
       unreadOnly: booleanish.optional(),
+      // Curseur sur createdAt, comme l'historique de conversation : un decalage
+      // par numero de page ferait reapparaitre une ligne des qu'une notification
+      // arrive entre deux appels.
+      before: z.coerce.date().optional(),
       take: z.coerce.number().int().min(1).max(100).default(50),
     })
     .strict(),

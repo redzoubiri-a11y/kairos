@@ -153,6 +153,14 @@ Les erreurs suivent toujours la forme
 Les parametres de requete sont valides en mode strict : n'envoyez jamais de parametre
 vide ou inconnu, la reponse serait un 400.
 
+Deux formes de pagination coexistent, selon la nature de la liste. Les listes stables
+(`/trips/list`, `/missions/list`, les routes `/admin/*`) se paginent par numero de page
+(`page`, `limit`) et renvoient `{ items, page, pages, total }`. Les flux ou une entree
+peut arriver a tout moment — `/chat/history` et `/notifications/list` — se paginent par
+curseur : `before` prend le `createdAt` de l'element le plus ancien deja affiche, et la
+reponse est `{ items }`. Un numero de page ferait reapparaitre une ligne des qu'un
+message ou une notification s'intercale entre deux appels.
+
 ## WebSockets
 
 Connexion Socket.IO sur l'origine du backend, JWT passe dans le handshake :
@@ -239,23 +247,26 @@ pour rejouer les migrations.
 cd truckspot/backend && npm test
 ```
 
-**69 tests d'integration** tournent contre une vraie base PostgreSQL et un vrai serveur
+**97 tests d'integration** tournent contre une vraie base PostgreSQL et un vrai serveur
 HTTP + Socket.IO, sans mock : authentification, cloisonnement des acces (un tiers ne peut
 lire ni une mission ni une conversation qui ne le concerne pas), recherche geographique,
 filtres de la carte, transitions de statut interdites, comptabilite du volume libre, chat
-temps reel (rejet d'un jeton invalide, absence de message en double), moderation admin et
+temps reel (rejet d'un jeton invalide, absence de message en double), moderation admin,
 confidentialite des pieces justificatives (401 sans jeton, 403 pour un tiers, aucune
-lecture possible en statique) et notifications push (purge des jetons obsoletes, panne
-d'Expo sans consequence sur l'action metier).
+lecture possible en statique), notifications push (purge des jetons obsoletes, panne
+d'Expo sans consequence sur l'action metier) et flux de notifications (curseur `before`,
+cloisonnement du `read-all`).
 
 Le back-office dispose de sa propre suite : **40 tests** (Vitest + Testing Library) sur la
 garde ADMIN, le motif de refus obligatoire, la normalisation des erreurs du client HTTP et
 la pagination — `cd truckspot/frontend_admin && npm test`. Il a par ailleurs ete valide par
 140 assertions sur les reponses reelles de l'API et un rendu de chaque page.
 
-L'application mobile dispose de **38 tests** sur ses stores (pagination, deduplication
-du chat, filtre marchandise, position temps reel) — `cd truckspot/frontend_mobile && npm test` —
-completes par un export Expo qui resout l'integralite du graphe de modules.
+L'application mobile dispose de **62 tests** sur ses stores (pagination des missions, des
+trajets, du fil de notifications et de la conversation, deduplication du chat, restauration
+apres un accuse de lecture refuse, filtre marchandise, position temps reel) —
+`cd truckspot/frontend_mobile && npm test` — completes par un export Expo qui resout
+l'integralite du graphe de modules.
 
 ## Deploiement
 

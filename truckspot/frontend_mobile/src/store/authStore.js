@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { authApi, transporterApi } from '../api/endpoints';
 import { setAuthToken, setUnauthorizedHandler } from '../api/client';
 import { connectSocket, disconnectSocket } from '../api/socket';
+import { registerForPushNotifications, unregisterPushNotifications } from '../api/push';
 
 const TOKEN_KEY = 'truckspot.token';
 const ONBOARDING_KEY = 'truckspot.onboarded';
@@ -32,6 +33,7 @@ export const useAuthStore = create((set, get) => ({
       const user = await authApi.me();
       connectSocket(token);
       set({ token, user, status: 'signedIn', onboarded: onboarded === 'true' });
+      registerForPushNotifications();
     } catch {
       await AsyncStorage.removeItem(TOKEN_KEY);
       setAuthToken(null);
@@ -51,6 +53,7 @@ export const useAuthStore = create((set, get) => ({
     setAuthToken(token);
     connectSocket(token);
     set({ token, user, status: 'signedIn' });
+    registerForPushNotifications();
     return user;
   },
 
@@ -61,10 +64,13 @@ export const useAuthStore = create((set, get) => ({
     setAuthToken(token);
     connectSocket(token);
     set({ token, user, status: 'signedIn' });
+    registerForPushNotifications();
     return user;
   },
 
   signOut: async () => {
+    // Tant que la session est valide : la route de desinscription exige un jeton.
+    await unregisterPushNotifications();
     await AsyncStorage.removeItem(TOKEN_KEY);
     setAuthToken(null);
     disconnectSocket();

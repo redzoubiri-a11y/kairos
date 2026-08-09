@@ -60,6 +60,12 @@ export const chatApi = {
   markRead: (missionId) => api.patch(`/chat/${missionId}/read`).then((r) => r.data),
 };
 
+export const deviceApi = {
+  register: (payload) => api.post('/notifications/devices', payload).then((r) => r.data),
+  list: () => api.get('/notifications/devices').then((r) => r.data.items),
+  unregister: (token) => api.delete('/notifications/devices', { data: { token } }).then((r) => r.data),
+};
+
 export const notificationApi = {
   list: (params) => api.get('/notifications/list', { params: cleanParams(params) }).then((r) => r.data.items),
   markAllRead: () => api.patch('/notifications/read-all').then((r) => r.data),

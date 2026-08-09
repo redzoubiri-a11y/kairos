@@ -27,6 +27,12 @@ const env = {
   s3Bucket: process.env.S3_BUCKET,
   s3AccessKeyId: process.env.S3_ACCESS_KEY_ID,
   s3SecretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+
+  // Notifications push Expo. L'URL est configurable pour permettre aux tests de
+  // viser un service local plutot que l'API publique.
+  pushEnabled: process.env.PUSH_ENABLED !== 'false',
+  expoPushUrl: process.env.EXPO_PUSH_URL || 'https://exp.host/--/api/v2/push/send',
+  expoAccessToken: process.env.EXPO_ACCESS_TOKEN,
 };
 
 env.isProduction = env.nodeEnv === 'production';

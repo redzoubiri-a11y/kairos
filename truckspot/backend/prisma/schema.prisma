@@ -52,6 +52,11 @@ enum MissionStatus {
   CANCELLED
 }
 
+enum DevicePlatform {
+  IOS
+  ANDROID
+}
+
 enum NotificationType {
   MISSION_CREATED
   MISSION_ACCEPTED
@@ -77,6 +82,7 @@ model User {
   clientMissions   Mission[]           @relation("ClientMissions")
   sentMessages     ChatMessage[]
   notifications    Notification[]
+  devices          DeviceToken[]
 
   @@index([role])
   @@map("users")
@@ -229,6 +235,23 @@ model ChatMessage {
 
   @@index([missionId, createdAt])
   @@map("chat_messages")
+}
+
+model DeviceToken {
+  id         String         @id @default(uuid())
+  userId     String
+  // Jeton Expo ("ExponentPushToken[...]"), unique par appareil : le meme
+  // telephone qui change de compte doit etre rattache au nouvel utilisateur.
+  token      String         @unique
+  platform   DevicePlatform
+  deviceName String?
+  lastUsedAt DateTime       @default(now())
+  createdAt  DateTime       @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("device_tokens")
 }
 
 model Notification {

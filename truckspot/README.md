@@ -79,10 +79,11 @@ User ──1:1── TransporterProfile ──1:N── TransporterDocument
                                     └──1:N── ChatMessage
 
 User ──1:N── Notification
+User ──1:N── DeviceToken
 ```
 
 Enums : `Role`, `VerificationStatus`, `DocumentType`, `TruckType`, `TripStatus`,
-`MissionStatus`, `NotificationType`. Schema complet dans
+`MissionStatus`, `NotificationType`, `DevicePlatform`. Schema complet dans
 `backend/prisma/schema.prisma`.
 
 ### Cycle de vie d'une mission
@@ -135,6 +136,9 @@ Base : `http://localhost:4000/api` — authentification par `Authorization: Bear
 | PATCH   | `/chat/:missionId/read`        | participant  | Marquer comme lu                         |
 | GET     | `/notifications/list`          | authentifie  | Notifications                            |
 | PATCH   | `/notifications/read-all`      | authentifie  | Tout marquer comme lu                    |
+| POST    | `/notifications/devices`       | authentifie  | Enregistre un appareil pour les push     |
+| GET     | `/notifications/devices`       | authentifie  | Appareils enregistres                    |
+| DELETE  | `/notifications/devices`       | authentifie  | Retire un appareil (deconnexion)         |
 | GET     | `/admin/stats`                 | admin        | Statistiques globales                    |
 | GET     | `/admin/transporters`          | admin        | File de moderation                       |
 | PATCH   | `/admin/verify-transporter`    | admin        | Validation ou refus (motif obligatoire)  |
@@ -180,6 +184,25 @@ Connexion Socket.IO sur l'origine du backend, JWT passe dans le handshake :
 `chat:message` et `chat:inbox` sont deliberement distincts : un destinataire deja present
 dans le salon afficherait sinon deux fois le meme message.
 
+## Notifications
+
+Trois canaux, un seul point de declenchement cote serveur :
+
+| Canal            | Quand                          | Mecanisme                        |
+| ---------------- | ------------------------------ | -------------------------------- |
+| In-app           | Toujours                       | Enregistrement en base           |
+| WebSocket        | Application ouverte            | `notification:new`               |
+| Push systeme     | Application fermee / en fond   | API Expo Push                    |
+
+L'envoi push est detache du cycle requete/reponse : creer une mission ne depend jamais de
+la disponibilite du service Expo. Un jeton refuse par Expo est supprime de la base plutot
+que reessaye indefiniment.
+
+> **Expo Go ne suffit pas pour tester les push sur Android** : cette fonctionnalite en a
+> ete retiree avec le SDK 53. Il faut un *development build*
+> (`eas build --profile development`). Les notifications in-app et la websocket, elles,
+> fonctionnent normalement dans Expo Go.
+
 ## Confidentialite des pieces justificatives
 
 Les documents transmis par les transporteurs sont des pieces d'identite et d'entreprise.
@@ -222,7 +245,8 @@ lire ni une mission ni une conversation qui ne le concerne pas), recherche geogr
 filtres de la carte, transitions de statut interdites, comptabilite du volume libre, chat
 temps reel (rejet d'un jeton invalide, absence de message en double), moderation admin et
 confidentialite des pieces justificatives (401 sans jeton, 403 pour un tiers, aucune
-lecture possible en statique).
+lecture possible en statique) et notifications push (purge des jetons obsoletes, panne
+d'Expo sans consequence sur l'action metier).
 
 Le back-office a ete valide par 140 assertions sur les reponses reelles de l'API, plus un
 rendu de chaque page contre l'API en fonctionnement.

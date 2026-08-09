@@ -259,6 +259,18 @@ const admin = {
   setUserActive: z.object({ isActive: booleanish }).strict(),
 };
 
+const device = {
+  register: z
+    .object({
+      token: z.string().min(10).max(200),
+      platform: z.enum(['IOS', 'ANDROID']),
+      deviceName: z.string().max(80).optional(),
+    })
+    .strict(),
+
+  unregister: z.object({ token: z.string().min(10).max(200) }).strict(),
+};
+
 const common = {
   idParam: z.object({ id: uuid }),
   missionIdParam: z.object({ missionId: uuid }),
@@ -272,6 +284,7 @@ const common = {
 
 module.exports = {
   auth,
+  device,
   transporter,
   truck,
   trip,

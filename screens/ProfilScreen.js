@@ -209,6 +209,7 @@ export default function ProfilScreen({ navigation }) {
             <View style={s.settingsCard}>
               {[
                 { icon:'⚙️', label:'Paramètres',             screen:'Settings'  },
+                { icon:'🛍️', label:'Mes commandes',          screen:'MyOrders'  },
                 { icon:'❓', label:'Aide & Support',          screen:'Aide'      },
                 { icon:'🔔', label:'Notifications',          screen:'Notifications' },
                 { icon:'🔒', label:'Confidentialité',        action: goPrivacy  },

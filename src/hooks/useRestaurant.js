@@ -17,6 +17,7 @@ export default function useRestaurant(restaurant) {
   const [reviews,        setReviews]        = useState([]);
   const [loadingReviews, setLoadingReviews] = useState(false);
   const [dbDishes,       setDbDishes]       = useState([]);
+  const [clickCollectEnabled, setClickCollectEnabled] = useState(false);
   const tabAnim = useRef(new Animated.Value(1)).current;
 
   const photos = useMemo(
@@ -68,6 +69,12 @@ export default function useRestaurant(restaurant) {
           .eq('is_available', true)
           .order('created_at', { ascending: true });
         if (data?.length > 0) setDbDishes(data);
+      })();
+
+      (async () => {
+        const { data } = await supabase.from('restaurants')
+          .select('click_collect_enabled').eq('id', restaurant.id).maybeSingle();
+        setClickCollectEnabled(!!data?.click_collect_enabled);
       })();
 
       setLoadingReviews(true);
@@ -135,6 +142,6 @@ export default function useRestaurant(restaurant) {
     tab, photoIndex, setPhotoIndex,
     isFav, favLoading, reviews, loadingReviews,
     tabAnim, photos, menu, rating, cuisineEmoji, desc,
-    toggleFav, switchTab,
+    toggleFav, switchTab, clickCollectEnabled,
   };
 }

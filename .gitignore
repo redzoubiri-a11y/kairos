@@ -40,3 +40,12 @@ yarn-error.*
 /ios
 /android
 .vercel
+
+# signing / build artifacts
+credentials.json
+cert.der
+*.aab
+*.apk
+
+# Supabase CLI local state
+supabase/.temp/

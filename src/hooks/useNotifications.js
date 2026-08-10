@@ -13,12 +13,15 @@ export const TYPE_CFG = {
   reminder:       { icon: '⏰', color: colors.accent, label: 'Rappel',       group: 'rappel' },
   review_ask:     { icon: '⭐', color: colors.accent, label: 'Avis',         group: 'rappel' },
   review_request: { icon: '⭐', color: colors.accent, label: 'Avis',         group: 'rappel' },
+  new_order:      { icon: '🛍️', color: colors.blue,   label: 'Commande',     group: 'commande' },
+  order_update:   { icon: '🛍️', color: colors.blue,   label: 'Commande',     group: 'commande' },
 };
 
 export const TABS = [
-  { id: 'all',    label: 'Tout' },
-  { id: 'resa',   label: 'Réservations' },
-  { id: 'rappel', label: 'Rappels' },
+  { id: 'all',      label: 'Tout' },
+  { id: 'resa',     label: 'Réservations' },
+  { id: 'commande', label: 'Commandes' },
+  { id: 'rappel',   label: 'Rappels' },
 ];
 
 export function timeAgo(iso) {
@@ -121,16 +124,17 @@ export default function useNotifications() {
     [notifs, tab],
   );
 
-  const { unread, unreadResa, unreadRappel } = useMemo(() => {
-    let unread = 0, unreadResa = 0, unreadRappel = 0;
+  const { unread, unreadResa, unreadRappel, unreadCommande } = useMemo(() => {
+    let unread = 0, unreadResa = 0, unreadRappel = 0, unreadCommande = 0;
     for (const n of notifs) {
       if (n.is_read) continue;
       unread++;
       const group = TYPE_CFG[n.type]?.group;
-      if (group === 'resa')   unreadResa++;
-      if (group === 'rappel') unreadRappel++;
+      if (group === 'resa')     unreadResa++;
+      if (group === 'rappel')   unreadRappel++;
+      if (group === 'commande') unreadCommande++;
     }
-    return { unread, unreadResa, unreadRappel };
+    return { unread, unreadResa, unreadRappel, unreadCommande };
   }, [notifs]);
 
   const groups    = useMemo(() => grouped(filtered), [filtered]);
@@ -138,7 +142,7 @@ export default function useNotifications() {
 
   return {
     loading, refreshing, tab, setTab,
-    filtered, unread, unreadResa, unreadRappel, groups,
+    filtered, unread, unreadResa, unreadRappel, unreadCommande, groups,
     markRead, markAllRead, deleteNotif, onRefresh,
   };
 }

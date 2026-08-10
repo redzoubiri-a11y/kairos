@@ -27,14 +27,15 @@ function SkeletonList() {
 export default function NotificationsScreen({ navigation }) {
   const {
     loading, refreshing, tab, setTab,
-    filtered, unread, unreadResa, unreadRappel, groups,
+    filtered, unread, unreadResa, unreadRappel, unreadCommande, groups,
     markRead, markAllRead, deleteNotif, onRefresh,
   } = useNotifications();
 
   const badgeFor  = (id) => {
-    if (id === 'all')    return unread;
-    if (id === 'resa')   return unreadResa;
-    if (id === 'rappel') return unreadRappel;
+    if (id === 'all')      return unread;
+    if (id === 'resa')     return unreadResa;
+    if (id === 'rappel')   return unreadRappel;
+    if (id === 'commande') return unreadCommande;
     return 0;
   };
 
@@ -79,7 +80,7 @@ export default function NotificationsScreen({ navigation }) {
       ) : filtered.length === 0 ? (
         <View style={s.center}>
           <Text style={s.emptyEmoji}>
-            {tab === 'resa' ? '📅' : tab === 'rappel' ? '⏰' : '🔔'}
+            {tab === 'resa' ? '📅' : tab === 'rappel' ? '⏰' : tab === 'commande' ? '🛍️' : '🔔'}
           </Text>
           <Text style={s.emptyTitle}>
             {tab === 'all' ? 'Aucune notification' : `Aucune notification\n${TABS.find(t => t.id === tab)?.label.toLowerCase()}`}

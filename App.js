@@ -33,6 +33,9 @@ import MapScreen from './screens/MapScreen';
 import ProInfoScreen from './screens/ProInfoScreen';
 import ProHorairesScreen from './screens/ProHorairesScreen';
 import AdminValidationScreen from './screens/AdminValidationScreen';
+import ClickCollectScreen from './screens/ClickCollectScreen';
+import ProOrdersScreen from './screens/ProOrdersScreen';
+import MyOrdersScreen from './screens/MyOrdersScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -192,6 +195,9 @@ export default function App() {
             <Stack.Screen name="ProInfo" component={ProInfoScreen} />
             <Stack.Screen name="ProHoraires" component={ProHorairesScreen} />
             <Stack.Screen name="AdminValidation" component={AdminValidationScreen} />
+            <Stack.Screen name="ClickCollect" component={ClickCollectScreen} />
+            <Stack.Screen name="ProOrders" component={ProOrdersScreen} />
+            <Stack.Screen name="MyOrders" component={MyOrdersScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </GuestContext.Provider>

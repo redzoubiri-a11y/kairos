@@ -66,6 +66,7 @@ export default function ProDashboard({ navigation }) {
   const goPhotos   = useCallback(() => navigation.navigate('ProPhotos', { restaurantId: restaurant?.id }), [navigation, restaurant]);
   const goInfo     = useCallback(() => navigation.navigate('ProInfo'),     [navigation]);
   const goHoraires = useCallback(() => navigation.navigate('ProHoraires'), [navigation]);
+  const goOrders   = useCallback(() => navigation.navigate('ProOrders'),   [navigation]);
 
   if (loading) {
     return (
@@ -116,6 +117,10 @@ export default function ProDashboard({ navigation }) {
           <TouchableOpacity style={s.comptoirBtn} onPress={goComptoir}>
             <Text style={s.comptoirIcon}>📟</Text>
             <Text style={s.comptoirBtnTxt}>Comptoir</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={s.comptoirBtn} onPress={goOrders}>
+            <Text style={s.comptoirIcon}>🛍️</Text>
+            <Text style={s.comptoirBtnTxt}>Commandes</Text>
           </TouchableOpacity>
           <TouchableOpacity style={s.comptoirBtn} onPress={goInfo}>
             <Text style={s.comptoirIcon}>✏️</Text>

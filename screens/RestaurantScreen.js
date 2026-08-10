@@ -40,10 +40,11 @@ export default function RestaurantScreen({ route, navigation }) {
     tab, photoIndex, setPhotoIndex,
     isFav, favLoading, reviews, loadingReviews,
     tabAnim, photos, menu, rating, cuisineEmoji, desc,
-    toggleFav, switchTab,
+    toggleFav, switchTab, clickCollectEnabled,
   } = useRestaurant(restaurant);
 
   const goReserve = useCallback(() => navigation.navigate('ReservationForm', { restaurant }), [navigation, restaurant]);
+  const goClickCollect = useCallback(() => navigation.navigate('ClickCollect', { restaurant }), [navigation, restaurant]);
   const handleShare = useCallback(() => {
     Share.share({
       message: `🍽️ ${restaurant.name} sur MIDA\n${restaurant.address || ''}\n\nRéserve ta table : mida://restaurant/${restaurant.id}`,
@@ -192,6 +193,11 @@ export default function RestaurantScreen({ route, navigation }) {
             <Text style={s.reserveTxt}>RÉSERVER UNE TABLE</Text>
           </TouchableOpacity>
         </View>
+        {clickCollectEnabled && (
+          <TouchableOpacity style={s.clickCollectBtn} onPress={goClickCollect}>
+            <Text style={s.clickCollectTxt}>🛍️  Commander à emporter</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
     </SafeAreaView>
@@ -258,4 +264,6 @@ const s = StyleSheet.create({
   reserveTxt:    { color: colors.bg, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium, letterSpacing: 1.5 },
   directionsBtn: { width: 52, paddingVertical: spacing.xl - 1, borderRadius: radius.card, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder },
   directionsIcon:{ fontSize: 20 },
+  clickCollectBtn: { marginTop: spacing.md, borderRadius: radius.card, paddingVertical: spacing.lg - 2, alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent', borderWidth: 1.5, borderColor: colors.green },
+  clickCollectTxt: { color: colors.green, fontSize: typography.size.body, fontWeight: typography.weight.semibold },
 });

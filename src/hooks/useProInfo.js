@@ -24,7 +24,7 @@ export const OCCASION_OPTIONS = [
 const DEFAULTS = {
   name: '', description: '', phone: '', address: '', quartier: '', city: '',
   cuisine_type: 'autre', occasion_tags: [], capacity: '', avg_ticket: '',
-  has_kids_menu: false, has_kids_chairs: false,
+  has_kids_menu: false, has_kids_chairs: false, click_collect_enabled: false,
 };
 
 export default function useProInfo() {
@@ -52,7 +52,7 @@ export default function useProInfo() {
       setRestaurantId(owner.restaurant_id);
       const { data: r } = await supabase
         .from('restaurants')
-        .select('name, description, phone, address, quartier, city, cuisine_type, occasion_tags, capacity, avg_ticket, has_kids_menu, has_kids_chairs')
+        .select('name, description, phone, address, quartier, city, cuisine_type, occasion_tags, capacity, avg_ticket, has_kids_menu, has_kids_chairs, click_collect_enabled')
         .eq('id', owner.restaurant_id)
         .maybeSingle();
       if (r && r.description) {
@@ -69,6 +69,7 @@ export default function useProInfo() {
           avg_ticket:     r.avg_ticket != null ? String(r.avg_ticket) : '',
           has_kids_menu:  r.has_kids_menu  ?? false,
           has_kids_chairs:r.has_kids_chairs ?? false,
+          click_collect_enabled: r.click_collect_enabled ?? false,
         });
       }
     } finally {
@@ -108,6 +109,7 @@ export default function useProInfo() {
         avg_ticket:      form.avg_ticket ? parseInt(form.avg_ticket) : 0,
         has_kids_menu:   form.has_kids_menu,
         has_kids_chairs: form.has_kids_chairs,
+        click_collect_enabled: form.click_collect_enabled,
       }).eq('id', restaurantId);
       if (err) throw err;
       setSaved(true);

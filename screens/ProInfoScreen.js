@@ -232,6 +232,21 @@ export default function ProInfoScreen({ navigation, route }) {
             />
           </View>
 
+          {/* Click & Collect */}
+          <Text style={s.section}>Click & Collect</Text>
+          <View style={[s.toggleRow, { borderBottomWidth: 0 }]}>
+            <View style={{ flex: 1, marginRight: spacing.md }}>
+              <Text style={s.toggleLabel}>Activer la commande à emporter</Text>
+              <Text style={s.toggleSub}>Les clients pourront commander depuis votre menu et venir récupérer sur place. Paiement au retrait.</Text>
+            </View>
+            <Switch
+              value={form.click_collect_enabled}
+              onValueChange={set('click_collect_enabled')}
+              trackColor={{ false: colors.cardBorder, true: `${PRO_ACCENT}55` }}
+              thumbColor={form.click_collect_enabled ? PRO_ACCENT : '#bbb'}
+            />
+          </View>
+
           {!!error && <Text style={s.error}>{error}</Text>}
           <View style={{ height: 120 }} />
         </ScrollView>
@@ -280,6 +295,7 @@ const s = StyleSheet.create({
 
   toggleRow:   { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   toggleLabel: { color: colors.text, fontSize: typography.size.body },
+  toggleSub:   { color: colors.textDim, fontSize: typography.size.caption, marginTop: 2 },
 
   error:       { color: colors.red, fontSize: typography.size.caption, marginTop: spacing.lg, textAlign: 'center' },
 });

@@ -1,7 +1,7 @@
 const { Server } = require('socket.io');
 const env = require('../config/env');
 const prisma = require('../config/prisma');
-const { verifyToken } = require('../middleware/auth');
+const { verifyToken, isTokenCurrent } = require('../middleware/auth');
 const realtime = require('./realtime');
 const chatService = require('../services/chat.service');
 const missionService = require('../services/mission.service');
@@ -25,6 +25,12 @@ function initWebSocket(httpServer) {
         include: { transporter: { select: { id: true, verificationStatus: true } } },
       });
       if (!user || !user.isActive) return next(new Error('Compte introuvable ou desactive'));
+
+      // Meme regle que sur l'API : sans cela la websocket d'un intrus
+      // survivrait a la reinitialisation qui devait le chasser.
+      if (!isTokenCurrent(payload, user)) {
+        return next(new Error('Mot de passe modifie, reconnectez-vous'));
+      }
 
       socket.user = user;
       next();

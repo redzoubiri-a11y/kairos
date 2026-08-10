@@ -3,8 +3,8 @@ const notificationService = require('../services/notification.service');
 const deviceService = require('../services/device.service');
 
 const list = asyncHandler(async (req, res) => {
-  const { unreadOnly, take } = req.validatedQuery;
-  res.json({ items: await notificationService.list(req.user.id, { unreadOnly, take }) });
+  const { unreadOnly, take, before } = req.validatedQuery;
+  res.json({ items: await notificationService.list(req.user.id, { unreadOnly, take, before }) });
 });
 
 const markAllRead = asyncHandler(async (req, res) => {

@@ -64,6 +64,28 @@ Deux prerequis avant que cela fonctionne :
    Dans Expo Go, les notifications in-app et la websocket continuent de fonctionner
    normalement ; seules les notifications systeme sont indisponibles.
 
+## Tests
+
+```bash
+npm test          # une passe
+npm run test:watch
+```
+
+38 tests (Vitest, environnement node) sur les stores, ou se trouve la logique :
+
+| Store | Couverture |
+| --- | --- |
+| `missionStore` | Pagination, ecart des doublons, upsert par websocket, compteur du badge |
+| `chatStore` | Deduplication des messages, isolation des conversations, echec d'envoi |
+| `mapStore` | Filtre marchandise croise avec les trajets, position temps reel, filtres |
+
+Les stores sont du JavaScript pur : les modules d'API et de socket sont remplaces
+par des doublures, la chaine d'imports Expo n'est donc jamais chargee et les tests
+tournent sans emulateur.
+
+Le job `mobile` de la CI lance ces tests puis un export Expo qui resout et transpile
+l'integralite du graphe de modules.
+
 ## Architecture
 
 ```

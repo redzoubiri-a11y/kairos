@@ -62,6 +62,22 @@ const auth = {
       newPassword: z.string().min(8, 'Au moins 8 caracteres'),
     })
     .strict(),
+
+  forgotPassword: z
+    .object({
+      email: z.string().email('Email invalide'),
+    })
+    .strict(),
+
+  resetPassword: z
+    .object({
+      email: z.string().email('Email invalide'),
+      // Six chiffres exactement : un format libre laisserait passer des essais
+      // que le compteur de tentatives devrait ensuite absorber.
+      code: z.string().regex(/^[0-9]{6}$/, 'Code a six chiffres'),
+      password: z.string().min(8, 'Au moins 8 caracteres'),
+    })
+    .strict(),
 };
 
 const transporter = {
@@ -120,6 +136,9 @@ const truck = {
       latitude: lat.optional(),
       longitude: lng.optional(),
       radiusKm: z.coerce.number().min(1).max(1000).default(50),
+      // Fenetre de fraicheur de la position, en minutes. Par defaut celle du
+      // serveur (TRUCK_POSITION_TTL_MINUTES) ; plafonnee a sept jours.
+      freshWithinMinutes: z.coerce.number().int().min(1).max(10080).optional(),
     })
     .strict(),
 };
@@ -277,6 +296,10 @@ const common = {
   notificationQuery: z
     .object({
       unreadOnly: booleanish.optional(),
+      // Curseur sur createdAt, comme l'historique de conversation : un decalage
+      // par numero de page ferait reapparaitre une ligne des qu'une notification
+      // arrive entre deux appels.
+      before: z.coerce.date().optional(),
       take: z.coerce.number().int().min(1).max(100).default(50),
     })
     .strict(),

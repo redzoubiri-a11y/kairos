@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
@@ -25,7 +25,9 @@ export default function NotificationsScreen({ navigation }) {
   const items = useNotificationStore((s) => s.items);
   const loading = useNotificationStore((s) => s.loading);
   const error = useNotificationStore((s) => s.error);
+  const loadingMore = useNotificationStore((s) => s.loadingMore);
   const load = useNotificationStore((s) => s.load);
+  const loadMore = useNotificationStore((s) => s.loadMore);
   const markAllRead = useNotificationStore((s) => s.markAllRead);
   const unreadCount = useNotificationStore((s) => s.items.filter((n) => !n.readAt).length);
 
@@ -92,6 +94,11 @@ export default function NotificationsScreen({ navigation }) {
               message="Vous serez prevenu des qu'une mission ou un message arrive."
             />
           }
+          onEndReached={loadMore}
+          onEndReachedThreshold={0.4}
+          ListFooterComponent={
+            loadingMore ? <ActivityIndicator style={styles.footer} color={colors.primary} /> : null
+          }
         />
       )}
     </SafeAreaView>
@@ -101,6 +108,7 @@ export default function NotificationsScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.card },
   list: { flexGrow: 1 },
+  footer: { paddingVertical: spacing.lg },
   markAll: { ...typography.small, fontWeight: '700', color: colors.primaryDark },
   row: {
     flexDirection: 'row',

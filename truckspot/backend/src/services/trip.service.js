@@ -1,5 +1,21 @@
 const prisma = require('../config/prisma');
+const env = require('../config/env');
 const ApiError = require('../utils/ApiError');
+
+// Rien ne fait vieillir un trajet : aucun travail de fond ne change son statut.
+// Sans cette limite, un trajet declare pour le 12 aout restait propose en
+// septembre, et le client envoyait une mission sur un depart depuis longtemps
+// passe. Un trajet IN_PROGRESS reste visible : le transporteur a explicitement
+// dit qu'il roulait, et sa capacite libre reste reservable en cours de route.
+function departureCutoff() {
+  return new Date(Date.now() - env.tripDepartureGraceHours * 3600_000);
+}
+
+function isVisibleInSearch(trip, cutoff = departureCutoff()) {
+  if (trip.transporter?.verificationStatus !== 'VERIFIED') return false;
+  if (trip.status === 'IN_PROGRESS') return true;
+  return trip.status === 'SCHEDULED' && new Date(trip.departureAt) >= cutoff;
+}
 const { distanceKm, boundingBox } = require('../utils/geo');
 const transporterService = require('./transporter.service');
 
@@ -89,15 +105,22 @@ async function list(filters = {}, currentUser = null) {
       : {}),
   };
 
+  const isMine = Boolean(mine && currentUser);
+
   if (adminView) {
     // Admins see every trip, including those of unverified transporters.
     if (!status) delete where.status;
-  } else if (mine && currentUser) {
+  } else if (isMine) {
+    // Le transporteur garde l'historique complet de ses trajets, y compris les
+    // departs passes : c'est son journal, pas une offre.
     const profile = await transporterService.getMine(currentUser.id);
     where.transporterId = profile.id;
     if (!status) delete where.status;
   } else {
     where.transporter = { verificationStatus: 'VERIFIED' };
+    // Un trajet en cours reste joignable ; un depart planifie devient caduc
+    // passe le delai de grace.
+    where.OR = [{ status: 'IN_PROGRESS' }, { departureAt: { gte: departureCutoff() } }];
   }
 
   if (latitude !== undefined && longitude !== undefined) {
@@ -117,7 +140,7 @@ async function list(filters = {}, currentUser = null) {
     }),
   ]);
 
-  const items =
+  const placed =
     latitude === undefined || longitude === undefined
       ? rows
       : rows
@@ -127,6 +150,11 @@ async function list(filters = {}, currentUser = null) {
           }))
           .filter((t) => t.distanceKm <= radiusKm)
           .sort((a, b) => a.distanceKm - b.distanceKm);
+
+  // Le transporteur doit pouvoir constater qu'un trajet n'est plus propose,
+  // sans avoir a deviner la regle appliquee par la recherche.
+  const cutoff = departureCutoff();
+  const items = isMine ? placed.map((t) => ({ ...t, visibleInSearch: isVisibleInSearch(t, cutoff) })) : placed;
 
   return { items, total, page, limit, pages: Math.ceil(total / limit) || 1 };
 }

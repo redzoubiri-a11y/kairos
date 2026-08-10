@@ -68,24 +68,52 @@ enum NotificationType {
 }
 
 model User {
-  id           String   @id @default(uuid())
-  email        String   @unique
-  passwordHash String
-  fullName     String
-  phone        String?
-  role         Role     @default(CLIENT)
-  isActive     Boolean  @default(true)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id                String    @id @default(uuid())
+  email             String    @unique
+  passwordHash      String
+  fullName          String
+  phone             String?
+  role              Role      @default(CLIENT)
+  isActive          Boolean   @default(true)
+  // Date du dernier changement, pour l'affichage et l'audit.
+  passwordChangedAt DateTime?
+  // Incremente a chaque changement de mot de passe et recopie dans le jeton :
+  // tout jeton portant une version anterieure est refuse. Une reinitialisation
+  // ferme donc les sessions ouvertes, au lieu de laisser un intrus connecte
+  // jusqu'aux sept jours de validite du jeton. Un compteur plutot qu'une
+  // comparaison de dates : `iat` est en secondes, un jeton emis dans la meme
+  // seconde que le changement aurait survecu.
+  tokenVersion      Int       @default(0)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
-  transporter      TransporterProfile?
-  clientMissions   Mission[]           @relation("ClientMissions")
-  sentMessages     ChatMessage[]
-  notifications    Notification[]
-  devices          DeviceToken[]
+  transporter    TransporterProfile?
+  clientMissions Mission[]           @relation("ClientMissions")
+  sentMessages   ChatMessage[]
+  notifications  Notification[]
+  devices        DeviceToken[]
+  resetCodes     PasswordResetCode[]
 
   @@index([role])
   @@map("users")
+}
+
+model PasswordResetCode {
+  id        String    @id @default(uuid())
+  userId    String
+  // Seule l'empreinte est conservee : une fuite de la base ne doit pas
+  // permettre de prendre la main sur les comptes.
+  codeHash  String
+  expiresAt DateTime
+  // Bornes les essais : un code a six chiffres se devine sinon.
+  attempts  Int       @default(0)
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("password_reset_codes")
 }
 
 model TransporterProfile {

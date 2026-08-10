@@ -205,6 +205,19 @@ export default function MyTrucksScreen({ navigation }) {
                 </View>
               ) : null}
 
+              {/* Le serveur ecarte de la carte les positions trop anciennes.
+                  Sans ce rappel, le transporteur se croirait visible. */}
+              {item.isAvailable && item.visibleOnMap === false ? (
+                <View style={styles.warning}>
+                  <Ionicons name="eye-off-outline" size={15} color={colors.warning} />
+                  <Text style={styles.warningText}>
+                    {item.lastPositionAt
+                      ? 'Position trop ancienne : votre camion n apparait plus sur la carte des clients. Diffusez votre position pour y revenir.'
+                      : 'Aucune position transmise : votre camion n apparait pas sur la carte des clients.'}
+                  </Text>
+                </View>
+              ) : null}
+
               <View style={styles.cardActions}>
                 <Button
                   title={item.isAvailable ? 'Rendre indisponible' : 'Rendre disponible'}
@@ -340,6 +353,21 @@ const styles = StyleSheet.create({
   trackingDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.success, marginRight: spacing.sm },
   trackingText: { ...typography.caption, color: colors.success, fontWeight: '600' },
   trackingButton: { marginTop: spacing.sm },
+  warning: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginTop: spacing.md,
+    padding: spacing.md,
+    borderRadius: radii.md,
+    backgroundColor: colors.warningSoft,
+  },
+  warningText: {
+    ...typography.caption,
+    color: colors.warning,
+    flex: 1,
+    marginLeft: spacing.sm,
+    lineHeight: 17,
+  },
   footer: {
     padding: spacing.lg,
     backgroundColor: colors.card,

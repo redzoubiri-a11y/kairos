@@ -1,4 +1,5 @@
 const prisma = require('../config/prisma');
+const env = require('../config/env');
 const ApiError = require('../utils/ApiError');
 const realtime = require('../websocket/realtime');
 const { distanceKm, boundingBox } = require('../utils/geo');
@@ -19,18 +20,43 @@ const TRUCK_INCLUDE = {
 async function create(userId, data) {
   const profile = await transporterService.getMine(userId);
   return prisma.truck.create({
-    data: { ...data, transporterId: profile.id },
+    data: {
+      ...data,
+      transporterId: profile.id,
+      // Une position declaree a l'inscription est datee comme une autre : sans
+      // cela elle n'aurait pas d'age et echapperait a la fenetre de fraicheur.
+      ...(data.latitude !== undefined && data.longitude !== undefined
+        ? { lastPositionAt: new Date() }
+        : {}),
+    },
     include: TRUCK_INCLUDE,
   });
 }
 
+// Meme regle que listAvailable, expose au transporteur : il doit pouvoir
+// constater que son camion a disparu de la carte, sans avoir a deviner le delai.
+function isPositionFresh(lastPositionAt, minutes = env.truckPositionTtlMinutes) {
+  if (!lastPositionAt) return false;
+  return Date.now() - new Date(lastPositionAt).getTime() <= minutes * 60_000;
+}
+
 async function listMine(userId) {
   const profile = await transporterService.getMine(userId);
-  return prisma.truck.findMany({
+  const trucks = await prisma.truck.findMany({
     where: { transporterId: profile.id },
     orderBy: { createdAt: 'desc' },
     include: TRUCK_INCLUDE,
   });
+
+  return trucks.map((truck) => ({
+    ...truck,
+    visibleOnMap:
+      truck.isAvailable &&
+      truck.latitude !== null &&
+      truck.longitude !== null &&
+      truck.transporter.verificationStatus === 'VERIFIED' &&
+      isPositionFresh(truck.lastPositionAt),
+  }));
 }
 
 async function assertOwned(userId, truckId) {
@@ -79,12 +105,29 @@ async function remove(userId, truckId) {
 }
 
 async function listAvailable(filters = {}) {
-  const { minVolumeM3, minCapacityKg, type, city, latitude, longitude, radiusKm = 50 } = filters;
+  const {
+    minVolumeM3,
+    minCapacityKg,
+    type,
+    city,
+    latitude,
+    longitude,
+    radiusKm = 50,
+    freshWithinMinutes,
+  } = filters;
+
+  // Le coeur de la promesse du produit : une position figee ne vaut pas une
+  // disponibilite. Sans cette fenetre, un camion apercu une fois il y a trois
+  // semaines restait affiche comme disponible, a une position qu'il a quittee
+  // depuis longtemps.
+  const freshness = freshWithinMinutes ?? env.truckPositionTtlMinutes;
+  const positionSince = new Date(Date.now() - freshness * 60_000);
 
   const where = {
     isAvailable: true,
     latitude: { not: null },
     longitude: { not: null },
+    lastPositionAt: { gte: positionSince },
     transporter: { verificationStatus: 'VERIFIED' },
     ...(minVolumeM3 ? { volumeM3: { gte: minVolumeM3 } } : {}),
     ...(minCapacityKg ? { capacityKg: { gte: minCapacityKg } } : {}),

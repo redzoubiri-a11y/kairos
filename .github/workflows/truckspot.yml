@@ -103,7 +103,7 @@ jobs:
       - run: npm run build
 
   mobile:
-    name: Mobile — bundle Expo
+    name: Mobile — tests et bundle Expo
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -119,6 +119,7 @@ jobs:
           cache-dependency-path: truckspot/frontend_mobile/package-lock.json
 
       - run: npm ci
+      - run: npm test
 
       # Resout et transpile l'integralite du graphe de modules : toute import
       # cassee ou erreur de syntaxe fait echouer le job.

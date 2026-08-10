@@ -6,6 +6,8 @@ export const authApi = {
   me: () => api.get('/auth/me').then((r) => r.data),
   updateProfile: (payload) => api.patch('/auth/me', payload).then((r) => r.data),
   changePassword: (payload) => api.post('/auth/change-password', payload).then((r) => r.data),
+  forgotPassword: (email) => api.post('/auth/forgot-password', { email }).then((r) => r.data),
+  resetPassword: (payload) => api.post('/auth/reset-password', payload).then((r) => r.data),
 };
 
 export const transporterApi = {

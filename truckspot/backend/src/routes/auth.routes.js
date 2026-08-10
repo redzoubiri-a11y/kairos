@@ -28,4 +28,17 @@ router.post(
   controller.changePassword
 );
 
+router.post(
+  '/forgot-password',
+  authLimiter,
+  validate(schemas.auth.forgotPassword),
+  controller.forgotPassword
+);
+router.post(
+  '/reset-password',
+  authLimiter,
+  validate(schemas.auth.resetPassword),
+  controller.resetPassword
+);
+
 module.exports = router;

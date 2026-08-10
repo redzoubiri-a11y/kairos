@@ -5,9 +5,19 @@ import Card from './Card';
 import Badge from './Badge';
 import { colors, spacing, typography } from '../theme';
 import { TRUCK_TYPE_LABELS } from '../utils/constants';
-import { formatDistance, formatVolume, formatWeight } from '../utils/format';
+import {
+  formatDistance,
+  formatRelative,
+  formatVolume,
+  formatWeight,
+  isPositionLive,
+} from '../utils/format';
 
 export default function TruckCard({ truck, onPress, style }) {
+  // Sans cette indication, une position d'il y a huit heures etait indiscernable
+  // de celle d'un camion qui roule : la carte promet du temps reel.
+  const live = isPositionLive(truck.lastPositionAt);
+
   return (
     <Card onPress={onPress} style={[styles.card, style]}>
       <View style={styles.header}>
@@ -36,9 +46,21 @@ export default function TruckCard({ truck, onPress, style }) {
         <Spec icon="location-outline" label="Base" value={truck.transporter?.city ?? '—'} />
       </View>
 
-      {truck.transporter?.verificationStatus === 'VERIFIED' ? (
-        <Badge status="VERIFIED" label="Transporteur verifie" style={styles.badge} />
-      ) : null}
+      <View style={styles.footer}>
+        {truck.transporter?.verificationStatus === 'VERIFIED' ? (
+          <Badge status="VERIFIED" label="Transporteur verifie" />
+        ) : (
+          <View />
+        )}
+        {truck.lastPositionAt ? (
+          <View style={styles.freshness}>
+            <View style={[styles.dot, live ? styles.dotLive : styles.dotIdle]} />
+            <Text style={styles.freshnessText}>
+              {live ? 'Position en direct' : `Position ${formatRelative(truck.lastPositionAt)}`}
+            </Text>
+          </View>
+        ) : null}
+      </View>
     </Card>
   );
 }
@@ -81,5 +103,15 @@ const styles = StyleSheet.create({
   spec: { flex: 1, alignItems: 'center' },
   specLabel: { ...typography.caption, color: colors.textMuted, marginTop: 4 },
   specValue: { ...typography.small, fontWeight: '700', color: colors.text, marginTop: 2 },
-  badge: { marginTop: spacing.md },
+  footer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: spacing.md,
+  },
+  freshness: { flexDirection: 'row', alignItems: 'center' },
+  dot: { width: 7, height: 7, borderRadius: 4, marginRight: 5 },
+  dotLive: { backgroundColor: colors.success },
+  dotIdle: { backgroundColor: colors.textMuted },
+  freshnessText: { ...typography.caption, color: colors.textMuted },
 });

@@ -159,14 +159,35 @@ async function updateStatus(user, missionId, status, reason) {
     });
 
     // Accepting consumes the declared free capacity of the trip.
+    //
+    // Le volume n'etait verifie qu'a la creation de la mission, alors que
+    // plusieurs demandes en attente coexistent sur un meme trajet sans rien
+    // consommer. Deux demandes de 15 m3 sur un trajet de 20 m3 libres passaient
+    // toutes les deux la creation, puis les deux acceptations : le trajet
+    // tombait a -10 m3 et le transporteur s'etait engage sur plus que son
+    // camion ne porte. La condition dans le `where` rend le controle atomique :
+    // deux acceptations simultanees ne peuvent pas la franchir ensemble.
     if (status === 'ACCEPTED' && next.tripId) {
-      await tx.trip.update({
-        where: { id: next.tripId },
+      const { count } = await tx.trip.updateMany({
+        where: {
+          id: next.tripId,
+          freeVolumeM3: { gte: next.volumeM3 },
+          freeWeightKg: { gte: next.weightKg },
+        },
         data: {
           freeVolumeM3: { decrement: next.volumeM3 },
           freeWeightKg: { decrement: next.weightKg },
         },
       });
+
+      if (count === 0) {
+        const trip = await tx.trip.findUnique({ where: { id: next.tripId } });
+        throw ApiError.badRequest(
+          `Capacite insuffisante sur ce trajet : il reste ${trip.freeVolumeM3} m3 et ` +
+            `${trip.freeWeightKg} kg, la mission en demande ${next.volumeM3} m3 et ` +
+            `${next.weightKg} kg. Annulez ou terminez une mission acceptee pour liberer de la place.`
+        );
+      }
     }
 
     // Cancelling after acceptance gives that capacity back.

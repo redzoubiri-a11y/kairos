@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
+  ActivityIndicator,
   FlatList,
   KeyboardAvoidingView,
   Platform,
@@ -18,7 +19,7 @@ import EmptyState from '../components/EmptyState';
 import ErrorBanner from '../components/ErrorBanner';
 import { useChatStore } from '../store/chatStore';
 import { useAuthStore } from '../store/authStore';
-import { emit } from '../api/socket';
+import { joinMission, leaveMission } from '../api/socket';
 import { colors, radii, spacing, typography } from '../theme';
 
 export default function ChatScreen({ navigation, route }) {
@@ -28,10 +29,13 @@ export default function ChatScreen({ navigation, route }) {
 
   const messages = useChatStore((s) => s.threads[missionId] ?? []);
   const loading = useChatStore((s) => s.loading);
+  const loadingOlder = useChatStore((s) => s.loadingOlder);
+  const hasOlder = useChatStore((s) => s.hasMore[missionId] ?? false);
   const sending = useChatStore((s) => s.sending);
   const error = useChatStore((s) => s.error);
   const typingIn = useChatStore((s) => s.typingIn);
   const loadHistory = useChatStore((s) => s.loadHistory);
+  const loadOlder = useChatStore((s) => s.loadOlder);
   const send = useChatStore((s) => s.send);
   const notifyTyping = useChatStore((s) => s.notifyTyping);
 
@@ -39,17 +43,19 @@ export default function ChatScreen({ navigation, route }) {
 
   useEffect(() => {
     loadHistory(missionId);
-    emit('mission:join', missionId);
-    return () => emit('mission:leave', missionId);
+    joinMission(missionId);
+    return () => leaveMission(missionId);
   }, [missionId, loadHistory]);
 
+  // On suit le dernier message et non le nombre : charger les messages
+  // precedents allonge aussi la liste, et ramener l'utilisateur en bas
+  // annulerait justement ce qu'il vient de demander.
+  const lastMessageId = messages.length ? messages[messages.length - 1].id : null;
   useEffect(() => {
-    if (messages.length) {
-      const timer = setTimeout(() => listRef.current?.scrollToEnd({ animated: true }), 80);
-      return () => clearTimeout(timer);
-    }
-    return undefined;
-  }, [messages.length]);
+    if (!lastMessageId) return undefined;
+    const timer = setTimeout(() => listRef.current?.scrollToEnd({ animated: true }), 80);
+    return () => clearTimeout(timer);
+  }, [lastMessageId]);
 
   const onSend = useCallback(async () => {
     const content = draft.trim();
@@ -80,6 +86,21 @@ export default function ChatScreen({ navigation, route }) {
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => <ChatBubble message={item} isMine={item.senderId === user?.id} />}
             contentContainerStyle={styles.list}
+            ListHeaderComponent={
+              hasOlder ? (
+                <Pressable
+                  onPress={() => loadOlder(missionId)}
+                  disabled={loadingOlder}
+                  style={styles.loadOlder}
+                >
+                  {loadingOlder ? (
+                    <ActivityIndicator color={colors.primaryDark} />
+                  ) : (
+                    <Text style={styles.loadOlderLabel}>Charger les messages precedents</Text>
+                  )}
+                </Pressable>
+              ) : null
+            }
             ListEmptyComponent={
               <EmptyState
                 icon="chatbubbles-outline"
@@ -87,7 +108,6 @@ export default function ChatScreen({ navigation, route }) {
                 message="Ecrivez le premier message pour organiser le chargement."
               />
             }
-            onContentSizeChange={() => listRef.current?.scrollToEnd({ animated: false })}
           />
         )}
 
@@ -127,6 +147,8 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.cardMuted },
   flex: { flex: 1 },
   list: { paddingVertical: spacing.lg, flexGrow: 1 },
+  loadOlder: { alignItems: 'center', paddingBottom: spacing.md },
+  loadOlderLabel: { ...typography.small, fontWeight: '700', color: colors.primaryDark },
   typing: { ...typography.caption, color: colors.textMuted, paddingHorizontal: spacing.lg, paddingBottom: 4 },
   composer: {
     backgroundColor: colors.card,

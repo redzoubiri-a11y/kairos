@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import ScreenHeader from '../components/ScreenHeader';
@@ -28,9 +28,13 @@ export default function MissionsReceivedScreen({ navigation }) {
   const statusFilter = useMissionStore((s) => s.statusFilter);
   const setStatusFilter = useMissionStore((s) => s.setStatusFilter);
   const load = useMissionStore((s) => s.load);
+  const loadMore = useMissionStore((s) => s.loadMore);
+  const loadingMore = useMissionStore((s) => s.loadingMore);
+  const total = useMissionStore((s) => s.total);
   const updateStatus = useMissionStore((s) => s.updateStatus);
 
   const [acting, setActing] = useState(null);
+  const [actionError, setActionError] = useState(null);
 
   useEffect(() => {
     setStatusFilter('PENDING');
@@ -42,10 +46,16 @@ export default function MissionsReceivedScreen({ navigation }) {
     }, [load])
   );
 
+  // Sans ce catch, un refus du serveur — capacite insuffisante sur le trajet,
+  // mission deja traitee ailleurs — n'affichait rien du tout : le bouton
+  // s'arretait de tourner et le transporteur ignorait pourquoi.
   const respond = async (missionId, status) => {
     setActing(`${missionId}:${status}`);
+    setActionError(null);
     try {
       await updateStatus(missionId, status);
+    } catch (err) {
+      setActionError(err.message);
     } finally {
       setActing(null);
     }
@@ -53,7 +63,7 @@ export default function MissionsReceivedScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <ScreenHeader title="Missions recues" subtitle={`${items.length} demande(s)`} />
+      <ScreenHeader title="Missions recues" subtitle={`${total} demande(s)`} />
       <SegmentedControl options={FILTERS} value={statusFilter} onChange={setStatusFilter} />
 
       {loading && items.length === 0 ? (
@@ -64,9 +74,26 @@ export default function MissionsReceivedScreen({ navigation }) {
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.list}
           refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={() => load({ refreshing: true })} />
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={() => {
+                setActionError(null);
+                load({ refreshing: true });
+              }}
+            />
           }
-          ListHeaderComponent={error ? <ErrorBanner message={error} onRetry={load} /> : null}
+          onEndReached={loadMore}
+          onEndReachedThreshold={0.4}
+          ListFooterComponent={loadingMore ? <ActivityIndicator style={styles.footer} color={colors.primary} /> : null}
+          ListHeaderComponent={
+            actionError ? (
+              // Pas de « Reessayer » : le transporteur relance en retouchant le
+              // bouton de la mission concernee, pas en rechargeant la liste.
+              <ErrorBanner message={actionError} />
+            ) : error ? (
+              <ErrorBanner message={error} onRetry={load} />
+            ) : null
+          }
           renderItem={({ item }) => (
             <View>
               <MissionCard
@@ -116,6 +143,7 @@ export default function MissionsReceivedScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.cardMuted },
   list: { padding: spacing.lg, flexGrow: 1 },
+  footer: { paddingVertical: spacing.lg },
   quickActions: { flexDirection: 'row', marginTop: -spacing.sm, marginBottom: spacing.lg },
   quickAction: { flex: 1, marginRight: spacing.sm },
   quickActionLast: { marginRight: 0 },

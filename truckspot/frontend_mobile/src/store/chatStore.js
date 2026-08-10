@@ -2,24 +2,65 @@ import { create } from 'zustand';
 import { chatApi } from '../api/endpoints';
 import { emit } from '../api/socket';
 
+const PAGE_SIZE = 50;
+
 export const useChatStore = create((set, get) => ({
   // { [missionId]: Message[] }
   threads: {},
+  // { [missionId]: boolean } — une page pleine laisse supposer un debut de
+  // conversation encore non charge.
+  hasMore: {},
   loading: false,
+  loadingOlder: false,
   sending: false,
   error: null,
   typingIn: null,
 
   messagesFor: (missionId) => get().threads[missionId] ?? [],
 
+  hasMoreFor: (missionId) => get().hasMore[missionId] ?? false,
+
   loadHistory: async (missionId) => {
     set({ loading: true, error: null });
     try {
-      const items = await chatApi.history(missionId, { limit: 100 });
-      set({ threads: { ...get().threads, [missionId]: items }, loading: false });
+      const items = await chatApi.history(missionId, { limit: PAGE_SIZE });
+      set({
+        threads: { ...get().threads, [missionId]: items },
+        hasMore: { ...get().hasMore, [missionId]: items.length === PAGE_SIZE },
+        loading: false,
+      });
       chatApi.markRead(missionId).catch(() => {});
     } catch (error) {
       set({ error: error.message, loading: false });
+    }
+  },
+
+  // Le serveur accepte un curseur `before` mais rien ne s'en servait : au-dela
+  // de PAGE_SIZE messages, le debut de la conversation etait perdu.
+  loadOlder: async (missionId) => {
+    const thread = get().threads[missionId] ?? [];
+    if (get().loadingOlder || !get().hasMore[missionId] || thread.length === 0) return;
+
+    set({ loadingOlder: true });
+    try {
+      const older = await chatApi.history(missionId, {
+        limit: PAGE_SIZE,
+        before: thread[0].createdAt,
+      });
+
+      // Un message recu pendant l'appel s'est ajoute en fin de fil : on compare
+      // a l'etat courant, pas a celui d'avant la requete.
+      const current = get().threads[missionId] ?? [];
+      const known = new Set(current.map((m) => m.id));
+      const fresh = older.filter((m) => !known.has(m.id));
+
+      set({
+        threads: { ...get().threads, [missionId]: [...fresh, ...current] },
+        hasMore: { ...get().hasMore, [missionId]: older.length === PAGE_SIZE },
+        loadingOlder: false,
+      });
+    } catch (error) {
+      set({ error: error.message, loadingOlder: false });
     }
   },
 
@@ -45,6 +86,25 @@ export const useChatStore = create((set, get) => ({
     }
   },
 
+  // Le serveur emet chat:read quand l'autre partie ouvre la conversation. La
+  // double coche existait deja dans la bulle mais rien ne l'allumait en direct :
+  // il fallait quitter l'ecran et revenir pour la voir apparaitre.
+  applyRead: (missionId, readerId) => {
+    const thread = get().threads[missionId];
+    if (!thread) return;
+
+    const now = new Date().toISOString();
+    let changed = false;
+    const next = thread.map((message) => {
+      // Le lecteur ne s'accuse pas reception a lui-meme.
+      if (message.readAt || message.senderId === readerId) return message;
+      changed = true;
+      return { ...message, readAt: now };
+    });
+
+    if (changed) set({ threads: { ...get().threads, [missionId]: next } });
+  },
+
   notifyTyping: (missionId) => emit('chat:typing', { missionId }),
 
   setTypingIn: (missionId) => {
@@ -56,7 +116,9 @@ export const useChatStore = create((set, get) => ({
 
   clearThread: (missionId) => {
     const threads = { ...get().threads };
+    const hasMore = { ...get().hasMore };
     delete threads[missionId];
-    set({ threads });
+    delete hasMore[missionId];
+    set({ threads, hasMore });
   },
 }));

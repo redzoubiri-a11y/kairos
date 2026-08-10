@@ -6,7 +6,7 @@ import Card from '../components/Card';
 import Input from '../components/Input';
 import Button from '../components/Button';
 import ErrorBanner from '../components/ErrorBanner';
-import { authApi, API_URL } from '../api/endpoints';
+import { API_URL } from '../api/endpoints';
 import { useAuthStore } from '../store/authStore';
 import { colors, spacing, typography } from '../theme';
 
@@ -14,6 +14,7 @@ export default function SettingsScreen({ navigation }) {
   const user = useAuthStore((s) => s.user);
   const updateProfile = useAuthStore((s) => s.updateProfile);
   const signOut = useAuthStore((s) => s.signOut);
+  const changePassword = useAuthStore((s) => s.changePassword);
 
   const [fullName, setFullName] = useState(user?.fullName ?? '');
   const [phone, setPhone] = useState(user?.phone ?? '');
@@ -49,7 +50,7 @@ export default function SettingsScreen({ navigation }) {
     setPasswordError(null);
     setPasswordMessage(null);
     try {
-      await authApi.changePassword({ currentPassword, newPassword });
+      await changePassword({ currentPassword, newPassword });
       setCurrentPassword('');
       setNewPassword('');
       setPasswordMessage('Mot de passe modifie.');

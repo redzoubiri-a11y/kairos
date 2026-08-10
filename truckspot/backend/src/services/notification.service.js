@@ -22,9 +22,16 @@ async function push({ userId, type, title, body, data }) {
   return notification;
 }
 
-function list(userId, { unreadOnly = false, take = 50 } = {}) {
+// `before` prend le createdAt de la plus ancienne notification deja affichee :
+// sans lui, la liste s'arretait a `take` et les plus anciennes etaient
+// inatteignables.
+function list(userId, { unreadOnly = false, take = 50, before } = {}) {
   return prisma.notification.findMany({
-    where: { userId, ...(unreadOnly ? { readAt: null } : {}) },
+    where: {
+      userId,
+      ...(unreadOnly ? { readAt: null } : {}),
+      ...(before ? { createdAt: { lt: before } } : {}),
+    },
     orderBy: { createdAt: 'desc' },
     take,
   });

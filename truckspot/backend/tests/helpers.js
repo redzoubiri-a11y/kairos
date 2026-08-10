@@ -205,6 +205,10 @@ function connectSocket(token) {
     });
     socket.on('connect_error', (err) => {
       clearTimeout(timer);
+      // Sans cela la socket continue de se reconnecter en boucle et retient le
+      // processus : une suite qui eprouve un refus de handshake ne rendait
+      // jamais la main.
+      socket.disconnect();
       reject(err);
     });
   });

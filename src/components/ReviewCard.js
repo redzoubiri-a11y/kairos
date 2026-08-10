@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import { supabase } from '../../supabase';
-import { colors, typography, spacing, radius } from '../theme';
+import { colors, typography, spacing, radius, alpha } from '../theme';
 import { formatDate, initials, avatarColor } from '../hooks/useProAvis';
 
 export default function ReviewCard({ review, onSaveResponse, onApprove, onReject }) {
@@ -119,11 +119,11 @@ export default function ReviewCard({ review, onSaveResponse, onApprove, onReject
 
 const s = StyleSheet.create({
   card:           { backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, marginHorizontal: spacing.xl, marginBottom: spacing.lg, padding: spacing.xl, gap: spacing.lg },
-  cardPending:    { borderColor: 'rgba(232,160,69,0.4)', borderLeftWidth: 3, borderLeftColor: colors.accent },
+  cardPending:    { borderColor: alpha(colors.amber, 0.4), borderLeftWidth: 3, borderLeftColor: colors.accent },
   pendingBanner:  { backgroundColor: colors.accentSoft, borderRadius: radius.md, paddingVertical: spacing.sm, paddingHorizontal: spacing.md, alignItems: 'center' },
   pendingBannerTxt: { color: colors.accent, fontSize: typography.size.caption, fontWeight: typography.weight.regular },
   moderateRow:    { flexDirection: 'row', gap: spacing.md },
-  rejectBtn:      { flex: 1, padding: spacing.md, borderRadius: radius.lg, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(224,90,90,0.35)', backgroundColor: 'rgba(224,90,90,0.08)' },
+  rejectBtn:      { flex: 1, padding: spacing.md, borderRadius: radius.lg, alignItems: 'center', borderWidth: 1, borderColor: alpha(colors.red, 0.35), backgroundColor: alpha(colors.red, 0.08) },
   rejectTxt:      { color: colors.red, fontSize: typography.size.body },
   approveBtn:     { flex: 2, padding: spacing.md, borderRadius: radius.lg, alignItems: 'center', backgroundColor: colors.green },
   approveTxt:     { color: colors.bg, fontSize: typography.size.body, fontWeight: typography.weight.bold },

@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { colors, typography, spacing, radius } from '../theme';
+import { colors, typography, spacing, radius, alpha } from '../theme';
 import ResaBadge from './ResaBadge';
 import { statusCfg, daysUntil, fmtLong } from '../hooks/useReservations';
 
@@ -94,17 +94,17 @@ export default function NextResaCard({ r, onCancel, onViewRestaurant, onEdit }) 
 }
 
 const s = StyleSheet.create({
-  card:          { marginHorizontal: spacing.xl, backgroundColor: colors.card, borderRadius: radius.pill, borderWidth:1, borderColor:'rgba(232,160,69,0.2)', overflow:'hidden', marginBottom: spacing.md },
+  card:          { marginHorizontal: spacing.xl, backgroundColor: colors.card, borderRadius: radius.pill, borderWidth:1, borderColor: alpha(colors.amber, 0.2), overflow:'hidden', marginBottom: spacing.md },
   photoWrap:     { height:200, position:'relative' },
   photo:         { ...StyleSheet.absoluteFillObject },
-  photoOverlay:  { ...StyleSheet.absoluteFillObject, backgroundColor:'rgba(15,13,11,0.45)' },
+  photoOverlay:  { ...StyleSheet.absoluteFillObject, backgroundColor: alpha(colors.ink, 0.45) },
   photoTop:      { position:'absolute', top: spacing.xl, left: spacing.xl, right: spacing.xl, flexDirection:'row', justifyContent:'space-between', alignItems:'center' },
-  ratingPill:    { backgroundColor:'rgba(15,13,11,0.72)', borderRadius: radius.full, paddingHorizontal: spacing.md, paddingVertical: spacing.sm, borderWidth:1, borderColor:'rgba(232,160,69,0.4)' },
+  ratingPill:    { backgroundColor: alpha(colors.ink, 0.72), borderRadius: radius.full, paddingHorizontal: spacing.md, paddingVertical: spacing.sm, borderWidth:1, borderColor: alpha(colors.amber, 0.4) },
   ratingTxt:     { color: colors.accent, fontSize: typography.size.caption, fontWeight: typography.weight.medium },
-  photoBottom:   { position:'absolute', bottom:0, left:0, right:0, padding: spacing.xl, backgroundColor:'rgba(15,13,11,0.65)' },
-  photoCuisine:  { color:'rgba(232,160,69,0.85)', fontSize: typography.size.xs, letterSpacing:2.5, marginBottom:3 },
+  photoBottom:   { position:'absolute', bottom:0, left:0, right:0, padding: spacing.xl, backgroundColor: alpha(colors.ink, 0.65) },
+  photoCuisine:  { color: alpha(colors.amber, 0.85), fontSize: typography.size.xs, letterSpacing:2.5, marginBottom:3 },
   photoName:     { color: colors.text, fontSize: typography.size.title, fontWeight: typography.weight.regular, letterSpacing:0.3, marginBottom:2 },
-  photoQuartier: { color:'rgba(240,235,227,0.65)', fontSize: typography.size.caption },
+  photoQuartier: { color: alpha(colors.sand, 0.65), fontSize: typography.size.caption },
   body:          { padding: spacing.xl, gap: spacing.lg },
   countdown:     { flexDirection:'row', alignItems:'center', justifyContent:'space-between', borderWidth:1, borderRadius: radius.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.lg },
   countdownLabel:{ fontSize: typography.size.subheading, fontWeight: typography.weight.medium },
@@ -119,10 +119,10 @@ const s = StyleSheet.create({
   noteLbl:       { color: colors.textMuted, fontSize: typography.size.sm, letterSpacing:1, marginBottom: spacing.xs },
   noteTxt:       { color: colors.text, fontSize: typography.size.bodyLg, fontWeight: typography.weight.regular, lineHeight:18 },
   actions:       { gap: spacing.md },
-  viewBtn:       { backgroundColor: colors.blueSoft, borderWidth:1, borderColor:'rgba(90,155,224,0.25)', borderRadius: radius.lg, paddingVertical: spacing.lg, alignItems:'center' },
+  viewBtn:       { backgroundColor: colors.blueSoft, borderWidth:1, borderColor: alpha(colors.blue, 0.25), borderRadius: radius.lg, paddingVertical: spacing.lg, alignItems:'center' },
   viewBtnTxt:    { color: colors.blue, fontSize: typography.size.bodyLg },
-  editBtn:       { borderWidth:1, borderColor:'rgba(90,155,224,0.3)', borderRadius: radius.lg, paddingVertical: spacing.lg, alignItems:'center', backgroundColor: colors.blueSoft },
+  editBtn:       { borderWidth:1, borderColor: alpha(colors.blue, 0.3), borderRadius: radius.lg, paddingVertical: spacing.lg, alignItems:'center', backgroundColor: colors.blueSoft },
   editTxt:       { color: colors.blue, fontSize: typography.size.bodyLg },
-  cancelBtn:     { borderWidth:1, borderColor:'rgba(224,90,90,0.3)', borderRadius: radius.lg, paddingVertical: spacing.lg, alignItems:'center', backgroundColor: colors.redSoft },
+  cancelBtn:     { borderWidth:1, borderColor: alpha(colors.red, 0.3), borderRadius: radius.lg, paddingVertical: spacing.lg, alignItems:'center', backgroundColor: colors.redSoft },
   cancelTxt:     { color: colors.red, fontSize: typography.size.bodyLg },
 });

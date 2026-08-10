@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { colors, typography, spacing, radius } from '../theme';
+import { colors, typography, spacing, radius, alpha } from '../theme';
 import ResaBadge from './ResaBadge';
 import { statusCfg, fmtShort } from '../hooks/useReservations';
 
@@ -55,7 +55,7 @@ const s = StyleSheet.create({
   note:         { color: colors.textDim, fontSize: typography.size.sm },
   actions:      { flexDirection:'row', flexWrap:'wrap', gap: spacing.lg, marginTop: spacing.xs },
   reBook:       { color: colors.blue, fontSize: typography.size.caption },
-  reviewBtn:    { backgroundColor: colors.goldSoft, borderRadius: radius.md, paddingHorizontal: spacing.md, paddingVertical: spacing.xxs, borderWidth:1, borderColor:'rgba(200,151,90,0.4)', shadowColor: colors.shadow, shadowOpacity:0.3, shadowRadius:6, shadowOffset:{ width:0, height:0 }, elevation:3 },
+  reviewBtn:    { backgroundColor: colors.goldSoft, borderRadius: radius.md, paddingHorizontal: spacing.md, paddingVertical: spacing.xxs, borderWidth:1, borderColor: alpha(colors.gold, 0.4), shadowColor: colors.shadow, shadowOpacity:0.3, shadowRadius:6, shadowOffset:{ width:0, height:0 }, elevation:3 },
   reviewBtnTxt: { color: colors.accent, fontSize: typography.size.caption, fontWeight: typography.weight.regular },
   reviewed:     { color: colors.green, fontSize: typography.size.caption },
   pending:      { color: colors.textMuted, fontSize: typography.size.caption, fontStyle: 'italic' },

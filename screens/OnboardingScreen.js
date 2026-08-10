@@ -3,7 +3,7 @@ import {
   View, Text, StyleSheet, TouchableOpacity, Animated, Linking,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors, typography, spacing, radius } from '../src/theme';
+import { colors, typography, spacing, radius, alpha } from '../src/theme';
 import useOnboarding, { SLIDES, TOTAL } from '../src/hooks/useOnboarding';
 import CGUModal from '../src/components/CGUModal';
 
@@ -94,7 +94,7 @@ export default function OnboardingScreen({ onSelect, onGuest }) {
         </View>
 
         <TouchableOpacity style={[s.roleCard, s.roleCardClient]} onPress={goClient} activeOpacity={0.82}>
-          <View style={[s.roleIconWrap, { backgroundColor: colors.blueSoft, borderColor: 'rgba(90,155,224,0.3)' }]}>
+          <View style={[s.roleIconWrap, { backgroundColor: colors.blueSoft, borderColor: alpha(colors.blue, 0.3) }]}>
             <Text style={s.roleEmoji}>🍽️</Text>
           </View>
           <View style={{ flex: 1 }}>
@@ -118,7 +118,7 @@ export default function OnboardingScreen({ onSelect, onGuest }) {
         </View>
 
         <TouchableOpacity style={[s.roleCard, s.roleCardPro]} onPress={goPro} activeOpacity={0.82}>
-          <View style={[s.roleIconWrap, { backgroundColor: colors.accentSoft, borderColor: 'rgba(232,160,69,0.3)' }]}>
+          <View style={[s.roleIconWrap, { backgroundColor: colors.accentSoft, borderColor: alpha(colors.amber, 0.3) }]}>
             <Text style={s.roleEmoji}>📊</Text>
           </View>
           <View style={{ flex: 1 }}>
@@ -126,7 +126,7 @@ export default function OnboardingScreen({ onSelect, onGuest }) {
             <Text style={s.roleDesc}>Gérer mes réservations et ma visibilité sur Mida</Text>
             <View style={s.roleChips}>
               {['Dashboard', 'Comptoir'].map((t, i) => (
-                <View key={i} style={[s.roleChipSmall, { borderColor: 'rgba(232,160,69,0.3)', backgroundColor: colors.accentSoft }]}>
+                <View key={i} style={[s.roleChipSmall, { borderColor: alpha(colors.amber, 0.3), backgroundColor: colors.accentSoft }]}>
                   <Text style={[s.roleChipTxt, { color: colors.accent }]}>{t}</Text>
                 </View>
               ))}
@@ -182,7 +182,7 @@ const s = StyleSheet.create({
 
   cityCards:       { gap: spacing.lg },
   cityCard:        { flexDirection: 'row', alignItems: 'center', gap: spacing.xl, backgroundColor: colors.card, borderRadius: radius.xxl - 2, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.xl },
-  cityCardOn:      { borderColor: colors.gold, backgroundColor: 'rgba(200,151,90,0.12)', shadowColor: colors.shadow, shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
+  cityCardOn:      { borderColor: colors.gold, backgroundColor: alpha(colors.gold, 0.12), shadowColor: colors.shadow, shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
   cityEmojiWrap:   { width: 48, height: 48, borderRadius: radius.lg, backgroundColor: colors.cardBorder, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   cityEmojiWrapOn: { backgroundColor: colors.accentSoft },
   cityEmoji:       { fontSize: 24 },
@@ -197,8 +197,8 @@ const s = StyleSheet.create({
   cityUncheck:     { width: 26, height: 26, borderRadius: 0, borderWidth: 1.5, borderColor: colors.textDim, flexShrink: 0 },
 
   roleCard:      { flexDirection: 'row', alignItems: 'center', gap: spacing.xl, backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.xxl - 2 },
-  roleCardClient:{ borderColor: 'rgba(90,155,224,0.3)' },
-  roleCardPro:   { borderColor: 'rgba(200,151,90,0.4)', backgroundColor: 'rgba(200,151,90,0.12)', shadowColor: colors.shadow, shadowOpacity: 0.3, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 4 },
+  roleCardClient:{ borderColor: alpha(colors.blue, 0.3) },
+  roleCardPro:   { borderColor: alpha(colors.gold, 0.4), backgroundColor: alpha(colors.gold, 0.12), shadowColor: colors.shadow, shadowOpacity: 0.3, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 4 },
   roleIconWrap:  { width: 52, height: 52, borderRadius: radius.lg + 1, borderWidth: 1, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   roleEmoji:     { fontSize: 24 },
   roleTitle:     { color: colors.text, fontSize: typography.size.heading3, fontWeight: typography.weight.medium, marginBottom: spacing.xs },

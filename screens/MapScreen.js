@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Location from 'expo-location';
-import { colors, typography, spacing, radius } from '../src/theme';
+import { colors, typography, spacing, radius, alpha } from '../src/theme';
 import useMapScreen, { INITIAL_REGION, CUISINE_EMOJI, getCoordinate } from '../src/hooks/useMapScreen';
 
 let MapView, Marker;
@@ -49,7 +49,7 @@ export default function MapScreen({ navigation }) {
           {loading ? (
             <ActivityIndicator color={colors.accent} />
           ) : (
-            <View style={{ backgroundColor: colors.accentSoft, borderRadius: 0, borderWidth: 1, borderColor: 'rgba(232,160,69,0.3)', padding: 14, width: '100%' }}>
+            <View style={{ backgroundColor: colors.accentSoft, borderRadius: 0, borderWidth: 1, borderColor: alpha(colors.amber, 0.3), padding: 14, width: '100%' }}>
               <Text style={{ color: colors.accent, fontSize: 11, letterSpacing: 2, marginBottom: 8 }}>RESTAURANTS DISPONIBLES</Text>
               {restaurants.slice(0, 6).map(r => (
                 <TouchableOpacity
@@ -163,7 +163,7 @@ const s = StyleSheet.create({
 
   pin: {
     width: 38, height: 38, borderRadius: 0,
-    backgroundColor: 'rgba(15,13,11,0.9)',
+    backgroundColor: alpha(colors.ink, 0.9),
     borderWidth: 2, borderColor: colors.cardBorder,
     alignItems: 'center', justifyContent: 'center',
   },
@@ -180,18 +180,18 @@ const s = StyleSheet.create({
   header: {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
     marginHorizontal: spacing.xl, marginTop: spacing.lg,
-    backgroundColor: 'rgba(15,13,11,0.92)',
+    backgroundColor: alpha(colors.ink, 0.92),
     borderRadius: radius.xxl, paddingHorizontal: spacing.xxl, paddingVertical: spacing.lg,
     borderWidth: 1, borderColor: colors.cardBorder,
   },
   backBtn:    { marginRight: spacing.sm },
-  backBtnTxt: { color: 'rgba(240,235,227,0.85)', fontSize: 22 },
+  backBtnTxt: { color: alpha(colors.sand, 0.85), fontSize: 22 },
   headerSub:  { color: colors.textMuted, fontSize: typography.size.caption, marginTop: 1 },
   countBadge: {
     flexDirection: 'row', alignItems: 'center', gap: spacing.sm,
     backgroundColor: colors.accentSoft,
     borderRadius: radius.full, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm,
-    borderWidth: 1, borderColor: 'rgba(200,151,90,0.4)',
+    borderWidth: 1, borderColor: alpha(colors.gold, 0.4),
     shadowColor: colors.shadow, shadowOpacity: 0.25, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 3,
   },
   countDot: { width: 6, height: 6, borderRadius: 0, backgroundColor: colors.green },
@@ -199,7 +199,7 @@ const s = StyleSheet.create({
 
   spinner: {
     position: 'absolute', bottom: 140, alignSelf: 'center',
-    backgroundColor: 'rgba(15,13,11,0.92)',
+    backgroundColor: alpha(colors.ink, 0.92),
     borderRadius: radius.full, padding: spacing.lg,
   },
 
@@ -211,7 +211,7 @@ const s = StyleSheet.create({
     flex: 1, flexDirection: 'row', alignItems: 'center',
     backgroundColor: colors.card,
     borderRadius: radius.xxl, overflow: 'hidden',
-    borderWidth: 1, borderColor: 'rgba(232,160,69,0.3)',
+    borderWidth: 1, borderColor: alpha(colors.amber, 0.3),
     padding: spacing.xl, gap: spacing.lg,
   },
   cardThumb: {

@@ -1,6 +1,6 @@
 import { TouchableOpacity, View, Text, Image, StyleSheet } from 'react-native';
 import { Dimensions } from 'react-native';
-import { colors, typography, spacing, radius } from '../theme';
+import { colors, typography, spacing, radius, alpha } from '../theme';
 
 const SW     = Dimensions.get('window').width;
 const FEAT_W = SW * 0.78;
@@ -58,16 +58,16 @@ const s = StyleSheet.create({
   photo:      { ...StyleSheet.absoluteFillObject },
   content:    { flex: 1, justifyContent: 'space-between', padding: spacing.xl },
   topRow:     { flexDirection: 'row', justifyContent: 'space-between' },
-  openPill:   { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: 'rgba(0,0,0,0.45)', borderRadius: radius.card, paddingHorizontal: spacing.lg, paddingVertical: 5, borderWidth: 1, borderColor: 'rgba(76,175,130,0.4)' },
+  openPill:   { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: alpha(colors.black, 0.45), borderRadius: radius.card, paddingHorizontal: spacing.lg, paddingVertical: 5, borderWidth: 1, borderColor: alpha(colors.green, 0.4) },
   openDot:    { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.green },
   openTxt:    { color: colors.green, fontSize: typography.size.sm, fontWeight: typography.weight.medium },
-  ratingPill: { backgroundColor: 'rgba(0,0,0,0.45)', borderRadius: radius.card, paddingHorizontal: spacing.lg, paddingVertical: 5, borderWidth: 1, borderColor: 'rgba(245,200,66,0.5)' },
+  ratingPill: { backgroundColor: alpha(colors.black, 0.45), borderRadius: radius.card, paddingHorizontal: spacing.lg, paddingVertical: 5, borderWidth: 1, borderColor: alpha(colors.star, 0.5) },
   ratingTxt:  { color: colors.star, fontSize: typography.size.caption, fontWeight: typography.weight.semibold },
   bottomRow:    { flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' },
-  infoBox:      { backgroundColor: 'rgba(0,0,0,0.50)', paddingHorizontal: spacing.md, paddingVertical: spacing.sm, gap: 2, maxWidth: '62%', borderRadius: radius.sm },
-  infoTag:      { color: 'rgba(255,255,255,0.65)', fontSize: typography.size.xs, letterSpacing: 1.5, textTransform: 'uppercase' },
+  infoBox:      { backgroundColor: alpha(colors.black, 0.5), paddingHorizontal: spacing.md, paddingVertical: spacing.sm, gap: 2, maxWidth: '62%', borderRadius: radius.sm },
+  infoTag:      { color: alpha(colors.onDark, 0.65), fontSize: typography.size.xs, letterSpacing: 1.5, textTransform: 'uppercase' },
   infoName:     { color: colors.onDark, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium },
-  infoQuartier: { color: 'rgba(255,255,255,0.65)', fontSize: typography.size.xs },
+  infoQuartier: { color: alpha(colors.onDark, 0.65), fontSize: typography.size.xs },
   resaBtn:    { borderRadius: radius.card, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.primary },
   resaBtnTxt: { color: colors.bg, fontSize: typography.size.body, fontWeight: typography.weight.semibold, letterSpacing: 0.3 },
 });

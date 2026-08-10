@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
   promoText: {
     fontSize: typography.size.caption,
     fontWeight: typography.weight.extrabold,
-    color: '#000000',
+    color: colors.black,
   },
   overlay: {
     position: 'absolute',

@@ -6,7 +6,7 @@ import {
 } from 'react-native';
 import CGUModal from '../src/components/CGUModal';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors, typography, spacing, radius } from '../src/theme';
+import { colors, typography, spacing, radius, alpha } from '../src/theme';
 import useAuth from '../src/hooks/useAuth';
 
 function Field({ icon, label, children }) {
@@ -220,10 +220,10 @@ const s = StyleSheet.create({
   forgotTxt:  { color: colors.accent, fontSize: typography.size.caption, fontWeight: typography.weight.medium },
   forgotSent: { color: colors.green, fontSize: typography.size.caption, fontWeight: typography.weight.medium },
 
-  errorBox:       { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.md, backgroundColor: colors.redSoft, borderRadius: radius.lg, padding: spacing.lg, borderWidth: 1, borderColor: 'rgba(224,90,90,0.25)', marginBottom: spacing.xl },
+  errorBox:       { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.md, backgroundColor: colors.redSoft, borderRadius: radius.lg, padding: spacing.lg, borderWidth: 1, borderColor: alpha(colors.red, 0.25), marginBottom: spacing.xl },
   errorIcon:      { fontSize: typography.size.bodyLg },
   errorTxt:       { color: colors.red, fontSize: typography.size.body, lineHeight: 18, flex: 1 },
-  successBox:     { gap: spacing.md, backgroundColor: colors.greenSoft, borderRadius: radius.lg, padding: spacing.xl, borderWidth: 1, borderColor: 'rgba(76,175,130,0.25)', marginBottom: spacing.xl },
+  successBox:     { gap: spacing.md, backgroundColor: colors.greenSoft, borderRadius: radius.lg, padding: spacing.xl, borderWidth: 1, borderColor: alpha(colors.green, 0.25), marginBottom: spacing.xl },
   successRow:     { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.md },
   successIcon:    { fontSize: typography.size.bodyLg },
   successTxt:     { color: colors.green, fontSize: typography.size.body, lineHeight: 18, flex: 1 },
@@ -233,7 +233,7 @@ const s = StyleSheet.create({
   submitBtn: { backgroundColor: colors.primary, borderRadius: radius.xl, paddingVertical: spacing.xl - 2, alignItems: 'center', marginTop: spacing.xs, shadowColor: colors.primary, shadowOpacity: 0.4, shadowRadius: 14, shadowOffset: { width: 0, height: 0 }, elevation: 7 },
   submitTxt: { color: colors.bg, fontSize: typography.size.bodyLg, fontWeight: typography.weight.bold, letterSpacing: 0.5 },
 
-  roleBadge:    { alignSelf: 'center', flexDirection: 'row', alignItems: 'center', backgroundColor: colors.blueSoft, borderRadius: radius.pill, borderWidth: 1, borderColor: 'rgba(90,155,224,0.3)', paddingHorizontal: spacing.xl, paddingVertical: spacing.md, marginBottom: spacing.xl },
+  roleBadge:    { alignSelf: 'center', flexDirection: 'row', alignItems: 'center', backgroundColor: colors.blueSoft, borderRadius: radius.pill, borderWidth: 1, borderColor: alpha(colors.blue, 0.3), paddingHorizontal: spacing.xl, paddingVertical: spacing.md, marginBottom: spacing.xl },
   roleBadgeTxt: { color: colors.blue, fontSize: typography.size.body, fontWeight: typography.weight.medium, letterSpacing: 0.5 },
 
   proHint: { color: colors.textMuted, fontSize: typography.size.caption, lineHeight: 17, fontStyle: 'italic' },
@@ -241,7 +241,7 @@ const s = StyleSheet.create({
   legal:     { color: colors.textDim, fontSize: typography.size.sm, textAlign: 'center', lineHeight: 16 },
   legalLink: { color: colors.textMuted },
 
-  switchTypeBtn: { alignSelf: 'center', marginTop: spacing.xxl, paddingVertical: spacing.md, paddingHorizontal: spacing.xxl - 2, borderRadius: radius.lg, borderWidth: 1, borderColor: 'rgba(90,155,224,0.3)', backgroundColor: colors.blueSoft },
+  switchTypeBtn: { alignSelf: 'center', marginTop: spacing.xxl, paddingVertical: spacing.md, paddingHorizontal: spacing.xxl - 2, borderRadius: radius.lg, borderWidth: 1, borderColor: alpha(colors.blue, 0.3), backgroundColor: colors.blueSoft },
   switchTypeTxt: { color: colors.blue, fontSize: typography.size.body, fontWeight: typography.weight.medium, letterSpacing: 0.3 },
   guestBtn:      { alignSelf: 'center', marginTop: spacing.xl, paddingVertical: spacing.md, paddingHorizontal: spacing.xxl },
   guestTxt:      { color: colors.textMuted, fontSize: typography.size.bodyLg },

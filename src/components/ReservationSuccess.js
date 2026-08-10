@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
-import { colors, typography, spacing, radius } from '../theme';
+import { colors, typography, spacing, radius, alpha } from '../theme';
 
 export default function ReservationSuccess({ restaurant, date, heure, adults, onGoHome, onReset }) {
   return (
@@ -37,8 +37,8 @@ const s = StyleSheet.create({
   statusRow:    { flexDirection: 'row', alignItems: 'center', gap: spacing.md, backgroundColor: colors.card, borderRadius: radius.lg, padding: spacing.lg, borderWidth: 1, borderColor: colors.cardBorder, width: '100%' },
   dot:          { width: 7, height: 7, borderRadius: 0, backgroundColor: colors.accent },
   statusTxt:    { color: colors.textMuted, fontSize: typography.size.body, flex: 1 },
-  btnPrimary:   { width: '100%', borderRadius: radius.xxl, paddingVertical: 15, alignItems: 'center', overflow: 'hidden', justifyContent: 'center', backgroundColor: '#006233' },
+  btnPrimary:   { width: '100%', borderRadius: radius.xxl, paddingVertical: 15, alignItems: 'center', overflow: 'hidden', justifyContent: 'center', backgroundColor: colors.dzGreen },
   btnPrimaryTxt:{ color: colors.bg, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium, letterSpacing: 2 },
-  btnOutline:   { width: '100%', borderRadius: radius.xxl, paddingVertical: 15, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(200,151,90,0.3)', shadowColor: colors.shadow, shadowOpacity: 0.2, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 3 },
+  btnOutline:   { width: '100%', borderRadius: radius.xxl, paddingVertical: 15, alignItems: 'center', borderWidth: 1, borderColor: alpha(colors.gold, 0.3), shadowColor: colors.shadow, shadowOpacity: 0.2, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 3 },
   btnOutlineTxt:{ color: colors.textMuted, fontSize: typography.size.bodyLg },
 });

@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
-import { colors, typography, spacing, radius } from '../theme';
+import { colors, typography, spacing, radius, alpha } from '../theme';
 import { STATUS_CFG, clientName } from '../hooks/useComptoir';
 
 export default function ResaDetail({ resa, onConfirm, onCancel, onArrive, onNoShow, acting }) {
@@ -93,8 +93,8 @@ export default function ResaDetail({ resa, onConfirm, onCancel, onArrive, onNoSh
 
 const s = StyleSheet.create({
   empty:       { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing.lg },
-  emptyTitle:  { color: '#F5F2EC', fontSize: typography.size.heading2, fontWeight: '300' },
-  emptySub:    { color: 'rgba(245,242,236,0.45)', fontSize: typography.size.body },
+  emptyTitle:  { color: colors.ivory, fontSize: typography.size.heading2, fontWeight: '300' },
+  emptySub:    { color: alpha(colors.ivory, 0.45), fontSize: typography.size.body },
 
   content:     { padding: spacing.section, alignItems: 'center', paddingBottom: 60 },
 
@@ -102,33 +102,33 @@ const s = StyleSheet.create({
   statusTxt:   { fontSize: typography.size.caption, fontWeight: typography.weight.bold, letterSpacing: 2 },
 
   time:        { fontSize: 80, fontWeight: '100', letterSpacing: 2, lineHeight: 90 },
-  clientName:  { color: '#F5F2EC', fontSize: typography.size.title, fontWeight: '300', letterSpacing: 0.5, marginBottom: spacing.xxl },
+  clientName:  { color: colors.ivory, fontSize: typography.size.title, fontWeight: '300', letterSpacing: 0.5, marginBottom: spacing.xxl },
 
   metaRow:     { flexDirection: 'row', gap: spacing.xxxl, marginBottom: spacing.xxl },
   metaBox:     { alignItems: 'center' },
   metaVal:     { color: colors.primary, fontSize: 48, fontWeight: '200', lineHeight: 52 },
-  metaLbl:     { color: 'rgba(245,242,236,0.40)', fontSize: typography.size.xs, letterSpacing: 2, marginTop: spacing.xs },
+  metaLbl:     { color: alpha(colors.ivory, 0.4), fontSize: typography.size.xs, letterSpacing: 2, marginTop: spacing.xs },
 
-  notesBox:    { backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: radius.xl, borderWidth: 1, borderColor: 'rgba(255,255,255,0.10)', padding: spacing.xl, width: '100%', marginBottom: spacing.xxl },
-  notesLabel:  { color: 'rgba(245,242,236,0.45)', fontSize: typography.size.caption, letterSpacing: 1, marginBottom: spacing.md },
-  notesTxt:    { color: '#F5F2EC', fontSize: typography.size.bodyLg, lineHeight: 20 },
+  notesBox:    { backgroundColor: alpha(colors.onDark, 0.06), borderRadius: radius.xl, borderWidth: 1, borderColor: alpha(colors.onDark, 0.1), padding: spacing.xl, width: '100%', marginBottom: spacing.xxl },
+  notesLabel:  { color: alpha(colors.ivory, 0.45), fontSize: typography.size.caption, letterSpacing: 1, marginBottom: spacing.md },
+  notesTxt:    { color: colors.ivory, fontSize: typography.size.bodyLg, lineHeight: 20 },
 
   actions:       { width: '100%', gap: spacing.lg, marginTop: spacing.lg },
   acting:        { color: colors.primary, fontSize: 36, fontWeight: '200', textAlign: 'center' },
-  btnConfirm:    { backgroundColor: colors.greenSoft, borderRadius: radius.xl, borderWidth: 1.5, borderColor: 'rgba(76,175,130,0.5)', paddingVertical: spacing.xl, alignItems: 'center' },
+  btnConfirm:    { backgroundColor: colors.greenSoft, borderRadius: radius.xl, borderWidth: 1.5, borderColor: alpha(colors.green, 0.5), paddingVertical: spacing.xl, alignItems: 'center' },
   btnConfirmTxt: { color: colors.green, fontSize: typography.size.heading2, fontWeight: typography.weight.semibold, letterSpacing: 1.5 },
-  btnArrive:     { backgroundColor: colors.blueSoft, borderRadius: radius.xl, borderWidth: 1.5, borderColor: 'rgba(90,155,224,0.4)', paddingVertical: spacing.xl, alignItems: 'center' },
+  btnArrive:     { backgroundColor: colors.blueSoft, borderRadius: radius.xl, borderWidth: 1.5, borderColor: alpha(colors.blue, 0.4), paddingVertical: spacing.xl, alignItems: 'center' },
   btnArriveTxt:  { color: colors.blue, fontSize: typography.size.heading2, fontWeight: typography.weight.semibold, letterSpacing: 1.5 },
-  btnCancel:     { backgroundColor: colors.redSoft, borderRadius: radius.xl, borderWidth: 1.5, borderColor: 'rgba(224,90,90,0.35)', paddingVertical: spacing.xl, alignItems: 'center' },
+  btnCancel:     { backgroundColor: colors.redSoft, borderRadius: radius.xl, borderWidth: 1.5, borderColor: alpha(colors.red, 0.35), paddingVertical: spacing.xl, alignItems: 'center' },
   btnCancelTxt:  { color: colors.red, fontSize: typography.size.heading2, fontWeight: typography.weight.semibold, letterSpacing: 1.5 },
   finalBadge:    { borderRadius: radius.pill, borderWidth: 1.5, paddingHorizontal: spacing.xxl, paddingVertical: spacing.xl, alignSelf: 'center', marginTop: spacing.lg },
   finalTxt:      { fontSize: typography.size.heading3, fontWeight: typography.weight.semibold, letterSpacing: 2 },
 
-  noShowBadge:       { backgroundColor: 'rgba(232,160,69,0.12)', borderRadius: radius.lg, borderWidth: 1, borderColor: 'rgba(232,160,69,0.35)', paddingHorizontal: spacing.xxl, paddingVertical: spacing.md, marginBottom: spacing.xxl },
-  noShowBadgeDanger: { backgroundColor: 'rgba(224,90,90,0.12)', borderColor: 'rgba(224,90,90,0.40)' },
+  noShowBadge:       { backgroundColor: alpha(colors.amber, 0.12), borderRadius: radius.lg, borderWidth: 1, borderColor: alpha(colors.amber, 0.35), paddingHorizontal: spacing.xxl, paddingVertical: spacing.md, marginBottom: spacing.xxl },
+  noShowBadgeDanger: { backgroundColor: alpha(colors.red, 0.12), borderColor: alpha(colors.red, 0.4) },
   noShowTxt:         { color: colors.accent, fontSize: typography.size.caption, fontWeight: typography.weight.semibold, letterSpacing: 0.5 },
   noShowTxtDanger:   { color: colors.red },
 
-  btnNoShow:    { backgroundColor: 'rgba(245,242,236,0.06)', borderRadius: radius.xl, borderWidth: 1.5, borderColor: 'rgba(245,242,236,0.18)', paddingVertical: spacing.xl, alignItems: 'center' },
-  btnNoShowTxt: { color: 'rgba(245,242,236,0.55)', fontSize: typography.size.heading2, fontWeight: typography.weight.semibold, letterSpacing: 1.5 },
+  btnNoShow:    { backgroundColor: alpha(colors.ivory, 0.06), borderRadius: radius.xl, borderWidth: 1.5, borderColor: alpha(colors.ivory, 0.18), paddingVertical: spacing.xl, alignItems: 'center' },
+  btnNoShowTxt: { color: alpha(colors.ivory, 0.55), fontSize: typography.size.heading2, fontWeight: typography.weight.semibold, letterSpacing: 1.5 },
 });

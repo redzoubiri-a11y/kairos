@@ -5,7 +5,7 @@ import {
   Image, ActivityIndicator,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { colors, typography, spacing, radius } from '../theme';
+import { colors, typography, spacing, radius, alpha } from '../theme';
 import { supabase } from '../../supabase';
 
 function ToggleRow({ label, sub, value, onChange }) {
@@ -125,7 +125,7 @@ export default function DishForm({ initial, categories, isEdit, restaurantId, on
                   <Image source={{ uri: form.photo }} style={f.photoImg} resizeMode="cover" />
                   <View style={f.photoOverlay}>
                     {uploading
-                      ? <ActivityIndicator color="#fff" size="small" />
+                      ? <ActivityIndicator color={colors.onDark} size="small" />
                       : <Text style={f.photoOverlayTxt}>📷  Changer</Text>
                     }
                   </View>
@@ -256,7 +256,7 @@ export default function DishForm({ initial, categories, isEdit, restaurantId, on
 
 const s = StyleSheet.create({
   header:      { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xxl, paddingTop: spacing.xl, paddingBottom: spacing.xl, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
-  backBtn:     { width: 36, height: 36, borderRadius: 0, backgroundColor: colors.card, borderWidth: 1, borderColor: 'rgba(200,151,90,0.3)', alignItems: 'center', justifyContent: 'center', shadowColor: colors.shadow, shadowOpacity: 0.25, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 3 },
+  backBtn:     { width: 36, height: 36, borderRadius: 0, backgroundColor: colors.card, borderWidth: 1, borderColor: alpha(colors.gold, 0.3), alignItems: 'center', justifyContent: 'center', shadowColor: colors.shadow, shadowOpacity: 0.25, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 3 },
   backBtnTxt:  { color: colors.text, fontSize: typography.size.heading2 },
   headerCenter:{ flex: 1, alignItems: 'center' },
   headerSub:   { color: colors.accent, fontSize: typography.size.xs, letterSpacing: 3, marginBottom: 2 },
@@ -273,11 +273,11 @@ const f = StyleSheet.create({
   label:          { color: colors.textMuted, fontSize: typography.size.caption, fontWeight: typography.weight.semibold, marginBottom: spacing.sm, letterSpacing: 0.5 },
   hint:           { color: colors.textDim, fontSize: typography.size.xs, marginBottom: spacing.sm, marginTop: -spacing.xs },
   inputWrap:      { flexDirection: 'row', alignItems: 'center', gap: spacing.md, backgroundColor: colors.card, borderRadius: radius.lg, borderWidth: 1, borderColor: colors.cardBorder, paddingHorizontal: spacing.lg, paddingVertical: spacing.md },
-  inputWrapActive:{ borderColor: 'rgba(232,160,69,0.5)' },
+  inputWrapActive:{ borderColor: alpha(colors.amber, 0.5) },
   inputIcon:      { fontSize: typography.size.subheading, flexShrink: 0 },
   input:          { flex: 1, color: colors.text, fontSize: typography.size.body, paddingVertical: spacing.xs },
   catChip:        { paddingHorizontal: spacing.lg, paddingVertical: spacing.md, borderRadius: radius.pill, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder },
-  catChipOn:      { backgroundColor: colors.accentSoft, borderColor: 'rgba(232,160,69,0.4)' },
+  catChipOn:      { backgroundColor: colors.accentSoft, borderColor: alpha(colors.amber, 0.4) },
   catChipTxt:     { color: colors.textMuted, fontSize: typography.size.body },
   catChipTxtOn:   { color: colors.accent, fontWeight: typography.weight.semibold },
   togglesWrap:    { backgroundColor: colors.card, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.cardBorder, paddingHorizontal: spacing.xl, marginBottom: spacing.xl },
@@ -285,7 +285,7 @@ const f = StyleSheet.create({
 
   photoBox:         { borderRadius: radius.xl, overflow: 'hidden', borderWidth: 1, borderColor: colors.cardBorder, height: 160 },
   photoImg:         { width: '100%', height: '100%' },
-  photoOverlay:     { position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: 'rgba(15,13,11,0.6)', paddingVertical: spacing.md, alignItems: 'center' },
+  photoOverlay:     { position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: alpha(colors.ink, 0.6), paddingVertical: spacing.md, alignItems: 'center' },
   photoOverlayTxt:  { color: colors.onDark, fontSize: typography.size.body, fontWeight: typography.weight.medium },
   photoPlaceholder: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing.sm, backgroundColor: colors.card },
   photoPlaceholderIcon: { fontSize: 32 },

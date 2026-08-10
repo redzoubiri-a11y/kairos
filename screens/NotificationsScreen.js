@@ -3,7 +3,7 @@ import {
   RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors, typography, spacing, radius } from '../src/theme';
+import { colors, typography, spacing, radius, alpha } from '../src/theme';
 import MLoader from '../src/components/MLoader';
 import useNotifications, { TYPE_CFG, TABS, timeAgo } from '../src/hooks/useNotifications';
 
@@ -150,14 +150,14 @@ const s = StyleSheet.create({
   markAllTxt:   { color: colors.blue, fontSize: typography.size.body },
   markAllDim:   { color: colors.textDim },
 
-  summaryBar:   { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingHorizontal: spacing.xxl, paddingVertical: spacing.md+1, backgroundColor: 'rgba(232,160,69,0.06)', borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
+  summaryBar:   { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingHorizontal: spacing.xxl, paddingVertical: spacing.md+1, backgroundColor: alpha(colors.amber, 0.06), borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   summaryDot:   { width: 7, height: 7, borderRadius: 0, backgroundColor: colors.accent },
   summaryTxt:   { color: colors.accent, fontSize: typography.size.body },
   summaryHint:  { color: colors.textDim, fontSize: typography.size.caption },
 
   tabBar:       { flexDirection: 'row', backgroundColor: colors.card, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   tabBtn:       { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: spacing.lg, gap: spacing.sm, position: 'relative' },
-  tabBtnOn:     { backgroundColor: 'rgba(200,151,90,0.12)', shadowColor: colors.shadow, shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
+  tabBtnOn:     { backgroundColor: alpha(colors.gold, 0.12), shadowColor: colors.shadow, shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
   tabTxt:       { color: colors.textMuted, fontSize: typography.size.body, fontWeight: typography.weight.regular },
   tabTxtOn:     { color: colors.accent, fontWeight: typography.weight.semibold },
   tabBadge:     { backgroundColor: colors.accent, borderRadius: radius.md, minWidth: 16, height: 16, paddingHorizontal: spacing.xxs+1, alignItems: 'center', justifyContent: 'center' },
@@ -167,7 +167,7 @@ const s = StyleSheet.create({
   groupLabel:   { color: colors.textMuted, fontSize: typography.size.xs, letterSpacing: 4, paddingHorizontal: spacing.xxl, paddingTop: spacing.xxl, paddingBottom: spacing.md },
 
   card:         { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.lg, paddingHorizontal: spacing.xxl, paddingVertical: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.cardBorder, borderLeftWidth: 3, borderLeftColor: 'transparent' },
-  cardUnread:   { backgroundColor: 'rgba(255,255,255,0.02)' },
+  cardUnread:   { backgroundColor: alpha(colors.onDark, 0.02) },
   iconWrap:     { width: 46, height: 46, borderRadius: radius.xl, borderWidth: 1, alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 2 },
   icon:         { fontSize: 20 },
   cardContent:  { flex: 1, gap: spacing.xs },
@@ -180,7 +180,7 @@ const s = StyleSheet.create({
   cardBody:     { color: colors.textMuted, fontSize: typography.size.body, lineHeight: 18 },
   unreadDot:    { width: 8, height: 8, borderRadius: 0, flexShrink: 0, marginTop: spacing.sm },
 
-  actionBtn:    { alignSelf: 'flex-start', marginTop: spacing.sm, paddingVertical: spacing.sm, paddingHorizontal: spacing.lg, backgroundColor: colors.blueSoft, borderRadius: radius.md, borderWidth: 1, borderColor: 'rgba(90,155,224,0.25)' },
+  actionBtn:    { alignSelf: 'flex-start', marginTop: spacing.sm, paddingVertical: spacing.sm, paddingHorizontal: spacing.lg, backgroundColor: colors.blueSoft, borderRadius: radius.md, borderWidth: 1, borderColor: alpha(colors.blue, 0.25) },
   actionBtnTxt: { color: colors.blue, fontSize: typography.size.caption },
 
   center:       { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing.lg },

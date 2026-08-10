@@ -4,7 +4,7 @@ import {
   TextInput, RefreshControl, ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors, typography, spacing, radius } from '../src/theme';
+import { colors, typography, spacing, radius, alpha } from '../src/theme';
 import { supabase } from '../supabase';
 import useAdminValidation from '../src/hooks/useAdminValidation';
 import { CUISINE_OPTIONS } from '../src/hooks/useProInfo';
@@ -225,7 +225,7 @@ const s = StyleSheet.create({
   scoreTxt:  { fontSize: typography.size.body, fontWeight: typography.weight.bold },
 
   missingRow:  { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, paddingHorizontal: spacing.xl, paddingBottom: spacing.lg },
-  missingChip: { paddingHorizontal: spacing.md, paddingVertical: spacing.xxs + 2, borderRadius: radius.full, backgroundColor: colors.redSoft, borderWidth: 1, borderColor: 'rgba(224,90,90,0.3)' },
+  missingChip: { paddingHorizontal: spacing.md, paddingVertical: spacing.xxs + 2, borderRadius: radius.full, backgroundColor: colors.redSoft, borderWidth: 1, borderColor: alpha(colors.red, 0.3) },
   missingTxt:  { color: colors.red, fontSize: typography.size.xs },
 
   editForm:   { paddingHorizontal: spacing.xl, paddingBottom: spacing.lg, gap: spacing.xs, borderTopWidth: 1, borderTopColor: colors.cardBorder, paddingTop: spacing.lg },

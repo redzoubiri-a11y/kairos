@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, TouchableOpacity, Image, Dimensions } from 'react-native';
-import { colors, typography, spacing, radius } from '../theme';
+import { colors, typography, spacing, radius, alpha } from '../theme';
 import { CUISINE_EMOJI } from '../hooks/useFavoris';
 
 const SW = Dimensions.get('window').width;
@@ -53,10 +53,10 @@ export default function FavCard({ fav, index, onPress, onReserve, onRemove, remo
 const s = StyleSheet.create({
   card:        { width: CARD_W, backgroundColor: colors.bg, borderRadius: radius.card, borderWidth: 1, borderColor: colors.separator, overflow: 'hidden' },
   photoWrap:   { height: 130, backgroundColor: colors.cardHover },
-  grad:        { position: 'absolute', bottom: 0, left: 0, right: 0, height: 50, backgroundColor: 'rgba(0,0,0,0.4)' },
-  ratingBadge: { position: 'absolute', bottom: spacing.md, left: spacing.md, backgroundColor: 'rgba(0,0,0,0.65)', borderRadius: radius.sm, paddingHorizontal: spacing.sm, paddingVertical: spacing.xxs + 1 },
+  grad:        { position: 'absolute', bottom: 0, left: 0, right: 0, height: 50, backgroundColor: alpha(colors.black, 0.4) },
+  ratingBadge: { position: 'absolute', bottom: spacing.md, left: spacing.md, backgroundColor: alpha(colors.black, 0.65), borderRadius: radius.sm, paddingHorizontal: spacing.sm, paddingVertical: spacing.xxs + 1 },
   ratingTxt:   { color: colors.star, fontSize: typography.size.sm, fontWeight: typography.weight.semibold },
-  heartBtn:    { position: 'absolute', top: spacing.md, right: spacing.md, width: 30, height: 30, borderRadius: 15, backgroundColor: 'rgba(0,0,0,0.55)', alignItems: 'center', justifyContent: 'center' },
+  heartBtn:    { position: 'absolute', top: spacing.md, right: spacing.md, width: 30, height: 30, borderRadius: 15, backgroundColor: alpha(colors.black, 0.55), alignItems: 'center', justifyContent: 'center' },
   info:        { padding: spacing.lg, gap: spacing.xs },
   cuisine:     { color: colors.textSecondary, fontSize: typography.size.xs, letterSpacing: 1.5, textTransform: 'uppercase' },
   name:        { color: colors.text, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium, letterSpacing: 0.2 },

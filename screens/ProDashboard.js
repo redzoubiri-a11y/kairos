@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { colors, typography, spacing, radius } from '../src/theme';
+import { colors, typography, spacing, radius, alpha, gradients } from '../src/theme';
 import MLoader from '../src/components/MLoader';
 import usePushNotifications from '../src/hooks/usePushNotifications';
 import useDeepLink from '../src/hooks/useDeepLink';
@@ -77,13 +77,13 @@ export default function ProDashboard({ navigation }) {
 
   return (
     <SafeAreaView style={s.root}>
-      <LinearGradient colors={['#C4B8C8', '#8B9BB4', '#6B7F9E']} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
+      <LinearGradient colors={gradients.bgOverlay} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
       <ScrollView
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.accent} />}
       >
         {/* Header */}
-        <LinearGradient colors={['#0D1628', '#162040']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={s.darkHeader}>
+        <LinearGradient colors={gradients.proHeader} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={s.darkHeader}>
           <View style={s.header}>
             <View style={s.headerLeft}>
               <Text style={s.headerGreeting} numberOfLines={1}>{greetingTxt} 👋</Text>
@@ -146,7 +146,7 @@ export default function ProDashboard({ navigation }) {
           <StatCard icon="📅" value={todayResas.length}    label="Résa auj."  color={colors.blue} />
           <StatCard icon="⏳" value={pendingAll.length}     label="En attente"         color={colors.accent} alert={pendingAll.length > 0} sub={pendingAll.length > 0 ? 'Action requise' : ''} />
           <StatCard icon="✅" value={confirmedToday.length} label="Confirmées"          color={colors.green} />
-          <StatCard icon="🪑" value={totalCovers}           label="Couverts"            color={'rgba(245,242,236,0.70)'} />
+          <StatCard icon="🪑" value={totalCovers}           label="Couverts"            color={alpha(colors.ivory, 0.7)} />
           {revenue != null && (
             <StatCard icon="💰" value={`${(revenue/1000).toFixed(0)}k`} label="Revenus DA" color={colors.accent} />
           )}
@@ -255,53 +255,53 @@ export default function ProDashboard({ navigation }) {
 }
 
 const s = StyleSheet.create({
-  root:      { flex: 1, backgroundColor: '#0D1B2A', paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 },
+  root:      { flex: 1, backgroundColor: colors.proBg, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 },
   bgOverlay: { ...StyleSheet.absoluteFillObject, opacity: 0.06 },
 
   darkHeader:     { paddingBottom: spacing.lg },
   header:         { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xl, paddingTop: spacing.lg, paddingBottom: spacing.lg },
   headerLeft:     { flex: 1 },
-  headerGreeting: { color: 'rgba(245,242,236,0.55)', fontSize: typography.size.caption, letterSpacing: 2, marginBottom: spacing.xxs },
-  headerTitle:    { color: '#F5F2EC', fontSize: typography.size.title, fontWeight: '300', letterSpacing: 0.5 },
+  headerGreeting: { color: alpha(colors.ivory, 0.55), fontSize: typography.size.caption, letterSpacing: 2, marginBottom: spacing.xxs },
+  headerTitle:    { color: colors.ivory, fontSize: typography.size.title, fontWeight: '300', letterSpacing: 0.5 },
   actionsRow:     { flexDirection: 'row', paddingHorizontal: spacing.xxl, paddingBottom: spacing.sm, gap: spacing.sm },
-  comptoirBtn:    { flex: 1, alignItems: 'center', paddingVertical: spacing.md, borderRadius: radius.lg, backgroundColor: 'rgba(255,255,255,0.07)', borderWidth: 1, borderColor: 'rgba(200,151,90,0.30)' },
+  comptoirBtn:    { flex: 1, alignItems: 'center', paddingVertical: spacing.md, borderRadius: radius.lg, backgroundColor: alpha(colors.onDark, 0.07), borderWidth: 1, borderColor: alpha(colors.gold, 0.3) },
   comptoirIcon:   { fontSize: 16, marginBottom: spacing.xxs },
-  comptoirBtnTxt: { color: 'rgba(245,242,236,0.80)', fontSize: typography.size.xs },
-  onlineBadge:    { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, flexShrink: 0, backgroundColor: colors.greenSoft, borderRadius: radius.full, paddingHorizontal: spacing.lg, paddingVertical: spacing.xs, borderWidth: 1, borderColor: 'rgba(76,175,130,0.35)' },
+  comptoirBtnTxt: { color: alpha(colors.ivory, 0.8), fontSize: typography.size.xs },
+  onlineBadge:    { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, flexShrink: 0, backgroundColor: colors.greenSoft, borderRadius: radius.full, paddingHorizontal: spacing.lg, paddingVertical: spacing.xs, borderWidth: 1, borderColor: alpha(colors.green, 0.35) },
   onlineDot:      { width: 6, height: 6, borderRadius: 0, backgroundColor: colors.green },
   onlineTxt:      { color: colors.green, fontSize: typography.size.sm },
 
   statsRow: { paddingHorizontal: spacing.xxl, paddingTop: spacing.sm, paddingBottom: spacing.sm, gap: spacing.sm },
 
-  sep:       { height: 1, backgroundColor: 'rgba(255,255,255,0.08)', marginHorizontal: spacing.xxl, marginVertical: spacing.sm },
+  sep:       { height: 1, backgroundColor: alpha(colors.onDark, 0.08), marginHorizontal: spacing.xxl, marginVertical: spacing.sm },
 
   chipRow:   { paddingHorizontal: spacing.xxl, paddingBottom: spacing.sm, gap: spacing.sm },
-  chip:      { paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderRadius: radius.full, backgroundColor: 'transparent', borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)' },
-  chipOn:    { backgroundColor: 'rgba(200,151,90,0.20)', borderColor: colors.gold },
-  chipTxt:   { color: 'rgba(245,242,236,0.55)', fontSize: typography.size.body },
+  chip:      { paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderRadius: radius.full, backgroundColor: 'transparent', borderWidth: 1, borderColor: alpha(colors.onDark, 0.15) },
+  chipOn:    { backgroundColor: alpha(colors.gold, 0.2), borderColor: colors.gold },
+  chipTxt:   { color: alpha(colors.ivory, 0.55), fontSize: typography.size.body },
   chipTxtOn: { color: colors.resa, fontWeight: typography.weight.semibold },
 
-  statusTabs:     { flexDirection: 'row', marginHorizontal: spacing.xxl, marginBottom: spacing.md, backgroundColor: 'rgba(255,255,255,0.10)', borderRadius: radius.xl, borderWidth: 1, borderColor: 'rgba(255,255,255,0.12)', padding: spacing.xxs + 1, gap: spacing.xxs },
+  statusTabs:     { flexDirection: 'row', marginHorizontal: spacing.xxl, marginBottom: spacing.md, backgroundColor: alpha(colors.onDark, 0.1), borderRadius: radius.xl, borderWidth: 1, borderColor: alpha(colors.onDark, 0.12), padding: spacing.xxs + 1, gap: spacing.xxs },
   statusTab:      { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: spacing.sm, borderRadius: radius.lg, gap: spacing.xs },
-  statusTabOn:    { backgroundColor: 'rgba(255,255,255,0.15)' },
-  statusTabTxt:   { color: 'rgba(245,242,236,0.45)', fontSize: typography.size.caption },
-  statusTabTxtOn: { color: '#F5F2EC', fontWeight: typography.weight.semibold },
+  statusTabOn:    { backgroundColor: alpha(colors.onDark, 0.15) },
+  statusTabTxt:   { color: alpha(colors.ivory, 0.45), fontSize: typography.size.caption },
+  statusTabTxtOn: { color: colors.ivory, fontWeight: typography.weight.semibold },
   badge:          { backgroundColor: colors.resa, borderRadius: radius.md, minWidth: 16, height: 16, alignItems: 'center', justifyContent: 'center', paddingHorizontal: spacing.xxs + 1 },
   badgeTxt:       { color: colors.onDark, fontSize: typography.size.xs, fontWeight: typography.weight.bold },
 
   listHead:    { paddingHorizontal: spacing.xxl, paddingBottom: spacing.xs },
-  listHeadTxt: { color: 'rgba(245,242,236,0.40)', fontSize: typography.size.sm, letterSpacing: 2 },
+  listHeadTxt: { color: alpha(colors.ivory, 0.4), fontSize: typography.size.sm, letterSpacing: 2 },
 
   groupHeader: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingHorizontal: spacing.xxl, paddingVertical: spacing.lg, marginTop: spacing.xs },
   groupIcon:   { fontSize: 14 },
-  groupLabel:  { color: '#F5F2EC', fontSize: typography.size.bodyLg, flex: 1 },
-  groupCount:  { color: 'rgba(245,242,236,0.45)', fontSize: typography.size.caption },
+  groupLabel:  { color: colors.ivory, fontSize: typography.size.bodyLg, flex: 1 },
+  groupCount:  { color: alpha(colors.ivory, 0.45), fontSize: typography.size.caption },
 
   empty:      { alignItems: 'center', paddingVertical: 48, gap: spacing.md },
   emptyEmoji: { fontSize: 36 },
-  emptyTitle: { color: 'rgba(245,242,236,0.65)', fontSize: typography.size.subheading, fontWeight: '300' },
-  emptyDesc:  { color: 'rgba(245,242,236,0.40)', fontSize: typography.size.body },
+  emptyTitle: { color: alpha(colors.ivory, 0.65), fontSize: typography.size.subheading, fontWeight: '300' },
+  emptyDesc:  { color: alpha(colors.ivory, 0.4), fontSize: typography.size.body },
 
-  signOutBtn: { marginHorizontal: spacing.xxl, paddingVertical: spacing.lg, borderRadius: radius.xl, borderWidth: 1, borderColor: 'rgba(224,90,90,0.25)', alignItems: 'center' },
-  signOutTxt: { color: 'rgba(224,90,90,0.80)', fontSize: typography.size.bodyLg },
+  signOutBtn: { marginHorizontal: spacing.xxl, paddingVertical: spacing.lg, borderRadius: radius.xl, borderWidth: 1, borderColor: alpha(colors.red, 0.25), alignItems: 'center' },
+  signOutTxt: { color: alpha(colors.red, 0.8), fontSize: typography.size.bodyLg },
 });

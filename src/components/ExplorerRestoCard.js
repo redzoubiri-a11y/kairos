@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, TouchableOpacity, Image, Dimensions } from 'react-native';
-import { colors, typography, radius, spacing } from '../theme';
+import { colors, typography, radius, spacing, alpha } from '../theme';
 import { CUISINE_EMOJI } from '../hooks/useExplorer';
 
 const SW = Dimensions.get('window').width;
@@ -21,9 +21,9 @@ export default function ExplorerRestoCard({ r, rank, distance, onPress, onReserv
         {rank != null && rank < 3 && (
           <View style={[
             s.medalWrap,
-            rank === 0 && { backgroundColor: '#f0c040' },
-            rank === 1 && { backgroundColor: '#b0b0b0' },
-            rank === 2 && { backgroundColor: '#cd7f32' },
+            rank === 0 && { backgroundColor: colors.medalGold },
+            rank === 1 && { backgroundColor: colors.medalSilver },
+            rank === 2 && { backgroundColor: colors.medalBronze },
           ]}>
             <Text style={s.medalTxt}>{rank + 1}</Text>
           </View>
@@ -59,11 +59,11 @@ const s = StyleSheet.create({
   imgWrap:       { position: 'relative', width: '100%', height: 130 },
   img:           { width: '100%', height: '100%' },
   imgPlaceholder:{ backgroundColor: colors.cardHover, alignItems: 'center', justifyContent: 'center' },
-  ratingBadge:   { position: 'absolute', top: 8, right: 8, backgroundColor: 'rgba(0,0,0,0.65)', borderRadius: radius.sm, paddingHorizontal: 7, paddingVertical: 3 },
+  ratingBadge:   { position: 'absolute', top: 8, right: 8, backgroundColor: alpha(colors.black, 0.65), borderRadius: radius.sm, paddingHorizontal: 7, paddingVertical: 3 },
   ratingBadgeTxt:{ color: colors.star, fontSize: typography.size.sm, fontWeight: '600' },
   medalWrap:     { position: 'absolute', top: 8, left: 8, width: 22, height: 22, borderRadius: 11, alignItems: 'center', justifyContent: 'center' },
   medalTxt:      { color: colors.bg, fontSize: typography.size.sm, fontWeight: '700' },
-  cuisinePill:   { position: 'absolute', bottom: 8, left: 8, backgroundColor: 'rgba(0,0,0,0.60)', borderRadius: radius.sm, paddingHorizontal: 7, paddingVertical: 3 },
+  cuisinePill:   { position: 'absolute', bottom: 8, left: 8, backgroundColor: alpha(colors.black, 0.6), borderRadius: radius.sm, paddingHorizontal: 7, paddingVertical: 3 },
   cuisinePillTxt:{ color: colors.onDark, fontSize: typography.size.xs },
   body:          { padding: 10, gap: 4 },
   name:          { color: colors.text, fontSize: typography.size.bodyLg, fontWeight: '500', letterSpacing: 0.2 },

@@ -13,7 +13,7 @@ if (Platform.OS !== 'web') {
   MapView = maps.default;
   Marker  = maps.Marker;
 }
-import { colors, typography, spacing, radius } from '../src/theme';
+import { colors, typography, spacing, radius, alpha, gradients } from '../src/theme';
 import useExplorer, { CITIES, getCoord, haversineKm } from '../src/hooks/useExplorer';
 import RestaurantPin from '../src/components/RestaurantPin';
 import ExplorerRestoCard, { CARD_W } from '../src/components/ExplorerRestoCard';
@@ -89,7 +89,7 @@ export default function ExplorerScreen({ navigation, route }) {
 
   return (
     <View style={s.root}>
-      <LinearGradient colors={['#C4B8C8', '#8B9BB4', '#6B7F9E']} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
+      <LinearGradient colors={gradients.bgOverlay} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
 
       {mode === 'map' && (
         <View style={s.mapWrap}>
@@ -231,7 +231,7 @@ const s = StyleSheet.create({
   header:      { flexDirection:'row', justifyContent:'space-between', alignItems:'center', paddingHorizontal:spacing.xl, paddingTop:TOP+14, paddingBottom:14, backgroundColor:'transparent', borderBottomWidth:1, borderBottomColor:colors.cardBorder },
   headerItalic:{ color:colors.blue, fontSize:typography.size.caption, fontStyle:'italic', letterSpacing:1.5, marginBottom:2 },
   headerTitle: { color:colors.text, fontSize:typography.size.heading2, fontWeight:typography.weight.regular, letterSpacing:3 },
-  countBadge:  { flexDirection:'row', alignItems:'center', gap:5, backgroundColor:colors.accentSoft, borderRadius:radius.full, paddingHorizontal:spacing.md, paddingVertical:5, borderWidth:1, borderColor:'rgba(232,160,69,0.3)' },
+  countBadge:  { flexDirection:'row', alignItems:'center', gap:5, backgroundColor:colors.accentSoft, borderRadius:radius.full, paddingHorizontal:spacing.md, paddingVertical:5, borderWidth:1, borderColor: alpha(colors.amber, 0.3) },
   countDot:    { width:6, height:6, borderRadius:3, backgroundColor:colors.green },
   countTxt:    { color:colors.accent, fontSize:typography.size.caption, fontWeight:'500' },
   modeBtn:     { width:36, height:36, borderRadius:radius.md, backgroundColor:'transparent', borderWidth:1, borderColor:colors.navyBorder, alignItems:'center', justifyContent:'center' },
@@ -248,11 +248,11 @@ const s = StyleSheet.create({
   selAddr:    { color:colors.textMuted, fontSize:typography.size.body },
   selPrice:   { color:colors.textDim, fontSize:typography.size.body },
   selActions: { flexDirection:'row', gap:8, paddingHorizontal:spacing.xl, paddingVertical:spacing.lg },
-  selBtnPrimary:    { flex:1, backgroundColor: colors.resa, borderRadius:radius.md, paddingVertical:11, alignItems:'center', borderWidth:1, borderColor:'rgba(255,220,150,0.4)', shadowColor: colors.shadow, shadowOpacity:0.45, shadowRadius:12, shadowOffset:{ width:0, height:0 }, elevation:6 },
+  selBtnPrimary:    { flex:1, backgroundColor: colors.resa, borderRadius:radius.md, paddingVertical:11, alignItems:'center', borderWidth:1, borderColor: alpha(colors.glow, 0.4), shadowColor: colors.shadow, shadowOpacity:0.45, shadowRadius:12, shadowOffset:{ width:0, height:0 }, elevation:6 },
   selBtnPrimaryTxt: { color: colors.onDark, fontSize:typography.size.bodyLg, fontWeight:'500' },
   selBtnSecondary:  { flex:1, borderRadius:radius.md, paddingVertical:11, alignItems:'center', borderWidth:1, borderColor:colors.cardBorder },
   selBtnSecondaryTxt:{ color:colors.text, fontSize:typography.size.bodyLg },
-  selClose:   { position:'absolute', top:10, right:10, width:28, height:28, borderRadius:14, backgroundColor:'rgba(15,13,11,0.72)', alignItems:'center', justifyContent:'center' },
+  selClose:   { position:'absolute', top:10, right:10, width:28, height:28, borderRadius:14, backgroundColor: alpha(colors.ink, 0.72), alignItems:'center', justifyContent:'center' },
   selCloseTxt:{ color: colors.onDark, fontSize:typography.size.body },
 
   mapChips:    { position:'absolute', bottom:0, left:0, right:0, backgroundColor:colors.bg, borderTopWidth:1, borderTopColor:colors.cardBorder },
@@ -263,14 +263,14 @@ const s = StyleSheet.create({
   chipsScroll: { borderBottomWidth:1, borderBottomColor:colors.cardBorder, flexShrink:0 },
   cityGrid:    { flexDirection:'row', alignItems:'center', paddingHorizontal:14, paddingVertical:10, gap:8 },
   cityChip:    { flexDirection:'row', alignItems:'center', gap:5, paddingHorizontal:18, paddingVertical:5, borderRadius:radius.full, backgroundColor:'transparent', borderWidth:1, borderColor:colors.cardBorder },
-  nearMeChip:  { borderColor:'rgba(90,155,224,0.3)' },
+  nearMeChip:  { borderColor: alpha(colors.blue, 0.3) },
   cityChipOn:  { backgroundColor: colors.bg, borderColor:colors.primary, borderWidth:1.5 },
   cityEmoji:   { fontSize:13 },
   cityTxt:     { color:colors.textMuted, fontSize:typography.size.body },
   cityTxtOn:   { color:colors.primary, fontWeight:'600' },
 
-  backBtn:     { width:36, height:36, borderRadius:0, backgroundColor:'rgba(15,13,11,0.65)', alignItems:'center', justifyContent:'center', borderWidth:1, borderColor:'rgba(240,235,227,0.15)' },
-  backBtnTxt:  { color:'rgba(240,235,227,0.9)', fontSize:18, lineHeight:22 },
+  backBtn:     { width:36, height:36, borderRadius:0, backgroundColor: alpha(colors.ink, 0.65), alignItems:'center', justifyContent:'center', borderWidth:1, borderColor: alpha(colors.sand, 0.15) },
+  backBtnTxt:  { color: alpha(colors.sand, 0.9), fontSize:18, lineHeight:22 },
 
   gridRow:     { paddingHorizontal:14, justifyContent:'space-between' },
   gridContent: { paddingTop:6 },

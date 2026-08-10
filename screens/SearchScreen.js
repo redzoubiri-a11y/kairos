@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, typography, spacing } from '../src/theme';
+import { colors, typography, spacing, alpha } from '../src/theme';
 import useSearch from '../src/hooks/useSearch';
 import { CUISINE_EMOJI } from '../src/hooks/useMapScreen';
 
@@ -250,7 +250,7 @@ const s = StyleSheet.create({
   input:       { flex: 1, color: colors.text, fontSize: typography.size.bodyLg, fontWeight: '300', padding: 0 },
 
   mapWrap:        { flex: 1 },
-  mapPlaceholder: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#e8e8e8' },
+  mapPlaceholder: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.greyPlaceholder },
 
   pin:      { backgroundColor: colors.bg, borderWidth: 1.5, borderColor: colors.text, paddingHorizontal: 8, paddingVertical: 5, alignItems: 'center', maxWidth: 120 },
   pinEmoji: { fontSize: 14 },
@@ -267,10 +267,10 @@ const s = StyleSheet.create({
   resultSub:   { color: colors.textMuted, fontSize: typography.size.caption, marginTop: 2, textTransform: 'capitalize' },
   resultArrow: { color: colors.textDim, fontSize: 20 },
 
-  tipBadge: { position: 'absolute', bottom: spacing.lg, alignSelf: 'center', backgroundColor: 'rgba(255,255,255,0.92)', paddingHorizontal: spacing.xl, paddingVertical: spacing.md, borderWidth: 1, borderColor: colors.cardBorder },
+  tipBadge: { position: 'absolute', bottom: spacing.lg, alignSelf: 'center', backgroundColor: alpha(colors.onDark, 0.92), paddingHorizontal: spacing.xl, paddingVertical: spacing.md, borderWidth: 1, borderColor: colors.cardBorder },
   tipTxt:   { color: colors.textMuted, fontSize: typography.size.caption },
 
-  overlay:    { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(255,255,255,0.88)', alignItems: 'center', justifyContent: 'center', gap: spacing.md },
+  overlay:    { ...StyleSheet.absoluteFillObject, backgroundColor: alpha(colors.onDark, 0.88), alignItems: 'center', justifyContent: 'center', gap: spacing.md },
   overlayTxt: { color: colors.textMuted, fontSize: typography.size.body },
   emptyEmoji: { fontSize: 44 },
   emptyTitle: { color: colors.text, fontSize: typography.size.heading3, fontWeight: '300' },

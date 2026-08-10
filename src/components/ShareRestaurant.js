@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { TouchableOpacity, Text, StyleSheet, Share, Platform } from 'react-native';
-import { colors, typography, spacing, radius } from '../theme';
+import { colors, typography, spacing, radius, alpha } from '../theme';
 
 export default function ShareRestaurant({ restaurantName, restaurantId, style }) {
   const handleShare = useCallback(async () => {
@@ -32,7 +32,7 @@ const s = StyleSheet.create({
     backgroundColor: colors.card,
     borderRadius: radius.lg,
     borderWidth: 1,
-    borderColor: 'rgba(200,151,90,0.3)',
+    borderColor: alpha(colors.gold, 0.3),
     shadowColor: colors.shadow,
     shadowOpacity: 0.25,
     shadowRadius: 8,

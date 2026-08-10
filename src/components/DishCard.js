@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { colors, typography, spacing, radius } from '../theme';
+import { colors, typography, spacing, radius, alpha } from '../theme';
 
 export default function DishCard({ dish, onEdit, onToggle, acting }) {
   const dimmed = !dish.is_available;
@@ -58,16 +58,16 @@ const s = StyleSheet.create({
   nameDim:       { color: colors.textDim },
   desc:          { color: colors.textDim, fontSize: typography.size.caption, lineHeight: 16 },
   price:         { color: colors.accent, fontSize: typography.size.subheading, fontWeight: typography.weight.bold, flexShrink: 0 },
-  indispoBadge:  { backgroundColor: colors.redSoft, borderRadius: radius.pill, paddingHorizontal: spacing.md, paddingVertical: spacing.xxs, borderWidth: 1, borderColor: 'rgba(224,90,90,0.3)' },
+  indispoBadge:  { backgroundColor: colors.redSoft, borderRadius: radius.pill, paddingHorizontal: spacing.md, paddingVertical: spacing.xxs, borderWidth: 1, borderColor: alpha(colors.red, 0.3) },
   indispoTxt:    { color: colors.red, fontSize: typography.size.xs, fontWeight: typography.weight.semibold },
-  dotdBadge:     { backgroundColor: colors.accentSoft, borderRadius: radius.pill, paddingHorizontal: spacing.md, paddingVertical: spacing.xxs, borderWidth: 1, borderColor: 'rgba(232,160,69,0.3)' },
+  dotdBadge:     { backgroundColor: colors.accentSoft, borderRadius: radius.pill, paddingHorizontal: spacing.md, paddingVertical: spacing.xxs, borderWidth: 1, borderColor: alpha(colors.amber, 0.3) },
   dotdTxt:       { color: colors.accent, fontSize: typography.size.xs, fontWeight: typography.weight.semibold },
   actions:       { flexDirection: 'row', gap: spacing.md },
   editBtn:       { flex: 1, alignItems: 'center', paddingVertical: spacing.md, borderRadius: radius.lg, backgroundColor: 'transparent', borderWidth: 1.5, borderColor: colors.blue },
   editTxt:       { color: colors.blue, fontSize: typography.size.body, fontWeight: typography.weight.semibold },
   toggleBtn:     { flex: 1, alignItems: 'center', paddingVertical: spacing.md, borderRadius: radius.lg },
-  toggleRed:     { backgroundColor: colors.redSoft, borderWidth: 1, borderColor: 'rgba(224,90,90,0.25)' },
-  toggleGreen:   { backgroundColor: colors.greenSoft, borderWidth: 1, borderColor: 'rgba(76,175,130,0.25)' },
+  toggleRed:     { backgroundColor: colors.redSoft, borderWidth: 1, borderColor: alpha(colors.red, 0.25) },
+  toggleGreen:   { backgroundColor: colors.greenSoft, borderWidth: 1, borderColor: alpha(colors.green, 0.25) },
   toggleTxt:     { fontSize: typography.size.body, fontWeight: typography.weight.semibold },
   toggleTxtRed:  { color: colors.red },
   toggleTxtGreen:{ color: colors.green },

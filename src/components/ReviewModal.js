@@ -3,7 +3,7 @@ import {
   Modal, View, Text, TextInput, TouchableOpacity,
   StyleSheet, ActivityIndicator, KeyboardAvoidingView, Platform,
 } from 'react-native';
-import { colors, typography, spacing, radius } from '../theme';
+import { colors, typography, spacing, radius, alpha } from '../theme';
 
 function StarPicker({ value, onChange }) {
   return (
@@ -93,7 +93,7 @@ export default function ReviewModal({ resa, visible, onClose, onSubmit, submitti
 }
 
 const s = StyleSheet.create({
-  overlay:      { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'flex-end' },
+  overlay:      { flex: 1, backgroundColor: alpha(colors.black, 0.6), justifyContent: 'flex-end' },
   sheet:        { backgroundColor: colors.card, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: spacing.xxl, paddingBottom: 40, gap: spacing.xl, borderTopWidth: 1, borderTopColor: colors.cardBorder },
   drag:         { width: 36, height: 4, borderRadius: 0, backgroundColor: colors.cardBorder, alignSelf: 'center', marginBottom: spacing.sm },
 

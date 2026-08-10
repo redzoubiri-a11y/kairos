@@ -2,7 +2,7 @@ import { useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput,
 } from 'react-native';
-import { colors, typography, spacing, radius } from '../theme';
+import { colors, typography, spacing, radius, alpha } from '../theme';
 import { PROMO_TYPES, PERCENTS } from '../hooks/useProPromos';
 
 export default function PromoCreateView({ onActivate, onBack }) {
@@ -120,7 +120,7 @@ const s = StyleSheet.create({
   slotBox:       { flex: 1, backgroundColor: colors.card, borderRadius: radius.lg, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.lg, alignItems: 'center' },
   slotTxt:       { color: colors.text, fontSize: typography.size.subheading },
   slotArrow:     { color: colors.textDim, fontSize: typography.size.subheading },
-  preview:       { backgroundColor: colors.accentSoft, borderRadius: radius.xl, padding: spacing.lg, borderWidth: 1, borderColor: 'rgba(232,160,69,0.2)' },
+  preview:       { backgroundColor: colors.accentSoft, borderRadius: radius.xl, padding: spacing.lg, borderWidth: 1, borderColor: alpha(colors.amber, 0.2) },
   previewLabel:  { color: colors.accent, fontSize: typography.size.caption, fontWeight: typography.weight.bold, marginBottom: spacing.xs },
   previewTitle:  { color: colors.text, fontSize: typography.size.subheading, fontWeight: typography.weight.extrabold },
   previewSub:    { color: colors.textMuted, fontSize: typography.size.caption, marginTop: 3 },

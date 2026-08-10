@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet } from 'react-native';
-import { colors, typography, spacing, radius } from '../theme';
+import { colors, typography, spacing, radius, alpha } from '../theme';
 
 export default function WeekStrip({ reservations }) {
   const days = Array.from({ length: 7 }, (_, i) => {
@@ -36,15 +36,15 @@ export default function WeekStrip({ reservations }) {
 }
 
 const s = StyleSheet.create({
-  wrap:          { marginHorizontal: spacing.xxl, marginBottom: spacing.md, backgroundColor: 'transparent', borderRadius: radius.xl, borderWidth: 1, borderColor: 'rgba(255,255,255,0.12)', paddingHorizontal: spacing.lg, paddingVertical: spacing.md },
-  title:         { color: 'rgba(245,242,236,0.45)', fontSize: typography.size.xs, letterSpacing: 3, marginBottom: spacing.sm },
+  wrap:          { marginHorizontal: spacing.xxl, marginBottom: spacing.md, backgroundColor: 'transparent', borderRadius: radius.xl, borderWidth: 1, borderColor: alpha(colors.onDark, 0.12), paddingHorizontal: spacing.lg, paddingVertical: spacing.md },
+  title:         { color: alpha(colors.ivory, 0.45), fontSize: typography.size.xs, letterSpacing: 3, marginBottom: spacing.sm },
   row:           { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' },
   col:           { alignItems: 'center', gap: 2, flex: 1 },
   countLbl:      { color: colors.green, fontSize: typography.size.xs, fontWeight: typography.weight.medium, minHeight: 10 },
   barTrack:      { height: 22, justifyContent: 'flex-end', width: '65%' },
   bar:           { borderRadius: radius.sm, minHeight: 2 },
-  dayNum:        { color: 'rgba(245,242,236,0.60)', fontSize: typography.size.xs },
+  dayNum:        { color: alpha(colors.ivory, 0.6), fontSize: typography.size.xs },
   dayNumToday:   { color: colors.green, fontWeight: typography.weight.medium },
-  dayLabel:      { color: 'rgba(245,242,236,0.35)', fontSize: typography.size.xs },
+  dayLabel:      { color: alpha(colors.ivory, 0.35), fontSize: typography.size.xs },
   dayLabelToday: { color: colors.green },
 });

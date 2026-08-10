@@ -7,7 +7,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as ScreenOrientation from 'expo-screen-orientation';
-import { colors, typography, spacing, radius } from '../src/theme';
+import { colors, typography, spacing, radius, alpha, gradients } from '../src/theme';
 import MLoader from '../src/components/MLoader';
 import useComptoir from '../src/hooks/useComptoir';
 import Clock from '../src/components/Clock';
@@ -27,7 +27,7 @@ function StatBox({ label, value, color }) {
 const sb = StyleSheet.create({
   wrap: { flex: 1, alignItems: 'center', paddingVertical: spacing.xl - 2 },
   val:  { fontSize: 36, fontWeight: '200', lineHeight: 40 },
-  lbl:  { color: 'rgba(245,242,236,0.45)', fontSize: typography.size.xs, letterSpacing: 2, marginTop: 2 },
+  lbl:  { color: alpha(colors.ivory, 0.45), fontSize: typography.size.xs, letterSpacing: 2, marginTop: 2 },
 });
 
 function SkeletonComptoir() {
@@ -147,7 +147,7 @@ export default function ProComptoir({ navigation }) {
       <View style={s.statDiv} />
       <StatBox label="ARRIVÉS"    value={arrived}    color={colors.blue}     />
       <View style={s.statDiv} />
-      <StatBox label="NO SHOW"    value={no_show}    color='rgba(245,242,236,0.45)'/>
+      <StatBox label="NO SHOW"    value={no_show}    color={alpha(colors.ivory, 0.45)}/>
       <View style={s.statDiv} />
       <StatBox label="COUVERTS"   value={covers}     color={colors.accent}   />
     </View>
@@ -156,7 +156,7 @@ export default function ProComptoir({ navigation }) {
   if (isLandscape) {
     return (
       <View style={[s.root, { paddingTop: insets.top }]}>
-        <LinearGradient colors={['#C4B8C8', '#8B9BB4', '#6B7F9E']} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
+        <LinearGradient colors={gradients.bgOverlay} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
         {header}
         {statsStrip}
         <View style={s.landscape}>
@@ -206,7 +206,7 @@ export default function ProComptoir({ navigation }) {
   // Portrait — FlatList couvre tout l'écran, header+stats dans ListHeaderComponent
   return (
     <View style={s.root}>
-      <LinearGradient colors={['#C4B8C8', '#8B9BB4', '#6B7F9E']} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
+      <LinearGradient colors={gradients.bgOverlay} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
       <FlatList
         data={loading ? [] : visibleReservations}
         keyExtractor={item => String(item.id)}
@@ -237,36 +237,36 @@ export default function ProComptoir({ navigation }) {
 }
 
 const s = StyleSheet.create({
-  root:      { flex: 1, backgroundColor: '#0D1B2A', paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 },
+  root:      { flex: 1, backgroundColor: colors.proBg, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 },
   bgOverlay: { ...StyleSheet.absoluteFillObject, opacity: 0 },
 
-  header:      { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xl, paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.10)' },
+  header:      { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xl, paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: alpha(colors.onDark, 0.1) },
   headerLeft:  { flexDirection: 'row', alignItems: 'center', gap: spacing.lg, flex: 1 },
-  backBtn:     { width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.12)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.20)' },
-  backBtnTxt:  { color: 'rgba(245,242,236,0.9)', fontSize: 20, lineHeight: 24 },
+  backBtn:     { width: 36, height: 36, borderRadius: 18, backgroundColor: alpha(colors.onDark, 0.12), alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: alpha(colors.onDark, 0.2) },
+  backBtnTxt:  { color: alpha(colors.ivory, 0.9), fontSize: 20, lineHeight: 24 },
   headerRight: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
-  restoName:   { color: '#F5F2EC', fontSize: typography.size.heading1, fontWeight: '300', letterSpacing: 0.3 },
-  dateStr:     { color: 'rgba(245,242,236,0.50)', fontSize: typography.size.caption, textTransform: 'capitalize', marginTop: 1 },
-  refreshBtn:  { width: 38, height: 38, backgroundColor: 'rgba(255,255,255,0.07)', borderRadius: 0, borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)', alignItems: 'center', justifyContent: 'center' },
+  restoName:   { color: colors.ivory, fontSize: typography.size.heading1, fontWeight: '300', letterSpacing: 0.3 },
+  dateStr:     { color: alpha(colors.ivory, 0.5), fontSize: typography.size.caption, textTransform: 'capitalize', marginTop: 1 },
+  refreshBtn:  { width: 38, height: 38, backgroundColor: alpha(colors.onDark, 0.07), borderRadius: 0, borderWidth: 1, borderColor: alpha(colors.onDark, 0.15), alignItems: 'center', justifyContent: 'center' },
   refreshTxt:  { color: colors.gold, fontSize: 18 },
 
-  statsStrip: { flexDirection: 'row', backgroundColor: '#091420', borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.08)' },
-  statDiv:    { width: 1, backgroundColor: 'rgba(255,255,255,0.08)', marginVertical: spacing.lg },
+  statsStrip: { flexDirection: 'row', backgroundColor: colors.proBgDeep, borderBottomWidth: 1, borderBottomColor: alpha(colors.onDark, 0.08) },
+  statDiv:    { width: 1, backgroundColor: alpha(colors.onDark, 0.08), marginVertical: spacing.lg },
 
   landscape:   { flex: 1, flexDirection: 'row' },
-  leftPanel:   { width: '35%', overflow: 'hidden', borderRightWidth: 1, borderRightColor: 'rgba(255,255,255,0.08)' },
+  leftPanel:   { width: '35%', overflow: 'hidden', borderRightWidth: 1, borderRightColor: alpha(colors.onDark, 0.08) },
   rightPanel:  { flex: 1 },
-  panelHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xxl, paddingVertical: spacing.xl, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.08)', backgroundColor: '#091420' },
-  panelTitle:  { color: 'rgba(245,242,236,0.45)', fontSize: typography.size.body, fontWeight: typography.weight.bold, letterSpacing: 3 },
+  panelHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xxl, paddingVertical: spacing.xl, borderBottomWidth: 1, borderBottomColor: alpha(colors.onDark, 0.08), backgroundColor: colors.proBgDeep },
+  panelTitle:  { color: alpha(colors.ivory, 0.45), fontSize: typography.size.body, fontWeight: typography.weight.bold, letterSpacing: 3 },
   panelCount:  { color: colors.resa, fontSize: typography.size.heading2, fontWeight: typography.weight.semibold },
 
   arrivedSep:     { flexDirection: 'row', alignItems: 'center', paddingHorizontal: spacing.xxl, paddingVertical: spacing.lg, gap: spacing.lg },
-  arrivedSepLine: { flex: 1, height: 1, backgroundColor: 'rgba(255,255,255,0.10)' },
-  arrivedSepTxt:  { color: 'rgba(245,242,236,0.35)', fontSize: typography.size.xs, letterSpacing: 3 },
+  arrivedSepLine: { flex: 1, height: 1, backgroundColor: alpha(colors.onDark, 0.1) },
+  arrivedSepTxt:  { color: alpha(colors.ivory, 0.35), fontSize: typography.size.xs, letterSpacing: 3 },
 
   center:       { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing.xl, paddingVertical: spacing.section * 3 },
   emptyEmoji:   { fontSize: 72 },
-  emptyTitle:   { color: '#F5F2EC', fontSize: 32, fontWeight: '200', letterSpacing: 0.5 },
-  emptyTitleSm: { color: '#F5F2EC', fontSize: typography.size.heading2, fontWeight: '300' },
-  emptySub:     { color: 'rgba(245,242,236,0.50)', fontSize: 18, fontWeight: '300', textTransform: 'capitalize' },
+  emptyTitle:   { color: colors.ivory, fontSize: 32, fontWeight: '200', letterSpacing: 0.5 },
+  emptyTitleSm: { color: colors.ivory, fontSize: typography.size.heading2, fontWeight: '300' },
+  emptySub:     { color: alpha(colors.ivory, 0.5), fontSize: 18, fontWeight: '300', textTransform: 'capitalize' },
 });

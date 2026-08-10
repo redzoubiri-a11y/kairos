@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet } from 'react-native';
-import { colors, typography, spacing, radius } from '../theme';
+import { colors, typography, spacing, radius, alpha } from '../theme';
 
 export default function AlertBanner({ pendingCount, upcomingCount }) {
   if (pendingCount === 0 && upcomingCount === 0) return null;
@@ -23,8 +23,8 @@ export default function AlertBanner({ pendingCount, upcomingCount }) {
 }
 
 const s = StyleSheet.create({
-  wrap: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, marginHorizontal: spacing.xxl, marginBottom: spacing.md, backgroundColor: 'transparent', borderRadius: radius.lg, borderWidth: 1, borderColor: 'rgba(255,255,255,0.12)', paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
+  wrap: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, marginHorizontal: spacing.xxl, marginBottom: spacing.md, backgroundColor: 'transparent', borderRadius: radius.lg, borderWidth: 1, borderColor: alpha(colors.onDark, 0.12), paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
   icon: { fontSize: 14 },
-  txt:  { color: 'rgba(245,242,236,0.65)', fontSize: typography.size.caption, lineHeight: 16 },
+  txt:  { color: alpha(colors.ivory, 0.65), fontSize: typography.size.caption, lineHeight: 16 },
   bold: { color: colors.cream, fontWeight: typography.weight.medium },
 });

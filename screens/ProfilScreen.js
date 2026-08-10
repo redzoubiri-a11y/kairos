@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { colors, typography, spacing, radius } from '../src/theme';
+import { colors, typography, spacing, radius, alpha, gradients } from '../src/theme';
 import MLoader from '../src/components/MLoader';
 import useProfil, { CUISINE_EMOJI, CARD_BG, SITUATIONS, CUISINES } from '../src/hooks/useProfil';
 import ProfilResaCard from '../src/components/ProfilResaCard';
@@ -71,7 +71,7 @@ export default function ProfilScreen({ navigation }) {
   return (
     <SafeAreaView style={s.root}>
       <StatusBar barStyle="dark-content" backgroundColor={colors.bg} />
-      <LinearGradient colors={['#C4B8C8', '#8B9BB4', '#6B7F9E']} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
+      <LinearGradient colors={gradients.bgOverlay} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
       <ScrollView showsVerticalScrollIndicator={false} automaticallyAdjustKeyboardInsets={true} keyboardDismissMode="interactive">
 
         <View style={s.darkTop}>
@@ -356,7 +356,7 @@ const s = StyleSheet.create({
   editBtnTxt:  { color: colors.text, fontSize: typography.size.caption },
 
   heroBlock:     { alignItems: 'center', paddingTop: 28, paddingBottom: 28, paddingHorizontal: spacing.xxl, overflow: 'hidden' },
-  heroDeco:      { position: 'absolute', top: -30, color: 'rgba(0,0,0,0.03)', fontSize: 220, fontWeight: '700' },
+  heroDeco:      { position: 'absolute', top: -30, color: alpha(colors.black, 0.03), fontSize: 220, fontWeight: '700' },
   avatarWrap:    { position: 'relative', marginBottom: spacing.lg },
   avatarRing:    { width: 104, height: 104, borderRadius: 52, borderWidth: 2.5, borderColor: colors.cardBorder, alignItems: 'center', justifyContent: 'center' },
   avatarClip:    { width: 96, height: 96, borderRadius: 48, overflow: 'hidden' },
@@ -372,7 +372,7 @@ const s = StyleSheet.create({
   editBlock:     { width: '100%', gap: spacing.lg },
   editRow:       { flexDirection: 'row', gap: spacing.lg },
   editInput:     { flex: 1, backgroundColor: colors.card, borderRadius: radius.lg, borderWidth: 1, borderColor: colors.cardBorder, color: colors.text, fontSize: typography.size.subheading, paddingHorizontal: spacing.lg, paddingVertical: spacing.lg },
-  saveBtn:       { backgroundColor: '#004d27', borderRadius: radius.lg, paddingVertical: 11, alignItems: 'center', borderWidth: 1.5, borderColor: colors.onDark, shadowColor: colors.shadow, shadowOpacity: 0.35, shadowRadius: 12, shadowOffset: { width: 0, height: 0 }, elevation: 6, overflow: 'hidden' },
+  saveBtn:       { backgroundColor: colors.forestBtn, borderRadius: radius.lg, paddingVertical: 11, alignItems: 'center', borderWidth: 1.5, borderColor: colors.onDark, shadowColor: colors.shadow, shadowOpacity: 0.35, shadowRadius: 12, shadowOffset: { width: 0, height: 0 }, elevation: 6, overflow: 'hidden' },
   saveBtnTxt:    { color: colors.onDark, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium },
 
   statsRow: { flexDirection: 'row', marginHorizontal: spacing.xxl, marginVertical: spacing.xl, backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, overflow: 'hidden' },
@@ -383,7 +383,7 @@ const s = StyleSheet.create({
 
   tabWrap:    { flexDirection: 'row', marginHorizontal: spacing.xxl, marginBottom: spacing.md, backgroundColor: colors.card, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.xxs+1, gap: spacing.xxs },
   tabBtn:     { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: spacing.md+1, borderRadius: radius.lg, gap: spacing.sm },
-  tabBtnOn:   { backgroundColor: 'rgba(26,26,26,0.08)' },
+  tabBtnOn:   { backgroundColor: alpha(colors.text, 0.08) },
   tabTxt:     { color: colors.textDim, fontSize: typography.size.body, fontWeight: typography.weight.regular },
   tabTxtOn:   { color: colors.text, fontWeight: typography.weight.semibold },
   tabBadge:   { width: 16, height: 16, borderRadius: 8, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' },
@@ -411,7 +411,7 @@ const s = StyleSheet.create({
   settingLabel:    { flex: 1, color: colors.text, fontSize: typography.size.subheading, fontWeight: typography.weight.regular },
   settingArrow:    { color: colors.textDim, fontSize: 20 },
 
-  signOutBtn: { marginHorizontal: spacing.xxl, marginTop: spacing.lg, paddingVertical: spacing.lg, borderRadius: radius.xl, borderWidth: 1, borderColor: 'rgba(224,90,90,0.2)', alignItems: 'center' },
+  signOutBtn: { marginHorizontal: spacing.xxl, marginTop: spacing.lg, paddingVertical: spacing.lg, borderRadius: radius.xl, borderWidth: 1, borderColor: alpha(colors.red, 0.2), alignItems: 'center' },
   signOutTxt: { color: colors.red, fontSize: typography.size.bodyLg },
   deleteAccountBtn: { marginHorizontal: spacing.xxl, marginTop: spacing.sm, paddingVertical: spacing.md, alignItems: 'center' },
   deleteAccountTxt: { color: colors.textDim, fontSize: typography.size.caption, textDecorationLine: 'underline' },
@@ -420,7 +420,7 @@ const s = StyleSheet.create({
   emptyEmoji: { fontSize: 44 },
   emptyTitle: { color: colors.text, fontSize: typography.size.heading1, fontWeight: typography.weight.regular },
   emptySub:   { color: colors.textMuted, fontSize: typography.size.bodyLg, textAlign: 'center', lineHeight: 20 },
-  emptyBtn:   { backgroundColor: colors.card, borderRadius: radius.lg, paddingHorizontal: spacing.xxl, paddingVertical: spacing.lg, borderWidth: 1, borderColor: 'rgba(200,151,90,0.35)', shadowColor: colors.shadow, shadowOpacity: 0.3, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 4, overflow: 'hidden' },
+  emptyBtn:   { backgroundColor: colors.card, borderRadius: radius.lg, paddingHorizontal: spacing.xxl, paddingVertical: spacing.lg, borderWidth: 1, borderColor: alpha(colors.gold, 0.35), shadowColor: colors.shadow, shadowOpacity: 0.3, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 4, overflow: 'hidden' },
   emptyBtnTxt:{ color: colors.text, fontSize: typography.size.bodyLg },
 
   favCard:      { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.lg, marginHorizontal: spacing.xxl, marginTop: spacing.lg, backgroundColor: colors.card, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.lg, overflow: 'hidden' },
@@ -433,7 +433,7 @@ const s = StyleSheet.create({
   favRating:    { color: colors.primary, fontSize: typography.size.caption, fontWeight: typography.weight.medium },
   favSep:       { color: colors.textDim },
   favPrice:     { color: colors.textMuted, fontSize: typography.size.caption },
-  favResaBtn:   { alignSelf: 'flex-start', backgroundColor: '#006233', borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, shadowColor: colors.shadow, shadowOpacity: 0.35, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 4, overflow: 'hidden' },
+  favResaBtn:   { alignSelf: 'flex-start', backgroundColor: colors.dzGreen, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, shadowColor: colors.shadow, shadowOpacity: 0.35, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 4, overflow: 'hidden' },
   favResaBtnTxt:{ color: colors.onDark, fontSize: typography.size.caption, fontWeight: typography.weight.semibold },
   favHeart:     { width: 32, height: 32, borderRadius: radius.full, backgroundColor: colors.primaryDim, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: colors.primarySoft, flexShrink: 0, shadowColor: colors.shadow, shadowOpacity: 0.2, shadowRadius: 6, shadowOffset: { width: 0, height: 0 }, elevation: 2, overflow: 'hidden' },
   favHeartTxt:  { fontSize: 14 },

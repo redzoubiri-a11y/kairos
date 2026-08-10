@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { colors, typography, spacing, radius } from '../theme';
+import { colors, typography, spacing, radius, alpha } from '../theme';
 import { clientName } from '../hooks/useComptoir';
 import { STATUS, avatarColor, formatDate } from '../hooks/useDashboard';
 
@@ -65,28 +65,28 @@ export default function DashResaCard({ r, onConfirm, onCancel, onArrived, isActi
 }
 
 const s = StyleSheet.create({
-  card:          { backgroundColor: 'transparent', borderRadius: 0, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.08)', borderLeftWidth: 3, borderLeftColor: 'transparent', marginHorizontal: spacing.xxl, paddingVertical: spacing.xl, gap: spacing.lg },
-  cardToday:     { backgroundColor: 'rgba(255,255,255,0.08)' },
+  card:          { backgroundColor: 'transparent', borderRadius: 0, borderBottomWidth: 1, borderBottomColor: alpha(colors.onDark, 0.08), borderLeftWidth: 3, borderLeftColor: 'transparent', marginHorizontal: spacing.xxl, paddingVertical: spacing.xl, gap: spacing.lg },
+  cardToday:     { backgroundColor: alpha(colors.onDark, 0.08) },
   top:           { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },
   timeCol:       { alignItems: 'center', minWidth: 46 },
-  timeVal:       { color: '#F5F2EC', fontSize: typography.size.heading3, fontWeight: typography.weight.medium },
-  dateVal:       { color: 'rgba(245,242,236,0.40)', fontSize: typography.size.xs, marginTop: 2 },
+  timeVal:       { color: colors.ivory, fontSize: typography.size.heading3, fontWeight: typography.weight.medium },
+  dateVal:       { color: alpha(colors.ivory, 0.4), fontSize: typography.size.xs, marginTop: 2 },
   avatar:        { width: 36, height: 36, borderRadius: 0, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
   avatarTxt:     { fontSize: typography.size.body, fontWeight: typography.weight.medium },
-  name:          { color: '#F5F2EC', fontSize: typography.size.subheading, fontWeight: '300', marginBottom: spacing.xxs },
+  name:          { color: colors.ivory, fontSize: typography.size.subheading, fontWeight: '300', marginBottom: spacing.xxs },
   coverRow:      { flexDirection: 'row', gap: spacing.sm, alignItems: 'center' },
-  coverTxt:      { color: 'rgba(245,242,236,0.60)', fontSize: typography.size.body },
-  childTxt:      { color: 'rgba(245,242,236,0.40)', fontSize: typography.size.caption },
+  coverTxt:      { color: alpha(colors.ivory, 0.6), fontSize: typography.size.body },
+  childTxt:      { color: alpha(colors.ivory, 0.4), fontSize: typography.size.caption },
   badge:         { borderRadius: radius.md, borderWidth: 1, paddingHorizontal: spacing.md, paddingVertical: spacing.xs },
   badgeTxt:      { fontSize: typography.size.xs, fontWeight: typography.weight.semibold, letterSpacing: 1 },
-  noteWrap:      { flexDirection: 'row', gap: spacing.md, backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: radius.md, padding: spacing.lg },
+  noteWrap:      { flexDirection: 'row', gap: spacing.md, backgroundColor: alpha(colors.onDark, 0.05), borderRadius: radius.md, padding: spacing.lg },
   noteIcon:      { fontSize: 13 },
-  noteTxt:       { color: 'rgba(245,242,236,0.65)', fontSize: typography.size.body, lineHeight: 18, flex: 1 },
+  noteTxt:       { color: alpha(colors.ivory, 0.65), fontSize: typography.size.body, lineHeight: 18, flex: 1 },
   actions:       { flexDirection: 'row', gap: spacing.md },
-  btnConfirm:    { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 11, borderRadius: radius.lg, backgroundColor: colors.greenSoft, borderWidth: 1, borderColor: 'rgba(76,175,130,0.35)' },
+  btnConfirm:    { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 11, borderRadius: radius.lg, backgroundColor: colors.greenSoft, borderWidth: 1, borderColor: alpha(colors.green, 0.35) },
   btnConfirmTxt: { color: colors.green, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium },
-  btnRefuse:     { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 11, borderRadius: radius.lg, backgroundColor: 'rgba(224,90,90,0.10)', borderWidth: 1, borderColor: 'rgba(224,90,90,0.25)' },
+  btnRefuse:     { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 11, borderRadius: radius.lg, backgroundColor: alpha(colors.red, 0.1), borderWidth: 1, borderColor: alpha(colors.red, 0.25) },
   btnRefuseTxt:  { color: colors.red, fontSize: typography.size.bodyLg },
-  btnArrived:    { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 11, borderRadius: radius.lg, backgroundColor: 'rgba(90,155,224,0.12)', borderWidth: 1, borderColor: 'rgba(90,155,224,0.30)' },
+  btnArrived:    { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 11, borderRadius: radius.lg, backgroundColor: alpha(colors.blue, 0.12), borderWidth: 1, borderColor: alpha(colors.blue, 0.3) },
   btnArrivedTxt: { color: colors.blue, fontSize: typography.size.bodyLg },
 });

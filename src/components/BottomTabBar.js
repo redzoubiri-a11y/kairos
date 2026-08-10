@@ -1,17 +1,18 @@
 import { useRef, useCallback, useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Platform, Animated } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { colors, alpha } from '../theme';
 
 const C = {
-  accent:   '#0D1628',
-  dim:      '#b0bec5',
-  activeBg: 'rgba(13,22,40,0.08)',
+  accent:   colors.navyInk,
+  dim:      colors.steel,
+  activeBg: alpha(colors.navyInk, 0.08),
 };
 
 const C_DARK = {
-  accent:   '#FFFFFF',
-  dim:      'rgba(255,255,255,0.45)',
-  activeBg: 'rgba(255,255,255,0.10)',
+  accent:   colors.onDark,
+  dim:      alpha(colors.onDark, 0.45),
+  activeBg: alpha(colors.onDark, 0.1),
 };
 
 const CLIENT_TABS = [
@@ -32,7 +33,7 @@ const PRO_TABS = [
 
 function TabItem({ tab, isActive, onPress, dark }) {
   const scale = useRef(new Animated.Value(1)).current;
-  const colors = dark ? C_DARK : C;
+  const palette = dark ? C_DARK : C;
 
   const handlePress = useCallback(() => {
     Animated.sequence([
@@ -46,10 +47,10 @@ function TabItem({ tab, isActive, onPress, dark }) {
     <TouchableOpacity style={s.tab} onPress={handlePress} activeOpacity={1}>
       <Animated.View style={[
         s.tabInner,
-        isActive && { backgroundColor: colors.activeBg },
+        isActive && { backgroundColor: palette.activeBg },
         { transform: [{ scale }] },
       ]}>
-        <Text style={[s.label, { color: isActive ? colors.accent : colors.dim }]} numberOfLines={1}>
+        <Text style={[s.label, { color: isActive ? palette.accent : palette.dim }]} numberOfLines={1}>
           {tab.label}
         </Text>
       </Animated.View>
@@ -117,11 +118,11 @@ const s = StyleSheet.create({
   },
   container: {
     flexDirection: 'row',
-    backgroundColor: 'rgba(255,255,255,0.97)',
+    backgroundColor: alpha(colors.onDark, 0.97),
     borderRadius: 36,
     paddingVertical: 8,
     height: 50,
-    shadowColor: '#000',
+    shadowColor: colors.shadow,
     shadowOpacity: 0.16,
     shadowRadius: 24,
     shadowOffset: { width: 0, height: 8 },

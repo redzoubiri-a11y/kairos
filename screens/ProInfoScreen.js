@@ -8,7 +8,7 @@ import { colors, typography, spacing, radius } from '../src/theme';
 import MLoader from '../src/components/MLoader';
 import useProInfo, { CUISINE_OPTIONS, OCCASION_OPTIONS } from '../src/hooks/useProInfo';
 
-const PRO_ACCENT = '#c8975a';
+const PRO_ACCENT = colors.gold;
 
 function Skeleton() {
   return (
@@ -219,7 +219,7 @@ export default function ProInfoScreen({ navigation, route }) {
               value={form.has_kids_menu}
               onValueChange={set('has_kids_menu')}
               trackColor={{ false: colors.cardBorder, true: `${PRO_ACCENT}55` }}
-              thumbColor={form.has_kids_menu ? PRO_ACCENT : '#bbb'}
+              thumbColor={form.has_kids_menu ? PRO_ACCENT : colors.greyMid}
             />
           </View>
           <View style={[s.toggleRow, { borderBottomWidth: 0 }]}>
@@ -228,7 +228,7 @@ export default function ProInfoScreen({ navigation, route }) {
               value={form.has_kids_chairs}
               onValueChange={set('has_kids_chairs')}
               trackColor={{ false: colors.cardBorder, true: `${PRO_ACCENT}55` }}
-              thumbColor={form.has_kids_chairs ? PRO_ACCENT : '#bbb'}
+              thumbColor={form.has_kids_chairs ? PRO_ACCENT : colors.greyMid}
             />
           </View>
 

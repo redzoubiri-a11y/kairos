@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors, typography, spacing, radius } from '../theme';
+import { colors, typography, spacing, radius, alpha } from '../theme';
 import { useGuestContext } from '../context/GuestContext';
 
 export default function GuestWall({ title, message }) {
@@ -34,7 +34,7 @@ const s = StyleSheet.create({
   iconWrap: {
     width: 88, height: 88, borderRadius: radius.xxl,
     backgroundColor: colors.accentSoft,
-    borderWidth: 1.5, borderColor: 'rgba(232,160,69,0.25)',
+    borderWidth: 1.5, borderColor: alpha(colors.amber, 0.25),
     alignItems: 'center', justifyContent: 'center',
     marginBottom: spacing.lg,
   },

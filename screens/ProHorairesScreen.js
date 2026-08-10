@@ -9,7 +9,7 @@ import { colors, typography, spacing, radius } from '../src/theme';
 import MLoader from '../src/components/MLoader';
 import useSchedule, { DOW_FULL, DOW_ORDER } from '../src/hooks/useSchedule';
 
-const PRO_ACCENT = '#c8975a';
+const PRO_ACCENT = colors.gold;
 
 // ── Time option generators ────────────────────────────────────────────────
 function genTimes(fromH, fromM, toH, toM, step = 30) {
@@ -85,7 +85,7 @@ function DayCard({ day, onSetDay, onPickTime }) {
               dinner_end:   null,
             })}
             trackColor={{ false: colors.cardBorder, true: `${PRO_ACCENT}66` }}
-            thumbColor={day.is_open ? PRO_ACCENT : '#bbb'}
+            thumbColor={day.is_open ? PRO_ACCENT : colors.greyMid}
           />
         </View>
       </View>

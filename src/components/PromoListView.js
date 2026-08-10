@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { colors, typography, spacing, radius } from '../theme';
+import { colors, typography, spacing, radius, alpha } from '../theme';
 import { PAST_PROMOS } from '../hooks/useProPromos';
 
 export default function PromoListView({ restaurant, onCreate }) {
@@ -82,30 +82,30 @@ export default function PromoListView({ restaurant, onCreate }) {
 }
 
 const s = StyleSheet.create({
-  activeBanner:      { flexDirection: 'row', alignItems: 'center', gap: spacing.lg, backgroundColor: colors.greenSoft, borderRadius: radius.xl, padding: spacing.lg, borderWidth: 1, borderColor: 'rgba(76,175,130,0.3)' },
+  activeBanner:      { flexDirection: 'row', alignItems: 'center', gap: spacing.lg, backgroundColor: colors.greenSoft, borderRadius: radius.xl, padding: spacing.lg, borderWidth: 1, borderColor: alpha(colors.green, 0.3) },
   activeBannerTitle: { color: colors.green, fontSize: typography.size.body, fontWeight: typography.weight.bold },
   activeBannerSub:   { color: colors.textMuted, fontSize: typography.size.caption, marginTop: 2 },
   sectionLabel:      { color: colors.text, fontSize: typography.size.body, fontWeight: typography.weight.bold, marginBottom: spacing.md },
-  promoCard:         { backgroundColor: '#E53935', borderRadius: radius.xl, padding: spacing.xl, borderWidth: 0 },
+  promoCard:         { backgroundColor: colors.promo, borderRadius: radius.xl, padding: spacing.xl, borderWidth: 0 },
   promoCardTop:      { flexDirection: 'row', alignItems: 'flex-start', marginBottom: spacing.lg },
   promoTitle:        { color: colors.onDark, fontSize: typography.size.title, fontWeight: typography.weight.extrabold, letterSpacing: -0.5 },
-  promoSub:          { color: 'rgba(255,255,255,0.80)', fontSize: typography.size.caption, marginTop: 4 },
-  livePill:          { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: colors.greenSoft, borderRadius: 0, paddingHorizontal: spacing.lg, paddingVertical: spacing.xs, borderWidth: 1, borderColor: 'rgba(76,175,130,0.3)' },
+  promoSub:          { color: alpha(colors.onDark, 0.8), fontSize: typography.size.caption, marginTop: 4 },
+  livePill:          { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: colors.greenSoft, borderRadius: 0, paddingHorizontal: spacing.lg, paddingVertical: spacing.xs, borderWidth: 1, borderColor: alpha(colors.green, 0.3) },
   liveDot:           { width: 7, height: 7, borderRadius: 0, backgroundColor: colors.green },
   liveTxt:           { color: colors.green, fontSize: typography.size.caption, fontWeight: typography.weight.semibold },
   tagRow:            { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginBottom: spacing.lg },
-  tag:               { backgroundColor: 'rgba(0,0,0,0.20)', borderRadius: radius.full, paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderWidth: 1, borderColor: 'rgba(255,255,255,0.30)' },
+  tag:               { backgroundColor: alpha(colors.black, 0.2), borderRadius: radius.full, paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderWidth: 1, borderColor: alpha(colors.onDark, 0.3) },
   tagTxt:            { color: colors.onDark, fontSize: typography.size.caption },
-  progressBox:       { backgroundColor: 'rgba(0,0,0,0.20)', borderRadius: radius.md, padding: spacing.lg, marginBottom: spacing.lg },
+  progressBox:       { backgroundColor: alpha(colors.black, 0.2), borderRadius: radius.md, padding: spacing.lg, marginBottom: spacing.lg },
   progressRow:       { flexDirection: 'row', justifyContent: 'space-between', marginBottom: spacing.sm },
-  progressLabel:     { color: 'rgba(255,255,255,0.75)', fontSize: typography.size.caption },
+  progressLabel:     { color: alpha(colors.onDark, 0.75), fontSize: typography.size.caption },
   progressVal:       { color: colors.onDark, fontSize: typography.size.caption, fontWeight: typography.weight.bold },
-  progressTrack:     { height: 4, backgroundColor: 'rgba(255,255,255,0.30)', borderRadius: 0 },
+  progressTrack:     { height: 4, backgroundColor: alpha(colors.onDark, 0.3), borderRadius: 0 },
   progressFill:      { height: 4, backgroundColor: colors.bg, borderRadius: 0 },
   actionRow:         { flexDirection: 'row', gap: spacing.sm },
-  editBtn:           { flex: 1, backgroundColor: 'rgba(0,0,0,0.20)', borderRadius: radius.md, padding: spacing.md, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.35)' },
+  editBtn:           { flex: 1, backgroundColor: alpha(colors.black, 0.2), borderRadius: radius.md, padding: spacing.md, alignItems: 'center', borderWidth: 1, borderColor: alpha(colors.onDark, 0.35) },
   editBtnTxt:        { color: colors.onDark, fontSize: typography.size.caption, fontWeight: typography.weight.bold },
-  pauseBtn:          { flex: 1, backgroundColor: colors.redSoft, borderRadius: radius.md, padding: spacing.md, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(224,90,90,0.2)' },
+  pauseBtn:          { flex: 1, backgroundColor: colors.redSoft, borderRadius: radius.md, padding: spacing.md, alignItems: 'center', borderWidth: 1, borderColor: alpha(colors.red, 0.2) },
   pauseBtnTxt:       { color: colors.red, fontSize: typography.size.caption, fontWeight: typography.weight.bold },
   pastCard:          { backgroundColor: colors.card, borderRadius: radius.lg, padding: spacing.lg, marginBottom: spacing.md, borderWidth: 1, borderColor: colors.cardBorder, opacity: 0.75 },
   pastCardTop:       { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.xs },

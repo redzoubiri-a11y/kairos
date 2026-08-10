@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
-import { colors, typography, spacing, radius } from '../theme';
+import { colors, typography, spacing, radius, alpha } from '../theme';
 
 export default function RestaurantMenuTab({ menu }) {
   const cats    = useMemo(() => menu.map(c => c.cat), [menu]);
@@ -71,7 +71,7 @@ const s = StyleSheet.create({
   rowLeft:     { flex: 1, gap: spacing.xs + 1 },
   nomRow:      { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: spacing.sm + 1 },
   nom:         { color: colors.text, fontSize: typography.size.subheading, fontWeight: typography.weight.regular },
-  popularBadge:{ backgroundColor: colors.accentSoft, borderRadius: radius.sm, paddingHorizontal: spacing.md - 2, paddingVertical: spacing.xxs, borderWidth: 1, borderColor: 'rgba(232,160,69,0.25)' },
+  popularBadge:{ backgroundColor: colors.accentSoft, borderRadius: radius.sm, paddingHorizontal: spacing.md - 2, paddingVertical: spacing.xxs, borderWidth: 1, borderColor: alpha(colors.amber, 0.25) },
   popularTxt:  { color: colors.accent, fontSize: typography.size.xs, fontWeight: typography.weight.medium },
   desc:        { color: colors.textMuted, fontSize: typography.size.caption, lineHeight: 16 },
   priceBox:    { alignItems: 'flex-end', minWidth: 55 },

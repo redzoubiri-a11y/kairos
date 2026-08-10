@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import { colors, typography, spacing, radius } from '../theme';
+import { colors, typography, spacing, radius, alpha, avatarColors } from '../theme';
 import MLoader from './MLoader';
 import Stars from './Stars';
 
-const AVATAR_COLORS = ['#E8A045','#5A9BE0','#4CAF82','#9b6cc8','#E05A5A','#5ab4c8'];
+const AVATAR_COLORS = avatarColors;
 function avatarColor(name) {
   let h = 0;
   for (let i = 0; i < (name||'').length; i++) h = (h * 31 + name.charCodeAt(i)) % AVATAR_COLORS.length;
@@ -124,7 +124,7 @@ const s = StyleSheet.create({
   nom:          { color: colors.text, fontSize: typography.size.bodyLg, fontWeight: typography.weight.regular },
   date:         { color: colors.textDim, fontSize: typography.size.sm },
   noteBadge:    { backgroundColor: colors.cardHover, borderRadius: radius.sm, paddingHorizontal: spacing.sm + 1, paddingVertical: spacing.xxs + 1, borderWidth: 1, borderColor: colors.cardBorder, alignSelf: 'flex-start' },
-  noteBadgeGood:{ backgroundColor: colors.greenSoft, borderColor: 'rgba(76,175,130,0.25)' },
+  noteBadgeGood:{ backgroundColor: colors.greenSoft, borderColor: alpha(colors.green, 0.25) },
   noteBadgeTxt: { color: colors.textMuted, fontSize: typography.size.sm },
   txt:          { color: colors.textMuted, fontSize: typography.size.bodyLg, fontWeight: typography.weight.regular, lineHeight: 20 },
   empty:        { alignItems: 'center', paddingVertical: 48, gap: spacing.md },
@@ -134,7 +134,7 @@ const s = StyleSheet.create({
   ctaWrap:      { margin: spacing.xl, gap: spacing.xl - 2 },
   ctaDivider:   { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },
   ctaDividerTxt:{ color: colors.textDim, fontSize: typography.size.caption },
-  ctaBtn:       { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.md, backgroundColor: colors.goldSoft, borderRadius: radius.xl, borderWidth: 1, borderColor: 'rgba(200,151,90,0.4)', paddingVertical: spacing.xl - 2, shadowColor: colors.shadow, shadowOpacity: 0.25, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 3 },
+  ctaBtn:       { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.md, backgroundColor: colors.goldSoft, borderRadius: radius.xl, borderWidth: 1, borderColor: alpha(colors.gold, 0.4), paddingVertical: spacing.xl - 2, shadowColor: colors.shadow, shadowOpacity: 0.25, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 3 },
   ctaIcon:      { fontSize: typography.size.heading3 },
   ctaTxt:       { color: colors.text, fontSize: typography.size.subheading, fontWeight: typography.weight.regular },
 });

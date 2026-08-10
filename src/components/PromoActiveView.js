@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { colors, typography, spacing, radius } from '../theme';
+import { colors, typography, spacing, radius, alpha } from '../theme';
 
 const RECAP = [
   ['Type',    "−20% sur l'addition"],
@@ -39,10 +39,10 @@ export default function PromoActiveView({ onViewAll, onCreate }) {
 
 const s = StyleSheet.create({
   wrap:          { alignItems: 'center', padding: spacing.xxl, gap: spacing.xl },
-  iconWrap:      { width: 70, height: 70, borderRadius: 0, backgroundColor: colors.accentSoft, borderWidth: 2, borderColor: 'rgba(232,160,69,0.4)', alignItems: 'center', justifyContent: 'center' },
+  iconWrap:      { width: 70, height: 70, borderRadius: 0, backgroundColor: colors.accentSoft, borderWidth: 2, borderColor: alpha(colors.amber, 0.4), alignItems: 'center', justifyContent: 'center' },
   title:         { color: colors.text, fontSize: typography.size.title, fontWeight: typography.weight.black },
   sub:           { color: colors.textMuted, fontSize: typography.size.body, textAlign: 'center', lineHeight: 20, maxWidth: 220 },
-  recapCard:     { backgroundColor: colors.card, borderRadius: radius.xl, padding: spacing.xl, borderWidth: 1, borderColor: 'rgba(232,160,69,0.3)', width: '100%' },
+  recapCard:     { backgroundColor: colors.card, borderRadius: radius.xl, padding: spacing.xl, borderWidth: 1, borderColor: alpha(colors.amber, 0.3), width: '100%' },
   recapRow:      { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: spacing.md },
   recapSep:      { borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   recapKey:      { color: colors.textMuted, fontSize: typography.size.body },

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { colors, typography, spacing, radius } from '../theme';
+import { colors, typography, spacing, radius, alpha } from '../theme';
 import { fetchCompletion } from '../utils/restaurantCompletion';
 
 const FIELD_SCREEN = {
@@ -54,13 +54,13 @@ export default function RestaurantCompletionCard({ navigation, restaurantId, ref
 }
 
 const s = StyleSheet.create({
-  card:    { marginHorizontal: spacing.xxl, marginTop: spacing.lg, padding: spacing.xl, borderRadius: radius.xxl, backgroundColor: 'rgba(200,151,90,0.10)', borderWidth: 1, borderColor: 'rgba(200,151,90,0.30)' },
+  card:    { marginHorizontal: spacing.xxl, marginTop: spacing.lg, padding: spacing.xl, borderRadius: radius.xxl, backgroundColor: alpha(colors.gold, 0.1), borderWidth: 1, borderColor: alpha(colors.gold, 0.3) },
   headRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: spacing.md },
-  title:   { color: '#F5F2EC', fontSize: typography.size.subheading, fontWeight: typography.weight.semibold },
-  sub:     { color: 'rgba(245,242,236,0.50)', fontSize: typography.size.xs },
-  track:   { height: 6, borderRadius: 3, backgroundColor: 'rgba(255,255,255,0.10)', overflow: 'hidden', marginBottom: spacing.md },
+  title:   { color: colors.ivory, fontSize: typography.size.subheading, fontWeight: typography.weight.semibold },
+  sub:     { color: alpha(colors.ivory, 0.5), fontSize: typography.size.xs },
+  track:   { height: 6, borderRadius: 3, backgroundColor: alpha(colors.onDark, 0.1), overflow: 'hidden', marginBottom: spacing.md },
   fill:    { height: '100%', backgroundColor: colors.gold, borderRadius: 3 },
   chips:   { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
-  chip:    { paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderRadius: radius.full, backgroundColor: 'rgba(255,255,255,0.08)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)' },
-  chipTxt: { color: 'rgba(245,242,236,0.80)', fontSize: typography.size.xs },
+  chip:    { paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderRadius: radius.full, backgroundColor: alpha(colors.onDark, 0.08), borderWidth: 1, borderColor: alpha(colors.onDark, 0.15) },
+  chipTxt: { color: alpha(colors.ivory, 0.8), fontSize: typography.size.xs },
 });

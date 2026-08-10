@@ -5,7 +5,7 @@ import {
   RefreshControl, Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors, typography, spacing, radius } from '../src/theme';
+import { colors, typography, spacing, radius, alpha } from '../src/theme';
 import MLoader from '../src/components/MLoader';
 import useProMenu, { DEFAULT_CATS, EMPTY_FORM } from '../src/hooks/useProMenu';
 import DishCard from '../src/components/DishCard';
@@ -241,7 +241,7 @@ const s = StyleSheet.create({
   emptyTitle: { color: colors.text, fontSize: typography.size.heading1, fontWeight: '300' },
   emptySub:   { color: colors.textMuted, fontSize: typography.size.body, textAlign: 'center' },
 
-  addDashed:     { borderWidth: 1, borderStyle: 'dashed', borderColor: 'rgba(232,160,69,0.35)', borderRadius: radius.xl, paddingVertical: spacing.xxl, alignItems: 'center', gap: spacing.sm, marginTop: spacing.sm },
+  addDashed:     { borderWidth: 1, borderStyle: 'dashed', borderColor: alpha(colors.amber, 0.35), borderRadius: radius.xl, paddingVertical: spacing.xxl, alignItems: 'center', gap: spacing.sm, marginTop: spacing.sm },
   addDashedPlus: { color: colors.accent, fontSize: 26 },
   addDashedTxt:  { color: colors.textMuted, fontSize: typography.size.body },
 

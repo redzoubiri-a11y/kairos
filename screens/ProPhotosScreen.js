@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image, ActivityIndicator, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors, typography, spacing, radius } from '../src/theme';
+import { colors, typography, spacing, radius, alpha } from '../src/theme';
 import useProPhotos from '../src/hooks/useProPhotos';
 import { useEffect } from 'react';
 import * as ScreenOrientation from 'expo-screen-orientation';
@@ -113,7 +113,7 @@ const s = StyleSheet.create({
   row:    { gap: spacing.md },
   card:   { flex: 1, aspectRatio: 4/3, borderRadius: radius.xl, overflow: 'hidden', marginBottom: spacing.md, backgroundColor: colors.card },
   img:    { width: '100%', height: '100%' },
-  deleteBtn: { position: 'absolute', top: spacing.sm, right: spacing.sm, width: 28, height: 28, borderRadius: 0, backgroundColor: 'rgba(15,13,11,0.75)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)' },
+  deleteBtn: { position: 'absolute', top: spacing.sm, right: spacing.sm, width: 28, height: 28, borderRadius: 0, backgroundColor: alpha(colors.ink, 0.75), alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: alpha(colors.onDark, 0.15) },
   deleteTxt: { color: colors.text, fontSize: 11, fontWeight: typography.weight.bold },
 
   empty:    { alignItems: 'center', paddingTop: 80, gap: spacing.md },

@@ -20,6 +20,9 @@ export const colors = {
   onDark: '#FFFFFF',
   // Couleur de projection des ombres — voir aussi `shadows` plus bas.
   shadow: '#000000',
+  // Noir pur des voiles et scrims posés sur une image ou un fond clair.
+  // Même valeur que `shadow`, usage différent : celui-ci se voit.
+  black: '#000000',
   card: '#F4F2EE',
   cardBorder: 'rgba(0,0,0,0.09)',
   cardHover: 'rgba(0,0,0,0.05)',
@@ -68,6 +71,60 @@ export const colors = {
   overlay: 'rgba(0,0,0,0.5)',
   overlayLight: 'rgba(0,0,0,0.15)',
 
+  // Fond des écrans pro sombres (ProDashboard, ProComptoir)
+  proBg: '#0D1B2A',
+  // Blanc chaud — texte principal sur les écrans sombres
+  ivory: '#F5F2EC',
+  // Blanc cassé plus rosé — libellés secondaires sur photo
+  sand: '#F0EBE3',
+  // Ambre historique, antérieur à `gold`
+  amber: '#E8A045',
+  // Vert du drapeau algérien — badges halal, accents nationaux
+  dzGreen: '#006233',
+  // Noir chaud — voiles posés sur les photos (badges, pastilles)
+  ink: '#0F0D0B',
+
+  // Voile de fond lavande → ardoise, du plus clair au plus profond
+  mistLight: '#C4B8C8',
+  mistMid: '#8B9BB4',
+  mistDeep: '#6B7F9E',
+
+  // Bandeau de statistiques du comptoir, un cran sous `proBg`
+  proBgDeep: '#091420',
+  // Navy encre — barre d'onglets et cartes de configuration pro
+  navyInk: '#0D1628',
+  // Navy encre éclairci, extrémité du dégradé d'en-tête pro
+  navyInkLight: '#162040',
+  // Gris de remplissage des zones carte non chargées
+  greyPlaceholder: '#E8E8E8',
+  // Gris bleuté — libellés inactifs de la barre d'onglets
+  steel: '#B0BEC5',
+  // Gris neutre — curseur d'interrupteur au repos
+  greyMid: '#BBBBBB',
+
+  // Vert clair — indicateurs « ouvert » et chiffres positifs sur fond sombre
+  greenLight: '#88D5A8',
+  // Vert sapin, du dégradé « disponible ce soir »
+  forestDeep: '#094E2E',
+  forestDark: '#072E1D',
+  // Vert profond du bouton d'enregistrement du profil
+  forestBtn: '#004D27',
+  // Vert moyen des badges de cuisine posés sur la photo hero
+  forestMid: '#1A5C3A',
+  // Rouge vif des cartes promotion
+  promo: '#E53935',
+  // Halo ambré des boutons de réservation
+  glow: '#FFDC96',
+
+  // Compléments de la palette d'avatars
+  violet: '#9B6CC8',
+  aqua: '#5AB4C8',
+
+  // Médailles du classement Explorer
+  medalGold: '#F0C040',
+  medalSilver: '#B0B0B0',
+  medalBronze: '#CD7F32',
+
   // Restaurant cards design system
   star: '#f5c842',
   separator: '#eeeeee',
@@ -76,6 +133,35 @@ export const colors = {
   textSecondary: '#555555',
   textTertiary: '#888888',
 };
+
+// Décline un token hexadécimal en version translucide.
+// À préférer à un `rgba(...)` écrit à la main : la teinte reste pilotée par la
+// palette, seul le niveau d'opacité est local.
+//   borderColor: alpha(colors.red, 0.3)
+// Une valeur déjà translucide est renvoyée telle quelle.
+export const alpha = (color, a) => {
+  if (typeof color !== 'string' || color[0] !== '#') return color;
+  const hex = color.slice(1);
+  const full = hex.length === 3 ? hex.replace(/./g, c => c + c) : hex;
+  const n = parseInt(full.slice(0, 6), 16);
+  return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${a})`;
+};
+
+// Dégradés partagés
+export const gradients = {
+  // Voile lavande/ardoise posé en fond d'écran, sous le contenu
+  bgOverlay: [colors.mistLight, colors.mistMid, colors.mistDeep],
+  // Carte « disponible ce soir » de l'accueil
+  tonight: [colors.forestDeep, colors.forestDark],
+  // En-tête sombre du tableau de bord pro
+  proHeader: [colors.navyInk, colors.navyInkLight],
+};
+
+// Couleurs d'avatar attribuées par rotation, faute de photo de profil
+export const avatarColors = [
+  colors.amber, colors.blue, colors.green,
+  colors.violet, colors.red, colors.aqua,
+];
 
 export const typography = {
   // Familles
@@ -141,28 +227,28 @@ export const radius = {
 
 export const shadows = {
   sm: {
-    shadowColor: '#000',
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 4,
     elevation: 2,
   },
   md: {
-    shadowColor: '#000',
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.12,
     shadowRadius: 10,
     elevation: 4,
   },
   lg: {
-    shadowColor: '#000',
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.16,
     shadowRadius: 20,
     elevation: 8,
   },
   accent: {
-    shadowColor: '#9B9088',
+    shadowColor: colors.accent,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 12,
@@ -233,7 +319,7 @@ export const buttonVariants = {
       padding: spacing.xl,
       alignItems: 'center',
       borderWidth: 1,
-      borderColor: 'rgba(10,10,10,0.5)',
+      borderColor: alpha(colors.noir, 0.5),
       shadowColor: colors.noir,
       shadowOpacity: 0.4,
       shadowRadius: 14,
@@ -241,7 +327,7 @@ export const buttonVariants = {
       elevation: 7,
     },
     text: {
-      color: '#FFFFFF',
+      color: colors.onDark,
       fontSize: typography.size.subheading,
       fontWeight: typography.weight.extrabold,
       letterSpacing: 0.3,
@@ -284,7 +370,7 @@ export const buttonVariants = {
       padding: spacing.xl,
       alignItems: 'center',
       borderWidth: 1,
-      borderColor: 'rgba(224, 90, 90, 0.3)',
+      borderColor: alpha(colors.red, 0.3),
     },
     text: {
       color: colors.red,
@@ -306,6 +392,8 @@ export const tagVariants = {
 
 export default {
   colors,
+  alpha,
+  gradients,
   typography,
   spacing,
   radius,

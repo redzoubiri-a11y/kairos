@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { colors, typography, spacing, radius } from '../src/theme';
+import { colors, typography, spacing, radius, alpha, gradients } from '../src/theme';
 import MLoader from '../src/components/MLoader';
 import useReservations, { daysUntil } from '../src/hooks/useReservations';
 import useMyReservations from '../src/hooks/useMyReservations';
@@ -18,9 +18,9 @@ import { useGuestContext } from '../src/context/GuestContext';
 
 // ── Feedback helpers pour la NextResaCard (cancel EF) ─────────────────────
 function nextFbStyle(status) {
-  if (status === 'ok')                 return { backgroundColor: colors.greenSoft,  borderColor: 'rgba(76,175,130,0.30)' };
-  if (status === 'pending_validation') return { backgroundColor: colors.blueSoft,   borderColor: 'rgba(90,155,224,0.30)' };
-  return                                      { backgroundColor: colors.redSoft,    borderColor: 'rgba(224,90,90,0.30)'  };
+  if (status === 'ok')                 return { backgroundColor: colors.greenSoft,  borderColor: alpha(colors.green, 0.3) };
+  if (status === 'pending_validation') return { backgroundColor: colors.blueSoft,   borderColor: alpha(colors.blue, 0.3) };
+  return                                      { backgroundColor: colors.redSoft,    borderColor: alpha(colors.red, 0.3)  };
 }
 function nextFbColor(status) {
   if (status === 'ok')                 return { color: colors.green  };
@@ -130,7 +130,7 @@ export default function ReservationScreen({ navigation }) {
 
   return (
     <SafeAreaView style={s.root}>
-      <LinearGradient colors={['#C4B8C8', '#8B9BB4', '#6B7F9E']} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
+      <LinearGradient colors={gradients.bgOverlay} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
 
       <View style={s.header}>
         <View style={{ flex:1 }}>
@@ -293,7 +293,7 @@ const s = StyleSheet.create({
   pendingDot:  { width:6, height:6, borderRadius:0, backgroundColor: colors.resa },
   pendingTxt:  { color: colors.text, fontSize: typography.size.caption },
 
-  tabs:       { flexDirection:'row', margin: spacing.xl, backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: radius.xl, padding: spacing.xs, borderWidth:1, borderColor: colors.cardBorder, gap: spacing.xxs },
+  tabs:       { flexDirection:'row', margin: spacing.xl, backgroundColor: alpha(colors.black, 0.04), borderRadius: radius.xl, padding: spacing.xs, borderWidth:1, borderColor: colors.cardBorder, gap: spacing.xxs },
   tab:        { flex:1, flexDirection:'row', paddingVertical: spacing.md, borderRadius: radius.lg, alignItems:'center', justifyContent:'center', gap: spacing.sm },
   tabOn:      { backgroundColor: colors.navy, shadowColor: colors.shadow, shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
   tabTxt:     { color: colors.textMuted, fontSize: typography.size.bodyLg, fontWeight: typography.weight.regular },
@@ -311,6 +311,6 @@ const s = StyleSheet.create({
   emptyEmoji: { fontSize:52 },
   emptyTitle: { color: colors.text, fontSize: typography.size.heading2, fontWeight: typography.weight.regular },
   emptySub:   { color: colors.textMuted, fontSize: typography.size.bodyLg, textAlign:'center', lineHeight:20, paddingHorizontal: spacing.section },
-  emptyBtn:   { backgroundColor: colors.navy, borderRadius: radius.lg, paddingHorizontal: spacing.xxl, paddingVertical: spacing.md, borderWidth:1, borderColor: 'rgba(200,151,90,0.35)', marginTop: spacing.xs, shadowColor: colors.shadow, shadowOpacity: 0.3, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 4 },
+  emptyBtn:   { backgroundColor: colors.navy, borderRadius: radius.lg, paddingHorizontal: spacing.xxl, paddingVertical: spacing.md, borderWidth:1, borderColor: alpha(colors.gold, 0.35), marginTop: spacing.xs, shadowColor: colors.shadow, shadowOpacity: 0.3, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 4 },
   emptyBtnTxt:{ color: colors.text, fontSize: typography.size.bodyLg },
 });

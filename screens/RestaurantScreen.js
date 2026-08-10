@@ -6,7 +6,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { colors, typography, spacing, radius } from '../src/theme';
+import { colors, typography, spacing, radius, alpha, gradients } from '../src/theme';
 import useRestaurant from '../src/hooks/useRestaurant';
 import RestaurantMenuTab from '../src/components/RestaurantMenuTab';
 import RestaurantAvisTab from '../src/components/RestaurantAvisTab';
@@ -20,12 +20,12 @@ function HeroGradient() {
   return (
     <>
       <LinearGradient
-        colors={['rgba(0,0,0,0.80)', 'transparent']}
+        colors={[alpha(colors.black, 0.8), 'transparent']}
         style={{ position: 'absolute', top: 0, left: 0, right: 0, height: HERO * 0.38 }}
         pointerEvents="none"
       />
       <LinearGradient
-        colors={['transparent', 'rgba(0,0,0,0.88)']}
+        colors={['transparent', alpha(colors.black, 0.88)]}
         style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: HERO * 0.60 }}
         pointerEvents="none"
       />
@@ -60,7 +60,7 @@ export default function RestaurantScreen({ route, navigation }) {
 
   return (
     <SafeAreaView style={s.root} edges={['top', 'left', 'right', 'bottom']}>
-      <LinearGradient colors={['#C4B8C8', '#8B9BB4', '#6B7F9E']} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
+      <LinearGradient colors={gradients.bgOverlay} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
 
       {/* Hero */}
       <View style={s.hero}>
@@ -204,25 +204,25 @@ const s = StyleSheet.create({
 
   hero:         { height: HERO, overflow: 'hidden' },
   heroLogo:     { position: 'absolute', top: TOP + 2, alignSelf: 'center', left: 0, right: 0 },
-  heroBtnTxt:   { color: colors.onDark, fontSize: typography.size.heading1, textShadowColor: 'rgba(0,0,0,0.8)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 4 },
+  heroBtnTxt:   { color: colors.onDark, fontSize: typography.size.heading1, textShadowColor: alpha(colors.black, 0.8), textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 4 },
   heroBtnIcon:  { fontSize: typography.size.heading1 },
   heroBtnActing:{ color: colors.accent, fontSize: typography.size.bodyLg, fontWeight: typography.weight.bold },
 
-  heroBackBtn:     { position: 'absolute', top: TOP, left: spacing.xl, width: 40, height: 40, borderRadius: 0, backgroundColor: 'rgba(15,13,11,0.72)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(240,235,227,0.12)' },
-  heroBackBtnTxt:  { color: 'rgba(240,235,227,0.9)', fontSize: 22, lineHeight: 26 },
+  heroBackBtn:     { position: 'absolute', top: TOP, left: spacing.xl, width: 40, height: 40, borderRadius: 0, backgroundColor: alpha(colors.ink, 0.72), alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: alpha(colors.sand, 0.12) },
+  heroBackBtnTxt:  { color: alpha(colors.sand, 0.9), fontSize: 22, lineHeight: 26 },
   heroBottomRight: { position: 'absolute', bottom: spacing.xl, right: spacing.xl, flexDirection: 'row', alignItems: 'center', gap: spacing.md },
-  favBtn:          { width: 44, height: 44, borderRadius: 0, backgroundColor: 'rgba(15,13,11,0.72)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(240,235,227,0.12)' },
-  sharePill:    { backgroundColor: 'rgba(255,255,255,0.07)', borderRadius: 0, paddingHorizontal: 14, paddingVertical: 9, borderWidth: 1, borderColor: 'rgba(255,255,255,0.13)' },
-  shareTxt:     { color: 'rgba(240,235,227,0.75)', fontSize: typography.size.caption, fontWeight: typography.weight.regular, letterSpacing: 2 },
+  favBtn:          { width: 44, height: 44, borderRadius: 0, backgroundColor: alpha(colors.ink, 0.72), alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: alpha(colors.sand, 0.12) },
+  sharePill:    { backgroundColor: alpha(colors.onDark, 0.07), borderRadius: 0, paddingHorizontal: 14, paddingVertical: 9, borderWidth: 1, borderColor: alpha(colors.onDark, 0.13) },
+  shareTxt:     { color: alpha(colors.sand, 0.75), fontSize: typography.size.caption, fontWeight: typography.weight.regular, letterSpacing: 2 },
 
 
-  openBadge: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs + 1, backgroundColor: 'rgba(15,13,11,0.76)', borderRadius: radius.full, paddingHorizontal: spacing.md + 2, paddingVertical: spacing.xs, borderWidth: 1, borderColor: 'rgba(76,175,130,0.3)' },
+  openBadge: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs + 1, backgroundColor: alpha(colors.ink, 0.76), borderRadius: radius.full, paddingHorizontal: spacing.md + 2, paddingVertical: spacing.xs, borderWidth: 1, borderColor: alpha(colors.green, 0.3) },
   openDot:   { width: 6, height: 6, borderRadius: 0, backgroundColor: colors.green },
   openTxt:   { color: colors.green, fontSize: typography.size.sm },
 
   heroInfo:        { position: 'absolute', bottom: 0, left: 0, right: 0, padding: spacing.xl, paddingBottom: spacing.xl + 2 },
   heroTopRow:      { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.md },
-  heroCuisineBadge:{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs + 1, backgroundColor: 'rgba(26,92,58,0.85)', borderRadius: radius.card, borderWidth: 1, borderColor: 'rgba(26,92,58,0.6)', paddingHorizontal: spacing.md + 1, paddingVertical: spacing.xs },
+  heroCuisineBadge:{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs + 1, backgroundColor: alpha(colors.forestMid, 0.85), borderRadius: radius.card, borderWidth: 1, borderColor: alpha(colors.forestMid, 0.6), paddingHorizontal: spacing.md + 1, paddingVertical: spacing.xs },
   heroCuisineEmoji:{ fontSize: typography.size.body },
   heroCuisineTxt:  { color: colors.onDark, fontSize: typography.size.xs, letterSpacing: 2.5 },
   heroName:        { color: colors.text, fontSize: typography.size.title + 4, fontWeight: typography.weight.regular, letterSpacing: 0.3, marginBottom: spacing.sm + 1 },

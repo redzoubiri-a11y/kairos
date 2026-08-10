@@ -2,7 +2,7 @@ import { useCallback, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { colors, typography, spacing, radius } from '../src/theme';
+import { colors, typography, spacing, radius, alpha, gradients } from '../src/theme';
 import useProInscription from '../src/hooks/useProInscription';
 import FormField from '../src/components/FormField';
 
@@ -24,7 +24,7 @@ export default function ProInscriptionScreen({ navigation }) {
   if (success && rejected) {
     return (
       <SafeAreaView style={s.root}>
-        <LinearGradient colors={['#C4B8C8', '#8B9BB4', '#6B7F9E']} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
+        <LinearGradient colors={gradients.bgOverlay} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
         <View style={s.successWrap}>
           <View style={s.successRing}>
             <Text style={s.successEmoji}>❌</Text>
@@ -41,7 +41,7 @@ export default function ProInscriptionScreen({ navigation }) {
   if (success) {
     return (
       <SafeAreaView style={s.root}>
-        <LinearGradient colors={['#C4B8C8', '#8B9BB4', '#6B7F9E']} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
+        <LinearGradient colors={gradients.bgOverlay} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
         <View style={s.successWrap}>
           <View style={s.successRing}>
             <Text style={s.successEmoji}>🍽️</Text>
@@ -57,7 +57,7 @@ export default function ProInscriptionScreen({ navigation }) {
 
   return (
     <SafeAreaView style={s.root}>
-      <LinearGradient colors={['#C4B8C8', '#8B9BB4', '#6B7F9E']} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
+      <LinearGradient colors={gradients.bgOverlay} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
       <View style={s.header}>
         <TouchableOpacity style={s.backBtn} onPress={goBack}>
           <Text style={s.backBtnTxt}>←</Text>
@@ -129,10 +129,10 @@ const s = StyleSheet.create({
 
   sectionLabel: { color: colors.textMuted, fontSize: typography.size.xs, letterSpacing: 4, paddingHorizontal: spacing.xxl, marginTop: spacing.xxl, marginBottom: spacing.lg },
 
-  errorBox: { marginHorizontal: spacing.xxl, marginTop: spacing.md, backgroundColor: colors.redSoft, borderRadius: radius.lg, padding: spacing.lg, borderWidth: 1, borderColor: 'rgba(224,90,90,0.3)' },
+  errorBox: { marginHorizontal: spacing.xxl, marginTop: spacing.md, backgroundColor: colors.redSoft, borderRadius: radius.lg, padding: spacing.lg, borderWidth: 1, borderColor: alpha(colors.red, 0.3) },
   errorTxt:  { color: colors.red, fontSize: typography.size.body },
 
-  submitBtn:    { marginHorizontal: spacing.xxl, marginTop: spacing.xxl, backgroundColor: colors.resa, borderRadius: radius.xl, paddingVertical: spacing.xl - 1, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,220,150,0.5)', shadowColor: colors.shadow, shadowOpacity: 0.5, shadowRadius: 14, shadowOffset: { width: 0, height: 0 }, elevation: 7 },
+  submitBtn:    { marginHorizontal: spacing.xxl, marginTop: spacing.xxl, backgroundColor: colors.resa, borderRadius: radius.xl, paddingVertical: spacing.xl - 1, alignItems: 'center', borderWidth: 1, borderColor: alpha(colors.glow, 0.5), shadowColor: colors.shadow, shadowOpacity: 0.5, shadowRadius: 14, shadowOffset: { width: 0, height: 0 }, elevation: 7 },
   submitBtnTxt: { color: colors.onDark, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium, letterSpacing: 1.5 },
 
   legalTxt:   { marginHorizontal: spacing.xxl, marginTop: spacing.lg, color: colors.textDim, fontSize: typography.size.caption, textAlign: 'center', lineHeight: 16, fontStyle: 'italic' },
@@ -144,6 +144,6 @@ const s = StyleSheet.create({
   successEmoji: { fontSize: 44 },
   successTitle: { color: colors.text, fontSize: typography.size.title, fontWeight: typography.weight.regular, letterSpacing: 0.5, marginBottom: spacing.lg, textAlign: 'center' },
   successSub:   { color: colors.textMuted, fontSize: typography.size.bodyLg, textAlign: 'center', lineHeight: 22, marginBottom: spacing.section },
-  successBtn:   { backgroundColor: colors.resa, borderRadius: radius.xl, paddingVertical: spacing.xl - 1, paddingHorizontal: spacing.section, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,220,150,0.5)', shadowColor: colors.shadow, shadowOpacity: 0.5, shadowRadius: 14, shadowOffset: { width: 0, height: 0 }, elevation: 7 },
+  successBtn:   { backgroundColor: colors.resa, borderRadius: radius.xl, paddingVertical: spacing.xl - 1, paddingHorizontal: spacing.section, alignItems: 'center', borderWidth: 1, borderColor: alpha(colors.glow, 0.5), shadowColor: colors.shadow, shadowOpacity: 0.5, shadowRadius: 14, shadowOffset: { width: 0, height: 0 }, elevation: 7 },
   successBtnTxt:{ color: colors.onDark, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium, letterSpacing: 2 },
 });

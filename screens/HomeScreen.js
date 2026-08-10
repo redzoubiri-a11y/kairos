@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { colors, typography, spacing, radius } from '../src/theme';
+import { colors, typography, spacing, radius, alpha, gradients } from '../src/theme';
 import MLoader from '../src/components/MLoader';
 import FeaturedCard from '../src/components/FeaturedCard';
 import ListCard from '../src/components/ListCard';
@@ -154,7 +154,7 @@ export default function HomeScreen({ navigation }) {
 
         {/* Tables d'aujourd'hui */}
         {slots.length > 0 && (
-          <LinearGradient colors={['#094e2e', '#072e1d']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={s.tonightCard}>
+          <LinearGradient colors={gradients.tonight} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={s.tonightCard}>
             <View style={s.tonightBody}>
               <Text style={s.tonightLabel}>🍽️  TABLES D'AUJOURD'HUI</Text>
               <Text style={s.tonightTitle}>Réserve ta table maintenant</Text>
@@ -262,7 +262,7 @@ const s = StyleSheet.create({
   searchIcon: { fontSize: 14 },
   searchInput:{ flex: 1, color: colors.text, fontSize: 16, fontWeight: '300', letterSpacing: 0.3, padding: 0 },
   headerRight:{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
-  iconBtn:    { width: 38, height: 38, borderRadius: radius.full, backgroundColor: 'rgba(255,255,255,0.15)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.30)', alignItems: 'center', justifyContent: 'center' },
+  iconBtn:    { width: 38, height: 38, borderRadius: radius.full, backgroundColor: alpha(colors.onDark, 0.15), borderWidth: 1, borderColor: alpha(colors.onDark, 0.3), alignItems: 'center', justifyContent: 'center' },
   iconBtnTxt: { fontSize: 17 },
   notifBadge: { position: 'absolute', top: -4, right: -4, minWidth: 16, height: 16, borderRadius: 8, backgroundColor: colors.noir, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 3, borderWidth: 1.5, borderColor: colors.primary },
   notifBadgeTxt: { color: colors.onDark, fontSize: typography.size.xs, fontWeight: typography.weight.bold },
@@ -270,32 +270,32 @@ const s = StyleSheet.create({
   /* Villes */
   cityRow:        { maxHeight: 42 },
   cityContent:    { paddingHorizontal: spacing.xl, paddingVertical: spacing.xxs, flexDirection: 'row', gap: spacing.md, alignItems: 'center' },
-  cityChip:       { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: radius.full, backgroundColor: 'rgba(255,255,255,0.15)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.30)' },
+  cityChip:       { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: radius.full, backgroundColor: alpha(colors.onDark, 0.15), borderWidth: 1, borderColor: alpha(colors.onDark, 0.3) },
   cityChipOn:     { backgroundColor: colors.noir, borderColor: colors.noir },
   cityEmoji:      { fontSize: typography.size.body },
-  cityTxt:        { color: 'rgba(255,255,255,0.8)', fontSize: typography.size.body },
+  cityTxt:        { color: alpha(colors.onDark, 0.8), fontSize: typography.size.body },
   cityTxtOn:      { color: colors.onDark, fontWeight: typography.weight.semibold },
-  cityCount:      { backgroundColor: 'rgba(255,255,255,0.12)', borderRadius: radius.full, paddingHorizontal: 6, paddingVertical: 1, minWidth: 20, alignItems: 'center' },
-  cityCountOn:    { backgroundColor: 'rgba(255,255,255,0.25)' },
-  cityCountTxt:   { color: 'rgba(255,255,255,0.7)', fontSize: typography.size.xs, fontWeight: typography.weight.semibold },
+  cityCount:      { backgroundColor: alpha(colors.onDark, 0.12), borderRadius: radius.full, paddingHorizontal: 6, paddingVertical: 1, minWidth: 20, alignItems: 'center' },
+  cityCountOn:    { backgroundColor: alpha(colors.onDark, 0.25) },
+  cityCountTxt:   { color: alpha(colors.onDark, 0.7), fontSize: typography.size.xs, fontWeight: typography.weight.semibold },
   cityCountTxtOn: { color: colors.onDark },
 
   /* Stats bar */
-  statsBar:      { flexDirection: 'row', alignItems: 'center', marginHorizontal: spacing.xl, marginTop: spacing.xs, marginBottom: spacing.xxs, backgroundColor: 'rgba(0,0,0,0.20)', borderRadius: radius.lg, paddingVertical: spacing.sm, paddingHorizontal: spacing.xl, borderWidth: 1, borderColor: 'rgba(255,255,255,0.12)' },
+  statsBar:      { flexDirection: 'row', alignItems: 'center', marginHorizontal: spacing.xl, marginTop: spacing.xs, marginBottom: spacing.xxs, backgroundColor: alpha(colors.black, 0.2), borderRadius: radius.lg, paddingVertical: spacing.sm, paddingHorizontal: spacing.xl, borderWidth: 1, borderColor: alpha(colors.onDark, 0.12) },
   statItem:      { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
   statVal:       { color: colors.cream, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium },
-  statLabel:     { color: 'rgba(245,237,214,0.65)', fontSize: typography.size.caption },
-  statGreen:     { color: '#88D5A8', fontSize: typography.size.caption },
-  statSep:       { width: 1, height: 18, backgroundColor: 'rgba(255,255,255,0.20)' },
-  openDotInline: { width: 7, height: 7, borderRadius: 3.5, backgroundColor: '#88D5A8' },
+  statLabel:     { color: alpha(colors.cream, 0.65), fontSize: typography.size.caption },
+  statGreen:     { color: colors.greenLight, fontSize: typography.size.caption },
+  statSep:       { width: 1, height: 18, backgroundColor: alpha(colors.onDark, 0.2) },
+  openDotInline: { width: 7, height: 7, borderRadius: 3.5, backgroundColor: colors.greenLight },
 
   /* Ce soir */
   tonightCard:  { marginHorizontal: spacing.xl, marginTop: spacing.md, borderRadius: radius.xl, overflow: 'hidden' },
   tonightBody:  { paddingHorizontal: spacing.xl, paddingVertical: spacing.lg },
-  tonightLabel: { color: 'rgba(245,237,214,0.85)', fontSize: typography.size.xs, letterSpacing: 2.5, marginBottom: spacing.xxs, fontWeight: typography.weight.semibold },
+  tonightLabel: { color: alpha(colors.cream, 0.85), fontSize: typography.size.xs, letterSpacing: 2.5, marginBottom: spacing.xxs, fontWeight: typography.weight.semibold },
   tonightTitle: { color: colors.onDark, fontSize: typography.size.bodyLg, fontWeight: typography.weight.semibold, marginBottom: spacing.sm },
   slotRow:      { gap: spacing.md },
-  slotChip:     { paddingHorizontal: spacing.lg, paddingVertical: 7, borderRadius: 0, backgroundColor: 'rgba(0,0,0,0.28)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.30)' },
+  slotChip:     { paddingHorizontal: spacing.lg, paddingVertical: 7, borderRadius: 0, backgroundColor: alpha(colors.black, 0.28), borderWidth: 1, borderColor: alpha(colors.onDark, 0.3) },
   slotTxt:      { color: colors.onDark, fontSize: typography.size.body, fontWeight: typography.weight.medium },
   /* À la une */
   featRow: { paddingHorizontal: spacing.xl, paddingBottom: spacing.xs },

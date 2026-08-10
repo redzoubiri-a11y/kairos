@@ -24,56 +24,50 @@ revue détaillée de la conformité aux wireframes.
 
 Les phases 1 à 7 du `ROADMAP.md` sont donc couvertes au niveau des fichiers.
 
-Attention : importer `theme` ne signifie pas n'utiliser que des tokens. Voir la
-dette ci-dessous.
+## Fait
 
-## Reste à faire
+### Couleurs en dur — réglé
 
-### Dette — couleurs en dur
-
-La règle 5 de `CLAUDE.md` (« NE JAMAIS utiliser de couleurs en dur ») n'est pas
-tenue. Audit du 10 août 2026 sur `screens/*.js` et `src/components/*.js` :
+La règle 5 de `CLAUDE.md` (« NE JAMAIS utiliser de couleurs en dur ») est
+désormais tenue sur `screens/*.js` et `src/components/*.js`.
 
 | Mesure | Valeur |
 | --- | --- |
-| Occurrences de littéraux `#…` / `rgba(…)` | 533 → **392** |
-| Fichiers concernés à l'audit | 24 écrans sur 27, 35 composants sur 56 |
-| Couleurs distinctes à l'audit | 164 |
+| Littéraux `#…` / `rgba(…)` | 533 → **0** |
+| Fichiers touchés | 26 écrans, 32 composants |
+| Tokens ajoutés à `src/theme.js` | 27 |
 
-141 occurrences ont été remplacées par des tokens (46 fichiers). Toutes les
-substitutions portent sur des valeurs strictement identiques : le refactor est
-un no-op visuel. Deux tokens ont été ajoutés à `src/theme.js` pour couvrir des
-usages qui n'en avaient pas :
+Les couleurs ne vivent plus qu'à un seul endroit : `src/theme.js`.
 
-- `colors.onDark` — texte ou icône sur fond sombre ou coloré (bouton, badge,
-  carte pleine). Même valeur que `colors.bg`, intention inverse.
-- `colors.shadow` — couleur de projection des ombres (`shadowColor`).
+**Toutes les substitutions sont à valeur identique — aucun changement visuel**,
+à la seule exception du `WeekStrip` ci-dessous. Vérifié fichier par fichier :
+la séquence des couleurs effectivement produites est la même qu'avant, tokens
+résolus des deux côtés.
 
-Deux natures de dette, à traiter séparément :
+Trois outils ont été introduits, parce qu'un token par couple (teinte, opacité)
+aurait fait exploser la palette — `#E05A5A` seul apparaissait à 11 opacités
+différentes :
 
-1. **156 occurrences (13 couleurs) ont déjà un token équivalent** — surtout
-   `#FFFFFF` (52), `#000000` (46, essentiellement des `shadowColor`), `#c8975a`
-   (20 → `colors.gold`), `#c87860` (14 → `colors.resa`). Remplacement
-   mécanique, mais à faire au cas par cas : un `#FFFFFF` peut être `colors.bg`
-   comme un blanc littéral posé sur un fond sombre, ce qui n'est pas le même
-   token.
-2. **377 occurrences (151 couleurs) n'ont aucun équivalent dans `theme.js`** —
-   dont `#f5f2ec` (18), `#006233` (17), `#c4b8c8` / `#8b9bb4` / `#6b7f9e` (11
-   chacune). Les absorber suppose d'étendre la palette de `src/theme.js`, donc
-   une décision design en amont, pas un simple remplacement.
+- **`alpha(token, opacité)`** — décline un token en version translucide.
+  `borderColor: alpha(colors.red, 0.3)` remplace un `rgba(224,90,90,0.3)`
+  écrit à la main : la teinte reste pilotée par la palette, seule l'opacité est
+  locale. Une valeur déjà translucide passe inchangée.
+- **`gradients`** — dégradés partagés. `bgOverlay` était dupliqué à l'identique
+  dans 11 écrans.
+- **`avatarColors`** — palette de secours des avatars sans photo.
 
-Les 392 occurrences restantes relèvent surtout du point 2, plus la palette
-privée en dur de `src/components/BottomTabBar.js` (`C` / `C_DARK`, lignes 5-15)
-qui double le thème au lieu de l'utiliser.
+Tokens ajoutés, par famille : `onDark` / `shadow` / `black` (blancs et noirs
+selon l'intention), `proBg` / `proBgDeep` / `navyInk` / `navyInkLight` (fonds
+pro sombres), `ivory` / `sand` / `steel` / `greyMid` / `greyPlaceholder`
+(neutres), `amber` / `gold` / `glow` (ambres), `dzGreen` / `greenLight` /
+`forestDeep` / `forestDark` / `forestBtn` / `forestMid` (verts), `promo`,
+`ink`, `violet`, `aqua`, `mistLight` / `mistMid` / `mistDeep`, `medalGold` /
+`medalSilver` / `medalBronze`.
 
-### Thème sombre implicite
-
-`src/theme.js` a migré vers un thème blanc (`colors.bg: '#FFFFFF'`), mais trois
-écrans sont restés sombres : `ProDashboard.js` et `ProComptoir.js`
-(`#0D1B2A` en dur) et `HomeScreen.js` (`colors.noir`). Les composants à texte
-clair leur sont bien réservés — vérifié, aucun n'est partagé avec un écran
-clair, donc pas de bug de contraste. Mais ce fond navy n'a pas de token :
-à nommer dans `theme.js` si ces écrans doivent rester sombres.
+`src/components/BottomTabBar.js` n'importait pas le thème du tout et portait sa
+propre palette (`C` / `C_DARK`) : elle est maintenant construite sur les
+tokens. Sa variable locale `colors` a été renommée `palette`, car elle masquait
+l'import et aurait piégé la prochaine modification.
 
 ### Lisibilité du WeekStrip — réglé
 
@@ -85,6 +79,21 @@ Le repère « aujourd'hui » est désormais `colors.green` (`#4CAF82`) sur ses
 quatre points d'usage — les trois libellés et la barre — soit 6,43:1 sur
 `#0D1B2A`, au-dessus du seuil WCAG AA. `colors.primary` (`#0D6B3F`), la valeur
 d'origine, plafonnait à 2,64:1.
+
+## Reste à faire
+
+### Thème sombre implicite
+
+`src/theme.js` a migré vers un thème blanc (`colors.bg: '#FFFFFF'`), mais trois
+écrans sont restés sombres : `ProDashboard.js` et `ProComptoir.js`
+(`colors.proBg`) et `HomeScreen.js` (`colors.noir`). Les composants à texte
+clair leur sont bien réservés — vérifié, aucun n'est partagé avec un écran
+clair, donc pas de bug de contraste.
+
+Ces fonds ont désormais des tokens, mais le partage reste implicite : rien
+n'empêche de poser demain un composant à texte `colors.ivory` sur un écran
+clair. Un mécanisme explicite (variante de thème, ou préfixe de nommage sur les
+tokens réservés au sombre) reste à décider.
 
 ### Phase 8 — Tests & déploiement
 

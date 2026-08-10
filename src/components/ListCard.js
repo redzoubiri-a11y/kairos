@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { TouchableOpacity, View, Text, Image, ScrollView, StyleSheet, Dimensions } from 'react-native';
-import { colors, typography, spacing, radius } from '../theme';
+import { colors, typography, spacing, radius, alpha } from '../theme';
 
 const SW     = Dimensions.get('window').width;
 const CARD_W = SW - 40;
@@ -83,13 +83,13 @@ const s = StyleSheet.create({
   hero:        { width: CARD_W, height: 220, alignItems: 'center', justifyContent: 'center', overflow: 'hidden', backgroundColor: colors.card },
   heroEmoji:   { fontSize: 56 },
   dots:        { position: 'absolute', bottom: spacing.lg, flexDirection: 'row', gap: 4, alignSelf: 'center' },
-  dot:         { width: 5, height: 5, borderRadius: 3, backgroundColor: 'rgba(255,255,255,0.4)' },
+  dot:         { width: 5, height: 5, borderRadius: 3, backgroundColor: alpha(colors.onDark, 0.4) },
   dotOn:       { backgroundColor: colors.bg, width: 16 },
-  rankBadge:   { position: 'absolute', top: spacing.lg, right: spacing.lg, backgroundColor: 'rgba(0,0,0,0.45)', borderRadius: radius.sm, paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)' },
-  rankTxt:     { color: 'rgba(255,255,255,0.8)', fontSize: typography.size.caption, fontWeight: typography.weight.bold },
+  rankBadge:   { position: 'absolute', top: spacing.lg, right: spacing.lg, backgroundColor: alpha(colors.black, 0.45), borderRadius: radius.sm, paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderWidth: 1, borderColor: alpha(colors.onDark, 0.15) },
+  rankTxt:     { color: alpha(colors.onDark, 0.8), fontSize: typography.size.caption, fontWeight: typography.weight.bold },
   topBadge:    { position: 'absolute', top: spacing.lg, left: spacing.lg, backgroundColor: colors.halalBg, borderRadius: radius.sm, paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderWidth: 1, borderColor: colors.halalBorder },
   topBadgeTxt: { color: colors.primary, fontSize: typography.size.sm, fontWeight: typography.weight.semibold },
-  openBadge:   { position: 'absolute', bottom: spacing.lg, left: spacing.lg, flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.45)', borderRadius: radius.sm, paddingHorizontal: spacing.md, paddingVertical: spacing.xs, gap: 5, borderWidth: 1, borderColor: 'rgba(76,175,130,0.35)' },
+  openBadge:   { position: 'absolute', bottom: spacing.lg, left: spacing.lg, flexDirection: 'row', alignItems: 'center', backgroundColor: alpha(colors.black, 0.45), borderRadius: radius.sm, paddingHorizontal: spacing.md, paddingVertical: spacing.xs, gap: 5, borderWidth: 1, borderColor: alpha(colors.green, 0.35) },
   openDot:     { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.green },
   openTxt:     { color: colors.green, fontSize: typography.size.sm, fontWeight: typography.weight.medium },
   body:        { padding: spacing.xl, gap: spacing.xl - 2, backgroundColor: colors.bg },

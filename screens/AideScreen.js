@@ -3,7 +3,7 @@ import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors, typography, spacing, radius } from '../src/theme';
+import { colors, typography, spacing, radius, alpha } from '../src/theme';
 import useAide, { FAQS } from '../src/hooks/useAide';
 
 const CONDITIONS = `CONDITIONS GÉNÉRALES D'UTILISATION — MIDA
@@ -248,11 +248,11 @@ const s = StyleSheet.create({
   title:      { color: colors.text, fontSize: typography.size.heading2, fontWeight: typography.weight.semibold },
   subtitle:   { color: colors.textMuted, fontSize: typography.size.caption, marginTop: 1 },
 
-  contactCard:    { backgroundColor: 'rgba(200,151,90,0.12)', borderRadius: radius.xxl, borderWidth: 1, borderColor: 'rgba(200,151,90,0.35)', padding: spacing.xl, alignItems: 'center', gap: spacing.xs, shadowColor: colors.shadow, shadowOpacity: 0.3, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 4 },
+  contactCard:    { backgroundColor: alpha(colors.gold, 0.12), borderRadius: radius.xxl, borderWidth: 1, borderColor: alpha(colors.gold, 0.35), padding: spacing.xl, alignItems: 'center', gap: spacing.xs, shadowColor: colors.shadow, shadowOpacity: 0.3, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 4 },
   contactIcon:    { fontSize: 28 },
   contactTitle:   { color: colors.accent, fontSize: typography.size.body, fontWeight: typography.weight.bold, textAlign: 'center' },
   contactSub:     { color: colors.textMuted, fontSize: typography.size.xs, textAlign: 'center' },
-  onlineBadge:    { flexDirection: 'row', alignItems: 'center', gap: spacing.xs, backgroundColor: colors.greenSoft, borderRadius: radius.full, paddingHorizontal: spacing.md, paddingVertical: 3, borderWidth: 1, borderColor: 'rgba(76,175,130,0.3)', marginTop: spacing.xs },
+  onlineBadge:    { flexDirection: 'row', alignItems: 'center', gap: spacing.xs, backgroundColor: colors.greenSoft, borderRadius: radius.full, paddingHorizontal: spacing.md, paddingVertical: 3, borderWidth: 1, borderColor: alpha(colors.green, 0.3), marginTop: spacing.xs },
   onlineDot:      { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.green },
   onlineTxt:      { color: colors.green, fontSize: typography.size.xs },
 

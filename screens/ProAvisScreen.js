@@ -5,7 +5,7 @@ import {
   KeyboardAvoidingView, Platform, RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors, typography, spacing, radius } from '../src/theme';
+import { colors, typography, spacing, radius, alpha } from '../src/theme';
 import MLoader from '../src/components/MLoader';
 import useProAvis, { FILTERS } from '../src/hooks/useProAvis';
 import AvisStats from '../src/components/AvisStats';
@@ -142,8 +142,8 @@ const s = StyleSheet.create({
   filterRow:   { paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, gap: spacing.sm },
   chip:        { flexDirection: 'row', alignItems: 'center', gap: spacing.xs, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: radius.full, backgroundColor: 'transparent', borderWidth: 1, borderColor: colors.cardBorder },
   chipOn:      { backgroundColor: colors.goldSoft, borderColor: colors.gold, shadowColor: colors.shadow, shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
-  chipAlert:   { borderColor: 'rgba(224,90,90,0.4)' },
-  chipPending: { borderColor: 'rgba(232,160,69,0.5)' },
+  chipAlert:   { borderColor: alpha(colors.red, 0.4) },
+  chipPending: { borderColor: alpha(colors.amber, 0.5) },
   chipTxt:     { color: colors.textMuted, fontSize: typography.size.body },
   chipTxtOn:   { color: colors.accent, fontWeight: typography.weight.semibold },
   chipCount:   { color: colors.textDim, fontSize: typography.size.xs },

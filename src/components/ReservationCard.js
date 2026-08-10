@@ -2,7 +2,7 @@ import { useState, useCallback, useMemo } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert,
 } from 'react-native';
-import { colors, typography, spacing, radius } from '../theme';
+import { colors, typography, spacing, radius, alpha } from '../theme';
 
 // ── Time / Date helpers ─────────────────────────────────────────────────────
 
@@ -43,9 +43,9 @@ const STATUS = {
 // ── Feedback banner ────────────────────────────────────────────────────────
 
 function feedbackStyle(status) {
-  if (status === 'ok')                  return { backgroundColor: colors.greenSoft,  borderColor: 'rgba(76,175,130,0.30)' };
-  if (status === 'pending_validation')  return { backgroundColor: colors.blueSoft,   borderColor: 'rgba(90,155,224,0.30)' };
-  return                                       { backgroundColor: colors.redSoft,    borderColor: 'rgba(224,90,90,0.30)'  };
+  if (status === 'ok')                  return { backgroundColor: colors.greenSoft,  borderColor: alpha(colors.green, 0.3) };
+  if (status === 'pending_validation')  return { backgroundColor: colors.blueSoft,   borderColor: alpha(colors.blue, 0.3) };
+  return                                       { backgroundColor: colors.redSoft,    borderColor: alpha(colors.red, 0.3)  };
 }
 
 function feedbackTextColor(status) {
@@ -326,7 +326,7 @@ const c = StyleSheet.create({
   actionRow: { flexDirection: 'row', gap: spacing.sm },
   btnMod:    { flex: 1, backgroundColor: colors.bg, borderRadius: radius.lg, borderWidth: 1, borderColor: colors.cardBorder, paddingVertical: spacing.md, paddingHorizontal: spacing.sm, alignItems: 'center' },
   btnModTxt: { color: colors.text, fontSize: typography.size.body, fontWeight: typography.weight.medium },
-  btnCancel: { backgroundColor: colors.redSoft, borderRadius: radius.lg, borderWidth: 1, borderColor: 'rgba(224,90,90,0.25)', paddingVertical: spacing.md, alignItems: 'center' },
+  btnCancel: { backgroundColor: colors.redSoft, borderRadius: radius.lg, borderWidth: 1, borderColor: alpha(colors.red, 0.25), paddingVertical: spacing.md, alignItems: 'center' },
   btnCancelTxt: { color: colors.red, fontSize: typography.size.bodyLg, fontWeight: typography.weight.semibold },
   btnDis:    { opacity: 0.5 },
 

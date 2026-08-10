@@ -97,14 +97,36 @@ tokens réservés au sombre) reste à décider.
 
 ### Phase 8 — Tests & déploiement
 
-Seule phase du `ROADMAP.md` encore entièrement ouverte :
-
+- [x] Test sur web — bundle Expo web : 914 modules, aucune erreur de
+      compilation ; application chargée dans Chromium, aucune erreur JS
 - [ ] Test complet sur iOS (Expo Go)
 - [ ] Test complet sur Android (Expo Go)
-- [ ] Test sur web (`localhost:8081`)
 - [ ] Vérifier tous les flux Supabase
 - [ ] Build de production
 - [ ] Déploiement
+
+Le rendu web a servi à valider le refactor de tokens : la version d'avant
+(`8ad5433`) et celle d'après ont été bundlées séparément, puis capturées sur le
+même parcours. Comparaison pixel à pixel des quatre vues atteignables sans
+réseau :
+
+| Vue | Résultat |
+| --- | --- |
+| Inscription | identique, au pixel près |
+| Accueil (thème sombre) | identique, au pixel près |
+| Connexion | 84 px sur 329 160 (0,03 %), écart max 13/255 |
+| Espace pro | 894 px sur 329 160 (0,27 %), écart max 12/255 |
+
+Les deux écarts tiennent dans la même zone de 96×96 px, à l'emplacement du logo
+animé. Contrôle : la même build capturée deux fois donne un écart du même ordre
+au même endroit (887 px, écart max 35) — c'est la phase de l'animation, pas le
+refactor.
+
+Limites de ce test : Supabase et les images externes sont injoignables depuis
+l'environnement, donc les écrans pilotés par les données restent en état de
+chargement. `ProDashboard`, `ProComptoir` et le `WeekStrip` corrigé demandent
+une session pro et n'ont pas pu être rendus — le contraste du repère
+« aujourd'hui » reste calculé, pas constaté.
 
 ### À valider avant de continuer
 

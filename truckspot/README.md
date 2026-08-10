@@ -163,6 +163,26 @@ Les erreurs suivent toujours la forme
 Les parametres de requete sont valides en mode strict : n'envoyez jamais de parametre
 vide ou inconnu, la reponse serait un 400.
 
+### Pieces justificatives
+
+Les documents d'identite ne sont jamais servis en statique : `GET
+/transporters/documents/:id` verifie que l'appelant est le proprietaire ou un
+administrateur, et le pilote s3 repond par une redirection vers une URL signee de
+cinq minutes. La cle de stockage n'est jamais serialisee vers un client.
+
+Renvoyer une piece **remplace** celle du meme type au lieu de s'y ajouter : l'ecran
+n'affiche qu'une carte par type, et rien n'appelait jamais la suppression cote
+stockage. Un transporteur qui corrigeait un RC illisible laissait donc l'ancien
+fichier indefiniment — une piece d'identite que plus personne ne consulte et que rien
+ne purge — pendant que l'administrateur voyait deux RC sans savoir lequel faisait foi.
+L'objet n'est efface qu'une fois la transaction acquittee, et un echec de suppression
+n'interrompt pas l'envoi : un objet orphelin reste moins grave qu'une ligne pointant
+vers un fichier absent.
+
+> Il n'existe pas de suppression de compte dans l'API. Le jour ou elle arrivera, elle
+> devra purger les objets de stockage : la cascade SQL efface les lignes, pas les
+> fichiers.
+
 ### Mot de passe oublie
 
 `POST /auth/forgot-password` envoie un code a six chiffres, valable 30 minutes, utilisable
@@ -308,7 +328,7 @@ pour rejouer les migrations.
 cd truckspot/backend && npm test
 ```
 
-**143 tests d'integration** tournent contre une vraie base PostgreSQL et un vrai serveur
+**149 tests d'integration** tournent contre une vraie base PostgreSQL et un vrai serveur
 HTTP + Socket.IO, sans mock : authentification, cloisonnement des acces (un tiers ne peut
 lire ni une mission ni une conversation qui ne le concerne pas), recherche geographique,
 filtres de la carte, expiration des positions trop anciennes, transitions de statut

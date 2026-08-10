@@ -1,6 +1,9 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
+const fs = require('fs');
+const path = require('path');
 const h = require('./helpers');
+const { uploadRoot } = require('../src/services/storage.service');
 
 // 1x1 PNG, small enough to inline.
 const PNG = Buffer.from(
@@ -146,6 +149,92 @@ test('documents transporteur', async (t) => {
 
     const { body } = await h.api('GET', '/transporters/me', { token: transporter.token });
     assert.equal(body.verificationStatus, 'PENDING');
+  });
+
+  // Le defaut corrige : le back-office affichait « Verifie le <date> » sur un
+  // dossier pourtant redevenu en attente.
+  await t.test('un nouvel envoi efface la date de validation', async () => {
+    const transporter = await h.createTransporter({ verified: true });
+
+    const avant = await h.api('GET', '/transporters/me', { token: transporter.token });
+    assert.ok(avant.body.verifiedAt, 'le dossier verifie porte bien une date');
+
+    await uploadDocs(transporter.token);
+
+    const apres = await h.api('GET', '/transporters/me', { token: transporter.token });
+    assert.equal(apres.body.verifiedAt, null);
+  });
+
+  // Le defaut corrige : rien n'appelait driver.remove(). Corriger un RC
+  // illisible empilait une seconde ligne et laissait l'ancien fichier dans le
+  // stockage, invisible et jamais purge.
+  await t.test('renvoyer une piece du meme type remplace la precedente', async () => {
+    const transporter = await h.createTransporter({ verified: false });
+
+    const premier = await uploadDocs(transporter.token);
+    const ancienId = premier.body.documents[0].id;
+
+    const second = await uploadDocs(transporter.token);
+    assert.equal(second.status, 201);
+
+    const { body } = await h.api('GET', '/transporters/me', { token: transporter.token });
+    const rc = body.documents.filter((doc) => doc.type === 'RC');
+    assert.equal(rc.length, 1, 'une seule piece RC subsiste');
+    assert.notEqual(rc[0].id, ancienId, 'c est bien la nouvelle');
+  });
+
+  await t.test("l ancien fichier disparait du stockage", async () => {
+    const transporter = await h.createTransporter({ verified: false });
+    await uploadDocs(transporter.token);
+
+    const avant = await h.prisma.transporterDocument.findFirst({
+      where: { type: 'RC', transporter: { userId: transporter.user.id } },
+    });
+    const cheminAncien = path.resolve(uploadRoot, avant.storageKey);
+    assert.ok(fs.existsSync(cheminAncien), 'le premier fichier est bien ecrit');
+
+    await uploadDocs(transporter.token);
+
+    assert.equal(fs.existsSync(cheminAncien), false, "l ancien fichier a ete supprime");
+  });
+
+  await t.test('remplacer un type ne touche pas les autres', async () => {
+    const transporter = await h.createTransporter({ verified: false });
+    await uploadDocs(transporter.token, [
+      { type: 'RC', mime: 'image/png', body: PNG },
+      { type: 'PATENTE', mime: 'image/png', body: PNG },
+    ]);
+
+    await uploadDocs(transporter.token, [{ type: 'RC', mime: 'image/png', body: PNG }]);
+
+    const { body } = await h.api('GET', '/transporters/me', { token: transporter.token });
+    assert.equal(body.documents.filter((d) => d.type === 'RC').length, 1);
+    assert.equal(body.documents.filter((d) => d.type === 'PATENTE').length, 1);
+  });
+
+  await t.test('refuse deux fichiers du meme type dans un seul envoi', async () => {
+    const transporter = await h.createTransporter({ verified: false });
+
+    const { status } = await uploadDocs(transporter.token, [
+      { type: 'RC', mime: 'image/png', body: PNG },
+      { type: 'RC', mime: 'image/png', body: PNG },
+    ]);
+    assert.equal(status, 400);
+  });
+
+  // Un objet deja disparu du stockage ne doit pas empecher le remplacement :
+  // l'envoi prime sur le menage.
+  await t.test('tolere un ancien fichier deja absent du stockage', async () => {
+    const transporter = await h.createTransporter({ verified: false });
+    await uploadDocs(transporter.token);
+
+    const ancien = await h.prisma.transporterDocument.findFirst({
+      where: { type: 'RC', transporter: { userId: transporter.user.id } },
+    });
+    fs.rmSync(path.resolve(uploadRoot, ancien.storageKey));
+
+    const { status } = await uploadDocs(transporter.token);
+    assert.equal(status, 201);
   });
 
   await t.test('renvoie 404 pour un document inexistant', async () => {

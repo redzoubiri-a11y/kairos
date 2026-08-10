@@ -49,6 +49,12 @@ async function uploadDocuments(userId, files, types) {
   if (files.length !== types.length) {
     throw ApiError.badRequest('Un type de document est requis pour chaque fichier');
   }
+  // Un seul fichier par type dans une meme requete : l'ecran n'affiche qu'une
+  // carte par type, et deux RC envoyes ensemble laisseraient un doublon que le
+  // remplacement ci-dessous ne peut pas trancher.
+  if (new Set(types).size !== types.length) {
+    throw ApiError.badRequest('Un seul fichier par type de document');
+  }
 
   // Written to storage first: a row pointing at a missing object would be worse
   // than an orphan object nobody references.
@@ -66,16 +72,53 @@ async function uploadDocuments(userId, files, types) {
     });
   }
 
-  const documents = await prisma.$transaction([
-    ...stored.map((data) => prisma.transporterDocument.create({ data })),
-    // Any new document set sends the profile back to the moderation queue.
-    prisma.transporterProfile.update({
-      where: { id: profile.id },
-      data: { verificationStatus: 'PENDING', rejectionReason: null },
-    }),
-  ]);
+  // Une piece du meme type est remplacee, pas empilee : l'ecran n'affiche
+  // qu'une carte par type, et rien n'appelait jamais driver.remove(). Un
+  // transporteur qui corrigeait un RC illisible laissait donc l'ancien dans le
+  // stockage indefiniment — une piece d'identite que plus personne ne consulte
+  // et que rien ne purge — et l'administrateur voyait deux RC sans savoir
+  // lequel faisait foi.
+  const remplacees = await prisma.transporterDocument.findMany({
+    where: { transporterId: profile.id, type: { in: types } },
+  });
 
-  return documentService.withUrls(documents.slice(0, stored.length));
+  const documents = await prisma.$transaction(async (tx) => {
+    if (remplacees.length) {
+      await tx.transporterDocument.deleteMany({
+        where: { id: { in: remplacees.map((doc) => doc.id) } },
+      });
+    }
+
+    const crees = [];
+    for (const data of stored) {
+      crees.push(await tx.transporterDocument.create({ data }));
+    }
+
+    // Any new document set sends the profile back to the moderation queue.
+    await tx.transporterProfile.update({
+      where: { id: profile.id },
+      data: {
+        verificationStatus: 'PENDING',
+        rejectionReason: null,
+        // Sans cela le back-office affichait « Verifie le <date> » sur un
+        // dossier redevenu en attente.
+        verifiedAt: null,
+      },
+    });
+
+    return crees;
+  });
+
+  // Les objets ne partent qu'une fois la transaction acquittee, et un echec de
+  // suppression ne fait pas echouer l'envoi : un objet orphelin reste moins
+  // grave qu'une ligne pointant vers un fichier absent.
+  for (const doc of remplacees) {
+    await driver.remove(doc.storageKey).catch((error) => {
+      console.warn(`[storage] suppression impossible (${doc.storageKey}):`, error.message);
+    });
+  }
+
+  return documentService.withUrls(documents);
 }
 
 module.exports = { create, getMine, update, uploadDocuments };

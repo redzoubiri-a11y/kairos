@@ -59,7 +59,7 @@ const s = StyleSheet.create({
   title:   { color: '#F5F2EC', fontSize: typography.size.subheading, fontWeight: typography.weight.semibold },
   sub:     { color: 'rgba(245,242,236,0.50)', fontSize: typography.size.xs },
   track:   { height: 6, borderRadius: 3, backgroundColor: 'rgba(255,255,255,0.10)', overflow: 'hidden', marginBottom: spacing.md },
-  fill:    { height: '100%', backgroundColor: '#c8975a', borderRadius: 3 },
+  fill:    { height: '100%', backgroundColor: colors.gold, borderRadius: 3 },
   chips:   { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   chip:    { paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderRadius: radius.full, backgroundColor: 'rgba(255,255,255,0.08)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)' },
   chipTxt: { color: 'rgba(245,242,236,0.80)', fontSize: typography.size.xs },

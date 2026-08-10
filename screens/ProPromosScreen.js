@@ -78,6 +78,6 @@ const s = StyleSheet.create({
   backBtnTxt:   { color: colors.text, fontSize: 22 },
   title:        { color: colors.text, fontSize: typography.size.heading2, fontWeight: typography.weight.semibold },
   subtitle:     { color: colors.textMuted, fontSize: typography.size.caption, marginTop: 1 },
-  createBtn:    { backgroundColor: '#c8975a', borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, shadowColor: '#000', shadowOpacity: 0.45, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
+  createBtn:    { backgroundColor: colors.gold, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, shadowColor: colors.shadow, shadowOpacity: 0.45, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
   createBtnTxt: { color: colors.bg, fontSize: typography.size.caption, fontWeight: typography.weight.extrabold },
 });

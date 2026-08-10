@@ -311,7 +311,7 @@ const s = StyleSheet.create({
   headerSub:   { color: '#006233', fontSize: typography.size.xs, letterSpacing: 3, marginBottom: 2 },
   headerTitle: { color: colors.text, fontSize: typography.size.heading3, fontWeight: typography.weight.regular, letterSpacing: 0.3 },
   ratingPill:  { backgroundColor: colors.navy, borderRadius: radius.md, borderWidth: 1, borderColor: colors.navyBorder, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
-  ratingTxt:   { color: '#C87860', fontSize: typography.size.body, fontWeight: typography.weight.medium },
+  ratingTxt:   { color: colors.resa, fontSize: typography.size.body, fontWeight: typography.weight.medium },
 
   bannerWrap:          { width: '100%', height: 180, position: 'relative' },
   banner:              { width: '100%', height: 180 },
@@ -339,7 +339,7 @@ const s = StyleSheet.create({
   dateDayName:     { color: colors.textDim, fontSize: typography.size.xs, letterSpacing: 1.5 },
   dateDayNum:      { color: colors.text, fontSize: 22, fontWeight: typography.weight.regular },
   dateMonth:       { color: colors.textDim, fontSize: typography.size.xs },
-  dateTxtOn:       { color: '#FFFFFF', fontWeight: typography.weight.semibold },
+  dateTxtOn:       { color: colors.onDark, fontWeight: typography.weight.semibold },
   weekendDot:      { width: 4, height: 4, borderRadius: 0, backgroundColor: '#006233', marginTop: 2 },
 
   slotSection:     { paddingHorizontal: spacing.xxl },
@@ -348,7 +348,7 @@ const s = StyleSheet.create({
   slotGroupLabel:  { color: colors.textMuted, fontSize: typography.size.body },
   slotsWrap:       { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md },
   slotChip:        { alignItems: 'center', paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, borderRadius: radius.lg, backgroundColor: 'transparent', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)', minWidth: 78 },
-  slotChipOn:      { backgroundColor: 'rgba(0,98,51,0.12)', borderColor: '#006233', shadowColor: '#000', shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
+  slotChipOn:      { backgroundColor: 'rgba(0,98,51,0.12)', borderColor: '#006233', shadowColor: colors.shadow, shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
   slotTxt:         { color: colors.textMuted, fontSize: typography.size.heading3, fontWeight: typography.weight.regular },
   slotTxtOn:       { color: '#006233', fontWeight: typography.weight.semibold },
   slotBadge:       { marginTop: spacing.xs, paddingHorizontal: spacing.sm, paddingVertical: spacing.xxs, borderRadius: radius.sm, backgroundColor: colors.accentSoft },
@@ -367,7 +367,7 @@ const s = StyleSheet.create({
 
   occasionGrid:   { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.lg, paddingHorizontal: spacing.xxl },
   occasionChip:   { width: '30%', flexGrow: 1, alignItems: 'center', paddingVertical: spacing.lg, borderRadius: radius.xl, backgroundColor: 'transparent', borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)', gap: spacing.sm, position: 'relative' },
-  occasionChipOn: { backgroundColor: 'rgba(0,98,51,0.12)', borderColor: '#006233', shadowColor: '#000', shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
+  occasionChipOn: { backgroundColor: 'rgba(0,98,51,0.12)', borderColor: '#006233', shadowColor: colors.shadow, shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
   occasionIcon:   { fontSize: 22 },
   occasionLabel:  { color: colors.textMuted, fontSize: typography.size.caption, textAlign: 'center' },
   occasionLabelOn:{ color: '#006233', fontWeight: typography.weight.semibold },
@@ -389,8 +389,8 @@ const s = StyleSheet.create({
 
   confirmBtn:     { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.lg, marginHorizontal: spacing.xxl, borderRadius: radius.xxl, paddingVertical: 17, overflow: 'hidden', backgroundColor: '#006233' },
   confirmBtnDim:  { opacity: 0.4 },
-  confirmBtnTxt:  { color: '#FFFFFF', fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium, letterSpacing: 1.5 },
-  confirmBtnArrow:{ color: '#FFFFFF', fontSize: 18, fontWeight: typography.weight.regular },
+  confirmBtnTxt:  { color: colors.onDark, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium, letterSpacing: 1.5 },
+  confirmBtnArrow:{ color: colors.onDark, fontSize: 18, fontWeight: typography.weight.regular },
 
   legalTxt: { marginHorizontal: spacing.xxl, marginTop: spacing.lg, color: colors.textDim, fontSize: typography.size.sm, lineHeight: 16, textAlign: 'center', fontStyle: 'italic' },
 });

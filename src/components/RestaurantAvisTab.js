@@ -134,7 +134,7 @@ const s = StyleSheet.create({
   ctaWrap:      { margin: spacing.xl, gap: spacing.xl - 2 },
   ctaDivider:   { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },
   ctaDividerTxt:{ color: colors.textDim, fontSize: typography.size.caption },
-  ctaBtn:       { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.md, backgroundColor: 'rgba(200,151,90,0.14)', borderRadius: radius.xl, borderWidth: 1, borderColor: 'rgba(200,151,90,0.4)', paddingVertical: spacing.xl - 2, shadowColor: '#000', shadowOpacity: 0.25, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 3 },
+  ctaBtn:       { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.md, backgroundColor: colors.goldSoft, borderRadius: radius.xl, borderWidth: 1, borderColor: 'rgba(200,151,90,0.4)', paddingVertical: spacing.xl - 2, shadowColor: colors.shadow, shadowOpacity: 0.25, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 3 },
   ctaIcon:      { fontSize: typography.size.heading3 },
   ctaTxt:       { color: colors.text, fontSize: typography.size.subheading, fontWeight: typography.weight.regular },
 });

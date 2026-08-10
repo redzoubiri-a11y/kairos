@@ -44,10 +44,10 @@ const s = StyleSheet.create({
   message: { color: colors.textMuted, fontSize: typography.size.bodyLg, textAlign: 'center', lineHeight: 22 },
 
   primaryBtn: {
-    backgroundColor: '#c8975a', borderRadius: radius.xl,
+    backgroundColor: colors.gold, borderRadius: radius.xl,
     paddingVertical: spacing.xl - 2, paddingHorizontal: spacing.xxxl,
     alignItems: 'center', width: '100%',
-    shadowColor: '#000', shadowOpacity: 0.5, shadowRadius: 14, shadowOffset: { width: 0, height: 0 }, elevation: 7,
+    shadowColor: colors.shadow, shadowOpacity: 0.5, shadowRadius: 14, shadowOffset: { width: 0, height: 0 }, elevation: 7,
   },
   primaryTxt: { color: colors.bg, fontSize: typography.size.bodyLg, fontWeight: typography.weight.bold, letterSpacing: 0.5 },
 

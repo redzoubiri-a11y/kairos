@@ -154,7 +154,7 @@ export default function AideScreen({ navigation }) {
       <SafeAreaView style={s.root} edges={['top', 'left', 'right']}>
         <View style={s.header}>
           <TouchableOpacity style={s.backBtn} onPress={() => setLegalPage(null)} activeOpacity={0.7}>
-            <Text style={[s.backBtnTxt, { color: '#C87860' }]}>←</Text>
+            <Text style={[s.backBtnTxt, { color: colors.resa }]}>←</Text>
           </TouchableOpacity>
           <Text style={s.legalPageTitle} numberOfLines={1}>{legalPage.label}</Text>
         </View>
@@ -244,11 +244,11 @@ const s = StyleSheet.create({
   mainBackBtn:    { padding: spacing.xs },
   mainBackBtnTxt: { color: colors.text, fontSize: 22 },
   backBtn:    { width: 36, height: 36, borderRadius: 0, backgroundColor: 'transparent', alignItems: 'center', justifyContent: 'center' },
-  backBtnTxt: { color: '#1A1A1A', fontSize: typography.size.subheading },
+  backBtnTxt: { color: colors.text, fontSize: typography.size.subheading },
   title:      { color: colors.text, fontSize: typography.size.heading2, fontWeight: typography.weight.semibold },
   subtitle:   { color: colors.textMuted, fontSize: typography.size.caption, marginTop: 1 },
 
-  contactCard:    { backgroundColor: 'rgba(200,151,90,0.12)', borderRadius: radius.xxl, borderWidth: 1, borderColor: 'rgba(200,151,90,0.35)', padding: spacing.xl, alignItems: 'center', gap: spacing.xs, shadowColor: '#000', shadowOpacity: 0.3, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 4 },
+  contactCard:    { backgroundColor: 'rgba(200,151,90,0.12)', borderRadius: radius.xxl, borderWidth: 1, borderColor: 'rgba(200,151,90,0.35)', padding: spacing.xl, alignItems: 'center', gap: spacing.xs, shadowColor: colors.shadow, shadowOpacity: 0.3, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 4 },
   contactIcon:    { fontSize: 28 },
   contactTitle:   { color: colors.accent, fontSize: typography.size.body, fontWeight: typography.weight.bold, textAlign: 'center' },
   contactSub:     { color: colors.textMuted, fontSize: typography.size.xs, textAlign: 'center' },

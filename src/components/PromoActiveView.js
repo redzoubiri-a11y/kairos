@@ -47,8 +47,8 @@ const s = StyleSheet.create({
   recapSep:      { borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   recapKey:      { color: colors.textMuted, fontSize: typography.size.body },
   recapVal:      { color: colors.text, fontSize: typography.size.body, fontWeight: typography.weight.medium },
-  activateBtn:   { backgroundColor: colors.noir, borderRadius: radius.xl, padding: spacing.xl, alignItems: 'center', width: '100%', shadowColor: '#000', shadowOpacity: 0.4, shadowRadius: 14, shadowOffset: { width: 0, height: 0 }, elevation: 7 },
-  activateBtnTxt:{ color: '#FFFFFF', fontSize: typography.size.subheading, fontWeight: typography.weight.extrabold },
-  ghostBtn:      { backgroundColor: 'transparent', borderRadius: radius.xl, padding: spacing.xl, alignItems: 'center', borderWidth: 1.5, borderColor: colors.primary, marginTop: spacing.sm, width: '100%', shadowColor: '#000', shadowOpacity: 0.25, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 3 },
+  activateBtn:   { backgroundColor: colors.noir, borderRadius: radius.xl, padding: spacing.xl, alignItems: 'center', width: '100%', shadowColor: colors.shadow, shadowOpacity: 0.4, shadowRadius: 14, shadowOffset: { width: 0, height: 0 }, elevation: 7 },
+  activateBtnTxt:{ color: colors.onDark, fontSize: typography.size.subheading, fontWeight: typography.weight.extrabold },
+  ghostBtn:      { backgroundColor: 'transparent', borderRadius: radius.xl, padding: spacing.xl, alignItems: 'center', borderWidth: 1.5, borderColor: colors.primary, marginTop: spacing.sm, width: '100%', shadowColor: colors.shadow, shadowOpacity: 0.25, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 3 },
   ghostBtnTxt:   { color: colors.primary, fontSize: typography.size.subheading, fontWeight: typography.weight.bold },
 });

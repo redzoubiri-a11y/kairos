@@ -39,6 +39,6 @@ const s = StyleSheet.create({
   statusTxt:    { color: colors.textMuted, fontSize: typography.size.body, flex: 1 },
   btnPrimary:   { width: '100%', borderRadius: radius.xxl, paddingVertical: 15, alignItems: 'center', overflow: 'hidden', justifyContent: 'center', backgroundColor: '#006233' },
   btnPrimaryTxt:{ color: colors.bg, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium, letterSpacing: 2 },
-  btnOutline:   { width: '100%', borderRadius: radius.xxl, paddingVertical: 15, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(200,151,90,0.3)', shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 3 },
+  btnOutline:   { width: '100%', borderRadius: radius.xxl, paddingVertical: 15, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(200,151,90,0.3)', shadowColor: colors.shadow, shadowOpacity: 0.2, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 3 },
   btnOutlineTxt:{ color: colors.textMuted, fontSize: typography.size.bodyLg },
 });

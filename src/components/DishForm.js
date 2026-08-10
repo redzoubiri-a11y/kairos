@@ -256,13 +256,13 @@ export default function DishForm({ initial, categories, isEdit, restaurantId, on
 
 const s = StyleSheet.create({
   header:      { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xxl, paddingTop: spacing.xl, paddingBottom: spacing.xl, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
-  backBtn:     { width: 36, height: 36, borderRadius: 0, backgroundColor: colors.card, borderWidth: 1, borderColor: 'rgba(200,151,90,0.3)', alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOpacity: 0.25, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 3 },
+  backBtn:     { width: 36, height: 36, borderRadius: 0, backgroundColor: colors.card, borderWidth: 1, borderColor: 'rgba(200,151,90,0.3)', alignItems: 'center', justifyContent: 'center', shadowColor: colors.shadow, shadowOpacity: 0.25, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 3 },
   backBtnTxt:  { color: colors.text, fontSize: typography.size.heading2 },
   headerCenter:{ flex: 1, alignItems: 'center' },
   headerSub:   { color: colors.accent, fontSize: typography.size.xs, letterSpacing: 3, marginBottom: 2 },
   headerTitle: { color: colors.text, fontSize: typography.size.title, fontWeight: '300', letterSpacing: 1 },
-  saveBtn:     { backgroundColor: colors.noir, borderRadius: radius.xl, paddingVertical: 15, alignItems: 'center', shadowColor: '#000', shadowOpacity: 0.4, shadowRadius: 14, shadowOffset: { width: 0, height: 0 }, elevation: 7 },
-  saveBtnTxt:  { color: '#FFFFFF', fontSize: typography.size.subheading, fontWeight: typography.weight.bold, letterSpacing: 0.3 },
+  saveBtn:     { backgroundColor: colors.noir, borderRadius: radius.xl, paddingVertical: 15, alignItems: 'center', shadowColor: colors.shadow, shadowOpacity: 0.4, shadowRadius: 14, shadowOffset: { width: 0, height: 0 }, elevation: 7 },
+  saveBtnTxt:  { color: colors.onDark, fontSize: typography.size.subheading, fontWeight: typography.weight.bold, letterSpacing: 0.3 },
   terminerBtn: { alignItems: 'center', paddingVertical: spacing.lg },
   terminerTxt: { color: colors.accent, fontSize: typography.size.body, fontWeight: typography.weight.medium },
 });
@@ -286,7 +286,7 @@ const f = StyleSheet.create({
   photoBox:         { borderRadius: radius.xl, overflow: 'hidden', borderWidth: 1, borderColor: colors.cardBorder, height: 160 },
   photoImg:         { width: '100%', height: '100%' },
   photoOverlay:     { position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: 'rgba(15,13,11,0.6)', paddingVertical: spacing.md, alignItems: 'center' },
-  photoOverlayTxt:  { color: '#fff', fontSize: typography.size.body, fontWeight: typography.weight.medium },
+  photoOverlayTxt:  { color: colors.onDark, fontSize: typography.size.body, fontWeight: typography.weight.medium },
   photoPlaceholder: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing.sm, backgroundColor: colors.card },
   photoPlaceholderIcon: { fontSize: 32 },
   photoPlaceholderTxt:  { color: colors.textMuted, fontSize: typography.size.body, fontWeight: typography.weight.medium },

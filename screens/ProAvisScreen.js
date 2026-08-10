@@ -137,11 +137,11 @@ const s = StyleSheet.create({
   title:      { color: colors.text, fontSize: typography.size.heading2, fontWeight: typography.weight.semibold },
   subtitle:   { color: colors.textMuted, fontSize: typography.size.caption, marginTop: 1 },
   badge:      { backgroundColor: colors.red, borderRadius: radius.full, minWidth: 22, height: 22, alignItems: 'center', justifyContent: 'center', paddingHorizontal: spacing.sm },
-  badgeTxt:   { color: '#FFFFFF', fontSize: typography.size.xs, fontWeight: typography.weight.bold },
+  badgeTxt:   { color: colors.onDark, fontSize: typography.size.xs, fontWeight: typography.weight.bold },
 
   filterRow:   { paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, gap: spacing.sm },
   chip:        { flexDirection: 'row', alignItems: 'center', gap: spacing.xs, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: radius.full, backgroundColor: 'transparent', borderWidth: 1, borderColor: colors.cardBorder },
-  chipOn:      { backgroundColor: 'rgba(200,151,90,0.14)', borderColor: '#c8975a', shadowColor: '#000', shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
+  chipOn:      { backgroundColor: colors.goldSoft, borderColor: colors.gold, shadowColor: colors.shadow, shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
   chipAlert:   { borderColor: 'rgba(224,90,90,0.4)' },
   chipPending: { borderColor: 'rgba(232,160,69,0.5)' },
   chipTxt:     { color: colors.textMuted, fontSize: typography.size.body },

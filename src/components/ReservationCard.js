@@ -341,8 +341,8 @@ const c = StyleSheet.create({
   chip:         { backgroundColor: colors.card, borderRadius: radius.pill, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderWidth: 1, borderColor: colors.cardBorder },
   chipSel:      { backgroundColor: colors.primary, borderColor: colors.primary },
   chipTxt:      { color: colors.textMuted, fontSize: typography.size.body, fontWeight: typography.weight.medium },
-  chipTxtSel:   { color: '#FFFFFF' },
+  chipTxtSel:   { color: colors.onDark },
 
   btnConfirm:    { backgroundColor: colors.primary, borderRadius: radius.lg, paddingVertical: spacing.lg, alignItems: 'center', marginTop: spacing.xs },
-  btnConfirmTxt: { color: '#FFFFFF', fontSize: typography.size.bodyLg, fontWeight: typography.weight.bold, letterSpacing: 0.3 },
+  btnConfirmTxt: { color: colors.onDark, fontSize: typography.size.bodyLg, fontWeight: typography.weight.bold, letterSpacing: 0.3 },
 });

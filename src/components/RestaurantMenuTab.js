@@ -60,7 +60,7 @@ export default function RestaurantMenuTab({ menu }) {
 const s = StyleSheet.create({
   pillRow:     { paddingHorizontal: spacing.xl, paddingVertical: spacing.xl, gap: spacing.md },
   pill:        { paddingHorizontal: spacing.xl + 2, paddingVertical: spacing.md + 1, borderRadius: radius.full, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, position: 'relative' },
-  pillOn:      { backgroundColor: colors.primaryDim, borderColor: colors.primary, shadowColor: '#000', shadowOpacity: 0.35, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 4 },
+  pillOn:      { backgroundColor: colors.primaryDim, borderColor: colors.primary, shadowColor: colors.shadow, shadowOpacity: 0.35, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 4 },
   pillTxt:     { color: colors.textMuted, fontSize: typography.size.bodyLg, fontWeight: typography.weight.regular },
   pillTxtOn:   { color: colors.primary, fontWeight: typography.weight.regular },
   pillDot:     { position: 'absolute', bottom: -1, left: '50%', width: 4, height: 4, borderRadius: 0, backgroundColor: colors.accent, marginLeft: -2 },

@@ -182,7 +182,7 @@ const s = StyleSheet.create({
 
   cityCards:       { gap: spacing.lg },
   cityCard:        { flexDirection: 'row', alignItems: 'center', gap: spacing.xl, backgroundColor: colors.card, borderRadius: radius.xxl - 2, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.xl },
-  cityCardOn:      { borderColor: '#c8975a', backgroundColor: 'rgba(200,151,90,0.12)', shadowColor: '#000', shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
+  cityCardOn:      { borderColor: colors.gold, backgroundColor: 'rgba(200,151,90,0.12)', shadowColor: colors.shadow, shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
   cityEmojiWrap:   { width: 48, height: 48, borderRadius: radius.lg, backgroundColor: colors.cardBorder, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   cityEmojiWrapOn: { backgroundColor: colors.accentSoft },
   cityEmoji:       { fontSize: 24 },
@@ -198,7 +198,7 @@ const s = StyleSheet.create({
 
   roleCard:      { flexDirection: 'row', alignItems: 'center', gap: spacing.xl, backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.xxl - 2 },
   roleCardClient:{ borderColor: 'rgba(90,155,224,0.3)' },
-  roleCardPro:   { borderColor: 'rgba(200,151,90,0.4)', backgroundColor: 'rgba(200,151,90,0.12)', shadowColor: '#000', shadowOpacity: 0.3, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 4 },
+  roleCardPro:   { borderColor: 'rgba(200,151,90,0.4)', backgroundColor: 'rgba(200,151,90,0.12)', shadowColor: colors.shadow, shadowOpacity: 0.3, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 4 },
   roleIconWrap:  { width: 52, height: 52, borderRadius: radius.lg + 1, borderWidth: 1, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   roleEmoji:     { fontSize: 24 },
   roleTitle:     { color: colors.text, fontSize: typography.size.heading3, fontWeight: typography.weight.medium, marginBottom: spacing.xs },

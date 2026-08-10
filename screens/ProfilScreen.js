@@ -363,7 +363,7 @@ const s = StyleSheet.create({
   avatarImg:     { width: 96, height: 96 },
   avatarFallback:{ width: 96, height: 96, backgroundColor: colors.greyBg, alignItems: 'center', justifyContent: 'center' },
   avatarInitial: { color: colors.textMuted, fontSize: 36, fontWeight: typography.weight.regular },
-  avatarBadge:   { position: 'absolute', bottom: 2, right: 2, width: 26, height: 26, borderRadius: 13, backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: colors.bg },
+  avatarBadge:   { position: 'absolute', bottom: 2, right: 2, width: 26, height: 26, borderRadius: 13, backgroundColor: colors.bg, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: colors.bg },
   heroInfo:      { alignItems: 'center', gap: spacing.sm },
   heroName:      { color: colors.text, fontSize: typography.size.title, fontWeight: typography.weight.regular, letterSpacing: 0.5 },
   heroEmail:     { color: colors.textMuted, fontSize: typography.size.bodyLg },
@@ -372,8 +372,8 @@ const s = StyleSheet.create({
   editBlock:     { width: '100%', gap: spacing.lg },
   editRow:       { flexDirection: 'row', gap: spacing.lg },
   editInput:     { flex: 1, backgroundColor: colors.card, borderRadius: radius.lg, borderWidth: 1, borderColor: colors.cardBorder, color: colors.text, fontSize: typography.size.subheading, paddingHorizontal: spacing.lg, paddingVertical: spacing.lg },
-  saveBtn:       { backgroundColor: '#004d27', borderRadius: radius.lg, paddingVertical: 11, alignItems: 'center', borderWidth: 1.5, borderColor: '#FFFFFF', shadowColor: '#000', shadowOpacity: 0.35, shadowRadius: 12, shadowOffset: { width: 0, height: 0 }, elevation: 6, overflow: 'hidden' },
-  saveBtnTxt:    { color: '#FFFFFF', fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium },
+  saveBtn:       { backgroundColor: '#004d27', borderRadius: radius.lg, paddingVertical: 11, alignItems: 'center', borderWidth: 1.5, borderColor: colors.onDark, shadowColor: colors.shadow, shadowOpacity: 0.35, shadowRadius: 12, shadowOffset: { width: 0, height: 0 }, elevation: 6, overflow: 'hidden' },
+  saveBtnTxt:    { color: colors.onDark, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium },
 
   statsRow: { flexDirection: 'row', marginHorizontal: spacing.xxl, marginVertical: spacing.xl, backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, overflow: 'hidden' },
   statItem: { flex: 1, alignItems: 'center', paddingVertical: spacing.xl },
@@ -387,13 +387,13 @@ const s = StyleSheet.create({
   tabTxt:     { color: colors.textDim, fontSize: typography.size.body, fontWeight: typography.weight.regular },
   tabTxtOn:   { color: colors.text, fontWeight: typography.weight.semibold },
   tabBadge:   { width: 16, height: 16, borderRadius: 8, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' },
-  tabBadgeTxt:{ color: '#FFFFFF', fontSize: typography.size.xs, fontWeight: typography.weight.bold },
+  tabBadgeTxt:{ color: colors.onDark, fontSize: typography.size.xs, fontWeight: typography.weight.bold },
 
   sectionLbl: { color: colors.textMuted, fontSize: typography.size.xs, letterSpacing: 3, paddingHorizontal: spacing.xxl, marginTop: spacing.xxl, marginBottom: spacing.lg },
 
   chipsWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md, paddingHorizontal: spacing.xxl },
   chip:      { paddingHorizontal: spacing.lg, paddingVertical: spacing.md, borderRadius: radius.full, backgroundColor: 'transparent', borderWidth: 1, borderColor: colors.cardBorder },
-  chipOn:    { backgroundColor: colors.primaryDim, borderColor: colors.primary, shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 3, overflow: 'hidden' },
+  chipOn:    { backgroundColor: colors.primaryDim, borderColor: colors.primary, shadowColor: colors.shadow, shadowOpacity: 0.2, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 3, overflow: 'hidden' },
   chipTxt:   { color: colors.textMuted, fontSize: typography.size.body, fontWeight: typography.weight.regular },
   chipTxtOn: { color: colors.primary, fontWeight: typography.weight.semibold },
 
@@ -420,7 +420,7 @@ const s = StyleSheet.create({
   emptyEmoji: { fontSize: 44 },
   emptyTitle: { color: colors.text, fontSize: typography.size.heading1, fontWeight: typography.weight.regular },
   emptySub:   { color: colors.textMuted, fontSize: typography.size.bodyLg, textAlign: 'center', lineHeight: 20 },
-  emptyBtn:   { backgroundColor: colors.card, borderRadius: radius.lg, paddingHorizontal: spacing.xxl, paddingVertical: spacing.lg, borderWidth: 1, borderColor: 'rgba(200,151,90,0.35)', shadowColor: '#000', shadowOpacity: 0.3, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 4, overflow: 'hidden' },
+  emptyBtn:   { backgroundColor: colors.card, borderRadius: radius.lg, paddingHorizontal: spacing.xxl, paddingVertical: spacing.lg, borderWidth: 1, borderColor: 'rgba(200,151,90,0.35)', shadowColor: colors.shadow, shadowOpacity: 0.3, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 4, overflow: 'hidden' },
   emptyBtnTxt:{ color: colors.text, fontSize: typography.size.bodyLg },
 
   favCard:      { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.lg, marginHorizontal: spacing.xxl, marginTop: spacing.lg, backgroundColor: colors.card, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.lg, overflow: 'hidden' },
@@ -433,8 +433,8 @@ const s = StyleSheet.create({
   favRating:    { color: colors.primary, fontSize: typography.size.caption, fontWeight: typography.weight.medium },
   favSep:       { color: colors.textDim },
   favPrice:     { color: colors.textMuted, fontSize: typography.size.caption },
-  favResaBtn:   { alignSelf: 'flex-start', backgroundColor: '#006233', borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, shadowColor: '#000', shadowOpacity: 0.35, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 4, overflow: 'hidden' },
-  favResaBtnTxt:{ color: '#FFFFFF', fontSize: typography.size.caption, fontWeight: typography.weight.semibold },
-  favHeart:     { width: 32, height: 32, borderRadius: radius.full, backgroundColor: colors.primaryDim, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: colors.primarySoft, flexShrink: 0, shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 6, shadowOffset: { width: 0, height: 0 }, elevation: 2, overflow: 'hidden' },
+  favResaBtn:   { alignSelf: 'flex-start', backgroundColor: '#006233', borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, shadowColor: colors.shadow, shadowOpacity: 0.35, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 4, overflow: 'hidden' },
+  favResaBtnTxt:{ color: colors.onDark, fontSize: typography.size.caption, fontWeight: typography.weight.semibold },
+  favHeart:     { width: 32, height: 32, borderRadius: radius.full, backgroundColor: colors.primaryDim, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: colors.primarySoft, flexShrink: 0, shadowColor: colors.shadow, shadowOpacity: 0.2, shadowRadius: 6, shadowOffset: { width: 0, height: 0 }, elevation: 2, overflow: 'hidden' },
   favHeartTxt:  { fontSize: 14 },
 });

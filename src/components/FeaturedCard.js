@@ -66,7 +66,7 @@ const s = StyleSheet.create({
   bottomRow:    { flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' },
   infoBox:      { backgroundColor: 'rgba(0,0,0,0.50)', paddingHorizontal: spacing.md, paddingVertical: spacing.sm, gap: 2, maxWidth: '62%', borderRadius: radius.sm },
   infoTag:      { color: 'rgba(255,255,255,0.65)', fontSize: typography.size.xs, letterSpacing: 1.5, textTransform: 'uppercase' },
-  infoName:     { color: '#FFFFFF', fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium },
+  infoName:     { color: colors.onDark, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium },
   infoQuartier: { color: 'rgba(255,255,255,0.65)', fontSize: typography.size.xs },
   resaBtn:    { borderRadius: radius.card, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.primary },
   resaBtnTxt: { color: colors.bg, fontSize: typography.size.body, fontWeight: typography.weight.semibold, letterSpacing: 0.3 },

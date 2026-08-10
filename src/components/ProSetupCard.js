@@ -109,16 +109,16 @@ const s = StyleSheet.create({
   },
   cardTitle:  { color: '#F5F2EC', fontSize: typography.size.body, fontWeight: typography.weight.semibold },
   cardSub:    { color: 'rgba(245,242,236,0.45)', fontSize: typography.size.xs, marginTop: 2 },
-  dismissTxt: { color: '#C8975A', fontSize: typography.size.caption },
+  dismissTxt: { color: colors.gold, fontSize: typography.size.caption },
   resetTxt:   { color: 'rgba(245,242,236,0.35)', fontSize: 18 },
 
   progressBar:  { height: 3, backgroundColor: 'rgba(255,255,255,0.08)', marginHorizontal: spacing.xl, borderRadius: 2, marginBottom: spacing.md },
-  progressFill: { height: 3, backgroundColor: '#C8975A', borderRadius: 2 },
+  progressFill: { height: 3, backgroundColor: colors.gold, borderRadius: 2 },
 
   // Étapes complétées
   doneRow:   { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingHorizontal: spacing.xl, paddingVertical: spacing.sm, opacity: 0.5 },
-  doneIcon:  { width: 28, height: 28, borderRadius: 8, backgroundColor: 'rgba(76,175,130,0.15)', borderWidth: 1, borderColor: 'rgba(76,175,130,0.30)', alignItems: 'center', justifyContent: 'center' },
-  doneCheck: { color: '#4CAF82', fontSize: 13, fontWeight: '700' },
+  doneIcon:  { width: 28, height: 28, borderRadius: 8, backgroundColor: colors.greenSoft, borderWidth: 1, borderColor: 'rgba(76,175,130,0.30)', alignItems: 'center', justifyContent: 'center' },
+  doneCheck: { color: colors.green, fontSize: 13, fontWeight: '700' },
   doneLabel: { color: 'rgba(245,242,236,0.65)', fontSize: typography.size.caption, textDecorationLine: 'line-through' },
 
   // Étape active
@@ -136,8 +136,8 @@ const s = StyleSheet.create({
   activeEmoji: { fontSize: 20 },
   activeLabel: { color: '#F5F2EC', fontSize: typography.size.body, fontWeight: typography.weight.semibold },
   activeDesc:  { color: 'rgba(245,242,236,0.55)', fontSize: typography.size.xs, marginTop: 3 },
-  activeBtn:   { backgroundColor: '#C8975A', borderRadius: radius.md, paddingVertical: spacing.md, alignItems: 'center' },
-  activeBtnTxt:{ color: '#fff', fontSize: typography.size.caption, fontWeight: typography.weight.extrabold },
+  activeBtn:   { backgroundColor: colors.gold, borderRadius: radius.md, paddingVertical: spacing.md, alignItems: 'center' },
+  activeBtnTxt:{ color: colors.onDark, fontSize: typography.size.caption, fontWeight: typography.weight.extrabold },
 
   // Étapes à venir
   pendingRow:   { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingHorizontal: spacing.xl, paddingVertical: spacing.sm, opacity: 0.55, marginTop: spacing.xs },

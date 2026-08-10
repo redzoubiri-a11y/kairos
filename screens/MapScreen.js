@@ -168,10 +168,10 @@ const s = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
   },
   pinActive: {
-    borderColor: '#c8975a', borderWidth: 2.5,
+    borderColor: colors.gold, borderWidth: 2.5,
     backgroundColor: colors.card,
     width: 46, height: 46, borderRadius: 0,
-    shadowColor: '#000', shadowOpacity: 0.5, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 6,
+    shadowColor: colors.shadow, shadowOpacity: 0.5, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 6,
   },
   pinEmoji:   { fontSize: 18 },
   pinEmojiLg: { fontSize: 22 },
@@ -192,7 +192,7 @@ const s = StyleSheet.create({
     backgroundColor: colors.accentSoft,
     borderRadius: radius.full, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm,
     borderWidth: 1, borderColor: 'rgba(200,151,90,0.4)',
-    shadowColor: '#000', shadowOpacity: 0.25, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 3,
+    shadowColor: colors.shadow, shadowOpacity: 0.25, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 3,
   },
   countDot: { width: 6, height: 6, borderRadius: 0, backgroundColor: colors.green },
   countTxt:  { color: colors.accent, fontSize: typography.size.caption, fontWeight: '500' },
@@ -227,9 +227,9 @@ const s = StyleSheet.create({
   cardRating:{ color: colors.accent, fontSize: typography.size.caption, fontWeight: '500' },
   cardArrow: {
     width: 32, height: 32, borderRadius: 0,
-    backgroundColor: '#c8975a',
+    backgroundColor: colors.gold,
     alignItems: 'center', justifyContent: 'center',
-    shadowColor: '#000', shadowOpacity: 0.5, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5,
+    shadowColor: colors.shadow, shadowOpacity: 0.5, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5,
   },
   cardArrowTxt: { color: colors.bg, fontSize: 20, fontWeight: '700', marginTop: -1 },
 

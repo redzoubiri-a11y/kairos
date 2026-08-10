@@ -204,7 +204,7 @@ const s = StyleSheet.create({
 
   hero:         { height: HERO, overflow: 'hidden' },
   heroLogo:     { position: 'absolute', top: TOP + 2, alignSelf: 'center', left: 0, right: 0 },
-  heroBtnTxt:   { color: '#FFFFFF', fontSize: typography.size.heading1, textShadowColor: 'rgba(0,0,0,0.8)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 4 },
+  heroBtnTxt:   { color: colors.onDark, fontSize: typography.size.heading1, textShadowColor: 'rgba(0,0,0,0.8)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 4 },
   heroBtnIcon:  { fontSize: typography.size.heading1 },
   heroBtnActing:{ color: colors.accent, fontSize: typography.size.bodyLg, fontWeight: typography.weight.bold },
 
@@ -224,7 +224,7 @@ const s = StyleSheet.create({
   heroTopRow:      { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.md },
   heroCuisineBadge:{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs + 1, backgroundColor: 'rgba(26,92,58,0.85)', borderRadius: radius.card, borderWidth: 1, borderColor: 'rgba(26,92,58,0.6)', paddingHorizontal: spacing.md + 1, paddingVertical: spacing.xs },
   heroCuisineEmoji:{ fontSize: typography.size.body },
-  heroCuisineTxt:  { color: '#FFFFFF', fontSize: typography.size.xs, letterSpacing: 2.5 },
+  heroCuisineTxt:  { color: colors.onDark, fontSize: typography.size.xs, letterSpacing: 2.5 },
   heroName:        { color: colors.text, fontSize: typography.size.title + 4, fontWeight: typography.weight.regular, letterSpacing: 0.3, marginBottom: spacing.sm + 1 },
   heroMeta:        { flexDirection: 'row', alignItems: 'center', gap: spacing.sm + 1, flexWrap: 'wrap' },
   heroRatingTxt:   { color: colors.star, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium },

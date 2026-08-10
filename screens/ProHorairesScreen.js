@@ -273,7 +273,7 @@ const s = StyleSheet.create({
   title:          { color: colors.text, fontSize: typography.size.heading2, fontWeight: typography.weight.semibold },
   saveBtn:        { backgroundColor: PRO_ACCENT, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
   saveBtnActive:  { opacity: 0.75 },
-  saveBtnTxt:     { color: '#fff', fontSize: typography.size.caption, fontWeight: typography.weight.extrabold },
+  saveBtnTxt:     { color: colors.onDark, fontSize: typography.size.caption, fontWeight: typography.weight.extrabold },
 
   content:        { padding: spacing.xl },
   section:        { color: colors.textMuted, fontSize: typography.size.xs, fontWeight: typography.weight.semibold, letterSpacing: 1, textTransform: 'uppercase', marginBottom: spacing.md },
@@ -282,7 +282,7 @@ const s = StyleSheet.create({
   durationChip:   { flex: 1, alignItems: 'center', paddingVertical: spacing.md, borderRadius: radius.md, borderWidth: 1, borderColor: colors.cardBorder, backgroundColor: colors.card },
   durationChipOn: { backgroundColor: PRO_ACCENT, borderColor: PRO_ACCENT },
   durationTxt:    { color: colors.textMuted, fontSize: typography.size.caption, fontWeight: typography.weight.medium },
-  durationTxtOn:  { color: '#fff', fontWeight: typography.weight.semibold },
+  durationTxtOn:  { color: colors.onDark, fontWeight: typography.weight.semibold },
 
   dayCard:        { backgroundColor: colors.card, borderRadius: radius.lg, borderWidth: 1, borderColor: colors.cardBorder, marginBottom: spacing.md, overflow: 'hidden' },
   dayHeader:      { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xl, paddingVertical: spacing.lg },
@@ -305,14 +305,14 @@ const s = StyleSheet.create({
   capLbl:         { color: colors.textMuted, fontSize: typography.size.caption },
   capInput:       { backgroundColor: colors.bg, borderWidth: 1, borderColor: colors.cardBorder, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.xs, color: colors.text, fontSize: typography.size.body, fontWeight: typography.weight.semibold, minWidth: 60, textAlign: 'center' },
 
-  backdrop:       { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center', padding: spacing.xl },
+  backdrop:       { flex: 1, backgroundColor: colors.overlay, justifyContent: 'center', alignItems: 'center', padding: spacing.xl },
   pickerBox:      { backgroundColor: colors.bg, borderRadius: radius.xl, padding: spacing.xl, width: '100%', maxHeight: '70%' },
   pickerTitle:    { color: colors.text, fontSize: typography.size.bodyLg, fontWeight: typography.weight.semibold, marginBottom: spacing.lg, textAlign: 'center' },
   pickerGrid:     { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, justifyContent: 'center' },
   pickerChip:     { paddingHorizontal: spacing.xl, paddingVertical: spacing.md, borderRadius: radius.md, borderWidth: 1, borderColor: colors.cardBorder, backgroundColor: colors.card },
   pickerChipOn:   { backgroundColor: PRO_ACCENT, borderColor: PRO_ACCENT },
   pickerChipTxt:  { color: colors.textMuted, fontSize: typography.size.body, fontVariant: ['tabular-nums'] },
-  pickerChipTxtOn:{ color: '#fff', fontWeight: typography.weight.semibold },
+  pickerChipTxtOn:{ color: colors.onDark, fontWeight: typography.weight.semibold },
 
   error:          { color: colors.red, fontSize: typography.size.caption, marginTop: spacing.lg, textAlign: 'center' },
 });

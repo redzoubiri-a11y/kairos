@@ -124,7 +124,7 @@ const s = StyleSheet.create({
   footer:     { position: 'absolute', bottom: 0, left: 0, right: 0, padding: spacing.xl, paddingBottom: spacing.xxl, backgroundColor: colors.bg, borderTopWidth: 1, borderTopColor: colors.cardBorder, gap: spacing.sm, zIndex: 10 },
   nextBtn:    { backgroundColor: colors.text, borderRadius: radius.xl, paddingVertical: spacing.md, alignItems: 'center', marginBottom: spacing.xs },
   nextBtnTxt: { color: colors.bg, fontSize: typography.size.body, fontWeight: typography.weight.semibold },
-  addBtn:     { backgroundColor: '#c8975a', borderRadius: radius.xl, paddingVertical: spacing.lg, alignItems: 'center', shadowColor: '#000', shadowOpacity: 0.45, shadowRadius: 12, shadowOffset: { width: 0, height: 0 }, elevation: 6 },
+  addBtn:     { backgroundColor: colors.gold, borderRadius: radius.xl, paddingVertical: spacing.lg, alignItems: 'center', shadowColor: colors.shadow, shadowOpacity: 0.45, shadowRadius: 12, shadowOffset: { width: 0, height: 0 }, elevation: 6 },
   addBtnDisabled: { opacity: 0.6 },
   addBtnTxt:  { color: colors.bg, fontSize: typography.size.subheading, fontWeight: typography.weight.semibold },
   hint:       { color: colors.textDim, fontSize: typography.size.xs, textAlign: 'center', marginTop: spacing.sm },

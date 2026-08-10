@@ -267,7 +267,7 @@ const s = StyleSheet.create({
   comptoirBtn:    { flex: 1, alignItems: 'center', paddingVertical: spacing.md, borderRadius: radius.lg, backgroundColor: 'rgba(255,255,255,0.07)', borderWidth: 1, borderColor: 'rgba(200,151,90,0.30)' },
   comptoirIcon:   { fontSize: 16, marginBottom: spacing.xxs },
   comptoirBtnTxt: { color: 'rgba(245,242,236,0.80)', fontSize: typography.size.xs },
-  onlineBadge:    { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, flexShrink: 0, backgroundColor: 'rgba(76,175,130,0.15)', borderRadius: radius.full, paddingHorizontal: spacing.lg, paddingVertical: spacing.xs, borderWidth: 1, borderColor: 'rgba(76,175,130,0.35)' },
+  onlineBadge:    { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, flexShrink: 0, backgroundColor: colors.greenSoft, borderRadius: radius.full, paddingHorizontal: spacing.lg, paddingVertical: spacing.xs, borderWidth: 1, borderColor: 'rgba(76,175,130,0.35)' },
   onlineDot:      { width: 6, height: 6, borderRadius: 0, backgroundColor: colors.green },
   onlineTxt:      { color: colors.green, fontSize: typography.size.sm },
 
@@ -277,17 +277,17 @@ const s = StyleSheet.create({
 
   chipRow:   { paddingHorizontal: spacing.xxl, paddingBottom: spacing.sm, gap: spacing.sm },
   chip:      { paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderRadius: radius.full, backgroundColor: 'transparent', borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)' },
-  chipOn:    { backgroundColor: 'rgba(200,151,90,0.20)', borderColor: '#c8975a' },
+  chipOn:    { backgroundColor: 'rgba(200,151,90,0.20)', borderColor: colors.gold },
   chipTxt:   { color: 'rgba(245,242,236,0.55)', fontSize: typography.size.body },
-  chipTxtOn: { color: '#C87860', fontWeight: typography.weight.semibold },
+  chipTxtOn: { color: colors.resa, fontWeight: typography.weight.semibold },
 
   statusTabs:     { flexDirection: 'row', marginHorizontal: spacing.xxl, marginBottom: spacing.md, backgroundColor: 'rgba(255,255,255,0.10)', borderRadius: radius.xl, borderWidth: 1, borderColor: 'rgba(255,255,255,0.12)', padding: spacing.xxs + 1, gap: spacing.xxs },
   statusTab:      { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: spacing.sm, borderRadius: radius.lg, gap: spacing.xs },
   statusTabOn:    { backgroundColor: 'rgba(255,255,255,0.15)' },
   statusTabTxt:   { color: 'rgba(245,242,236,0.45)', fontSize: typography.size.caption },
   statusTabTxtOn: { color: '#F5F2EC', fontWeight: typography.weight.semibold },
-  badge:          { backgroundColor: '#C87860', borderRadius: radius.md, minWidth: 16, height: 16, alignItems: 'center', justifyContent: 'center', paddingHorizontal: spacing.xxs + 1 },
-  badgeTxt:       { color: '#FFFFFF', fontSize: typography.size.xs, fontWeight: typography.weight.bold },
+  badge:          { backgroundColor: colors.resa, borderRadius: radius.md, minWidth: 16, height: 16, alignItems: 'center', justifyContent: 'center', paddingHorizontal: spacing.xxs + 1 },
+  badgeTxt:       { color: colors.onDark, fontSize: typography.size.xs, fontWeight: typography.weight.bold },
 
   listHead:    { paddingHorizontal: spacing.xxl, paddingBottom: spacing.xs },
   listHeadTxt: { color: 'rgba(245,242,236,0.40)', fontSize: typography.size.sm, letterSpacing: 2 },

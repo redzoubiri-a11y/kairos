@@ -87,10 +87,10 @@ const r = StyleSheet.create({
   header:   { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: spacing.lg },
   title:    { color: '#F5F2EC', fontSize: typography.size.bodyLg, fontWeight: typography.weight.semibold, letterSpacing: 0.3 },
   subtitle: { color: 'rgba(245,242,236,0.40)', fontSize: typography.size.caption, textTransform: 'capitalize', marginTop: spacing.xxs },
-  refresh:  { color: '#c8975a', fontSize: typography.size.heading2 },
+  refresh:  { color: colors.gold, fontSize: typography.size.heading2 },
 
   highlight:    { alignItems: 'center', paddingVertical: spacing.lg },
-  highlightVal: { color: '#c8975a', fontSize: typography.size.display, fontWeight: '200', lineHeight: 40 },
+  highlightVal: { color: colors.gold, fontSize: typography.size.display, fontWeight: '200', lineHeight: 40 },
   highlightLbl: { color: 'rgba(245,242,236,0.50)', fontSize: typography.size.caption, letterSpacing: 1, marginTop: spacing.xs },
 
   divider: { height: 1, backgroundColor: 'rgba(255,255,255,0.08)', marginVertical: spacing.lg },

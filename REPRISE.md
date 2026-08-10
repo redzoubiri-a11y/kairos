@@ -36,9 +36,18 @@ tenue. Audit du 10 août 2026 sur `screens/*.js` et `src/components/*.js` :
 
 | Mesure | Valeur |
 | --- | --- |
-| Occurrences de littéraux `#…` / `rgba(…)` | 533 |
-| Fichiers concernés | 24 écrans sur 27, 35 composants sur 56 |
-| Couleurs distinctes | 164 |
+| Occurrences de littéraux `#…` / `rgba(…)` | 533 → **392** |
+| Fichiers concernés à l'audit | 24 écrans sur 27, 35 composants sur 56 |
+| Couleurs distinctes à l'audit | 164 |
+
+141 occurrences ont été remplacées par des tokens (46 fichiers). Toutes les
+substitutions portent sur des valeurs strictement identiques : le refactor est
+un no-op visuel. Deux tokens ont été ajoutés à `src/theme.js` pour couvrir des
+usages qui n'en avaient pas :
+
+- `colors.onDark` — texte ou icône sur fond sombre ou coloré (bouton, badge,
+  carte pleine). Même valeur que `colors.bg`, intention inverse.
+- `colors.shadow` — couleur de projection des ombres (`shadowColor`).
 
 Deux natures de dette, à traiter séparément :
 
@@ -53,7 +62,30 @@ Deux natures de dette, à traiter séparément :
    chacune). Les absorber suppose d'étendre la palette de `src/theme.js`, donc
    une décision design en amont, pas un simple remplacement.
 
-Seul `screens/MapScreen.web.js` a été traité (commit `ee0aa69`).
+Les 392 occurrences restantes relèvent surtout du point 2, plus la palette
+privée en dur de `src/components/BottomTabBar.js` (`C` / `C_DARK`, lignes 5-15)
+qui double le thème au lieu de l'utiliser.
+
+### Thème sombre implicite
+
+`src/theme.js` a migré vers un thème blanc (`colors.bg: '#FFFFFF'`), mais trois
+écrans sont restés sombres : `ProDashboard.js` et `ProComptoir.js`
+(`#0D1B2A` en dur) et `HomeScreen.js` (`colors.noir`). Les composants à texte
+clair leur sont bien réservés — vérifié, aucun n'est partagé avec un écran
+clair, donc pas de bug de contraste. Mais ce fond navy n'a pas de token :
+à nommer dans `theme.js` si ces écrans doivent rester sombres.
+
+### Point ouvert — lisibilité du WeekStrip
+
+`src/components/WeekStrip.js` écrivait `color: 'colors.primary'` en chaîne de
+caractères : valeur non parsable par React Native, style ignoré, texte rendu en
+noir par défaut sur le fond navy de `ProDashboard` (1,21:1). Corrigé en
+utilisant le token.
+
+Le token lui-même reste peu lisible sur ce fond : `colors.primary` (`#0D6B3F`)
+donne 2,64:1, sous le seuil WCAG AA. À arbitrer côté design —
+`colors.green` (`#4CAF82`) monterait à 6,43:1 en gardant la teinte verte. Non
+changé ici, c'est une décision visuelle.
 
 ### Phase 8 — Tests & déploiement
 

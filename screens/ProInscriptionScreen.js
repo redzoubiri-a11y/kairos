@@ -119,8 +119,8 @@ const s = StyleSheet.create({
 
   header:      { flexDirection: 'row', alignItems: 'center', gap: spacing.xl - 2, paddingHorizontal: spacing.xxl, paddingTop: spacing.xl, paddingBottom: spacing.xl, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   backBtn:     { width: 38, height: 38, borderRadius: 0, backgroundColor: 'transparent', alignItems: 'center', justifyContent: 'center' },
-  backBtnTxt:  { color: '#1A1A1A', fontSize: typography.size.heading1 },
-  headerSub:   { color: '#C87860', fontSize: typography.size.xs, letterSpacing: 3, marginBottom: spacing.xxs },
+  backBtnTxt:  { color: colors.text, fontSize: typography.size.heading1 },
+  headerSub:   { color: colors.resa, fontSize: typography.size.xs, letterSpacing: 3, marginBottom: spacing.xxs },
   headerTitle: { color: colors.text, fontSize: typography.size.title, fontWeight: typography.weight.regular, letterSpacing: 0.5 },
 
   intro:     { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.lg, margin: spacing.xxl, padding: spacing.xl, backgroundColor: colors.navy, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.navyBorder },
@@ -132,8 +132,8 @@ const s = StyleSheet.create({
   errorBox: { marginHorizontal: spacing.xxl, marginTop: spacing.md, backgroundColor: colors.redSoft, borderRadius: radius.lg, padding: spacing.lg, borderWidth: 1, borderColor: 'rgba(224,90,90,0.3)' },
   errorTxt:  { color: colors.red, fontSize: typography.size.body },
 
-  submitBtn:    { marginHorizontal: spacing.xxl, marginTop: spacing.xxl, backgroundColor: '#C87860', borderRadius: radius.xl, paddingVertical: spacing.xl - 1, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,220,150,0.5)', shadowColor: '#000', shadowOpacity: 0.5, shadowRadius: 14, shadowOffset: { width: 0, height: 0 }, elevation: 7 },
-  submitBtnTxt: { color: '#FFFFFF', fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium, letterSpacing: 1.5 },
+  submitBtn:    { marginHorizontal: spacing.xxl, marginTop: spacing.xxl, backgroundColor: colors.resa, borderRadius: radius.xl, paddingVertical: spacing.xl - 1, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,220,150,0.5)', shadowColor: colors.shadow, shadowOpacity: 0.5, shadowRadius: 14, shadowOffset: { width: 0, height: 0 }, elevation: 7 },
+  submitBtnTxt: { color: colors.onDark, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium, letterSpacing: 1.5 },
 
   legalTxt:   { marginHorizontal: spacing.xxl, marginTop: spacing.lg, color: colors.textDim, fontSize: typography.size.caption, textAlign: 'center', lineHeight: 16, fontStyle: 'italic' },
   clientLink: { marginHorizontal: spacing.xxl, marginTop: spacing.xl, paddingVertical: spacing.lg, alignItems: 'center' },
@@ -144,6 +144,6 @@ const s = StyleSheet.create({
   successEmoji: { fontSize: 44 },
   successTitle: { color: colors.text, fontSize: typography.size.title, fontWeight: typography.weight.regular, letterSpacing: 0.5, marginBottom: spacing.lg, textAlign: 'center' },
   successSub:   { color: colors.textMuted, fontSize: typography.size.bodyLg, textAlign: 'center', lineHeight: 22, marginBottom: spacing.section },
-  successBtn:   { backgroundColor: '#C87860', borderRadius: radius.xl, paddingVertical: spacing.xl - 1, paddingHorizontal: spacing.section, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,220,150,0.5)', shadowColor: '#000', shadowOpacity: 0.5, shadowRadius: 14, shadowOffset: { width: 0, height: 0 }, elevation: 7 },
-  successBtnTxt:{ color: '#FFFFFF', fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium, letterSpacing: 2 },
+  successBtn:   { backgroundColor: colors.resa, borderRadius: radius.xl, paddingVertical: spacing.xl - 1, paddingHorizontal: spacing.section, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,220,150,0.5)', shadowColor: colors.shadow, shadowOpacity: 0.5, shadowRadius: 14, shadowOffset: { width: 0, height: 0 }, elevation: 7 },
+  successBtnTxt:{ color: colors.onDark, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium, letterSpacing: 2 },
 });

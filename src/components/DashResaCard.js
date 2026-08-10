@@ -83,7 +83,7 @@ const s = StyleSheet.create({
   noteIcon:      { fontSize: 13 },
   noteTxt:       { color: 'rgba(245,242,236,0.65)', fontSize: typography.size.body, lineHeight: 18, flex: 1 },
   actions:       { flexDirection: 'row', gap: spacing.md },
-  btnConfirm:    { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 11, borderRadius: radius.lg, backgroundColor: 'rgba(76,175,130,0.15)', borderWidth: 1, borderColor: 'rgba(76,175,130,0.35)' },
+  btnConfirm:    { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 11, borderRadius: radius.lg, backgroundColor: colors.greenSoft, borderWidth: 1, borderColor: 'rgba(76,175,130,0.35)' },
   btnConfirmTxt: { color: colors.green, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium },
   btnRefuse:     { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 11, borderRadius: radius.lg, backgroundColor: 'rgba(224,90,90,0.10)', borderWidth: 1, borderColor: 'rgba(224,90,90,0.25)' },
   btnRefuseTxt:  { color: colors.red, fontSize: typography.size.bodyLg },

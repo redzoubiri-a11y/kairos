@@ -15,6 +15,11 @@ export const colors = {
 
   // Backgrounds
   bg: '#FFFFFF',
+  // Texte et icônes posés sur un fond sombre ou coloré (bouton, badge, carte
+  // pleine). Distinct de `bg` : même valeur, intention inverse.
+  onDark: '#FFFFFF',
+  // Couleur de projection des ombres — voir aussi `shadows` plus bas.
+  shadow: '#000000',
   card: '#F4F2EE',
   cardBorder: 'rgba(0,0,0,0.09)',
   cardHover: 'rgba(0,0,0,0.05)',

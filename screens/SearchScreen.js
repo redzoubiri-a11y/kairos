@@ -252,12 +252,12 @@ const s = StyleSheet.create({
   mapWrap:        { flex: 1 },
   mapPlaceholder: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#e8e8e8' },
 
-  pin:      { backgroundColor: '#fff', borderWidth: 1.5, borderColor: '#1A1A1A', paddingHorizontal: 8, paddingVertical: 5, alignItems: 'center', maxWidth: 120 },
+  pin:      { backgroundColor: colors.bg, borderWidth: 1.5, borderColor: colors.text, paddingHorizontal: 8, paddingVertical: 5, alignItems: 'center', maxWidth: 120 },
   pinEmoji: { fontSize: 14 },
-  pinName:  { color: '#1A1A1A', fontSize: 9, fontWeight: '600', marginTop: 2, letterSpacing: 0.3 },
+  pinName:  { color: colors.text, fontSize: 9, fontWeight: '600', marginTop: 2, letterSpacing: 0.3 },
 
-  countBadge: { position: 'absolute', top: spacing.lg, left: spacing.lg, flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: '#1A1A1A', paddingHorizontal: spacing.lg, paddingVertical: spacing.xs },
-  countTxt:   { color: '#fff', fontSize: typography.size.caption, fontWeight: typography.weight.semibold, letterSpacing: 1 },
+  countBadge: { position: 'absolute', top: spacing.lg, left: spacing.lg, flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: colors.text, paddingHorizontal: spacing.lg, paddingVertical: spacing.xs },
+  countTxt:   { color: colors.onDark, fontSize: typography.size.caption, fontWeight: typography.weight.semibold, letterSpacing: 1 },
   countArrow: { fontSize: 12 },
 
   listPanel:   { ...StyleSheet.absoluteFillObject, backgroundColor: colors.bg },

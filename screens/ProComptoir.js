@@ -248,7 +248,7 @@ const s = StyleSheet.create({
   restoName:   { color: '#F5F2EC', fontSize: typography.size.heading1, fontWeight: '300', letterSpacing: 0.3 },
   dateStr:     { color: 'rgba(245,242,236,0.50)', fontSize: typography.size.caption, textTransform: 'capitalize', marginTop: 1 },
   refreshBtn:  { width: 38, height: 38, backgroundColor: 'rgba(255,255,255,0.07)', borderRadius: 0, borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)', alignItems: 'center', justifyContent: 'center' },
-  refreshTxt:  { color: '#c8975a', fontSize: 18 },
+  refreshTxt:  { color: colors.gold, fontSize: 18 },
 
   statsStrip: { flexDirection: 'row', backgroundColor: '#091420', borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.08)' },
   statDiv:    { width: 1, backgroundColor: 'rgba(255,255,255,0.08)', marginVertical: spacing.lg },
@@ -258,7 +258,7 @@ const s = StyleSheet.create({
   rightPanel:  { flex: 1 },
   panelHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xxl, paddingVertical: spacing.xl, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.08)', backgroundColor: '#091420' },
   panelTitle:  { color: 'rgba(245,242,236,0.45)', fontSize: typography.size.body, fontWeight: typography.weight.bold, letterSpacing: 3 },
-  panelCount:  { color: '#C87860', fontSize: typography.size.heading2, fontWeight: typography.weight.semibold },
+  panelCount:  { color: colors.resa, fontSize: typography.size.heading2, fontWeight: typography.weight.semibold },
 
   arrivedSep:     { flexDirection: 'row', alignItems: 'center', paddingHorizontal: spacing.xxl, paddingVertical: spacing.lg, gap: spacing.lg },
   arrivedSepLine: { flex: 1, height: 1, backgroundColor: 'rgba(255,255,255,0.10)' },

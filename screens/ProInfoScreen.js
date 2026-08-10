@@ -257,7 +257,7 @@ const s = StyleSheet.create({
   terminerTxt: { color: colors.accent, fontSize: typography.size.body, fontWeight: typography.weight.medium },
   saveBtn:     { backgroundColor: PRO_ACCENT, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, opacity: 1 },
   saveBtnActive:{ opacity: 0.75 },
-  saveBtnTxt:  { color: '#fff', fontSize: typography.size.caption, fontWeight: typography.weight.extrabold },
+  saveBtnTxt:  { color: colors.onDark, fontSize: typography.size.caption, fontWeight: typography.weight.extrabold },
 
   content:     { padding: spacing.xl, gap: 0 },
   section:     { color: colors.textMuted, fontSize: typography.size.xs, fontWeight: typography.weight.semibold, letterSpacing: 1, textTransform: 'uppercase', marginTop: spacing.xxl, marginBottom: spacing.md },
@@ -276,7 +276,7 @@ const s = StyleSheet.create({
   chip:        { borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, backgroundColor: colors.card, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
   chipOn:      { backgroundColor: PRO_ACCENT, borderColor: PRO_ACCENT },
   chipTxt:     { color: colors.textMuted, fontSize: typography.size.caption, fontWeight: typography.weight.medium },
-  chipTxtOn:   { color: '#fff', fontWeight: typography.weight.semibold },
+  chipTxtOn:   { color: colors.onDark, fontWeight: typography.weight.semibold },
 
   toggleRow:   { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   toggleLabel: { color: colors.text, fontSize: typography.size.body },

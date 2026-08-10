@@ -258,14 +258,14 @@ const s = StyleSheet.create({
   /* Zone header verte */
   headerZone: { backgroundColor: colors.primary, paddingBottom: spacing.sm },
   header:     { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingHorizontal: spacing.xl, paddingVertical: spacing.sm },
-  searchBar:  { flex: 1, flexDirection: 'row', alignItems: 'center', gap: spacing.md, backgroundColor: '#FFFFFF', borderRadius: radius.full, borderWidth: 0, paddingHorizontal: spacing.xl, paddingVertical: spacing.lg },
+  searchBar:  { flex: 1, flexDirection: 'row', alignItems: 'center', gap: spacing.md, backgroundColor: colors.bg, borderRadius: radius.full, borderWidth: 0, paddingHorizontal: spacing.xl, paddingVertical: spacing.lg },
   searchIcon: { fontSize: 14 },
   searchInput:{ flex: 1, color: colors.text, fontSize: 16, fontWeight: '300', letterSpacing: 0.3, padding: 0 },
   headerRight:{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   iconBtn:    { width: 38, height: 38, borderRadius: radius.full, backgroundColor: 'rgba(255,255,255,0.15)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.30)', alignItems: 'center', justifyContent: 'center' },
   iconBtnTxt: { fontSize: 17 },
   notifBadge: { position: 'absolute', top: -4, right: -4, minWidth: 16, height: 16, borderRadius: 8, backgroundColor: colors.noir, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 3, borderWidth: 1.5, borderColor: colors.primary },
-  notifBadgeTxt: { color: '#FFFFFF', fontSize: typography.size.xs, fontWeight: typography.weight.bold },
+  notifBadgeTxt: { color: colors.onDark, fontSize: typography.size.xs, fontWeight: typography.weight.bold },
 
   /* Villes */
   cityRow:        { maxHeight: 42 },
@@ -274,11 +274,11 @@ const s = StyleSheet.create({
   cityChipOn:     { backgroundColor: colors.noir, borderColor: colors.noir },
   cityEmoji:      { fontSize: typography.size.body },
   cityTxt:        { color: 'rgba(255,255,255,0.8)', fontSize: typography.size.body },
-  cityTxtOn:      { color: '#FFFFFF', fontWeight: typography.weight.semibold },
+  cityTxtOn:      { color: colors.onDark, fontWeight: typography.weight.semibold },
   cityCount:      { backgroundColor: 'rgba(255,255,255,0.12)', borderRadius: radius.full, paddingHorizontal: 6, paddingVertical: 1, minWidth: 20, alignItems: 'center' },
   cityCountOn:    { backgroundColor: 'rgba(255,255,255,0.25)' },
   cityCountTxt:   { color: 'rgba(255,255,255,0.7)', fontSize: typography.size.xs, fontWeight: typography.weight.semibold },
-  cityCountTxtOn: { color: '#FFFFFF' },
+  cityCountTxtOn: { color: colors.onDark },
 
   /* Stats bar */
   statsBar:      { flexDirection: 'row', alignItems: 'center', marginHorizontal: spacing.xl, marginTop: spacing.xs, marginBottom: spacing.xxs, backgroundColor: 'rgba(0,0,0,0.20)', borderRadius: radius.lg, paddingVertical: spacing.sm, paddingHorizontal: spacing.xl, borderWidth: 1, borderColor: 'rgba(255,255,255,0.12)' },
@@ -293,10 +293,10 @@ const s = StyleSheet.create({
   tonightCard:  { marginHorizontal: spacing.xl, marginTop: spacing.md, borderRadius: radius.xl, overflow: 'hidden' },
   tonightBody:  { paddingHorizontal: spacing.xl, paddingVertical: spacing.lg },
   tonightLabel: { color: 'rgba(245,237,214,0.85)', fontSize: typography.size.xs, letterSpacing: 2.5, marginBottom: spacing.xxs, fontWeight: typography.weight.semibold },
-  tonightTitle: { color: '#FFFFFF', fontSize: typography.size.bodyLg, fontWeight: typography.weight.semibold, marginBottom: spacing.sm },
+  tonightTitle: { color: colors.onDark, fontSize: typography.size.bodyLg, fontWeight: typography.weight.semibold, marginBottom: spacing.sm },
   slotRow:      { gap: spacing.md },
   slotChip:     { paddingHorizontal: spacing.lg, paddingVertical: 7, borderRadius: 0, backgroundColor: 'rgba(0,0,0,0.28)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.30)' },
-  slotTxt:      { color: '#FFFFFF', fontSize: typography.size.body, fontWeight: typography.weight.medium },
+  slotTxt:      { color: colors.onDark, fontSize: typography.size.body, fontWeight: typography.weight.medium },
   /* À la une */
   featRow: { paddingHorizontal: spacing.xl, paddingBottom: spacing.xs },
 
@@ -306,7 +306,7 @@ const s = StyleSheet.create({
   pillOn:    { backgroundColor: colors.noir, borderColor: colors.noir, shadowColor: colors.noir, shadowOpacity: 0.22, shadowRadius: 8, shadowOffset: { width: 0, height: 2 }, elevation: 4 },
   pillEmoji: { fontSize: typography.size.subheading },
   pillTxt:   { color: colors.textMuted, fontSize: typography.size.body },
-  pillTxtOn: { color: '#FFFFFF', fontWeight: typography.weight.semibold },
+  pillTxtOn: { color: colors.onDark, fontWeight: typography.weight.semibold },
 
   /* Quick filters */
   quickRow:    { paddingHorizontal: spacing.xl, gap: spacing.md, paddingTop: spacing.xs, paddingBottom: spacing.xs },

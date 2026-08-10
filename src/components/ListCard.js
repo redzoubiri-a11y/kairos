@@ -84,7 +84,7 @@ const s = StyleSheet.create({
   heroEmoji:   { fontSize: 56 },
   dots:        { position: 'absolute', bottom: spacing.lg, flexDirection: 'row', gap: 4, alignSelf: 'center' },
   dot:         { width: 5, height: 5, borderRadius: 3, backgroundColor: 'rgba(255,255,255,0.4)' },
-  dotOn:       { backgroundColor: '#FFFFFF', width: 16 },
+  dotOn:       { backgroundColor: colors.bg, width: 16 },
   rankBadge:   { position: 'absolute', top: spacing.lg, right: spacing.lg, backgroundColor: 'rgba(0,0,0,0.45)', borderRadius: radius.sm, paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)' },
   rankTxt:     { color: 'rgba(255,255,255,0.8)', fontSize: typography.size.caption, fontWeight: typography.weight.bold },
   topBadge:    { position: 'absolute', top: spacing.lg, left: spacing.lg, backgroundColor: colors.halalBg, borderRadius: radius.sm, paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderWidth: 1, borderColor: colors.halalBorder },

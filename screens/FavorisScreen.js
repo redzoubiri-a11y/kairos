@@ -177,7 +177,7 @@ const s = StyleSheet.create({
   searchBar:   { flex: 1, flexDirection: 'row', alignItems: 'center', gap: spacing.md, backgroundColor: 'transparent', borderRadius: radius.full, paddingHorizontal: spacing.lg, paddingVertical: spacing.md+1, borderWidth: 1, borderColor: 'rgba(0,0,0,0.7)' },
   searchIcon:  { fontSize: 13 },
   searchInput: { flex: 1, color: colors.text, fontSize: typography.size.bodyLg },
-  sortBtn:     { backgroundColor: colors.card, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.md+1, borderWidth: 1, borderColor: 'rgba(200,151,90,0.3)', justifyContent: 'center', shadowColor: '#000', shadowOpacity: 0.3, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 3 },
+  sortBtn:     { backgroundColor: colors.card, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.md+1, borderWidth: 1, borderColor: 'rgba(200,151,90,0.3)', justifyContent: 'center', shadowColor: colors.shadow, shadowOpacity: 0.3, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 3 },
   sortTxt:     { color: colors.accent, fontSize: typography.size.sm, fontWeight: typography.weight.medium },
 
   statStrip:   { flexDirection: 'row', backgroundColor: colors.card, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.cardBorder, marginHorizontal: spacing.xxl, marginBottom: spacing.xl },
@@ -201,6 +201,6 @@ const s = StyleSheet.create({
   emptyEmoji:   { fontSize: 56 },
   emptyTitle:   { color: colors.text, fontSize: typography.size.title, fontWeight: typography.weight.regular, letterSpacing: 0.5 },
   emptySub:     { color: colors.textMuted, fontSize: typography.size.bodyLg, textAlign: 'center', lineHeight: 20 },
-  exploreBtn:   { backgroundColor: '#006233', borderRadius: radius.xl, paddingVertical: 13, paddingHorizontal: spacing.xxxl, marginTop: spacing.md, shadowColor: '#000', shadowOpacity: 0.45, shadowRadius: 12, shadowOffset: { width: 0, height: 0 }, elevation: 6 },
+  exploreBtn:   { backgroundColor: '#006233', borderRadius: radius.xl, paddingVertical: 13, paddingHorizontal: spacing.xxxl, marginTop: spacing.md, shadowColor: colors.shadow, shadowOpacity: 0.45, shadowRadius: 12, shadowOffset: { width: 0, height: 0 }, elevation: 6 },
   exploreBtnTxt:{ color: colors.bg, fontSize: typography.size.body, fontWeight: typography.weight.medium, letterSpacing: 2 },
 });

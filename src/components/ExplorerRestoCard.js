@@ -64,7 +64,7 @@ const s = StyleSheet.create({
   medalWrap:     { position: 'absolute', top: 8, left: 8, width: 22, height: 22, borderRadius: 11, alignItems: 'center', justifyContent: 'center' },
   medalTxt:      { color: colors.bg, fontSize: typography.size.sm, fontWeight: '700' },
   cuisinePill:   { position: 'absolute', bottom: 8, left: 8, backgroundColor: 'rgba(0,0,0,0.60)', borderRadius: radius.sm, paddingHorizontal: 7, paddingVertical: 3 },
-  cuisinePillTxt:{ color: '#FFFFFF', fontSize: typography.size.xs },
+  cuisinePillTxt:{ color: colors.onDark, fontSize: typography.size.xs },
   body:          { padding: 10, gap: 4 },
   name:          { color: colors.text, fontSize: typography.size.bodyLg, fontWeight: '500', letterSpacing: 0.2 },
   quartier:      { color: colors.textSecondary, fontSize: typography.size.sm },

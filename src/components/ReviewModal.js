@@ -111,9 +111,9 @@ const s = StyleSheet.create({
   input:        { color: colors.text, fontSize: typography.size.bodyLg, padding: spacing.xl, minHeight: 90 },
   charCount:    { color: colors.textDim, fontSize: typography.size.sm, textAlign: 'right', paddingRight: spacing.lg, paddingBottom: spacing.sm },
 
-  btnSubmit:    { backgroundColor: colors.noir, borderRadius: radius.xxl, paddingVertical: 15, alignItems: 'center', shadowColor: '#000', shadowOpacity: 0.4, shadowRadius: 14, shadowOffset: { width: 0, height: 0 }, elevation: 7 },
+  btnSubmit:    { backgroundColor: colors.noir, borderRadius: radius.xxl, paddingVertical: 15, alignItems: 'center', shadowColor: colors.shadow, shadowOpacity: 0.4, shadowRadius: 14, shadowOffset: { width: 0, height: 0 }, elevation: 7 },
   btnDim:       { opacity: 0.4 },
-  btnSubmitTxt: { color: '#FFFFFF', fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium, letterSpacing: 1.5 },
+  btnSubmitTxt: { color: colors.onDark, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium, letterSpacing: 1.5 },
   btnCancel:    { alignItems: 'center', paddingVertical: spacing.md },
   btnCancelTxt: { color: colors.textMuted, fontSize: typography.size.bodyLg },
 });

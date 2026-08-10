@@ -221,7 +221,7 @@ const s = StyleSheet.create({
   headerCenter: { flex: 1, alignItems: 'center' },
   headerSub:    { color: colors.accent, fontSize: typography.size.xs, letterSpacing: 3, marginBottom: 2 },
   headerTitle:  { color: colors.text, fontSize: typography.size.title, fontWeight: '300', letterSpacing: 1 },
-  addBtn:       { backgroundColor: '#c8975a', borderRadius: radius.lg, paddingHorizontal: spacing.lg, paddingVertical: spacing.md, shadowColor: '#000', shadowOpacity: 0.45, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
+  addBtn:       { backgroundColor: colors.gold, borderRadius: radius.lg, paddingHorizontal: spacing.lg, paddingVertical: spacing.md, shadowColor: colors.shadow, shadowOpacity: 0.45, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
   addBtnTxt:    { color: colors.bg, fontSize: typography.size.body, fontWeight: typography.weight.bold },
 
   subBar:  { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingHorizontal: spacing.xxl, paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },

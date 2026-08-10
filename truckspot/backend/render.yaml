@@ -28,6 +28,14 @@ services:
       # Delai de grace apres l'heure de depart d'un trajet planifie.
       - key: TRIP_DEPARTURE_GRACE_HOURS
         value: 3
+      # L'envoi de courriel est indispensable a la reinitialisation de mot de
+      # passe : le pilote `log` n'envoie rien a personne.
+      - key: MAIL_DRIVER
+        value: smtp
+      - key: SMTP_URL
+        sync: false
+      - key: MAIL_FROM
+        sync: false
       # Renseigner l'URL publique du service une fois attribuee par Render.
       - key: PUBLIC_URL
         sync: false

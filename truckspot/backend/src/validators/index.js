@@ -62,6 +62,22 @@ const auth = {
       newPassword: z.string().min(8, 'Au moins 8 caracteres'),
     })
     .strict(),
+
+  forgotPassword: z
+    .object({
+      email: z.string().email('Email invalide'),
+    })
+    .strict(),
+
+  resetPassword: z
+    .object({
+      email: z.string().email('Email invalide'),
+      // Six chiffres exactement : un format libre laisserait passer des essais
+      // que le compteur de tentatives devrait ensuite absorber.
+      code: z.string().regex(/^[0-9]{6}$/, 'Code a six chiffres'),
+      password: z.string().min(8, 'Au moins 8 caracteres'),
+    })
+    .strict(),
 };
 
 const transporter = {

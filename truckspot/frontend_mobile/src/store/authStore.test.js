@@ -8,7 +8,13 @@ import { registerForPushNotifications, unregisterPushNotifications } from '../ap
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 vi.mock('../api/endpoints', () => ({
-  authApi: { me: vi.fn(), login: vi.fn(), signup: vi.fn(), updateProfile: vi.fn() },
+  authApi: {
+    me: vi.fn(),
+    login: vi.fn(),
+    signup: vi.fn(),
+    updateProfile: vi.fn(),
+    changePassword: vi.fn(),
+  },
   transporterApi: { create: vi.fn() },
 }));
 vi.mock('../api/client', () => ({
@@ -177,6 +183,50 @@ describe('deconnexion', () => {
     expect(state.user).toBeNull();
     expect(disconnectSocket).toHaveBeenCalled();
     expect(setAuthToken).toHaveBeenCalledWith(null);
+  });
+});
+
+describe('changement de mot de passe', () => {
+  // Le serveur invalide les jetons precedents, y compris celui de la session en
+  // cours. Sans adopter le remplacant, l'appel suivant repartait avec un jeton
+  // perime et deconnectait celui qui venait de changer son mot de passe.
+  it('adopte le jeton de remplacement', async () => {
+    useAuthStore.setState({ token: 'ancien', user: CLIENT, status: 'signedIn' });
+    authApi.changePassword.mockResolvedValue({ success: true, token: 'nouveau' });
+
+    await useAuthStore.getState().changePassword({
+      currentPassword: 'x',
+      newPassword: 'yyyyyyyy',
+    });
+
+    expect(useAuthStore.getState().token).toBe('nouveau');
+    expect(storage.get(TOKEN_KEY)).toBe('nouveau');
+    expect(setAuthToken).toHaveBeenCalledWith('nouveau');
+    // La websocket porte le jeton dans son handshake : elle doit repartir aussi.
+    expect(connectSocket).toHaveBeenCalledWith('nouveau');
+  });
+
+  it('garde la session en place si le serveur ne renvoie pas de jeton', async () => {
+    useAuthStore.setState({ token: 'ancien', user: CLIENT, status: 'signedIn' });
+    authApi.changePassword.mockResolvedValue({ success: true });
+
+    await useAuthStore.getState().changePassword({
+      currentPassword: 'x',
+      newPassword: 'yyyyyyyy',
+    });
+
+    expect(useAuthStore.getState().token).toBe('ancien');
+  });
+
+  it('laisse remonter un mot de passe actuel errone', async () => {
+    useAuthStore.setState({ token: 'ancien', user: CLIENT, status: 'signedIn' });
+    authApi.changePassword.mockRejectedValue(new Error('Mot de passe actuel incorrect'));
+
+    await expect(
+      useAuthStore.getState().changePassword({ currentPassword: 'faux', newPassword: 'yyyyyyyy' })
+    ).rejects.toThrow('Mot de passe actuel incorrect');
+
+    expect(useAuthStore.getState().token).toBe('ancien');
   });
 });
 

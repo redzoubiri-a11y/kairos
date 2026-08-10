@@ -23,4 +23,20 @@ const changePassword = asyncHandler(async (req, res) => {
   res.json(await authService.changePassword(req.user.id, req.body));
 });
 
-module.exports = { signup, login, me, updateProfile, changePassword };
+const forgotPassword = asyncHandler(async (req, res) => {
+  res.json(await authService.requestPasswordReset(req.body));
+});
+
+const resetPassword = asyncHandler(async (req, res) => {
+  res.json(await authService.resetPassword(req.body));
+});
+
+module.exports = {
+  signup,
+  login,
+  me,
+  updateProfile,
+  changePassword,
+  forgotPassword,
+  resetPassword,
+};

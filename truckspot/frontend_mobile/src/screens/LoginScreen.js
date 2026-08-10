@@ -8,8 +8,9 @@ import ErrorBanner from '../components/ErrorBanner';
 import { useAuthStore } from '../store/authStore';
 import { colors, spacing, typography } from '../theme';
 
-export default function LoginScreen({ navigation }) {
+export default function LoginScreen({ navigation, route }) {
   const login = useAuthStore((s) => s.login);
+  const passwordReset = route?.params?.passwordReset;
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -51,6 +52,15 @@ export default function LoginScreen({ navigation }) {
           <Text style={styles.title}>Bon retour</Text>
           <Text style={styles.subtitle}>Connectez-vous pour retrouver vos missions.</Text>
 
+          {passwordReset ? (
+            <View style={styles.success}>
+              <Ionicons name="checkmark-circle" size={17} color={colors.success} />
+              <Text style={styles.successText}>
+                Mot de passe reinitialise. Connectez-vous avec le nouveau.
+              </Text>
+            </View>
+          ) : null}
+
           <ErrorBanner message={error} />
 
           <Input
@@ -74,6 +84,12 @@ export default function LoginScreen({ navigation }) {
           />
 
           <Button title="Se connecter" onPress={onSubmit} loading={loading} />
+
+          <Button
+            title="Mot de passe oublie ?"
+            variant="ghost"
+            onPress={() => navigation.navigate('ForgotPassword')}
+          />
 
           <View style={styles.footer}>
             <Text style={styles.footerText}>Pas encore de compte ?</Text>
@@ -106,5 +122,14 @@ const styles = StyleSheet.create({
   title: { ...typography.h1, color: colors.text },
   subtitle: { ...typography.body, color: colors.textMuted, marginTop: spacing.xs, marginBottom: spacing.xl },
   footer: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: spacing.lg },
+  success: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.successSoft,
+    borderRadius: 12,
+    padding: spacing.md,
+    marginBottom: spacing.md,
+  },
+  successText: { ...typography.small, color: colors.success, flex: 1, marginLeft: spacing.sm },
   footerText: { ...typography.small, color: colors.textMuted },
 });

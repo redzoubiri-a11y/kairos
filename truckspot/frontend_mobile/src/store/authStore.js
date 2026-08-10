@@ -77,6 +77,21 @@ export const useAuthStore = create((set, get) => ({
     set({ token: null, user: null, status: 'signedOut' });
   },
 
+  // Le serveur invalide les jetons precedents, y compris le notre. Sans adopter
+  // le remplacant qu'il renvoie, l'appel suivant partirait avec un jeton perime
+  // et deconnecterait l'utilisateur qui vient simplement de changer son mot de
+  // passe.
+  changePassword: async ({ currentPassword, newPassword }) => {
+    const result = await authApi.changePassword({ currentPassword, newPassword });
+    if (result.token) {
+      await AsyncStorage.setItem(TOKEN_KEY, result.token);
+      setAuthToken(result.token);
+      connectSocket(result.token);
+      set({ token: result.token });
+    }
+    return result;
+  },
+
   refreshUser: async () => {
     const user = await authApi.me();
     set({ user });

@@ -117,6 +117,8 @@ Base : `http://localhost:4000/api` — authentification par `Authorization: Bear
 | GET     | `/auth/me`                     | authentifie  | Profil courant                           |
 | PATCH   | `/auth/me`                     | authentifie  | Mise a jour du profil                    |
 | POST    | `/auth/change-password`        | authentifie  | Changement de mot de passe               |
+| POST    | `/auth/forgot-password`        | public       | Demande d'un code de reinitialisation    |
+| POST    | `/auth/reset-password`         | public       | Reinitialisation avec le code recu       |
 | POST    | `/transporters/create`         | authentifie  | Creation du profil entreprise            |
 | GET     | `/transporters/me`             | transporteur | Profil entreprise + documents            |
 | PATCH   | `/transporters/me`             | transporteur | Mise a jour de l'entreprise              |
@@ -159,6 +161,29 @@ Les erreurs suivent toujours la forme
 
 Les parametres de requete sont valides en mode strict : n'envoyez jamais de parametre
 vide ou inconnu, la reponse serait un 400.
+
+### Mot de passe oublie
+
+`POST /auth/forgot-password` envoie un code a six chiffres, valable 30 minutes, utilisable
+une fois. Quatre proprietes tiennent ce mecanisme :
+
+- **Pas d'enumeration.** La reponse est identique que le compte existe, n'existe pas ou
+  soit desactive. Demander une reinitialisation ne revele donc pas qui est inscrit.
+- **Rien en clair.** Seule l'empreinte SHA-256 du code est stockee : une fuite de la base
+  ne donne pas la main sur les comptes. La comparaison est a temps constant.
+- **Essais bornes.** Un code a six chiffres se devine en un million d'essais ; au-dela de
+  cinq erreurs le code est mort, meme presente correctement ensuite.
+- **Sessions fermees.** Chaque changement de mot de passe incremente `tokenVersion`, recopie
+  dans le jeton. Tout jeton d'une version anterieure est refuse, par l'API comme par la
+  websocket. Sans cela, reinitialiser son mot de passe ne chassait personne : la session
+  d'un intrus survivait jusqu'aux sept jours de validite du jeton. Un compteur plutot
+  qu'une comparaison de dates, parce que `iat` est en secondes et qu'un jeton emis dans la
+  meme seconde que le changement aurait survecu. La session qui fait la demande recoit un
+  jeton a la nouvelle version : elle ne se deconnecte pas elle-meme.
+
+> L'envoi passe par `MAIL_DRIVER`. Le pilote `log` par defaut ecrit le message dans la
+> sortie standard et le garde en memoire — pratique en developpement, mais **personne ne
+> recoit rien**. Toute mise en production exige `MAIL_DRIVER=smtp` et `SMTP_URL`.
 
 ### Fraicheur des offres
 
@@ -282,7 +307,7 @@ pour rejouer les migrations.
 cd truckspot/backend && npm test
 ```
 
-**116 tests d'integration** tournent contre une vraie base PostgreSQL et un vrai serveur
+**136 tests d'integration** tournent contre une vraie base PostgreSQL et un vrai serveur
 HTTP + Socket.IO, sans mock : authentification, cloisonnement des acces (un tiers ne peut
 lire ni une mission ni une conversation qui ne le concerne pas), recherche geographique,
 filtres de la carte, expiration des positions trop anciennes, transitions de statut
@@ -299,7 +324,7 @@ garde ADMIN, le motif de refus obligatoire, la normalisation des erreurs du clie
 la pagination — `cd truckspot/frontend_admin && npm test`. Il a par ailleurs ete valide par
 140 assertions sur les reponses reelles de l'API et un rendu de chaque page.
 
-L'application mobile dispose de **105 tests** sur ses stores, sa couche socket et ses
+L'application mobile dispose de **108 tests** sur ses stores, sa couche socket et ses
 utilitaires (pagination des missions, des trajets, du fil de notifications et de la
 conversation, deduplication du chat, restauration apres un accuse de lecture refuse, cycle
 de session complet, rejointure des salons apres reconnexion, filtre marchandise, position

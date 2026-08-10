@@ -4,9 +4,17 @@ const prisma = require('../config/prisma');
 const ApiError = require('../utils/ApiError');
 
 function signToken(user) {
-  return jwt.sign({ sub: user.id, role: user.role }, env.jwtSecret, {
+  return jwt.sign({ sub: user.id, role: user.role, ver: user.tokenVersion ?? 0 }, env.jwtSecret, {
     expiresIn: env.jwtExpiresIn,
   });
+}
+
+// Un jeton dont la version est depassee ne vaut plus : c'est ce qui ferme les
+// sessions ouvertes lors d'un changement de mot de passe. Les jetons emis avant
+// l'introduction du compteur n'en portent pas — ils valent la version 0, et
+// restent donc valables tant que le mot de passe n'a pas change.
+function isTokenCurrent(payload, user) {
+  return (payload.ver ?? 0) === (user.tokenVersion ?? 0);
 }
 
 function verifyToken(token) {
@@ -35,6 +43,10 @@ async function requireAuth(req, res, next) {
 
     if (!user || !user.isActive) {
       throw ApiError.unauthorized('Compte introuvable ou desactive');
+    }
+
+    if (!isTokenCurrent(payload, user)) {
+      throw ApiError.unauthorized('Mot de passe modifie, reconnectez-vous');
     }
 
     req.user = user;
@@ -66,4 +78,11 @@ function requireVerifiedTransporter(req, res, next) {
   next();
 }
 
-module.exports = { signToken, verifyToken, requireAuth, requireRole, requireVerifiedTransporter };
+module.exports = {
+  signToken,
+  verifyToken,
+  isTokenCurrent,
+  requireAuth,
+  requireRole,
+  requireVerifiedTransporter,
+};

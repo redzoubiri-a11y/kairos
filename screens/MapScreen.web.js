@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { colors, typography, spacing } from '../src/theme';
 
 export default function MapScreen() {
   return (
@@ -10,6 +11,6 @@ export default function MapScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' },
-  text: { fontSize: 18, textAlign: 'center', padding: 20 },
+  container: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.bg },
+  text: { color: colors.text, fontSize: typography.size.heading1, textAlign: 'center', padding: spacing.xxl },
 });

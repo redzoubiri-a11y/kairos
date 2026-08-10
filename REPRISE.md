@@ -20,17 +20,14 @@ revue détaillée de la conformité aux wireframes.
 | Composants Phase 1 (MButton, MTag, MInput, MCard, MToggle, MNavBar, MHeader, MStars, MLoader) | tous présents |
 | `src/components/` | 56 composants |
 | `screens/` | 27 écrans, dont les écrans pro ajoutés en Phase 6 (ProMenu, ProPromos, ProAvis) et les écrans transversaux de Phase 7 (Settings, Aide) |
-| Import de `theme` dans les écrans | 26 / 27 |
+| Import de `theme` dans les écrans | 27 / 27 |
 
 Les phases 1 à 7 du `ROADMAP.md` sont donc couvertes au niveau des fichiers.
 
+Plus aucune couleur en dur dans `screens/` : `MapScreen.web.js`, dernier écran
+concerné, est passé sous les tokens de `src/theme.js`.
+
 ## Reste à faire
-
-### Écart identifié
-
-- `screens/MapScreen.web.js` — stub de 15 lignes, seul écran à ne pas importer
-  `theme` et à porter une couleur en dur (`#fff`, ligne 14). À reprendre avec
-  les tokens de `src/theme.js`, en cohérence avec `MapScreen.js`.
 
 ### Phase 8 — Tests & déploiement
 

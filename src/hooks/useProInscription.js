@@ -59,6 +59,16 @@ export default function useProInscription() {
       if (err) { setError(err.message); return; }
       setRequestId(inserted.id);
       setSuccess(true);
+      const { error: fnErr } = await supabase.functions.invoke('auto-approve-pro', {
+        body: { request_id: inserted.id },
+      });
+      if (fnErr) {
+        // La demande reste pending, le cron 48h la rattrapera.
+        setError('Inscription enregistrée, activation en cours…');
+        return;
+      }
+      await supabase.auth.refreshSession();
+      setApproved(true);
     } finally {
       setLoading(false);
     }

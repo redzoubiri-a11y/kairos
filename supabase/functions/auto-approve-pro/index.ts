@@ -9,18 +9,38 @@ const admin = createClient(SUPABASE_URL, SERVICE_KEY, {
   auth: { autoRefreshToken: false, persistSession: false },
 });
 
-Deno.serve(async (_req) => {
-  const threshold = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+};
 
-  const { data: requests } = await admin
-    .from("pro_requests")
-    .select("*")
-    .eq("status", "pending")
-    .lt("created_at", threshold);
+Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
+  }
+
+  // Body JSON optionnel { request_id } : approbation immédiate d'une seule demande.
+  // Sans body (appel cron), filet de sécurité sur les pending de plus de 48h.
+  let requestId: string | null = null;
+  try {
+    const body = await req.json();
+    if (body && typeof body.request_id === "string") requestId = body.request_id;
+  } catch (_) {
+    // pas de body / JSON invalide → mode cron
+  }
+
+  let query = admin.from("pro_requests").select("*").eq("status", "pending");
+  if (requestId) {
+    query = query.eq("id", requestId);
+  } else {
+    const threshold = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
+    query = query.lt("created_at", threshold);
+  }
+  const { data: requests } = await query;
 
   if (!requests || requests.length === 0) {
     return new Response(JSON.stringify({ approved: 0 }), {
-      headers: { "Content-Type": "application/json" },
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
 
@@ -85,6 +105,6 @@ Deno.serve(async (_req) => {
 
   console.log(`[auto-approve-pro] approved=${approved} errors=${errors.length}`);
   return new Response(JSON.stringify({ approved, errors }), {
-    headers: { "Content-Type": "application/json" },
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 });

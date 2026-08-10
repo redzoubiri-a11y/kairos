@@ -75,17 +75,16 @@ clair leur sont bien réservés — vérifié, aucun n'est partagé avec un écr
 clair, donc pas de bug de contraste. Mais ce fond navy n'a pas de token :
 à nommer dans `theme.js` si ces écrans doivent rester sombres.
 
-### Point ouvert — lisibilité du WeekStrip
+### Lisibilité du WeekStrip — réglé
 
 `src/components/WeekStrip.js` écrivait `color: 'colors.primary'` en chaîne de
 caractères : valeur non parsable par React Native, style ignoré, texte rendu en
-noir par défaut sur le fond navy de `ProDashboard` (1,21:1). Corrigé en
-utilisant le token.
+noir par défaut sur le fond navy de `ProDashboard` (1,21:1).
 
-Le token lui-même reste peu lisible sur ce fond : `colors.primary` (`#0D6B3F`)
-donne 2,64:1, sous le seuil WCAG AA. À arbitrer côté design —
-`colors.green` (`#4CAF82`) monterait à 6,43:1 en gardant la teinte verte. Non
-changé ici, c'est une décision visuelle.
+Le repère « aujourd'hui » est désormais `colors.green` (`#4CAF82`) sur ses
+quatre points d'usage — les trois libellés et la barre — soit 6,43:1 sur
+`#0D1B2A`, au-dessus du seuil WCAG AA. `colors.primary` (`#0D6B3F`), la valeur
+d'origine, plafonnait à 2,64:1.
 
 ### Phase 8 — Tests & déploiement
 

@@ -3,6 +3,7 @@ import { StyleSheet } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import TruckPin from './TruckPin';
 import { DEFAULT_REGION } from '../utils/constants';
+import { isPositionLive } from '../utils/format';
 
 const MAP_STYLE = [
   { featureType: 'poi', elementType: 'labels', stylers: [{ visibility: 'off' }] },
@@ -40,6 +41,7 @@ const TruckMap = forwardRef(function TruckMap(
               label={`${truck.volumeM3} m³`}
               selected={truck.id === selectedTruckId}
               available={truck.isAvailable}
+              live={isPositionLive(truck.lastPositionAt)}
             />
           </Marker>
         ))}

@@ -20,6 +20,10 @@ const env = {
   publicUrl: process.env.PUBLIC_URL || `http://localhost:${process.env.PORT || 4000}`,
   disableRateLimit: process.env.DISABLE_RATE_LIMIT === 'true',
 
+  // Au-dela de ce delai sans nouvelle position, un camion n'est plus considere
+  // comme disponible : une position figee ne vaut pas une disponibilite.
+  truckPositionTtlMinutes: Number(process.env.TRUCK_POSITION_TTL_MINUTES || 1440),
+
   // 'local' writes to UPLOAD_DIR, 's3' targets any S3-compatible bucket.
   storageDriver: process.env.STORAGE_DRIVER === 's3' ? 's3' : 'local',
   s3Endpoint: process.env.S3_ENDPOINT,

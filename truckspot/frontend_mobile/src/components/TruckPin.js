@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { colors, radii, typography } from '../theme';
 
 // Rendered inside a <Marker>, so it must stay a pure view with no touch handling.
-export default function TruckPin({ label, selected = false, available = true }) {
+export default function TruckPin({ label, selected = false, available = true, live = false }) {
   const bg = !available ? colors.textMuted : selected ? colors.primaryDark : colors.primary;
 
   return (
@@ -16,6 +16,9 @@ export default function TruckPin({ label, selected = false, available = true }) 
             {label}
           </Text>
         ) : null}
+        {/* Une epingle immobile depuis des heures ne doit pas se lire comme un
+            camion qui roule. */}
+        {live ? <View style={styles.livePulse} /> : null}
       </View>
       <View style={[styles.tail, { borderTopColor: bg }]} />
     </View>
@@ -34,6 +37,15 @@ const styles = StyleSheet.create({
     borderColor: '#FFFFFF',
   },
   pinSelected: { transform: [{ scale: 1.12 }] },
+  livePulse: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    marginLeft: 5,
+    backgroundColor: colors.success,
+    borderWidth: 1,
+    borderColor: '#FFFFFF',
+  },
   label: { ...typography.caption, color: '#1A1206', marginLeft: 4, maxWidth: 70 },
   tail: {
     width: 0,

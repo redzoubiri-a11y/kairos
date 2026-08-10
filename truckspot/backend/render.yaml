@@ -21,6 +21,10 @@ services:
         generateValue: true
       - key: JWT_EXPIRES_IN
         value: 7d
+      # Delai au-dela duquel un camion sort de la carte faute de nouvelle
+      # position. 1440 = 24 h.
+      - key: TRUCK_POSITION_TTL_MINUTES
+        value: 1440
       # Renseigner l'URL publique du service une fois attribuee par Render.
       - key: PUBLIC_URL
         sync: false

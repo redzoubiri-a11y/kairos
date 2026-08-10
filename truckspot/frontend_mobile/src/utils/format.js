@@ -30,6 +30,16 @@ export function formatRelative(value) {
   return formatDate(value);
 }
 
+// Le serveur ecarte deja les positions trop anciennes. Ce seuil-ci ne sert qu'a
+// distinguer, parmi celles qui restent, celle d'un camion qui roule en ce
+// moment de celle d'un camion vu ce matin.
+export const LIVE_POSITION_MINUTES = 15;
+
+export function isPositionLive(lastPositionAt) {
+  if (!lastPositionAt) return false;
+  return Date.now() - new Date(lastPositionAt).getTime() <= LIVE_POSITION_MINUTES * 60000;
+}
+
 export function formatPrice(value) {
   if (value === null || value === undefined) return 'A negocier';
   return `${Number(value).toLocaleString('fr-FR')} DA`;

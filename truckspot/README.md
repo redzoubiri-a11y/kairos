@@ -117,7 +117,7 @@ Base : `http://localhost:4000/api` — authentification par `Authorization: Bear
 | GET     | `/transporters/documents/:id`  | proprietaire ou admin | Lecture d'un document justificatif |
 | POST    | `/trucks/create`               | transporteur | Ajout d'un camion                        |
 | GET     | `/trucks/mine`                 | transporteur | Flotte du transporteur                   |
-| GET     | `/trucks/available`            | authentifie  | Camions disponibles (filtres + geo)      |
+| GET     | `/trucks/available`            | authentifie  | Camions disponibles (filtres + geo + fraicheur) |
 | GET     | `/trucks/:id`                  | authentifie  | Fiche camion                             |
 | PATCH   | `/trucks/:id`                  | transporteur | Mise a jour d'un camion                  |
 | PATCH   | `/trucks/:id/position`         | verifie      | Position temps reel                      |
@@ -152,6 +152,23 @@ Les erreurs suivent toujours la forme
 
 Les parametres de requete sont valides en mode strict : n'envoyez jamais de parametre
 vide ou inconnu, la reponse serait un 400.
+
+### Fraicheur des positions
+
+`GET /trucks/available` n'affiche un camion que si sa position a moins de
+`TRUCK_POSITION_TTL_MINUTES` (24 h par defaut, reglable par deploiement, et par
+requete avec `freshWithinMinutes`). Une position figee ne vaut pas une
+disponibilite : sans cette fenetre, un camion apercu une fois restait sur la
+carte indefiniment, a un endroit qu'il avait quitte depuis longtemps — l'inverse
+exact de ce que le produit promet.
+
+Le transporteur n'a pas a deviner la regle : `GET /trucks/mine` renvoie
+`visibleOnMap` par camion, et l'application l'avertit quand le sien n'apparait
+plus. Cote client, chaque camion affiche l'age de sa position, et un point vert
+distingue celui qui roule en ce moment.
+
+> Le jeu de demonstration date les positions a l'instant du `npm run seed`. Une
+> base semee la veille affiche donc une carte vide : relancer le seed.
 
 Deux formes de pagination coexistent, selon la nature de la liste. Les listes stables
 (`/trips/list`, `/missions/list`, les routes `/admin/*`) se paginent par numero de page
@@ -247,10 +264,11 @@ pour rejouer les migrations.
 cd truckspot/backend && npm test
 ```
 
-**97 tests d'integration** tournent contre une vraie base PostgreSQL et un vrai serveur
+**104 tests d'integration** tournent contre une vraie base PostgreSQL et un vrai serveur
 HTTP + Socket.IO, sans mock : authentification, cloisonnement des acces (un tiers ne peut
 lire ni une mission ni une conversation qui ne le concerne pas), recherche geographique,
-filtres de la carte, transitions de statut interdites, comptabilite du volume libre, chat
+filtres de la carte, expiration des positions trop anciennes, transitions de statut
+interdites, comptabilite du volume libre, chat
 temps reel (rejet d'un jeton invalide, absence de message en double), moderation admin,
 confidentialite des pieces justificatives (401 sans jeton, 403 pour un tiers, aucune
 lecture possible en statique), notifications push (purge des jetons obsoletes, panne
@@ -262,9 +280,10 @@ garde ADMIN, le motif de refus obligatoire, la normalisation des erreurs du clie
 la pagination — `cd truckspot/frontend_admin && npm test`. Il a par ailleurs ete valide par
 140 assertions sur les reponses reelles de l'API et un rendu de chaque page.
 
-L'application mobile dispose de **62 tests** sur ses stores (pagination des missions, des
-trajets, du fil de notifications et de la conversation, deduplication du chat, restauration
-apres un accuse de lecture refuse, filtre marchandise, position temps reel) —
+L'application mobile dispose de **71 tests** sur ses stores et ses utilitaires (pagination
+des missions, des trajets, du fil de notifications et de la conversation, deduplication du
+chat, restauration apres un accuse de lecture refuse, filtre marchandise, position temps
+reel, fraicheur d'une position) —
 `cd truckspot/frontend_mobile && npm test` — completes par un export Expo qui resout
 l'integralite du graphe de modules.
 

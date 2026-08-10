@@ -120,6 +120,9 @@ const truck = {
       latitude: lat.optional(),
       longitude: lng.optional(),
       radiusKm: z.coerce.number().min(1).max(1000).default(50),
+      // Fenetre de fraicheur de la position, en minutes. Par defaut celle du
+      // serveur (TRUCK_POSITION_TTL_MINUTES) ; plafonnee a sept jours.
+      freshWithinMinutes: z.coerce.number().int().min(1).max(10080).optional(),
     })
     .strict(),
 };

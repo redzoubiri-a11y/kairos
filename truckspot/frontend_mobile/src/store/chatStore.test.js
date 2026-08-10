@@ -186,6 +186,62 @@ describe('reception', () => {
   });
 });
 
+describe('accuses de lecture', () => {
+  // Le defaut corrige : la bulle affichait deja la double coche, mais rien
+  // n'ecoutait chat:read. Il fallait quitter l'ecran et revenir pour la voir.
+  it('marque comme lus les messages de l autre partie', () => {
+    useChatStore.setState({
+      threads: {
+        'mission-1': [
+          message('c1', { senderId: 'moi' }),
+          message('c2', { senderId: 'moi' }),
+          message('c3', { senderId: 'lui' }),
+        ],
+      },
+    });
+
+    useChatStore.getState().applyRead('mission-1', 'lui');
+
+    const thread = useChatStore.getState().messagesFor('mission-1');
+    expect(thread[0].readAt).toBeTruthy();
+    expect(thread[1].readAt).toBeTruthy();
+    // Le lecteur ne s'accuse pas reception a lui-meme.
+    expect(thread[2].readAt).toBeUndefined();
+  });
+
+  it('ne rejoue pas la date d un message deja lu', () => {
+    useChatStore.setState({
+      threads: {
+        'mission-1': [message('c1', { senderId: 'moi', readAt: '2026-08-01T10:00:00.000Z' })],
+      },
+    });
+
+    useChatStore.getState().applyRead('mission-1', 'lui');
+
+    expect(useChatStore.getState().messagesFor('mission-1')[0].readAt).toBe(
+      '2026-08-01T10:00:00.000Z'
+    );
+  });
+
+  it('ne touche pas les autres conversations', () => {
+    useChatStore.setState({
+      threads: {
+        'mission-1': [message('c1', { senderId: 'moi' })],
+        'mission-2': [message('c2', { missionId: 'mission-2', senderId: 'moi' })],
+      },
+    });
+
+    useChatStore.getState().applyRead('mission-1', 'lui');
+
+    expect(useChatStore.getState().messagesFor('mission-2')[0].readAt).toBeUndefined();
+  });
+
+  it('ignore une conversation jamais ouverte', () => {
+    expect(() => useChatStore.getState().applyRead('inconnue', 'lui')).not.toThrow();
+    expect(useChatStore.getState().messagesFor('inconnue')).toEqual([]);
+  });
+});
+
 describe('envoi', () => {
   it('envoie le message ebarbe et l ajoute a la conversation', async () => {
     chatApi.send.mockResolvedValue(message('c1', { content: 'Bonjour' }));

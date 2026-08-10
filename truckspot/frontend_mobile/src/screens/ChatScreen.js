@@ -19,7 +19,7 @@ import EmptyState from '../components/EmptyState';
 import ErrorBanner from '../components/ErrorBanner';
 import { useChatStore } from '../store/chatStore';
 import { useAuthStore } from '../store/authStore';
-import { emit } from '../api/socket';
+import { joinMission, leaveMission } from '../api/socket';
 import { colors, radii, spacing, typography } from '../theme';
 
 export default function ChatScreen({ navigation, route }) {
@@ -43,8 +43,8 @@ export default function ChatScreen({ navigation, route }) {
 
   useEffect(() => {
     loadHistory(missionId);
-    emit('mission:join', missionId);
-    return () => emit('mission:leave', missionId);
+    joinMission(missionId);
+    return () => leaveMission(missionId);
   }, [missionId, loadHistory]);
 
   // On suit le dernier message et non le nombre : charger les messages

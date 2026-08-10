@@ -299,12 +299,21 @@ garde ADMIN, le motif de refus obligatoire, la normalisation des erreurs du clie
 la pagination — `cd truckspot/frontend_admin && npm test`. Il a par ailleurs ete valide par
 140 assertions sur les reponses reelles de l'API et un rendu de chaque page.
 
-L'application mobile dispose de **71 tests** sur ses stores et ses utilitaires (pagination
-des missions, des trajets, du fil de notifications et de la conversation, deduplication du
-chat, restauration apres un accuse de lecture refuse, filtre marchandise, position temps
-reel, fraicheur d'une position) —
+L'application mobile dispose de **105 tests** sur ses stores, sa couche socket et ses
+utilitaires (pagination des missions, des trajets, du fil de notifications et de la
+conversation, deduplication du chat, restauration apres un accuse de lecture refuse, cycle
+de session complet, rejointure des salons apres reconnexion, filtre marchandise, position
+temps reel, fraicheur d'une position) —
 `cd truckspot/frontend_mobile && npm test` — completes par un export Expo qui resout
 l'integralite du graphe de modules.
+
+
+Les salons de mission sont lies a la connexion : le serveur les perd des qu'une socket
+tombe. Le client retient donc les salons rejoints et les redemande sur l'evenement
+`connect`, sinon une conversation ouverte cessait sans aucun signe de recevoir la saisie
+et les accuses de lecture apres la moindre coupure. Cote application, la table
+`realtimeHandlers` est comparee par un test a la liste des evenements emis par le
+backend : un evenement pousse que rien n'ecoute devient une erreur, pas un silence.
 
 ## Deploiement
 

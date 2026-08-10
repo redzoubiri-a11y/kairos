@@ -86,6 +86,25 @@ export const useChatStore = create((set, get) => ({
     }
   },
 
+  // Le serveur emet chat:read quand l'autre partie ouvre la conversation. La
+  // double coche existait deja dans la bulle mais rien ne l'allumait en direct :
+  // il fallait quitter l'ecran et revenir pour la voir apparaitre.
+  applyRead: (missionId, readerId) => {
+    const thread = get().threads[missionId];
+    if (!thread) return;
+
+    const now = new Date().toISOString();
+    let changed = false;
+    const next = thread.map((message) => {
+      // Le lecteur ne s'accuse pas reception a lui-meme.
+      if (message.readAt || message.senderId === readerId) return message;
+      changed = true;
+      return { ...message, readAt: now };
+    });
+
+    if (changed) set({ threads: { ...get().threads, [missionId]: next } });
+  },
+
   notifyTyping: (missionId) => emit('chat:typing', { missionId }),
 
   setTypingIn: (missionId) => {

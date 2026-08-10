@@ -99,6 +99,13 @@ Les transitions sont verifiees cote serveur. Seul le transporteur peut accepter,
 demarrer ou terminer ; seul le client peut annuler. Accepter une mission rattachee a un
 trajet decremente le volume et la charge libres de ce trajet ; une annulation les restitue.
 
+L'acceptation est refusee si la capacite restante ne suffit plus. Le controle ne peut pas
+se faire a la creation de la mission : plusieurs demandes en attente coexistent sur un meme
+trajet sans rien consommer, et deux demandes de 15 m3 sur un trajet de 20 m3 libres sont
+toutes les deux legitimes tant qu'aucune n'est acceptee. La verification est portee par la
+condition de l'ecriture, donc evaluee sous le verrou de ligne : deux acceptations
+simultanees ne peuvent pas la franchir ensemble.
+
 ## API
 
 Base : `http://localhost:4000/api` — authentification par `Authorization: Bearer <jwt>`.
@@ -264,11 +271,12 @@ pour rejouer les migrations.
 cd truckspot/backend && npm test
 ```
 
-**104 tests d'integration** tournent contre une vraie base PostgreSQL et un vrai serveur
+**110 tests d'integration** tournent contre une vraie base PostgreSQL et un vrai serveur
 HTTP + Socket.IO, sans mock : authentification, cloisonnement des acces (un tiers ne peut
 lire ni une mission ni une conversation qui ne le concerne pas), recherche geographique,
 filtres de la carte, expiration des positions trop anciennes, transitions de statut
-interdites, comptabilite du volume libre, chat
+interdites, comptabilite du volume libre (y compris deux acceptations simultanees sur
+un meme trajet), chat
 temps reel (rejet d'un jeton invalide, absence de message en double), moderation admin,
 confidentialite des pieces justificatives (401 sans jeton, 403 pour un tiers, aucune
 lecture possible en statique), notifications push (purge des jetons obsoletes, panne

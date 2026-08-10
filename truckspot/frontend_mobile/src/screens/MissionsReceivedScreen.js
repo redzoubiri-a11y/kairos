@@ -34,6 +34,7 @@ export default function MissionsReceivedScreen({ navigation }) {
   const updateStatus = useMissionStore((s) => s.updateStatus);
 
   const [acting, setActing] = useState(null);
+  const [actionError, setActionError] = useState(null);
 
   useEffect(() => {
     setStatusFilter('PENDING');
@@ -45,10 +46,16 @@ export default function MissionsReceivedScreen({ navigation }) {
     }, [load])
   );
 
+  // Sans ce catch, un refus du serveur — capacite insuffisante sur le trajet,
+  // mission deja traitee ailleurs — n'affichait rien du tout : le bouton
+  // s'arretait de tourner et le transporteur ignorait pourquoi.
   const respond = async (missionId, status) => {
     setActing(`${missionId}:${status}`);
+    setActionError(null);
     try {
       await updateStatus(missionId, status);
+    } catch (err) {
+      setActionError(err.message);
     } finally {
       setActing(null);
     }
@@ -67,12 +74,26 @@ export default function MissionsReceivedScreen({ navigation }) {
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.list}
           refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={() => load({ refreshing: true })} />
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={() => {
+                setActionError(null);
+                load({ refreshing: true });
+              }}
+            />
           }
           onEndReached={loadMore}
           onEndReachedThreshold={0.4}
           ListFooterComponent={loadingMore ? <ActivityIndicator style={styles.footer} color={colors.primary} /> : null}
-          ListHeaderComponent={error ? <ErrorBanner message={error} onRetry={load} /> : null}
+          ListHeaderComponent={
+            actionError ? (
+              // Pas de « Reessayer » : le transporteur relance en retouchant le
+              // bouton de la mission concernee, pas en rechargeant la liste.
+              <ErrorBanner message={actionError} />
+            ) : error ? (
+              <ErrorBanner message={error} onRetry={load} />
+            ) : null
+          }
           renderItem={({ item }) => (
             <View>
               <MissionCard

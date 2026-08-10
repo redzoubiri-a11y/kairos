@@ -162,7 +162,18 @@ async function listUsers({ role, search, page = 1, limit = 20 } = {}) {
   return { items, total, page, limit, pages: Math.ceil(total / limit) || 1 };
 }
 
-async function setUserActive(userId, isActive) {
+async function setUserActive(actorId, userId, isActive) {
+  // Le back-office grise deja le bouton, mais un bouton grise n'est pas une
+  // regle : l'API l'acceptait. Un administrateur qui se desactivait lui-meme
+  // etait ensuite refuse par requireAuth, donc incapable de revenir en arriere.
+  // Comme il ne peut desactiver que d'autres comptes, il reste toujours au
+  // moins un administrateur actif : celui qui agit.
+  if (!isActive && userId === actorId) {
+    throw ApiError.badRequest(
+      'Vous ne pouvez pas desactiver votre propre compte : plus personne ne pourrait le reactiver'
+    );
+  }
+
   const user = await prisma.user.update({
     where: { id: userId },
     data: { isActive },
@@ -171,4 +182,20 @@ async function setUserActive(userId, isActive) {
   return user;
 }
 
-module.exports = { listTransporters, verifyTransporter, stats, listUsers, setUserActive };
+async function getTransporter(transporterId) {
+  const profile = await prisma.transporterProfile.findUnique({
+    where: { id: transporterId },
+    include: TRANSPORTER_INCLUDE,
+  });
+  if (!profile) throw ApiError.notFound('Transporteur introuvable');
+  return documentService.decorateProfile(profile);
+}
+
+module.exports = {
+  listTransporters,
+  getTransporter,
+  verifyTransporter,
+  stats,
+  listUsers,
+  setUserActive,
+};

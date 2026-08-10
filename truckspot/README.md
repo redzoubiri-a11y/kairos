@@ -150,6 +150,7 @@ Base : `http://localhost:4000/api` — authentification par `Authorization: Bear
 | DELETE  | `/notifications/devices`       | authentifie  | Retire un appareil (deconnexion)         |
 | GET     | `/admin/stats`                 | admin        | Statistiques globales                    |
 | GET     | `/admin/transporters`          | admin        | File de moderation                       |
+| GET     | `/admin/transporters/:id`      | admin        | Detail d'un dossier                      |
 | PATCH   | `/admin/verify-transporter`    | admin        | Validation ou refus (motif obligatoire)  |
 | GET     | `/admin/trips`                 | admin        | Tous les trajets                         |
 | GET     | `/admin/missions`              | admin        | Toutes les missions                      |
@@ -307,7 +308,7 @@ pour rejouer les migrations.
 cd truckspot/backend && npm test
 ```
 
-**136 tests d'integration** tournent contre une vraie base PostgreSQL et un vrai serveur
+**143 tests d'integration** tournent contre une vraie base PostgreSQL et un vrai serveur
 HTTP + Socket.IO, sans mock : authentification, cloisonnement des acces (un tiers ne peut
 lire ni une mission ni une conversation qui ne le concerne pas), recherche geographique,
 filtres de la carte, expiration des positions trop anciennes, transitions de statut
@@ -319,7 +320,7 @@ lecture possible en statique), notifications push (purge des jetons obsoletes, p
 d'Expo sans consequence sur l'action metier) et flux de notifications (curseur `before`,
 cloisonnement du `read-all`).
 
-Le back-office dispose de sa propre suite : **40 tests** (Vitest + Testing Library) sur la
+Le back-office dispose de sa propre suite : **47 tests** (Vitest + Testing Library) sur la
 garde ADMIN, le motif de refus obligatoire, la normalisation des erreurs du client HTTP et
 la pagination — `cd truckspot/frontend_admin && npm test`. Il a par ailleurs ete valide par
 140 assertions sur les reponses reelles de l'API et un rendu de chaque page.

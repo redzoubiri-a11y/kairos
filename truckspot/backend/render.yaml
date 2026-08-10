@@ -25,6 +25,9 @@ services:
       # position. 1440 = 24 h.
       - key: TRUCK_POSITION_TTL_MINUTES
         value: 1440
+      # Delai de grace apres l'heure de depart d'un trajet planifie.
+      - key: TRIP_DEPARTURE_GRACE_HOURS
+        value: 3
       # Renseigner l'URL publique du service une fois attribuee par Render.
       - key: PUBLIC_URL
         sync: false

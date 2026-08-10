@@ -130,7 +130,7 @@ Base : `http://localhost:4000/api` — authentification par `Authorization: Bear
 | PATCH   | `/trucks/:id/position`         | verifie      | Position temps reel                      |
 | DELETE  | `/trucks/:id`                  | transporteur | Suppression                              |
 | POST    | `/trips/create`                | verifie      | Declaration d'un trajet                  |
-| GET     | `/trips/list`                  | authentifie  | Recherche de trajets (filtres + geo)     |
+| GET     | `/trips/list`                  | authentifie  | Recherche de trajets (filtres + geo + fraicheur) |
 | GET     | `/trips/:id`                   | authentifie  | Fiche trajet                             |
 | PATCH   | `/trips/:id`                   | transporteur | Mise a jour                              |
 | DELETE  | `/trips/:id`                   | transporteur | Annulation                               |
@@ -160,7 +160,7 @@ Les erreurs suivent toujours la forme
 Les parametres de requete sont valides en mode strict : n'envoyez jamais de parametre
 vide ou inconnu, la reponse serait un 400.
 
-### Fraicheur des positions
+### Fraicheur des offres
 
 `GET /trucks/available` n'affiche un camion que si sa position a moins de
 `TRUCK_POSITION_TTL_MINUTES` (24 h par defaut, reglable par deploiement, et par
@@ -174,8 +174,19 @@ Le transporteur n'a pas a deviner la regle : `GET /trucks/mine` renvoie
 plus. Cote client, chaque camion affiche l'age de sa position, et un point vert
 distingue celui qui roule en ce moment.
 
-> Le jeu de demonstration date les positions a l'instant du `npm run seed`. Une
-> base semee la veille affiche donc une carte vide : relancer le seed.
+Meme regle pour les trajets : aucun travail de fond ne fait vieillir un trajet, et
+rien ne changeait son statut. Un depart declare pour le 12 aout restait donc propose
+en septembre. `GET /trips/list` ecarte desormais les trajets `SCHEDULED` dont l'heure
+de depart est passee de plus de `TRIP_DEPARTURE_GRACE_HOURS` (3 h par defaut, le temps
+d'un chargement qui traine). Un trajet `IN_PROGRESS` reste propose : le transporteur a
+declare qu'il roulait, et sa capacite libre reste reservable en cours de route. Le
+transporteur garde l'historique complet de ses trajets via `mine=true`, chacun portant
+`visibleInSearch` ; l'application l'avertit et lui rappelle ses deux recours, repousser
+le depart ou passer le trajet en cours.
+
+> Le jeu de demonstration date les positions a l'instant du `npm run seed` et place les
+> departs a un a trois jours de la. Une base semee la semaine passee affiche donc une
+> carte et une recherche vides : relancer le seed.
 
 Deux formes de pagination coexistent, selon la nature de la liste. Les listes stables
 (`/trips/list`, `/missions/list`, les routes `/admin/*`) se paginent par numero de page
@@ -271,7 +282,7 @@ pour rejouer les migrations.
 cd truckspot/backend && npm test
 ```
 
-**110 tests d'integration** tournent contre une vraie base PostgreSQL et un vrai serveur
+**116 tests d'integration** tournent contre une vraie base PostgreSQL et un vrai serveur
 HTTP + Socket.IO, sans mock : authentification, cloisonnement des acces (un tiers ne peut
 lire ni une mission ni une conversation qui ne le concerne pas), recherche geographique,
 filtres de la carte, expiration des positions trop anciennes, transitions de statut

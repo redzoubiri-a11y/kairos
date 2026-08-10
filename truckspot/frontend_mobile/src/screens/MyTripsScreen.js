@@ -1,7 +1,8 @@
 import React, { useCallback, useState } from 'react';
-import { ActivityIndicator, Alert, FlatList, StyleSheet } from 'react-native';
+import { ActivityIndicator, Alert, FlatList, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 import ScreenHeader from '../components/ScreenHeader';
 import TripCard from '../components/TripCard';
 import Button from '../components/Button';
@@ -9,7 +10,7 @@ import EmptyState from '../components/EmptyState';
 import Loader from '../components/Loader';
 import ErrorBanner from '../components/ErrorBanner';
 import { tripApi } from '../api/endpoints';
-import { colors, spacing } from '../theme';
+import { colors, radii, spacing, typography } from '../theme';
 
 const PAGE_SIZE = 20;
 
@@ -104,6 +105,17 @@ export default function MyTripsScreen({ navigation }) {
         renderItem={({ item }) => (
           <>
             <TripCard trip={item} showStatus />
+            {/* La recherche client ecarte les departs passes. Sans ce rappel,
+                le transporteur croirait son trajet toujours propose. */}
+            {item.status === 'SCHEDULED' && item.visibleInSearch === false ? (
+              <View style={styles.warning}>
+                <Ionicons name="time-outline" size={15} color={colors.warning} />
+                <Text style={styles.warningText}>
+                  Heure de depart passee : ce trajet n apparait plus dans la recherche des
+                  clients. Repoussez le depart ou passez le trajet en cours.
+                </Text>
+              </View>
+            ) : null}
             {item.status === 'SCHEDULED' ? (
               <Button
                 title="Annuler ce trajet"
@@ -134,4 +146,20 @@ const styles = StyleSheet.create({
   list: { padding: spacing.lg, flexGrow: 1 },
   footer: { paddingVertical: spacing.lg },
   cancel: { marginTop: -spacing.sm, marginBottom: spacing.lg },
+  warning: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginTop: -spacing.sm,
+    marginBottom: spacing.sm,
+    padding: spacing.md,
+    borderRadius: radii.md,
+    backgroundColor: colors.warningSoft,
+  },
+  warningText: {
+    ...typography.caption,
+    color: colors.warning,
+    flex: 1,
+    marginLeft: spacing.sm,
+    lineHeight: 17,
+  },
 });

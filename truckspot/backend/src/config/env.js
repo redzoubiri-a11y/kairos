@@ -24,6 +24,12 @@ const env = {
   // comme disponible : une position figee ne vaut pas une disponibilite.
   truckPositionTtlMinutes: Number(process.env.TRUCK_POSITION_TTL_MINUTES || 1440),
 
+  // Delai de grace apres l'heure de depart pendant lequel un trajet planifie
+  // reste propose : un transporteur encore en chargement doit pouvoir etre
+  // rejoint, mais un depart d'il y a trois semaines n'a plus rien a faire dans
+  // la recherche.
+  tripDepartureGraceHours: Number(process.env.TRIP_DEPARTURE_GRACE_HOURS || 3),
+
   // 'local' writes to UPLOAD_DIR, 's3' targets any S3-compatible bucket.
   storageDriver: process.env.STORAGE_DRIVER === 's3' ? 's3' : 'local',
   s3Endpoint: process.env.S3_ENDPOINT,

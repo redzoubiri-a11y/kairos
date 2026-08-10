@@ -293,6 +293,118 @@ test('camions et trajets', async (t) => {
     assert.ok(!body.items.some((item) => item.id === truck.id));
   });
 
+  // Le defaut corrige : aucun travail de fond ne fait vieillir un trajet. Un
+  // depart declare pour le 12 aout restait propose en septembre, et le client
+  // envoyait une mission sur un trajet parti depuis longtemps.
+  await t.test('un trajet dont le depart est passe sort de la recherche', async () => {
+    const transporter = await h.createTransporter();
+    const truck = await h.createTruck(transporter.token);
+    const trip = await h.createTrip(transporter.token, truck.id);
+    const client = await h.createClient();
+
+    const avant = await h.api('GET', '/trips/list', { token: client.token });
+    assert.ok(avant.body.items.some((item) => item.id === trip.id));
+
+    await h.prisma.trip.update({
+      where: { id: trip.id },
+      data: { departureAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000) },
+    });
+
+    const apres = await h.api('GET', '/trips/list', { token: client.token });
+    assert.ok(!apres.body.items.some((item) => item.id === trip.id));
+  });
+
+  // Le transporteur a explicitement declare qu'il roulait : sa capacite libre
+  // reste reservable en cours de route.
+  await t.test('un trajet en cours reste propose malgre un depart passe', async () => {
+    const transporter = await h.createTransporter();
+    const truck = await h.createTruck(transporter.token);
+    const trip = await h.createTrip(transporter.token, truck.id);
+    const client = await h.createClient();
+
+    await h.prisma.trip.update({
+      where: { id: trip.id },
+      data: {
+        departureAt: new Date(Date.now() - 5 * 60 * 60 * 1000),
+        status: 'IN_PROGRESS',
+      },
+    });
+
+    const { body } = await h.api('GET', '/trips/list', { token: client.token });
+    assert.ok(body.items.some((item) => item.id === trip.id));
+  });
+
+  await t.test('un depart tout juste passe reste dans le delai de grace', async () => {
+    const transporter = await h.createTransporter();
+    const truck = await h.createTruck(transporter.token);
+    const trip = await h.createTrip(transporter.token, truck.id);
+    const client = await h.createClient();
+
+    // Le transporteur charge encore : une heure de retard ne doit pas le retirer.
+    await h.prisma.trip.update({
+      where: { id: trip.id },
+      data: { departureAt: new Date(Date.now() - 60 * 60 * 1000) },
+    });
+
+    const { body } = await h.api('GET', '/trips/list', { token: client.token });
+    assert.ok(body.items.some((item) => item.id === trip.id));
+  });
+
+  await t.test('le transporteur garde ses trajets passes et sait qu ils ne sont plus proposes', async () => {
+    const transporter = await h.createTransporter();
+    const truck = await h.createTruck(transporter.token);
+    const trip = await h.createTrip(transporter.token, truck.id);
+
+    const frais = await h.api('GET', '/trips/list?mine=true', { token: transporter.token });
+    assert.equal(frais.body.items.find((t2) => t2.id === trip.id).visibleInSearch, true);
+
+    await h.prisma.trip.update({
+      where: { id: trip.id },
+      data: { departureAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000) },
+    });
+
+    const passe = await h.api('GET', '/trips/list?mine=true', { token: transporter.token });
+    const found = passe.body.items.find((t2) => t2.id === trip.id);
+    assert.ok(found, 'le trajet reste dans son historique');
+    assert.equal(found.visibleInSearch, false);
+  });
+
+  await t.test("l'administrateur voit aussi les trajets dont le depart est passe", async () => {
+    const transporter = await h.createTransporter();
+    const truck = await h.createTruck(transporter.token);
+    const trip = await h.createTrip(transporter.token, truck.id);
+    const admin = await h.createAdmin();
+
+    await h.prisma.trip.update({
+      where: { id: trip.id },
+      data: { departureAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000) },
+    });
+
+    const { body } = await h.api('GET', '/admin/trips', { token: admin.token });
+    assert.ok(body.items.some((item) => item.id === trip.id));
+  });
+
+  await t.test('repousser le depart remet le trajet dans la recherche', async () => {
+    const transporter = await h.createTransporter();
+    const truck = await h.createTruck(transporter.token);
+    const trip = await h.createTrip(transporter.token, truck.id);
+    const client = await h.createClient();
+
+    await h.prisma.trip.update({
+      where: { id: trip.id },
+      data: { departureAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000) },
+    });
+
+    const repousse = await h.api('PATCH', `/trips/${trip.id}`, {
+      token: transporter.token,
+      body: { departureAt: h.tomorrowAt(7) },
+    });
+    assert.equal(repousse.status, 200);
+
+    const { body } = await h.api('GET', '/trips/list', { token: client.token });
+    assert.ok(body.items.some((item) => item.id === trip.id));
+  });
+
   await t.test('un parametre de requete inconnu est rejete', async () => {
     const client = await h.createClient();
     const { status } = await h.api('GET', '/trips/list?parametreInconnu=1', { token: client.token });

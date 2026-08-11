@@ -11,10 +11,28 @@ function departureCutoff() {
   return new Date(Date.now() - env.tripDepartureGraceHours * 3600_000);
 }
 
+// Une mission exige un minimum strictement positif de volume et de poids : un
+// trajet epuise sur une seule des deux dimensions ne peut deja plus en
+// accepter aucune.
+function hasBookableCapacity(trip) {
+  return trip.freeVolumeM3 > 0 && trip.freeWeightKg > 0;
+}
+
+// Renvoie null si le trajet est visible dans la recherche publique, sinon le
+// motif precis. isVisibleInSearch derive de cette meme fonction : une seule
+// regle, jamais deux versions qui pourraient diverger.
+function searchVisibilityReason(trip, cutoff = departureCutoff()) {
+  if (trip.transporter?.verificationStatus !== 'VERIFIED') return 'UNVERIFIED';
+  if (!hasBookableCapacity(trip)) return 'CAPACITY_EXHAUSTED';
+  if (trip.status === 'IN_PROGRESS') return null;
+  if (trip.status === 'SCHEDULED') {
+    return new Date(trip.departureAt) >= cutoff ? null : 'DEPARTURE_PASSED';
+  }
+  return 'NOT_ACTIVE';
+}
+
 function isVisibleInSearch(trip, cutoff = departureCutoff()) {
-  if (trip.transporter?.verificationStatus !== 'VERIFIED') return false;
-  if (trip.status === 'IN_PROGRESS') return true;
-  return trip.status === 'SCHEDULED' && new Date(trip.departureAt) >= cutoff;
+  return searchVisibilityReason(trip, cutoff) === null;
 }
 const { distanceKm, boundingBox } = require('../utils/geo');
 const transporterService = require('./transporter.service');
@@ -92,8 +110,6 @@ async function list(filters = {}, currentUser = null) {
     ...(status ? { status } : { status: { in: ['SCHEDULED', 'IN_PROGRESS'] } }),
     ...(originCity ? { originCity: { contains: originCity, mode: 'insensitive' } } : {}),
     ...(destinationCity ? { destinationCity: { contains: destinationCity, mode: 'insensitive' } } : {}),
-    ...(minFreeVolumeM3 ? { freeVolumeM3: { gte: minFreeVolumeM3 } } : {}),
-    ...(minFreeWeightKg ? { freeWeightKg: { gte: minFreeWeightKg } } : {}),
     ...(goodsType ? { goodsTypes: { has: goodsType } } : {}),
     ...(departureFrom || departureTo
       ? {
@@ -121,6 +137,27 @@ async function list(filters = {}, currentUser = null) {
     // Un trajet en cours reste joignable ; un depart planifie devient caduc
     // passe le delai de grace.
     where.OR = [{ status: 'IN_PROGRESS' }, { departureAt: { gte: departureCutoff() } }];
+  }
+
+  // Meme raisonnement que la peremption du depart : un trajet epuise sur le
+  // volume ou le poids ne peut plus accepter aucune mission (elle exige un
+  // minimum positif sur les deux). Le proposer quand meme ne menerait qu'a un
+  // formulaire qui refuse systematiquement, sans jamais dire pourquoi. La vue
+  // du transporteur (mine=true) et celle de l'admin gardent tout : c'est un
+  // journal, pas une offre. Composable avec un minimum explicite (Prisma
+  // applique les deux bornes sur le meme champ).
+  const requirePositive = !isMine && !adminView;
+  if (minFreeVolumeM3 || requirePositive) {
+    where.freeVolumeM3 = {
+      ...(minFreeVolumeM3 ? { gte: minFreeVolumeM3 } : {}),
+      ...(requirePositive ? { gt: 0 } : {}),
+    };
+  }
+  if (minFreeWeightKg || requirePositive) {
+    where.freeWeightKg = {
+      ...(minFreeWeightKg ? { gte: minFreeWeightKg } : {}),
+      ...(requirePositive ? { gt: 0 } : {}),
+    };
   }
 
   if (latitude !== undefined && longitude !== undefined) {
@@ -152,9 +189,14 @@ async function list(filters = {}, currentUser = null) {
           .sort((a, b) => a.distanceKm - b.distanceKm);
 
   // Le transporteur doit pouvoir constater qu'un trajet n'est plus propose,
-  // sans avoir a deviner la regle appliquee par la recherche.
+  // et pourquoi, sans avoir a deviner la regle appliquee par la recherche.
   const cutoff = departureCutoff();
-  const items = isMine ? placed.map((t) => ({ ...t, visibleInSearch: isVisibleInSearch(t, cutoff) })) : placed;
+  const items = isMine
+    ? placed.map((t) => {
+        const reason = searchVisibilityReason(t, cutoff);
+        return { ...t, visibleInSearch: reason === null, searchBlockedReason: reason };
+      })
+    : placed;
 
   return { items, total, page, limit, pages: Math.ceil(total / limit) || 1 };
 }

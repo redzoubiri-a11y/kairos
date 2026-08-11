@@ -105,14 +105,22 @@ export default function MyTripsScreen({ navigation }) {
         renderItem={({ item }) => (
           <>
             <TripCard trip={item} showStatus />
-            {/* La recherche client ecarte les departs passes. Sans ce rappel,
-                le transporteur croirait son trajet toujours propose. */}
-            {item.status === 'SCHEDULED' && item.visibleInSearch === false ? (
+            {/* La recherche client ecarte les departs passes et les trajets
+                epuises. Sans ce rappel, le transporteur croirait son trajet
+                toujours propose. */}
+            {['SCHEDULED', 'IN_PROGRESS'].includes(item.status) && item.visibleInSearch === false ? (
               <View style={styles.warning}>
-                <Ionicons name="time-outline" size={15} color={colors.warning} />
+                <Ionicons
+                  name={item.searchBlockedReason === 'CAPACITY_EXHAUSTED' ? 'cube-outline' : 'time-outline'}
+                  size={15}
+                  color={colors.warning}
+                />
                 <Text style={styles.warningText}>
-                  Heure de depart passee : ce trajet n apparait plus dans la recherche des
-                  clients. Repoussez le depart ou passez le trajet en cours.
+                  {item.searchBlockedReason === 'CAPACITY_EXHAUSTED'
+                    ? 'Capacite epuisee : ce trajet n apparait plus dans la recherche des clients. ' +
+                      'Il redeviendra visible si une mission liee est annulee, ou en declarant un nouveau trajet.'
+                    : 'Heure de depart passee : ce trajet n apparait plus dans la recherche des ' +
+                      'clients. Repoussez le depart ou passez le trajet en cours.'}
                 </Text>
               </View>
             ) : null}

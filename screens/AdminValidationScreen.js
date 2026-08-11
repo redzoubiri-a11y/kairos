@@ -11,7 +11,7 @@ import { CUISINE_OPTIONS } from '../src/hooks/useProInfo';
 
 function scoreColor(score) {
   if (score >= 70) return colors.green;
-  if (score >= 40) return colors.accent;
+  if (score >= 40) return colors.gold;
   return colors.red;
 }
 

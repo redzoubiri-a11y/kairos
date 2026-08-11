@@ -73,20 +73,20 @@ const lc = StyleSheet.create({
   imgWrap:        { position:'relative', width:'100%', height: 130 },
   img:            { width:'100%', height:'100%' },
   imgPlaceholder: { backgroundColor: colors.cardHover, alignItems:'center', justifyContent:'center' },
-  ratingBadge:    { position:'absolute', top:8, right:8, backgroundColor:'rgba(15,13,11,0.82)', borderRadius:radius.md, paddingHorizontal:7, paddingVertical:3, borderWidth:1, borderColor:'rgba(232,160,69,0.3)' },
-  ratingBadgeTxt: { color:colors.accent, fontSize:typography.size.sm, fontWeight:'600' },
-  medalWrap:      { position:'absolute', top:8, left:8, width:22, height:22, borderRadius:0, alignItems:'center', justifyContent:'center' },
+  ratingBadge:    { position:'absolute', top:8, right:8, backgroundColor:'rgba(10,10,10,0.82)', borderRadius:radius.md, paddingHorizontal:7, paddingVertical:3 },
+  ratingBadgeTxt: { color:colors.gold, fontSize:typography.size.sm, fontWeight:'600' },
+  medalWrap:      { position:'absolute', top:8, left:8, width:22, height:22, borderRadius:11, alignItems:'center', justifyContent:'center' },
   medalTxt:       { color:colors.bg, fontSize:typography.size.sm, fontWeight:'700' },
-  cuisinePill:    { position:'absolute', bottom:8, left:8, backgroundColor:'rgba(15,13,11,0.78)', borderRadius:radius.sm, paddingHorizontal:7, paddingVertical:3 },
-  cuisinePillTxt: { color:colors.text, fontSize:typography.size.xs },
+  cuisinePill:    { position:'absolute', bottom:8, left:8, backgroundColor:'rgba(10,10,10,0.78)', borderRadius:radius.sm, paddingHorizontal:7, paddingVertical:3 },
+  cuisinePillTxt: { color:'#FFFFFF', fontSize:typography.size.xs },
   body:           { padding:10, gap:4 },
   name:           { color:colors.text, fontSize:typography.size.bodyLg, fontWeight:'400', letterSpacing:0.2 },
   quartier:       { color:colors.textMuted, fontSize:typography.size.sm },
   footer:         { flexDirection:'row', justifyContent:'space-between', alignItems:'flex-end', marginTop:4 },
-  price:          { color:colors.accent, fontSize:typography.size.sm, fontWeight:'500' },
+  price:          { color:colors.primary, fontSize:typography.size.sm, fontWeight:'500' },
   reviews:        { color:colors.textDim, fontSize:typography.size.xs, marginTop:1 },
-  reserveBtn:     { backgroundColor:colors.accentSoft, borderRadius:radius.sm, paddingHorizontal:8, paddingVertical:5, borderWidth:1, borderColor:'rgba(232,160,69,0.3)' },
-  reserveTxt:     { color:colors.accent, fontSize:typography.size.sm, fontWeight:'500' },
+  reserveBtn:     { backgroundColor:colors.resaSoft, borderRadius:radius.sm, paddingHorizontal:8, paddingVertical:5 },
+  reserveTxt:     { color:colors.resa, fontSize:typography.size.sm, fontWeight:'500' },
 });
 
 export default function ExplorerScreen({ navigation }) {
@@ -148,7 +148,7 @@ export default function ExplorerScreen({ navigation }) {
 
       {/* Liste */}
       {loading ? (
-        <View style={s.center}><ActivityIndicator color={colors.accent} size="large" /></View>
+        <View style={s.center}><ActivityIndicator color={colors.primary} size="large" /></View>
       ) : restaurants.length === 0 ? (
         <View style={s.center}>
           <Text style={{ fontSize:36 }}>🍽️</Text>
@@ -173,15 +173,15 @@ export default function ExplorerScreen({ navigation }) {
 const s = StyleSheet.create({
   root:    { flex:1, backgroundColor:colors.bg },
   header:  { flexDirection:'row', justifyContent:'space-between', alignItems:'center', paddingHorizontal:spacing.xxl, paddingTop:spacing.xl, paddingBottom:spacing.lg, borderBottomWidth:1, borderBottomColor:colors.cardBorder },
-  logo:    { color:colors.accent, fontSize:typography.size.heading2, fontWeight:'700', letterSpacing:5 },
+  logo:    { color:colors.primary, fontFamily: typography.display, fontSize:typography.size.heading2, fontWeight:'700', letterSpacing:1 },
   logoSub: { color:colors.textMuted, fontSize:typography.size.sm },
-  countBadge: { flexDirection:'row', alignItems:'center', gap:5, backgroundColor:colors.accentSoft, borderRadius:radius.full, paddingHorizontal:spacing.md, paddingVertical:5, borderWidth:1, borderColor:'rgba(232,160,69,0.3)' },
-  countDot:   { width:6, height:6, borderRadius:0, backgroundColor:colors.green },
-  countTxt:   { color:colors.accent, fontSize:typography.size.caption, fontWeight:'500' },
+  countBadge: { flexDirection:'row', alignItems:'center', gap:5, backgroundColor:colors.card, borderRadius:radius.full, paddingHorizontal:spacing.md, paddingVertical:5, borderWidth:1, borderColor:colors.cardBorder },
+  countDot:   { width:6, height:6, borderRadius:3, backgroundColor:colors.green },
+  countTxt:   { color:colors.text, fontSize:typography.size.caption, fontWeight:'500' },
 
   cityGrid:  { flexDirection:'row', flexWrap:'wrap', paddingHorizontal:14, paddingVertical:10, gap:8 },
   cityChip:  { flexDirection:'row', alignItems:'center', gap:6, paddingHorizontal:14, paddingVertical:9, borderRadius:radius.xl, backgroundColor:colors.card, borderWidth:1, borderColor:colors.cardBorder },
-  cityChipOn:{ backgroundColor:colors.accent, borderColor:colors.accent },
+  cityChipOn:{ backgroundColor:colors.noir, borderColor:colors.noir },
   cityEmoji: { fontSize:14 },
   cityTxt:   { color:colors.text, fontSize:typography.size.bodyLg },
   cityTxtOn: { color:colors.bg, fontWeight:'600' },

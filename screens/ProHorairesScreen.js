@@ -265,7 +265,7 @@ const s = StyleSheet.create({
   root:           { flex: 1, backgroundColor: colors.bg },
   terminerBar: { paddingHorizontal: spacing.xl, paddingVertical: spacing.md, backgroundColor: colors.card, borderTopWidth: 1, borderTopColor: colors.cardBorder },
   terminerBtn: { alignItems: 'center', paddingVertical: spacing.md },
-  terminerTxt: { color: colors.accent, fontSize: typography.size.body, fontWeight: typography.weight.medium },
+  terminerTxt: { color: colors.gold, fontSize: typography.size.body, fontWeight: typography.weight.medium },
   header:         { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.cardBorder, backgroundColor: colors.card },
   headerLeft:     { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },
   backBtn:        { marginRight: spacing.sm, padding: spacing.xs },

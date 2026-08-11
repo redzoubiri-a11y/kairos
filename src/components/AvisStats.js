@@ -25,7 +25,7 @@ export default function AvisStats({ reviews }) {
               <View style={s.barTrack}>
                 <View style={[s.barFill, {
                   width: `${Math.round((d.count / max) * 100)}%`,
-                  backgroundColor: d.star >= 4 ? colors.green : d.star === 3 ? colors.accent : colors.red,
+                  backgroundColor: d.star >= 4 ? colors.green : d.star === 3 ? colors.gold : colors.red,
                 }]} />
               </View>
               <Text style={s.barCount}>{d.count}</Text>
@@ -54,19 +54,19 @@ const s = StyleSheet.create({
   wrap:          { marginHorizontal: spacing.xl, marginBottom: spacing.lg, backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.xl, gap: spacing.lg },
   scoreRow:      { flexDirection: 'row', gap: spacing.xl },
   scoreLeft:     { alignItems: 'center', justifyContent: 'center', gap: spacing.xs, minWidth: 70 },
-  scoreNum:      { color: colors.text, fontSize: 36, fontWeight: '200', lineHeight: 38 },
-  scoreStar:     { color: colors.accent, fontSize: typography.size.body, letterSpacing: 1 },
+  scoreNum:      { color: colors.text, fontFamily: typography.display, fontSize: 36, fontWeight: typography.weight.bold, lineHeight: 38 },
+  scoreStar:     { color: colors.gold, fontSize: typography.size.body, letterSpacing: 1 },
   scoreCount:    { color: colors.textDim, fontSize: typography.size.xs, textAlign: 'center', marginTop: spacing.xxs },
   barBlock:      { flex: 1, gap: spacing.xs },
   barRow:        { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   barLabel:      { color: colors.textDim, fontSize: typography.size.xs, width: 22, textAlign: 'right' },
-  barTrack:      { flex: 1, height: 6, backgroundColor: colors.cardHover || colors.bg, borderRadius: 0 },
-  barFill:       { height: 6, borderRadius: 0, minWidth: 2 },
+  barTrack:      { flex: 1, height: 6, backgroundColor: colors.cardHover, borderRadius: 3 },
+  barFill:       { height: 6, borderRadius: 3, minWidth: 2 },
   barCount:      { color: colors.textMuted, fontSize: typography.size.xs, width: 16 },
   responseRow:   { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },
   responseLabel: { color: colors.textMuted, fontSize: typography.size.caption, marginBottom: spacing.xs },
-  responseTrack: { height: 5, backgroundColor: colors.cardBorder, borderRadius: 0, overflow: 'hidden' },
-  responseFill:  { height: 5, backgroundColor: colors.green, borderRadius: 0 },
+  responseTrack: { height: 5, backgroundColor: colors.cardBorder, borderRadius: 3, overflow: 'hidden' },
+  responseFill:  { height: 5, backgroundColor: colors.green, borderRadius: 3 },
   responseVal:   { color: colors.green, fontSize: typography.size.subheading, fontWeight: typography.weight.medium, minWidth: 36, textAlign: 'right' },
-  responseTip:   { color: colors.accent, fontSize: typography.size.caption },
+  responseTip:   { color: colors.gold, fontSize: typography.size.caption },
 });

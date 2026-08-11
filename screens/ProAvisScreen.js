@@ -56,7 +56,7 @@ export default function ProAvisScreen({ navigation }) {
         {loading ? <Skeleton /> : (
           <ScrollView
             showsVerticalScrollIndicator={false}
-            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.accent} />}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
           >
             <View style={{ marginTop: spacing.xl }}>
               <AvisStats reviews={reviews} />
@@ -128,7 +128,7 @@ export default function ProAvisScreen({ navigation }) {
 const s = StyleSheet.create({
   terminerBar: { paddingHorizontal: spacing.xl, paddingVertical: spacing.md, backgroundColor: colors.card, borderTopWidth: 1, borderTopColor: colors.cardBorder },
   terminerBtn: { alignItems: 'center', paddingVertical: spacing.md },
-  terminerTxt: { color: colors.accent, fontSize: typography.size.body, fontWeight: typography.weight.medium },
+  terminerTxt: { color: colors.gold, fontSize: typography.size.body, fontWeight: typography.weight.medium },
   root:   { flex: 1, backgroundColor: colors.bg },
 
   header:     { flexDirection: 'row', alignItems: 'center', gap: spacing.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.cardBorder, backgroundColor: colors.card },
@@ -141,13 +141,13 @@ const s = StyleSheet.create({
 
   filterRow:   { paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, gap: spacing.sm },
   chip:        { flexDirection: 'row', alignItems: 'center', gap: spacing.xs, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: radius.full, backgroundColor: 'transparent', borderWidth: 1, borderColor: colors.cardBorder },
-  chipOn:      { backgroundColor: 'rgba(200,151,90,0.14)', borderColor: '#c8975a', shadowColor: '#000', shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
+  chipOn:      { backgroundColor: colors.goldSoft, borderColor: colors.gold },
   chipAlert:   { borderColor: 'rgba(224,90,90,0.4)' },
-  chipPending: { borderColor: 'rgba(232,160,69,0.5)' },
+  chipPending: { borderColor: 'rgba(200,151,90,0.5)' },
   chipTxt:     { color: colors.textMuted, fontSize: typography.size.body },
-  chipTxtOn:   { color: colors.accent, fontWeight: typography.weight.semibold },
+  chipTxtOn:   { color: colors.gold, fontWeight: typography.weight.semibold },
   chipCount:   { color: colors.textDim, fontSize: typography.size.xs },
-  chipCountOn: { color: colors.accent },
+  chipCountOn: { color: colors.gold },
 
   listHead:    { paddingHorizontal: spacing.xl, paddingBottom: spacing.md },
   listHeadTxt: { color: colors.textDim, fontSize: typography.size.sm, letterSpacing: 2 },

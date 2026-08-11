@@ -25,10 +25,10 @@ const tr = StyleSheet.create({
   row:     { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   label:   { color: colors.text, fontSize: typography.size.body, fontWeight: typography.weight.medium },
   sub:     { color: colors.textDim, fontSize: typography.size.caption, marginTop: spacing.xxs },
-  track:   { width: 38, height: 22, borderRadius: 0, backgroundColor: colors.cardBorder, borderWidth: 1, borderColor: colors.cardBorder, justifyContent: 'center', paddingHorizontal: 3 },
-  trackOn: { backgroundColor: colors.accent, borderColor: colors.accentDim },
-  thumb:   { width: 16, height: 16, borderRadius: 0, backgroundColor: colors.textDim, alignSelf: 'flex-start' },
-  thumbOn: { backgroundColor: colors.bg, alignSelf: 'flex-end' },
+  track:   { width: 38, height: 22, borderRadius: 11, backgroundColor: colors.cardBorder, borderWidth: 1, borderColor: colors.cardBorder, justifyContent: 'center', paddingHorizontal: 3 },
+  trackOn: { backgroundColor: colors.primary, borderColor: colors.primary },
+  thumb:   { width: 16, height: 16, borderRadius: 8, backgroundColor: '#FFFFFF', alignSelf: 'flex-start' },
+  thumbOn: { alignSelf: 'flex-end' },
 });
 
 export default function DishForm({ initial, categories, isEdit, restaurantId, onSave, onCancel, onDelete, onTerminer }) {
@@ -133,7 +133,7 @@ export default function DishForm({ initial, categories, isEdit, restaurantId, on
               ) : (
                 <View style={f.photoPlaceholder}>
                   {uploading
-                    ? <ActivityIndicator color={colors.accent} size="small" />
+                    ? <ActivityIndicator color={colors.gold} size="small" />
                     : <>
                         <Text style={f.photoPlaceholderIcon}>📷</Text>
                         <Text style={f.photoPlaceholderTxt}>Ajouter une photo</Text>
@@ -256,15 +256,15 @@ export default function DishForm({ initial, categories, isEdit, restaurantId, on
 
 const s = StyleSheet.create({
   header:      { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xxl, paddingTop: spacing.xl, paddingBottom: spacing.xl, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
-  backBtn:     { width: 36, height: 36, borderRadius: 0, backgroundColor: colors.card, borderWidth: 1, borderColor: 'rgba(200,151,90,0.3)', alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOpacity: 0.25, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 3 },
+  backBtn:     { width: 36, height: 36, borderRadius: 18, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, alignItems: 'center', justifyContent: 'center' },
   backBtnTxt:  { color: colors.text, fontSize: typography.size.heading2 },
   headerCenter:{ flex: 1, alignItems: 'center' },
-  headerSub:   { color: colors.accent, fontSize: typography.size.xs, letterSpacing: 3, marginBottom: 2 },
-  headerTitle: { color: colors.text, fontSize: typography.size.title, fontWeight: '300', letterSpacing: 1 },
-  saveBtn:     { backgroundColor: colors.noir, borderRadius: radius.xl, paddingVertical: 15, alignItems: 'center', shadowColor: '#000', shadowOpacity: 0.4, shadowRadius: 14, shadowOffset: { width: 0, height: 0 }, elevation: 7 },
+  headerSub:   { color: colors.gold, fontSize: typography.size.xs, letterSpacing: 3, marginBottom: 2 },
+  headerTitle: { color: colors.text, fontFamily: typography.display, fontSize: typography.size.title, fontWeight: typography.weight.bold, letterSpacing: -0.3 },
+  saveBtn:     { backgroundColor: colors.noir, borderRadius: radius.xl, paddingVertical: 15, alignItems: 'center' },
   saveBtnTxt:  { color: '#FFFFFF', fontSize: typography.size.subheading, fontWeight: typography.weight.bold, letterSpacing: 0.3 },
   terminerBtn: { alignItems: 'center', paddingVertical: spacing.lg },
-  terminerTxt: { color: colors.accent, fontSize: typography.size.body, fontWeight: typography.weight.medium },
+  terminerTxt: { color: colors.gold, fontSize: typography.size.body, fontWeight: typography.weight.medium },
 });
 
 const f = StyleSheet.create({
@@ -273,13 +273,13 @@ const f = StyleSheet.create({
   label:          { color: colors.textMuted, fontSize: typography.size.caption, fontWeight: typography.weight.semibold, marginBottom: spacing.sm, letterSpacing: 0.5 },
   hint:           { color: colors.textDim, fontSize: typography.size.xs, marginBottom: spacing.sm, marginTop: -spacing.xs },
   inputWrap:      { flexDirection: 'row', alignItems: 'center', gap: spacing.md, backgroundColor: colors.card, borderRadius: radius.lg, borderWidth: 1, borderColor: colors.cardBorder, paddingHorizontal: spacing.lg, paddingVertical: spacing.md },
-  inputWrapActive:{ borderColor: 'rgba(232,160,69,0.5)' },
+  inputWrapActive:{ borderColor: 'rgba(200,151,90,0.5)' },
   inputIcon:      { fontSize: typography.size.subheading, flexShrink: 0 },
   input:          { flex: 1, color: colors.text, fontSize: typography.size.body, paddingVertical: spacing.xs },
   catChip:        { paddingHorizontal: spacing.lg, paddingVertical: spacing.md, borderRadius: radius.pill, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder },
-  catChipOn:      { backgroundColor: colors.accentSoft, borderColor: 'rgba(232,160,69,0.4)' },
+  catChipOn:      { backgroundColor: colors.goldSoft, borderColor: 'rgba(200,151,90,0.4)' },
   catChipTxt:     { color: colors.textMuted, fontSize: typography.size.body },
-  catChipTxtOn:   { color: colors.accent, fontWeight: typography.weight.semibold },
+  catChipTxtOn:   { color: colors.gold, fontWeight: typography.weight.semibold },
   togglesWrap:    { backgroundColor: colors.card, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.cardBorder, paddingHorizontal: spacing.xl, marginBottom: spacing.xl },
   deleteBtn:      { color: colors.red, fontSize: typography.size.body },
 

@@ -6,7 +6,7 @@ import { statusCfg, daysUntil, fmtLong } from '../hooks/useReservations';
 export default function NextResaCard({ r, onCancel, onViewRestaurant, onEdit }) {
   const resto = r.restaurants || {};
   const diff  = Math.round((new Date(r.date+'T00:00:00') - new Date().setHours(0,0,0,0)) / 86400000);
-  const urgentColor = diff === 0 ? colors.accent : diff === 1 ? colors.green : colors.blue;
+  const urgentColor = diff === 0 ? colors.resa : diff === 1 ? colors.green : colors.blue;
 
   return (
     <View style={s.card}>
@@ -94,17 +94,17 @@ export default function NextResaCard({ r, onCancel, onViewRestaurant, onEdit }) 
 }
 
 const s = StyleSheet.create({
-  card:          { marginHorizontal: spacing.xl, backgroundColor: colors.card, borderRadius: radius.pill, borderWidth:1, borderColor:'rgba(232,160,69,0.2)', overflow:'hidden', marginBottom: spacing.md },
+  card:          { marginHorizontal: spacing.xl, backgroundColor: colors.card, borderRadius: radius.pill, borderWidth:1, borderColor:'rgba(200,151,90,0.2)', overflow:'hidden', marginBottom: spacing.md },
   photoWrap:     { height:200, position:'relative' },
   photo:         { ...StyleSheet.absoluteFillObject },
-  photoOverlay:  { ...StyleSheet.absoluteFillObject, backgroundColor:'rgba(15,13,11,0.45)' },
+  photoOverlay:  { ...StyleSheet.absoluteFillObject, backgroundColor:'rgba(10,10,10,0.45)' },
   photoTop:      { position:'absolute', top: spacing.xl, left: spacing.xl, right: spacing.xl, flexDirection:'row', justifyContent:'space-between', alignItems:'center' },
-  ratingPill:    { backgroundColor:'rgba(15,13,11,0.72)', borderRadius: radius.full, paddingHorizontal: spacing.md, paddingVertical: spacing.sm, borderWidth:1, borderColor:'rgba(232,160,69,0.4)' },
-  ratingTxt:     { color: colors.accent, fontSize: typography.size.caption, fontWeight: typography.weight.medium },
-  photoBottom:   { position:'absolute', bottom:0, left:0, right:0, padding: spacing.xl, backgroundColor:'rgba(15,13,11,0.65)' },
-  photoCuisine:  { color:'rgba(232,160,69,0.85)', fontSize: typography.size.xs, letterSpacing:2.5, marginBottom:3 },
-  photoName:     { color: colors.text, fontSize: typography.size.title, fontWeight: typography.weight.regular, letterSpacing:0.3, marginBottom:2 },
-  photoQuartier: { color:'rgba(240,235,227,0.65)', fontSize: typography.size.caption },
+  ratingPill:    { backgroundColor:'rgba(10,10,10,0.72)', borderRadius: radius.full, paddingHorizontal: spacing.md, paddingVertical: spacing.sm, borderWidth:1, borderColor:'rgba(200,151,90,0.4)' },
+  ratingTxt:     { color: colors.gold, fontSize: typography.size.caption, fontWeight: typography.weight.medium },
+  photoBottom:   { position:'absolute', bottom:0, left:0, right:0, padding: spacing.xl, backgroundColor:'rgba(10,10,10,0.65)' },
+  photoCuisine:  { color:'rgba(200,151,90,0.85)', fontSize: typography.size.xs, letterSpacing:2.5, marginBottom:3 },
+  photoName:     { color: '#FFFFFF', fontFamily: typography.display, fontSize: typography.size.title, fontWeight: typography.weight.bold, letterSpacing:0.3, marginBottom:2 },
+  photoQuartier: { color:'rgba(255,255,255,0.65)', fontSize: typography.size.caption },
   body:          { padding: spacing.xl, gap: spacing.lg },
   countdown:     { flexDirection:'row', alignItems:'center', justifyContent:'space-between', borderWidth:1, borderRadius: radius.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.lg },
   countdownLabel:{ fontSize: typography.size.subheading, fontWeight: typography.weight.medium },

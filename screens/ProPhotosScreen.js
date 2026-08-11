@@ -51,7 +51,7 @@ export default function ProPhotosScreen({ navigation, route }) {
       {!!error && <Text style={s.error}>{error}</Text>}
 
       {loading ? (
-        <ActivityIndicator color={colors.accent} style={{ marginTop: 60 }} />
+        <ActivityIndicator color={colors.primary} style={{ marginTop: 60 }} />
       ) : (
         <FlatList
           data={photos}
@@ -113,8 +113,8 @@ const s = StyleSheet.create({
   row:    { gap: spacing.md },
   card:   { flex: 1, aspectRatio: 4/3, borderRadius: radius.xl, overflow: 'hidden', marginBottom: spacing.md, backgroundColor: colors.card },
   img:    { width: '100%', height: '100%' },
-  deleteBtn: { position: 'absolute', top: spacing.sm, right: spacing.sm, width: 28, height: 28, borderRadius: 0, backgroundColor: 'rgba(15,13,11,0.75)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)' },
-  deleteTxt: { color: colors.text, fontSize: 11, fontWeight: typography.weight.bold },
+  deleteBtn: { position: 'absolute', top: spacing.sm, right: spacing.sm, width: 28, height: 28, borderRadius: 14, backgroundColor: 'rgba(10,10,10,0.75)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)' },
+  deleteTxt: { color: '#FFFFFF', fontSize: 11, fontWeight: typography.weight.bold },
 
   empty:    { alignItems: 'center', paddingTop: 80, gap: spacing.md },
   emptyEmoji: { fontSize: 48 },
@@ -124,10 +124,10 @@ const s = StyleSheet.create({
   footer:     { position: 'absolute', bottom: 0, left: 0, right: 0, padding: spacing.xl, paddingBottom: spacing.xxl, backgroundColor: colors.bg, borderTopWidth: 1, borderTopColor: colors.cardBorder, gap: spacing.sm, zIndex: 10 },
   nextBtn:    { backgroundColor: colors.text, borderRadius: radius.xl, paddingVertical: spacing.md, alignItems: 'center', marginBottom: spacing.xs },
   nextBtnTxt: { color: colors.bg, fontSize: typography.size.body, fontWeight: typography.weight.semibold },
-  addBtn:     { backgroundColor: '#c8975a', borderRadius: radius.xl, paddingVertical: spacing.lg, alignItems: 'center', shadowColor: '#000', shadowOpacity: 0.45, shadowRadius: 12, shadowOffset: { width: 0, height: 0 }, elevation: 6 },
+  addBtn:     { backgroundColor: colors.gold, borderRadius: radius.xl, paddingVertical: spacing.lg, alignItems: 'center' },
   addBtnDisabled: { opacity: 0.6 },
-  addBtnTxt:  { color: colors.bg, fontSize: typography.size.subheading, fontWeight: typography.weight.semibold },
+  addBtnTxt:  { color: colors.noir, fontSize: typography.size.subheading, fontWeight: typography.weight.semibold },
   hint:       { color: colors.textDim, fontSize: typography.size.xs, textAlign: 'center', marginTop: spacing.sm },
   terminerBtn: { alignItems: 'center', paddingVertical: spacing.md },
-  terminerTxt: { color: colors.accent, fontSize: typography.size.body, fontWeight: typography.weight.medium },
+  terminerTxt: { color: colors.gold, fontSize: typography.size.body, fontWeight: typography.weight.medium },
 });

@@ -27,7 +27,7 @@ export default function ReviewCard({ review, onSaveResponse, onApprove, onReject
   const col         = avatarColor(name);
   const ini         = initials(review.users?.first_name, review.users?.last_name);
   const stars       = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
-  const ratingColor = review.rating >= 4 ? colors.green : review.rating === 3 ? colors.accent : colors.red;
+  const ratingColor = review.rating >= 4 ? colors.green : review.rating === 3 ? colors.gold : colors.red;
 
   const save = useCallback(async () => {
     if (!text.trim()) return;
@@ -119,25 +119,25 @@ export default function ReviewCard({ review, onSaveResponse, onApprove, onReject
 
 const s = StyleSheet.create({
   card:           { backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, marginHorizontal: spacing.xl, marginBottom: spacing.lg, padding: spacing.xl, gap: spacing.lg },
-  cardPending:    { borderColor: 'rgba(232,160,69,0.4)', borderLeftWidth: 3, borderLeftColor: colors.accent },
-  pendingBanner:  { backgroundColor: colors.accentSoft, borderRadius: radius.md, paddingVertical: spacing.sm, paddingHorizontal: spacing.md, alignItems: 'center' },
-  pendingBannerTxt: { color: colors.accent, fontSize: typography.size.caption, fontWeight: typography.weight.regular },
+  cardPending:    { borderColor: 'rgba(200,151,90,0.4)', borderLeftWidth: 3, borderLeftColor: colors.gold },
+  pendingBanner:  { backgroundColor: colors.goldSoft, borderRadius: radius.md, paddingVertical: spacing.sm, paddingHorizontal: spacing.md, alignItems: 'center' },
+  pendingBannerTxt: { color: colors.gold, fontSize: typography.size.caption, fontWeight: typography.weight.regular },
   moderateRow:    { flexDirection: 'row', gap: spacing.md },
   rejectBtn:      { flex: 1, padding: spacing.md, borderRadius: radius.lg, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(224,90,90,0.35)', backgroundColor: 'rgba(224,90,90,0.08)' },
   rejectTxt:      { color: colors.red, fontSize: typography.size.body },
   approveBtn:     { flex: 2, padding: spacing.md, borderRadius: radius.lg, alignItems: 'center', backgroundColor: colors.green },
-  approveTxt:     { color: colors.bg, fontSize: typography.size.body, fontWeight: typography.weight.bold },
+  approveTxt:     { color: '#FFFFFF', fontSize: typography.size.body, fontWeight: typography.weight.bold },
   top:            { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },
-  avatar:         { width: 38, height: 38, borderRadius: 0, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
+  avatar:         { width: 38, height: 38, borderRadius: 19, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
   avatarTxt:      { fontSize: typography.size.bodyLg || 15, fontWeight: typography.weight.medium },
-  name:           { color: colors.text, fontSize: typography.size.subheading, fontWeight: '300' },
+  name:           { color: colors.text, fontSize: typography.size.subheading, fontWeight: typography.weight.medium },
   date:           { color: colors.textDim, fontSize: typography.size.caption, marginTop: spacing.xxs },
   stars:          { fontSize: typography.size.bodyLg || 15, letterSpacing: 1 },
   comment:        { color: colors.textMuted, fontSize: typography.size.body, lineHeight: 20, fontStyle: 'italic' },
-  responseWrap:   { backgroundColor: colors.bg, borderRadius: radius.lg, padding: spacing.lg, borderLeftWidth: 3, borderLeftColor: colors.accent },
+  responseWrap:   { backgroundColor: colors.cream, borderRadius: radius.lg, padding: spacing.lg },
   responseHeader: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.xs },
   responseIcon:   { fontSize: 13 },
-  responseLabel:  { color: colors.accent, fontSize: typography.size.caption, fontWeight: typography.weight.bold, flex: 1 },
+  responseLabel:  { color: colors.primary, fontSize: typography.size.caption, fontWeight: typography.weight.bold, flex: 1 },
   editTxt:        { color: colors.textDim, fontSize: typography.size.xs },
   responseTxt:    { color: colors.textMuted, fontSize: typography.size.body, lineHeight: 18 },
   replyBtn:       { backgroundColor: colors.primaryDim, borderRadius: radius.lg, padding: spacing.md, alignItems: 'center', borderWidth: 1, borderColor: colors.primary, shadowColor: '#000', shadowOpacity: 0.25, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 3 },

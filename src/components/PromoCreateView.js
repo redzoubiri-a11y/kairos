@@ -28,8 +28,8 @@ export default function PromoCreateView({ onActivate, onBack }) {
                 style={[s.typeCard, type === t.id && s.typeCardOn]}
                 onPress={() => setType(t.id)}
               >
-                <Text style={[s.typeIcon, type === t.id && { color: colors.accent }]}>{t.icon}</Text>
-                <Text style={[s.typeLabel, type === t.id && { color: colors.accent }]}>{t.label}</Text>
+                <Text style={[s.typeIcon, type === t.id && { color: colors.gold }]}>{t.icon}</Text>
+                <Text style={[s.typeLabel, type === t.id && { color: colors.gold }]}>{t.label}</Text>
                 <Text style={s.typeDesc}>{t.desc}</Text>
               </TouchableOpacity>
             ))}
@@ -120,8 +120,8 @@ const s = StyleSheet.create({
   slotBox:       { flex: 1, backgroundColor: colors.card, borderRadius: radius.lg, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.lg, alignItems: 'center' },
   slotTxt:       { color: colors.text, fontSize: typography.size.subheading },
   slotArrow:     { color: colors.textDim, fontSize: typography.size.subheading },
-  preview:       { backgroundColor: colors.accentSoft, borderRadius: radius.xl, padding: spacing.lg, borderWidth: 1, borderColor: 'rgba(232,160,69,0.2)' },
-  previewLabel:  { color: colors.accent, fontSize: typography.size.caption, fontWeight: typography.weight.bold, marginBottom: spacing.xs },
+  preview:       { backgroundColor: colors.goldSoft, borderRadius: radius.xl, padding: spacing.lg, borderWidth: 1, borderColor: 'rgba(200,151,90,0.3)' },
+  previewLabel:  { color: colors.gold, fontSize: typography.size.caption, fontWeight: typography.weight.bold, marginBottom: spacing.xs },
   previewTitle:  { color: colors.text, fontSize: typography.size.subheading, fontWeight: typography.weight.extrabold },
   previewSub:    { color: colors.textMuted, fontSize: typography.size.caption, marginTop: 3 },
   activateBtn:   { backgroundColor: colors.noir, borderRadius: radius.xl, padding: spacing.xl, alignItems: 'center', shadowColor: '#000', shadowOpacity: 0.4, shadowRadius: 14, shadowOffset: { width: 0, height: 0 }, elevation: 7 },

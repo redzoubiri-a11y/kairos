@@ -109,11 +109,15 @@ export default function ClickCollectScreen({ route, navigation }) {
           </ScrollView>
 
           {totalCount > 0 && !showCart && (
-            <TouchableOpacity style={s.cartBar} onPress={() => setShowCart(true)} activeOpacity={0.85}>
-              <View style={s.cartBadge}><Text style={s.cartBadgeTxt}>{totalCount}</Text></View>
-              <Text style={s.cartBarTxt}>Voir le panier</Text>
-              <Text style={s.cartBarTotal}>{totalAmount.toLocaleString('fr-FR')} DA</Text>
-            </TouchableOpacity>
+            <View style={s.cartBar}>
+              <View>
+                <Text style={s.cartBarCount}>{totalCount} article{totalCount > 1 ? 's' : ''}</Text>
+                <Text style={s.cartBarTotal}>{totalAmount.toLocaleString('fr-FR')} DA</Text>
+              </View>
+              <TouchableOpacity style={s.cartBarBtn} onPress={() => setShowCart(true)} activeOpacity={0.85}>
+                <Text style={s.cartBarBtnTxt}>Voir le panier</Text>
+              </TouchableOpacity>
+            </View>
           )}
 
           {showCart && (
@@ -163,8 +167,8 @@ const s = StyleSheet.create({
   header:      { height: 56, flexDirection: 'row', alignItems: 'center', paddingHorizontal: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   backBtn:     { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
   backBtnTxt:  { color: colors.text, fontSize: 22 },
-  headerSub:   { color: colors.blue, fontSize: typography.size.xs, letterSpacing: 2, textAlign: 'center' },
-  headerTitle: { color: colors.text, fontSize: typography.size.heading3, fontWeight: '600', textAlign: 'center' },
+  headerSub:   { color: colors.gold, fontSize: typography.size.xs, letterSpacing: 2, textAlign: 'center' },
+  headerTitle: { color: colors.text, fontFamily: typography.display, fontSize: typography.size.heading3, fontWeight: typography.weight.bold, textAlign: 'center' },
 
   emptyWrap:  { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing.md, padding: spacing.section },
   emptyTitle: { color: colors.text, fontSize: typography.size.heading2, fontWeight: '300' },
@@ -172,10 +176,10 @@ const s = StyleSheet.create({
 
   catsWrap: { maxHeight: 56, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   catsList: { paddingHorizontal: spacing.xl, paddingVertical: spacing.md, gap: spacing.sm, flexDirection: 'row' },
-  catChip:      { paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: radius.pill, backgroundColor: 'transparent', borderWidth: 1.5, borderColor: colors.text },
-  catChipOn:    { borderColor: colors.blue },
-  catChipTxt:   { color: colors.textMuted, fontSize: typography.size.body },
-  catChipTxtOn: { color: colors.blue, fontWeight: typography.weight.semibold },
+  catChip:      { paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: radius.pill, backgroundColor: colors.tagNeutralBg },
+  catChipOn:    { backgroundColor: colors.noir },
+  catChipTxt:   { color: colors.text, fontSize: typography.size.body },
+  catChipTxtOn: { color: '#FFFFFF', fontWeight: typography.weight.semibold },
 
   dishRow:     { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingVertical: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   dishPhoto:   { width: 56, height: 56, borderRadius: radius.md, backgroundColor: colors.cardHover, flexShrink: 0 },
@@ -188,11 +192,11 @@ const s = StyleSheet.create({
   stepBtnTxt:  { color: colors.green, fontSize: 16, fontWeight: '700' },
   stepQty:     { color: colors.text, fontSize: typography.size.body, fontWeight: '600', minWidth: 16, textAlign: 'center' },
 
-  cartBar:      { position: 'absolute', left: spacing.xl, right: spacing.xl, bottom: spacing.xl, backgroundColor: colors.green, borderRadius: radius.lg, paddingVertical: spacing.lg, paddingHorizontal: spacing.xl, flexDirection: 'row', alignItems: 'center', gap: spacing.md },
-  cartBadge:    { backgroundColor: 'rgba(255,255,255,0.3)', borderRadius: radius.full, minWidth: 24, height: 24, alignItems: 'center', justifyContent: 'center', paddingHorizontal: spacing.xs },
-  cartBadgeTxt: { color: '#FFFFFF', fontSize: typography.size.caption, fontWeight: '700' },
-  cartBarTxt:   { flex: 1, color: '#FFFFFF', fontSize: typography.size.body, fontWeight: '600' },
-  cartBarTotal: { color: '#FFFFFF', fontSize: typography.size.body, fontWeight: '700' },
+  cartBar:      { position: 'absolute', left: 0, right: 0, bottom: 0, backgroundColor: colors.noir, borderTopLeftRadius: radius.xl, borderTopRightRadius: radius.xl, paddingVertical: spacing.lg, paddingHorizontal: spacing.xl, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  cartBarCount: { color: 'rgba(255,255,255,0.55)', fontSize: typography.size.caption, fontWeight: typography.weight.medium },
+  cartBarTotal: { color: '#FFFFFF', fontFamily: typography.display, fontSize: typography.size.subheading, fontWeight: typography.weight.bold, marginTop: 2 },
+  cartBarBtn:   { backgroundColor: colors.gold, borderRadius: radius.lg, paddingVertical: spacing.md, paddingHorizontal: spacing.xxl },
+  cartBarBtnTxt:{ color: colors.noir, fontSize: typography.size.body, fontWeight: typography.weight.bold },
 
   cartPanel:       { position: 'absolute', left: 0, right: 0, bottom: 0, backgroundColor: colors.bg, borderTopLeftRadius: radius.xxl, borderTopRightRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.xl, gap: spacing.md, shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 20, shadowOffset: { width: 0, height: -4 } },
   cartPanelHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },

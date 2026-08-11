@@ -181,7 +181,7 @@ export default function ReservationScreen({ navigation }) {
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={{ flex:1 }}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.accent} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
       >
         {tab === 'avenir' && (
           !next ? (
@@ -286,19 +286,19 @@ const s = StyleSheet.create({
   bgOverlay: { ...StyleSheet.absoluteFillObject, opacity: 0.06 },
 
   header:      { flexDirection:'row', alignItems:'center', justifyContent:'space-between', paddingHorizontal: spacing.xxl, paddingTop: spacing.xl, paddingBottom: spacing.xl, borderBottomWidth:1, borderBottomColor: colors.cardBorder },
-  headerSub:   { color: '#C87860', fontSize: typography.size.xs, letterSpacing: 3, marginBottom: spacing.xs },
+  headerSub:   { color: colors.resa, fontSize: typography.size.xs, letterSpacing: 3, marginBottom: spacing.xs },
   headerLabel: { color: colors.textMuted, fontSize: typography.size.caption, letterSpacing: 1, marginBottom: spacing.xxs },
-  headerTitle: { color: colors.text, fontSize: typography.size.hero, fontWeight: '200', letterSpacing: -0.5 },
-  pendingPill: { flexDirection:'row', alignItems:'center', gap: spacing.sm, backgroundColor: colors.navy, borderRadius: radius.full, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderWidth:1, borderColor: colors.navyBorder },
-  pendingDot:  { width:6, height:6, borderRadius:0, backgroundColor: '#C87860' },
+  headerTitle: { color: colors.text, fontFamily: typography.display, fontSize: typography.size.hero, fontWeight: typography.weight.bold, letterSpacing: -0.5 },
+  pendingPill: { flexDirection:'row', alignItems:'center', gap: spacing.sm, backgroundColor: colors.resaSoft, borderRadius: radius.full, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderWidth:1, borderColor: 'rgba(200,120,96,0.3)' },
+  pendingDot:  { width:6, height:6, borderRadius:3, backgroundColor: colors.resa },
   pendingTxt:  { color: colors.text, fontSize: typography.size.caption },
 
   tabs:       { flexDirection:'row', margin: spacing.xl, backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: radius.xl, padding: spacing.xs, borderWidth:1, borderColor: colors.cardBorder, gap: spacing.xxs },
   tab:        { flex:1, flexDirection:'row', paddingVertical: spacing.md, borderRadius: radius.lg, alignItems:'center', justifyContent:'center', gap: spacing.sm },
-  tabOn:      { backgroundColor: colors.navy, shadowColor: '#000', shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
+  tabOn:      { backgroundColor: colors.card },
   tabTxt:     { color: colors.textMuted, fontSize: typography.size.bodyLg, fontWeight: typography.weight.regular },
   tabTxtOn:   { color: colors.text, fontWeight: typography.weight.semibold },
-  tabBadge:   { backgroundColor: '#C87860', borderRadius: radius.md, minWidth:18, height:18, alignItems:'center', justifyContent:'center', paddingHorizontal: spacing.xs },
+  tabBadge:   { backgroundColor: colors.resa, borderRadius: radius.md, minWidth:18, height:18, alignItems:'center', justifyContent:'center', paddingHorizontal: spacing.xs },
   tabBadgeTxt:{ color: '#FFFFFF', fontSize: typography.size.sm, fontWeight: typography.weight.semibold },
 
   sectionLbl: { color: colors.textMuted, fontSize: typography.size.xs, letterSpacing:4, paddingHorizontal: spacing.xxl, marginBottom: spacing.lg },
@@ -311,6 +311,6 @@ const s = StyleSheet.create({
   emptyEmoji: { fontSize:52 },
   emptyTitle: { color: colors.text, fontSize: typography.size.heading2, fontWeight: typography.weight.regular },
   emptySub:   { color: colors.textMuted, fontSize: typography.size.bodyLg, textAlign:'center', lineHeight:20, paddingHorizontal: spacing.section },
-  emptyBtn:   { backgroundColor: colors.navy, borderRadius: radius.lg, paddingHorizontal: spacing.xxl, paddingVertical: spacing.md, borderWidth:1, borderColor: 'rgba(200,151,90,0.35)', marginTop: spacing.xs, shadowColor: '#000', shadowOpacity: 0.3, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 4 },
-  emptyBtnTxt:{ color: colors.text, fontSize: typography.size.bodyLg },
+  emptyBtn:   { backgroundColor: colors.primary, borderRadius: radius.lg, paddingHorizontal: spacing.xxl, paddingVertical: spacing.md, marginTop: spacing.xs },
+  emptyBtnTxt:{ color: '#FFFFFF', fontSize: typography.size.bodyLg, fontWeight: typography.weight.semibold },
 });

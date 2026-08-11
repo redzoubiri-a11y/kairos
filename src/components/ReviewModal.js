@@ -95,15 +95,15 @@ export default function ReviewModal({ resa, visible, onClose, onSubmit, submitti
 const s = StyleSheet.create({
   overlay:      { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'flex-end' },
   sheet:        { backgroundColor: colors.card, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: spacing.xxl, paddingBottom: 40, gap: spacing.xl, borderTopWidth: 1, borderTopColor: colors.cardBorder },
-  drag:         { width: 36, height: 4, borderRadius: 0, backgroundColor: colors.cardBorder, alignSelf: 'center', marginBottom: spacing.sm },
+  drag:         { width: 36, height: 4, borderRadius: 2, backgroundColor: colors.cardBorder, alignSelf: 'center', marginBottom: spacing.sm },
 
-  title:        { color: colors.text, fontSize: typography.size.heading2, fontWeight: typography.weight.regular, textAlign: 'center' },
+  title:        { color: colors.text, fontFamily: typography.display, fontSize: typography.size.heading2, fontWeight: typography.weight.bold, textAlign: 'center' },
   sub:          { color: colors.textMuted, fontSize: typography.size.bodyLg, textAlign: 'center', marginTop: -spacing.sm },
 
   stars:        { flexDirection: 'row', justifyContent: 'center', gap: spacing.lg },
   star:         { fontSize: 38, color: colors.cardBorder },
-  starOn:       { color: colors.accent },
-  label:        { color: colors.accent, fontSize: typography.size.body, textAlign: 'center', marginTop: -spacing.md },
+  starOn:       { color: colors.gold },
+  label:        { color: colors.gold, fontSize: typography.size.body, textAlign: 'center', marginTop: -spacing.md },
 
   error:        { color: colors.red, fontSize: typography.size.body, textAlign: 'center' },
 

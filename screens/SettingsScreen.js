@@ -61,8 +61,8 @@ export default function SettingsScreen({ navigation }) {
                         <Switch
                           value={!!toggles[key]}
                           onValueChange={() => toggle(key)}
-                          trackColor={{ false: colors.cardBorder, true: colors.accent + '80' }}
-                          thumbColor={toggles[key] ? colors.accent : colors.textDim}
+                          trackColor={{ false: colors.cardBorder, true: colors.primary }}
+                          thumbColor="#FFFFFF"
                           ios_backgroundColor={colors.cardBorder}
                         />
                       </View>
@@ -122,6 +122,6 @@ const s = StyleSheet.create({
   backBtn:      { padding: spacing.xs },
   backBtnTxt:   { color: colors.text, fontSize: 22 },
   title:        { color: colors.text, fontSize: typography.size.heading2, fontWeight: typography.weight.semibold },
-  sectionLabel: { color: colors.accent, fontSize: typography.size.xs, fontWeight: typography.weight.bold, letterSpacing: 2, textTransform: 'uppercase', marginBottom: spacing.md },
+  sectionLabel: { color: colors.primary, fontSize: typography.size.xs, fontWeight: typography.weight.bold, letterSpacing: 2, textTransform: 'uppercase', marginBottom: spacing.md },
   card:         { backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, overflow: 'hidden' },
 });

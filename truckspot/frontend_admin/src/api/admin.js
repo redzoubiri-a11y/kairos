@@ -30,28 +30,14 @@ export async function listTransporters({ status, search, page = 1, limit = 20 } 
 }
 
 /**
- * The API exposes no `GET /admin/transporters/:id`, so the detail view resolves
- * a profile by walking the paginated list. Pages are requested at the maximum
- * server-allowed size to keep this to a single round-trip in practice.
+ * Renvoie la meme forme que les elements de `listTransporters` (user, documents,
+ * _count), la page de detail s'appuie dessus.
  *
  * @param {string} id
  */
 export async function getTransporter(id) {
-  const limit = 100;
-  let page = 1;
-  let pages = 1;
-
-  do {
-    const data = await listTransporters({ page, limit });
-    const found = data.items.find((item) => item.id === id);
-    if (found) return found;
-    pages = data.pages;
-    page += 1;
-  } while (page <= pages);
-
-  const error = new Error('Transporteur introuvable.');
-  error.status = 404;
-  throw error;
+  const { data } = await client.get(`/admin/transporters/${id}`);
+  return data;
 }
 
 /**

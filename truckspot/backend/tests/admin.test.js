@@ -158,4 +158,97 @@ test('administration', async (t) => {
     });
     assert.equal(enabled.body.isActive, true);
   });
+
+  // Le defaut corrige : le back-office grisait le bouton, mais l'API acceptait
+  // la demande. Un administrateur qui se desactivait etait ensuite refuse par
+  // requireAuth, donc incapable de revenir en arriere sans acces a la base.
+  await t.test('un administrateur ne peut pas se desactiver lui-meme', async () => {
+    const admin = await h.createAdmin();
+
+    const refus = await h.api('PATCH', `/admin/users/${admin.user.id}/active`, {
+      token: admin.token,
+      body: { isActive: false },
+    });
+    assert.equal(refus.status, 400);
+    assert.match(refus.body.error.message, /votre propre compte/i);
+
+    // Et il garde bien la main.
+    const toujours = await h.api('GET', '/auth/me', { token: admin.token });
+    assert.equal(toujours.status, 200);
+  });
+
+  await t.test('un administrateur peut se reactiver lui-meme sans blocage', async () => {
+    const admin = await h.createAdmin();
+
+    // La regle ne vise que la desactivation : une reactivation reste inoffensive.
+    const { status } = await h.api('PATCH', `/admin/users/${admin.user.id}/active`, {
+      token: admin.token,
+      body: { isActive: true },
+    });
+    assert.equal(status, 200);
+  });
+
+  await t.test('desactiver un autre administrateur reste possible', async () => {
+    const premier = await h.createAdmin();
+    const second = await h.createAdmin();
+
+    const { status, body } = await h.api('PATCH', `/admin/users/${second.user.id}/active`, {
+      token: premier.token,
+      body: { isActive: false },
+    });
+    assert.equal(status, 200);
+    assert.equal(body.isActive, false);
+
+    // Celui qui agit reste actif : la plateforme garde un administrateur.
+    const encore = await h.api('GET', '/auth/me', { token: premier.token });
+    assert.equal(encore.status, 200);
+  });
+
+  // Le detail d'un dossier passait par un parcours de toutes les pages de la
+  // liste, faute de route dediee : une requete par centaine de transporteurs.
+  await t.test('expose le detail d un transporteur par identifiant', async () => {
+    const admin = await h.createAdmin();
+    const transporter = await h.createTransporter({ verified: false });
+
+    const { status, body } = await h.api(`GET`, `/admin/transporters/${transporter.profileId}`, {
+      token: admin.token,
+    });
+
+    assert.equal(status, 200);
+    assert.equal(body.id, transporter.profileId);
+    // Meme forme que dans la liste : la page de detail s'appuie dessus.
+    assert.ok(body.user, 'le responsable est joint');
+    assert.ok(Array.isArray(body.documents), 'les documents sont joints');
+    assert.equal(typeof body._count.trucks, 'number');
+  });
+
+  await t.test('renvoie 404 pour un transporteur inconnu', async () => {
+    const admin = await h.createAdmin();
+
+    const { status } = await h.api(
+      'GET',
+      '/admin/transporters/00000000-0000-4000-8000-000000000000',
+      { token: admin.token }
+    );
+    assert.equal(status, 404);
+  });
+
+  await t.test('refuse un identifiant qui n est pas un uuid', async () => {
+    const admin = await h.createAdmin();
+
+    const { status } = await h.api('GET', '/admin/transporters/pas-un-uuid', {
+      token: admin.token,
+    });
+    assert.equal(status, 400);
+  });
+
+  await t.test('le detail d un transporteur reste ferme aux non-admins', async () => {
+    const client = await h.createClient();
+    const transporter = await h.createTransporter();
+
+    const { status } = await h.api('GET', `/admin/transporters/${transporter.profileId}`, {
+      token: client.token,
+    });
+    assert.equal(status, 403);
+  });
 });

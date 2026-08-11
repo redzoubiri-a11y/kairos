@@ -29,11 +29,16 @@ const listUsers = asyncHandler(async (req, res) => {
 });
 
 const setUserActive = asyncHandler(async (req, res) => {
-  res.json(await adminService.setUserActive(req.params.id, req.body.isActive));
+  res.json(await adminService.setUserActive(req.user.id, req.params.id, req.body.isActive));
+});
+
+const getTransporter = asyncHandler(async (req, res) => {
+  res.json(await adminService.getTransporter(req.params.id));
 });
 
 module.exports = {
   listTransporters,
+  getTransporter,
   verifyTransporter,
   listTrips,
   listMissions,

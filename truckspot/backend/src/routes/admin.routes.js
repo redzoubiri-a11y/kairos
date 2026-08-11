@@ -10,6 +10,11 @@ router.use(requireAuth, requireRole('ADMIN'));
 
 router.get('/stats', controller.stats);
 router.get('/transporters', validate(schemas.admin.listTransporters, 'query'), controller.listTransporters);
+router.get(
+  '/transporters/:id',
+  validate(schemas.common.idParam, 'params'),
+  controller.getTransporter
+);
 router.patch(
   '/verify-transporter',
   validate(schemas.admin.verifyTransporter),

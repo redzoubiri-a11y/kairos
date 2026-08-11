@@ -150,6 +150,7 @@ Base : `http://localhost:4000/api` — authentification par `Authorization: Bear
 | DELETE  | `/notifications/devices`       | authentifie  | Retire un appareil (deconnexion)         |
 | GET     | `/admin/stats`                 | admin        | Statistiques globales                    |
 | GET     | `/admin/transporters`          | admin        | File de moderation                       |
+| GET     | `/admin/transporters/:id`      | admin        | Detail d'un dossier                      |
 | PATCH   | `/admin/verify-transporter`    | admin        | Validation ou refus (motif obligatoire)  |
 | GET     | `/admin/trips`                 | admin        | Tous les trajets                         |
 | GET     | `/admin/missions`              | admin        | Toutes les missions                      |
@@ -161,6 +162,26 @@ Les erreurs suivent toujours la forme
 
 Les parametres de requete sont valides en mode strict : n'envoyez jamais de parametre
 vide ou inconnu, la reponse serait un 400.
+
+### Pieces justificatives
+
+Les documents d'identite ne sont jamais servis en statique : `GET
+/transporters/documents/:id` verifie que l'appelant est le proprietaire ou un
+administrateur, et le pilote s3 repond par une redirection vers une URL signee de
+cinq minutes. La cle de stockage n'est jamais serialisee vers un client.
+
+Renvoyer une piece **remplace** celle du meme type au lieu de s'y ajouter : l'ecran
+n'affiche qu'une carte par type, et rien n'appelait jamais la suppression cote
+stockage. Un transporteur qui corrigeait un RC illisible laissait donc l'ancien
+fichier indefiniment — une piece d'identite que plus personne ne consulte et que rien
+ne purge — pendant que l'administrateur voyait deux RC sans savoir lequel faisait foi.
+L'objet n'est efface qu'une fois la transaction acquittee, et un echec de suppression
+n'interrompt pas l'envoi : un objet orphelin reste moins grave qu'une ligne pointant
+vers un fichier absent.
+
+> Il n'existe pas de suppression de compte dans l'API. Le jour ou elle arrivera, elle
+> devra purger les objets de stockage : la cascade SQL efface les lignes, pas les
+> fichiers.
 
 ### Mot de passe oublie
 
@@ -307,7 +328,7 @@ pour rejouer les migrations.
 cd truckspot/backend && npm test
 ```
 
-**136 tests d'integration** tournent contre une vraie base PostgreSQL et un vrai serveur
+**149 tests d'integration** tournent contre une vraie base PostgreSQL et un vrai serveur
 HTTP + Socket.IO, sans mock : authentification, cloisonnement des acces (un tiers ne peut
 lire ni une mission ni une conversation qui ne le concerne pas), recherche geographique,
 filtres de la carte, expiration des positions trop anciennes, transitions de statut
@@ -319,7 +340,7 @@ lecture possible en statique), notifications push (purge des jetons obsoletes, p
 d'Expo sans consequence sur l'action metier) et flux de notifications (curseur `before`,
 cloisonnement du `read-all`).
 
-Le back-office dispose de sa propre suite : **40 tests** (Vitest + Testing Library) sur la
+Le back-office dispose de sa propre suite : **47 tests** (Vitest + Testing Library) sur la
 garde ADMIN, le motif de refus obligatoire, la normalisation des erreurs du client HTTP et
 la pagination — `cd truckspot/frontend_admin && npm test`. Il a par ailleurs ete valide par
 140 assertions sur les reponses reelles de l'API et un rendu de chaque page.

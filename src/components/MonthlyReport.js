@@ -47,7 +47,7 @@ export default function MonthlyReport({ report, loading, error, onRefetch }) {
             icon="📅"
             label="Réservations totales"
             value={report.totalReservations}
-            color="rgba(245,242,236,0.85)"
+            color={colors.text}
           />
           <StatRow
             icon="✅"
@@ -65,7 +65,7 @@ export default function MonthlyReport({ report, loading, error, onRefetch }) {
             icon="🔄"
             label="Annulations self-service"
             value={report.selfServiceCancellations}
-            color={colors.accent}
+            color={colors.gold}
           />
         </>
       ) : null}
@@ -77,26 +77,26 @@ const r = StyleSheet.create({
   card: {
     marginHorizontal: spacing.xxl,
     marginVertical: spacing.lg,
-    backgroundColor: 'rgba(255,255,255,0.05)',
+    backgroundColor: colors.card,
     borderRadius: radius.xl,
     borderWidth: 1,
-    borderColor: 'rgba(200,151,90,0.20)',
+    borderColor: 'rgba(200,151,90,0.3)',
     padding: spacing.xl,
   },
 
   header:   { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: spacing.lg },
-  title:    { color: '#F5F2EC', fontSize: typography.size.bodyLg, fontWeight: typography.weight.semibold, letterSpacing: 0.3 },
-  subtitle: { color: 'rgba(245,242,236,0.40)', fontSize: typography.size.caption, textTransform: 'capitalize', marginTop: spacing.xxs },
-  refresh:  { color: '#c8975a', fontSize: typography.size.heading2 },
+  title:    { color: colors.text, fontFamily: typography.display, fontSize: typography.size.bodyLg, fontWeight: typography.weight.bold, letterSpacing: -0.2 },
+  subtitle: { color: colors.textDim, fontSize: typography.size.caption, textTransform: 'capitalize', marginTop: spacing.xxs },
+  refresh:  { color: colors.gold, fontSize: typography.size.heading2 },
 
   highlight:    { alignItems: 'center', paddingVertical: spacing.lg },
-  highlightVal: { color: '#c8975a', fontSize: typography.size.display, fontWeight: '200', lineHeight: 40 },
-  highlightLbl: { color: 'rgba(245,242,236,0.50)', fontSize: typography.size.caption, letterSpacing: 1, marginTop: spacing.xs },
+  highlightVal: { color: colors.gold, fontFamily: typography.display, fontSize: typography.size.display, fontWeight: typography.weight.bold, lineHeight: 40 },
+  highlightLbl: { color: colors.textMuted, fontSize: typography.size.caption, letterSpacing: 1, marginTop: spacing.xs },
 
-  divider: { height: 1, backgroundColor: 'rgba(255,255,255,0.08)', marginVertical: spacing.lg },
+  divider: { height: 1, backgroundColor: colors.cardBorder, marginVertical: spacing.lg },
 
   statRow:   { flexDirection: 'row', alignItems: 'center', paddingVertical: spacing.sm, gap: spacing.md },
   statIcon:  { fontSize: 14, width: 20, textAlign: 'center' },
-  statLabel: { flex: 1, color: 'rgba(245,242,236,0.55)', fontSize: typography.size.bodyLg },
+  statLabel: { flex: 1, color: colors.textMuted, fontSize: typography.size.bodyLg },
   statValue: { fontSize: typography.size.heading2, fontWeight: typography.weight.semibold },
 });

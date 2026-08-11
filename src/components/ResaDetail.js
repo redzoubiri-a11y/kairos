@@ -93,25 +93,25 @@ export default function ResaDetail({ resa, onConfirm, onCancel, onArrive, onNoSh
 
 const s = StyleSheet.create({
   empty:       { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing.lg },
-  emptyTitle:  { color: '#F5F2EC', fontSize: typography.size.heading2, fontWeight: '300' },
-  emptySub:    { color: 'rgba(245,242,236,0.45)', fontSize: typography.size.body },
+  emptyTitle:  { color: colors.text, fontSize: typography.size.heading2, fontWeight: typography.weight.medium },
+  emptySub:    { color: colors.textDim, fontSize: typography.size.body },
 
   content:     { padding: spacing.section, alignItems: 'center', paddingBottom: 60 },
 
   statusBadge: { borderRadius: radius.pill, borderWidth: 1.5, paddingHorizontal: spacing.xxl, paddingVertical: spacing.md, marginBottom: spacing.xl },
   statusTxt:   { fontSize: typography.size.caption, fontWeight: typography.weight.bold, letterSpacing: 2 },
 
-  time:        { fontSize: 80, fontWeight: '100', letterSpacing: 2, lineHeight: 90 },
-  clientName:  { color: '#F5F2EC', fontSize: typography.size.title, fontWeight: '300', letterSpacing: 0.5, marginBottom: spacing.xxl },
+  time:        { fontFamily: typography.display, fontSize: 72, fontWeight: typography.weight.bold, letterSpacing: -1, lineHeight: 82 },
+  clientName:  { color: colors.text, fontSize: typography.size.title, fontWeight: typography.weight.medium, letterSpacing: 0.5, marginBottom: spacing.xxl },
 
   metaRow:     { flexDirection: 'row', gap: spacing.xxxl, marginBottom: spacing.xxl },
   metaBox:     { alignItems: 'center' },
-  metaVal:     { color: colors.primary, fontSize: 48, fontWeight: '200', lineHeight: 52 },
-  metaLbl:     { color: 'rgba(245,242,236,0.40)', fontSize: typography.size.xs, letterSpacing: 2, marginTop: spacing.xs },
+  metaVal:     { color: colors.primary, fontFamily: typography.display, fontSize: 48, fontWeight: typography.weight.bold, lineHeight: 52 },
+  metaLbl:     { color: colors.textDim, fontSize: typography.size.xs, letterSpacing: 2, marginTop: spacing.xs },
 
-  notesBox:    { backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: radius.xl, borderWidth: 1, borderColor: 'rgba(255,255,255,0.10)', padding: spacing.xl, width: '100%', marginBottom: spacing.xxl },
-  notesLabel:  { color: 'rgba(245,242,236,0.45)', fontSize: typography.size.caption, letterSpacing: 1, marginBottom: spacing.md },
-  notesTxt:    { color: '#F5F2EC', fontSize: typography.size.bodyLg, lineHeight: 20 },
+  notesBox:    { backgroundColor: colors.cardHover, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.xl, width: '100%', marginBottom: spacing.xxl },
+  notesLabel:  { color: colors.textDim, fontSize: typography.size.caption, letterSpacing: 1, marginBottom: spacing.md },
+  notesTxt:    { color: colors.text, fontSize: typography.size.bodyLg, lineHeight: 20 },
 
   actions:       { width: '100%', gap: spacing.lg, marginTop: spacing.lg },
   acting:        { color: colors.primary, fontSize: 36, fontWeight: '200', textAlign: 'center' },
@@ -124,11 +124,11 @@ const s = StyleSheet.create({
   finalBadge:    { borderRadius: radius.pill, borderWidth: 1.5, paddingHorizontal: spacing.xxl, paddingVertical: spacing.xl, alignSelf: 'center', marginTop: spacing.lg },
   finalTxt:      { fontSize: typography.size.heading3, fontWeight: typography.weight.semibold, letterSpacing: 2 },
 
-  noShowBadge:       { backgroundColor: 'rgba(232,160,69,0.12)', borderRadius: radius.lg, borderWidth: 1, borderColor: 'rgba(232,160,69,0.35)', paddingHorizontal: spacing.xxl, paddingVertical: spacing.md, marginBottom: spacing.xxl },
-  noShowBadgeDanger: { backgroundColor: 'rgba(224,90,90,0.12)', borderColor: 'rgba(224,90,90,0.40)' },
-  noShowTxt:         { color: colors.accent, fontSize: typography.size.caption, fontWeight: typography.weight.semibold, letterSpacing: 0.5 },
+  noShowBadge:       { backgroundColor: colors.goldSoft, borderRadius: radius.lg, borderWidth: 1, borderColor: 'rgba(200,151,90,0.35)', paddingHorizontal: spacing.xxl, paddingVertical: spacing.md, marginBottom: spacing.xxl },
+  noShowBadgeDanger: { backgroundColor: colors.redSoft, borderColor: 'rgba(224,90,90,0.4)' },
+  noShowTxt:         { color: colors.gold, fontSize: typography.size.caption, fontWeight: typography.weight.semibold, letterSpacing: 0.5 },
   noShowTxtDanger:   { color: colors.red },
 
-  btnNoShow:    { backgroundColor: 'rgba(245,242,236,0.06)', borderRadius: radius.xl, borderWidth: 1.5, borderColor: 'rgba(245,242,236,0.18)', paddingVertical: spacing.xl, alignItems: 'center' },
-  btnNoShowTxt: { color: 'rgba(245,242,236,0.55)', fontSize: typography.size.heading2, fontWeight: typography.weight.semibold, letterSpacing: 1.5 },
+  btnNoShow:    { backgroundColor: colors.cardHover, borderRadius: radius.xl, borderWidth: 1.5, borderColor: colors.cardBorder, paddingVertical: spacing.xl, alignItems: 'center' },
+  btnNoShowTxt: { color: colors.textMuted, fontSize: typography.size.heading2, fontWeight: typography.weight.semibold, letterSpacing: 1.5 },
 });

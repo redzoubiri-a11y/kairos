@@ -190,7 +190,7 @@ export default function RestaurantScreen({ route, navigation }) {
             style={[s.reserveBtn, !restaurant.avg_ticket && { flex: 1 }]}
             onPress={goReserve}
           >
-            <Text style={s.reserveTxt}>RÉSERVER UNE TABLE</Text>
+            <Text style={s.reserveTxt}>Réserver une table</Text>
           </TouchableOpacity>
         </View>
         {clickCollectEnabled && (
@@ -210,33 +210,33 @@ const s = StyleSheet.create({
 
   hero:         { height: HERO, overflow: 'hidden' },
   heroLogo:     { position: 'absolute', top: TOP + 2, alignSelf: 'center', left: 0, right: 0 },
-  heroBtnTxt:   { color: '#FFFFFF', fontSize: typography.size.heading1, textShadowColor: 'rgba(0,0,0,0.8)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 4 },
+  heroBtnTxt:   { color: colors.noir, fontSize: typography.size.heading1 },
   heroBtnIcon:  { fontSize: typography.size.heading1 },
-  heroBtnActing:{ color: colors.accent, fontSize: typography.size.bodyLg, fontWeight: typography.weight.bold },
+  heroBtnActing:{ color: colors.primary, fontSize: typography.size.bodyLg, fontWeight: typography.weight.bold },
 
-  heroBackBtn:     { position: 'absolute', top: TOP, left: spacing.xl, width: 40, height: 40, borderRadius: 0, backgroundColor: 'rgba(15,13,11,0.72)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(240,235,227,0.12)' },
-  heroBackBtnTxt:  { color: 'rgba(240,235,227,0.9)', fontSize: 22, lineHeight: 26 },
+  heroBackBtn:     { position: 'absolute', top: TOP, left: spacing.xl, width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.92)', alignItems: 'center', justifyContent: 'center' },
+  heroBackBtnTxt:  { color: colors.noir, fontSize: 20, lineHeight: 24 },
   heroBottomRight: { position: 'absolute', bottom: spacing.xl, right: spacing.xl, flexDirection: 'row', alignItems: 'center', gap: spacing.md },
-  favBtn:          { width: 44, height: 44, borderRadius: 0, backgroundColor: 'rgba(15,13,11,0.72)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(240,235,227,0.12)' },
-  sharePill:    { backgroundColor: 'rgba(255,255,255,0.07)', borderRadius: 0, paddingHorizontal: 14, paddingVertical: 9, borderWidth: 1, borderColor: 'rgba(255,255,255,0.13)' },
-  shareTxt:     { color: 'rgba(240,235,227,0.75)', fontSize: typography.size.caption, fontWeight: typography.weight.regular, letterSpacing: 2 },
+  favBtn:          { width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.92)', alignItems: 'center', justifyContent: 'center' },
+  sharePill:    { backgroundColor: 'rgba(255,255,255,0.92)', borderRadius: radius.pill, paddingHorizontal: 14, paddingVertical: 9 },
+  shareTxt:     { color: colors.noir, fontSize: typography.size.caption, fontWeight: typography.weight.semibold, letterSpacing: 0.5 },
 
 
-  openBadge: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs + 1, backgroundColor: 'rgba(15,13,11,0.76)', borderRadius: radius.full, paddingHorizontal: spacing.md + 2, paddingVertical: spacing.xs, borderWidth: 1, borderColor: 'rgba(76,175,130,0.3)' },
-  openDot:   { width: 6, height: 6, borderRadius: 0, backgroundColor: colors.green },
+  openBadge: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs + 1, backgroundColor: 'rgba(10,10,10,0.76)', borderRadius: radius.full, paddingHorizontal: spacing.md + 2, paddingVertical: spacing.xs, borderWidth: 1, borderColor: 'rgba(76,175,130,0.3)' },
+  openDot:   { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.green },
   openTxt:   { color: colors.green, fontSize: typography.size.sm },
 
   heroInfo:        { position: 'absolute', bottom: 0, left: 0, right: 0, padding: spacing.xl, paddingBottom: spacing.xl + 2 },
   heroTopRow:      { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.md },
-  heroCuisineBadge:{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs + 1, backgroundColor: 'rgba(26,92,58,0.85)', borderRadius: radius.card, borderWidth: 1, borderColor: 'rgba(26,92,58,0.6)', paddingHorizontal: spacing.md + 1, paddingVertical: spacing.xs },
+  heroCuisineBadge:{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs + 1, backgroundColor: 'rgba(13,107,63,0.85)', borderRadius: radius.card, paddingHorizontal: spacing.md + 1, paddingVertical: spacing.xs },
   heroCuisineEmoji:{ fontSize: typography.size.body },
   heroCuisineTxt:  { color: '#FFFFFF', fontSize: typography.size.xs, letterSpacing: 2.5 },
-  heroName:        { color: colors.text, fontSize: typography.size.title + 4, fontWeight: typography.weight.regular, letterSpacing: 0.3, marginBottom: spacing.sm + 1 },
+  heroName:        { color: '#FFFFFF', fontFamily: typography.display, fontSize: typography.size.title + 4, fontWeight: typography.weight.bold, letterSpacing: -0.3, marginBottom: spacing.sm + 1 },
   heroMeta:        { flexDirection: 'row', alignItems: 'center', gap: spacing.sm + 1, flexWrap: 'wrap' },
   heroRatingTxt:   { color: colors.star, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium },
-  heroReviewCount: { color: colors.textMuted, fontSize: typography.size.caption },
-  heroSep:         { color: colors.textDim },
-  heroAddr:        { color: colors.textMuted, fontSize: typography.size.body, flex: 1 },
+  heroReviewCount: { color: 'rgba(255,255,255,0.6)', fontSize: typography.size.caption },
+  heroSep:         { color: 'rgba(255,255,255,0.5)' },
+  heroAddr:        { color: 'rgba(255,255,255,0.75)', fontSize: typography.size.body, flex: 1 },
 
   strip:     { flexDirection: 'row', backgroundColor: colors.card, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   stripItem: { flex: 1, alignItems: 'center', paddingVertical: spacing.lg - 1, gap: spacing.xxs },
@@ -255,13 +255,13 @@ const s = StyleSheet.create({
   tabTxtOn:{ color: colors.primary, fontWeight: typography.weight.semibold },
   tabLine: { position: 'absolute', bottom: 0, left: '25%', right: '25%', height: 2, backgroundColor: colors.primary, borderRadius: 1 },
 
-  footer:        { paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, borderTopWidth: 1, borderTopColor: colors.cardBorder, backgroundColor: colors.navy },
+  footer:        { paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, borderTopWidth: 1, borderTopColor: colors.cardBorder, backgroundColor: colors.card },
   footerInner:   { flexDirection: 'row', alignItems: 'center', gap: spacing.xl - 2 },
   footerPrice:   { gap: spacing.xxs },
   footerPriceLbl:{ color: colors.textDim, fontSize: typography.size.xs, letterSpacing: 1.5 },
   footerPriceVal:{ color: colors.primary, fontSize: typography.size.heading2, fontWeight: typography.weight.medium },
-  reserveBtn:    { flex: 1, borderRadius: radius.card, paddingVertical: spacing.xl - 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.primary },
-  reserveTxt:    { color: colors.bg, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium, letterSpacing: 1.5 },
+  reserveBtn:    { flex: 1, borderRadius: radius.card, paddingVertical: spacing.xl - 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.resa },
+  reserveTxt:    { color: '#FFFFFF', fontSize: typography.size.bodyLg, fontWeight: typography.weight.bold, letterSpacing: 0.3 },
   directionsBtn: { width: 52, paddingVertical: spacing.xl - 1, borderRadius: radius.card, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder },
   directionsIcon:{ fontSize: 20 },
   clickCollectBtn: { marginTop: spacing.md, borderRadius: radius.card, paddingVertical: spacing.lg - 2, alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent', borderWidth: 1.5, borderColor: colors.green },

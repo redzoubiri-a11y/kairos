@@ -1,25 +1,24 @@
 import { useCallback, useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  Animated, Platform, StatusBar, TextInput,
+  Animated, Platform, StatusBar, TextInput, Dimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, typography, spacing, radius } from '../src/theme';
 import MLoader from '../src/components/MLoader';
-import FeaturedCard from '../src/components/FeaturedCard';
-import ListCard from '../src/components/ListCard';
+import RestaurantCard from '../src/components/RestaurantCard';
 import useHomeData, { CITIES, CATEGORIES, QUICK_FILTERS } from '../src/hooks/useHomeData';
 import usePushNotifications from '../src/hooks/usePushNotifications';
 import useDeepLink from '../src/hooks/useDeepLink';
 
+const SW     = Dimensions.get('window').width;
+const FEAT_W = SW * 0.78;
+
 function SectionHead({ label, right, rightAction }) {
   return (
     <View style={sh.row}>
-      <View style={sh.left}>
-        <View style={sh.bar} />
-        <Text style={sh.label}>{label}</Text>
-      </View>
+      <Text style={sh.label}>{label}</Text>
       {right && (
         <TouchableOpacity onPress={rightAction}>
           <Text style={sh.right}>{right}</Text>
@@ -29,11 +28,9 @@ function SectionHead({ label, right, rightAction }) {
   );
 }
 const sh = StyleSheet.create({
-  row:   { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: spacing.xl, marginTop: spacing.lg, marginBottom: spacing.sm },
-  left:  { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
-  bar:   { width: 3, height: 14, borderRadius: 2, backgroundColor: colors.primary },
-  label: { color: colors.textMuted, fontSize: typography.size.xs, fontWeight: typography.weight.semibold, letterSpacing: 3.5 },
-  right: { color: colors.primary, fontSize: typography.size.body },
+  row:   { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', paddingHorizontal: spacing.xl, marginTop: spacing.lg, marginBottom: spacing.sm },
+  label: { color: colors.text, fontFamily: typography.display, fontSize: typography.size.heading1, fontWeight: typography.weight.bold, letterSpacing: -0.3 },
+  right: { color: colors.primary, fontSize: typography.size.caption, fontWeight: typography.weight.semibold },
 });
 
 function SkeletonCard() {
@@ -152,6 +149,22 @@ export default function HomeScreen({ navigation }) {
       {/* ── Contenu scrollable ── */}
       <ScrollView showsVerticalScrollIndicator={false} style={s.scroll}>
 
+        {/* Actions rapides */}
+        <View style={s.quickActions}>
+          <TouchableOpacity style={s.quickAction} onPress={goExplorer} activeOpacity={0.85}>
+            <View style={[s.quickActionIcon, { backgroundColor: colors.resa }]}>
+              <Text style={s.quickActionEmoji}>📅</Text>
+            </View>
+            <Text style={s.quickActionTxt}>Réserver{'\n'}une table</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={s.quickAction} onPress={goExplorer} activeOpacity={0.85}>
+            <View style={[s.quickActionIcon, { backgroundColor: colors.primary }]}>
+              <Text style={s.quickActionEmoji}>🛍️</Text>
+            </View>
+            <Text style={s.quickActionTxt}>Click &{'\n'}Collect</Text>
+          </TouchableOpacity>
+        </View>
+
         {/* Tables d'aujourd'hui */}
         {slots.length > 0 && (
           <LinearGradient colors={['#094e2e', '#072e1d']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={s.tonightCard}>
@@ -172,14 +185,15 @@ export default function HomeScreen({ navigation }) {
         {/* À la une */}
         {!loading && featured.length > 0 && (
           <>
-            <SectionHead label="À LA UNE" />
+            <SectionHead label="À la une" />
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.featRow}>
               {featured.map(r => (
-                <FeaturedCard
-                  key={r.id} r={r}
-                  onPress={() => navigation.navigate('Restaurant', { restaurant: r })}
-                  onReserve={() => navigation.navigate('ReservationForm', { restaurant: r })}
-                />
+                <View key={r.id} style={s.featCardWrap}>
+                  <RestaurantCard
+                    r={r} variant="featured"
+                    onPress={() => navigation.navigate('Restaurant', { restaurant: r })}
+                  />
+                </View>
               ))}
             </ScrollView>
           </>
@@ -187,7 +201,7 @@ export default function HomeScreen({ navigation }) {
 
         {/* Catégories */}
         <SectionHead
-          label="CUISINES"
+          label="Cuisines"
           right={category !== 'all' ? '✕ Effacer' : null}
           rightAction={clearCategory}
         />
@@ -217,7 +231,7 @@ export default function HomeScreen({ navigation }) {
 
         {/* Liste */}
         <SectionHead
-          label={category === 'all' ? 'TOP RESTAURANTS' : (CATEGORIES.find(c => c.id === category)?.label || '').toUpperCase()}
+          label={category === 'all' ? 'Top restaurants' : (CATEGORIES.find(c => c.id === category)?.label || '')}
         />
 
         {loading ? (
@@ -234,12 +248,11 @@ export default function HomeScreen({ navigation }) {
             </TouchableOpacity>
           </View>
         ) : (
-          <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }] }}>
-            {filtered.map((r, i) => (
-              <ListCard
-                key={r.id} r={r} rank={i}
+          <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }], paddingHorizontal: spacing.xl, gap: spacing.md }}>
+            {filtered.map(r => (
+              <RestaurantCard
+                key={r.id} r={r} variant="compact"
                 onPress={() => navigation.navigate('Restaurant', { restaurant: r })}
-                onReserve={() => navigation.navigate('ReservationForm', { restaurant: r })}
               />
             ))}
           </Animated.View>
@@ -256,7 +269,7 @@ const s = StyleSheet.create({
   scroll: { flex: 1, backgroundColor: colors.greyBg },
 
   /* Zone header verte */
-  headerZone: { backgroundColor: colors.primary, paddingBottom: spacing.sm },
+  headerZone: { backgroundColor: colors.primary, paddingBottom: spacing.sm, borderBottomLeftRadius: radius.xxl, borderBottomRightRadius: radius.xxl },
   header:     { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingHorizontal: spacing.xl, paddingVertical: spacing.sm },
   searchBar:  { flex: 1, flexDirection: 'row', alignItems: 'center', gap: spacing.md, backgroundColor: '#FFFFFF', borderRadius: radius.full, borderWidth: 0, paddingHorizontal: spacing.xl, paddingVertical: spacing.lg },
   searchIcon: { fontSize: 14 },
@@ -295,10 +308,18 @@ const s = StyleSheet.create({
   tonightLabel: { color: 'rgba(245,237,214,0.85)', fontSize: typography.size.xs, letterSpacing: 2.5, marginBottom: spacing.xxs, fontWeight: typography.weight.semibold },
   tonightTitle: { color: '#FFFFFF', fontSize: typography.size.bodyLg, fontWeight: typography.weight.semibold, marginBottom: spacing.sm },
   slotRow:      { gap: spacing.md },
-  slotChip:     { paddingHorizontal: spacing.lg, paddingVertical: 7, borderRadius: 0, backgroundColor: 'rgba(0,0,0,0.28)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.30)' },
+  slotChip:     { paddingHorizontal: spacing.lg, paddingVertical: 7, borderRadius: radius.pill, backgroundColor: 'rgba(0,0,0,0.28)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.30)' },
   slotTxt:      { color: '#FFFFFF', fontSize: typography.size.body, fontWeight: typography.weight.medium },
+  /* Actions rapides */
+  quickActions:     { flexDirection: 'row', gap: spacing.md, paddingHorizontal: spacing.xl, paddingTop: spacing.lg },
+  quickAction:      { flex: 1, backgroundColor: colors.cream, borderRadius: radius.xl - 2, padding: spacing.lg },
+  quickActionIcon:  { width: 30, height: 30, borderRadius: radius.sm + 3, alignItems: 'center', justifyContent: 'center' },
+  quickActionEmoji: { fontSize: 15 },
+  quickActionTxt:   { fontFamily: typography.display, fontSize: typography.size.bodyLg, fontWeight: typography.weight.bold, color: colors.noir, marginTop: spacing.md, letterSpacing: -0.2, lineHeight: 17 },
+
   /* À la une */
-  featRow: { paddingHorizontal: spacing.xl, paddingBottom: spacing.xs },
+  featRow:      { paddingHorizontal: spacing.xl, paddingBottom: spacing.xs },
+  featCardWrap: { width: FEAT_W, marginRight: spacing.lg },
 
   /* Pills cuisine */
   pillRow:   { paddingHorizontal: spacing.xl, gap: spacing.md, paddingBottom: spacing.xs },

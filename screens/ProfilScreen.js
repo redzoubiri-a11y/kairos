@@ -198,7 +198,7 @@ export default function ProfilScreen({ navigation }) {
               <TouchableOpacity style={s.proCard} onPress={goProInscription}>
                 <View style={s.proCardIcon}><Text style={{ fontSize: 22 }}>🍽️</Text></View>
                 <View style={{ flex: 1 }}>
-                  <Text style={s.proCardTitle}>DEVENIR PARTENAIRE</Text>
+                  <Text style={s.proCardTitle}>Vous êtes restaurateur ?</Text>
                   <Text style={s.proCardSub}>{'Rejoignez MIDA Pro\nGérez vos réservations'}</Text>
                 </View>
                 <Text style={s.proCardArrow}>›</Text>
@@ -366,19 +366,19 @@ const s = StyleSheet.create({
   avatarInitial: { color: colors.textMuted, fontSize: 36, fontWeight: typography.weight.regular },
   avatarBadge:   { position: 'absolute', bottom: 2, right: 2, width: 26, height: 26, borderRadius: 13, backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: colors.bg },
   heroInfo:      { alignItems: 'center', gap: spacing.sm },
-  heroName:      { color: colors.text, fontSize: typography.size.title, fontWeight: typography.weight.regular, letterSpacing: 0.5 },
+  heroName:      { color: colors.text, fontFamily: typography.display, fontSize: typography.size.title, fontWeight: typography.weight.bold, letterSpacing: -0.3 },
   heroEmail:     { color: colors.textMuted, fontSize: typography.size.bodyLg },
   heroCity:      { color: colors.textMuted, fontSize: typography.size.body },
   heroMember:    { color: colors.textDim, fontSize: typography.size.sm, letterSpacing: 1, marginTop: 2 },
   editBlock:     { width: '100%', gap: spacing.lg },
   editRow:       { flexDirection: 'row', gap: spacing.lg },
   editInput:     { flex: 1, backgroundColor: colors.card, borderRadius: radius.lg, borderWidth: 1, borderColor: colors.cardBorder, color: colors.text, fontSize: typography.size.subheading, paddingHorizontal: spacing.lg, paddingVertical: spacing.lg },
-  saveBtn:       { backgroundColor: '#004d27', borderRadius: radius.lg, paddingVertical: 11, alignItems: 'center', borderWidth: 1.5, borderColor: '#FFFFFF', shadowColor: '#000', shadowOpacity: 0.35, shadowRadius: 12, shadowOffset: { width: 0, height: 0 }, elevation: 6, overflow: 'hidden' },
+  saveBtn:       { backgroundColor: colors.primary, borderRadius: radius.lg, paddingVertical: 11, alignItems: 'center' },
   saveBtnTxt:    { color: '#FFFFFF', fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium },
 
   statsRow: { flexDirection: 'row', marginHorizontal: spacing.xxl, marginVertical: spacing.xl, backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, overflow: 'hidden' },
   statItem: { flex: 1, alignItems: 'center', paddingVertical: spacing.xl },
-  statVal:  { color: colors.primary, fontSize: typography.size.title, fontWeight: typography.weight.regular, marginBottom: spacing.xs },
+  statVal:  { color: colors.primary, fontFamily: typography.display, fontSize: typography.size.title, fontWeight: typography.weight.bold, marginBottom: spacing.xs },
   statLbl:  { color: colors.textDim, fontSize: typography.size.xs, letterSpacing: 1.5 },
   statDiv:  { width: 1, backgroundColor: colors.cardBorder, marginVertical: spacing.lg },
 
@@ -398,11 +398,11 @@ const s = StyleSheet.create({
   chipTxt:   { color: colors.textMuted, fontSize: typography.size.body, fontWeight: typography.weight.regular },
   chipTxtOn: { color: colors.primary, fontWeight: typography.weight.semibold },
 
-  proCard:      { flexDirection: 'row', alignItems: 'center', gap: spacing.lg, marginHorizontal: spacing.xxl, marginTop: spacing.xxl, padding: spacing.xl, borderRadius: radius.xxl, backgroundColor: colors.primaryDim, borderWidth: 1, borderColor: colors.primarySoft },
-  proCardIcon:  { width: 46, height: 46, borderRadius: radius.lg, backgroundColor: colors.primarySoft, alignItems: 'center', justifyContent: 'center' },
-  proCardTitle: { color: colors.primary, fontSize: typography.size.subheading, fontWeight: typography.weight.semibold, marginBottom: 2 },
-  proCardSub:   { color: colors.textMuted, fontSize: typography.size.caption },
-  proCardArrow: { color: colors.primary, fontSize: 22 },
+  proCard:      { flexDirection: 'row', alignItems: 'center', gap: spacing.lg, marginHorizontal: spacing.xxl, marginTop: spacing.xxl, padding: spacing.xl, borderRadius: radius.xxl, backgroundColor: colors.noir },
+  proCardIcon:  { width: 46, height: 46, borderRadius: radius.lg, backgroundColor: colors.goldSoft, alignItems: 'center', justifyContent: 'center' },
+  proCardTitle: { color: colors.gold, fontFamily: typography.display, fontSize: typography.size.subheading, fontWeight: typography.weight.bold, marginBottom: 2 },
+  proCardSub:   { color: 'rgba(255,255,255,0.6)', fontSize: typography.size.caption },
+  proCardArrow: { color: colors.gold, fontSize: 22 },
 
   settingsCard:    { marginHorizontal: spacing.xxl, backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, overflow: 'hidden' },
   settingRow:      { flexDirection: 'row', alignItems: 'center', gap: spacing.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.lg },
@@ -434,7 +434,7 @@ const s = StyleSheet.create({
   favRating:    { color: colors.primary, fontSize: typography.size.caption, fontWeight: typography.weight.medium },
   favSep:       { color: colors.textDim },
   favPrice:     { color: colors.textMuted, fontSize: typography.size.caption },
-  favResaBtn:   { alignSelf: 'flex-start', backgroundColor: '#006233', borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, shadowColor: '#000', shadowOpacity: 0.35, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 4, overflow: 'hidden' },
+  favResaBtn:   { alignSelf: 'flex-start', backgroundColor: colors.resa, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
   favResaBtnTxt:{ color: '#FFFFFF', fontSize: typography.size.caption, fontWeight: typography.weight.semibold },
   favHeart:     { width: 32, height: 32, borderRadius: radius.full, backgroundColor: colors.primaryDim, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: colors.primarySoft, flexShrink: 0, shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 6, shadowOffset: { width: 0, height: 0 }, elevation: 2, overflow: 'hidden' },
   favHeartTxt:  { fontSize: 14 },

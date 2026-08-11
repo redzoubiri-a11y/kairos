@@ -8,7 +8,7 @@ import { clientName } from './useComptoir';
 export { clientName };
 
 export const STATUS = {
-  pending:   { label:'EN ATTENTE', color: colors.accent, bg: colors.accentSoft, border: 'rgba(232,160,69,0.3)'  },
+  pending:   { label:'EN ATTENTE', color: colors.statusPendingText, bg: colors.statusPendingBg, border: 'transparent'  },
   confirmed: { label:'CONFIRMÉE',  color: colors.green,  bg: colors.greenSoft,  border: 'rgba(76,175,130,0.3)'  },
   cancelled: { label:'ANNULÉE',    color: colors.red,    bg: colors.redSoft,    border: 'rgba(224,90,90,0.3)'   },
   completed: { label:'TERMINÉE',   color: colors.textDim,bg: colors.cardBorder, border: colors.cardBorder       },

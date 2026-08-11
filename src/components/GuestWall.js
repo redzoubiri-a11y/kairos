@@ -33,23 +33,22 @@ const s = StyleSheet.create({
 
   iconWrap: {
     width: 88, height: 88, borderRadius: radius.xxl,
-    backgroundColor: colors.accentSoft,
-    borderWidth: 1.5, borderColor: 'rgba(232,160,69,0.25)',
+    backgroundColor: colors.goldSoft,
+    borderWidth: 1.5, borderColor: 'rgba(200,151,90,0.3)',
     alignItems: 'center', justifyContent: 'center',
     marginBottom: spacing.lg,
   },
-  icon: { color: colors.accent, fontSize: 32 },
+  icon: { color: colors.gold, fontSize: 32 },
 
-  title:   { color: colors.text, fontSize: typography.size.title, fontWeight: typography.weight.regular, letterSpacing: 0.3, textAlign: 'center' },
+  title:   { color: colors.text, fontFamily: typography.display, fontSize: typography.size.title, fontWeight: typography.weight.bold, letterSpacing: -0.3, textAlign: 'center' },
   message: { color: colors.textMuted, fontSize: typography.size.bodyLg, textAlign: 'center', lineHeight: 22 },
 
   primaryBtn: {
-    backgroundColor: '#c8975a', borderRadius: radius.xl,
+    backgroundColor: colors.gold, borderRadius: radius.xl,
     paddingVertical: spacing.xl - 2, paddingHorizontal: spacing.xxxl,
     alignItems: 'center', width: '100%',
-    shadowColor: '#000', shadowOpacity: 0.5, shadowRadius: 14, shadowOffset: { width: 0, height: 0 }, elevation: 7,
   },
-  primaryTxt: { color: colors.bg, fontSize: typography.size.bodyLg, fontWeight: typography.weight.bold, letterSpacing: 0.5 },
+  primaryTxt: { color: colors.noir, fontSize: typography.size.bodyLg, fontWeight: typography.weight.bold, letterSpacing: 0.5 },
 
   secondaryBtn: { paddingVertical: spacing.md, paddingHorizontal: spacing.xxl },
   secondaryTxt: { color: colors.blue, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium },

@@ -5,11 +5,11 @@ import { supabase } from '../../supabase';
 import { colors } from '../theme';
 
 export const ORDER_STATUS = {
-  pending:   { label: 'EN ATTENTE',  color: colors.accent, bg: colors.accentSoft, border: 'rgba(232,160,69,0.3)' },
-  confirmed: { label: 'CONFIRMÉE',   color: colors.blue,   bg: colors.blueSoft,   border: 'rgba(90,155,224,0.3)' },
-  ready:     { label: 'PRÊTE',       color: colors.green,  bg: colors.greenSoft,  border: 'rgba(76,175,130,0.3)' },
-  collected: { label: 'RÉCUPÉRÉE',   color: colors.textDim,bg: colors.cardBorder, border: colors.cardBorder },
-  cancelled: { label: 'ANNULÉE',     color: colors.red,    bg: colors.redSoft,    border: 'rgba(224,90,90,0.3)' },
+  pending:   { label: 'EN ATTENTE',  color: colors.statusPendingText,   bg: colors.statusPendingBg,   border: 'transparent' },
+  confirmed: { label: 'CONFIRMÉE',   color: colors.statusPendingText,   bg: colors.statusPendingBg,   border: 'transparent' },
+  ready:     { label: 'PRÊTE',       color: colors.statusConfirmedText, bg: colors.statusConfirmedBg, border: 'transparent' },
+  collected: { label: 'RÉCUPÉRÉE',   color: colors.textMuted,           bg: colors.tagNeutralBg,      border: 'transparent' },
+  cancelled: { label: 'ANNULÉE',     color: colors.statusCancelledText, bg: colors.statusCancelledBg, border: 'transparent' },
 };
 
 const NEXT_STATUS = { pending: 'confirmed', confirmed: 'ready', ready: 'collected' };

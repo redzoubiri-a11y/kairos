@@ -54,13 +54,13 @@ export default function RestaurantCompletionCard({ navigation, restaurantId, ref
 }
 
 const s = StyleSheet.create({
-  card:    { marginHorizontal: spacing.xxl, marginTop: spacing.lg, padding: spacing.xl, borderRadius: radius.xxl, backgroundColor: 'rgba(200,151,90,0.10)', borderWidth: 1, borderColor: 'rgba(200,151,90,0.30)' },
+  card:    { marginHorizontal: spacing.xxl, marginTop: spacing.lg, padding: spacing.xl, borderRadius: radius.xxl, backgroundColor: colors.goldSoft, borderWidth: 1, borderColor: 'rgba(200,151,90,0.3)' },
   headRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: spacing.md },
-  title:   { color: '#F5F2EC', fontSize: typography.size.subheading, fontWeight: typography.weight.semibold },
-  sub:     { color: 'rgba(245,242,236,0.50)', fontSize: typography.size.xs },
-  track:   { height: 6, borderRadius: 3, backgroundColor: 'rgba(255,255,255,0.10)', overflow: 'hidden', marginBottom: spacing.md },
-  fill:    { height: '100%', backgroundColor: '#c8975a', borderRadius: 3 },
+  title:   { color: colors.text, fontSize: typography.size.subheading, fontWeight: typography.weight.semibold },
+  sub:     { color: colors.textMuted, fontSize: typography.size.xs },
+  track:   { height: 6, borderRadius: 3, backgroundColor: colors.cardBorder, overflow: 'hidden', marginBottom: spacing.md },
+  fill:    { height: '100%', backgroundColor: colors.gold, borderRadius: 3 },
   chips:   { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
-  chip:    { paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderRadius: radius.full, backgroundColor: 'rgba(255,255,255,0.08)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)' },
-  chipTxt: { color: 'rgba(245,242,236,0.80)', fontSize: typography.size.xs },
+  chip:    { paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderRadius: radius.full, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder },
+  chipTxt: { color: colors.text, fontSize: typography.size.xs },
 });

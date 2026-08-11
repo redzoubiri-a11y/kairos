@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, typography, spacing } from '../src/theme';
+import { colors, typography, spacing, radius } from '../src/theme';
 import useSearch from '../src/hooks/useSearch';
 import { CUISINE_EMOJI } from '../src/hooks/useMapScreen';
 
@@ -252,22 +252,22 @@ const s = StyleSheet.create({
   mapWrap:        { flex: 1 },
   mapPlaceholder: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#e8e8e8' },
 
-  pin:      { backgroundColor: '#fff', borderWidth: 1.5, borderColor: '#1A1A1A', paddingHorizontal: 8, paddingVertical: 5, alignItems: 'center', maxWidth: 120 },
+  pin:      { backgroundColor: colors.card, borderRadius: radius.sm + 2, borderWidth: 1.5, borderColor: colors.noir, paddingHorizontal: 8, paddingVertical: 5, alignItems: 'center', maxWidth: 120 },
   pinEmoji: { fontSize: 14 },
-  pinName:  { color: '#1A1A1A', fontSize: 9, fontWeight: '600', marginTop: 2, letterSpacing: 0.3 },
+  pinName:  { color: colors.noir, fontSize: 9, fontWeight: '600', marginTop: 2, letterSpacing: 0.3 },
 
-  countBadge: { position: 'absolute', top: spacing.lg, left: spacing.lg, flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: '#1A1A1A', paddingHorizontal: spacing.lg, paddingVertical: spacing.xs },
+  countBadge: { position: 'absolute', top: spacing.lg, left: spacing.lg, flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: colors.noir, borderRadius: radius.pill, paddingHorizontal: spacing.lg, paddingVertical: spacing.xs },
   countTxt:   { color: '#fff', fontSize: typography.size.caption, fontWeight: typography.weight.semibold, letterSpacing: 1 },
   countArrow: { fontSize: 12 },
 
   listPanel:   { ...StyleSheet.absoluteFillObject, backgroundColor: colors.bg },
   resultRow:   { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   resultThumb: { width: 44, height: 44, borderRadius: 8, backgroundColor: colors.cardHover, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
-  resultName:  { color: colors.text, fontSize: typography.size.bodyLg, fontWeight: '500' },
+  resultName:  { color: colors.text, fontFamily: typography.display, fontSize: typography.size.bodyLg, fontWeight: typography.weight.bold },
   resultSub:   { color: colors.textMuted, fontSize: typography.size.caption, marginTop: 2, textTransform: 'capitalize' },
   resultArrow: { color: colors.textDim, fontSize: 20 },
 
-  tipBadge: { position: 'absolute', bottom: spacing.lg, alignSelf: 'center', backgroundColor: 'rgba(255,255,255,0.92)', paddingHorizontal: spacing.xl, paddingVertical: spacing.md, borderWidth: 1, borderColor: colors.cardBorder },
+  tipBadge: { position: 'absolute', bottom: spacing.lg, alignSelf: 'center', backgroundColor: 'rgba(255,255,255,0.92)', borderRadius: radius.pill, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, borderWidth: 1, borderColor: colors.cardBorder },
   tipTxt:   { color: colors.textMuted, fontSize: typography.size.caption },
 
   overlay:    { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(255,255,255,0.88)', alignItems: 'center', justifyContent: 'center', gap: spacing.md },

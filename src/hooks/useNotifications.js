@@ -10,9 +10,9 @@ export const TYPE_CFG = {
   cancellation:   { icon: '❌', color: colors.red,    label: 'Annulation',   group: 'resa' },
   resa_cancelled: { icon: '❌', color: colors.red,    label: 'Annulation',   group: 'resa' },
   new_resa:       { icon: '📅', color: colors.blue,   label: 'Réservation',  group: 'resa' },
-  reminder:       { icon: '⏰', color: colors.accent, label: 'Rappel',       group: 'rappel' },
-  review_ask:     { icon: '⭐', color: colors.accent, label: 'Avis',         group: 'rappel' },
-  review_request: { icon: '⭐', color: colors.accent, label: 'Avis',         group: 'rappel' },
+  reminder:       { icon: '⏰', color: colors.gold, label: 'Rappel',       group: 'rappel' },
+  review_ask:     { icon: '⭐', color: colors.resa, label: 'Avis',         group: 'rappel' },
+  review_request: { icon: '⭐', color: colors.resa, label: 'Avis',         group: 'rappel' },
   new_order:      { icon: '🛍️', color: colors.blue,   label: 'Commande',     group: 'commande' },
   order_update:   { icon: '🛍️', color: colors.blue,   label: 'Commande',     group: 'commande' },
 };

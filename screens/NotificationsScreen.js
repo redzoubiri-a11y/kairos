@@ -90,7 +90,7 @@ export default function NotificationsScreen({ navigation }) {
       ) : (
         <ScrollView
           showsVerticalScrollIndicator={false}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.accent} />}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
         >
           {groups.map(({ label, items }) => (
             <View key={label}>
@@ -146,24 +146,24 @@ const s = StyleSheet.create({
   header:       { flexDirection: 'row', alignItems: 'center', paddingHorizontal: spacing.xxl, paddingTop: spacing.xl, paddingBottom: spacing.xl, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   backBtn:      { width: 60, alignItems: 'flex-start' },
   backBtnTxt:   { color: colors.text, fontSize: 22 },
-  headerSub:    { flex: 1, color: colors.accent, fontSize: typography.size.xs, letterSpacing: 3, textAlign: 'center' },
+  headerSub:    { flex: 1, color: colors.primary, fontSize: typography.size.xs, letterSpacing: 3, textAlign: 'center' },
   markAllBtn:   { width: 60, alignItems: 'flex-end' },
   markAllTxt:   { color: colors.blue, fontSize: typography.size.body },
   markAllDim:   { color: colors.textDim },
 
-  summaryBar:   { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingHorizontal: spacing.xxl, paddingVertical: spacing.md+1, backgroundColor: 'rgba(232,160,69,0.06)', borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
-  summaryDot:   { width: 7, height: 7, borderRadius: 0, backgroundColor: colors.accent },
-  summaryTxt:   { color: colors.accent, fontSize: typography.size.body },
+  summaryBar:   { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingHorizontal: spacing.xxl, paddingVertical: spacing.md+1, backgroundColor: colors.primaryDim, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
+  summaryDot:   { width: 7, height: 7, borderRadius: 3.5, backgroundColor: colors.primary },
+  summaryTxt:   { color: colors.primary, fontSize: typography.size.body },
   summaryHint:  { color: colors.textDim, fontSize: typography.size.caption },
 
   tabBar:       { flexDirection: 'row', backgroundColor: colors.card, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   tabBtn:       { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: spacing.lg, gap: spacing.sm, position: 'relative' },
-  tabBtnOn:     { backgroundColor: 'rgba(200,151,90,0.12)', shadowColor: '#000', shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
+  tabBtnOn:     { backgroundColor: colors.primaryDim },
   tabTxt:       { color: colors.textMuted, fontSize: typography.size.body, fontWeight: typography.weight.regular },
-  tabTxtOn:     { color: colors.accent, fontWeight: typography.weight.semibold },
-  tabBadge:     { backgroundColor: colors.accent, borderRadius: radius.md, minWidth: 16, height: 16, paddingHorizontal: spacing.xxs+1, alignItems: 'center', justifyContent: 'center' },
-  tabBadgeTxt:  { color: colors.bg, fontSize: typography.size.xs, fontWeight: typography.weight.bold },
-  tabLine:      { position: 'absolute', bottom: 0, left: '15%', right: '15%', height: 2, backgroundColor: colors.accent, borderRadius: 0 },
+  tabTxtOn:     { color: colors.primary, fontWeight: typography.weight.semibold },
+  tabBadge:     { backgroundColor: colors.primary, borderRadius: radius.md, minWidth: 16, height: 16, paddingHorizontal: spacing.xxs+1, alignItems: 'center', justifyContent: 'center' },
+  tabBadgeTxt:  { color: '#FFFFFF', fontSize: typography.size.xs, fontWeight: typography.weight.bold },
+  tabLine:      { position: 'absolute', bottom: 0, left: '15%', right: '15%', height: 2, backgroundColor: colors.primary, borderRadius: 1 },
 
   groupLabel:   { color: colors.textMuted, fontSize: typography.size.xs, letterSpacing: 4, paddingHorizontal: spacing.xxl, paddingTop: spacing.xxl, paddingBottom: spacing.md },
 
@@ -179,7 +179,7 @@ const s = StyleSheet.create({
   cardTitle:    { color: colors.text, fontSize: typography.size.subheading, fontWeight: typography.weight.regular, lineHeight: 20 },
   cardTitleBold:{ fontWeight: typography.weight.medium },
   cardBody:     { color: colors.textMuted, fontSize: typography.size.body, lineHeight: 18 },
-  unreadDot:    { width: 8, height: 8, borderRadius: 0, flexShrink: 0, marginTop: spacing.sm },
+  unreadDot:    { width: 8, height: 8, borderRadius: 4, flexShrink: 0, marginTop: spacing.sm },
 
   actionBtn:    { alignSelf: 'flex-start', marginTop: spacing.sm, paddingVertical: spacing.sm, paddingHorizontal: spacing.lg, backgroundColor: colors.blueSoft, borderRadius: radius.md, borderWidth: 1, borderColor: 'rgba(90,155,224,0.25)' },
   actionBtnTxt: { color: colors.blue, fontSize: typography.size.caption },

@@ -16,7 +16,7 @@ function Dots({ total, current, accentColor }) {
           style={[
             d.dot,
             i === current
-              ? { backgroundColor: accentColor || colors.accent, width: 22 }
+              ? { backgroundColor: accentColor || colors.primary, width: 22 }
               : i < current
               ? { backgroundColor: colors.accentDim, width: 6 }
               : { backgroundColor: colors.cardBorder, width: 6 },
@@ -70,12 +70,12 @@ export default function OnboardingScreen({ onSelect, onGuest }) {
         </Animated.View>
 
         <View style={s.footer}>
-          <Dots total={TOTAL} current={step} accentColor={sl.accentColor} />
+          <Dots total={TOTAL} current={step} accentColor={colors.primary} />
           <View style={s.footerBtns}>
             <TouchableOpacity style={s.skipBtn} onPress={goToFinal} activeOpacity={0.6}>
               <Text style={s.skipTxt}>Passer</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[s.nextBtn, { backgroundColor: sl.accentColor }]} onPress={goToNext} activeOpacity={0.85}>
+            <TouchableOpacity style={s.nextBtn} onPress={goToNext} activeOpacity={0.85}>
               <Text style={s.nextTxt}>{step === 2 ? 'Commencer  ✦' : 'Suivant  →'}</Text>
             </TouchableOpacity>
           </View>
@@ -118,22 +118,22 @@ export default function OnboardingScreen({ onSelect, onGuest }) {
         </View>
 
         <TouchableOpacity style={[s.roleCard, s.roleCardPro]} onPress={goPro} activeOpacity={0.82}>
-          <View style={[s.roleIconWrap, { backgroundColor: colors.accentSoft, borderColor: 'rgba(232,160,69,0.3)' }]}>
+          <View style={[s.roleIconWrap, { backgroundColor: colors.goldSoft, borderColor: 'rgba(200,151,90,0.3)' }]}>
             <Text style={s.roleEmoji}>📊</Text>
           </View>
           <View style={{ flex: 1 }}>
-            <Text style={[s.roleTitle, { color: colors.accent }]}>J'ai un restaurant</Text>
+            <Text style={[s.roleTitle, { color: colors.gold }]}>J'ai un restaurant</Text>
             <Text style={s.roleDesc}>Gérer mes réservations et ma visibilité sur Mida</Text>
             <View style={s.roleChips}>
               {['Dashboard', 'Comptoir'].map((t, i) => (
-                <View key={i} style={[s.roleChipSmall, { borderColor: 'rgba(232,160,69,0.3)', backgroundColor: colors.accentSoft }]}>
-                  <Text style={[s.roleChipTxt, { color: colors.accent }]}>{t}</Text>
+                <View key={i} style={[s.roleChipSmall, { borderColor: 'rgba(200,151,90,0.3)', backgroundColor: colors.goldSoft }]}>
+                  <Text style={[s.roleChipTxt, { color: colors.gold }]}>{t}</Text>
                 </View>
               ))}
             </View>
           </View>
-          <View style={[s.roleArrowWrap, { backgroundColor: colors.accentSoft }]}>
-            <Text style={[s.roleArrow, { color: colors.accent }]}>›</Text>
+          <View style={[s.roleArrowWrap, { backgroundColor: colors.goldSoft }]}>
+            <Text style={[s.roleArrow, { color: colors.gold }]}>›</Text>
           </View>
         </TouchableOpacity>
 
@@ -152,7 +152,7 @@ export default function OnboardingScreen({ onSelect, onGuest }) {
       </Animated.View>
 
       <View style={[s.footer, { paddingBottom: spacing.lg }]}>
-        <Dots total={TOTAL} current={3} accentColor={colors.accent} />
+        <Dots total={TOTAL} current={3} accentColor={colors.primary} />
       </View>
     </SafeAreaView>
   );
@@ -162,22 +162,22 @@ const s = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.bg },
 
   slideWrap:  { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 28 },
-  tag:        { flexDirection: 'row', alignItems: 'center', gap: 7, borderRadius: 0, borderWidth: 1, paddingHorizontal: spacing.xl, paddingVertical: spacing.sm, marginBottom: spacing.section },
-  tagDot:     { width: 5, height: 5, borderRadius: 0 },
+  tag:        { flexDirection: 'row', alignItems: 'center', gap: 7, borderRadius: radius.pill, borderWidth: 1, paddingHorizontal: spacing.xl, paddingVertical: spacing.sm, marginBottom: spacing.section },
+  tagDot:     { width: 5, height: 5, borderRadius: 2.5 },
   tagTxt:     { fontSize: typography.size.xs, letterSpacing: 3, fontWeight: typography.weight.semibold },
-  emojiOuter: { width: 148, height: 148, borderRadius: 0, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center', marginBottom: spacing.section + 4 },
-  emojiInner: { width: 108, height: 108, borderRadius: 0, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
+  emojiOuter: { width: 148, height: 148, borderRadius: 74, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center', marginBottom: spacing.section + 4 },
+  emojiInner: { width: 108, height: 108, borderRadius: 54, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
   mainEmoji:  { fontSize: 56 },
-  slideTitle: { color: colors.text, fontSize: typography.size.hero, fontWeight: typography.weight.regular, letterSpacing: 0.3, textAlign: 'center', lineHeight: 40, marginBottom: spacing.xl },
+  slideTitle: { color: colors.text, fontFamily: typography.display, fontSize: typography.size.hero, fontWeight: typography.weight.bold, letterSpacing: -0.5, textAlign: 'center', lineHeight: 36, marginBottom: spacing.xl },
   slideSub:   { color: colors.textMuted, fontSize: typography.size.bodyLg, textAlign: 'center', lineHeight: 22, marginBottom: spacing.xxl + 4, paddingHorizontal: spacing.md },
   chipsRow:   { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md, justifyContent: 'center' },
-  chip:       { borderRadius: 0, borderWidth: 1, paddingHorizontal: spacing.lg, paddingVertical: spacing.xs },
+  chip:       { borderRadius: radius.pill, borderWidth: 1, paddingHorizontal: spacing.lg, paddingVertical: spacing.xs },
   chipTxt:    { fontSize: typography.size.caption, fontWeight: typography.weight.regular },
 
   stepWrap:   { flex: 1, paddingHorizontal: spacing.xxl, paddingTop: spacing.xl },
   stepHeader: { alignItems: 'center', marginBottom: spacing.section },
-  stepTag:    { color: colors.accent, fontSize: typography.size.xs, letterSpacing: 3, fontWeight: typography.weight.semibold, marginBottom: spacing.lg },
-  stepTitle:  { color: colors.text, fontSize: typography.size.hero, fontWeight: typography.weight.regular, letterSpacing: 0.3, marginBottom: spacing.md, textAlign: 'center' },
+  stepTag:    { color: colors.primary, fontSize: typography.size.xs, letterSpacing: 3, fontWeight: typography.weight.semibold, marginBottom: spacing.lg },
+  stepTitle:  { color: colors.text, fontFamily: typography.display, fontSize: typography.size.hero, fontWeight: typography.weight.bold, letterSpacing: -0.5, marginBottom: spacing.md, textAlign: 'center' },
   stepSub:    { color: colors.textMuted, fontSize: typography.size.bodyLg, textAlign: 'center', lineHeight: 20 },
 
   cityCards:       { gap: spacing.lg },
@@ -204,7 +204,7 @@ const s = StyleSheet.create({
   roleTitle:     { color: colors.text, fontSize: typography.size.heading3, fontWeight: typography.weight.medium, marginBottom: spacing.xs },
   roleDesc:      { color: colors.textMuted, fontSize: typography.size.caption, lineHeight: 16, marginBottom: spacing.lg },
   roleChips:     { flexDirection: 'row', gap: spacing.sm },
-  roleChipSmall: { borderRadius: 0, borderWidth: 1, borderColor: colors.cardBorder, backgroundColor: colors.cardBorder, paddingHorizontal: spacing.md, paddingVertical: spacing.xxs },
+  roleChipSmall: { borderRadius: radius.sm + 2, borderWidth: 1, borderColor: colors.cardBorder, backgroundColor: colors.cardBorder, paddingHorizontal: spacing.md, paddingVertical: spacing.xxs },
   roleChipTxt:   { color: colors.textMuted, fontSize: typography.size.xs, fontWeight: typography.weight.regular },
   roleArrowWrap: { width: 34, height: 34, borderRadius: radius.md, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   roleArrow:     { fontSize: 20, fontWeight: typography.weight.regular },
@@ -220,7 +220,7 @@ const s = StyleSheet.create({
   footerBtns: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   skipBtn:    { paddingVertical: spacing.md, paddingHorizontal: spacing.xs },
   skipTxt:    { color: colors.textDim, fontSize: typography.size.subheading },
-  nextBtn:    { borderRadius: radius.xl, paddingVertical: spacing.xl - 2, paddingHorizontal: spacing.xxl + 6 },
+  nextBtn:    { backgroundColor: colors.noir, borderRadius: radius.xl, paddingVertical: spacing.xl - 2, paddingHorizontal: spacing.xxl + 6 },
   nextBtnDim: { backgroundColor: colors.textDim },
-  nextTxt:    { color: colors.bg, fontSize: typography.size.subheading, fontWeight: typography.weight.medium },
+  nextTxt:    { color: '#FFFFFF', fontSize: typography.size.subheading, fontWeight: typography.weight.bold },
 });

@@ -45,6 +45,7 @@ export default function AuthScreen({ onAuth, userType, onSwitchType, onGuest }) 
         <ScrollView contentContainerStyle={s.scroll} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
 
           <View style={s.hero}>
+            <Text style={s.wordmark}>MIDA</Text>
             <Animated.View style={[s.heroRingOuter, { transform: [{ scale: pulseAnim }] }]}>
               <View style={s.heroRingInner}>
                 <Text style={s.heroStar}>✦</Text>
@@ -197,6 +198,7 @@ const s = StyleSheet.create({
   scroll: { flexGrow: 1, paddingHorizontal: spacing.xl, paddingBottom: spacing.section + 4 },
 
   hero:          { alignItems: 'center', paddingTop: 50, paddingBottom: spacing.section },
+  wordmark:      { fontFamily: typography.display, fontSize: typography.size.heading1, fontWeight: typography.weight.bold, color: colors.primary, letterSpacing: -0.3, marginBottom: spacing.xl },
   heroRingOuter: { width: 88, height: 88, borderRadius: radius.xxl, backgroundColor: colors.primarySoft, borderWidth: 1.5, borderColor: colors.primarySoft, alignItems: 'center', justifyContent: 'center', marginBottom: spacing.xxl },
   heroRingInner: { width: 60, height: 60, borderRadius: radius.xl, backgroundColor: colors.primarySoft, borderWidth: 1, borderColor: colors.primarySoft, alignItems: 'center', justifyContent: 'center' },
   heroStar:      { color: colors.primary, fontSize: 28 },
@@ -209,7 +211,7 @@ const s = StyleSheet.create({
 
   card:      { backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.xxl, marginBottom: spacing.xl },
   cardHead:  { marginBottom: spacing.xxl },
-  cardTitle: { color: colors.text, fontSize: typography.size.title, fontWeight: typography.weight.regular, letterSpacing: 0.3, marginBottom: spacing.xs },
+  cardTitle: { color: colors.text, fontFamily: typography.display, fontSize: typography.size.title, fontWeight: typography.weight.bold, letterSpacing: -0.3, marginBottom: spacing.xs },
   cardSub:   { color: colors.textMuted, fontSize: typography.size.bodyLg, lineHeight: 19 },
 
   input:   { flex: 1, color: colors.text, fontSize: typography.size.heading3, fontWeight: typography.weight.regular, paddingVertical: 0 },
@@ -217,7 +219,7 @@ const s = StyleSheet.create({
   eyeTxt:  { color: colors.blue, fontSize: typography.size.body },
 
   forgotBtn:  { alignSelf: 'flex-end', marginTop: spacing.sm, marginBottom: spacing.lg },
-  forgotTxt:  { color: colors.accent, fontSize: typography.size.caption, fontWeight: typography.weight.medium },
+  forgotTxt:  { color: colors.primary, fontSize: typography.size.caption, fontWeight: typography.weight.medium },
   forgotSent: { color: colors.green, fontSize: typography.size.caption, fontWeight: typography.weight.medium },
 
   errorBox:       { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.md, backgroundColor: colors.redSoft, borderRadius: radius.lg, padding: spacing.lg, borderWidth: 1, borderColor: 'rgba(224,90,90,0.25)', marginBottom: spacing.xl },
@@ -231,7 +233,7 @@ const s = StyleSheet.create({
   successLinkTxt: { color: colors.blue, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium },
 
   submitBtn: { backgroundColor: colors.primary, borderRadius: radius.xl, paddingVertical: spacing.xl - 2, alignItems: 'center', marginTop: spacing.xs, shadowColor: colors.primary, shadowOpacity: 0.4, shadowRadius: 14, shadowOffset: { width: 0, height: 0 }, elevation: 7 },
-  submitTxt: { color: colors.bg, fontSize: typography.size.bodyLg, fontWeight: typography.weight.bold, letterSpacing: 0.5 },
+  submitTxt: { color: '#FFFFFF', fontSize: typography.size.bodyLg, fontWeight: typography.weight.bold, letterSpacing: 0.5 },
 
   roleBadge:    { alignSelf: 'center', flexDirection: 'row', alignItems: 'center', backgroundColor: colors.blueSoft, borderRadius: radius.pill, borderWidth: 1, borderColor: 'rgba(90,155,224,0.3)', paddingHorizontal: spacing.xl, paddingVertical: spacing.md, marginBottom: spacing.xl },
   roleBadgeTxt: { color: colors.blue, fontSize: typography.size.body, fontWeight: typography.weight.medium, letterSpacing: 0.5 },

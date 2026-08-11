@@ -5,7 +5,7 @@
 // ─────────────────────────────────────────────
 
 export const colors = {
-  // Palette principale MIDA v2
+  // Palette principale MIDA — direction "Marché" (refonte 08/2026)
   primary: '#0D6B3F',
   primarySoft: 'rgba(13,107,63,0.10)',
   primaryDim: 'rgba(13,107,63,0.06)',
@@ -14,33 +14,33 @@ export const colors = {
   greyBg: '#F5F6F8',
 
   // Backgrounds
-  bg: '#FFFFFF',
-  card: '#F4F2EE',
-  cardBorder: 'rgba(0,0,0,0.09)',
-  cardHover: 'rgba(0,0,0,0.05)',
+  bg: '#FDFCF9',
+  card: '#FFFFFF',
+  cardBorder: '#ECE7DC',
+  cardHover: 'rgba(10,10,10,0.04)',
 
   // Neutral light — boutons et éléments UI (thème blanc)
   navy: 'transparent',
-  navyBorder: 'rgba(0,0,0,0.10)',
-  navyDeep: 'rgba(0,0,0,0.04)',
+  navyBorder: '#ECE7DC',
+  navyDeep: 'rgba(10,10,10,0.04)',
 
-  // Accent UI — galets stone
-  accent: '#9B9088',
-  accentSoft: 'rgba(155,144,136,0.18)',
-  accentDim: '#7A7270',
+  // Accent UI — neutre sombre (remplace l'ancien stone #9B9088)
+  accent: 'rgba(10,10,10,0.55)',
+  accentSoft: 'rgba(10,10,10,0.08)',
+  accentDim: 'rgba(10,10,10,0.35)',
 
-  // CTA Pro — ambre doré (héritage, à remplacer progressivement)
+  // CTA Pro — ambre, exclusif à l'univers restaurateur
   gold: '#c8975a',
   goldSoft: 'rgba(200,151,90,0.14)',
 
-  // CTA Réservation — terracotta chaud
+  // CTA Réservation — terracotta, exclusif à l'action de réserver
   resa: '#C87860',
   resaSoft: 'rgba(200,120,96,0.18)',
 
   // Texte
-  text: '#1A1A1A',
-  textMuted: 'rgba(26,26,26,0.60)',
-  textDim: 'rgba(26,26,26,0.38)',
+  text: '#0A0A0A',
+  textMuted: 'rgba(10,10,10,0.55)',
+  textDim: 'rgba(10,10,10,0.38)',
 
   // États
   green: '#4CAF82',
@@ -52,7 +52,7 @@ export const colors = {
   purple: '#9B7FE8',
   purpleSoft: 'rgba(155, 127, 232, 0.15)',
 
-  // Turquoise réservation
+  // Turquoise réservation (héritage, écrans non encore migrés)
   teal: '#3A96A8',
   tealLight: '#6BBDCB',
   tealSoft: 'rgba(58,150,168,0.20)',
@@ -63,19 +63,27 @@ export const colors = {
   overlay: 'rgba(0,0,0,0.5)',
   overlayLight: 'rgba(0,0,0,0.15)',
 
+  // Statuts réservation/commande (pro)
+  statusPendingBg: '#F6ECDD',
+  statusPendingText: '#8a6a35',
+  statusConfirmedBg: '#E8F1EB',
+  statusConfirmedText: '#0D6B3F',
+  statusCancelledBg: '#F3E3DE',
+  statusCancelledText: '#8a4633',
+
   // Restaurant cards design system
   star: '#f5c842',
-  separator: '#eeeeee',
-  halalBg: '#e8f5ee',
-  halalBorder: '#a3d4b8',
-  textSecondary: '#555555',
-  textTertiary: '#888888',
+  separator: '#ECE7DC',
+  tagGreenBg: '#E8F1EB',
+  tagNeutralBg: '#F1EEE6',
+  textSecondary: 'rgba(10,10,10,0.55)',
+  textTertiary: 'rgba(10,10,10,0.45)',
 };
 
 export const typography = {
-  // Familles
-  display: 'Georgia',       // Logo et titres hero
-  body: 'System',           // Texte courant (utilise la police système)
+  // Familles — direction "Marché" : Space Grotesk (titres/chiffres) + DM Sans (tout le reste)
+  display: 'Space Grotesk',       // Titres d'écran, noms de restaurants, chiffres clés
+  body: 'DM Sans',                // Texte courant, interface
 
   // Tailles
   size: {
@@ -87,10 +95,10 @@ export const typography = {
     subheading: 14,
     heading3: 15,
     heading2: 16,
-    heading1: 18,
-    title: 20,
+    heading1: 19,
+    title: 24,
     hero: 28,
-    display: 36,
+    display: 32,
   },
 
   // Poids
@@ -114,11 +122,11 @@ export const typography = {
 export const spacing = {
   xxs: 2,
   xs: 4,
-  sm: 6,
+  sm: 8,
   md: 8,
   lg: 12,
   xl: 16,
-  xxl: 20,
+  xxl: 24,
   xxxl: 24,
   section: 32,
 };
@@ -126,38 +134,38 @@ export const spacing = {
 export const radius = {
   sm: 4,
   md: 8,
-  card: 10,
+  card: 16,
   lg: 12,
   xl: 16,
-  xxl: 20,
-  pill: 32,
+  xxl: 22,
+  pill: 999,
   full: 999,
 };
 
 export const shadows = {
   sm: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
+    shadowColor: '#0A0A0A',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 12,
     elevation: 2,
   },
   md: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
-    shadowRadius: 10,
+    shadowColor: '#0A0A0A',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.22,
+    shadowRadius: 28,
     elevation: 4,
   },
   lg: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.16,
-    shadowRadius: 20,
+    shadowColor: '#0A0A0A',
+    shadowOffset: { width: 0, height: 24 },
+    shadowOpacity: 0.28,
+    shadowRadius: 48,
     elevation: 8,
   },
   accent: {
-    shadowColor: '#9B9088',
+    shadowColor: '#0A0A0A',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 12,
@@ -173,7 +181,7 @@ export const common = {
   },
   card: {
     backgroundColor: colors.card,
-    borderRadius: radius.xl,
+    borderRadius: radius.card,
     borderWidth: 1,
     borderColor: colors.cardBorder,
   },
@@ -191,10 +199,12 @@ export const common = {
     justifyContent: 'center',
   },
   sectionTitle: {
-    fontSize: typography.size.bodyLg,
+    fontFamily: typography.display,
+    fontSize: typography.size.heading1,
     fontWeight: typography.weight.bold,
     color: colors.text,
     marginBottom: spacing.lg,
+    letterSpacing: -0.3,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -204,7 +214,7 @@ export const common = {
   },
   seeAll: {
     fontSize: typography.size.caption,
-    color: colors.accent,
+    color: colors.primary,
     fontWeight: typography.weight.bold,
   },
   separator: {
@@ -224,50 +234,88 @@ export const buttonVariants = {
   primary: {
     container: {
       backgroundColor: colors.noir,
-      borderRadius: radius.xl,
+      borderRadius: radius.lg,
       padding: spacing.xl,
       alignItems: 'center',
-      borderWidth: 1,
-      borderColor: 'rgba(10,10,10,0.5)',
-      shadowColor: colors.noir,
-      shadowOpacity: 0.4,
-      shadowRadius: 14,
-      shadowOffset: { width: 0, height: 0 },
-      elevation: 7,
     },
     text: {
+      fontFamily: typography.body,
       color: '#FFFFFF',
       fontSize: typography.size.subheading,
-      fontWeight: typography.weight.extrabold,
+      fontWeight: typography.weight.bold,
       letterSpacing: 0.3,
+    },
+  },
+  confirm: {
+    container: {
+      backgroundColor: colors.primary,
+      borderRadius: radius.lg,
+      padding: spacing.xl,
+      alignItems: 'center',
+    },
+    text: {
+      fontFamily: typography.body,
+      color: '#FFFFFF',
+      fontSize: typography.size.subheading,
+      fontWeight: typography.weight.bold,
+    },
+  },
+  reserve: {
+    container: {
+      backgroundColor: colors.resa,
+      borderRadius: radius.lg,
+      padding: spacing.xl,
+      alignItems: 'center',
+    },
+    text: {
+      fontFamily: typography.body,
+      color: '#FFFFFF',
+      fontSize: typography.size.subheading,
+      fontWeight: typography.weight.bold,
+    },
+  },
+  pro: {
+    container: {
+      backgroundColor: colors.gold,
+      borderRadius: radius.lg,
+      padding: spacing.xl,
+      alignItems: 'center',
+    },
+    text: {
+      fontFamily: typography.body,
+      color: colors.noir,
+      fontSize: typography.size.subheading,
+      fontWeight: typography.weight.bold,
     },
   },
   secondary: {
     container: {
       backgroundColor: 'transparent',
-      borderRadius: radius.xl,
+      borderRadius: radius.lg,
       padding: spacing.xl,
       alignItems: 'center',
       borderWidth: 1.5,
-      borderColor: colors.accent,
+      borderColor: colors.noir,
     },
     text: {
-      color: colors.accent,
+      fontFamily: typography.body,
+      color: colors.noir,
       fontSize: typography.size.subheading,
-      fontWeight: typography.weight.extrabold,
+      fontWeight: typography.weight.bold,
     },
   },
   ghost: {
     container: {
       backgroundColor: colors.card,
-      borderRadius: radius.xl,
+      borderRadius: radius.lg,
       padding: spacing.xl,
       alignItems: 'center',
       borderWidth: 1,
       borderColor: colors.cardBorder,
     },
     text: {
-      color: '#5A5550',
+      fontFamily: typography.body,
+      color: colors.text,
       fontSize: typography.size.subheading,
       fontWeight: typography.weight.bold,
     },
@@ -275,25 +323,41 @@ export const buttonVariants = {
   danger: {
     container: {
       backgroundColor: colors.redSoft,
-      borderRadius: radius.xl,
+      borderRadius: radius.lg,
       padding: spacing.xl,
       alignItems: 'center',
       borderWidth: 1,
       borderColor: 'rgba(224, 90, 90, 0.3)',
     },
     text: {
+      fontFamily: typography.body,
       color: colors.red,
       fontSize: typography.size.subheading,
-      fontWeight: typography.weight.extrabold,
+      fontWeight: typography.weight.bold,
+    },
+  },
+  disabled: {
+    container: {
+      backgroundColor: colors.tagNeutralBg,
+      borderRadius: radius.lg,
+      padding: spacing.xl,
+      alignItems: 'center',
+    },
+    text: {
+      fontFamily: typography.body,
+      color: colors.accentDim,
+      fontSize: typography.size.subheading,
+      fontWeight: typography.weight.bold,
     },
   },
 };
 
 // Tags / Badges
 export const tagVariants = {
-  default: { bg: colors.accentSoft, text: colors.accent },
-  success: { bg: colors.greenSoft, text: colors.green },
-  error: { bg: colors.redSoft, text: colors.red },
+  default: { bg: colors.tagNeutralBg, text: colors.text },
+  success: { bg: colors.tagGreenBg, text: colors.primary },
+  error: { bg: colors.statusCancelledBg, text: colors.statusCancelledText },
+  pending: { bg: colors.statusPendingBg, text: colors.statusPendingText },
   info: { bg: colors.blueSoft, text: colors.blue },
   purple: { bg: colors.purpleSoft, text: colors.purple },
   muted: { bg: colors.cardBorder, text: colors.textMuted },
@@ -309,3 +373,4 @@ export default {
   buttonVariants,
   tagVariants,
 };
+

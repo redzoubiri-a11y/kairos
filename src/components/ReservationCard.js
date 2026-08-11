@@ -35,9 +35,9 @@ const NEXT_DAYS = getNextDays();
 // ── Status display (thème clair) ───────────────────────────────────────────
 
 const STATUS = {
-  confirmed: { label: 'CONFIRMÉE',  color: colors.green,  bg: colors.greenSoft  },
-  pending:   { label: 'EN ATTENTE', color: colors.accent,  bg: colors.accentSoft },
-  cancelled: { label: 'ANNULÉE',    color: colors.red,     bg: colors.redSoft    },
+  confirmed: { label: 'CONFIRMÉE',  color: colors.statusConfirmedText, bg: colors.statusConfirmedBg },
+  pending:   { label: 'EN ATTENTE', color: colors.statusPendingText,   bg: colors.statusPendingBg   },
+  cancelled: { label: 'ANNULÉE',    color: colors.statusCancelledText, bg: colors.statusCancelledBg },
 };
 
 // ── Feedback banner ────────────────────────────────────────────────────────
@@ -309,14 +309,14 @@ export default function ReservationCard({
 }
 
 const c = StyleSheet.create({
-  card:       { marginHorizontal: spacing.xl, marginBottom: spacing.lg, backgroundColor: colors.card, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.cardBorder, overflow: 'hidden' },
+  card:       { marginHorizontal: spacing.xl, marginBottom: spacing.lg, backgroundColor: colors.card, borderRadius: radius.xl - 2, borderWidth: 1, borderColor: colors.cardBorder, overflow: 'hidden' },
   cardDimmed: { opacity: 0.55 },
 
   header:    { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.lg, padding: spacing.xl },
-  restoName: { color: colors.text, fontSize: typography.size.heading2, fontWeight: typography.weight.semibold },
-  meta:      { color: colors.textMuted, fontSize: typography.size.bodyLg, lineHeight: 18 },
-  badge:     { borderRadius: radius.pill, paddingHorizontal: spacing.lg, paddingVertical: spacing.xs, alignSelf: 'flex-start' },
-  badgeTxt:  { fontSize: typography.size.caption, fontWeight: typography.weight.bold, letterSpacing: 0.5 },
+  restoName: { color: colors.text, fontFamily: typography.display, fontSize: typography.size.heading3, fontWeight: typography.weight.bold, letterSpacing: -0.2 },
+  meta:      { color: colors.textMuted, fontSize: typography.size.body, lineHeight: 18 },
+  badge:     { flexShrink: 0, borderRadius: radius.sm + 2, paddingHorizontal: spacing.sm, paddingVertical: 5, alignSelf: 'flex-start' },
+  badgeTxt:  { fontSize: typography.size.xs + 0.5, fontWeight: typography.weight.bold, letterSpacing: 0.2 },
 
   feedbackBanner:  { flexDirection: 'row', alignItems: 'center', marginHorizontal: spacing.xl, marginBottom: spacing.md, borderRadius: radius.lg, borderWidth: 1, paddingHorizontal: spacing.lg, paddingVertical: spacing.md, gap: spacing.sm },
   feedbackTxt:     { flex: 1, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium, lineHeight: 18 },
@@ -326,8 +326,8 @@ const c = StyleSheet.create({
   actionRow: { flexDirection: 'row', gap: spacing.sm },
   btnMod:    { flex: 1, backgroundColor: colors.bg, borderRadius: radius.lg, borderWidth: 1, borderColor: colors.cardBorder, paddingVertical: spacing.md, paddingHorizontal: spacing.sm, alignItems: 'center' },
   btnModTxt: { color: colors.text, fontSize: typography.size.body, fontWeight: typography.weight.medium },
-  btnCancel: { backgroundColor: colors.redSoft, borderRadius: radius.lg, borderWidth: 1, borderColor: 'rgba(224,90,90,0.25)', paddingVertical: spacing.md, alignItems: 'center' },
-  btnCancelTxt: { color: colors.red, fontSize: typography.size.bodyLg, fontWeight: typography.weight.semibold },
+  btnCancel: { backgroundColor: 'transparent', borderRadius: radius.lg, borderWidth: 1.5, borderColor: colors.resaSoft, paddingVertical: spacing.md, alignItems: 'center' },
+  btnCancelTxt: { color: colors.resa, fontSize: typography.size.bodyLg, fontWeight: typography.weight.semibold },
   btnDis:    { opacity: 0.5 },
 
   panel:        { marginHorizontal: spacing.xl, marginBottom: spacing.xl, backgroundColor: colors.bg, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.xl, gap: spacing.md },

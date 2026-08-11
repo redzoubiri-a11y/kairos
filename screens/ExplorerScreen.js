@@ -197,7 +197,7 @@ export default function ExplorerScreen({ navigation, route }) {
 
         <View style={{ flex: 1 }}>
           {loading ? (
-            <View style={s.empty}><ActivityIndicator color={colors.accent} size="large" /></View>
+            <View style={s.empty}><ActivityIndicator color={colors.primary} size="large" /></View>
           ) : restaurants.length === 0 ? (
             <View style={s.empty}>
               <Text style={{ fontSize: 36 }}>🍽️</Text>
@@ -231,25 +231,25 @@ const s = StyleSheet.create({
   header:      { flexDirection:'row', justifyContent:'space-between', alignItems:'center', paddingHorizontal:spacing.xl, paddingTop:TOP+14, paddingBottom:14, backgroundColor:'transparent', borderBottomWidth:1, borderBottomColor:colors.cardBorder },
   headerItalic:{ color:colors.blue, fontSize:typography.size.caption, fontStyle:'italic', letterSpacing:1.5, marginBottom:2 },
   headerTitle: { color:colors.text, fontSize:typography.size.heading2, fontWeight:typography.weight.regular, letterSpacing:3 },
-  countBadge:  { flexDirection:'row', alignItems:'center', gap:5, backgroundColor:colors.accentSoft, borderRadius:radius.full, paddingHorizontal:spacing.md, paddingVertical:5, borderWidth:1, borderColor:'rgba(232,160,69,0.3)' },
+  countBadge:  { flexDirection:'row', alignItems:'center', gap:5, backgroundColor:'rgba(255,255,255,0.92)', borderRadius:radius.full, paddingHorizontal:spacing.md, paddingVertical:5 },
   countDot:    { width:6, height:6, borderRadius:3, backgroundColor:colors.green },
-  countTxt:    { color:colors.accent, fontSize:typography.size.caption, fontWeight:'500' },
-  modeBtn:     { width:36, height:36, borderRadius:radius.md, backgroundColor:'transparent', borderWidth:1, borderColor:colors.navyBorder, alignItems:'center', justifyContent:'center' },
-  modeBtnOn:   { backgroundColor:'rgba(200,151,90,0.14)', borderColor:'#c8975a', shadowColor:'#000', shadowOpacity:0.35, shadowRadius:10, shadowOffset:{ width:0, height:0 }, elevation:5 },
+  countTxt:    { color:colors.noir, fontSize:typography.size.caption, fontWeight:typography.weight.semibold },
+  modeBtn:     { width:36, height:36, borderRadius:radius.md, backgroundColor:'rgba(255,255,255,0.92)', borderWidth:1, borderColor:colors.cardBorder, alignItems:'center', justifyContent:'center' },
+  modeBtnOn:   { backgroundColor:colors.goldSoft, borderWidth: 1, borderColor:colors.gold },
   modeBtnTxt:  { fontSize:16 },
 
   selCard:    { position:'absolute', bottom:8, left:14, right:14, backgroundColor:colors.card, borderRadius:radius.xl, borderWidth:1, borderColor:colors.cardBorder, overflow:'hidden', zIndex:5 },
   selPhoto:   { width:'100%', height:120 },
   selOverlay: { paddingHorizontal:spacing.xl, paddingTop:spacing.md, paddingBottom:spacing.xs },
-  selCuisine: { color:'#C87860', fontSize:typography.size.xs, letterSpacing:2.5, marginBottom:3 },
-  selName:    { color:colors.text, fontSize:typography.size.heading2, fontWeight:'300', letterSpacing:0.3, marginBottom:4 },
+  selCuisine: { color:colors.resa, fontSize:typography.size.xs, letterSpacing:2.5, marginBottom:3 },
+  selName:    { color:colors.text, fontFamily:typography.display, fontSize:typography.size.heading2, fontWeight:typography.weight.bold, letterSpacing:-0.2, marginBottom:4 },
   selMeta:    { flexDirection:'row', flexWrap:'wrap', gap:6 },
-  selRating:  { color:'#C87860', fontSize:typography.size.body, fontWeight:'500' },
+  selRating:  { color:colors.gold, fontSize:typography.size.body, fontWeight:typography.weight.medium },
   selAddr:    { color:colors.textMuted, fontSize:typography.size.body },
   selPrice:   { color:colors.textDim, fontSize:typography.size.body },
   selActions: { flexDirection:'row', gap:8, paddingHorizontal:spacing.xl, paddingVertical:spacing.lg },
-  selBtnPrimary:    { flex:1, backgroundColor:'#C87860', borderRadius:radius.md, paddingVertical:11, alignItems:'center', borderWidth:1, borderColor:'rgba(255,220,150,0.4)', shadowColor:'#000', shadowOpacity:0.45, shadowRadius:12, shadowOffset:{ width:0, height:0 }, elevation:6 },
-  selBtnPrimaryTxt: { color:'#FFFFFF', fontSize:typography.size.bodyLg, fontWeight:'500' },
+  selBtnPrimary:    { flex:1, backgroundColor:colors.resa, borderRadius:radius.md, paddingVertical:11, alignItems:'center' },
+  selBtnPrimaryTxt: { color:'#FFFFFF', fontSize:typography.size.bodyLg, fontWeight:typography.weight.semibold },
   selBtnSecondary:  { flex:1, borderRadius:radius.md, paddingVertical:11, alignItems:'center', borderWidth:1, borderColor:colors.cardBorder },
   selBtnSecondaryTxt:{ color:colors.text, fontSize:typography.size.bodyLg },
   selClose:   { position:'absolute', top:10, right:10, width:28, height:28, borderRadius:14, backgroundColor:'rgba(15,13,11,0.72)', alignItems:'center', justifyContent:'center' },
@@ -269,8 +269,8 @@ const s = StyleSheet.create({
   cityTxt:     { color:colors.textMuted, fontSize:typography.size.body },
   cityTxtOn:   { color:colors.primary, fontWeight:'600' },
 
-  backBtn:     { width:36, height:36, borderRadius:0, backgroundColor:'rgba(15,13,11,0.65)', alignItems:'center', justifyContent:'center', borderWidth:1, borderColor:'rgba(240,235,227,0.15)' },
-  backBtnTxt:  { color:'rgba(240,235,227,0.9)', fontSize:18, lineHeight:22 },
+  backBtn:     { width:36, height:36, borderRadius:18, backgroundColor:'rgba(255,255,255,0.92)', alignItems:'center', justifyContent:'center' },
+  backBtnTxt:  { color:colors.noir, fontSize:18, lineHeight:22 },
 
   gridRow:     { paddingHorizontal:14, justifyContent:'space-between' },
   gridContent: { paddingTop:6 },

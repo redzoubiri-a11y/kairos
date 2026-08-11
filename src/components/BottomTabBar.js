@@ -1,11 +1,13 @@
 import { useRef, useCallback, useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Platform, Animated } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
+import { colors as theme } from '../theme';
 
 const C = {
-  accent:   '#0D1628',
-  dim:      '#b0bec5',
-  activeBg: 'rgba(13,22,40,0.08)',
+  accent:   theme.primary,
+  dim:      theme.textDim,
+  activeBg: theme.primarySoft,
 };
 
 const C_DARK = {
@@ -15,19 +17,19 @@ const C_DARK = {
 };
 
 const CLIENT_TABS = [
-  { name: 'Accueil',   label: 'Accueil',      route: 'Accueil' },
-  { name: 'Recherche', label: 'Recherche',     route: 'Recherche' },
-  { name: 'Favoris',   label: 'Favoris',       route: 'Favoris' },
-  { name: 'Resa',      label: 'Réservations',  route: 'Resa' },
-  { name: 'Profil',    label: 'Profil',        route: 'Profil' },
+  { name: 'Accueil',   label: 'Accueil',  route: 'Accueil',  icon: 'home',     iconOff: 'home-outline' },
+  { name: 'Recherche', label: 'Explorer', route: 'Recherche',icon: 'search',   iconOff: 'search-outline' },
+  { name: 'Favoris',   label: 'Favoris',  route: 'Favoris',  icon: 'heart',    iconOff: 'heart-outline' },
+  { name: 'Resa',      label: 'Résas',    route: 'Resa',     icon: 'calendar', iconOff: 'calendar-outline' },
+  { name: 'Profil',    label: 'Profil',   route: 'Profil',   icon: 'person',   iconOff: 'person-outline' },
 ];
 
 const PRO_TABS = [
-  { name: 'Accueil',   label: 'Accueil',   route: 'Accueil' },
-  { name: 'Recherche', label: 'Recherche', route: 'Recherche' },
-  { name: 'Favoris',   label: 'Favoris',   route: 'Favoris' },
-  { name: 'Manager',   label: 'Manager',   route: 'Manager' },
-  { name: 'Profil',    label: 'Profil',    route: 'Profil' },
+  { name: 'Accueil',   label: 'Accueil',  route: 'Accueil',  icon: 'home',     iconOff: 'home-outline' },
+  { name: 'Recherche', label: 'Explorer', route: 'Recherche',icon: 'search',   iconOff: 'search-outline' },
+  { name: 'Favoris',   label: 'Favoris',  route: 'Favoris',  icon: 'heart',    iconOff: 'heart-outline' },
+  { name: 'Manager',   label: 'Manager',  route: 'Manager',  icon: 'grid',     iconOff: 'grid-outline' },
+  { name: 'Profil',    label: 'Profil',   route: 'Profil',   icon: 'person',   iconOff: 'person-outline' },
 ];
 
 function TabItem({ tab, isActive, onPress, dark }) {
@@ -49,6 +51,11 @@ function TabItem({ tab, isActive, onPress, dark }) {
         isActive && { backgroundColor: colors.activeBg },
         { transform: [{ scale }] },
       ]}>
+        <Ionicons
+          name={isActive ? tab.icon : tab.iconOff}
+          size={18}
+          color={isActive ? colors.accent : colors.dim}
+        />
         <Text style={[s.label, { color: isActive ? colors.accent : colors.dim }]} numberOfLines={1}>
           {tab.label}
         </Text>
@@ -111,26 +118,19 @@ export default function BottomTabBar({ navigation, isPro = false, activeTab = nu
 
 const s = StyleSheet.create({
   outerWrap: {
-    paddingHorizontal: 16,
-    paddingTop: 8,
     backgroundColor: 'transparent',
   },
   container: {
     flexDirection: 'row',
-    backgroundColor: 'rgba(255,255,255,0.97)',
-    borderRadius: 36,
+    backgroundColor: theme.bg,
+    borderTopWidth: 1,
+    borderTopColor: theme.cardBorder,
     paddingVertical: 8,
-    height: 50,
-    shadowColor: '#000',
-    shadowOpacity: 0.16,
-    shadowRadius: 24,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 16,
+    height: 58,
   },
   containerTransparent: {
     backgroundColor: 'transparent',
-    shadowOpacity: 0,
-    elevation: 0,
+    borderTopWidth: 0,
   },
   tab: {
     flex: 1,
@@ -140,9 +140,10 @@ const s = StyleSheet.create({
   tabInner: {
     alignItems: 'center',
     justifyContent: 'center',
+    gap: 4,
     paddingHorizontal: 10,
     paddingVertical: 5,
-    borderRadius: 16,
+    borderRadius: 12,
   },
   tabInnerActive: {
     backgroundColor: C.activeBg,

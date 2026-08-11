@@ -5,7 +5,7 @@ import { supabase } from '../../supabase';
 import { colors } from '../theme';
 
 export const STATUS_CFG = {
-  pending:   { label: 'EN ATTENTE', color: colors.accent,    bg: colors.accentSoft, border: 'rgba(232,160,69,0.35)'  },
+  pending:   { label: 'EN ATTENTE', color: colors.gold,      bg: colors.goldSoft,   border: 'rgba(200,151,90,0.35)'  },
   confirmed: { label: 'CONFIRMÉE',  color: colors.green,     bg: colors.greenSoft,  border: 'rgba(76,175,130,0.35)'  },
   cancelled: { label: 'ANNULÉE',    color: colors.red,       bg: colors.redSoft,    border: 'rgba(224,90,90,0.35)'   },
   arrived:   { label: 'ARRIVÉ',     color: colors.blue,      bg: colors.blueSoft,   border: 'rgba(90,155,224,0.35)'  },

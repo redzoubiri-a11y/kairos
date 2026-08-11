@@ -11,9 +11,9 @@ export const SLIDES = [
     title: 'Trouve ton resto\nen 10 secondes',
     sub: "Parcours les meilleurs restaurants d'Alger, filtre par quartier, cuisine et budget.",
     chips: ['347 restaurants', '100% avis vérifiés', 'Résa en 30s'],
-    accentColor: colors.accent,
-    ringBg: colors.accentSoft,
-    ringBorder: 'rgba(232,160,69,0.25)',
+    accentColor: colors.gold,
+    ringBg: colors.goldSoft,
+    ringBorder: 'rgba(200,151,90,0.3)',
   },
   {
     emoji: '📅',

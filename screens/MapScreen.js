@@ -42,15 +42,15 @@ export default function MapScreen({ navigation }) {
       <View style={s.root}>
         <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg, alignItems: 'center', justifyContent: 'center', gap: 16, padding: 32 }}>
           <Text style={{ fontSize: 48 }}>🗺️</Text>
-          <Text style={{ color: colors.accent, fontSize: 20, fontWeight: '600', letterSpacing: 4 }}>CARTE</Text>
+          <Text style={{ color: colors.primary, fontFamily: typography.display, fontSize: 20, fontWeight: typography.weight.bold, letterSpacing: 1 }}>Carte</Text>
           <Text style={{ color: colors.textMuted, fontSize: 13, textAlign: 'center', lineHeight: 20 }}>
             La carte interactive est disponible sur l'application mobile.
           </Text>
           {loading ? (
-            <ActivityIndicator color={colors.accent} />
+            <ActivityIndicator color={colors.primary} />
           ) : (
-            <View style={{ backgroundColor: colors.accentSoft, borderRadius: 0, borderWidth: 1, borderColor: 'rgba(232,160,69,0.3)', padding: 14, width: '100%' }}>
-              <Text style={{ color: colors.accent, fontSize: 11, letterSpacing: 2, marginBottom: 8 }}>RESTAURANTS DISPONIBLES</Text>
+            <View style={{ backgroundColor: colors.card, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.cardBorder, padding: 14, width: '100%' }}>
+              <Text style={{ color: colors.textDim, fontSize: 11, letterSpacing: 2, marginBottom: 8 }}>RESTAURANTS DISPONIBLES</Text>
               {restaurants.slice(0, 6).map(r => (
                 <TouchableOpacity
                   key={r.id}
@@ -62,7 +62,7 @@ export default function MapScreen({ navigation }) {
                     <Text style={{ color: colors.text, fontSize: 13 }}>{r.name}</Text>
                     <Text style={{ color: colors.textMuted, fontSize: 11 }}>{r.quartier || '—'}</Text>
                   </View>
-                  {r.avg_rating > 0 && <Text style={{ color: colors.accent, fontSize: 11 }}>★ {Number(r.avg_rating).toFixed(1)}</Text>}
+                  {r.avg_rating > 0 && <Text style={{ color: colors.gold, fontSize: 11 }}>★ {Number(r.avg_rating).toFixed(1)}</Text>}
                 </TouchableOpacity>
               ))}
               {restaurants.length > 6 && (
@@ -162,16 +162,15 @@ const s = StyleSheet.create({
   map:  { flex: 1 },
 
   pin: {
-    width: 38, height: 38, borderRadius: 0,
-    backgroundColor: 'rgba(15,13,11,0.9)',
-    borderWidth: 2, borderColor: colors.cardBorder,
+    width: 38, height: 38, borderRadius: 19,
+    backgroundColor: 'rgba(10,10,10,0.9)',
+    borderWidth: 2, borderColor: '#FFFFFF',
     alignItems: 'center', justifyContent: 'center',
   },
   pinActive: {
-    borderColor: '#c8975a', borderWidth: 2.5,
+    borderColor: colors.gold, borderWidth: 2.5,
     backgroundColor: colors.card,
-    width: 46, height: 46, borderRadius: 0,
-    shadowColor: '#000', shadowOpacity: 0.5, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 6,
+    width: 46, height: 46, borderRadius: 23,
   },
   pinEmoji:   { fontSize: 18 },
   pinEmojiLg: { fontSize: 22 },
@@ -180,26 +179,24 @@ const s = StyleSheet.create({
   header: {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
     marginHorizontal: spacing.xl, marginTop: spacing.lg,
-    backgroundColor: 'rgba(15,13,11,0.92)',
+    backgroundColor: 'rgba(10,10,10,0.92)',
     borderRadius: radius.xxl, paddingHorizontal: spacing.xxl, paddingVertical: spacing.lg,
-    borderWidth: 1, borderColor: colors.cardBorder,
   },
   backBtn:    { marginRight: spacing.sm },
-  backBtnTxt: { color: 'rgba(240,235,227,0.85)', fontSize: 22 },
-  headerSub:  { color: colors.textMuted, fontSize: typography.size.caption, marginTop: 1 },
+  backBtnTxt: { color: '#FFFFFF', fontSize: 22 },
+  headerSub:  { color: 'rgba(255,255,255,0.65)', fontSize: typography.size.caption, marginTop: 1 },
   countBadge: {
     flexDirection: 'row', alignItems: 'center', gap: spacing.sm,
-    backgroundColor: colors.accentSoft,
+    backgroundColor: 'rgba(200,151,90,0.18)',
     borderRadius: radius.full, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm,
     borderWidth: 1, borderColor: 'rgba(200,151,90,0.4)',
-    shadowColor: '#000', shadowOpacity: 0.25, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 3,
   },
-  countDot: { width: 6, height: 6, borderRadius: 0, backgroundColor: colors.green },
-  countTxt:  { color: colors.accent, fontSize: typography.size.caption, fontWeight: '500' },
+  countDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.green },
+  countTxt:  { color: colors.gold, fontSize: typography.size.caption, fontWeight: typography.weight.medium },
 
   spinner: {
     position: 'absolute', bottom: 140, alignSelf: 'center',
-    backgroundColor: 'rgba(15,13,11,0.92)',
+    backgroundColor: 'rgba(10,10,10,0.92)',
     borderRadius: radius.full, padding: spacing.lg,
   },
 
@@ -211,7 +208,7 @@ const s = StyleSheet.create({
     flex: 1, flexDirection: 'row', alignItems: 'center',
     backgroundColor: colors.card,
     borderRadius: radius.xxl, overflow: 'hidden',
-    borderWidth: 1, borderColor: 'rgba(232,160,69,0.3)',
+    borderWidth: 1, borderColor: colors.cardBorder,
     padding: spacing.xl, gap: spacing.lg,
   },
   cardThumb: {
@@ -221,20 +218,19 @@ const s = StyleSheet.create({
   },
   cardEmoji: { fontSize: 24 },
   cardInfo:  { flex: 1 },
-  cardTag:   { color: colors.accent, fontSize: typography.size.xs, letterSpacing: 2.5, marginBottom: 3 },
-  cardName:  { color: colors.text,   fontSize: typography.size.heading3, fontWeight: '400', marginBottom: 3 },
+  cardTag:   { color: colors.gold, fontSize: typography.size.xs, letterSpacing: 2.5, marginBottom: 3 },
+  cardName:  { color: colors.text, fontFamily: typography.display, fontSize: typography.size.heading3, fontWeight: typography.weight.bold, marginBottom: 3 },
   cardAddr:  { color: colors.textMuted, fontSize: typography.size.caption, marginBottom: 4 },
-  cardRating:{ color: colors.accent, fontSize: typography.size.caption, fontWeight: '500' },
+  cardRating:{ color: colors.gold, fontSize: typography.size.caption, fontWeight: typography.weight.medium },
   cardArrow: {
-    width: 32, height: 32, borderRadius: 0,
-    backgroundColor: '#c8975a',
+    width: 32, height: 32, borderRadius: 16,
+    backgroundColor: colors.gold,
     alignItems: 'center', justifyContent: 'center',
-    shadowColor: '#000', shadowOpacity: 0.5, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5,
   },
-  cardArrowTxt: { color: colors.bg, fontSize: 20, fontWeight: '700', marginTop: -1 },
+  cardArrowTxt: { color: colors.noir, fontSize: 20, fontWeight: '700', marginTop: -1 },
 
   closeBtn: {
-    width: 40, height: 40, borderRadius: 0,
+    width: 40, height: 40, borderRadius: 20,
     backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder,
     alignItems: 'center', justifyContent: 'center',
   },

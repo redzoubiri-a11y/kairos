@@ -89,7 +89,7 @@ export default function FavorisScreen({ navigation }) {
           <Text style={s.emptyTitle}>Aucun favori</Text>
           <Text style={s.emptySub}>Appuyez sur ❤️ sur la page d'un restaurant{'\n'}pour l'ajouter ici.</Text>
           <TouchableOpacity style={s.exploreBtn} onPress={goExplorer}>
-            <Text style={s.exploreBtnTxt}>EXPLORER LES RESTAURANTS</Text>
+            <Text style={s.exploreBtnTxt}>Explorer les restaurants</Text>
           </TouchableOpacity>
         </View>
       ) : filtered.length === 0 ? (
@@ -104,7 +104,7 @@ export default function FavorisScreen({ navigation }) {
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={s.grid}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.accent} />}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
         >
           <View style={s.statStrip}>
             <View style={s.statItem}>
@@ -168,21 +168,21 @@ const s = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.bg },
 
   header:      { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: spacing.xxxl, paddingTop: spacing.xl, paddingBottom: spacing.xl, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
-  headerSub:   { color: '#0D1628', fontSize: typography.size.xs, letterSpacing: 3, marginBottom: spacing.xs },
-  headerTitle: { color: colors.text, fontSize: typography.size.heading2, fontWeight: '300', letterSpacing: 1, textTransform: 'uppercase' },
-  countBadge:  { backgroundColor: colors.accentSoft, borderRadius: radius.full, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderWidth: 1, borderColor: 'rgba(232,160,69,0.3)' },
-  countTxt:    { color: colors.accent, fontSize: typography.size.bodyLg },
+  headerSub:   { color: colors.primary, fontSize: typography.size.xs, letterSpacing: 3, marginBottom: spacing.xs },
+  headerTitle: { color: colors.text, fontFamily: typography.display, fontSize: typography.size.heading1, fontWeight: typography.weight.bold, letterSpacing: -0.3 },
+  countBadge:  { backgroundColor: colors.redSoft, borderRadius: radius.full, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderWidth: 1, borderColor: 'rgba(224,90,90,0.3)' },
+  countTxt:    { color: colors.red, fontSize: typography.size.bodyLg },
 
   controls:    { flexDirection: 'row', gap: spacing.md, paddingHorizontal: spacing.xxl, paddingVertical: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
-  searchBar:   { flex: 1, flexDirection: 'row', alignItems: 'center', gap: spacing.md, backgroundColor: 'transparent', borderRadius: radius.full, paddingHorizontal: spacing.lg, paddingVertical: spacing.md+1, borderWidth: 1, borderColor: 'rgba(0,0,0,0.7)' },
+  searchBar:   { flex: 1, flexDirection: 'row', alignItems: 'center', gap: spacing.md, backgroundColor: colors.card, borderRadius: radius.full, paddingHorizontal: spacing.lg, paddingVertical: spacing.md+1, borderWidth: 1, borderColor: colors.cardBorder },
   searchIcon:  { fontSize: 13 },
   searchInput: { flex: 1, color: colors.text, fontSize: typography.size.bodyLg },
-  sortBtn:     { backgroundColor: colors.card, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.md+1, borderWidth: 1, borderColor: 'rgba(200,151,90,0.3)', justifyContent: 'center', shadowColor: '#000', shadowOpacity: 0.3, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 3 },
-  sortTxt:     { color: colors.accent, fontSize: typography.size.sm, fontWeight: typography.weight.medium },
+  sortBtn:     { backgroundColor: colors.card, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.md+1, borderWidth: 1, borderColor: 'rgba(200,151,90,0.3)', justifyContent: 'center' },
+  sortTxt:     { color: colors.gold, fontSize: typography.size.sm, fontWeight: typography.weight.medium },
 
   statStrip:   { flexDirection: 'row', backgroundColor: colors.card, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.cardBorder, marginHorizontal: spacing.xxl, marginBottom: spacing.xl },
   statItem:    { flex: 1, alignItems: 'center', paddingVertical: spacing.lg, gap: spacing.xxs },
-  statVal:     { color: colors.text, fontSize: typography.size.heading1, fontWeight: typography.weight.regular },
+  statVal:     { color: colors.text, fontFamily: typography.display, fontSize: typography.size.heading1, fontWeight: typography.weight.bold },
   statLbl:     { color: colors.textDim, fontSize: typography.size.xs, letterSpacing: 1 },
   statDiv:     { width: 1, backgroundColor: colors.cardBorder, marginVertical: spacing.md },
 
@@ -201,6 +201,6 @@ const s = StyleSheet.create({
   emptyEmoji:   { fontSize: 56 },
   emptyTitle:   { color: colors.text, fontSize: typography.size.title, fontWeight: typography.weight.regular, letterSpacing: 0.5 },
   emptySub:     { color: colors.textMuted, fontSize: typography.size.bodyLg, textAlign: 'center', lineHeight: 20 },
-  exploreBtn:   { backgroundColor: '#006233', borderRadius: radius.xl, paddingVertical: 13, paddingHorizontal: spacing.xxxl, marginTop: spacing.md, shadowColor: '#000', shadowOpacity: 0.45, shadowRadius: 12, shadowOffset: { width: 0, height: 0 }, elevation: 6 },
-  exploreBtnTxt:{ color: colors.bg, fontSize: typography.size.body, fontWeight: typography.weight.medium, letterSpacing: 2 },
+  exploreBtn:   { backgroundColor: colors.primary, borderRadius: radius.xl, paddingVertical: 13, paddingHorizontal: spacing.xxxl, marginTop: spacing.md },
+  exploreBtnTxt:{ color: '#FFFFFF', fontSize: typography.size.body, fontWeight: typography.weight.semibold, letterSpacing: 0.5 },
 });

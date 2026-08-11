@@ -55,17 +55,17 @@ export default function ResaRow({ resa, index, onConfirm, onCancel, onArrive, ac
 }
 
 const s = StyleSheet.create({
-  card:       { borderLeftWidth: 4, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.07)', paddingVertical: spacing.xl, paddingHorizontal: spacing.xxl },
+  card:       { borderLeftWidth: 4, borderBottomWidth: 1, borderBottomColor: colors.cardBorder, paddingVertical: spacing.xl, paddingHorizontal: spacing.xxl },
   cardDim:    { opacity: 0.4 },
-  cardStripe: { backgroundColor: 'rgba(255,255,255,0.04)' },
+  cardStripe: { backgroundColor: colors.cardHover },
 
   infoRow:    { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },
-  time:       { fontSize: 18, fontWeight: '300', flexShrink: 0, marginRight: spacing.md, minWidth: 52 },
+  time:       { fontFamily: typography.display, fontSize: 18, fontWeight: typography.weight.bold, flexShrink: 0, marginRight: spacing.md, minWidth: 52 },
   clientCol:  { flex: 1 },
-  clientName: { color: '#F5F2EC', fontSize: typography.size.bodyLg, fontWeight: '400', letterSpacing: 0.3 },
-  notes:      { color: 'rgba(245,242,236,0.50)', fontSize: typography.size.body, fontStyle: 'italic', marginTop: 3 },
-  couv:       { color: '#F5F2EC', fontSize: typography.size.bodyLg, fontWeight: '300' },
-  couvUnit:   { color: 'rgba(245,242,236,0.45)', fontSize: typography.size.body },
+  clientName: { color: colors.text, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium, letterSpacing: 0.3 },
+  notes:      { color: colors.textMuted, fontSize: typography.size.body, fontStyle: 'italic', marginTop: 3 },
+  couv:       { color: colors.text, fontSize: typography.size.bodyLg, fontWeight: typography.weight.regular },
+  couvUnit:   { color: colors.textDim, fontSize: typography.size.body },
   badge:      { borderRadius: radius.md, borderWidth: 1, paddingHorizontal: spacing.lg, paddingVertical: 6, alignItems: 'center' },
   badgeTxt:   { fontSize: typography.size.caption, fontWeight: '700', letterSpacing: 1.2 },
 

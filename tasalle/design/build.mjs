@@ -175,6 +175,38 @@ const BASE = `
 
   svg.i { width: 1em; height: 1em; fill: none; stroke: currentColor; stroke-width: 2;
           stroke-linecap: round; stroke-linejoin: round; flex: none; }
+
+  .point-pin { width: 16px; height: 16px; border-radius: var(--r-pill); border: 1.5px solid var(--c-border); }
+  .point-pin--rempli { background: var(--c-primaryInk); border-color: var(--c-primaryInk); }
+  .point-pin--erreur { background: var(--c-accent); border-color: var(--c-accent); }
+  .touche-pin { width: 74px; height: 52px; border-radius: var(--r-lg); border: 1px solid var(--c-border);
+                background: var(--c-surface); display: flex; align-items: center; justify-content: center;
+                font-size: 20px; font-weight: 500; color: var(--c-dark); }
+  .touche-pin--vide { border: none; background: transparent; }
+
+  .jour { flex: 1; aspect-ratio: 1; border-radius: var(--r-md); display: flex; align-items: center;
+          justify-content: center; flex-direction: column; gap: 2px; font-size: 13px; color: var(--c-dark);
+          border: 1px solid transparent; background: var(--c-surface); }
+  .jour--hors-mois { opacity: .25; }
+  .jour--selectionne { background: var(--c-primary); color: var(--c-onPrimary); font-weight: 600; border-color: var(--c-primary); }
+  .jour--reservee { background: var(--c-successBg); color: var(--c-primaryInk); }
+  .jour--attente { background: var(--c-warningBg); color: var(--c-goldText); }
+  .jour--bloquee { background: var(--c-surfaceElevated); color: var(--c-warmGray); border-color: var(--c-border); }
+  .jour--passee { background: transparent; color: var(--c-warmGray); opacity: .4; }
+  .puce-jour { width: 4px; height: 4px; border-radius: 2px; background: var(--c-secondary); }
+
+  .ligne-salle { display: flex; border: 1px solid var(--c-border); border-radius: var(--r-xl);
+                 overflow: hidden; background: var(--c-surface); }
+  .ligne-salle__photo { width: 140px; height: 140px; flex: none; display: flex; align-items: center;
+                         justify-content: center; }
+
+  .selecteur-salle { display: inline-flex; align-items: center; gap: var(--sp-sm); background: var(--c-surface);
+                      border: 1px solid var(--c-border); border-radius: var(--r-lg); padding: 10px 14px; width: 260px; }
+  .selecteur-salle--ouvert { border-color: var(--c-primaryInk); }
+  .selecteur-salle__liste { width: 260px; border: 1px solid var(--c-border); border-radius: var(--r-lg);
+                             background: var(--c-surface); overflow: hidden; margin-top: 6px; }
+  .selecteur-salle__item { display: flex; align-items: center; gap: var(--sp-sm); padding: 11px 14px; }
+  .selecteur-salle__item--actif { background: var(--c-primaryLight); }
 `;
 
 /**
@@ -198,10 +230,17 @@ const ICONES = {
   alert: '<circle cx="12" cy="12" r="9"/><line x1="12" y1="7" x2="12" y2="13"/><circle cx="12" cy="17" r=".6" fill="currentColor"/>',
   cloud: '<path d="M7 18a4 4 0 0 1 .6-8 5.5 5.5 0 0 1 10.6 1.5A3.5 3.5 0 0 1 17.5 18Z"/>',
   search: '<circle cx="11" cy="11" r="7"/><line x1="16" y1="16" x2="21" y2="21"/>',
+  heart: '<path d="M12 20s-7-4.35-9.5-9A5.5 5.5 0 0 1 12 5.5 5.5 5.5 0 0 1 21.5 11c-2.5 4.65-9.5 9-9.5 9Z"/>',
+  backspace: '<path d="M8 6h12a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H8l-6-6a1 1 0 0 1 0-2Z"/><line x1="12" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="12" y2="15"/>',
+  business: '<rect x="5" y="3" width="9" height="18" rx="1"/><rect x="14" y="9" width="5" height="12" rx="1"/><circle cx="8" cy="7" r=".7" fill="currentColor"/><circle cx="11" cy="7" r=".7" fill="currentColor"/><circle cx="8" cy="11" r=".7" fill="currentColor"/><circle cx="11" cy="11" r=".7" fill="currentColor"/><circle cx="8" cy="15" r=".7" fill="currentColor"/><circle cx="11" cy="15" r=".7" fill="currentColor"/>',
 };
 
 const ic = (nom, taille = '1em') =>
   `<svg class="i" viewBox="0 0 24 24" style="width:${taille};height:${taille}">${ICONES[nom]}</svg>`;
+
+/** Cœur, plein ou creux — seule icône dont la variante active se remplit. */
+const icCoeur = (plein, taille = '1em', couleur = 'currentColor') =>
+  `<svg viewBox="0 0 24 24" style="width:${taille};height:${taille};flex:none" fill="${plein ? couleur : 'none'}" stroke="${couleur}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONES.heart}</svg>`;
 
 /** Une page de prévisualisation, autonome. */
 function page({ chemin, groupe, nom, titre, intro, corps, largeur = 720, hauteur }) {
@@ -897,6 +936,251 @@ const pages = [];
               )
               .join('')}
           </div>
+        </div>
+      </div>`,
+    })
+  );
+}
+
+// 17. Code PIN
+{
+  const point = (etat) =>
+    `<div class="point-pin ${etat === 'rempli' ? 'point-pin--rempli' : etat === 'erreur' ? 'point-pin--erreur' : ''}"></div>`;
+
+  const clavier = () => {
+    const touches = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', 'del'];
+    return `<div style="display:flex;flex-wrap:wrap;width:246px;gap:8px">
+      ${touches
+        .map((k) =>
+          !k
+            ? `<div class="touche-pin touche-pin--vide"></div>`
+            : k === 'del'
+            ? `<div class="touche-pin">${ic('backspace', '20px')}</div>`
+            : `<div class="touche-pin">${k}</div>`
+        )
+        .join('')}
+    </div>`;
+  };
+
+  pages.push(
+    page({
+      chemin: 'composants/code-pin.html',
+      groupe: 'Composants',
+      nom: 'Code PIN',
+      titre: 'Code PIN',
+      largeur: 720,
+      intro:
+        "Signature digitale du propriétaire à l'accueil (§2.3, §10.1) : quatre chiffres, jamais affichés en clair — seuls des points de progression le sont.",
+      corps: `<h2>Points de progression</h2>
+        <div class="rangee" style="gap:40px">
+          <div class="colonne" style="align-items:center;gap:12px">
+            <div class="etiquette">Vide</div>
+            <div class="rangee" style="gap:10px">${point()}${point()}${point()}${point()}</div>
+          </div>
+          <div class="colonne" style="align-items:center;gap:12px">
+            <div class="etiquette">2 chiffres saisis</div>
+            <div class="rangee" style="gap:10px">${point('rempli')}${point('rempli')}${point()}${point()}</div>
+          </div>
+          <div class="colonne" style="align-items:center;gap:12px">
+            <div class="etiquette">Erreur</div>
+            <div class="rangee" style="gap:10px">${point('erreur')}${point('erreur')}${point('erreur')}${point('erreur')}</div>
+            <div style="font-size:11px;color:var(--c-accent)">Code incorrect. Réessayez.</div>
+          </div>
+        </div>
+        <h2>Clavier</h2>
+        ${clavier()}`,
+    })
+  );
+}
+
+// 18. Calendrier
+{
+  function monthGrid(year, month) {
+    const first = new Date(year, month, 1);
+    const offset = (first.getDay() + 6) % 7;
+    const start = new Date(year, month, 1 - offset);
+    const cells = [];
+    for (let i = 0; i < 42; i += 1) {
+      const d = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i);
+      cells.push({
+        iso: d.toISOString().slice(0, 10),
+        day: d.getDate(),
+        inMonth: d.getMonth() === month,
+      });
+    }
+    return cells;
+  }
+
+  // Août 2026 : quelques journées passées, une tenue, une réservée, une
+  // bloquée par le propriétaire, une sélectionnée par le client.
+  const etats = {
+    '2026-08-01': 'passee', '2026-08-02': 'passee', '2026-08-03': 'passee', '2026-08-04': 'passee',
+    '2026-08-05': 'passee', '2026-08-06': 'passee', '2026-08-07': 'passee', '2026-08-08': 'passee',
+    '2026-08-09': 'passee', '2026-08-10': 'passee',
+    '2026-08-14': 'attente',
+    '2026-08-19': 'reservee',
+    '2026-08-24': 'bloquee',
+  };
+  const marqueurs = new Set(['2026-08-19', '2026-08-26']);
+  const selectionne = '2026-08-26';
+
+  const classeEtat = (etat) => (etat ? `jour--${etat}` : '');
+
+  const grille = (cells) =>
+    cells
+      .map((c) => {
+        const etat = c.inMonth ? etats[c.iso] : null;
+        const estSelectionne = c.iso === selectionne && c.inMonth;
+        return `<div style="width:${100 / 7}%;padding:2px">
+          <div class="jour ${c.inMonth ? '' : 'jour--hors-mois'} ${estSelectionne ? 'jour--selectionne' : classeEtat(etat)}">
+            <span>${c.day}</span>
+            ${c.inMonth && marqueurs.has(c.iso) ? `<div class="puce-jour" style="${estSelectionne ? 'background:var(--c-onPrimary)' : ''}"></div>` : ''}
+          </div>
+        </div>`;
+      })
+      .join('');
+
+  const legende = [
+    ['jour--reservee', 'Réservée'],
+    ['jour--attente', 'Tenue'],
+    ['jour--bloquee', 'Bloquée par le propriétaire'],
+  ];
+
+  pages.push(
+    page({
+      chemin: 'composants/calendrier.html',
+      groupe: 'Composants',
+      nom: 'Calendrier',
+      titre: 'Calendrier',
+      largeur: 460,
+      intro:
+        "Grille de 6 semaines commençant un lundi (§4.4 étape 1, §5.3 planning pro). Côté client, seuls les jours disponibles répondent au toucher ; côté propriétaire, tous les jours à venir sont cliquables — un jour tenu ou bloqué peut être rouvert depuis le planning.",
+      corps: `<div style="max-width:340px">
+        <div class="rangee" style="justify-content:space-between;margin-bottom:10px">
+          <span style="display:inline-block;transform:rotate(180deg)">${ic('chevron', '18px')}</span><b style="font-size:15px">Août 2026</b>${ic('chevron', '18px')}
+        </div>
+        <div style="display:flex;margin-bottom:2px">
+          ${['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
+            .map((j) => `<div style="flex:1;text-align:center;font-size:11px;font-weight:500;color:var(--c-warmGray)">${j}</div>`)
+            .join('')}
+        </div>
+        <div style="display:flex;flex-wrap:wrap">${grille(monthGrid(2026, 7))}</div>
+      </div>
+      <h2>Légende</h2>
+      <div class="rangee" style="gap:16px">
+        ${legende
+          .map(
+            ([classe, label]) =>
+              `<div class="rangee" style="gap:6px"><div class="jour ${classe}" style="width:14px;height:14px;flex:none;border-radius:4px"></div><span style="font-size:11px;color:var(--c-warmGray)">${label}</span></div>`
+          )
+          .join('')}
+      </div>`,
+    })
+  );
+}
+
+// 19. Ligne salle (liste de recherche)
+{
+  const ligne = (nom, ville, capacite, avis, note, prix, [d1, d2], initiale, fav, premium) => `
+    <div class="ligne-salle">
+      <div class="ligne-salle__photo" style="background:linear-gradient(135deg,${d1},${d2})">
+        <span style="font-size:44px;color:rgba(255,255,255,.35);font-weight:500">${initiale}</span>
+      </div>
+      <div style="flex:1;padding:12px;display:flex;flex-direction:column;justify-content:space-between;gap:6px">
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <div class="rangee" style="justify-content:space-between;gap:8px">
+            <span style="font-weight:500;font-size:15px">${nom}</span>
+            ${icCoeur(fav, '18px', fav ? 'var(--c-accent)' : 'var(--c-warmGray)')}
+          </div>
+          <div class="rangee" style="gap:4px">
+            <span style="color:var(--c-goldMark)">★</span>
+            <span style="font-size:12px">${note}</span>
+            <span style="font-size:12px;color:var(--c-warmGray)">(${avis})</span>
+          </div>
+          <div style="font-size:12px;color:var(--c-warmGray)">${ville} · ${capacite} places</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="font-size:15px;font-weight:500;color:var(--c-primaryInk)">À partir de ${prix}</div>
+          <div class="rangee" style="gap:6px">
+            <span class="badge badge--sm" style="background:var(--c-successBg);color:var(--c-primaryInk)">Disponible</span>
+            ${premium ? `<span class="badge badge--sm" style="background:var(--c-goldLight);color:var(--c-goldText)">Premium</span>` : ''}
+          </div>
+        </div>
+      </div>
+    </div>`;
+
+  pages.push(
+    page({
+      chemin: 'metier/ligne-salle.html',
+      groupe: 'Métier',
+      nom: 'Ligne salle (recherche)',
+      titre: 'Ligne salle — résultats de recherche',
+      largeur: 480,
+      intro:
+        "Variante horizontale de la carte de salle, pour la liste de résultats (§4.2). Photo carrée à gauche — à droite en RTL — puis les mêmes informations que la carte, dans l'ordre où l'œil les cherche : nom, note, lieu, prix, disponibilité.",
+      corps: `<div class="colonne" style="width:100%">
+        ${ligne('Palais Ryad', 'Oran', 700, 203, '4.9', '55 000 DA', ['#8B6914', '#BE9A5E'], 'P', true, true)}
+        ${ligne('Salle Ennour', 'Constantine', 250, 41, '4.3', '28 000 DA', ['#6B5B4A', '#A89684'], 'E', false, false)}
+      </div>`,
+    })
+  );
+}
+
+// 20. Sélecteur de salle
+{
+  const salles = [
+    { nom: 'Palais Ryad', ville: 'Oran', actif: true },
+    { nom: 'Le Corail', ville: 'Annaba', actif: false },
+    { nom: 'Salle Ennour', ville: 'Constantine', actif: false },
+  ];
+
+  const ferme = (label) => `<div class="selecteur-salle">
+      <span style="color:var(--c-primaryInk)">${ic('business')}</span>
+      <span style="flex:1;font-size:14px">${label}</span>
+      <span style="font-size:12px;color:var(--c-warmGray)">${salles.length}</span>
+      <span style="display:inline-block;transform:rotate(90deg)">${ic('chevron', '15px')}</span>
+    </div>`;
+
+  const ouvert = () => `<div>
+      <div class="selecteur-salle selecteur-salle--ouvert">
+        <span style="color:var(--c-primaryInk)">${ic('business')}</span>
+        <span style="flex:1;font-size:14px">${salles[0].nom}</span>
+        <span style="font-size:12px;color:var(--c-warmGray)">${salles.length}</span>
+        <span style="display:inline-block;transform:rotate(-90deg)">${ic('chevron', '15px')}</span>
+      </div>
+      <div class="selecteur-salle__liste">
+        ${salles
+          .map(
+            (s, i) => `${i ? '<div class="separateur"></div>' : ''}
+          <div class="selecteur-salle__item ${s.actif ? 'selecteur-salle__item--actif' : ''}">
+            <div style="flex:1">
+              <div style="font-size:14px;color:${s.actif ? 'var(--c-primaryInk)' : 'var(--c-dark)'}">${s.nom}</div>
+              <div style="font-size:11px;color:var(--c-warmGray)">${s.ville}</div>
+            </div>
+            ${s.actif ? `<span style="color:var(--c-primaryInk)">${ic('check')}</span>` : ''}
+          </div>`
+          )
+          .join('')}
+      </div>
+    </div>`;
+
+  pages.push(
+    page({
+      chemin: 'composants/selecteur-salle.html',
+      groupe: 'Composants',
+      nom: 'Sélecteur de salle',
+      titre: 'Sélecteur de salle',
+      largeur: 640,
+      intro:
+        "N'apparaît qu'à partir de deux salles pour un même propriétaire : avec une seule, il n'y a rien à choisir, et une liste à un élément n'est que du bruit. Reste affiché en tête des écrans pro pour rappeler en permanence sur quelle salle on agit.",
+      corps: `<div class="duo">
+        <div>
+          <div class="etiquette">Fermé</div>
+          ${ferme(salles[0].nom)}
+        </div>
+        <div>
+          <div class="etiquette">Ouvert</div>
+          ${ouvert()}
         </div>
       </div>`,
     })

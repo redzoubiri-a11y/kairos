@@ -11,3 +11,4 @@ npm-debug.*
 *.tsbuildinfo
 /ios
 /android
+/design/build

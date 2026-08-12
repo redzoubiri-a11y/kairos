@@ -23,6 +23,10 @@ async function create(userId, data) {
     data: {
       ...data,
       transporterId: profile.id,
+      // Un camion declare part avec toute sa capacite libre pour les missions
+      // sans trajet ; voir updateStatus dans mission.service pour le decompte.
+      freeVolumeM3: data.volumeM3,
+      freeWeightKg: data.capacityKg,
       // Une position declaree a l'inscription est datee comme une autre : sans
       // cela elle n'aurait pas d'age et echapperait a la fenetre de fraicheur.
       ...(data.latitude !== undefined && data.longitude !== undefined
@@ -68,8 +72,21 @@ async function assertOwned(userId, truckId) {
 }
 
 async function update(userId, truckId, data) {
-  await assertOwned(userId, truckId);
-  return prisma.truck.update({ where: { id: truckId }, data, include: TRUCK_INCLUDE });
+  const truck = await assertOwned(userId, truckId);
+
+  // Redimensionner le camion ne doit pas rouvrir ou perdre la capacite deja
+  // engagee par des missions acceptees : on deplace la capacite libre du meme
+  // delta que la capacite totale, jamais en l'ecrasant par la nouvelle valeur.
+  const capacityShift = {
+    ...(data.volumeM3 !== undefined ? { freeVolumeM3: { increment: data.volumeM3 - truck.volumeM3 } } : {}),
+    ...(data.capacityKg !== undefined ? { freeWeightKg: { increment: data.capacityKg - truck.capacityKg } } : {}),
+  };
+
+  return prisma.truck.update({
+    where: { id: truckId },
+    data: { ...data, ...capacityShift },
+    include: TRUCK_INCLUDE,
+  });
 }
 
 async function updatePosition(userId, truckId, { latitude, longitude, isAvailable }) {

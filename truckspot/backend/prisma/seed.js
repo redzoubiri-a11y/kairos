@@ -139,6 +139,11 @@ async function main() {
           data: {
             ...truck,
             transporterId: user.transporter.id,
+            // Contourne truck.service.create : la meme initialisation doit se
+            // faire ici, sinon chaque camion demo part avec une capacite libre
+            // nulle et refuse toute mission sans trajet des le seed.
+            freeVolumeM3: truck.volumeM3,
+            freeWeightKg: truck.capacityKg,
             latitude: jitter(base.lat),
             longitude: jitter(base.lng),
             lastPositionAt: new Date(),

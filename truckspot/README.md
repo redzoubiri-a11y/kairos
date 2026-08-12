@@ -225,10 +225,24 @@ rien ne changeait son statut. Un depart declare pour le 12 aout restait donc pro
 en septembre. `GET /trips/list` ecarte desormais les trajets `SCHEDULED` dont l'heure
 de depart est passee de plus de `TRIP_DEPARTURE_GRACE_HOURS` (3 h par defaut, le temps
 d'un chargement qui traine). Un trajet `IN_PROGRESS` reste propose : le transporteur a
-declare qu'il roulait, et sa capacite libre reste reservable en cours de route. Le
-transporteur garde l'historique complet de ses trajets via `mine=true`, chacun portant
-`visibleInSearch` ; l'application l'avertit et lui rappelle ses deux recours, repousser
-le depart ou passer le trajet en cours.
+declare qu'il roulait, et sa capacite libre reste reservable en cours de route.
+
+La recherche ecarte aussi tout trajet dont le volume ou le poids libre est tombe a
+zero : une mission exige un minimum strictement positif sur les deux, donc un trajet
+epuise sur l'une des deux dimensions ne peut deja plus en accepter aucune. Le laisser
+visible menait un client a un formulaire qui refuse systematiquement, sans jamais dire
+pourquoi — cote mobile, `MissionFormScreen` s'en protege desormais aussi directement
+(la liste peut avoir vieilli de quelques secondes entre son chargement et l'ouverture
+de l'ecran) en affichant « Ce trajet est complet » plutot qu'un curseur de volume dont
+le minimum depasserait le maximum. La capacite epuisee prime sur un depart passe : un
+trajet `IN_PROGRESS` qui echappe au delai de grace n'echappe pas a l'epuisement.
+
+Le transporteur garde l'historique complet de ses trajets via `mine=true`, chacun
+portant `visibleInSearch` et `searchBlockedReason` (`DEPARTURE_PASSED` ou
+`CAPACITY_EXHAUSTED`) ; l'application distingue les deux dans son avertissement plutot
+que d'afficher un message generique, et rappelle le recours propre a chacun — repousser
+le depart ou passer le trajet en cours pour le premier, annuler une mission ou declarer
+un nouveau trajet pour le second.
 
 > Le jeu de demonstration date les positions a l'instant du `npm run seed` et place les
 > departs a un a trois jours de la. Une base semee la semaine passee affiche donc une
@@ -328,7 +342,7 @@ pour rejouer les migrations.
 cd truckspot/backend && npm test
 ```
 
-**149 tests d'integration** tournent contre une vraie base PostgreSQL et un vrai serveur
+**157 tests d'integration** tournent contre une vraie base PostgreSQL et un vrai serveur
 HTTP + Socket.IO, sans mock : authentification, cloisonnement des acces (un tiers ne peut
 lire ni une mission ni une conversation qui ne le concerne pas), recherche geographique,
 filtres de la carte, expiration des positions trop anciennes, transitions de statut

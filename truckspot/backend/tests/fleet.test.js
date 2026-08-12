@@ -405,6 +405,132 @@ test('camions et trajets', async (t) => {
     assert.ok(body.items.some((item) => item.id === trip.id));
   });
 
+  // Le defaut corrige : une mission exige un minimum positif de volume et de
+  // poids, donc un trajet epuise sur l'une des deux dimensions ne peut deja
+  // plus en accepter aucune. Le laisser dans la recherche menait un client a
+  // un formulaire qui refuse systematiquement, sans jamais dire pourquoi.
+  await t.test('un trajet sans volume libre sort de la recherche', async () => {
+    const transporter = await h.createTransporter();
+    const truck = await h.createTruck(transporter.token);
+    const trip = await h.createTrip(transporter.token, truck.id);
+    const client = await h.createClient();
+
+    await h.prisma.trip.update({ where: { id: trip.id }, data: { freeVolumeM3: 0 } });
+
+    const { body } = await h.api('GET', '/trips/list', { token: client.token });
+    assert.ok(!body.items.some((item) => item.id === trip.id));
+  });
+
+  await t.test('un trajet sans charge libre sort de la recherche', async () => {
+    const transporter = await h.createTransporter();
+    const truck = await h.createTruck(transporter.token);
+    const trip = await h.createTrip(transporter.token, truck.id);
+    const client = await h.createClient();
+
+    await h.prisma.trip.update({ where: { id: trip.id }, data: { freeWeightKg: 0 } });
+
+    const { body } = await h.api('GET', '/trips/list', { token: client.token });
+    assert.ok(!body.items.some((item) => item.id === trip.id));
+  });
+
+  // La capacite prime sur le statut : un trajet EN_COURS echappe au delai de
+  // grace du depart, mais pas a l'epuisement de sa capacite.
+  await t.test('un trajet en cours mais epuise sort aussi de la recherche', async () => {
+    const transporter = await h.createTransporter();
+    const truck = await h.createTruck(transporter.token);
+    const trip = await h.createTrip(transporter.token, truck.id);
+    const client = await h.createClient();
+
+    await h.prisma.trip.update({
+      where: { id: trip.id },
+      data: { status: 'IN_PROGRESS', freeVolumeM3: 0 },
+    });
+
+    const { body } = await h.api('GET', '/trips/list', { token: client.token });
+    assert.ok(!body.items.some((item) => item.id === trip.id));
+  });
+
+  await t.test('le transporteur voit pourquoi son trajet epuise n est plus propose', async () => {
+    const transporter = await h.createTransporter();
+    const truck = await h.createTruck(transporter.token);
+    const trip = await h.createTrip(transporter.token, truck.id);
+
+    await h.prisma.trip.update({ where: { id: trip.id }, data: { freeVolumeM3: 0 } });
+
+    const { body } = await h.api('GET', '/trips/list?mine=true', { token: transporter.token });
+    const found = body.items.find((item) => item.id === trip.id);
+    assert.equal(found.visibleInSearch, false);
+    assert.equal(found.searchBlockedReason, 'CAPACITY_EXHAUSTED');
+  });
+
+  await t.test('distingue le motif : capacite epuisee prime sur un depart passe', async () => {
+    const transporter = await h.createTransporter();
+    const truck = await h.createTruck(transporter.token);
+    const trip = await h.createTrip(transporter.token, truck.id);
+
+    await h.prisma.trip.update({
+      where: { id: trip.id },
+      data: { freeVolumeM3: 0, departureAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000) },
+    });
+
+    const { body } = await h.api('GET', '/trips/list?mine=true', { token: transporter.token });
+    const found = body.items.find((item) => item.id === trip.id);
+    assert.equal(found.searchBlockedReason, 'CAPACITY_EXHAUSTED');
+  });
+
+  await t.test('mine=true garde un motif nul pour un trajet visible', async () => {
+    const transporter = await h.createTransporter();
+    const truck = await h.createTruck(transporter.token);
+    await h.createTrip(transporter.token, truck.id);
+
+    const { body } = await h.api('GET', '/trips/list?mine=true', { token: transporter.token });
+    assert.equal(body.items[0].visibleInSearch, true);
+    assert.equal(body.items[0].searchBlockedReason, null);
+  });
+
+  // Une mission annulee apres acceptation restitue la capacite (deja teste
+  // cote missions) : le trajet doit redevenir trouvable, pas rester exclu.
+  await t.test('restituer la capacite remet le trajet dans la recherche', async () => {
+    const transporter = await h.createTransporter();
+    const truck = await h.createTruck(transporter.token);
+    const trip = await h.createTrip(transporter.token, truck.id, {
+      freeVolumeM3: 5,
+      freeWeightKg: 500,
+    });
+    const client = await h.createClient();
+    const mission = await h.createMission(client.token, {
+      transporterId: transporter.profileId,
+      truckId: truck.id,
+      tripId: trip.id,
+      volumeM3: 5,
+      weightKg: 500,
+    });
+
+    await h.api('PATCH', '/missions/update-status', {
+      token: transporter.token,
+      body: { missionId: mission.id, status: 'ACCEPTED' },
+    });
+    const epuise = await h.api('GET', '/trips/list', { token: client.token });
+    assert.ok(!epuise.body.items.some((item) => item.id === trip.id));
+
+    await h.api('PATCH', '/missions/update-status', {
+      token: client.token,
+      body: { missionId: mission.id, status: 'CANCELLED', reason: 'Report' },
+    });
+    const restaure = await h.api('GET', '/trips/list', { token: client.token });
+    assert.ok(restaure.body.items.some((item) => item.id === trip.id));
+  });
+
+  await t.test('un minimum de volume explicite reste applique en plus du plancher', async () => {
+    const transporter = await h.createTransporter();
+    const truck = await h.createTruck(transporter.token);
+    const trip = await h.createTrip(transporter.token, truck.id, { freeVolumeM3: 5 });
+    const client = await h.createClient();
+
+    const { body } = await h.api('GET', '/trips/list?minFreeVolumeM3=10', { token: client.token });
+    assert.ok(!body.items.some((item) => item.id === trip.id));
+  });
+
   await t.test('un parametre de requete inconnu est rejete', async () => {
     const client = await h.createClient();
     const { status } = await h.api('GET', '/trips/list?parametreInconnu=1', { token: client.token });

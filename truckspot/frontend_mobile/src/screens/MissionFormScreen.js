@@ -8,6 +8,7 @@ import Button from '../components/Button';
 import OptionPicker from '../components/OptionPicker';
 import VolumeSlider from '../components/VolumeSlider';
 import ErrorBanner from '../components/ErrorBanner';
+import EmptyState from '../components/EmptyState';
 import { missionApi } from '../api/endpoints';
 import { useMissionStore } from '../store/missionStore';
 import { ALGERIAN_CITIES, GOODS_TYPES } from '../utils/constants';
@@ -49,6 +50,13 @@ export default function MissionFormScreen({ navigation, route }) {
 
   const maxVolume = trip?.freeVolumeM3 ?? truck?.volumeM3 ?? 100;
   const maxWeight = trip?.freeWeightKg ?? truck?.capacityKg ?? 20000;
+  // La recherche ecarte deja les trajets epuises (voir /trips/list), mais la
+  // liste affichee peut avoir vieilli de quelques secondes entre son
+  // chargement et l'ouverture de cet ecran — une mission acceptee entre
+  // temps peut avoir consomme la derniere place. Sans ce garde-fou, le
+  // curseur de volume s'ouvrait avec un minimum superieur a son maximum : un
+  // formulaire qui refuse systematiquement, sans jamais dire pourquoi.
+  const capacityExhausted = trip != null && (maxVolume <= 0 || maxWeight <= 0);
 
   const [form, setForm] = useState({
     goodsType: trip?.goodsTypes?.[0] ?? GOODS_TYPES[0],
@@ -120,6 +128,21 @@ export default function MissionFormScreen({ navigation, route }) {
       setLoading(false);
     }
   };
+
+  if (capacityExhausted) {
+    return (
+      <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
+        <ScreenHeader title="Nouvelle mission" onBack={() => navigation.goBack()} />
+        <EmptyState
+          icon="cube-outline"
+          title="Ce trajet est complet"
+          message="Un autre client vient de reserver la place restante. Revenez a la carte pour trouver un autre trajet, ou envoyez une demande directe au transporteur."
+          actionLabel="Retour"
+          onAction={() => navigation.goBack()}
+        />
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container} edges={['top', 'bottom']}>

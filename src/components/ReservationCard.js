@@ -223,7 +223,7 @@ export default function ReservationCard({
                 disabled={acting}
                 onPress={handleCancel}
               >
-                <Text style={c.btnCancelTxt}>{acting ? '···' : 'Annuler la réservation'}</Text>
+                <Text style={c.btnCancelTxt} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}>{acting ? '···' : 'Annuler la réservation'}</Text>
               </TouchableOpacity>
             </View>
           )}

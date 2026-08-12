@@ -9,12 +9,16 @@ import MLoader from '../src/components/MLoader';
 import RestaurantCard from '../src/components/RestaurantCard';
 import Tag from '../src/components/Tag';
 import EmptyState from '../src/components/EmptyState';
+import PromoBanner from '../src/components/PromoBanner';
 import useHomeData, { FILTERS } from '../src/hooks/useHomeData';
 import usePushNotifications from '../src/hooks/usePushNotifications';
 import useDeepLink from '../src/hooks/useDeepLink';
 
 function greetingWord() {
-  return new Date().getHours() < 18 ? 'Bonjour' : 'Bonsoir';
+  const h = new Date().getHours();
+  if (h < 12) return 'Bonjour';
+  if (h < 18) return 'Bonne après-midi';
+  return 'Bonsoir';
 }
 
 function SkeletonCard() {
@@ -32,6 +36,13 @@ function SkeletonCard() {
 const sk = StyleSheet.create({
   card: { marginHorizontal: spacing.xl, marginBottom: spacing.xl - 4, backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder },
 });
+
+// Bannière promo — placeholders auto-promo Mida, en attendant de vraies pubs
+const PROMO_SLIDES = [
+  { id: 'resa', title: 'Réservez votre table en 30 secondes', ctaLabel: 'Explorer', route: 'Explorer' },
+  { id: 'cc',   title: 'Commandez à emporter en un clic',      ctaLabel: 'Découvrir', route: 'Search', params: { initialCity: 'all' } },
+  { id: 'pro',  title: 'Vous êtes restaurateur ? Rejoignez MIDA Pro', ctaLabel: 'Découvrir', route: 'ProInscription' },
+];
 
 export default function HomeScreen({ navigation }) {
   usePushNotifications(navigation);
@@ -56,10 +67,11 @@ export default function HomeScreen({ navigation }) {
     navigation.navigate('Search', { initialQuery: searchText.trim(), initialCity: 'all' });
     setSearchText('');
   }, [navigation, searchText]);
+  const goPromoSlide     = useCallback((slide) => navigation.navigate(slide.route, slide.params), [navigation]);
 
   const greeting = useMemo(
-    () => greetingWord() + (userName ? ` ${userName}.` : ' !'),
-    [userName],
+    () => greetingWord(),
+    [],
   );
 
   const emptyMessage = quickFilter === 'promo'
@@ -70,7 +82,7 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <SafeAreaView style={s.root} edges={['top', 'left', 'right']}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.noir} />
+      <StatusBar barStyle="dark-content" backgroundColor={colors.bg} />
 
       {/* ── Zone header (couleur de marque) ── */}
       <View style={s.headerZone}>
@@ -87,8 +99,10 @@ export default function HomeScreen({ navigation }) {
         </View>
 
         <Text style={s.greeting}>
-          {greeting}{'\n'}On mange où ce soir ?
+          {greeting}
         </Text>
+
+        <PromoBanner slides={PROMO_SLIDES} onPressSlide={goPromoSlide} />
 
         <View style={s.searchBar}>
           <Text style={s.searchIcon}>🔍</Text>
@@ -109,17 +123,11 @@ export default function HomeScreen({ navigation }) {
 
         {/* Actions rapides */}
         <View style={s.quickActions}>
-          <TouchableOpacity style={s.quickAction} onPress={goExplorer} activeOpacity={0.85}>
-            <View style={[s.quickActionIcon, { backgroundColor: colors.resa }]}>
-              <Text style={s.quickActionEmoji}>📅</Text>
-            </View>
-            <Text style={s.quickActionTxt}>Réserver{'\n'}une table</Text>
+          <TouchableOpacity style={s.quickAction} onPress={goExplorer} activeOpacity={0.88}>
+            <Text style={s.quickActionTxt} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8}>Réserver une table</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={s.quickAction} onPress={goOrderSearch} activeOpacity={0.85}>
-            <View style={[s.quickActionIcon, { backgroundColor: colors.primary }]}>
-              <Text style={s.quickActionEmoji}>🛍️</Text>
-            </View>
-            <Text style={s.quickActionTxt}>Click &{'\n'}Collect</Text>
+          <TouchableOpacity style={s.quickAction} onPress={goOrderSearch} activeOpacity={0.88}>
+            <Text style={s.quickActionTxt} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8}>Click & Collect</Text>
           </TouchableOpacity>
         </View>
 
@@ -172,33 +180,31 @@ export default function HomeScreen({ navigation }) {
 }
 
 const s = StyleSheet.create({
-  root:   { flex: 1, backgroundColor: colors.noir, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 },
+  root:   { flex: 1, backgroundColor: colors.bg, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 },
   scroll: { flex: 1, backgroundColor: colors.greyBg },
 
   /* Zone header */
-  headerZone: { backgroundColor: colors.primary, paddingHorizontal: spacing.xl, paddingBottom: spacing.xl, borderBottomLeftRadius: radius.xxl, borderBottomRightRadius: radius.xxl },
-  header:     { flexDirection: 'row', alignItems: 'center', paddingTop: spacing.sm },
+  headerZone: { backgroundColor: 'rgba(255,255,255,0.001)', paddingHorizontal: spacing.xl, paddingBottom: spacing.md, borderBottomLeftRadius: radius.xxl, borderBottomRightRadius: radius.xxl },
+  header:     { flexDirection: 'row', alignItems: 'center', paddingTop: spacing.xs },
   iconBtn:    { width: 38, height: 38, borderRadius: 11, backgroundColor: 'rgba(245,237,214,0.14)', alignItems: 'center', justifyContent: 'center' },
   iconBtnTxt: { fontSize: 17 },
   notifBadge: { position: 'absolute', top: -4, right: -4, minWidth: 16, height: 16, borderRadius: 8, backgroundColor: colors.noir, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 3, borderWidth: 1.5, borderColor: colors.primary },
   notifBadgeTxt: { fontFamily: typography.bodyBold, color: '#FFFFFF', fontSize: typography.size.xs },
 
-  greeting: { fontFamily: typography.display, fontSize: 25, color: colors.cream, letterSpacing: -0.3, lineHeight: 30, marginTop: spacing.lg },
+  greeting: { fontFamily: typography.display, fontSize: 19, color: colors.noir, letterSpacing: -0.3, marginTop: spacing.xs },
 
-  searchBar:  { flexDirection: 'row', alignItems: 'center', gap: spacing.md, backgroundColor: '#FFFFFF', borderRadius: 13, paddingHorizontal: 14, paddingVertical: 13, marginTop: spacing.lg },
+  searchBar:  { flexDirection: 'row', alignItems: 'center', gap: spacing.md, backgroundColor: '#FFFFFF', borderRadius: 13, borderWidth: 1, borderColor: colors.noir, paddingHorizontal: 14, paddingVertical: 13, marginTop: spacing.lg },
   searchIcon: { fontSize: 14 },
   searchInput:{ flex: 1, fontFamily: typography.body, color: colors.text, fontSize: 13.5, letterSpacing: 0.3, padding: 0 },
 
   /* Actions rapides */
   quickActions:     { flexDirection: 'row', gap: spacing.sm + 2, paddingHorizontal: spacing.xl, paddingTop: spacing.xl },
-  quickAction:      { flex: 1, backgroundColor: colors.cream, borderRadius: radius.xl - 2, padding: spacing.lg + 2 },
-  quickActionIcon:  { width: 30, height: 30, borderRadius: 9, alignItems: 'center', justifyContent: 'center' },
-  quickActionEmoji: { fontSize: 15 },
-  quickActionTxt:   { fontFamily: typography.display, fontSize: 13.5, color: colors.noir, marginTop: spacing.lg - 1, letterSpacing: -0.1, lineHeight: 17 },
+  quickAction:      { flex: 1, borderRadius: radius.xl - 2, paddingVertical: spacing.sm, paddingHorizontal: spacing.sm, backgroundColor: 'rgba(255,255,255,0.03)', borderWidth: 1.5, borderColor: colors.primary },
+  quickActionTxt:   { fontFamily: typography.display, fontSize: 14, letterSpacing: -0.1, color: colors.noir },
 
   /* Section */
   sectionHead:   { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', paddingHorizontal: spacing.xl, marginTop: spacing.xxl - 2, marginBottom: spacing.sm },
-  sectionLabel:  { color: colors.text, fontFamily: typography.display, fontSize: 17, letterSpacing: -0.3 },
+  sectionLabel:  { color: colors.text, fontFamily: typography.display, fontSize: 14, letterSpacing: -0.3 },
   sectionRight:  { fontFamily: typography.bodySemibold, color: colors.primary, fontSize: typography.size.caption + 0.5 },
 
   /* Filtres */

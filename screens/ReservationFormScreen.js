@@ -4,6 +4,7 @@ import {
   TextInput, Image, Animated,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, typography, spacing, radius } from '../src/theme';
 import useReservationForm, { OCCASIONS, DAYS, formatDateLong } from '../src/hooks/useReservationForm';
@@ -79,11 +80,13 @@ export default function ReservationFormScreen({ route, navigation }) {
       {/* Header */}
       <View style={s.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
-          <Text style={s.backBtnTxt}>←</Text>
+          <Ionicons name="chevron-back" size={14} color={colors.text} />
         </TouchableOpacity>
         <View style={{ flex: 1 }}>
-          <Text style={s.headerSub}>{isEdit ? 'MODIFIER' : 'RÉSERVATION'}</Text>
           <Text style={s.headerTitle} numberOfLines={1}>{restaurant.name}</Text>
+          <Text style={s.headerSub} numberOfLines={1}>
+            {[isEdit && 'Modification', (restaurant.cuisine_type || '').replace(/_/g, ' '), restaurant.quartier].filter(Boolean).join(' · ')}
+          </Text>
         </View>
         {!!restaurant.avg_rating && (
           <View style={s.ratingPill}>
@@ -306,11 +309,10 @@ const s = StyleSheet.create({
   root:      { flex: 1, backgroundColor: colors.bg },
   bgOverlay: { ...StyleSheet.absoluteFillObject, opacity: 0.06 },
 
-  header:      { flexDirection: 'row', alignItems: 'center', gap: spacing.lg, paddingHorizontal: spacing.xxl, paddingTop: spacing.lg, paddingBottom: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
-  backBtn:     { padding: spacing.xs, marginRight: spacing.sm },
-  backBtnTxt:  { color: colors.text, fontSize: 22 },
-  headerSub:   { color: colors.primary, fontSize: typography.size.xs, letterSpacing: 3, marginBottom: 2 },
-  headerTitle: { color: colors.text, fontFamily: typography.display, fontSize: typography.size.heading3, fontWeight: typography.weight.bold, letterSpacing: -0.2 },
+  header:      { flexDirection: 'row', alignItems: 'center', gap: spacing.xl - 2, paddingHorizontal: spacing.xxl, paddingTop: spacing.lg, paddingBottom: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
+  backBtn:     { width: 34, height: 34, borderRadius: 17, backgroundColor: colors.tagNeutralBg, alignItems: 'center', justifyContent: 'center' },
+  headerTitle: { fontFamily: typography.display, fontSize: 16, color: colors.text, letterSpacing: -0.16 },
+  headerSub:   { fontFamily: typography.body, fontSize: typography.size.bodyLg - 1.5, lineHeight: 15, color: colors.textCaption, marginTop: 2 },
   ratingPill:  { backgroundColor: colors.goldSoft, borderRadius: radius.md, borderWidth: 1, borderColor: 'rgba(200,151,90,0.3)', paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
   ratingTxt:   { color: colors.gold, fontSize: typography.size.body, fontWeight: typography.weight.medium },
 

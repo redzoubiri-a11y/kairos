@@ -43,6 +43,10 @@ export default function OnboardingScreen({ onSelect, onGuest }) {
     const sl = SLIDES[step];
     return (
       <SafeAreaView style={s.root}>
+        <TouchableOpacity style={s.skipPill} onPress={goToFinal} activeOpacity={0.75}>
+          <Text style={s.skipPillTxt}>Passer</Text>
+        </TouchableOpacity>
+
         <Animated.View style={[s.slideWrap, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
 
           <View style={[s.tag, { borderColor: sl.ringBorder, backgroundColor: sl.ringBg }]}>
@@ -71,14 +75,9 @@ export default function OnboardingScreen({ onSelect, onGuest }) {
 
         <View style={s.footer}>
           <Dots total={TOTAL} current={step} accentColor={colors.primary} />
-          <View style={s.footerBtns}>
-            <TouchableOpacity style={s.skipBtn} onPress={goToFinal} activeOpacity={0.6}>
-              <Text style={s.skipTxt}>Passer</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={s.nextBtn} onPress={goToNext} activeOpacity={0.85}>
-              <Text style={s.nextTxt}>{step === 2 ? 'Commencer  ✦' : 'Suivant  →'}</Text>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity style={s.nextBtn} onPress={goToNext} activeOpacity={0.85}>
+            <Text style={s.nextTxt}>{step === 2 ? 'Commencer  ✦' : 'Suivant  →'}</Text>
+          </TouchableOpacity>
         </View>
       </SafeAreaView>
     );
@@ -161,6 +160,9 @@ export default function OnboardingScreen({ onSelect, onGuest }) {
 const s = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.bg },
 
+  skipPill:    { position: 'absolute', top: spacing.xl, right: 20, zIndex: 10, backgroundColor: 'rgba(10,10,10,0.4)', borderRadius: radius.badgeSm, paddingHorizontal: 13, paddingVertical: spacing.sm },
+  skipPillTxt: { fontFamily: typography.bodySemibold, fontSize: typography.size.bodyLg - 0.5, color: '#FFFFFF' },
+
   slideWrap:  { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 28 },
   tag:        { flexDirection: 'row', alignItems: 'center', gap: 7, borderRadius: radius.pill, borderWidth: 1, paddingHorizontal: spacing.xl, paddingVertical: spacing.sm, marginBottom: spacing.section },
   tagDot:     { width: 5, height: 5, borderRadius: 2.5 },
@@ -217,10 +219,6 @@ const s = StyleSheet.create({
   guestTxt:      { color: colors.textMuted, fontSize: typography.size.bodyLg, fontWeight: typography.weight.regular },
 
   footer:     { paddingHorizontal: spacing.xxl, paddingBottom: spacing.section - 4, gap: spacing.xxl - 2 },
-  footerBtns: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  skipBtn:    { paddingVertical: spacing.md, paddingHorizontal: spacing.xs },
-  skipTxt:    { color: colors.textDim, fontSize: typography.size.subheading },
-  nextBtn:    { backgroundColor: colors.noir, borderRadius: radius.xl, paddingVertical: spacing.xl - 2, paddingHorizontal: spacing.xxl + 6 },
-  nextBtnDim: { backgroundColor: colors.textDim },
+  nextBtn:    { backgroundColor: colors.noir, borderRadius: radius.xl, alignItems: 'center', paddingVertical: spacing.xl - 2 },
   nextTxt:    { color: '#FFFFFF', fontSize: typography.size.subheading, fontWeight: typography.weight.bold },
 });

@@ -51,6 +51,8 @@ export const colors = {
   textFaint: 'rgba(10,10,10,0.4)',
   // Libellés de champ de formulaire — Inscription Restaurateur.dc.html : rgba(10,10,10,.45)
   textLabel: 'rgba(10,10,10,0.45)',
+  // Sous-titre header (ex. "Méditerranéen · Hydra") — Formulaire de Reservation.dc.html : rgba(10,10,10,.5)
+  textCaption: 'rgba(10,10,10,0.5)',
 
   // États
   green: '#4CAF82',

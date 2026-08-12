@@ -4,7 +4,7 @@ import { supabase } from '../../supabase';
 import { colors } from '../theme';
 
 export const STARS   = [1, 2, 3, 4, 5];
-export const FILTERS = ['Tous', 'En attente', '5 ⭐', '4 ⭐', '3 ⭐', '1–2 ⭐', 'Sans réponse'];
+export const FILTERS = ['Tous', 'Sans réponse'];
 
 export function formatDate(iso) {
   if (!iso) return '';
@@ -74,24 +74,10 @@ export default function useProAvis() {
   const onRefresh = useCallback(() => load(true), [load]);
 
   const approved = useMemo(() => reviews.filter(r => r.moderation_status === 'approved'), [reviews]);
-  const pending  = useMemo(() => reviews.filter(r => r.moderation_status === 'pending'),  [reviews]);
 
   const noReply = useMemo(() => approved.filter(r => !r.pro_response).length, [approved]);
 
-  const ratingCounts = useMemo(() => ({
-    5:   approved.filter(r => r.rating === 5).length,
-    4:   approved.filter(r => r.rating === 4).length,
-    3:   approved.filter(r => r.rating === 3).length,
-    low: approved.filter(r => r.rating <= 2).length,
-  }), [approved]);
-
   const filtered = useMemo(() => reviews.filter(r => {
-    if (filter === 'Tous')         return true;
-    if (filter === 'En attente')   return r.moderation_status === 'pending';
-    if (filter === '5 ⭐')         return r.moderation_status === 'approved' && r.rating === 5;
-    if (filter === '4 ⭐')         return r.moderation_status === 'approved' && r.rating === 4;
-    if (filter === '3 ⭐')         return r.moderation_status === 'approved' && r.rating === 3;
-    if (filter === '1–2 ⭐')       return r.moderation_status === 'approved' && r.rating <= 2;
     if (filter === 'Sans réponse') return r.moderation_status === 'approved' && !r.pro_response;
     return true;
   }), [reviews, filter]);
@@ -109,6 +95,6 @@ export default function useProAvis() {
   return {
     reviews, loading, refreshing, filter, setFilter, restaurant,
     handleSaveResponse, handleApprove, handleReject,
-    onRefresh, noReply, ratingCounts, filtered, pendingCount: pending.length,
+    onRefresh, noReply, filtered,
   };
 }

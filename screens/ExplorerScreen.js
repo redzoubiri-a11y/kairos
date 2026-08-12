@@ -86,7 +86,7 @@ export default function ExplorerScreen({ navigation }) {
               </ScrollView>
             </View>
 
-            <TouchableOpacity style={s.miniMap} activeOpacity={0.92} onPress={goMap}>
+            <View style={s.miniMap}>
               {Platform.OS !== 'web' ? (
                 <MapView
                   style={StyleSheet.absoluteFill}
@@ -97,26 +97,34 @@ export default function ExplorerScreen({ navigation }) {
                   pitchEnabled={false}
                   showsCompass={false}
                   toolbarEnabled={false}
-                  pointerEvents="none"
+                  onPress={goMap}
                 >
                   {restaurants.slice(0, 30).map((r) => (
-                    <Marker key={String(r.id)} coordinate={getCoord(r)} tracksViewChanges={false}>
-                      <View style={[s.pin, shadows.mapPin]} />
+                    <Marker
+                      key={String(r.id)}
+                      coordinate={getCoord(r)}
+                      tracksViewChanges={false}
+                      onPress={() => goRestaurant(r)}
+                      anchor={{ x: 0.5, y: 0.5 }}
+                    >
+                      <View style={[s.pin, shadows.mapPin]}>
+                        <View style={s.pinDot} />
+                      </View>
                     </Marker>
                   ))}
                 </MapView>
               ) : (
-                <View style={[StyleSheet.absoluteFill, s.miniMapWebFallback]}>
+                <TouchableOpacity style={[StyleSheet.absoluteFill, s.miniMapWebFallback]} onPress={goMap}>
                   <Text style={s.miniMapWebTxt}>Carte disponible sur mobile</Text>
-                </View>
+                </TouchableOpacity>
               )}
-              <View style={s.miniMapBadge}>
+              <View style={s.miniMapBadge} pointerEvents="none">
                 <Text style={s.miniMapBadgeTxt}>{count} restaurant{count > 1 ? 's' : ''} ici</Text>
               </View>
-              <View style={[s.locateBtn, shadows.mapControl]}>
+              <TouchableOpacity style={[s.locateBtn, shadows.mapControl]} onPress={goMap}>
                 <Ionicons name="locate-outline" size={15} color={colors.text} />
-              </View>
-            </TouchableOpacity>
+              </TouchableOpacity>
+            </View>
 
             <View style={s.resultsRow}>
               <Text style={s.resultsCount}>{count} résultat{count > 1 ? 's' : ''}</Text>
@@ -177,11 +185,13 @@ const s = StyleSheet.create({
   },
   miniMapWebFallback: { alignItems: 'center', justifyContent: 'center', backgroundColor: colors.cardHover, padding: spacing.xl },
   miniMapWebTxt: { fontFamily: typography.body, fontSize: typography.size.body, color: colors.textMuted, textAlign: 'center' },
+  // Cible circulaire (pas de rotation, meilleure zone de clic que le losange pivoté)
   pin: {
-    width: 30, height: 30, backgroundColor: colors.primary,
-    borderTopLeftRadius: 15, borderTopRightRadius: 15, borderBottomRightRadius: 15, borderBottomLeftRadius: 0,
-    transform: [{ rotate: '-45deg' }],
+    width: 28, height: 28, borderRadius: 14,
+    backgroundColor: colors.primary, borderWidth: 3, borderColor: '#FFFFFF',
+    alignItems: 'center', justifyContent: 'center',
   },
+  pinDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#FFFFFF' },
   miniMapBadge: {
     position: 'absolute', top: 12, left: 12, backgroundColor: 'rgba(255,255,255,0.92)',
     paddingHorizontal: 10, paddingVertical: 5, borderRadius: radius.badgeSm,

@@ -4,9 +4,13 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { colors, typography, spacing, radius } from '../src/theme';
 import useProOrders from '../src/hooks/useProOrders';
 import OrderCard from '../src/components/OrderCard';
+import Tag from '../src/components/Tag';
 
-const FILTERS = ['Tout', 'En attente', 'Confirmées', 'Prêtes'];
-const FILTER_MAP = { 'En attente': 'pending', 'Confirmées': 'confirmed', 'Prêtes': 'ready' };
+// Vocabulaire aligné sur celui déjà littéral d'OrderCard.dc.html (NOUVELLE →
+// EN PRÉPARATION → PRÊTE), pas le vocabulaire réservation En attente/Confirmées
+// utilisé ici avant.
+const FILTERS = ['Tout', 'Nouvelles', 'En cours', 'Prêtes'];
+const FILTER_MAP = { 'Nouvelles': 'pending', 'En cours': 'confirmed', 'Prêtes': 'ready' };
 
 export default function ProOrdersScreen({ navigation }) {
   const { orders, loading, refreshing, acting, onRefresh, advance, cancel, NEXT_LABEL } = useProOrders();
@@ -18,7 +22,15 @@ export default function ProOrdersScreen({ navigation }) {
     return orders.filter(o => o.status === FILTER_MAP[filter]);
   }, [orders, filter]);
 
-  const pendingCount = useMemo(() => orders.filter(o => o.status === 'pending').length, [orders]);
+  const countFor = useMemo(() => {
+    const active = orders.filter(o => o.status !== 'collected' && o.status !== 'cancelled');
+    return {
+      Tout: active.length,
+      Nouvelles: orders.filter(o => o.status === 'pending').length,
+      'En cours': orders.filter(o => o.status === 'confirmed').length,
+      Prêtes: orders.filter(o => o.status === 'ready').length,
+    };
+  }, [orders]);
 
   return (
     <SafeAreaView style={s.root} edges={['top', 'left', 'right', 'bottom']}>
@@ -34,11 +46,8 @@ export default function ProOrdersScreen({ navigation }) {
         {FILTERS.map(f => {
           const active = f === filter;
           return (
-            <TouchableOpacity key={f} style={[s.filterChip, active && s.filterChipOn]} onPress={() => setFilter(f)}>
-              <Text style={[s.filterChipTxt, active && s.filterChipTxtOn]}>{f}</Text>
-              {f === 'En attente' && pendingCount > 0 && (
-                <View style={s.filterBadge}><Text style={s.filterBadgeTxt}>{pendingCount}</Text></View>
-              )}
+            <TouchableOpacity key={f} onPress={() => setFilter(f)}>
+              <Tag variant={active ? 'filterActive' : 'filterInactive'} size="filter">{`${f} (${countFor[f]})`}</Tag>
             </TouchableOpacity>
           );
         })}
@@ -89,13 +98,7 @@ const s = StyleSheet.create({
   backBtnTxt:  { color: colors.text, fontSize: 22 },
 
   filtersWrap: { maxHeight: 64, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
-  filtersList: { paddingHorizontal: spacing.xl, paddingVertical: spacing.md, gap: spacing.sm, flexDirection: 'row', alignItems: 'center' },
-  filterChip:      { flexDirection: 'row', alignItems: 'center', gap: spacing.xs, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: radius.pill, backgroundColor: colors.tagNeutralBg },
-  filterChipOn:    { backgroundColor: colors.noir },
-  filterChipTxt:   { fontFamily: typography.body, color: colors.text, fontSize: typography.size.body },
-  filterChipTxtOn: { fontFamily: typography.bodySemibold, color: '#FFFFFF' },
-  filterBadge:     { backgroundColor: colors.resa, borderRadius: radius.full, minWidth: 18, height: 18, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 4 },
-  filterBadgeTxt:  { fontFamily: typography.bodyBold, color: '#FFFFFF', fontSize: typography.size.xs },
+  filtersList: { paddingHorizontal: spacing.xl, paddingVertical: spacing.md, gap: 6, flexDirection: 'row', alignItems: 'center' },
 
   emptyWrap:  { alignItems: 'center', paddingVertical: spacing.section * 2, gap: spacing.md },
   emptyTitle: { color: colors.text, fontSize: typography.size.heading2, fontWeight: typography.weight.medium },

@@ -19,16 +19,16 @@ const C_DARK = {
 const CLIENT_TABS = [
   { name: 'Accueil',   label: 'Accueil',  route: 'Accueil',  icon: 'home',     iconOff: 'home-outline' },
   { name: 'Recherche', label: 'Explorer', route: 'Recherche',icon: 'search',   iconOff: 'search-outline' },
-  { name: 'Favoris',   label: 'Favoris',  route: 'Favoris',  icon: 'heart',    iconOff: 'heart-outline' },
   { name: 'Resa',      label: 'Résas',    route: 'Resa',     icon: 'calendar', iconOff: 'calendar-outline' },
+  { name: 'Favoris',   label: 'Favoris',  route: 'Favoris',  icon: 'heart',    iconOff: 'heart-outline' },
   { name: 'Profil',    label: 'Profil',   route: 'Profil',   icon: 'person',   iconOff: 'person-outline' },
 ];
 
 const PRO_TABS = [
   { name: 'Accueil',   label: 'Accueil',  route: 'Accueil',  icon: 'home',     iconOff: 'home-outline' },
   { name: 'Recherche', label: 'Explorer', route: 'Recherche',icon: 'search',   iconOff: 'search-outline' },
-  { name: 'Favoris',   label: 'Favoris',  route: 'Favoris',  icon: 'heart',    iconOff: 'heart-outline' },
   { name: 'Manager',   label: 'Manager',  route: 'Manager',  icon: 'grid',     iconOff: 'grid-outline' },
+  { name: 'Favoris',   label: 'Favoris',  route: 'Favoris',  icon: 'heart',    iconOff: 'heart-outline' },
   { name: 'Profil',    label: 'Profil',   route: 'Profil',   icon: 'person',   iconOff: 'person-outline' },
 ];
 

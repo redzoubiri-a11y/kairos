@@ -32,7 +32,7 @@ export default function AuthScreen({ onAuth, userType, onSwitchType, onGuest }) 
   const {
     isPro, mode, email, setEmail, password, setPassword, confirm, setConfirm,
     loading, error, showPwd, success, resetSent, resetLoading,
-    pulseAnim, fadeAnim, shakeX,
+    fadeAnim, shakeX,
     switchToSignin, switchToSignup, toggleShowPwd, clearSuccess, switchType,
     sendReset, submit,
   } = useAuth({ onAuth, userType, onSwitchType });
@@ -46,11 +46,7 @@ export default function AuthScreen({ onAuth, userType, onSwitchType, onGuest }) 
 
           <View style={s.hero}>
             <Text style={s.wordmark}>MIDA</Text>
-            <Animated.View style={[s.heroRingOuter, { transform: [{ scale: pulseAnim }] }]}>
-              <View style={s.heroRingInner}>
-                <Text style={s.heroStar}>✦</Text>
-              </View>
-            </Animated.View>
+            <Text style={s.heroTitle}>Bienvenue.{'\n'}Réservons une table.</Text>
           </View>
 
           {isPro && (
@@ -197,11 +193,9 @@ const s = StyleSheet.create({
   root:   { flex: 1, backgroundColor: colors.bg },
   scroll: { flexGrow: 1, paddingHorizontal: spacing.xl, paddingBottom: spacing.section + 4 },
 
-  hero:          { alignItems: 'center', paddingTop: 50, paddingBottom: spacing.section },
-  wordmark:      { fontFamily: typography.display, fontSize: typography.size.heading1, fontWeight: typography.weight.bold, color: colors.primary, letterSpacing: -0.3, marginBottom: spacing.xl },
-  heroRingOuter: { width: 88, height: 88, borderRadius: radius.xxl, backgroundColor: colors.primarySoft, borderWidth: 1.5, borderColor: colors.primarySoft, alignItems: 'center', justifyContent: 'center', marginBottom: spacing.xxl },
-  heroRingInner: { width: 60, height: 60, borderRadius: radius.xl, backgroundColor: colors.primarySoft, borderWidth: 1, borderColor: colors.primarySoft, alignItems: 'center', justifyContent: 'center' },
-  heroStar:      { color: colors.primary, fontSize: 28 },
+  hero:          { alignItems: 'flex-start', paddingTop: 50, paddingBottom: spacing.xxl },
+  wordmark:      { fontFamily: typography.display, fontSize: 22, color: colors.primary, letterSpacing: -0.44 },
+  heroTitle:     { fontFamily: typography.display, fontSize: 25, color: colors.text, letterSpacing: -0.5, lineHeight: 31.25, marginTop: spacing.xxl - 2 },
 
   tabRow:   { flexDirection: 'row', backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, padding: 4, marginBottom: spacing.xl },
   tabBtn:   { flex: 1, paddingVertical: spacing.lg, alignItems: 'center', borderRadius: radius.xl },

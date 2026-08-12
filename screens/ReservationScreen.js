@@ -138,8 +138,8 @@ export default function ReservationScreen({ navigation }) {
           {aVenir.length > 0 && next ? (
             next.date === today ? (
               <View>
-                <Text style={s.headerLabel}>Ce soir chez</Text>
-                <Text style={s.headerTitle} numberOfLines={1}>{next.restaurants?.name || '…'}</Text>
+                <Text style={s.headerLabel}>Ce soir</Text>
+                <Text style={s.headerTitle}>à {next.time_slot?.slice(0, 5) || '—'}</Text>
               </View>
             ) : (
               <View>

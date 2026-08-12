@@ -74,17 +74,17 @@ export default function NextResaCard({ r, onCancel, onViewRestaurant, onEdit }) 
         <View style={s.actions}>
           {onViewRestaurant && (
             <TouchableOpacity style={s.viewBtn} onPress={onViewRestaurant}>
-              <Text style={s.viewBtnTxt}>Voir le restaurant →</Text>
+              <Text style={s.viewBtnTxt} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}>Voir le restaurant →</Text>
             </TouchableOpacity>
           )}
           {['confirmed','pending'].includes(r.status) && onEdit && (
             <TouchableOpacity style={s.editBtn} onPress={onEdit}>
-              <Text style={s.editTxt}>Modifier la réservation</Text>
+              <Text style={s.editTxt} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}>Modifier la réservation</Text>
             </TouchableOpacity>
           )}
           {['confirmed','pending'].includes(r.status) && (
             <TouchableOpacity style={s.cancelBtn} onPress={onCancel}>
-              <Text style={s.cancelTxt}>Annuler la réservation</Text>
+              <Text style={s.cancelTxt} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}>Annuler la réservation</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -94,7 +94,7 @@ export default function NextResaCard({ r, onCancel, onViewRestaurant, onEdit }) 
 }
 
 const s = StyleSheet.create({
-  card:          { marginHorizontal: spacing.xl, backgroundColor: colors.card, borderRadius: radius.pill, borderWidth:1, borderColor:'rgba(200,151,90,0.2)', overflow:'hidden', marginBottom: spacing.md },
+  card:          { marginHorizontal: spacing.xl, backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth:1, borderColor:'rgba(200,151,90,0.2)', overflow:'hidden', marginBottom: spacing.md },
   photoWrap:     { height:200, position:'relative' },
   photo:         { ...StyleSheet.absoluteFillObject },
   photoOverlay:  { ...StyleSheet.absoluteFillObject, backgroundColor:'rgba(10,10,10,0.45)' },
@@ -119,10 +119,10 @@ const s = StyleSheet.create({
   noteLbl:       { color: colors.textMuted, fontSize: typography.size.sm, letterSpacing:1, marginBottom: spacing.xs },
   noteTxt:       { color: colors.text, fontSize: typography.size.bodyLg, fontWeight: typography.weight.regular, lineHeight:18 },
   actions:       { gap: spacing.md },
-  viewBtn:       { backgroundColor: colors.blueSoft, borderWidth:1, borderColor:'rgba(90,155,224,0.25)', borderRadius: radius.lg, paddingVertical: spacing.lg, alignItems:'center' },
-  viewBtnTxt:    { color: colors.blue, fontSize: typography.size.bodyLg },
-  editBtn:       { borderWidth:1, borderColor:'rgba(90,155,224,0.3)', borderRadius: radius.lg, paddingVertical: spacing.lg, alignItems:'center', backgroundColor: colors.blueSoft },
-  editTxt:       { color: colors.blue, fontSize: typography.size.bodyLg },
-  cancelBtn:     { borderWidth:1, borderColor:'rgba(224,90,90,0.3)', borderRadius: radius.lg, paddingVertical: spacing.lg, alignItems:'center', backgroundColor: colors.redSoft },
-  cancelTxt:     { color: colors.red, fontSize: typography.size.bodyLg },
+  viewBtn:       { backgroundColor: colors.blueSoft, borderWidth:1, borderColor:'rgba(90,155,224,0.25)', borderRadius: radius.lg, paddingVertical: spacing.lg, paddingHorizontal: spacing.sm, alignItems:'center' },
+  viewBtnTxt:    { color: colors.blue, fontSize: typography.size.body },
+  editBtn:       { borderWidth:1, borderColor:'rgba(90,155,224,0.3)', borderRadius: radius.lg, paddingVertical: spacing.lg, paddingHorizontal: spacing.sm, alignItems:'center', backgroundColor: colors.blueSoft },
+  editTxt:       { color: colors.blue, fontSize: typography.size.body },
+  cancelBtn:     { borderWidth:1, borderColor:'rgba(224,90,90,0.3)', borderRadius: radius.lg, paddingVertical: spacing.lg, paddingHorizontal: spacing.sm, alignItems:'center', backgroundColor: colors.redSoft },
+  cancelTxt:     { color: colors.red, fontSize: typography.size.body },
 });

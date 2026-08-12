@@ -10,6 +10,7 @@ import MLoader from '../src/components/MLoader';
 import useProAvis, { FILTERS } from '../src/hooks/useProAvis';
 import AvisStats from '../src/components/AvisStats';
 import ReviewCard from '../src/components/ReviewCard';
+import Tag from '../src/components/Tag';
 
 function Skeleton() {
   return (
@@ -27,7 +28,7 @@ export default function ProAvisScreen({ navigation }) {
   const {
     reviews, loading, refreshing, filter, setFilter, restaurant,
     handleSaveResponse, handleApprove, handleReject,
-    onRefresh, noReply, ratingCounts, filtered, pendingCount,
+    onRefresh, noReply, filtered,
   } = useProAvis();
 
   useEffect(() => {
@@ -65,22 +66,10 @@ export default function ProAvisScreen({ navigation }) {
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.filterRow} delayContentTouches={false}>
               {FILTERS.map(f => {
                 const isActive = filter === f;
-                const count = f === 'Sans réponse' ? noReply
-                            : f === 'Tous'          ? reviews.length
-                            : f === 'En attente'    ? pendingCount
-                            : f === '5 ⭐'          ? ratingCounts[5]
-                            : f === '4 ⭐'          ? ratingCounts[4]
-                            : f === '3 ⭐'          ? ratingCounts[3]
-                            : ratingCounts.low;
+                const label = f === 'Sans réponse' ? `Sans réponse (${noReply})` : f;
                 return (
-                  <TouchableOpacity
-                    key={f}
-                    delayPressIn={0}
-                    style={[s.chip, isActive && s.chipOn, f === 'Sans réponse' && noReply > 0 && !isActive && s.chipAlert, f === 'En attente' && pendingCount > 0 && !isActive && s.chipPending]}
-                    onPress={() => setFilter(f)}
-                  >
-                    <Text style={[s.chipTxt, isActive && s.chipTxtOn]}>{f}</Text>
-                    {count > 0 && <Text style={[s.chipCount, isActive && s.chipCountOn]}>{count}</Text>}
+                  <TouchableOpacity key={f} delayPressIn={0} onPress={() => setFilter(f)}>
+                    <Tag variant={isActive ? 'filterActive' : 'filterInactive'} size="filter">{label}</Tag>
                   </TouchableOpacity>
                 );
               })}
@@ -139,15 +128,7 @@ const s = StyleSheet.create({
   badge:      { backgroundColor: colors.red, borderRadius: radius.full, minWidth: 22, height: 22, alignItems: 'center', justifyContent: 'center', paddingHorizontal: spacing.sm },
   badgeTxt:   { color: '#FFFFFF', fontSize: typography.size.xs, fontWeight: typography.weight.bold },
 
-  filterRow:   { paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, gap: spacing.sm },
-  chip:        { flexDirection: 'row', alignItems: 'center', gap: spacing.xs, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: radius.full, backgroundColor: 'transparent', borderWidth: 1, borderColor: colors.cardBorder },
-  chipOn:      { backgroundColor: colors.goldSoft, borderColor: colors.gold },
-  chipAlert:   { borderColor: 'rgba(224,90,90,0.4)' },
-  chipPending: { borderColor: 'rgba(200,151,90,0.5)' },
-  chipTxt:     { color: colors.textMuted, fontSize: typography.size.body },
-  chipTxtOn:   { color: colors.gold, fontWeight: typography.weight.semibold },
-  chipCount:   { color: colors.textDim, fontSize: typography.size.xs },
-  chipCountOn: { color: colors.gold },
+  filterRow:   { paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, gap: 6 },
 
   listHead:    { paddingHorizontal: spacing.xl, paddingBottom: spacing.md },
   listHeadTxt: { color: colors.textDim, fontSize: typography.size.sm, letterSpacing: 2 },

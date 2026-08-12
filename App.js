@@ -49,7 +49,7 @@ const Stack = createNativeStackNavigator();
 const C = {
   bg: '#FDFCF9', bg2: 'transparent',
   border: '#ECE7DC',
-  accent: '#0D6B3F', dim: 'rgba(10,10,10,0.38)', text: '#0A0A0A',
+  accent: '#0D6B3F', dim: 'rgba(10,10,10,0.62)', text: '#0A0A0A',
 };
 
 const TAB_ICONS = {
@@ -116,8 +116,8 @@ function TabNavigator({ userRole }) {
     >
       <Tab.Screen name="Accueil" component={HomeScreen} />
       <Tab.Screen name="Recherche" component={ExplorerScreen} />
-      <Tab.Screen name="Favoris" component={FavorisScreen} />
       <Tab.Screen name={lastName} component={LastScreen} />
+      <Tab.Screen name="Favoris" component={FavorisScreen} />
       <Tab.Screen name="Profil" component={ProfilScreen} />
     </Tab.Navigator>
   );

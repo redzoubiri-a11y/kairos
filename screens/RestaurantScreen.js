@@ -220,7 +220,7 @@ export default function RestaurantScreen({ route, navigation }) {
         </View>
         {clickCollectEnabled && (
           <TouchableOpacity style={s.clickCollectBtn} onPress={goClickCollect}>
-            <Text style={s.clickCollectTxt}>🛍️  Commander à emporter</Text>
+            <Text style={s.clickCollectTxt}>Commander à emporter</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -296,9 +296,9 @@ const s = StyleSheet.create({
   footerPriceLbl:{ color: colors.textDim, fontSize: typography.size.xs, letterSpacing: 1.5 },
   footerPriceVal:{ color: colors.primary, fontSize: typography.size.heading2, fontWeight: typography.weight.medium },
   reserveBtn:    { flex: 1, borderRadius: radius.card, paddingVertical: spacing.xl - 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.resa },
-  reserveTxt:    { color: '#FFFFFF', fontSize: typography.size.bodyLg, fontWeight: typography.weight.bold, letterSpacing: 0.3 },
+  reserveTxt:    { fontFamily: typography.bodyBold, color: '#FFFFFF', fontSize: typography.size.bodyLg, letterSpacing: 0.3 },
   directionsBtn: { width: 52, paddingVertical: spacing.xl - 1, borderRadius: radius.card, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder },
   directionsIcon:{ fontSize: 20 },
-  clickCollectBtn: { marginTop: spacing.md, borderRadius: radius.card, paddingVertical: spacing.lg - 2, alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent', borderWidth: 1.5, borderColor: colors.green },
-  clickCollectTxt: { color: colors.green, fontSize: typography.size.body, fontWeight: typography.weight.semibold },
+  clickCollectBtn: { marginTop: spacing.md, borderRadius: radius.card, paddingVertical: spacing.lg, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.greenSoft },
+  clickCollectTxt: { fontFamily: typography.bodySemibold, color: colors.green, fontSize: typography.size.bodyLg, letterSpacing: 0.2 },
 });

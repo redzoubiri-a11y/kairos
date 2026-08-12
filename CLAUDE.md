@@ -66,3 +66,16 @@ Palette dans src/theme.js — NE JAMAIS utiliser de couleurs en dur.
 6. FavorisScreen + NotificationsScreen + ProfilScreen
 7. ProDashboard + ProComptoir + ProInscriptionScreen
 8. MapScreen + ExplorerScreen
+
+## RÈGLE ABSOLUE — REFONTE VISUELLE MIDA PREMIUM (LECTURE LITTÉRALE)
+
+Les fichiers .dc.html du système "Refonte Visuelle Mida Premium" sont la SOURCE DE VÉRITÉ UNIQUE pour tout le visuel.
+
+1. LIS le fichier .dc.html de l'écran AVANT d'écrire une ligne de code. Ne code jamais de mémoire.
+2. REPRODUIS À LA LETTRE : couleurs exactes (hex), tailles de police, poids, espacements, rayons de bordure, ombres, ordre des éléments, wording des labels.
+3. INTERDIT : improviser, "améliorer", interpréter, remplacer une valeur par un équivalent du theme.js existant si elle diffère de la maquette. Si la maquette dit 14px, c'est 14px — pas "text-sm parce que c'est proche".
+4. Si une valeur de la maquette n'existe pas dans src/theme.js : AJOUTE-LA au theme (ne la hardcode pas dans le composant, mais ne la remplace pas non plus par une valeur existante différente).
+5. Si un élément de la maquette est ambigu ou en conflit avec une contrainte technique : STOP, pose-moi la question. Ne tranche jamais seul.
+6. À la fin de chaque écran : liste tout écart entre ton code et le .dc.html, même mineur. Zéro écart non déclaré.
+
+Toute déviation non validée par moi = travail à refaire.

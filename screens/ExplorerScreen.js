@@ -1,281 +1,214 @@
-import { useRef, useCallback, useEffect } from 'react';
-import { useFocusEffect } from '@react-navigation/native';
+import { useState, useCallback } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, ScrollView,
-  ActivityIndicator, Platform,
-  StatusBar as RNStatusBar, Image, FlatList,
+  ActivityIndicator, Platform, TextInput, FlatList,
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 let MapView, Marker;
 if (Platform.OS !== 'web') {
   const maps = require('react-native-maps');
   MapView = maps.default;
   Marker  = maps.Marker;
 }
-import { colors, typography, spacing, radius } from '../src/theme';
-import useExplorer, { CITIES, getCoord, haversineKm } from '../src/hooks/useExplorer';
-import RestaurantPin from '../src/components/RestaurantPin';
-import ExplorerRestoCard, { CARD_W } from '../src/components/ExplorerRestoCard';
+import { colors, typography, spacing, radius, shadows } from '../src/theme';
+import useExplorer, { getCoord } from '../src/hooks/useExplorer';
+import RestaurantCard from '../src/components/RestaurantCard';
+import Tag from '../src/components/Tag';
+import EmptyState from '../src/components/EmptyState';
 
+// Chips visibles mais non filtrantes : pas de donnée réelle en base
+// (open_time/close_time/amenities NULL, pas de table promotions) — même
+// convention que HomeScreen.
+const FAKE_CHIPS = ['Ouvert', 'Terrasse', '€€', 'Note 4,5+'];
 
-const TOP = Platform.OS === 'android' ? (RNStatusBar.currentHeight || 0) : 0;
+const SORT_OPTIONS = [
+  { id: 'pertinence', label: 'Pertinence' },
+  { id: 'note', label: 'Note' },
+];
 
-export default function ExplorerScreen({ navigation, route }) {
-  const mapRef = useRef(null);
-  const initialCity = route?.params?.initialCity;
-  const {
-    city, setCity, mode, setMode, restaurants, loading, selected, setSelected,
-    cityData, cityDefault,
-    userLocation, nearMe, locLoading, requestNearMe,
-  } = useExplorer(initialCity);
+export default function ExplorerScreen({ navigation }) {
+  const { restaurants, loading, query, setQuery, sortBy, setSortBy } = useExplorer();
+  const [sortOpen, setSortOpen] = useState(false);
 
-  const changeCity = useCallback((c) => {
-    setCity(c);
-    const r = CITIES.find(x => x.id === c)?.region;
-    if (r) mapRef.current?.animateToRegion(r, 400);
-  }, [setCity]);
+  const goMap = useCallback(() => navigation.navigate('Map'), [navigation]);
+  const goRestaurant = useCallback(
+    (r) => navigation.navigate('Restaurant', { restaurant: r }),
+    [navigation],
+  );
+  const pickSort = useCallback((id) => { setSortBy(id); setSortOpen(false); }, [setSortBy]);
 
-  const handleNearMe = useCallback(async () => {
-    await requestNearMe();
-  }, [requestNearMe]);
+  const sortLabel = SORT_OPTIONS.find(o => o.id === sortBy)?.label ?? 'Trier';
+  const count = restaurants.length;
 
-  useEffect(() => {
-    if (nearMe && userLocation) {
-      mapRef.current?.animateToRegion(
-        { ...userLocation, latitudeDelta: 0.04, longitudeDelta: 0.04 },
-        500,
-      );
-    }
-  }, [nearMe, userLocation]);
-
-  const handleMarker = useCallback((r) => {
-    const same = selected?.id === r.id;
-    setSelected(same ? null : r);
-    if (!same) {
-      mapRef.current?.animateToRegion(
-        { ...getCoord(r, cityDefault), latitudeDelta: 0.025, longitudeDelta: 0.025 },
-        350,
-      );
-    }
-  }, [selected, cityDefault, setSelected]);
-
-  const renderItem = useCallback(({ item: r, index }) => {
-    let distance = null;
-    if (nearMe && userLocation) {
-      const coord = getCoord(r, cityDefault);
-      const km = haversineKm(userLocation.latitude, userLocation.longitude, coord.latitude, coord.longitude);
-      distance = km < 1 ? `${Math.round(km * 1000)} m` : `${km.toFixed(1)} km`;
-    }
-    return (
-      <ExplorerRestoCard
-        r={r}
-        rank={nearMe ? null : index}
-        distance={distance}
-        onPress={() => navigation.navigate('Restaurant', { restaurant: r })}
-        onReserve={() => navigation.navigate('ReservationForm', { restaurant: r })}
-      />
-    );
-  }, [navigation, nearMe, userLocation, cityDefault]);
-
-  const canBack           = navigation.canGoBack();
-  const goBack            = useCallback(() => { if (navigation.canGoBack()) navigation.goBack(); }, [navigation]);
-  const toggleMode        = useCallback(() => { setMode(m => m === 'map' ? 'list' : 'map'); setSelected(null); }, [setMode, setSelected]);
-  const closeSelected     = useCallback(() => setSelected(null), [setSelected]);
-  const goReserveSelected = useCallback(() => { const r = selected; setSelected(null); navigation.navigate('ReservationForm', { restaurant: r }); }, [navigation, selected, setSelected]);
-  const goViewSelected    = useCallback(() => { const r = selected; setSelected(null); navigation.navigate('Restaurant', { restaurant: r }); }, [navigation, selected, setSelected]);
-
-  useFocusEffect(useCallback(() => () => setSelected(null), [setSelected]));
+  const renderItem = useCallback(({ item: r }) => (
+    <View style={s.cardWrap}>
+      <RestaurantCard r={r} variant="compact" onPress={() => goRestaurant(r)} />
+    </View>
+  ), [goRestaurant]);
 
   return (
-    <View style={s.root}>
-      <LinearGradient colors={['#C4B8C8', '#8B9BB4', '#6B7F9E']} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
+    <SafeAreaView style={s.root} edges={['top']}>
+      <FlatList
+        data={restaurants}
+        keyExtractor={(r) => String(r.id)}
+        renderItem={renderItem}
+        ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
+        contentContainerStyle={s.listContent}
+        showsVerticalScrollIndicator={false}
+        ListHeaderComponent={
+          <>
+            <View style={s.header}>
+              <Text style={s.title}>Explorer</Text>
 
-      {mode === 'map' && (
-        <View style={s.mapWrap}>
-          <MapView
-            ref={mapRef}
-            style={StyleSheet.absoluteFill}
-            initialRegion={cityData.region}
-            showsUserLocation={nearMe}
-            showsCompass={false}
-            toolbarEnabled={false}
-          >
-            {restaurants.map(r => (
-              <Marker
-                key={String(r.id)}
-                coordinate={getCoord(r, cityDefault)}
-                tracksViewChanges={false}
-                onPress={() => handleMarker(r)}
+              <View style={s.searchBar}>
+                <Ionicons name="search-outline" size={14} color={colors.primary} />
+                <TextInput
+                  style={s.searchInput}
+                  value={query}
+                  onChangeText={setQuery}
+                  placeholder="Restaurant, cuisine, quartier…"
+                  placeholderTextColor={colors.textPlaceholder}
+                />
+              </View>
+
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={s.chipsRow}
               >
-                <RestaurantPin restaurant={r} isSelected={selected?.id === r.id} />
-              </Marker>
-            ))}
-          </MapView>
-
-          {/* Chips collés en bas de la carte */}
-          {!selected && (
-            <View style={s.mapChips}>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.cityGrid} delayContentTouches={false}>
-                <TouchableOpacity delayPressIn={0} style={[s.cityChip, s.nearMeChip, nearMe && s.cityChipOn]} onPress={handleNearMe} disabled={locLoading}>
-                  <Text style={[s.cityTxt, nearMe && s.cityTxtOn]}>Près de moi</Text>
+                <TouchableOpacity onPress={goMap}>
+                  <Tag variant="filterActive" size="filter">Carte</Tag>
                 </TouchableOpacity>
-                {CITIES.map(c => (
-                  <TouchableOpacity key={c.id} delayPressIn={0} style={[s.cityChip, !nearMe && city === c.id && s.cityChipOn]} onPress={() => changeCity(c.id)}>
-                    <Text style={[s.cityTxt, !nearMe && city === c.id && s.cityTxtOn]}>{c.label}</Text>
-                  </TouchableOpacity>
+                {FAKE_CHIPS.map((label) => (
+                  <Tag key={label} variant="filterInactive" size="filter">{label}</Tag>
                 ))}
               </ScrollView>
             </View>
-          )}
 
-          {selected && (
-            <View style={s.selCard}>
-              {selected.photos?.[0]
-                ? <Image source={{ uri: selected.photos[0] }} style={s.selPhoto} resizeMode="cover" />
-                : <View style={[s.selPhoto, { backgroundColor:colors.cardHover, alignItems:'center', justifyContent:'center' }]}><Text style={{ fontSize:28 }}>🍽️</Text></View>
-              }
-              <View style={s.selOverlay}>
-                <Text style={s.selCuisine}>{(selected.cuisine_type||'').toUpperCase().replace(/_/g,' ')}</Text>
-                <Text style={s.selName} numberOfLines={1}>{selected.name}</Text>
-                <View style={s.selMeta}>
-                  {selected.avg_rating > 0 && <Text style={s.selRating}>★ {Number(selected.avg_rating).toFixed(1)}</Text>}
-                  {selected.quartier && <Text style={s.selAddr}>· {selected.quartier}</Text>}
-                  {selected.avg_ticket > 0 && <Text style={s.selPrice}>· {selected.avg_ticket.toLocaleString('fr-FR')} DA</Text>}
+            <TouchableOpacity style={s.miniMap} activeOpacity={0.92} onPress={goMap}>
+              {Platform.OS !== 'web' ? (
+                <MapView
+                  style={StyleSheet.absoluteFill}
+                  initialRegion={{ latitude: 36.7538, longitude: 3.0588, latitudeDelta: 0.12, longitudeDelta: 0.12 }}
+                  scrollEnabled={false}
+                  zoomEnabled={false}
+                  rotateEnabled={false}
+                  pitchEnabled={false}
+                  showsCompass={false}
+                  toolbarEnabled={false}
+                  pointerEvents="none"
+                >
+                  {restaurants.slice(0, 30).map((r) => (
+                    <Marker key={String(r.id)} coordinate={getCoord(r)} tracksViewChanges={false}>
+                      <View style={[s.pin, shadows.mapPin]} />
+                    </Marker>
+                  ))}
+                </MapView>
+              ) : (
+                <View style={[StyleSheet.absoluteFill, s.miniMapWebFallback]}>
+                  <Text style={s.miniMapWebTxt}>Carte disponible sur mobile</Text>
                 </View>
+              )}
+              <View style={s.miniMapBadge}>
+                <Text style={s.miniMapBadgeTxt}>{count} restaurant{count > 1 ? 's' : ''} ici</Text>
               </View>
-              <View style={s.selActions}>
-                <TouchableOpacity style={s.selBtnPrimary} onPress={goReserveSelected}>
-                  <Text style={s.selBtnPrimaryTxt}>Réserver</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={s.selBtnSecondary} onPress={goViewSelected}>
-                  <Text style={s.selBtnSecondaryTxt}>Voir le resto →</Text>
-                </TouchableOpacity>
+              <View style={[s.locateBtn, shadows.mapControl]}>
+                <Ionicons name="locate-outline" size={15} color={colors.text} />
               </View>
-              <TouchableOpacity style={s.selClose} onPress={closeSelected}>
-                <Text style={s.selCloseTxt}>✕</Text>
+            </TouchableOpacity>
+
+            <View style={s.resultsRow}>
+              <Text style={s.resultsCount}>{count} résultat{count > 1 ? 's' : ''}</Text>
+              <TouchableOpacity onPress={() => setSortOpen((o) => !o)}>
+                <Text style={s.sortTxt}>{sortLabel} ▾</Text>
               </TouchableOpacity>
             </View>
-          )}
-        </View>
-      )}
 
-      <SafeAreaView style={s.overlay} pointerEvents="box-none">
-        <View style={s.header}>
-          {canBack
-            ? <TouchableOpacity style={s.backBtn} onPress={goBack}><Text style={s.backBtnTxt}>←</Text></TouchableOpacity>
-            : <View style={{ width: 36 }} />
-          }
-          <View style={{ width: 36 }} />
-          <View style={{ flexDirection:'row', gap:8, alignItems:'center' }}>
-            {!loading && (
-              <View style={s.countBadge}>
-                <View style={s.countDot} />
-                <Text style={s.countTxt}>{restaurants.length} restos</Text>
+            {sortOpen && (
+              <View style={s.sortMenu}>
+                {SORT_OPTIONS.map((o) => (
+                  <TouchableOpacity key={o.id} style={s.sortItem} onPress={() => pickSort(o.id)}>
+                    <Text style={[s.sortItemTxt, sortBy === o.id && s.sortItemTxtActive]}>{o.label}</Text>
+                  </TouchableOpacity>
+                ))}
               </View>
             )}
-            <TouchableOpacity style={[s.modeBtn, mode === 'list' && s.modeBtnOn]} onPress={toggleMode}>
-              <Text style={s.modeBtnTxt}>{mode === 'map' ? '☰' : '🗺️'}</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </SafeAreaView>
-
-      <View style={[s.sheet, mode === 'list' && s.sheetFull]}>
-        {mode === 'list' && (
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={s.chipsScroll} contentContainerStyle={s.cityGrid} delayContentTouches={false}>
-            <TouchableOpacity delayPressIn={0} style={[s.cityChip, s.nearMeChip, nearMe && s.cityChipOn]} onPress={handleNearMe} disabled={locLoading}>
-              <Text style={[s.cityTxt, nearMe && s.cityTxtOn]}>Près de moi</Text>
-            </TouchableOpacity>
-            {CITIES.map(c => (
-              <TouchableOpacity key={c.id} delayPressIn={0} style={[s.cityChip, !nearMe && city === c.id && s.cityChipOn]} onPress={() => changeCity(c.id)}>
-                <Text style={[s.cityTxt, !nearMe && city === c.id && s.cityTxtOn]}>{c.label}</Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        )}
-
-        <View style={{ flex: 1 }}>
-          {loading ? (
-            <View style={s.empty}><ActivityIndicator color={colors.primary} size="large" /></View>
-          ) : restaurants.length === 0 ? (
-            <View style={s.empty}>
-              <Text style={{ fontSize: 36 }}>🍽️</Text>
-              <Text style={s.emptyTitle}>Aucun restaurant trouvé</Text>
-              <Text style={s.emptyDesc}>Aucun établissement pour cette ville.</Text>
+          </>
+        }
+        ListEmptyComponent={
+          loading ? (
+            <View style={s.loading}>
+              <ActivityIndicator color={colors.primary} size="large" />
             </View>
           ) : (
-            <FlatList
-              data={restaurants}
-              keyExtractor={r => String(r.id)}
-              numColumns={2}
-              columnWrapperStyle={s.gridRow}
-              contentContainerStyle={s.gridContent}
-              showsVerticalScrollIndicator={false}
-              renderItem={renderItem}
-              ListFooterComponent={<View style={{ height: 60 }} />}
+            <EmptyState
+              icon={<Text style={{ fontSize: 20 }}>🔍</Text>}
+              title="Aucun restaurant trouvé"
+              subtitle="Essayez un autre nom, une autre cuisine ou un autre quartier."
+              style={s.emptyState}
             />
-          )}
-        </View>
-      </View>
-    </View>
+          )
+        }
+      />
+    </SafeAreaView>
   );
 }
 
 const s = StyleSheet.create({
-  root:       { flex:1, backgroundColor:colors.bg },
-  bgOverlay:  { ...StyleSheet.absoluteFillObject, opacity: 0.06 },
-  mapWrap: { flex:54 },
+  root: { flex: 1, backgroundColor: colors.bg },
+  listContent: { paddingBottom: 84 },
 
-  overlay:     { position:'absolute', top:0, left:0, right:0, zIndex:10 },
-  header:      { flexDirection:'row', justifyContent:'space-between', alignItems:'center', paddingHorizontal:spacing.xl, paddingTop:TOP+14, paddingBottom:14, backgroundColor:'transparent', borderBottomWidth:1, borderBottomColor:colors.cardBorder },
-  headerItalic:{ color:colors.blue, fontSize:typography.size.caption, fontStyle:'italic', letterSpacing:1.5, marginBottom:2 },
-  headerTitle: { color:colors.text, fontSize:typography.size.heading2, fontWeight:typography.weight.regular, letterSpacing:3 },
-  countBadge:  { flexDirection:'row', alignItems:'center', gap:5, backgroundColor:'rgba(255,255,255,0.92)', borderRadius:radius.full, paddingHorizontal:spacing.md, paddingVertical:5 },
-  countDot:    { width:6, height:6, borderRadius:3, backgroundColor:colors.green },
-  countTxt:    { color:colors.noir, fontSize:typography.size.caption, fontWeight:typography.weight.semibold },
-  modeBtn:     { width:36, height:36, borderRadius:radius.md, backgroundColor:'rgba(255,255,255,0.92)', borderWidth:1, borderColor:colors.cardBorder, alignItems:'center', justifyContent:'center' },
-  modeBtnOn:   { backgroundColor:colors.goldSoft, borderWidth: 1, borderColor:colors.gold },
-  modeBtnTxt:  { fontSize:16 },
+  header: { paddingTop: spacing.xl, paddingHorizontal: 20 },
+  title: { fontFamily: typography.display, fontSize: typography.size.heading2 + 6, color: colors.text, letterSpacing: -0.44 },
 
-  selCard:    { position:'absolute', bottom:8, left:14, right:14, backgroundColor:colors.card, borderRadius:radius.xl, borderWidth:1, borderColor:colors.cardBorder, overflow:'hidden', zIndex:5 },
-  selPhoto:   { width:'100%', height:120 },
-  selOverlay: { paddingHorizontal:spacing.xl, paddingTop:spacing.md, paddingBottom:spacing.xs },
-  selCuisine: { color:colors.resa, fontSize:typography.size.xs, letterSpacing:2.5, marginBottom:3 },
-  selName:    { color:colors.text, fontFamily:typography.display, fontSize:typography.size.heading2, fontWeight:typography.weight.bold, letterSpacing:-0.2, marginBottom:4 },
-  selMeta:    { flexDirection:'row', flexWrap:'wrap', gap:6 },
-  selRating:  { color:colors.gold, fontSize:typography.size.body, fontWeight:typography.weight.medium },
-  selAddr:    { color:colors.textMuted, fontSize:typography.size.body },
-  selPrice:   { color:colors.textDim, fontSize:typography.size.body },
-  selActions: { flexDirection:'row', gap:8, paddingHorizontal:spacing.xl, paddingVertical:spacing.lg },
-  selBtnPrimary:    { flex:1, backgroundColor:colors.resa, borderRadius:radius.md, paddingVertical:11, alignItems:'center' },
-  selBtnPrimaryTxt: { color:'#FFFFFF', fontSize:typography.size.bodyLg, fontWeight:typography.weight.semibold },
-  selBtnSecondary:  { flex:1, borderRadius:radius.md, paddingVertical:11, alignItems:'center', borderWidth:1, borderColor:colors.cardBorder },
-  selBtnSecondaryTxt:{ color:colors.text, fontSize:typography.size.bodyLg },
-  selClose:   { position:'absolute', top:10, right:10, width:28, height:28, borderRadius:14, backgroundColor:'rgba(15,13,11,0.72)', alignItems:'center', justifyContent:'center' },
-  selCloseTxt:{ color:'#FFFFFF', fontSize:typography.size.body },
+  searchBar: {
+    marginTop: 14, flexDirection: 'row', alignItems: 'center', gap: 9,
+    backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder,
+    borderRadius: radius.lg, paddingVertical: spacing.lg, paddingHorizontal: spacing.lg + 1,
+  },
+  searchInput: { flex: 1, fontFamily: typography.body, fontSize: typography.size.bodyLg, color: colors.text, padding: 0 },
 
-  mapChips:    { position:'absolute', bottom:0, left:0, right:0, backgroundColor:colors.bg, borderTopWidth:1, borderTopColor:colors.cardBorder },
-  sheet:       { flex:46, backgroundColor:colors.bg },
-  sheetFull:   { flex:1, borderTopWidth:1, borderTopColor:colors.cardBorder, marginTop:TOP+66 },
-  sheetHandle: { width:36, height:3, backgroundColor:colors.textDim, borderRadius:2, alignSelf:'center', marginBottom:8, opacity:0.35 },
+  chipsRow: { flexDirection: 'row', gap: 6, marginTop: spacing.lg, paddingRight: 20 },
 
-  chipsScroll: { borderBottomWidth:1, borderBottomColor:colors.cardBorder, flexShrink:0 },
-  cityGrid:    { flexDirection:'row', alignItems:'center', paddingHorizontal:14, paddingVertical:10, gap:8 },
-  cityChip:    { flexDirection:'row', alignItems:'center', gap:5, paddingHorizontal:18, paddingVertical:5, borderRadius:radius.full, backgroundColor:'transparent', borderWidth:1, borderColor:colors.cardBorder },
-  nearMeChip:  { borderColor:'rgba(90,155,224,0.3)' },
-  cityChipOn:  { backgroundColor:'#FFFFFF', borderColor:colors.primary, borderWidth:1.5 },
-  cityEmoji:   { fontSize:13 },
-  cityTxt:     { color:colors.textMuted, fontSize:typography.size.body },
-  cityTxtOn:   { color:colors.primary, fontWeight:'600' },
+  miniMap: {
+    marginTop: 14, marginHorizontal: 20, height: 230,
+    borderRadius: radius.xl, overflow: 'hidden', backgroundColor: colors.cardHover,
+  },
+  miniMapWebFallback: { alignItems: 'center', justifyContent: 'center', backgroundColor: colors.cardHover, padding: spacing.xl },
+  miniMapWebTxt: { fontFamily: typography.body, fontSize: typography.size.body, color: colors.textMuted, textAlign: 'center' },
+  pin: {
+    width: 30, height: 30, backgroundColor: colors.primary,
+    borderTopLeftRadius: 15, borderTopRightRadius: 15, borderBottomRightRadius: 15, borderBottomLeftRadius: 0,
+    transform: [{ rotate: '-45deg' }],
+  },
+  miniMapBadge: {
+    position: 'absolute', top: 12, left: 12, backgroundColor: 'rgba(255,255,255,0.92)',
+    paddingHorizontal: 10, paddingVertical: 5, borderRadius: radius.badgeSm,
+  },
+  miniMapBadgeTxt: { fontFamily: typography.bodySemibold, fontSize: typography.size.caption - 0.5, color: colors.text },
+  locateBtn: {
+    position: 'absolute', bottom: 12, right: 12, width: 34, height: 34,
+    borderRadius: radius.control, backgroundColor: colors.card, alignItems: 'center', justifyContent: 'center',
+  },
 
-  backBtn:     { width:36, height:36, borderRadius:18, backgroundColor:'rgba(255,255,255,0.92)', alignItems:'center', justifyContent:'center' },
-  backBtnTxt:  { color:colors.noir, fontSize:18, lineHeight:22 },
+  resultsRow: {
+    marginTop: 18, paddingHorizontal: 20, marginBottom: spacing.lg,
+    flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between',
+  },
+  resultsCount: { fontFamily: typography.display, fontSize: typography.size.heading3, color: colors.text, letterSpacing: -0.15 },
+  sortTxt: { fontFamily: typography.bodySemibold, fontSize: typography.size.caption + 0.5, color: colors.primary },
 
-  gridRow:     { paddingHorizontal:14, justifyContent:'space-between' },
-  gridContent: { paddingTop:6 },
+  sortMenu: {
+    alignSelf: 'flex-end', marginRight: 20, marginTop: -spacing.sm, marginBottom: spacing.lg,
+    backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, borderRadius: radius.lg,
+    paddingVertical: spacing.xs, ...shadows.sm,
+  },
+  sortItem: { paddingVertical: spacing.sm, paddingHorizontal: spacing.xl },
+  sortItemTxt: { fontFamily: typography.body, fontSize: typography.size.bodyLg, color: colors.textMuted },
+  sortItemTxtActive: { fontFamily: typography.bodySemibold, color: colors.primary },
 
-  empty:       { flex:1, alignItems:'center', justifyContent:'center', gap:8, padding:30 },
-  emptyTitle:  { color:colors.text, fontSize:typography.size.heading2, fontWeight:'300' },
-  emptyDesc:   { color:colors.textMuted, fontSize:typography.size.body, textAlign:'center' },
+  cardWrap: { paddingHorizontal: 20 },
+  loading: { paddingVertical: spacing.section, alignItems: 'center', justifyContent: 'center' },
+  emptyState: { marginHorizontal: 20 },
 });

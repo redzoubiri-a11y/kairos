@@ -21,7 +21,7 @@ export default function useMyOrders() {
 
       const { data } = await supabase
         .from('orders')
-        .select('id, status, notes, total_amount, created_at, restaurant_id, order_items(id, dish_name, price, quantity), restaurants(id, name, photos, quartier, phone)')
+        .select('id, status, notes, total_amount, created_at, restaurant_id, order_items(id, dish_name, price, quantity), restaurants(id, name, photos, quartier, phone, address, latitude, longitude)')
         .eq('user_id', userRow.id)
         .order('created_at', { ascending: false });
       setOrders(data ?? []);

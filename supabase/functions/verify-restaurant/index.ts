@@ -125,7 +125,7 @@ async function autoApprove(row: Record<string, string>, requestId: string, userE
     restoId = existingResto.id;
   } else {
     const { data: restoRow, error: restoErr } = await admin.from("restaurants").insert({
-      owner_id: ownerRow.id, name: row.restaurant_name, cuisine_type: "autre",
+      owner_id: ownerRow.id, name: row.restaurant_name, cuisine_type: row.cuisine_type || "autre",
       status: "active", address: row.address || "", quartier: "",
       phone: row.phone || "", city: (row.city?.trim() || "alger").toLowerCase(),
     }).select("id").single();

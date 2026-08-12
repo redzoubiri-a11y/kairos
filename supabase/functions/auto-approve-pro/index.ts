@@ -53,7 +53,7 @@ Deno.serve(async (_req) => {
           quartier: "",
           city: (row.city ?? "alger").toLowerCase(),
           phone: row.phone,
-          cuisine_type: "autre",
+          cuisine_type: row.cuisine_type || "autre",
           status: "active",
         }).select("id").single();
         if (restoErr) throw new Error(restoErr.message);

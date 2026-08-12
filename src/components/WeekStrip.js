@@ -40,11 +40,11 @@ const s = StyleSheet.create({
   title:         { color: colors.textDim, fontSize: typography.size.xs, letterSpacing: 3, marginBottom: spacing.sm },
   row:           { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' },
   col:           { alignItems: 'center', gap: 2, flex: 1 },
-  countLbl:      { color: colors.primary, fontSize: typography.size.xs, fontWeight: typography.weight.medium, minHeight: 10 },
+  countLbl:      { fontFamily: typography.bodyMedium, color: colors.primary, fontSize: typography.size.xs, minHeight: 10 },
   barTrack:      { height: 22, justifyContent: 'flex-end', width: '65%' },
   bar:           { borderRadius: radius.sm, minHeight: 2 },
   dayNum:        { color: colors.textMuted, fontSize: typography.size.xs },
-  dayNumToday:   { color: colors.primary, fontWeight: typography.weight.medium },
+  dayNumToday:   { fontFamily: typography.bodyMedium, color: colors.primary },
   dayLabel:      { color: colors.textDim, fontSize: typography.size.xs },
   dayLabelToday: { color: colors.primary },
 });

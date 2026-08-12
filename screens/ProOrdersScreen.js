@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl, ActivityIndicator } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, typography, spacing, radius } from '../src/theme';
 import useProOrders from '../src/hooks/useProOrders';
 import OrderCard from '../src/components/OrderCard';
@@ -11,6 +11,7 @@ const FILTER_MAP = { 'En attente': 'pending', 'Confirmées': 'confirmed', 'Prêt
 export default function ProOrdersScreen({ navigation }) {
   const { orders, loading, refreshing, acting, onRefresh, advance, cancel, NEXT_LABEL } = useProOrders();
   const [filter, setFilter] = useState('Tout');
+  const insets = useSafeAreaInsets();
 
   const filtered = useMemo(() => {
     if (filter === 'Tout') return orders.filter(o => o.status !== 'collected' && o.status !== 'cancelled');
@@ -46,7 +47,7 @@ export default function ProOrdersScreen({ navigation }) {
       <ScrollView
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.text} />}
-        contentContainerStyle={{ paddingBottom: 40 }}
+        contentContainerStyle={{ paddingBottom: insets.bottom + 60 }}
       >
         {loading ? (
           <ActivityIndicator style={{ marginTop: 60 }} color={colors.text} />
@@ -87,14 +88,14 @@ const s = StyleSheet.create({
   backBtn:     { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
   backBtnTxt:  { color: colors.text, fontSize: 22 },
 
-  filtersWrap: { maxHeight: 56, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
-  filtersList: { paddingHorizontal: spacing.xl, paddingVertical: spacing.md, gap: spacing.sm, flexDirection: 'row' },
+  filtersWrap: { maxHeight: 64, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
+  filtersList: { paddingHorizontal: spacing.xl, paddingVertical: spacing.md, gap: spacing.sm, flexDirection: 'row', alignItems: 'center' },
   filterChip:      { flexDirection: 'row', alignItems: 'center', gap: spacing.xs, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: radius.pill, backgroundColor: colors.tagNeutralBg },
   filterChipOn:    { backgroundColor: colors.noir },
-  filterChipTxt:   { color: colors.text, fontSize: typography.size.body },
-  filterChipTxtOn: { color: '#FFFFFF', fontWeight: typography.weight.semibold },
+  filterChipTxt:   { fontFamily: typography.body, color: colors.text, fontSize: typography.size.body },
+  filterChipTxtOn: { fontFamily: typography.bodySemibold, color: '#FFFFFF' },
   filterBadge:     { backgroundColor: colors.resa, borderRadius: radius.full, minWidth: 18, height: 18, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 4 },
-  filterBadgeTxt:  { color: '#FFFFFF', fontSize: typography.size.xs, fontWeight: '700' },
+  filterBadgeTxt:  { fontFamily: typography.bodyBold, color: '#FFFFFF', fontSize: typography.size.xs },
 
   emptyWrap:  { alignItems: 'center', paddingVertical: spacing.section * 2, gap: spacing.md },
   emptyTitle: { color: colors.text, fontSize: typography.size.heading2, fontWeight: typography.weight.medium },

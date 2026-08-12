@@ -98,5 +98,5 @@ const r = StyleSheet.create({
   statRow:   { flexDirection: 'row', alignItems: 'center', paddingVertical: spacing.sm, gap: spacing.md },
   statIcon:  { fontSize: 14, width: 20, textAlign: 'center' },
   statLabel: { flex: 1, color: colors.textMuted, fontSize: typography.size.bodyLg },
-  statValue: { fontSize: typography.size.heading2, fontWeight: typography.weight.semibold },
+  statValue: { fontFamily: typography.bodySemibold, fontSize: typography.size.heading2 },
 });

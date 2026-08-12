@@ -1,163 +1,84 @@
-import { useCallback, useEffect } from 'react';
-import {
-  View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  TextInput, RefreshControl,
-} from 'react-native';
+import { useCallback } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import { colors, typography, spacing, radius } from '../src/theme';
-import MLoader from '../src/components/MLoader';
-import useFavoris, { CUISINE_EMOJI, SORT_OPTIONS, timeAdded } from '../src/hooks/useFavoris';
-import FavCard, { CARD_W } from '../src/components/FavCard';
+import useFavoris from '../src/hooks/useFavoris';
+import RestaurantCard from '../src/components/RestaurantCard';
+import Tag from '../src/components/Tag';
+import EmptyState from '../src/components/EmptyState';
 import GuestWall from '../src/components/GuestWall';
 import { useGuestContext } from '../src/context/GuestContext';
 
-function SkeletonGrid() {
-  return (
-    <View style={{ paddingHorizontal: spacing.xxl, paddingTop: spacing.xl, gap: spacing.lg }}>
-      {[1, 2, 3].map(i => (
-        <View key={i} style={{ flexDirection: 'row', gap: spacing.lg }}>
-          <MLoader width={CARD_W} height={200} borderRadius={radius.xxl} />
-          <MLoader width={CARD_W} height={200} borderRadius={radius.xxl} />
-        </View>
-      ))}
-    </View>
-  );
-}
+// Chips visibles mais non filtrantes : pas de catégorisation réelle des
+// favoris en base (aucune colonne équivalente) — même convention que
+// Home/Explorer.
+const FAKE_CHIPS = ['Envie de sortir', 'Business'];
 
 export default function FavorisScreen({ navigation }) {
   const { isGuest } = useGuestContext();
-  const {
-    favorites, loading, refreshing, removing,
-    search, setSearch, sort,
-    filtered, rows, avgRating, cuisineCount,
-    removeFavorite, clearSearch, cycleSort, onRefresh,
-  } = useFavoris();
+  const { favorites, loading, refreshing, removing, removeFavorite, onRefresh } = useFavoris();
 
   const goExplorer = useCallback(() => navigation.navigate('Explorer'), [navigation]);
+  const goRestaurant = useCallback(
+    (r) => navigation.navigate('Restaurant', { restaurant: r }),
+    [navigation],
+  );
 
   if (isGuest) {
     return <GuestWall title="Vos favoris" message="Connectez-vous pour sauvegarder vos restaurants préférés et y accéder depuis n'importe quel appareil." />;
   }
 
   return (
-    <SafeAreaView style={s.root}>
-
+    <SafeAreaView style={s.root} edges={['top']}>
       <View style={s.header}>
-        <View style={{ flex: 1 }}>
-          <Text style={s.headerSub}>MES PRÉFÉRÉS</Text>
-          <Text style={s.headerTitle}>
-            {loading ? '…' : favorites.length > 0
-              ? `${favorites.length} restaurant${favorites.length > 1 ? 's' : ''}`
-              : 'Aucun favori'}
-          </Text>
-        </View>
+        <Text style={s.title}>Favoris</Text>
         {!loading && favorites.length > 0 && (
-          <View style={s.countBadge}>
-            <Text style={s.countTxt}>❤️  {favorites.length}</Text>
-          </View>
-        )}
-      </View>
-
-      <View style={s.controls}>
-        <View style={s.searchBar}>
-          <Text style={s.searchIcon}>🔍</Text>
-          <TextInput
-            style={s.searchInput}
-            placeholder="Chercher dans mes favoris…"
-            placeholderTextColor={colors.textDim}
-            value={search}
-            onChangeText={setSearch}
-          />
-          {search.length > 0 && (
-            <TouchableOpacity onPress={clearSearch}>
-              <Text style={{ color: colors.textDim, fontSize: typography.size.bodyLg }}>✕</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-        {!loading && favorites.length > 0 && (
-          <TouchableOpacity style={s.sortBtn} onPress={cycleSort}>
-            <Text style={s.sortTxt}>{SORT_OPTIONS.find(o => o.id === sort)?.label}</Text>
-          </TouchableOpacity>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.chipsRow}>
+            <Tag variant="filterActive" size="filter">Tous ({favorites.length})</Tag>
+            {FAKE_CHIPS.map((label) => (
+              <Tag key={label} variant="filterInactive" size="filter">{label}</Tag>
+            ))}
+          </ScrollView>
         )}
       </View>
 
       {loading ? (
-        <SkeletonGrid />
+        <View style={s.loading}><ActivityIndicator color={colors.primary} size="large" /></View>
       ) : favorites.length === 0 ? (
-        <View style={s.center}>
-          <Text style={s.emptyEmoji}>🤍</Text>
-          <Text style={s.emptyTitle}>Aucun favori</Text>
-          <Text style={s.emptySub}>Appuyez sur ❤️ sur la page d'un restaurant{'\n'}pour l'ajouter ici.</Text>
-          <TouchableOpacity style={s.exploreBtn} onPress={goExplorer}>
-            <Text style={s.exploreBtnTxt}>Explorer les restaurants</Text>
-          </TouchableOpacity>
-        </View>
-      ) : filtered.length === 0 ? (
-        <View style={s.center}>
-          <Text style={{ fontSize: 36 }}>🔍</Text>
-          <Text style={s.emptyTitle}>Aucun résultat</Text>
-          <TouchableOpacity onPress={clearSearch}>
-            <Text style={{ color: colors.blue, fontSize: typography.size.bodyLg }}>Effacer la recherche</Text>
-          </TouchableOpacity>
-        </View>
+        <EmptyState
+          icon={<Text style={{ fontSize: 20 }}>🤍</Text>}
+          title="Aucun favori"
+          subtitle={"Appuyez sur ❤️ sur la page d'un restaurant\npour l'ajouter ici."}
+          actionLabel="Explorer les restaurants"
+          onAction={goExplorer}
+          style={s.emptyState}
+        />
       ) : (
         <ScrollView
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={s.grid}
+          contentContainerStyle={s.list}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
         >
-          <View style={s.statStrip}>
-            <View style={s.statItem}>
-              <Text style={s.statVal}>{favorites.length}</Text>
-              <Text style={s.statLbl}>Favoris</Text>
-            </View>
-            <View style={s.statDiv} />
-            <View style={s.statItem}>
-              <Text style={s.statVal}>{avgRating}</Text>
-              <Text style={s.statLbl}>Note moy.</Text>
-            </View>
-            <View style={s.statDiv} />
-            <View style={s.statItem}>
-              <Text style={s.statVal}>{cuisineCount}</Text>
-              <Text style={s.statLbl}>Cuisines</Text>
-            </View>
-          </View>
-
-          {rows.map((row, ri) => (
-            <View key={ri} style={s.row}>
-              {row.map((fav, ci) => fav ? (
-                <FavCard
-                  key={fav.id}
-                  fav={fav}
-                  index={ri * 2 + ci}
-                  removing={removing.has(fav.id)}
-                  onPress={() => navigation.navigate('Restaurant', { restaurant: fav.restaurants || {} })}
-                  onReserve={() => navigation.navigate('ReservationForm', { restaurant: fav.restaurants || {} })}
-                  onRemove={() => removeFavorite(fav)}
-                />
-              ) : (
-                <View key="empty" style={{ width: CARD_W }} />
-              ))}
-            </View>
-          ))}
-
-          <View style={s.recentSection}>
-            <Text style={s.recentLabel}>HISTORIQUE DES AJOUTS</Text>
-            {[...favorites].slice(0, 5).map(fav => (
-              <View key={fav.id} style={s.recentRow}>
-                <Text style={s.recentEmoji}>{CUISINE_EMOJI[fav.restaurants?.cuisine_type] || '🍽️'}</Text>
-                <View style={{ flex: 1 }}>
-                  <Text style={s.recentName} numberOfLines={1}>{fav.restaurants?.name || '—'}</Text>
-                  <Text style={s.recentTime}>{timeAdded(fav.created_at)}</Text>
-                </View>
-                <TouchableOpacity onPress={() => navigation.navigate('Restaurant', { restaurant: fav.restaurants || {} })}>
-                  <Text style={s.recentArrow}>›</Text>
+          {favorites.map((fav) => {
+            const r = fav.restaurants || {};
+            const isRemoving = removing.has(fav.id);
+            return (
+              <View key={fav.id} style={s.cardWrap}>
+                <RestaurantCard r={r} variant="compact" onPress={() => goRestaurant(r)} />
+                <TouchableOpacity
+                  style={s.removeBtn}
+                  onPress={() => removeFavorite(fav)}
+                  disabled={isRemoving}
+                >
+                  {isRemoving
+                    ? <Text style={s.removingTxt}>···</Text>
+                    : <Ionicons name="heart" size={14} color={colors.resa} />
+                  }
                 </TouchableOpacity>
               </View>
-            ))}
-          </View>
-
-          <View style={{ height: 100 }} />
+            );
+          })}
         </ScrollView>
       )}
     </SafeAreaView>
@@ -167,40 +88,19 @@ export default function FavorisScreen({ navigation }) {
 const s = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.bg },
 
-  header:      { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: spacing.xxxl, paddingTop: spacing.xl, paddingBottom: spacing.xl, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
-  headerSub:   { color: colors.primary, fontSize: typography.size.xs, letterSpacing: 3, marginBottom: spacing.xs },
-  headerTitle: { color: colors.text, fontFamily: typography.display, fontSize: typography.size.heading1, fontWeight: typography.weight.bold, letterSpacing: -0.3 },
-  countBadge:  { backgroundColor: colors.redSoft, borderRadius: radius.full, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderWidth: 1, borderColor: 'rgba(224,90,90,0.3)' },
-  countTxt:    { color: colors.red, fontSize: typography.size.bodyLg },
+  header: { paddingTop: spacing.xl, paddingHorizontal: 20 },
+  title: { fontFamily: typography.display, fontSize: typography.size.heading2 + 6, color: colors.text, letterSpacing: -0.44 },
+  chipsRow: { flexDirection: 'row', gap: 6, marginTop: spacing.lg, paddingRight: 20 },
 
-  controls:    { flexDirection: 'row', gap: spacing.md, paddingHorizontal: spacing.xxl, paddingVertical: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
-  searchBar:   { flex: 1, flexDirection: 'row', alignItems: 'center', gap: spacing.md, backgroundColor: colors.card, borderRadius: radius.full, paddingHorizontal: spacing.lg, paddingVertical: spacing.md+1, borderWidth: 1, borderColor: colors.cardBorder },
-  searchIcon:  { fontSize: 13 },
-  searchInput: { flex: 1, color: colors.text, fontSize: typography.size.bodyLg },
-  sortBtn:     { backgroundColor: colors.card, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.md+1, borderWidth: 1, borderColor: 'rgba(200,151,90,0.3)', justifyContent: 'center' },
-  sortTxt:     { color: colors.gold, fontSize: typography.size.sm, fontWeight: typography.weight.medium },
+  list: { paddingHorizontal: 20, paddingTop: spacing.xl, paddingBottom: 84, gap: 10 },
+  cardWrap: { position: 'relative' },
+  removeBtn: {
+    position: 'absolute', top: 8, right: 8, width: 26, height: 26, borderRadius: 13,
+    backgroundColor: 'rgba(255,255,255,0.92)', alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: colors.cardBorder,
+  },
+  removingTxt: { color: colors.textDim, fontSize: typography.size.sm },
 
-  statStrip:   { flexDirection: 'row', backgroundColor: colors.card, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.cardBorder, marginHorizontal: spacing.xxl, marginBottom: spacing.xl },
-  statItem:    { flex: 1, alignItems: 'center', paddingVertical: spacing.lg, gap: spacing.xxs },
-  statVal:     { color: colors.text, fontFamily: typography.display, fontSize: typography.size.heading1, fontWeight: typography.weight.bold },
-  statLbl:     { color: colors.textDim, fontSize: typography.size.xs, letterSpacing: 1 },
-  statDiv:     { width: 1, backgroundColor: colors.cardBorder, marginVertical: spacing.md },
-
-  grid:        { paddingHorizontal: spacing.xxl, paddingTop: spacing.xl },
-  row:         { flexDirection: 'row', gap: spacing.lg, marginBottom: spacing.lg },
-
-  recentSection: { marginTop: spacing.md },
-  recentLabel:   { color: colors.textDim, fontSize: typography.size.xs, letterSpacing: 4, marginBottom: spacing.lg },
-  recentRow:     { flexDirection: 'row', alignItems: 'center', gap: spacing.lg, paddingVertical: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
-  recentEmoji:   { fontSize: 22, width: 32, textAlign: 'center' },
-  recentName:    { color: colors.text, fontSize: typography.size.subheading, fontWeight: typography.weight.regular, marginBottom: 2 },
-  recentTime:    { color: colors.textDim, fontSize: typography.size.caption },
-  recentArrow:   { color: colors.textDim, fontSize: 22, fontWeight: typography.weight.regular },
-
-  center:       { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing.lg, paddingHorizontal: 40 },
-  emptyEmoji:   { fontSize: 56 },
-  emptyTitle:   { color: colors.text, fontSize: typography.size.title, fontWeight: typography.weight.regular, letterSpacing: 0.5 },
-  emptySub:     { color: colors.textMuted, fontSize: typography.size.bodyLg, textAlign: 'center', lineHeight: 20 },
-  exploreBtn:   { backgroundColor: colors.primary, borderRadius: radius.xl, paddingVertical: 13, paddingHorizontal: spacing.xxxl, marginTop: spacing.md },
-  exploreBtnTxt:{ color: '#FFFFFF', fontSize: typography.size.body, fontWeight: typography.weight.semibold, letterSpacing: 0.5 },
+  loading: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  emptyState: { marginHorizontal: 20, marginTop: spacing.section },
 });

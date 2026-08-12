@@ -63,13 +63,19 @@
         }
       ],
       "expo-location",
-      ["expo-screen-orientation", { "initialOrientation": "DEFAULT" }],
+      [
+        "expo-screen-orientation",
+        {
+          "initialOrientation": "DEFAULT"
+        }
+      ],
       [
         "expo-image-picker",
         {
           "photosPermission": "MIDA accède à vos photos pour ajouter des images à votre restaurant."
         }
-      ]
+      ],
+      "expo-font"
     ],
     "extra": {
       "eas": {

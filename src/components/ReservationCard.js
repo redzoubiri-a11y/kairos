@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo } from 'react';
 import {
-  View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert,
+  View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, Image,
 } from 'react-native';
 import { colors, typography, spacing, radius } from '../theme';
 
@@ -81,13 +81,13 @@ function Stepper({ label, value, onMinus, onPlus, min = 0 }) {
 
 const st = StyleSheet.create({
   stepWrap:      { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: spacing.sm },
-  stepLabel:     { color: colors.text, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium },
+  stepLabel:     { fontFamily: typography.bodyMedium, color: colors.text, fontSize: typography.size.bodyLg },
   stepRow:       { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },
   stepBtn:       { width: 36, height: 36, borderRadius: radius.lg, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, alignItems: 'center', justifyContent: 'center' },
   stepBtnDis:    { opacity: 0.35 },
-  stepBtnTxt:    { color: colors.text, fontSize: typography.size.heading1, lineHeight: 22, fontWeight: typography.weight.medium },
+  stepBtnTxt:    { fontFamily: typography.bodyMedium, color: colors.text, fontSize: typography.size.heading1, lineHeight: 22 },
   stepBtnTxtDis: { color: colors.textMuted },
-  stepVal:       { color: colors.text, fontSize: typography.size.heading2, fontWeight: typography.weight.semibold, minWidth: 28, textAlign: 'center' },
+  stepVal:       { fontFamily: typography.display, color: colors.text, fontSize: typography.size.heading2, minWidth: 28, textAlign: 'center' },
 });
 
 // ── ReservationCard ────────────────────────────────────────────────────────
@@ -161,16 +161,24 @@ export default function ReservationCard({
 
       {/* ── Header ────────────────────────────────────────────── */}
       <View style={c.header}>
+        <View style={c.photoWrap}>
+          {r.restaurants?.photos?.[0]
+            ? <Image source={{ uri: r.restaurants.photos[0] }} style={c.photo} resizeMode="cover" />
+            : <View style={[c.photo, c.photoPlaceholder]} />
+          }
+        </View>
         <View style={{ flex: 1, gap: spacing.xs }}>
-          <Text style={c.restoName} numberOfLines={1}>
-            {r.restaurants?.name ?? '—'}
-          </Text>
+          <View style={c.titleRow}>
+            <Text style={c.restoName} numberOfLines={1}>
+              {r.restaurants?.name ?? '—'}
+            </Text>
+            <View style={[c.badge, { backgroundColor: cfg.bg }]}>
+              <Text style={[c.badgeTxt, { color: cfg.color }]}>{cfg.label}</Text>
+            </View>
+          </View>
           <Text style={c.meta}>
             {dateLabel}  ·  {timeLabel}  ·  {partyCount} pers.
           </Text>
-        </View>
-        <View style={[c.badge, { backgroundColor: cfg.bg }]}>
-          <Text style={[c.badgeTxt, { color: cfg.color }]}>{cfg.label}</Text>
         </View>
       </View>
 
@@ -313,36 +321,40 @@ const c = StyleSheet.create({
   cardDimmed: { opacity: 0.55 },
 
   header:    { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.lg, padding: spacing.xl },
-  restoName: { color: colors.text, fontFamily: typography.display, fontSize: typography.size.heading3, fontWeight: typography.weight.bold, letterSpacing: -0.2 },
-  meta:      { color: colors.textMuted, fontSize: typography.size.body, lineHeight: 18 },
+  photoWrap: { width: 56, height: 56, flexShrink: 0, borderRadius: radius.lg - 2, overflow: 'hidden' },
+  photo:     { width: '100%', height: '100%' },
+  photoPlaceholder: { backgroundColor: colors.cardHover },
+  titleRow:  { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: spacing.sm },
+  restoName: { flex: 1, color: colors.text, fontFamily: typography.display, fontSize: typography.size.heading3, letterSpacing: -0.2 },
+  meta:      { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.body, lineHeight: 18, marginTop: spacing.sm - 2 },
   badge:     { flexShrink: 0, borderRadius: radius.sm + 2, paddingHorizontal: spacing.sm, paddingVertical: 5, alignSelf: 'flex-start' },
-  badgeTxt:  { fontSize: typography.size.xs + 0.5, fontWeight: typography.weight.bold, letterSpacing: 0.2 },
+  badgeTxt:  { fontFamily: typography.bodyBold, fontSize: typography.size.xs + 0.5, letterSpacing: 0.2 },
 
   feedbackBanner:  { flexDirection: 'row', alignItems: 'center', marginHorizontal: spacing.xl, marginBottom: spacing.md, borderRadius: radius.lg, borderWidth: 1, paddingHorizontal: spacing.lg, paddingVertical: spacing.md, gap: spacing.sm },
-  feedbackTxt:     { flex: 1, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium, lineHeight: 18 },
-  feedbackDismiss: { fontSize: typography.size.caption, fontWeight: typography.weight.bold },
+  feedbackTxt:     { fontFamily: typography.bodyMedium, flex: 1, fontSize: typography.size.bodyLg, lineHeight: 18 },
+  feedbackDismiss: { fontFamily: typography.bodyBold, fontSize: typography.size.caption },
 
   actions:   { paddingHorizontal: spacing.xl, paddingBottom: spacing.xl, gap: spacing.sm },
   actionRow: { flexDirection: 'row', gap: spacing.sm },
   btnMod:    { flex: 1, backgroundColor: colors.bg, borderRadius: radius.lg, borderWidth: 1, borderColor: colors.cardBorder, paddingVertical: spacing.md, paddingHorizontal: spacing.sm, alignItems: 'center' },
-  btnModTxt: { color: colors.text, fontSize: typography.size.body, fontWeight: typography.weight.medium },
+  btnModTxt: { fontFamily: typography.bodyMedium, color: colors.text, fontSize: typography.size.body },
   btnCancel: { backgroundColor: 'transparent', borderRadius: radius.lg, borderWidth: 1.5, borderColor: colors.resaSoft, paddingVertical: spacing.md, alignItems: 'center' },
-  btnCancelTxt: { color: colors.resa, fontSize: typography.size.bodyLg, fontWeight: typography.weight.semibold },
+  btnCancelTxt: { fontFamily: typography.bodySemibold, color: colors.resa, fontSize: typography.size.bodyLg },
   btnDis:    { opacity: 0.5 },
 
   panel:        { marginHorizontal: spacing.xl, marginBottom: spacing.xl, backgroundColor: colors.bg, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.xl, gap: spacing.md },
   panelHeader:  { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  panelTitle:   { color: colors.text, fontSize: typography.size.heading3, fontWeight: typography.weight.semibold },
-  panelSubtitle:{ color: colors.textMuted, fontSize: typography.size.caption, letterSpacing: 1, marginTop: spacing.xs },
+  panelTitle:   { fontFamily: typography.bodySemibold, color: colors.text, fontSize: typography.size.heading3 },
+  panelSubtitle:{ fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.caption, letterSpacing: 1, marginTop: spacing.xs },
   panelClose:   { color: colors.textMuted, fontSize: typography.size.heading2 },
 
   chipScroll:   { marginHorizontal: -spacing.xs },
   chipContent:  { paddingHorizontal: spacing.xs, gap: spacing.sm, flexDirection: 'row' },
   chip:         { backgroundColor: colors.card, borderRadius: radius.pill, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderWidth: 1, borderColor: colors.cardBorder },
   chipSel:      { backgroundColor: colors.primary, borderColor: colors.primary },
-  chipTxt:      { color: colors.textMuted, fontSize: typography.size.body, fontWeight: typography.weight.medium },
+  chipTxt:      { fontFamily: typography.bodyMedium, color: colors.textMuted, fontSize: typography.size.body },
   chipTxtSel:   { color: '#FFFFFF' },
 
   btnConfirm:    { backgroundColor: colors.primary, borderRadius: radius.lg, paddingVertical: spacing.lg, alignItems: 'center', marginTop: spacing.xs },
-  btnConfirmTxt: { color: '#FFFFFF', fontSize: typography.size.bodyLg, fontWeight: typography.weight.bold, letterSpacing: 0.3 },
+  btnConfirmTxt: { fontFamily: typography.bodyBold, color: '#FFFFFF', fontSize: typography.size.bodyLg, letterSpacing: 0.3 },
 });

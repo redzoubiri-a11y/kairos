@@ -4,17 +4,22 @@ import { useFocusEffect } from '@react-navigation/native';
 import { supabase } from '../../supabase';
 import { colors } from '../theme';
 
+// bg/iconLib='ionicons' : valeurs exactes de Notifications.dc.html, pour les 3
+// types illustrés dans la maquette (resa_confirmed, review_ask, order_update).
+// Les autres types (cancellation, new_resa, reminder) n'ont pas d'exemple dans
+// la maquette — laissés en emoji/couleur générique existants, pas de valeur
+// inventée pour eux.
 export const TYPE_CFG = {
   confirm:        { icon: '✅', color: colors.green,  label: 'Confirmation', group: 'resa' },
-  resa_confirmed: { icon: '✅', color: colors.green,  label: 'Confirmation', group: 'resa' },
+  resa_confirmed: { icon: 'checkmark', iconLib: 'ionicons', color: colors.primary, bg: colors.ratingBg, label: 'Confirmation', group: 'resa' },
   cancellation:   { icon: '❌', color: colors.red,    label: 'Annulation',   group: 'resa' },
   resa_cancelled: { icon: '❌', color: colors.red,    label: 'Annulation',   group: 'resa' },
   new_resa:       { icon: '📅', color: colors.blue,   label: 'Réservation',  group: 'resa' },
   reminder:       { icon: '⏰', color: colors.gold, label: 'Rappel',       group: 'rappel' },
-  review_ask:     { icon: '⭐', color: colors.resa, label: 'Avis',         group: 'rappel' },
-  review_request: { icon: '⭐', color: colors.resa, label: 'Avis',         group: 'rappel' },
-  new_order:      { icon: '🛍️', color: colors.blue,   label: 'Commande',     group: 'commande' },
-  order_update:   { icon: '🛍️', color: colors.blue,   label: 'Commande',     group: 'commande' },
+  review_ask:     { icon: 'star', iconLib: 'ionicons', color: colors.resa, bg: colors.statusCancelledBg, label: 'Avis', group: 'rappel' },
+  review_request: { icon: 'star', iconLib: 'ionicons', color: colors.resa, bg: colors.statusCancelledBg, label: 'Avis', group: 'rappel' },
+  new_order:      { icon: 'bag-handle', iconLib: 'ionicons', color: colors.statusPendingText, bg: colors.statusPendingBg, label: 'Commande', group: 'commande' },
+  order_update:   { icon: 'bag-handle', iconLib: 'ionicons', color: colors.statusPendingText, bg: colors.statusPendingBg, label: 'Commande', group: 'commande' },
 };
 
 export const TABS = [

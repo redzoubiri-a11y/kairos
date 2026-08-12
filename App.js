@@ -6,6 +6,11 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { View, Text, Platform } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { useFonts } from 'expo-font';
+import { SpaceGrotesk_500Medium, SpaceGrotesk_700Bold } from '@expo-google-fonts/space-grotesk';
+import {
+  DMSans_400Regular, DMSans_500Medium, DMSans_600SemiBold, DMSans_700Bold,
+} from '@expo-google-fonts/dm-sans';
 import { supabase } from './supabase';
 import { GuestContext } from './src/context/GuestContext';
 import { linkingConfig } from './src/linking';
@@ -36,6 +41,7 @@ import AdminValidationScreen from './screens/AdminValidationScreen';
 import ClickCollectScreen from './screens/ClickCollectScreen';
 import ProOrdersScreen from './screens/ProOrdersScreen';
 import MyOrdersScreen from './screens/MyOrdersScreen';
+import OrderTrackingScreen from './screens/OrderTrackingScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -118,6 +124,14 @@ function TabNavigator({ userRole }) {
 }
 
 export default function App() {
+  const [fontsLoaded] = useFonts({
+    'Space Grotesk': SpaceGrotesk_700Bold,
+    'Space Grotesk Medium': SpaceGrotesk_500Medium,
+    'DM Sans': DMSans_400Regular,
+    'DM Sans Medium': DMSans_500Medium,
+    'DM Sans SemiBold': DMSans_600SemiBold,
+    'DM Sans Bold': DMSans_700Bold,
+  });
   const [userType, setUserType] = useState(null);
   const [session, setSession]       = useState(null);
   const [loading, setLoading]       = useState(true);
@@ -158,7 +172,7 @@ export default function App() {
   }, []);
 
   function renderContent() {
-    if (loading) {
+    if (loading || !fontsLoaded) {
       return (
         <View style={{ flex: 1, backgroundColor: C.bg, alignItems: 'center', justifyContent: 'center' }}>
           <Text style={{ color: C.accent, fontSize: 28, fontWeight: '300', letterSpacing: 8 }}>MIDA</Text>
@@ -197,6 +211,7 @@ export default function App() {
             <Stack.Screen name="ClickCollect" component={ClickCollectScreen} />
             <Stack.Screen name="ProOrders" component={ProOrdersScreen} />
             <Stack.Screen name="MyOrders" component={MyOrdersScreen} />
+            <Stack.Screen name="OrderTracking" component={OrderTrackingScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </GuestContext.Provider>

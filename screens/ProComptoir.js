@@ -9,26 +9,13 @@ import { LinearGradient } from 'expo-linear-gradient';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import { colors, typography, spacing, radius } from '../src/theme';
 import MLoader from '../src/components/MLoader';
+import EmptyState from '../src/components/EmptyState';
 import useComptoir from '../src/hooks/useComptoir';
 import Clock from '../src/components/Clock';
 import ResaRow from '../src/components/ResaRow';
 import CompactResaRow from '../src/components/CompactResaRow';
 import ResaDetail from '../src/components/ResaDetail';
 import BottomTabBar from '../src/components/BottomTabBar';
-
-function StatBox({ label, value, color }) {
-  return (
-    <View style={sb.wrap}>
-      <Text style={[sb.val, { color }]}>{value}</Text>
-      <Text style={sb.lbl}>{label}</Text>
-    </View>
-  );
-}
-const sb = StyleSheet.create({
-  wrap: { flex: 1, alignItems: 'center', paddingVertical: spacing.xl - 2 },
-  val:  { fontFamily: typography.display, fontSize: 32, fontWeight: typography.weight.bold, lineHeight: 36 },
-  lbl:  { color: colors.textDim, fontSize: typography.size.xs, letterSpacing: 2, marginTop: 2 },
-});
 
 function SkeletonComptoir() {
   return (
@@ -56,6 +43,7 @@ export default function ProComptoir({ navigation }) {
   const {
     restaurant, reservations, visibleReservations, loading, refreshing,
     acting, selectedResa, selectedResaId, stats, emptyDateStr,
+    selectedDate, isToday, goPrevDay, goNextDay, goToday,
     load, confirm, arrive, cancel, noShow, selectResa,
   } = useComptoir();
 
@@ -117,6 +105,10 @@ export default function ProComptoir({ navigation }) {
   const h = new Date().getHours();
   const greeting = h < 6 ? 'Bonne nuit' : h < 12 ? 'Bonjour' : h < 18 ? 'Bon après-midi' : 'Bonsoir';
 
+  const dayLabel = isToday
+    ? `Aujourd'hui, ${new Date(selectedDate + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}`
+    : new Date(selectedDate + 'T12:00:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+
   const header = (
     <View style={s.header}>
       <View style={s.headerLeft}>
@@ -137,19 +129,51 @@ export default function ProComptoir({ navigation }) {
     </View>
   );
 
-  const statsStrip = (
-    <View style={s.statsStrip}>
-      <StatBox label="TOTAL"      value={total}     color={colors.text} />
-      <View style={s.statDiv} />
-      <StatBox label="CONFIRMÉES" value={confirmed}  color={colors.green}    />
-      <View style={s.statDiv} />
-      <StatBox label="EN ATTENTE" value={pending}    color={colors.gold}   />
-      <View style={s.statDiv} />
-      <StatBox label="ARRIVÉS"    value={arrived}    color={colors.blue}     />
-      <View style={s.statDiv} />
-      <StatBox label="NO SHOW"    value={no_show}    color={colors.textDim}/>
-      <View style={s.statDiv} />
-      <StatBox label="COUVERTS"   value={covers}     color={colors.text}   />
+  const toolRow = (
+    <View style={s.toolRow}>
+      <View style={s.dateSelector}>
+        <TouchableOpacity onPress={goPrevDay} hitSlop={8} style={s.dateArrow}>
+          <Text style={s.dateArrowTxt}>‹</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={goToday} style={s.datePill} activeOpacity={0.7}>
+          <Text style={s.datePillTxt} numberOfLines={1}>{dayLabel}</Text>
+          <Text style={s.dateChevron}>▾</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={goNextDay} hitSlop={8} style={s.dateArrow}>
+          <Text style={s.dateArrowTxt}>›</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={s.planSalleBtn}>
+        <Text style={s.planSalleTxt}>Plan de salle</Text>
+        <Text style={s.planSalleSoon}>Bientôt</Text>
+      </View>
+    </View>
+  );
+
+  const statsMain = (
+    <View style={s.statsMain}>
+      <View style={[s.statCard, { backgroundColor: colors.tagGreenBg }]}>
+        <Text style={[s.statCardVal, { color: colors.primary }]}>{total}</Text>
+        <Text style={s.statCardLbl}>Réservations</Text>
+      </View>
+      <View style={[s.statCard, { backgroundColor: colors.goldSoft }]}>
+        <Text style={[s.statCardVal, { color: colors.gold }]}>{pending}</Text>
+        <Text style={s.statCardLbl}>En attente</Text>
+      </View>
+      <View style={[s.statCard, { backgroundColor: colors.tagNeutralBg }]}>
+        <Text style={[s.statCardVal, { color: colors.text }]}>{covers}</Text>
+        <Text style={s.statCardLbl}>Couverts</Text>
+      </View>
+    </View>
+  );
+
+  const statsSecondary = (
+    <View style={s.statsSecondary}>
+      <Text style={s.statsSecondaryItem}>{confirmed} confirmées</Text>
+      <View style={s.statsSecondaryDot} />
+      <Text style={s.statsSecondaryItem}>{arrived} arrivés</Text>
+      <View style={s.statsSecondaryDot} />
+      <Text style={s.statsSecondaryItem}>{no_show} no-show</Text>
     </View>
   );
 
@@ -158,7 +182,9 @@ export default function ProComptoir({ navigation }) {
       <View style={[s.root, { paddingTop: insets.top }]}>
         <LinearGradient colors={['#C4B8C8', '#8B9BB4', '#6B7F9E']} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
         {header}
-        {statsStrip}
+        {toolRow}
+        {statsMain}
+        {statsSecondary}
         <View style={s.landscape}>
           <View style={s.leftPanel}>
             <View style={s.panelHeader}>
@@ -171,9 +197,7 @@ export default function ProComptoir({ navigation }) {
               </View>
             ) : visibleReservations.length === 0 ? (
               <View style={s.center}>
-                <Text style={{ fontSize: 40 }}>📅</Text>
-                <Text style={s.emptyTitleSm}>Aucune réservation</Text>
-                <Text style={s.emptySub}>{emptyDateStr}</Text>
+                <EmptyState icon={<Text style={{ fontSize: 20 }}>📅</Text>} title="Aucune réservation" subtitle={emptyDateStr} />
               </View>
             ) : (
               <FlatList
@@ -214,15 +238,15 @@ export default function ProComptoir({ navigation }) {
         ListHeaderComponent={
           <View style={{ paddingTop: insets.top }}>
             {header}
-            {statsStrip}
+            {toolRow}
+            {statsMain}
+            {statsSecondary}
           </View>
         }
         ListEmptyComponent={
           loading ? <SkeletonComptoir /> : (
             <View style={s.center}>
-              <Text style={s.emptyEmoji}>📅</Text>
-              <Text style={s.emptyTitle}>Aucune réservation aujourd'hui</Text>
-              <Text style={s.emptySub}>{emptyDateStr}</Text>
+              <EmptyState icon={<Text style={{ fontSize: 20 }}>📅</Text>} title="Aucune réservation aujourd'hui" subtitle={emptyDateStr} />
             </View>
           )
         }
@@ -245,28 +269,43 @@ const s = StyleSheet.create({
   backBtn:     { width: 36, height: 36, borderRadius: 18, backgroundColor: colors.cardHover, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: colors.cardBorder },
   backBtnTxt:  { color: colors.text, fontSize: 20, lineHeight: 24 },
   headerRight: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
-  restoName:   { color: colors.text, fontFamily: typography.display, fontSize: typography.size.heading1, fontWeight: typography.weight.bold, letterSpacing: -0.2 },
-  dateStr:     { color: colors.textMuted, fontSize: typography.size.caption, textTransform: 'capitalize', marginTop: 1 },
+  restoName:   { color: colors.text, fontFamily: typography.display, fontSize: typography.size.heading1, letterSpacing: -0.2 },
+  dateStr:     { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.caption, textTransform: 'capitalize', marginTop: 1 },
   refreshBtn:  { width: 38, height: 38, backgroundColor: colors.card, borderRadius: 19, borderWidth: 1, borderColor: colors.cardBorder, alignItems: 'center', justifyContent: 'center' },
   refreshTxt:  { color: colors.gold, fontSize: 18 },
 
-  statsStrip: { flexDirection: 'row', backgroundColor: colors.card, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
-  statDiv:    { width: 1, backgroundColor: colors.cardBorder, marginVertical: spacing.lg },
+  // Sélecteur de date + "Plan de salle" — valeurs littérales de Comptoir Reservations.dc.html
+  toolRow:        { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xl, paddingVertical: spacing.md, gap: spacing.md, backgroundColor: colors.card },
+  dateSelector:   { flexDirection: 'row', alignItems: 'center', gap: spacing.xs, flexShrink: 1 },
+  dateArrow:      { width: 26, height: 26, alignItems: 'center', justifyContent: 'center' },
+  dateArrowTxt:   { fontFamily: typography.bodyMedium, color: colors.textMuted, fontSize: 18 },
+  datePill:       { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: colors.tagNeutralBg, borderRadius: 10, paddingHorizontal: 13, paddingVertical: spacing.sm + 1, flexShrink: 1 },
+  datePillTxt:    { fontFamily: typography.bodySemibold, color: colors.text, fontSize: typography.size.bodyLg, textTransform: 'capitalize' },
+  dateChevron:    { color: colors.textDim, fontSize: 10 },
+  planSalleBtn:   { borderWidth: 1.5, borderColor: 'rgba(10,10,10,0.16)', borderRadius: 10, paddingHorizontal: 13, paddingVertical: spacing.sm + 1, alignItems: 'center' },
+  planSalleTxt:   { fontFamily: typography.bodySemibold, color: colors.text, fontSize: typography.size.caption },
+  planSalleSoon:  { fontFamily: typography.body, color: colors.textDim, fontSize: typography.size.xs, marginTop: 1 },
+
+  // 3 cases stats teintées — valeurs littérales (valeur SG700 17px, label DM Sans 500 9.5px)
+  statsMain:      { flexDirection: 'row', gap: spacing.md, paddingHorizontal: spacing.xl, paddingBottom: spacing.md, backgroundColor: colors.card },
+  statCard:       { flex: 1, borderRadius: 10, paddingVertical: 10, paddingHorizontal: spacing.sm, alignItems: 'center' },
+  statCardVal:    { fontFamily: typography.display, fontSize: 17, lineHeight: 20 },
+  statCardLbl:    { fontFamily: typography.bodyMedium, color: colors.textMuted, fontSize: typography.size.xs + 0.5, marginTop: 3 },
+
+  statsSecondary:     { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.sm, paddingBottom: spacing.md, backgroundColor: colors.card, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
+  statsSecondaryItem: { fontFamily: typography.bodyMedium, color: colors.textDim, fontSize: typography.size.xs + 0.5 },
+  statsSecondaryDot:  { width: 3, height: 3, borderRadius: 1.5, backgroundColor: colors.textDim },
 
   landscape:   { flex: 1, flexDirection: 'row' },
   leftPanel:   { width: '35%', overflow: 'hidden', borderRightWidth: 1, borderRightColor: colors.cardBorder },
   rightPanel:  { flex: 1 },
   panelHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xxl, paddingVertical: spacing.xl, borderBottomWidth: 1, borderBottomColor: colors.cardBorder, backgroundColor: colors.card },
-  panelTitle:  { color: colors.textDim, fontSize: typography.size.body, fontWeight: typography.weight.bold, letterSpacing: 3 },
-  panelCount:  { color: colors.resa, fontSize: typography.size.heading2, fontWeight: typography.weight.semibold },
+  panelTitle:  { fontFamily: typography.bodyBold, color: colors.textDim, fontSize: typography.size.body, letterSpacing: 3 },
+  panelCount:  { fontFamily: typography.bodySemibold, color: colors.resa, fontSize: typography.size.heading2 },
 
   arrivedSep:     { flexDirection: 'row', alignItems: 'center', paddingHorizontal: spacing.xxl, paddingVertical: spacing.lg, gap: spacing.lg },
   arrivedSepLine: { flex: 1, height: 1, backgroundColor: colors.cardBorder },
-  arrivedSepTxt:  { color: colors.textDim, fontSize: typography.size.xs, letterSpacing: 3 },
+  arrivedSepTxt:  { fontFamily: typography.body, color: colors.textDim, fontSize: typography.size.xs, letterSpacing: 3 },
 
   center:       { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing.xl, paddingVertical: spacing.section * 3 },
-  emptyEmoji:   { fontSize: 72 },
-  emptyTitle:   { color: colors.text, fontFamily: typography.display, fontSize: 28, fontWeight: typography.weight.bold, letterSpacing: -0.3 },
-  emptyTitleSm: { color: colors.text, fontSize: typography.size.heading2, fontWeight: typography.weight.medium },
-  emptySub:     { color: colors.textMuted, fontSize: 16, fontWeight: typography.weight.regular, textTransform: 'capitalize' },
 });

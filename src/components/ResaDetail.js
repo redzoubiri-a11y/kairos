@@ -1,14 +1,13 @@
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import { colors, typography, spacing, radius } from '../theme';
 import { STATUS_CFG, clientName } from '../hooks/useComptoir';
+import EmptyState from './EmptyState';
 
 export default function ResaDetail({ resa, onConfirm, onCancel, onArrive, onNoShow, acting }) {
   if (!resa) {
     return (
       <View style={s.empty}>
-        <Text style={{ fontSize: 48 }}>👆</Text>
-        <Text style={s.emptyTitle}>Sélectionnez une réservation</Text>
-        <Text style={s.emptySub}>dans la liste à gauche</Text>
+        <EmptyState icon={<Text style={{ fontSize: 20 }}>👆</Text>} title="Sélectionnez une réservation" subtitle="dans la liste à gauche" />
       </View>
     );
   }
@@ -93,42 +92,40 @@ export default function ResaDetail({ resa, onConfirm, onCancel, onArrive, onNoSh
 
 const s = StyleSheet.create({
   empty:       { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing.lg },
-  emptyTitle:  { color: colors.text, fontSize: typography.size.heading2, fontWeight: typography.weight.medium },
-  emptySub:    { color: colors.textDim, fontSize: typography.size.body },
 
   content:     { padding: spacing.section, alignItems: 'center', paddingBottom: 60 },
 
   statusBadge: { borderRadius: radius.pill, borderWidth: 1.5, paddingHorizontal: spacing.xxl, paddingVertical: spacing.md, marginBottom: spacing.xl },
-  statusTxt:   { fontSize: typography.size.caption, fontWeight: typography.weight.bold, letterSpacing: 2 },
+  statusTxt:   { fontFamily: typography.bodyBold, fontSize: typography.size.caption, letterSpacing: 2 },
 
-  time:        { fontFamily: typography.display, fontSize: 72, fontWeight: typography.weight.bold, letterSpacing: -1, lineHeight: 82 },
-  clientName:  { color: colors.text, fontSize: typography.size.title, fontWeight: typography.weight.medium, letterSpacing: 0.5, marginBottom: spacing.xxl },
+  time:        { fontFamily: typography.display, fontSize: 72, letterSpacing: -1, lineHeight: 82 },
+  clientName:  { fontFamily: typography.bodyMedium, color: colors.text, fontSize: typography.size.title, letterSpacing: 0.5, marginBottom: spacing.xxl },
 
   metaRow:     { flexDirection: 'row', gap: spacing.xxxl, marginBottom: spacing.xxl },
   metaBox:     { alignItems: 'center' },
-  metaVal:     { color: colors.primary, fontFamily: typography.display, fontSize: 48, fontWeight: typography.weight.bold, lineHeight: 52 },
-  metaLbl:     { color: colors.textDim, fontSize: typography.size.xs, letterSpacing: 2, marginTop: spacing.xs },
+  metaVal:     { color: colors.primary, fontFamily: typography.display, fontSize: 48, lineHeight: 52 },
+  metaLbl:     { fontFamily: typography.body, color: colors.textDim, fontSize: typography.size.xs, letterSpacing: 2, marginTop: spacing.xs },
 
   notesBox:    { backgroundColor: colors.cardHover, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.xl, width: '100%', marginBottom: spacing.xxl },
-  notesLabel:  { color: colors.textDim, fontSize: typography.size.caption, letterSpacing: 1, marginBottom: spacing.md },
-  notesTxt:    { color: colors.text, fontSize: typography.size.bodyLg, lineHeight: 20 },
+  notesLabel:  { fontFamily: typography.body, color: colors.textDim, fontSize: typography.size.caption, letterSpacing: 1, marginBottom: spacing.md },
+  notesTxt:    { fontFamily: typography.body, color: colors.text, fontSize: typography.size.bodyLg, lineHeight: 20 },
 
   actions:       { width: '100%', gap: spacing.lg, marginTop: spacing.lg },
   acting:        { color: colors.primary, fontSize: 36, fontWeight: '200', textAlign: 'center' },
   btnConfirm:    { backgroundColor: colors.greenSoft, borderRadius: radius.xl, borderWidth: 1.5, borderColor: 'rgba(76,175,130,0.5)', paddingVertical: spacing.xl, alignItems: 'center' },
-  btnConfirmTxt: { color: colors.green, fontSize: typography.size.heading2, fontWeight: typography.weight.semibold, letterSpacing: 1.5 },
+  btnConfirmTxt: { fontFamily: typography.bodySemibold, color: colors.green, fontSize: typography.size.heading2, letterSpacing: 1.5 },
   btnArrive:     { backgroundColor: colors.blueSoft, borderRadius: radius.xl, borderWidth: 1.5, borderColor: 'rgba(90,155,224,0.4)', paddingVertical: spacing.xl, alignItems: 'center' },
-  btnArriveTxt:  { color: colors.blue, fontSize: typography.size.heading2, fontWeight: typography.weight.semibold, letterSpacing: 1.5 },
+  btnArriveTxt:  { fontFamily: typography.bodySemibold, color: colors.blue, fontSize: typography.size.heading2, letterSpacing: 1.5 },
   btnCancel:     { backgroundColor: colors.redSoft, borderRadius: radius.xl, borderWidth: 1.5, borderColor: 'rgba(224,90,90,0.35)', paddingVertical: spacing.xl, alignItems: 'center' },
-  btnCancelTxt:  { color: colors.red, fontSize: typography.size.heading2, fontWeight: typography.weight.semibold, letterSpacing: 1.5 },
+  btnCancelTxt:  { fontFamily: typography.bodySemibold, color: colors.red, fontSize: typography.size.heading2, letterSpacing: 1.5 },
   finalBadge:    { borderRadius: radius.pill, borderWidth: 1.5, paddingHorizontal: spacing.xxl, paddingVertical: spacing.xl, alignSelf: 'center', marginTop: spacing.lg },
-  finalTxt:      { fontSize: typography.size.heading3, fontWeight: typography.weight.semibold, letterSpacing: 2 },
+  finalTxt:      { fontFamily: typography.bodySemibold, fontSize: typography.size.heading3, letterSpacing: 2 },
 
   noShowBadge:       { backgroundColor: colors.goldSoft, borderRadius: radius.lg, borderWidth: 1, borderColor: 'rgba(200,151,90,0.35)', paddingHorizontal: spacing.xxl, paddingVertical: spacing.md, marginBottom: spacing.xxl },
   noShowBadgeDanger: { backgroundColor: colors.redSoft, borderColor: 'rgba(224,90,90,0.4)' },
-  noShowTxt:         { color: colors.gold, fontSize: typography.size.caption, fontWeight: typography.weight.semibold, letterSpacing: 0.5 },
+  noShowTxt:         { fontFamily: typography.bodySemibold, color: colors.gold, fontSize: typography.size.caption, letterSpacing: 0.5 },
   noShowTxtDanger:   { color: colors.red },
 
   btnNoShow:    { backgroundColor: colors.cardHover, borderRadius: radius.xl, borderWidth: 1.5, borderColor: colors.cardBorder, paddingVertical: spacing.xl, alignItems: 'center' },
-  btnNoShowTxt: { color: colors.textMuted, fontSize: typography.size.heading2, fontWeight: typography.weight.semibold, letterSpacing: 1.5 },
+  btnNoShowTxt: { fontFamily: typography.bodySemibold, color: colors.textMuted, fontSize: typography.size.heading2, letterSpacing: 1.5 },
 });

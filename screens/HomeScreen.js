@@ -1,37 +1,21 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  Animated, Platform, StatusBar, TextInput, Dimensions,
+  Animated, Platform, StatusBar, TextInput,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { LinearGradient } from 'expo-linear-gradient';
 import { colors, typography, spacing, radius } from '../src/theme';
 import MLoader from '../src/components/MLoader';
 import RestaurantCard from '../src/components/RestaurantCard';
-import useHomeData, { CITIES, CATEGORIES, QUICK_FILTERS } from '../src/hooks/useHomeData';
+import Tag from '../src/components/Tag';
+import EmptyState from '../src/components/EmptyState';
+import useHomeData, { FILTERS } from '../src/hooks/useHomeData';
 import usePushNotifications from '../src/hooks/usePushNotifications';
 import useDeepLink from '../src/hooks/useDeepLink';
 
-const SW     = Dimensions.get('window').width;
-const FEAT_W = SW * 0.78;
-
-function SectionHead({ label, right, rightAction }) {
-  return (
-    <View style={sh.row}>
-      <Text style={sh.label}>{label}</Text>
-      {right && (
-        <TouchableOpacity onPress={rightAction}>
-          <Text style={sh.right}>{right}</Text>
-        </TouchableOpacity>
-      )}
-    </View>
-  );
+function greetingWord() {
+  return new Date().getHours() < 18 ? 'Bonjour' : 'Bonsoir';
 }
-const sh = StyleSheet.create({
-  row:   { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', paddingHorizontal: spacing.xl, marginTop: spacing.lg, marginBottom: spacing.sm },
-  label: { color: colors.text, fontFamily: typography.display, fontSize: typography.size.heading1, fontWeight: typography.weight.bold, letterSpacing: -0.3 },
-  right: { color: colors.primary, fontSize: typography.size.caption, fontWeight: typography.weight.semibold },
-});
 
 function SkeletonCard() {
   return (
@@ -54,96 +38,70 @@ export default function HomeScreen({ navigation }) {
   useDeepLink(navigation);
 
   const {
-    city, setCity,
-    category, setCategory,
-    restaurants, loading,
+    loading,
+    userName,
     unreadNotifs,
     quickFilter, setQuickFilter,
-    featured, filtered, topCount,
-    slots, cityObj,
+    list,
     fadeAnim, slideAnim,
   } = useHomeData();
 
   const [searchText, setSearchText] = useState('');
 
   const goNotifications = useCallback(() => navigation.navigate('Notifications'), [navigation]);
-  const goExplorer      = useCallback(() => navigation.navigate('Explorer', { initialCity: city }), [navigation, city]);
-  const clearCategory   = useCallback(() => setCategory('all'), []);
+  const goExplorer      = useCallback(() => navigation.navigate('Explorer'), [navigation]);
+  const goOrderSearch   = useCallback(() => navigation.navigate('Search', { initialCity: 'all' }), [navigation]);
+  const resetFilter     = useCallback(() => setQuickFilter('all'), [setQuickFilter]);
   const submitSearch    = useCallback(() => {
-    navigation.navigate('Search', { initialQuery: searchText.trim(), initialCity: city });
+    navigation.navigate('Search', { initialQuery: searchText.trim(), initialCity: 'all' });
     setSearchText('');
-  }, [navigation, searchText, city]);
+  }, [navigation, searchText]);
+
+  const greeting = useMemo(
+    () => greetingWord() + (userName ? ` ${userName}.` : ' !'),
+    [userName],
+  );
+
+  const emptyMessage = quickFilter === 'promo'
+    ? { title: 'Aucune promo active', sub: 'Revenez bientôt, les restaurateurs pourront bientôt publier leurs offres.' }
+    : quickFilter === 'terrace'
+      ? { title: 'Aucune terrasse trouvée', sub: 'Aucun restaurant ne renseigne encore cette info.' }
+      : { title: 'Aucun restaurant', sub: 'Réessayez plus tard.' };
 
   return (
     <SafeAreaView style={s.root} edges={['top', 'left', 'right']}>
       <StatusBar barStyle="light-content" backgroundColor={colors.noir} />
 
-      {/* ── Zone verte (header + villes + stats) ── */}
+      {/* ── Zone header (couleur de marque) ── */}
       <View style={s.headerZone}>
         <View style={s.header}>
-          <View style={s.searchBar}>
-            <Text style={s.searchIcon}>🔍</Text>
-            <TextInput
-              style={s.searchInput}
-              placeholder="Chercher un restaurant…"
-              placeholderTextColor={colors.textMuted}
-              value={searchText}
-              onChangeText={setSearchText}
-              returnKeyType="search"
-              onSubmitEditing={submitSearch}
-            />
-          </View>
-          <View style={s.headerRight}>
-            <TouchableOpacity style={s.iconBtn} onPress={goNotifications}>
-              <Text style={s.iconBtnTxt}>🔔</Text>
-              {unreadNotifs > 0 && (
-                <View style={s.notifBadge}>
-                  <Text style={s.notifBadgeTxt}>{unreadNotifs > 9 ? '9+' : unreadNotifs}</Text>
-                </View>
-              )}
-            </TouchableOpacity>
-          </View>
+          <View style={{ flex: 1 }} />
+          <TouchableOpacity style={s.iconBtn} onPress={goNotifications}>
+            <Text style={s.iconBtnTxt}>🔔</Text>
+            {unreadNotifs > 0 && (
+              <View style={s.notifBadge}>
+                <Text style={s.notifBadgeTxt}>{unreadNotifs > 9 ? '9+' : unreadNotifs}</Text>
+              </View>
+            )}
+          </TouchableOpacity>
         </View>
 
-        {/* Villes */}
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={s.cityRow} contentContainerStyle={s.cityContent} delayContentTouches={false}>
-          {CITIES.map(c => (
-            <TouchableOpacity
-              key={c.id}
-              delayPressIn={0}
-              style={[s.cityChip, city === c.id && s.cityChipOn]}
-              onPress={() => { setCity(c.id); setCategory('all'); setQuickFilter(null); }}
-            >
-              <Text style={s.cityEmoji}>{c.emoji}</Text>
-              <Text style={[s.cityTxt, city === c.id && s.cityTxtOn]}>{c.label}</Text>
-              {!!c.count && (
-                <View style={[s.cityCount, city === c.id && s.cityCountOn]}>
-                  <Text style={[s.cityCountTxt, city === c.id && s.cityCountTxtOn]}>{c.count}</Text>
-                </View>
-              )}
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+        <Text style={s.greeting}>
+          {greeting}{'\n'}On mange où ce soir ?
+        </Text>
 
-        {/* Stats bar */}
-        {!loading && (
-          <View style={s.statsBar}>
-            <View style={s.statItem}>
-              <Text style={s.statVal}>{restaurants.length}</Text>
-              <Text style={s.statLabel}> restaurants</Text>
-            </View>
-            <View style={s.statSep} />
-            <View style={s.statItem}>
-              <View style={s.openDotInline} />
-              <Text style={s.statGreen}> Tous ouverts</Text>
-            </View>
-            <View style={s.statSep} />
-            <View style={s.statItem}>
-              <Text style={s.statVal}>{topCount}</Text>
-              <Text style={s.statLabel}> top notés</Text>
-            </View>
-          </View>
-        )}
+        <View style={s.searchBar}>
+          <Text style={s.searchIcon}>🔍</Text>
+          <TextInput
+            style={s.searchInput}
+            placeholder="Restaurant, cuisine, quartier…"
+            placeholderTextColor={colors.textMuted}
+            value={searchText}
+            onChangeText={setSearchText}
+            returnKeyType="search"
+            onSubmitEditing={submitSearch}
+          />
+        </View>
       </View>
 
       {/* ── Contenu scrollable ── */}
@@ -157,7 +115,7 @@ export default function HomeScreen({ navigation }) {
             </View>
             <Text style={s.quickActionTxt}>Réserver{'\n'}une table</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={s.quickAction} onPress={goExplorer} activeOpacity={0.85}>
+          <TouchableOpacity style={s.quickAction} onPress={goOrderSearch} activeOpacity={0.85}>
             <View style={[s.quickActionIcon, { backgroundColor: colors.primary }]}>
               <Text style={s.quickActionEmoji}>🛍️</Text>
             </View>
@@ -165,93 +123,42 @@ export default function HomeScreen({ navigation }) {
           </TouchableOpacity>
         </View>
 
-        {/* Tables d'aujourd'hui */}
-        {slots.length > 0 && (
-          <LinearGradient colors={['#094e2e', '#072e1d']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={s.tonightCard}>
-            <View style={s.tonightBody}>
-              <Text style={s.tonightLabel}>🍽️  TABLES D'AUJOURD'HUI</Text>
-              <Text style={s.tonightTitle}>Réserve ta table maintenant</Text>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.slotRow} delayContentTouches={false}>
-                {slots.map(slot => (
-                  <TouchableOpacity key={slot} delayPressIn={0} style={s.slotChip} onPress={goExplorer}>
-                    <Text style={s.slotTxt}>{slot}</Text>
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-            </View>
-          </LinearGradient>
-        )}
+        {/* Près de vous */}
+        <View style={s.sectionHead}>
+          <Text style={s.sectionLabel}>Près de vous</Text>
+          <TouchableOpacity onPress={resetFilter}>
+            <Text style={s.sectionRight}>Filtrer</Text>
+          </TouchableOpacity>
+        </View>
 
-        {/* À la une */}
-        {!loading && featured.length > 0 && (
-          <>
-            <SectionHead label="À la une" />
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.featRow}>
-              {featured.map(r => (
-                <View key={r.id} style={s.featCardWrap}>
-                  <RestaurantCard
-                    r={r} variant="featured"
-                    onPress={() => navigation.navigate('Restaurant', { restaurant: r })}
-                  />
-                </View>
-              ))}
-            </ScrollView>
-          </>
-        )}
-
-        {/* Catégories */}
-        <SectionHead
-          label="Cuisines"
-          right={category !== 'all' ? '✕ Effacer' : null}
-          rightAction={clearCategory}
-        />
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.pillRow} delayContentTouches={false}>
-          {CATEGORIES.map(cat => (
-            <TouchableOpacity key={cat.id} delayPressIn={0} style={[s.pill, category === cat.id && s.pillOn]} onPress={() => setCategory(cat.id)}>
-              <Text style={s.pillEmoji}>{cat.emoji}</Text>
-              <Text style={[s.pillTxt, category === cat.id && s.pillTxtOn]}>{cat.label}</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.filterRow} delayContentTouches={false}>
+          {FILTERS.map(f => (
+            <TouchableOpacity key={f.id} delayPressIn={0} onPress={() => setQuickFilter(f.id)}>
+              <Tag size="filter" variant={quickFilter === f.id ? 'filterActive' : 'filterInactive'}>
+                {f.label}
+              </Tag>
             </TouchableOpacity>
           ))}
         </ScrollView>
-
-        {/* Quick filters */}
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.quickRow} delayContentTouches={false}>
-          {QUICK_FILTERS.map(f => (
-            <TouchableOpacity
-              key={f.id}
-              delayPressIn={0}
-              style={[s.quickChip, quickFilter === f.id && s.quickChipOn]}
-              onPress={() => setQuickFilter(quickFilter === f.id ? null : f.id)}
-            >
-              <Text style={s.quickEmoji}>{f.emoji}</Text>
-              <Text style={[s.quickTxt, quickFilter === f.id && s.quickTxtOn]}>{f.label}</Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-
-        {/* Liste */}
-        <SectionHead
-          label={category === 'all' ? 'Top restaurants' : (CATEGORIES.find(c => c.id === category)?.label || '')}
-        />
 
         {loading ? (
-          <View>
+          <View style={{ marginTop: spacing.lg }}>
             {[1, 2, 3].map(i => <SkeletonCard key={i} />)}
           </View>
-        ) : filtered.length === 0 ? (
-          <View style={s.emptyWrap}>
-            <Text style={s.emptyEmoji}>🍽️</Text>
-            <Text style={s.emptyTitle}>Aucun restaurant</Text>
-            <Text style={s.emptySub}>Essayez une autre catégorie</Text>
-            <TouchableOpacity onPress={clearCategory} style={s.emptyBtn}>
-              <Text style={s.emptyBtnTxt}>Voir tout</Text>
-            </TouchableOpacity>
-          </View>
+        ) : list.length === 0 ? (
+          <EmptyState
+            style={s.emptyWrap}
+            icon={<Text style={{ fontSize: 20 }}>🍽️</Text>}
+            title={emptyMessage.title}
+            subtitle={emptyMessage.sub}
+            actionLabel={quickFilter !== 'all' ? 'Voir tout' : undefined}
+            onAction={resetFilter}
+          />
         ) : (
-          <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }], paddingHorizontal: spacing.xl, gap: spacing.md }}>
-            {filtered.map(r => (
+          <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }], paddingHorizontal: spacing.xl, gap: spacing.md, marginTop: spacing.lg }}>
+            {list.map((r, i) => (
               <RestaurantCard
-                key={r.id} r={r} variant="compact"
+                key={r.id} r={r} variant={i === 0 ? 'featured' : 'compact'}
                 onPress={() => navigation.navigate('Restaurant', { restaurant: r })}
               />
             ))}
@@ -268,80 +175,35 @@ const s = StyleSheet.create({
   root:   { flex: 1, backgroundColor: colors.noir, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 },
   scroll: { flex: 1, backgroundColor: colors.greyBg },
 
-  /* Zone header verte */
-  headerZone: { backgroundColor: colors.primary, paddingBottom: spacing.sm, borderBottomLeftRadius: radius.xxl, borderBottomRightRadius: radius.xxl },
-  header:     { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingHorizontal: spacing.xl, paddingVertical: spacing.sm },
-  searchBar:  { flex: 1, flexDirection: 'row', alignItems: 'center', gap: spacing.md, backgroundColor: '#FFFFFF', borderRadius: radius.full, borderWidth: 0, paddingHorizontal: spacing.xl, paddingVertical: spacing.lg },
-  searchIcon: { fontSize: 14 },
-  searchInput:{ flex: 1, color: colors.text, fontSize: 16, fontWeight: '300', letterSpacing: 0.3, padding: 0 },
-  headerRight:{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
-  iconBtn:    { width: 38, height: 38, borderRadius: radius.full, backgroundColor: 'rgba(255,255,255,0.15)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.30)', alignItems: 'center', justifyContent: 'center' },
+  /* Zone header */
+  headerZone: { backgroundColor: colors.primary, paddingHorizontal: spacing.xl, paddingBottom: spacing.xl, borderBottomLeftRadius: radius.xxl, borderBottomRightRadius: radius.xxl },
+  header:     { flexDirection: 'row', alignItems: 'center', paddingTop: spacing.sm },
+  iconBtn:    { width: 38, height: 38, borderRadius: 11, backgroundColor: 'rgba(245,237,214,0.14)', alignItems: 'center', justifyContent: 'center' },
   iconBtnTxt: { fontSize: 17 },
   notifBadge: { position: 'absolute', top: -4, right: -4, minWidth: 16, height: 16, borderRadius: 8, backgroundColor: colors.noir, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 3, borderWidth: 1.5, borderColor: colors.primary },
-  notifBadgeTxt: { color: '#FFFFFF', fontSize: typography.size.xs, fontWeight: typography.weight.bold },
+  notifBadgeTxt: { fontFamily: typography.bodyBold, color: '#FFFFFF', fontSize: typography.size.xs },
 
-  /* Villes */
-  cityRow:        { maxHeight: 42 },
-  cityContent:    { paddingHorizontal: spacing.xl, paddingVertical: spacing.xxs, flexDirection: 'row', gap: spacing.md, alignItems: 'center' },
-  cityChip:       { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: radius.full, backgroundColor: 'rgba(255,255,255,0.15)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.30)' },
-  cityChipOn:     { backgroundColor: colors.noir, borderColor: colors.noir },
-  cityEmoji:      { fontSize: typography.size.body },
-  cityTxt:        { color: 'rgba(255,255,255,0.8)', fontSize: typography.size.body },
-  cityTxtOn:      { color: '#FFFFFF', fontWeight: typography.weight.semibold },
-  cityCount:      { backgroundColor: 'rgba(255,255,255,0.12)', borderRadius: radius.full, paddingHorizontal: 6, paddingVertical: 1, minWidth: 20, alignItems: 'center' },
-  cityCountOn:    { backgroundColor: 'rgba(255,255,255,0.25)' },
-  cityCountTxt:   { color: 'rgba(255,255,255,0.7)', fontSize: typography.size.xs, fontWeight: typography.weight.semibold },
-  cityCountTxtOn: { color: '#FFFFFF' },
+  greeting: { fontFamily: typography.display, fontSize: 25, color: colors.cream, letterSpacing: -0.3, lineHeight: 30, marginTop: spacing.lg },
 
-  /* Stats bar */
-  statsBar:      { flexDirection: 'row', alignItems: 'center', marginHorizontal: spacing.xl, marginTop: spacing.xs, marginBottom: spacing.xxs, backgroundColor: 'rgba(0,0,0,0.20)', borderRadius: radius.lg, paddingVertical: spacing.sm, paddingHorizontal: spacing.xl, borderWidth: 1, borderColor: 'rgba(255,255,255,0.12)' },
-  statItem:      { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
-  statVal:       { color: colors.cream, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium },
-  statLabel:     { color: 'rgba(245,237,214,0.65)', fontSize: typography.size.caption },
-  statGreen:     { color: '#88D5A8', fontSize: typography.size.caption },
-  statSep:       { width: 1, height: 18, backgroundColor: 'rgba(255,255,255,0.20)' },
-  openDotInline: { width: 7, height: 7, borderRadius: 3.5, backgroundColor: '#88D5A8' },
+  searchBar:  { flexDirection: 'row', alignItems: 'center', gap: spacing.md, backgroundColor: '#FFFFFF', borderRadius: 13, paddingHorizontal: 14, paddingVertical: 13, marginTop: spacing.lg },
+  searchIcon: { fontSize: 14 },
+  searchInput:{ flex: 1, fontFamily: typography.body, color: colors.text, fontSize: 13.5, letterSpacing: 0.3, padding: 0 },
 
-  /* Ce soir */
-  tonightCard:  { marginHorizontal: spacing.xl, marginTop: spacing.md, borderRadius: radius.xl, overflow: 'hidden' },
-  tonightBody:  { paddingHorizontal: spacing.xl, paddingVertical: spacing.lg },
-  tonightLabel: { color: 'rgba(245,237,214,0.85)', fontSize: typography.size.xs, letterSpacing: 2.5, marginBottom: spacing.xxs, fontWeight: typography.weight.semibold },
-  tonightTitle: { color: '#FFFFFF', fontSize: typography.size.bodyLg, fontWeight: typography.weight.semibold, marginBottom: spacing.sm },
-  slotRow:      { gap: spacing.md },
-  slotChip:     { paddingHorizontal: spacing.lg, paddingVertical: 7, borderRadius: radius.pill, backgroundColor: 'rgba(0,0,0,0.28)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.30)' },
-  slotTxt:      { color: '#FFFFFF', fontSize: typography.size.body, fontWeight: typography.weight.medium },
   /* Actions rapides */
-  quickActions:     { flexDirection: 'row', gap: spacing.md, paddingHorizontal: spacing.xl, paddingTop: spacing.lg },
-  quickAction:      { flex: 1, backgroundColor: colors.cream, borderRadius: radius.xl - 2, padding: spacing.lg },
-  quickActionIcon:  { width: 30, height: 30, borderRadius: radius.sm + 3, alignItems: 'center', justifyContent: 'center' },
+  quickActions:     { flexDirection: 'row', gap: spacing.sm + 2, paddingHorizontal: spacing.xl, paddingTop: spacing.xl },
+  quickAction:      { flex: 1, backgroundColor: colors.cream, borderRadius: radius.xl - 2, padding: spacing.lg + 2 },
+  quickActionIcon:  { width: 30, height: 30, borderRadius: 9, alignItems: 'center', justifyContent: 'center' },
   quickActionEmoji: { fontSize: 15 },
-  quickActionTxt:   { fontFamily: typography.display, fontSize: typography.size.bodyLg, fontWeight: typography.weight.bold, color: colors.noir, marginTop: spacing.md, letterSpacing: -0.2, lineHeight: 17 },
+  quickActionTxt:   { fontFamily: typography.display, fontSize: 13.5, color: colors.noir, marginTop: spacing.lg - 1, letterSpacing: -0.1, lineHeight: 17 },
 
-  /* À la une */
-  featRow:      { paddingHorizontal: spacing.xl, paddingBottom: spacing.xs },
-  featCardWrap: { width: FEAT_W, marginRight: spacing.lg },
+  /* Section */
+  sectionHead:   { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', paddingHorizontal: spacing.xl, marginTop: spacing.xxl - 2, marginBottom: spacing.sm },
+  sectionLabel:  { color: colors.text, fontFamily: typography.display, fontSize: 17, letterSpacing: -0.3 },
+  sectionRight:  { fontFamily: typography.bodySemibold, color: colors.primary, fontSize: typography.size.caption + 0.5 },
 
-  /* Pills cuisine */
-  pillRow:   { paddingHorizontal: spacing.xl, gap: spacing.md, paddingBottom: spacing.xs },
-  pill:      { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, borderRadius: radius.pill, backgroundColor: colors.bg, borderWidth: 1, borderColor: colors.cardBorder },
-  pillOn:    { backgroundColor: colors.noir, borderColor: colors.noir, shadowColor: colors.noir, shadowOpacity: 0.22, shadowRadius: 8, shadowOffset: { width: 0, height: 2 }, elevation: 4 },
-  pillEmoji: { fontSize: typography.size.subheading },
-  pillTxt:   { color: colors.textMuted, fontSize: typography.size.body },
-  pillTxtOn: { color: '#FFFFFF', fontWeight: typography.weight.semibold },
-
-  /* Quick filters */
-  quickRow:    { paddingHorizontal: spacing.xl, gap: spacing.md, paddingTop: spacing.xs, paddingBottom: spacing.xs },
-  quickChip:   { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: radius.pill, backgroundColor: colors.bg, borderWidth: 1, borderColor: colors.cardBorder },
-  quickChipOn: { backgroundColor: colors.primarySoft, borderColor: colors.primary },
-  quickEmoji:  { fontSize: typography.size.body },
-  quickTxt:    { color: colors.textMuted, fontSize: typography.size.caption },
-  quickTxtOn:  { color: colors.primary, fontWeight: typography.weight.semibold },
+  /* Filtres */
+  filterRow:   { paddingHorizontal: spacing.xl, gap: spacing.xs + 2, paddingBottom: spacing.xs },
 
   /* Empty */
-  emptyWrap:   { alignItems: 'center', paddingVertical: spacing.section + spacing.xxl, gap: spacing.lg },
-  emptyEmoji:  { fontSize: 44 },
-  emptyTitle:  { color: colors.text, fontSize: typography.size.heading1, fontWeight: typography.weight.regular },
-  emptySub:    { color: colors.textMuted, fontSize: typography.size.bodyLg },
-  emptyBtn:    { backgroundColor: colors.primary, borderRadius: radius.pill, paddingHorizontal: spacing.xxl, paddingVertical: spacing.lg, marginTop: spacing.xs },
-  emptyBtnTxt: { color: colors.cream, fontSize: typography.size.bodyLg, fontWeight: typography.weight.semibold },
+  emptyWrap:   { marginHorizontal: spacing.xl, marginTop: spacing.lg },
 });

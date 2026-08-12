@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image, ActivityIndicator, Alert } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, typography, spacing, radius } from '../src/theme';
 import useProPhotos from '../src/hooks/useProPhotos';
 import { useEffect } from 'react';
@@ -9,6 +9,7 @@ export default function ProPhotosScreen({ navigation, route }) {
   const restaurantId   = route?.params?.restaurantId;
   const onSetupComplete = route?.params?.onSetupComplete;
   const { photos, loading, uploading, error, addPhoto, removePhoto } = useProPhotos(restaurantId);
+  const insets = useSafeAreaInsets();
   useEffect(() => {
     ScreenOrientation.unlockAsync();
     return () => ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
@@ -77,7 +78,7 @@ export default function ProPhotosScreen({ navigation, route }) {
         />
       )}
 
-      <View style={s.footer}>
+      <View style={[s.footer, { bottom: insets.bottom }]}>
         {onSetupComplete && (
           <TouchableOpacity style={s.nextBtn} onPress={handleNext}>
             <Text style={s.nextBtnTxt}>Étape suivante →</Text>

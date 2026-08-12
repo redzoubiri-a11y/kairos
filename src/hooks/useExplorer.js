@@ -1,26 +1,5 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
-import { Alert } from 'react-native';
-import * as Location from 'expo-location';
+import { useState, useEffect, useMemo } from 'react';
 import { supabase } from '../../supabase';
-
-export const CITIES = [
-  { id:'alger',       label:'Alger',       emoji:'🏛️', region:{ latitude:36.7538, longitude:3.0588,  latitudeDelta:0.13, longitudeDelta:0.13 } },
-  { id:'tipaza',      label:'Tipaza',      emoji:'🏖️', region:{ latitude:36.5911, longitude:2.4475,  latitudeDelta:0.13, longitudeDelta:0.13 } },
-  { id:'oran',        label:'Oran',        emoji:'🌊', region:{ latitude:35.6969, longitude:-0.6331, latitudeDelta:0.13, longitudeDelta:0.13 } },
-  { id:'constantine', label:'Constantine', emoji:'🌉', region:{ latitude:36.3650, longitude:6.6147,  latitudeDelta:0.13, longitudeDelta:0.13 } },
-  { id:'tizi_ouzou',  label:'Tizi Ouzou',  emoji:'⛰️', region:{ latitude:36.7117, longitude:4.0450,  latitudeDelta:0.13, longitudeDelta:0.13 } },
-  { id:'bejaia',      label:'Béjaïa',      emoji:'🌅', region:{ latitude:36.7509, longitude:5.0564,  latitudeDelta:0.13, longitudeDelta:0.13 } },
-  { id:'setif',       label:'Sétif',       emoji:'🌾', region:{ latitude:36.1898, longitude:5.4108,  latitudeDelta:0.13, longitudeDelta:0.13 } },
-  { id:'annaba',      label:'Annaba',      emoji:'🌺', region:{ latitude:36.9000, longitude:7.7667,  latitudeDelta:0.13, longitudeDelta:0.13 } },
-  { id:'tlemcen',     label:'Tlemcen',     emoji:'🕌', region:{ latitude:34.8828, longitude:-1.3167, latitudeDelta:0.13, longitudeDelta:0.13 } },
-];
-
-export const CUISINE_EMOJI = {
-  algerien:'🥘', mediterraneen:'🐟', fast_casual:'☕',
-  italien:'🍕', japonais:'🍣', turc:'🍢', libanais:'🌿', francais:'🍷',
-  thai:'🍜', indien:'🍛', jordanien:'🧆', marocain:'🥙', egyptien:'🫓',
-  autre:'🍽️',
-};
 
 export const QUARTIER_COORDS = {
   'hydra':{ latitude:36.7539, longitude:3.0427 },
@@ -52,6 +31,15 @@ export const QUARTIER_COORDS = {
   'zouaghi':{ latitude:36.3300, longitude:6.5800 },
 };
 
+const ALGER_DEFAULT = { latitude: 36.7538, longitude: 3.0588 };
+
+export const CUISINE_EMOJI = {
+  algerien:'🥘', mediterraneen:'🐟', fast_casual:'☕',
+  italien:'🍕', japonais:'🍣', turc:'🍢', libanais:'🌿', francais:'🍷',
+  thai:'🍜', indien:'🍛', jordanien:'🧆', marocain:'🥙', egyptien:'🫓',
+  autre:'🍽️',
+};
+
 export function haversineKm(lat1, lon1, lat2, lon2) {
   const R = 6371;
   const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -61,7 +49,7 @@ export function haversineKm(lat1, lon1, lat2, lon2) {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-export function getCoord(r, cityDefault) {
+export function getCoord(r, cityDefault = ALGER_DEFAULT) {
   if (r.latitude && r.longitude) return { latitude: r.latitude, longitude: r.longitude };
   const key  = (r.quartier || '').toLowerCase();
   const base = QUARTIER_COORDS[key] || cityDefault;
@@ -74,86 +62,45 @@ export function getCoord(r, cityDefault) {
   };
 }
 
-export default function useExplorer(initialCity = 'alger') {
-  const [city,         setCity]         = useState(initialCity);
-  const [mode,         setMode]         = useState('map');
-  const [restaurants,  setRestaurants]  = useState([]);
-  const [loading,      setLoading]      = useState(false);
-  const [selected,     setSelected]     = useState(null);
-  const [userLocation, setUserLocation] = useState(null);
-  const [nearMe,       setNearMe]       = useState(false);
-  const [locLoading,   setLocLoading]   = useState(false);
-
-  const cityData = useMemo(() => CITIES.find(c => c.id === city) || CITIES[0], [city]);
-  const cityDefault = useMemo(
-    () => ({ latitude: cityData.region.latitude, longitude: cityData.region.longitude }),
-    [cityData],
-  );
+export default function useExplorer() {
+  const [restaurants, setRestaurants] = useState([]);
+  const [loading,     setLoading]     = useState(false);
+  const [query,       setQuery]       = useState('');
+  const [sortBy,      setSortBy]      = useState('pertinence'); // 'pertinence' | 'note'
 
   useEffect(() => {
     (async () => {
       setLoading(true);
-      setSelected(null);
       try {
-        const query = supabase
+        const { data } = await supabase
           .from('restaurants')
           .select('id, name, cuisine_type, address, quartier, city, photos, avg_rating, avg_ticket, review_count, capacity, latitude, longitude, opening_hours, phone')
           .eq('status', 'active')
           .order('avg_rating', { ascending: false });
-
-        const finalQuery = !nearMe ? query.eq('city', city) : query;
-
-        const { data } = await finalQuery;
         setRestaurants(data ?? []);
       } finally {
         setLoading(false);
       }
     })();
-  }, [city, nearMe]);
+  }, []);
 
-  const sortedRestaurants = useMemo(() => {
-    if (!nearMe || !userLocation) return restaurants;
-    return [...restaurants].sort((a, b) => {
-      const ca = getCoord(a, cityDefault);
-      const cb = getCoord(b, cityDefault);
-      const da = haversineKm(userLocation.latitude, userLocation.longitude, ca.latitude, ca.longitude);
-      const db = haversineKm(userLocation.latitude, userLocation.longitude, cb.latitude, cb.longitude);
-      return da - db;
-    });
-  }, [restaurants, nearMe, userLocation, cityDefault]);
-
-  const requestNearMe = useCallback(async () => {
-    setLocLoading(true);
-    try {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert(
-          'Localisation refusée',
-          'Activez la localisation dans les Réglages pour voir les restaurants près de vous.',
-        );
-        return;
-      }
-      const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
-      setUserLocation({ latitude: loc.coords.latitude, longitude: loc.coords.longitude });
-      setNearMe(true);
-    } catch (_) {
-      Alert.alert('Erreur', 'Impossible de récupérer votre position.');
-    } finally {
-      setLocLoading(false);
+  const filteredRestaurants = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    let list = !q ? restaurants : restaurants.filter(r => (
+      r.name?.toLowerCase().includes(q)
+      || r.cuisine_type?.toLowerCase().includes(q)
+      || r.quartier?.toLowerCase().includes(q)
+    ));
+    if (sortBy === 'note') {
+      list = [...list].sort((a, b) => (b.avg_rating || 0) - (a.avg_rating || 0));
     }
-  }, []);
-
-  const selectCity = useCallback((c) => {
-    setCity(c);
-    setNearMe(false);
-    setUserLocation(null);
-  }, []);
+    return list;
+  }, [restaurants, query, sortBy]);
 
   return {
-    city, setCity: selectCity, mode, setMode,
-    restaurants: sortedRestaurants,
-    loading, selected, setSelected,
-    cityData, cityDefault,
-    userLocation, nearMe, locLoading, requestNearMe,
+    restaurants: filteredRestaurants,
+    loading,
+    query, setQuery,
+    sortBy, setSortBy,
   };
 }

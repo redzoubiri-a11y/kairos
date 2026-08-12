@@ -36,14 +36,12 @@ export default function DishCard({ dish, onEdit, onToggle, acting }) {
           <Text style={s.editTxt}>Modifier</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[s.toggleBtn, dish.is_available ? s.toggleRed : s.toggleGreen]}
+          style={[s.switchTrack, dish.is_available && s.switchTrackOn, acting && { opacity: 0.5 }]}
           onPress={onToggle}
           disabled={acting}
-          activeOpacity={0.7}
+          activeOpacity={0.8}
         >
-          <Text style={[s.toggleTxt, dish.is_available ? s.toggleTxtRed : s.toggleTxtGreen]}>
-            {acting ? '···' : dish.is_available ? '⏸  Indisponible' : '▶  Disponible'}
-          </Text>
+          <View style={[s.switchThumb, dish.is_available && s.switchThumbOn]} />
         </TouchableOpacity>
       </View>
     </View>
@@ -62,13 +60,12 @@ const s = StyleSheet.create({
   indispoTxt:    { color: colors.red, fontSize: typography.size.xs, fontWeight: typography.weight.semibold },
   dotdBadge:     { backgroundColor: colors.goldSoft, borderRadius: radius.pill, paddingHorizontal: spacing.md, paddingVertical: spacing.xxs, borderWidth: 1, borderColor: 'rgba(200,151,90,0.3)' },
   dotdTxt:       { color: colors.gold, fontSize: typography.size.xs, fontWeight: typography.weight.semibold },
-  actions:       { flexDirection: 'row', gap: spacing.md },
-  editBtn:       { flex: 1, alignItems: 'center', paddingVertical: spacing.md, borderRadius: radius.lg, backgroundColor: 'transparent', borderWidth: 1.5, borderColor: colors.blue },
+  actions:       { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.md },
+  editBtn:       { paddingHorizontal: spacing.xl, alignItems: 'center', paddingVertical: spacing.md, borderRadius: radius.lg, backgroundColor: 'transparent', borderWidth: 1.5, borderColor: colors.blue },
   editTxt:       { color: colors.blue, fontSize: typography.size.body, fontWeight: typography.weight.semibold },
-  toggleBtn:     { flex: 1, alignItems: 'center', paddingVertical: spacing.md, borderRadius: radius.lg },
-  toggleRed:     { backgroundColor: colors.redSoft, borderWidth: 1, borderColor: 'rgba(224,90,90,0.25)' },
-  toggleGreen:   { backgroundColor: colors.greenSoft, borderWidth: 1, borderColor: 'rgba(76,175,130,0.25)' },
-  toggleTxt:     { fontSize: typography.size.body, fontWeight: typography.weight.semibold },
-  toggleTxtRed:  { color: colors.red },
-  toggleTxtGreen:{ color: colors.green },
+  // Switch compact de disponibilité — Menu Pro.dc.html : piste 38×22 radius 11, pastille 18×18 inset 2
+  switchTrack:    { width: 38, height: 22, borderRadius: 11, backgroundColor: colors.cardBorder, justifyContent: 'center' },
+  switchTrackOn:  { backgroundColor: colors.primary },
+  switchThumb:    { width: 18, height: 18, borderRadius: 9, backgroundColor: '#FFFFFF', marginLeft: 2 },
+  switchThumbOn:  { marginLeft: 18 },
 });

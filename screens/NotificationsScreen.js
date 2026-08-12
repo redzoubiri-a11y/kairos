@@ -3,6 +3,7 @@ import {
   RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import { colors, typography, spacing, radius } from '../src/theme';
 import MLoader from '../src/components/MLoader';
 import useNotifications, { TYPE_CFG, TABS, timeAgo } from '../src/hooks/useNotifications';
@@ -101,23 +102,24 @@ export default function NotificationsScreen({ navigation }) {
                 return (
                   <TouchableOpacity
                     key={n.id}
-                    style={[s.card, !n.is_read && s.cardUnread, { borderLeftColor: cfg.color }]}
+                    style={s.card}
                     onPress={() => markRead(n)}
                     onLongPress={() => deleteNotif(n)}
                     activeOpacity={0.75}
                   >
-                    <View style={[s.iconWrap, { backgroundColor: cfg.color + '18', borderColor: cfg.color + '35' }]}>
-                      <Text style={s.icon}>{cfg.icon}</Text>
+                    <View style={[s.iconWrap, { backgroundColor: cfg.bg || cfg.color + '18' }]}>
+                      {cfg.iconLib === 'ionicons'
+                        ? <Ionicons name={cfg.icon} size={17} color={cfg.color} />
+                        : <Text style={s.icon}>{cfg.icon}</Text>
+                      }
                     </View>
                     <View style={s.cardContent}>
-                      <View style={s.cardTopRow}>
-                        <View style={[s.typeBadge, { backgroundColor: cfg.color + '15', borderColor: cfg.color + '30' }]}>
-                          <Text style={[s.typeBadgeTxt, { color: cfg.color }]}>{cfg.label}</Text>
-                        </View>
-                        <Text style={s.cardTime}>{timeAgo(n.sent_at)}</Text>
-                      </View>
-                      <Text style={[s.cardTitle, !n.is_read && s.cardTitleBold]}>{n.title}</Text>
+                      <Text style={s.cardTitle}>{n.title}</Text>
                       <Text style={s.cardBody}>{n.body}</Text>
+                      <View style={s.cardTimeRow}>
+                        <Text style={s.cardTime}>{timeAgo(n.sent_at)}</Text>
+                        {!n.is_read && <View style={[s.unreadDot, { backgroundColor: cfg.color }]} />}
+                      </View>
                       {isResa && (
                         <TouchableOpacity
                           style={s.actionBtn}
@@ -127,7 +129,6 @@ export default function NotificationsScreen({ navigation }) {
                         </TouchableOpacity>
                       )}
                     </View>
-                    {!n.is_read && <View style={[s.unreadDot, { backgroundColor: cfg.color }]} />}
                   </TouchableOpacity>
                 );
               })}
@@ -165,21 +166,17 @@ const s = StyleSheet.create({
   tabBadgeTxt:  { color: '#FFFFFF', fontSize: typography.size.xs, fontWeight: typography.weight.bold },
   tabLine:      { position: 'absolute', bottom: 0, left: '15%', right: '15%', height: 2, backgroundColor: colors.primary, borderRadius: 1 },
 
-  groupLabel:   { color: colors.textMuted, fontSize: typography.size.xs, letterSpacing: 4, paddingHorizontal: spacing.xxl, paddingTop: spacing.xxl, paddingBottom: spacing.md },
+  groupLabel:   { fontFamily: typography.bodySemibold, color: colors.textFaint, fontSize: typography.size.caption - 0.5, letterSpacing: 0.84, textTransform: 'uppercase', paddingHorizontal: spacing.xxl, paddingTop: spacing.xxl, paddingBottom: spacing.md },
 
-  card:         { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.lg, paddingHorizontal: spacing.xxl, paddingVertical: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.cardBorder, borderLeftWidth: 3, borderLeftColor: 'transparent' },
-  cardUnread:   { backgroundColor: 'rgba(255,255,255,0.02)' },
-  iconWrap:     { width: 46, height: 46, borderRadius: radius.xl, borderWidth: 1, alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 2 },
-  icon:         { fontSize: 20 },
-  cardContent:  { flex: 1, gap: spacing.xs },
-  cardTopRow:   { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 },
-  typeBadge:    { borderRadius: radius.sm, borderWidth: 1, paddingHorizontal: spacing.sm+1, paddingVertical: spacing.xxs },
-  typeBadgeTxt: { fontSize: typography.size.xs, fontWeight: typography.weight.medium, letterSpacing: 0.5 },
-  cardTime:     { color: colors.textDim, fontSize: typography.size.sm },
-  cardTitle:    { color: colors.text, fontSize: typography.size.subheading, fontWeight: typography.weight.regular, lineHeight: 20 },
-  cardTitleBold:{ fontWeight: typography.weight.medium },
-  cardBody:     { color: colors.textMuted, fontSize: typography.size.body, lineHeight: 18 },
-  unreadDot:    { width: 8, height: 8, borderRadius: 4, flexShrink: 0, marginTop: spacing.sm },
+  card:         { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.lg, paddingHorizontal: spacing.xxl, paddingVertical: spacing.lg + 1, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
+  iconWrap:     { width: 38, height: 38, borderRadius: radius.control, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+  icon:         { fontSize: 17 },
+  cardContent:  { flex: 1 },
+  cardTitle:    { fontFamily: typography.bodySemibold, color: colors.text, fontSize: typography.size.bodyLg + 0.5, lineHeight: 17.5 },
+  cardBody:     { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.bodyLg - 0.5, lineHeight: 18, marginTop: 3 },
+  cardTimeRow:  { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginTop: 6 },
+  cardTime:     { fontFamily: typography.body, color: colors.accentDim, fontSize: typography.size.caption },
+  unreadDot:    { width: 6, height: 6, borderRadius: 3, flexShrink: 0 },
 
   actionBtn:    { alignSelf: 'flex-start', marginTop: spacing.sm, paddingVertical: spacing.sm, paddingHorizontal: spacing.lg, backgroundColor: colors.blueSoft, borderRadius: radius.md, borderWidth: 1, borderColor: 'rgba(90,155,224,0.25)' },
   actionBtnTxt: { color: colors.blue, fontSize: typography.size.caption },

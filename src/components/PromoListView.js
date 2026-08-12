@@ -1,79 +1,81 @@
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { colors, typography, spacing, radius } from '../theme';
-import { PAST_PROMOS } from '../hooks/useProPromos';
+import { STATUS_LABEL } from '../hooks/useProPromos';
+import EmptyState from './EmptyState';
 
-export default function PromoListView({ restaurant, onCreate }) {
-  const hasActive = true;
+const BADGE_STYLE = {
+  active:    { bg: colors.gold,           text: colors.noir },
+  scheduled: { bg: colors.statusPendingBg, text: colors.statusPendingText },
+  ended:     { bg: colors.tagNeutralBg,    text: colors.textMuted },
+  paused:    { bg: colors.tagNeutralBg,    text: colors.textMuted },
+};
+
+export default function PromoListView({ activePromo, otherPromos, onCreate, onTogglePause, onIncrementUse }) {
+  const hasAny = !!activePromo || otherPromos.length > 0;
+
+  if (!hasAny) {
+    return (
+      <View style={{ padding: spacing.xl }}>
+        <EmptyState
+          icon={<Text style={{ fontSize: 20 }}>🏷️</Text>}
+          title="Aucune promotion"
+          subtitle={"Créez votre première promotion pour la rendre\nvisible sur votre fiche MIDA."}
+          actionLabel="+ Créer une promotion"
+          onAction={onCreate}
+        />
+      </View>
+    );
+  }
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
-      <View style={{ padding: spacing.xl, gap: spacing.xl }}>
+      <View style={{ padding: spacing.xl, gap: spacing.lg }}>
 
-        {hasActive && (
-          <View style={s.activeBanner}>
-            <Text style={{ fontSize: 22 }}>🟢</Text>
-            <View style={{ flex: 1 }}>
-              <Text style={s.activeBannerTitle}>1 promo active en ce moment</Text>
-              <Text style={s.activeBannerSub}>Visible par tous les clients sur ta fiche</Text>
+        {activePromo && (
+          <View style={s.activeCard}>
+            <View style={s.activeGlow} pointerEvents="none" />
+            <View style={[s.badge, { backgroundColor: BADGE_STYLE.active.bg }]}>
+              <Text style={[s.badgeTxt, { color: BADGE_STYLE.active.text }]}>{STATUS_LABEL.active}</Text>
             </View>
-          </View>
-        )}
+            <Text style={s.activeTitle}>{activePromo.title}</Text>
+            {!!activePromo.description && <Text style={s.activeDesc}>{activePromo.description}</Text>}
 
-        <View>
-          <Text style={s.sectionLabel}>⚡ Active</Text>
-          <View style={s.promoCard}>
-            <View style={s.promoCardTop}>
-              <View style={{ flex: 1 }}>
-                <Text style={s.promoTitle}>−20% sur l'addition</Text>
-                <Text style={s.promoSub}>Avant 21h · Tous les soirs</Text>
-              </View>
-              <View style={s.livePill}>
-                <View style={s.liveDot} />
-                <Text style={s.liveTxt}>Live</Text>
-              </View>
-            </View>
-
-            <View style={s.tagRow}>
-              {['📅 Lun–Ven', '🕐 18h–21h', '👥 Sans minimum'].map(t => (
-                <View key={t} style={s.tag}><Text style={s.tagTxt}>{t}</Text></View>
-              ))}
-            </View>
-
-            <View style={s.progressBox}>
-              <View style={s.progressRow}>
-                <Text style={s.progressLabel}>Utilisations aujourd'hui</Text>
-                <Text style={s.progressVal}>7 / 20</Text>
-              </View>
-              <View style={s.progressTrack}>
-                <View style={[s.progressFill, { width: '35%' }]} />
-              </View>
+            <View style={s.statsRow}>
+              <Text style={s.statVal}>{activePromo.use_count || 0}</Text>
+              <Text style={s.statLbl}>utilisations</Text>
             </View>
 
             <View style={s.actionRow}>
-              <TouchableOpacity style={s.editBtn}>
-                <Text style={s.editBtnTxt}>✏️ Modifier</Text>
+              <TouchableOpacity style={s.useBtn} onPress={() => onIncrementUse(activePromo)}>
+                <Text style={s.useBtnTxt}>+1 utilisation</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={s.pauseBtn}>
+              <TouchableOpacity style={s.pauseBtn} onPress={() => onTogglePause(activePromo)}>
                 <Text style={s.pauseBtnTxt}>⏸ Suspendre</Text>
               </TouchableOpacity>
             </View>
           </View>
-        </View>
+        )}
 
-        <View>
-          <Text style={s.sectionLabel}>📋 Passées</Text>
-          {PAST_PROMOS.map((p, i) => (
-            <View key={i} style={s.pastCard}>
-              <View style={s.pastCardTop}>
-                <Text style={s.pastTitle}>{p.label}</Text>
-                <View style={s.usesPill}>
-                  <Text style={s.usesTxt}>{p.uses} utilisations</Text>
-                </View>
+        {otherPromos.map((p) => {
+          const badge = BADGE_STYLE[p.status] || BADGE_STYLE.ended;
+          const isEnded = p.status === 'ended';
+          return (
+            <View key={p.id} style={[s.card, isEnded && { opacity: 0.6 }]}>
+              <View style={[s.badge, { backgroundColor: badge.bg }]}>
+                <Text style={[s.badgeTxt, { color: badge.text }]}>{STATUS_LABEL[p.status]}</Text>
               </View>
-              <Text style={s.pastPeriod}>{p.period}</Text>
+              <Text style={s.cardTitle}>{p.title}</Text>
+              <Text style={s.cardDesc}>
+                {isEnded ? `${p.use_count || 0} utilisations au total` : p.description}
+              </Text>
+              {p.status === 'paused' && (
+                <TouchableOpacity style={s.resumeBtn} onPress={() => onTogglePause(p)}>
+                  <Text style={s.resumeBtnTxt}>▶ Reprendre</Text>
+                </TouchableOpacity>
+              )}
             </View>
-          ))}
-        </View>
+          );
+        })}
 
         <View style={{ height: 40 }} />
       </View>
@@ -82,35 +84,25 @@ export default function PromoListView({ restaurant, onCreate }) {
 }
 
 const s = StyleSheet.create({
-  activeBanner:      { flexDirection: 'row', alignItems: 'center', gap: spacing.lg, backgroundColor: colors.greenSoft, borderRadius: radius.xl, padding: spacing.lg, borderWidth: 1, borderColor: 'rgba(76,175,130,0.3)' },
-  activeBannerTitle: { color: colors.green, fontSize: typography.size.body, fontWeight: typography.weight.bold },
-  activeBannerSub:   { color: colors.textMuted, fontSize: typography.size.caption, marginTop: 2 },
-  sectionLabel:      { color: colors.text, fontSize: typography.size.body, fontWeight: typography.weight.bold, marginBottom: spacing.md },
-  promoCard:         { backgroundColor: colors.noir, borderRadius: radius.xl, padding: spacing.xl, borderWidth: 0 },
-  promoCardTop:      { flexDirection: 'row', alignItems: 'flex-start', marginBottom: spacing.lg },
-  promoTitle:        { color: '#FFFFFF', fontFamily: typography.display, fontSize: typography.size.title, fontWeight: typography.weight.bold, letterSpacing: -0.5 },
-  promoSub:          { color: 'rgba(255,255,255,0.80)', fontSize: typography.size.caption, marginTop: 4 },
-  livePill:          { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: colors.goldSoft, borderRadius: radius.full, paddingHorizontal: spacing.lg, paddingVertical: spacing.xs, borderWidth: 1, borderColor: 'rgba(200,151,90,0.4)' },
-  liveDot:           { width: 7, height: 7, borderRadius: 3.5, backgroundColor: colors.gold },
-  liveTxt:           { color: colors.gold, fontSize: typography.size.caption, fontWeight: typography.weight.semibold },
-  tagRow:            { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginBottom: spacing.lg },
-  tag:               { backgroundColor: 'rgba(255,255,255,0.12)', borderRadius: radius.full, paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderWidth: 1, borderColor: 'rgba(255,255,255,0.25)' },
-  tagTxt:            { color: '#FFFFFF', fontSize: typography.size.caption },
-  progressBox:       { backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: radius.md, padding: spacing.lg, marginBottom: spacing.lg },
-  progressRow:       { flexDirection: 'row', justifyContent: 'space-between', marginBottom: spacing.sm },
-  progressLabel:     { color: 'rgba(255,255,255,0.75)', fontSize: typography.size.caption },
-  progressVal:       { color: '#FFFFFF', fontSize: typography.size.caption, fontWeight: typography.weight.bold },
-  progressTrack:     { height: 4, backgroundColor: 'rgba(255,255,255,0.20)', borderRadius: 2 },
-  progressFill:      { height: 4, backgroundColor: colors.gold, borderRadius: 2 },
-  actionRow:         { flexDirection: 'row', gap: spacing.sm },
-  editBtn:           { flex: 1, backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: radius.md, padding: spacing.md, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.25)' },
-  editBtnTxt:        { color: '#FFFFFF', fontSize: typography.size.caption, fontWeight: typography.weight.bold },
-  pauseBtn:          { flex: 1, backgroundColor: colors.redSoft, borderRadius: radius.md, padding: spacing.md, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(224,90,90,0.2)' },
-  pauseBtnTxt:       { color: colors.red, fontSize: typography.size.caption, fontWeight: typography.weight.bold },
-  pastCard:          { backgroundColor: colors.card, borderRadius: radius.lg, padding: spacing.lg, marginBottom: spacing.md, borderWidth: 1, borderColor: colors.cardBorder, opacity: 0.75 },
-  pastCardTop:       { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.xs },
-  pastTitle:         { color: colors.text, fontSize: typography.size.body, fontWeight: typography.weight.bold },
-  pastPeriod:        { color: colors.textDim, fontSize: typography.size.caption },
-  usesPill:          { backgroundColor: colors.goldSoft, borderRadius: radius.full, paddingHorizontal: spacing.md, paddingVertical: spacing.xs },
-  usesTxt:           { color: colors.gold, fontSize: typography.size.caption, fontWeight: typography.weight.medium },
+  badge:    { alignSelf: 'flex-start', borderRadius: 6, paddingHorizontal: 8, paddingVertical: 5, marginBottom: spacing.md },
+  badgeTxt: { fontFamily: typography.bodyBold, fontSize: 9.5, letterSpacing: 0.4 },
+
+  activeCard: { backgroundColor: colors.noir, borderRadius: radius.xl, padding: spacing.xl, overflow: 'hidden' },
+  activeGlow: { position: 'absolute', top: -30, right: -30, width: 110, height: 110, borderRadius: 55, backgroundColor: colors.goldSoft },
+  activeTitle: { fontFamily: typography.display, fontSize: typography.size.title - 6, color: '#FFFFFF', letterSpacing: -0.2 },
+  activeDesc: { fontFamily: typography.body, fontSize: typography.size.body, color: 'rgba(255,255,255,0.55)', marginTop: 5, lineHeight: 17 },
+  statsRow: { flexDirection: 'row', alignItems: 'baseline', gap: 6, marginTop: spacing.lg },
+  statVal: { fontFamily: typography.display, fontSize: typography.size.heading2, color: '#FFFFFF' },
+  statLbl: { fontFamily: typography.bodyMedium, fontSize: 9.5, color: 'rgba(255,255,255,0.5)' },
+  actionRow: { flexDirection: 'row', gap: spacing.sm, marginTop: spacing.lg },
+  useBtn: { flex: 1, backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: radius.md, paddingVertical: spacing.md, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.25)' },
+  useBtnTxt: { color: '#FFFFFF', fontSize: typography.size.caption, fontFamily: typography.bodyBold },
+  pauseBtn: { flex: 1, backgroundColor: colors.redSoft, borderRadius: radius.md, paddingVertical: spacing.md, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(224,90,90,0.2)' },
+  pauseBtnTxt: { color: colors.red, fontSize: typography.size.caption, fontFamily: typography.bodyBold },
+
+  card: { backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, borderRadius: radius.xl, padding: spacing.xl },
+  cardTitle: { fontFamily: typography.display, fontSize: typography.size.heading2, color: colors.text },
+  cardDesc: { fontFamily: typography.body, fontSize: typography.size.body, color: colors.textMuted, marginTop: 5, lineHeight: 17 },
+  resumeBtn: { alignSelf: 'flex-start', marginTop: spacing.lg, borderWidth: 1.5, borderColor: 'rgba(10,10,10,0.16)', borderRadius: radius.md, paddingHorizontal: spacing.xl, paddingVertical: spacing.sm + 1 },
+  resumeBtnTxt: { fontFamily: typography.bodySemibold, fontSize: typography.size.bodyLg - 1.5, color: colors.text },
 });

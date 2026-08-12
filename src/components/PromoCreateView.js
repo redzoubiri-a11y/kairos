@@ -5,15 +5,57 @@ import {
 import { colors, typography, spacing, radius } from '../theme';
 import { PROMO_TYPES, PERCENTS } from '../hooks/useProPromos';
 
-export default function PromoCreateView({ onActivate, onBack }) {
-  const [type,    setType]    = useState('percent');
-  const [percent, setPercent] = useState('20%');
-  const [maxUses, setMaxUses] = useState('20');
+function parseDateFR(str) {
+  const m = (str || '').trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (!m) return null;
+  const [, d, mo, y] = m;
+  return `${y}-${mo.padStart(2, '0')}-${d.padStart(2, '0')}`;
+}
+
+function fmtDateFR(iso) {
+  return new Date(iso + 'T00:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+}
+
+export default function PromoCreateView({ onActivate, onBack, saving }) {
+  const [type,      setType]      = useState('percent');
+  const [percent,   setPercent]   = useState('20%');
+  const [maxUses,   setMaxUses]   = useState('20');
+  const [startStr,  setStartStr]  = useState('');
+  const [endStr,    setEndStr]    = useState('');
+  const [dateError, setDateError] = useState('');
 
   const label = type === 'percent' ? `−${percent} sur l'addition`
               : type === 'fixed'   ? '−500 DA offerts'
               : type === 'free'    ? 'Dessert offert'
               : '2 plats achetés = 1 offert';
+
+  const handleActivate = () => {
+    const startDate = startStr ? parseDateFR(startStr) : null;
+    const endDate   = endStr   ? parseDateFR(endStr)   : null;
+    if ((startStr && !startDate) || (endStr && !endDate)) {
+      setDateError('Format de date invalide (JJ/MM/AAAA)');
+      return;
+    }
+    setDateError('');
+
+    const periodTxt = [
+      startDate ? `À partir du ${fmtDateFR(startDate)}` : null,
+      endDate   ? `Jusqu'au ${fmtDateFR(endDate)}`       : null,
+    ].filter(Boolean).join(' · ') || null;
+    const description = ['Lun–Ven, 18h00–21h00', periodTxt].filter(Boolean).join(' · ');
+
+    onActivate({
+      type,
+      title: label,
+      description,
+      percent_value: type === 'percent' ? Number(percent.replace('%', '')) : null,
+      time_start: '18:00',
+      time_end: '21:00',
+      max_uses_per_day: maxUses ? Number(maxUses) : null,
+      start_date: startDate,
+      end_date: endDate,
+    });
+  };
 
   return (
     <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
@@ -84,14 +126,45 @@ export default function PromoCreateView({ onActivate, onBack }) {
           <Text style={s.hint}>Laisse vide pour ne pas limiter</Text>
         </View>
 
+        <View style={s.dateRow}>
+          <View style={{ flex: 1 }}>
+            <Text style={s.fieldLabel}>Date de début</Text>
+            <View style={s.inputBox}>
+              <TextInput
+                style={s.inputVal}
+                value={startStr}
+                onChangeText={setStartStr}
+                placeholder="JJ/MM/AAAA"
+                placeholderTextColor={colors.textDim}
+                keyboardType="numeric"
+              />
+            </View>
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={s.fieldLabel}>Date de fin</Text>
+            <View style={s.inputBox}>
+              <TextInput
+                style={s.inputVal}
+                value={endStr}
+                onChangeText={setEndStr}
+                placeholder="JJ/MM/AAAA"
+                placeholderTextColor={colors.textDim}
+                keyboardType="numeric"
+              />
+            </View>
+          </View>
+        </View>
+        <Text style={s.hint}>Vides = démarre immédiatement, sans date de fin</Text>
+        {!!dateError && <Text style={s.errorTxt}>{dateError}</Text>}
+
         <View style={s.preview}>
           <Text style={s.previewLabel}>👁 Aperçu client</Text>
           <Text style={s.previewTitle}>{label}</Text>
           <Text style={s.previewSub}>Lun–Ven · 18h00–21h00 · Max {maxUses || '∞'}/soir</Text>
         </View>
 
-        <TouchableOpacity style={s.activateBtn} onPress={onActivate}>
-          <Text style={s.activateBtnTxt}>Activer la promotion →</Text>
+        <TouchableOpacity style={[s.activateBtn, saving && { opacity: 0.6 }]} onPress={handleActivate} disabled={saving}>
+          <Text style={s.activateBtnTxt}>{saving ? '···' : 'Activer la promotion →'}</Text>
         </TouchableOpacity>
 
         <View style={{ height: 40 }} />
@@ -116,6 +189,8 @@ const s = StyleSheet.create({
   inputBox:      { backgroundColor: colors.card, borderRadius: radius.lg, borderWidth: 1, borderColor: colors.cardBorder, paddingHorizontal: spacing.xl, paddingVertical: spacing.lg },
   inputVal:      { color: colors.text, fontSize: typography.size.subheading },
   hint:          { color: colors.textDim, fontSize: typography.size.xs, marginTop: spacing.xs },
+  dateRow:       { flexDirection: 'row', gap: spacing.md },
+  errorTxt:      { color: colors.red, fontSize: typography.size.caption, marginTop: spacing.xs },
   slotRow:       { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },
   slotBox:       { flex: 1, backgroundColor: colors.card, borderRadius: radius.lg, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.lg, alignItems: 'center' },
   slotTxt:       { color: colors.text, fontSize: typography.size.subheading },

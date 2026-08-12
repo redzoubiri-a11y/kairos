@@ -56,7 +56,7 @@ export default function RestaurantCompletionCard({ navigation, restaurantId, ref
 const s = StyleSheet.create({
   card:    { marginHorizontal: spacing.xxl, marginTop: spacing.lg, padding: spacing.xl, borderRadius: radius.xxl, backgroundColor: colors.goldSoft, borderWidth: 1, borderColor: 'rgba(200,151,90,0.3)' },
   headRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: spacing.md },
-  title:   { color: colors.text, fontSize: typography.size.subheading, fontWeight: typography.weight.semibold },
+  title:   { fontFamily: typography.bodySemibold, color: colors.text, fontSize: typography.size.subheading },
   sub:     { color: colors.textMuted, fontSize: typography.size.xs },
   track:   { height: 6, borderRadius: 3, backgroundColor: colors.cardBorder, overflow: 'hidden', marginBottom: spacing.md },
   fill:    { height: '100%', backgroundColor: colors.gold, borderRadius: 3 },

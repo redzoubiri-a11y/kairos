@@ -4,11 +4,15 @@
 // Jamais de couleurs ou tailles en dur
 // ─────────────────────────────────────────────
 
+// Rebrand Cyan/Magenta (08/2026) — remplace le vert/terracotta de la direction "Marché"
+const CYAN = '#00B4D8';
+const MAGENTA = '#E8006F';
+
 export const colors = {
-  // Palette principale MIDA — direction "Marché" (refonte 08/2026)
-  primary: '#0D6B3F',
-  primarySoft: 'rgba(13,107,63,0.10)',
-  primaryDim: 'rgba(13,107,63,0.06)',
+  // Palette principale MIDA — rebrand Cyan/Magenta (08/2026)
+  primary: CYAN,
+  primarySoft: 'rgba(0,180,216,0.10)',
+  primaryDim: 'rgba(0,180,216,0.06)',
   noir: '#0A0A0A',
   cream: '#F5EDD6',
   greyBg: '#F5F6F8',
@@ -33,14 +37,20 @@ export const colors = {
   gold: '#c8975a',
   goldSoft: 'rgba(200,151,90,0.14)',
 
-  // CTA Réservation — terracotta, exclusif à l'action de réserver
-  resa: '#C87860',
-  resaSoft: 'rgba(200,120,96,0.18)',
+  // CTA Réservation — magenta, exclusif à l'action de réserver
+  resa: MAGENTA,
+  resaSoft: 'rgba(232,0,111,0.18)',
 
   // Texte
   text: '#0A0A0A',
   textMuted: 'rgba(10,10,10,0.55)',
   textDim: 'rgba(10,10,10,0.38)',
+  // Placeholder de champ de recherche — Explorer.dc.html : rgba(10,10,10,.42), distinct de textDim
+  textPlaceholder: 'rgba(10,10,10,0.42)',
+  // Libellés de section (ex. "AUJOURD'HUI") — Notifications.dc.html : rgba(10,10,10,.4), distinct de textDim (.38)
+  textFaint: 'rgba(10,10,10,0.4)',
+  // Libellés de champ de formulaire — Inscription Restaurateur.dc.html : rgba(10,10,10,.45)
+  textLabel: 'rgba(10,10,10,0.45)',
 
   // États
   green: '#4CAF82',
@@ -66,15 +76,19 @@ export const colors = {
   // Statuts réservation/commande (pro)
   statusPendingBg: '#F6ECDD',
   statusPendingText: '#8a6a35',
-  statusConfirmedBg: '#E8F1EB',
-  statusConfirmedText: '#0D6B3F',
+  statusConfirmedBg: '#E0F7FA',
+  statusConfirmedText: CYAN,
   statusCancelledBg: '#F3E3DE',
   statusCancelledText: '#8a4633',
+
+  // Badge note + tag "Terrasse" — Fiche Restaurant.dc.html : #E8F1EB (distinct de tagGreenBg #E0F7FA,
+  // valeur différente dans ce fichier source, pas fusionnée avec le token existant)
+  ratingBg: '#E8F1EB',
 
   // Restaurant cards design system
   star: '#f5c842',
   separator: '#ECE7DC',
-  tagGreenBg: '#E8F1EB',
+  tagGreenBg: '#E0F7FA',
   tagNeutralBg: '#F1EEE6',
   textSecondary: 'rgba(10,10,10,0.55)',
   textTertiary: 'rgba(10,10,10,0.45)',
@@ -82,8 +96,15 @@ export const colors = {
 
 export const typography = {
   // Familles — direction "Marché" : Space Grotesk (titres/chiffres) + DM Sans (tout le reste)
-  display: 'Space Grotesk',       // Titres d'écran, noms de restaurants, chiffres clés
-  body: 'DM Sans',                // Texte courant, interface
+  // Chaque famille = un fichier de poids précis (RN ignore fontWeight sur une police custom,
+  // surtout Android) — display/body couvrent les usages dominants (gras pour les titres,
+  // regular pour le texte courant) ; les variantes ci-dessous sont dispo pour les cas précis.
+  display: 'Space Grotesk',           // = SpaceGrotesk_700Bold — titres d'écran, chiffres clés
+  displayMedium: 'Space Grotesk Medium', // = SpaceGrotesk_500Medium
+  body: 'DM Sans',                    // = DMSans_400Regular — texte courant, interface
+  bodyMedium: 'DM Sans Medium',       // = DMSans_500Medium
+  bodySemibold: 'DM Sans SemiBold',   // = DMSans_600SemiBold
+  bodyBold: 'DM Sans Bold',           // = DMSans_700Bold
 
   // Tailles
   size: {
@@ -119,6 +140,10 @@ export const typography = {
   },
 };
 
+// Échelle littérale du design system (base 4) : 4/8/12/16/24/32/48.
+// xxs=2 et xxxl=24 restent des utilitaires hors échelle déjà largement consommés
+// (ne pas les faire disparaître sans migrer chaque appelant) ; `huge` complète
+// l'échelle avec la valeur 48 manquante jusqu'ici.
 export const spacing = {
   xxs: 2,
   xs: 4,
@@ -129,6 +154,7 @@ export const spacing = {
   xxl: 24,
   xxxl: 24,
   section: 32,
+  huge: 48,
 };
 
 export const radius = {
@@ -140,9 +166,21 @@ export const radius = {
   xxl: 22,
   pill: 999,
   full: 999,
+  // Bouton de recentrage sur mini-carte — Explorer.dc.html : border-radius 10px
+  control: 10,
+  // Badge "N restaurants ici" sur mini-carte — Explorer.dc.html : border-radius 20px
+  badgeSm: 20,
 };
 
 export const shadows = {
+  // xs — hairline (doc: 0 1px 2px rgba(10,10,10,.05)), palier manquant jusqu'ici
+  xs: {
+    shadowColor: '#0A0A0A',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
+  },
   sm: {
     shadowColor: '#0A0A0A',
     shadowOffset: { width: 0, height: 4 },
@@ -170,6 +208,22 @@ export const shadows = {
     shadowOpacity: 0.2,
     shadowRadius: 12,
     elevation: 5,
+  },
+  // Pin de mini-carte — Explorer.dc.html : 0 4px 10px rgba(10,10,10,.25)
+  mapPin: {
+    shadowColor: '#0A0A0A',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    elevation: 3,
+  },
+  // Bouton de recentrage sur mini-carte — Explorer.dc.html : 0 4px 10px rgba(10,10,10,.15)
+  mapControl: {
+    shadowColor: '#0A0A0A',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 10,
+    elevation: 2,
   },
 };
 
@@ -213,9 +267,9 @@ export const common = {
     marginBottom: spacing.lg,
   },
   seeAll: {
-    fontSize: typography.size.caption,
+    fontFamily: typography.bodyBold,
+    fontSize: typography.size.subheading + 2,
     color: colors.primary,
-    fontWeight: typography.weight.bold,
   },
   separator: {
     height: 1,
@@ -229,81 +283,96 @@ export const common = {
   },
 };
 
-// Variantes de boutons
+// Variantes de boutons — section 05 du design system, valeurs littérales
+// (padding 16px/26px, radius 12, DM Sans 700 15px), vert/terracotta remplacés
+// par cyan/magenta (rebrand acté). `bodyBold` (police chargée séparément, pas
+// fontWeight) car RN ignore fontWeight sur une police custom statique.
+const BTN_TEXT_BASE = {
+  fontFamily: typography.bodyBold,
+  fontSize: typography.size.subheading + 2, // 15px, doc : "DM Sans 700 15px"
+};
+
 export const buttonVariants = {
+  // "Continuer" — action principale de navigation/premium
   primary: {
     container: {
       backgroundColor: colors.noir,
       borderRadius: radius.lg,
-      padding: spacing.xl,
+      paddingVertical: spacing.xl,
+      paddingHorizontal: spacing.xxl + 2, // 26
       alignItems: 'center',
     },
-    text: {
-      fontFamily: typography.body,
-      color: '#FFFFFF',
-      fontSize: typography.size.subheading,
-      fontWeight: typography.weight.bold,
-      letterSpacing: 0.3,
-    },
+    text: { ...BTN_TEXT_BASE, color: '#FFFFFF' },
   },
+  // "Confirmer" — confirmation de marque
   confirm: {
     container: {
       backgroundColor: colors.primary,
       borderRadius: radius.lg,
-      padding: spacing.xl,
+      paddingVertical: spacing.xl,
+      paddingHorizontal: spacing.xxl + 2,
       alignItems: 'center',
     },
-    text: {
-      fontFamily: typography.body,
-      color: '#FFFFFF',
-      fontSize: typography.size.subheading,
-      fontWeight: typography.weight.bold,
-    },
+    text: { ...BTN_TEXT_BASE, color: '#FFFFFF' },
   },
+  // "Réserver" — exclusif à l'action de réserver
   reserve: {
     container: {
       backgroundColor: colors.resa,
       borderRadius: radius.lg,
-      padding: spacing.xl,
+      paddingVertical: spacing.xl,
+      paddingHorizontal: spacing.xxl + 2,
       alignItems: 'center',
     },
-    text: {
-      fontFamily: typography.body,
-      color: '#FFFFFF',
-      fontSize: typography.size.subheading,
-      fontWeight: typography.weight.bold,
-    },
+    text: { ...BTN_TEXT_BASE, color: '#FFFFFF' },
   },
+  // "Ajouter un créneau" — exclusif aux actions restaurateur, texte NOIR sur fond ambre
   pro: {
     container: {
       backgroundColor: colors.gold,
       borderRadius: radius.lg,
-      padding: spacing.xl,
+      paddingVertical: spacing.xl,
+      paddingHorizontal: spacing.xxl + 2,
       alignItems: 'center',
     },
-    text: {
-      fontFamily: typography.body,
-      color: colors.noir,
-      fontSize: typography.size.subheading,
-      fontWeight: typography.weight.bold,
-    },
+    text: { ...BTN_TEXT_BASE, color: colors.noir },
   },
+  // "Plus tard" — outline, padding vertical réduit de 1.5px (largeur de bordure)
+  // pour garder la même hauteur totale que les boutons pleins
   secondary: {
     container: {
       backgroundColor: 'transparent',
       borderRadius: radius.lg,
-      padding: spacing.xl,
+      paddingVertical: spacing.xl - 1.5,
+      paddingHorizontal: spacing.xxl + 2,
       alignItems: 'center',
       borderWidth: 1.5,
       borderColor: colors.noir,
     },
-    text: {
-      fontFamily: typography.body,
-      color: colors.noir,
-      fontSize: typography.size.subheading,
-      fontWeight: typography.weight.bold,
-    },
+    text: { ...BTN_TEXT_BASE, color: colors.noir },
   },
+  // "Tout voir" — lien texte seul, aucun fond ni bordure
+  link: {
+    container: {
+      paddingVertical: spacing.xl,
+      paddingHorizontal: spacing.sm,
+      alignSelf: 'flex-start',
+    },
+    text: { ...BTN_TEXT_BASE, color: colors.primary },
+  },
+  // "Indisponible" — désactivé
+  disabled: {
+    container: {
+      backgroundColor: colors.tagNeutralBg,
+      borderRadius: radius.lg,
+      paddingVertical: spacing.xl,
+      paddingHorizontal: spacing.xxl + 2,
+      alignItems: 'center',
+    },
+    text: { ...BTN_TEXT_BASE, color: colors.accentDim },
+  },
+
+  // Variantes additionnelles (hors les 7 du fichier source, besoins réels de l'app)
   ghost: {
     container: {
       backgroundColor: colors.card,
@@ -313,12 +382,7 @@ export const buttonVariants = {
       borderWidth: 1,
       borderColor: colors.cardBorder,
     },
-    text: {
-      fontFamily: typography.body,
-      color: colors.text,
-      fontSize: typography.size.subheading,
-      fontWeight: typography.weight.bold,
-    },
+    text: { ...BTN_TEXT_BASE, color: colors.text },
   },
   danger: {
     container: {
@@ -329,31 +393,32 @@ export const buttonVariants = {
       borderWidth: 1,
       borderColor: 'rgba(224, 90, 90, 0.3)',
     },
-    text: {
-      fontFamily: typography.body,
-      color: colors.red,
-      fontSize: typography.size.subheading,
-      fontWeight: typography.weight.bold,
-    },
-  },
-  disabled: {
-    container: {
-      backgroundColor: colors.tagNeutralBg,
-      borderRadius: radius.lg,
-      padding: spacing.xl,
-      alignItems: 'center',
-    },
-    text: {
-      fontFamily: typography.body,
-      color: colors.accentDim,
-      fontSize: typography.size.subheading,
-      fontWeight: typography.weight.bold,
-    },
+    text: { ...BTN_TEXT_BASE, color: colors.red },
   },
 };
 
-// Tags / Badges
+// Tags / Badges — section 06 du design system
+// Taxonomie littérale du fichier source : filtres (actif/inactif), tags
+// cuisine/info, statuts réservation/commande (pending/confirmed/cancelled déjà
+// alignés dans `colors`, cf. statusPendingBg/statusConfirmedBg/statusCancelledBg).
 export const tagVariants = {
+  // Filtres — doc : DM Sans 500 11px, radius 7, padding 7px 11px
+  filterActive:   { bg: colors.noir, text: '#FFFFFF' },
+  filterInactive: { bg: colors.tagNeutralBg, text: colors.noir },
+
+  // Tags cuisine / info — doc : DM Sans 700 10px tracké .04em, radius 6, padding 6px 9px
+  cuisineInfo:    { bg: colors.tagGreenBg, text: colors.primary },
+  cuisineNeutral: { bg: colors.tagNeutralBg, text: colors.textMuted },
+
+  // Statuts réservation/commande (pro) — mêmes couleurs que colors.statusXxx
+  statusPending:   { bg: colors.statusPendingBg, text: colors.statusPendingText },
+  statusConfirmed: { bg: colors.statusConfirmedBg, text: colors.statusConfirmedText },
+  statusCancelled: { bg: colors.statusCancelledBg, text: colors.statusCancelledText },
+
+  // Aménité mise en avant ("Terrasse") — Fiche Restaurant.dc.html
+  amenityHighlight: { bg: colors.ratingBg, text: colors.primary },
+
+  // Variantes additionnelles (hors fichier source, besoins réels de l'app)
   default: { bg: colors.tagNeutralBg, text: colors.text },
   success: { bg: colors.tagGreenBg, text: colors.primary },
   error: { bg: colors.statusCancelledBg, text: colors.statusCancelledText },

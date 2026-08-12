@@ -21,6 +21,9 @@ import RestaurantCompletionCard from '../src/components/RestaurantCompletionCard
 import useProOnboarding from '../src/hooks/useProOnboarding';
 import { useMonthlyReport } from '../src/hooks/useMonthlyReport';
 import MonthlyReport from '../src/components/MonthlyReport';
+import useProOrders from '../src/hooks/useProOrders';
+import OrderCard from '../src/components/OrderCard';
+import EmptyState from '../src/components/EmptyState';
 
 function SkeletonDashboard() {
   return (
@@ -52,12 +55,19 @@ export default function ProDashboard({ navigation }) {
     acting,
     confirm, cancel, markArrived, signOut, onRefresh,
     todayResas, pendingAll, confirmedToday, totalCovers, revenue, upcomingCount,
+    upcomingResas, occupancyPct,
     filtered, showGroups, midi, soir,
-    greetingTxt, t,
+    t,
   } = useDashboard();
 
   const { visible: setupVisible, visited, markVisited, dismiss: dismissSetup, reset: resetSetup } = useProOnboarding();
   const { report: monthlyReport, loading: monthlyLoading, error: monthlyError, refetch: refetchReport } = useMonthlyReport(restaurant?.id);
+
+  const {
+    orders: proOrders, advance: advanceOrder, cancel: cancelOrder,
+    acting: orderActing, NEXT_LABEL,
+  } = useProOrders();
+  const nextOrder = proOrders.find(o => ['pending', 'confirmed', 'ready'].includes(o.status)) || null;
 
   const goPromos   = useCallback(() => navigation.navigate('ProPromos'),   [navigation]);
   const goComptoir = useCallback(() => navigation.navigate('ProComptoir'), [navigation]);
@@ -87,7 +97,7 @@ export default function ProDashboard({ navigation }) {
         <View style={s.darkHeader}>
           <View style={s.header}>
             <View style={s.headerLeft}>
-              <Text style={s.headerGreeting} numberOfLines={1}>{greetingTxt} 👋</Text>
+              <Text style={s.headerEyebrow} numberOfLines={1}>ESPACE PRO</Text>
               <Text style={s.headerTitle} numberOfLines={1}>{restaurant?.name || 'Manager'}</Text>
             </View>
             <View style={s.onlineBadge}>
@@ -96,42 +106,97 @@ export default function ProDashboard({ navigation }) {
             </View>
           </View>
 
-          {/* Actions rapides */}
-          <View style={s.actionsRow}>
-          <TouchableOpacity style={s.comptoirBtn} onPress={goMenu}>
-            <Text style={s.comptoirIcon}>🍽️</Text>
-            <Text style={s.comptoirBtnTxt}>Menu</Text>
+          {/* Tuiles stats (Couverts / Taux d'occupation / CA du jour) */}
+          <View style={s.tilesRow}>
+            <View style={s.tile}>
+              <Text style={s.tileVal}>{totalCovers}</Text>
+              <Text style={s.tileLbl}>Couverts ce soir</Text>
+            </View>
+            <View style={s.tile}>
+              <Text style={[s.tileVal, s.tileValGold]}>{occupancyPct != null ? `${occupancyPct}%` : '—'}</Text>
+              <Text style={s.tileLbl}>Taux d'occupation</Text>
+            </View>
+            <View style={s.tile}>
+              <Text style={s.tileVal}>{revenue != null ? `${Math.round(revenue / 1000)}k` : '—'}</Text>
+              <Text style={s.tileLbl}>CA du jour (DA)</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Accès rapide */}
+        <View style={s.quickGrid}>
+          <TouchableOpacity style={s.quickBtn} onPress={goMenu}>
+            <Text style={s.quickIcon}>🍽️</Text>
+            <Text style={s.quickBtnTxt}>Menu</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={s.comptoirBtn} onPress={goAvis}>
-            <Text style={s.comptoirIcon}>⭐</Text>
-            <Text style={s.comptoirBtnTxt}>Avis</Text>
+          <TouchableOpacity style={s.quickBtn} onPress={goAvis}>
+            <Text style={s.quickIcon}>⭐</Text>
+            <Text style={s.quickBtnTxt}>Avis</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={s.comptoirBtn} onPress={goPhotos}>
-            <Text style={s.comptoirIcon}>📷</Text>
-            <Text style={s.comptoirBtnTxt}>Photos</Text>
+          <TouchableOpacity style={s.quickBtn} onPress={goPhotos}>
+            <Text style={s.quickIcon}>📷</Text>
+            <Text style={s.quickBtnTxt}>Photos</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={s.comptoirBtn} onPress={goPromos}>
-            <Text style={s.comptoirIcon}>🏷️</Text>
-            <Text style={s.comptoirBtnTxt}>Promos</Text>
+          <TouchableOpacity style={s.quickBtn} onPress={goPromos}>
+            <Text style={s.quickIcon}>🏷️</Text>
+            <Text style={s.quickBtnTxt}>Promos</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={s.comptoirBtn} onPress={goComptoir}>
-            <Text style={s.comptoirIcon}>📟</Text>
-            <Text style={s.comptoirBtnTxt}>Comptoir</Text>
+          <TouchableOpacity style={s.quickBtn} onPress={goComptoir}>
+            <Text style={s.quickIcon}>📟</Text>
+            <Text style={s.quickBtnTxt}>Comptoir</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={s.comptoirBtn} onPress={goOrders}>
-            <Text style={s.comptoirIcon}>🛍️</Text>
-            <Text style={s.comptoirBtnTxt}>Commandes</Text>
+          <TouchableOpacity style={s.quickBtn} onPress={goOrders}>
+            <Text style={s.quickIcon}>🛍️</Text>
+            <Text style={s.quickBtnTxt}>Commandes</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={s.comptoirBtn} onPress={goInfo}>
-            <Text style={s.comptoirIcon}>✏️</Text>
-            <Text style={s.comptoirBtnTxt}>Infos</Text>
+          <TouchableOpacity style={s.quickBtn} onPress={goInfo}>
+            <Text style={s.quickIcon}>✏️</Text>
+            <Text style={s.quickBtnTxt}>Infos</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={s.comptoirBtn} onPress={goHoraires}>
-            <Text style={s.comptoirIcon}>🕐</Text>
-            <Text style={s.comptoirBtnTxt}>Horaires</Text>
+          <TouchableOpacity style={s.quickBtn} onPress={goHoraires}>
+            <Text style={s.quickIcon}>🕐</Text>
+            <Text style={s.quickBtnTxt}>Horaires</Text>
           </TouchableOpacity>
         </View>
+
+        {/* Prochaines réservations */}
+        <View style={s.previewSectionHead}>
+          <Text style={s.previewSectionTitle}>Prochaines réservations</Text>
+          <TouchableOpacity onPress={goComptoir}>
+            <Text style={s.previewSectionLink}>Voir tout</Text>
+          </TouchableOpacity>
         </View>
+        {upcomingResas.length === 0 ? (
+          <Text style={s.previewEmpty}>Aucune réservation à venir.</Text>
+        ) : (
+          <View style={{ gap: spacing.md, paddingHorizontal: spacing.xxl, marginBottom: spacing.md }}>
+            {upcomingResas.map(r => (
+              <DashResaCard key={r.id} r={r}
+                onConfirm={() => confirm(r)} onCancel={() => cancel(r)} onArrived={() => markArrived(r)}
+                isActing={acting.has(r.id)} isToday={r.date === t} />
+            ))}
+          </View>
+        )}
+
+        {/* Commandes à emporter */}
+        <View style={s.previewSectionHead}>
+          <Text style={s.previewSectionTitle}>Commandes à emporter</Text>
+          <TouchableOpacity onPress={goOrders}>
+            <Text style={s.previewSectionLink}>Voir tout</Text>
+          </TouchableOpacity>
+        </View>
+        {!nextOrder ? (
+          <Text style={s.previewEmpty}>Aucune commande en cours.</Text>
+        ) : (
+          <View style={{ paddingHorizontal: spacing.xxl, marginBottom: spacing.md }}>
+            <OrderCard
+              order={nextOrder} context="pro"
+              title={[nextOrder.users?.first_name, nextOrder.users?.last_name].filter(Boolean).join(' ') || 'Client'}
+              onAdvance={advanceOrder} advanceLabel={NEXT_LABEL[nextOrder.status]}
+              onCancel={cancelOrder} acting={orderActing.has(nextOrder.id)}
+            />
+          </View>
+        )}
 
         {setupVisible && (
           <ProSetupCard
@@ -197,11 +262,12 @@ export default function ProDashboard({ navigation }) {
 
         {/* List */}
         {filtered.length === 0 ? (
-          <View style={s.empty}>
-            <Text style={s.emptyEmoji}>📭</Text>
-            <Text style={s.emptyTitle}>Aucune réservation</Text>
-            <Text style={s.emptyDesc}>Modifiez les filtres pour voir plus de résultats.</Text>
-          </View>
+          <EmptyState
+            style={s.empty}
+            icon={<Text style={{ fontSize: 20 }}>📭</Text>}
+            title="Aucune réservation"
+            subtitle="Modifiez les filtres pour voir plus de résultats."
+          />
         ) : showGroups ? (
           <>
             {midi.length > 0 && (
@@ -233,10 +299,11 @@ export default function ProDashboard({ navigation }) {
               </>
             )}
             {midi.length === 0 && soir.length === 0 && (
-              <View style={s.empty}>
-                <Text style={s.emptyEmoji}>📭</Text>
-                <Text style={s.emptyTitle}>Aucune réservation aujourd'hui</Text>
-              </View>
+              <EmptyState
+                style={s.empty}
+                icon={<Text style={{ fontSize: 20 }}>📭</Text>}
+                title="Aucune réservation aujourd'hui"
+              />
             )}
           </>
         ) : (
@@ -266,15 +333,30 @@ const s = StyleSheet.create({
   darkHeader:     { backgroundColor: colors.noir, borderBottomLeftRadius: radius.xxl, borderBottomRightRadius: radius.xxl, paddingBottom: spacing.lg },
   header:         { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xl, paddingTop: spacing.lg, paddingBottom: spacing.lg },
   headerLeft:     { flex: 1 },
-  headerGreeting: { color: 'rgba(245,242,236,0.55)', fontSize: typography.size.caption, letterSpacing: 2, marginBottom: spacing.xxs },
-  headerTitle:    { color: '#F5F2EC', fontSize: typography.size.title, fontWeight: '300', letterSpacing: 0.5 },
-  actionsRow:     { flexDirection: 'row', paddingHorizontal: spacing.xxl, paddingBottom: spacing.sm, gap: spacing.sm },
-  comptoirBtn:    { flex: 1, alignItems: 'center', paddingVertical: spacing.md, borderRadius: radius.lg, backgroundColor: 'rgba(255,255,255,0.07)', borderWidth: 1, borderColor: 'rgba(200,151,90,0.30)' },
-  comptoirIcon:   { fontSize: 16, marginBottom: spacing.xxs },
-  comptoirBtnTxt: { color: 'rgba(245,242,236,0.80)', fontSize: typography.size.xs },
+  headerEyebrow:  { fontFamily: typography.bodySemibold, color: colors.gold, fontSize: typography.size.caption - 0.5, letterSpacing: 1.6, textTransform: 'uppercase', marginBottom: spacing.xxs + 4 },
+  headerTitle:    { fontFamily: typography.display, color: '#FFFFFF', fontSize: typography.size.heading1, letterSpacing: -0.4 },
   onlineBadge:    { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, flexShrink: 0, backgroundColor: 'rgba(76,175,130,0.15)', borderRadius: radius.full, paddingHorizontal: spacing.lg, paddingVertical: spacing.xs, borderWidth: 1, borderColor: 'rgba(76,175,130,0.35)' },
   onlineDot:      { width: 6, height: 6, borderRadius: 0, backgroundColor: colors.green },
-  onlineTxt:      { color: colors.green, fontSize: typography.size.sm },
+  onlineTxt:      { fontFamily: typography.body, color: colors.green, fontSize: typography.size.sm },
+
+  /* Tuiles stats dans le bandeau */
+  tilesRow:    { flexDirection: 'row', gap: spacing.sm, paddingHorizontal: spacing.xl, marginTop: spacing.lg + 6 },
+  tile:        { flex: 1, backgroundColor: 'rgba(255,255,255,0.07)', borderRadius: radius.lg, padding: spacing.lg },
+  tileVal:     { fontFamily: typography.display, fontSize: 21, color: '#FFFFFF' },
+  tileValGold: { color: colors.gold },
+  tileLbl:     { fontFamily: typography.bodyMedium, color: 'rgba(255,255,255,0.55)', fontSize: 10, marginTop: 5 },
+
+  /* Accès rapide (déplacé hors du bandeau noir) */
+  quickGrid:    { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, paddingHorizontal: spacing.xxl, paddingTop: spacing.xl, paddingBottom: spacing.md },
+  quickBtn:     { width: '23%', alignItems: 'center', paddingVertical: spacing.md, borderRadius: radius.lg, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder },
+  quickIcon:    { fontSize: 16, marginBottom: spacing.xxs },
+  quickBtnTxt:  { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.xs },
+
+  /* Sections aperçu (résas / commandes) */
+  previewSectionHead:  { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', paddingHorizontal: spacing.xxl, marginBottom: spacing.md },
+  previewSectionTitle: { fontFamily: typography.display, fontSize: typography.size.heading3, color: colors.text, letterSpacing: -0.2 },
+  previewSectionLink:  { fontFamily: typography.bodySemibold, color: colors.primary, fontSize: typography.size.caption + 0.5 },
+  previewEmpty:        { fontFamily: typography.body, color: colors.textDim, fontSize: typography.size.body, paddingHorizontal: spacing.xxl, marginBottom: spacing.lg },
 
   statsRow: { paddingHorizontal: spacing.xxl, paddingTop: spacing.xl, paddingBottom: spacing.sm, gap: spacing.sm },
 
@@ -283,30 +365,27 @@ const s = StyleSheet.create({
   chipRow:   { paddingHorizontal: spacing.xxl, paddingBottom: spacing.sm, gap: spacing.sm },
   chip:      { paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderRadius: radius.full, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder },
   chipOn:    { backgroundColor: colors.goldSoft, borderColor: colors.gold },
-  chipTxt:   { color: colors.textMuted, fontSize: typography.size.body },
-  chipTxtOn: { color: colors.gold, fontWeight: typography.weight.semibold },
+  chipTxt:   { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.body },
+  chipTxtOn: { fontFamily: typography.bodySemibold, color: colors.gold },
 
   statusTabs:     { flexDirection: 'row', marginHorizontal: spacing.xxl, marginBottom: spacing.md, backgroundColor: colors.card, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.xxs + 1, gap: spacing.xxs },
   statusTab:      { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: spacing.sm, borderRadius: radius.lg, gap: spacing.xs },
   statusTabOn:    { backgroundColor: colors.cardHover },
-  statusTabTxt:   { color: colors.textDim, fontSize: typography.size.caption },
-  statusTabTxtOn: { color: colors.text, fontWeight: typography.weight.semibold },
+  statusTabTxt:   { fontFamily: typography.body, color: colors.textDim, fontSize: typography.size.caption },
+  statusTabTxtOn: { fontFamily: typography.bodySemibold, color: colors.text },
   badge:          { backgroundColor: colors.resa, borderRadius: radius.md, minWidth: 16, height: 16, alignItems: 'center', justifyContent: 'center', paddingHorizontal: spacing.xxs + 1 },
-  badgeTxt:       { color: '#FFFFFF', fontSize: typography.size.xs, fontWeight: typography.weight.bold },
+  badgeTxt:       { fontFamily: typography.bodyBold, color: '#FFFFFF', fontSize: typography.size.xs },
 
   listHead:    { paddingHorizontal: spacing.xxl, paddingBottom: spacing.xs },
-  listHeadTxt: { color: colors.textDim, fontSize: typography.size.sm, letterSpacing: 2 },
+  listHeadTxt: { fontFamily: typography.body, color: colors.textDim, fontSize: typography.size.sm, letterSpacing: 2 },
 
   groupHeader: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingHorizontal: spacing.xxl, paddingVertical: spacing.lg, marginTop: spacing.xs },
   groupIcon:   { fontSize: 14 },
   groupLabel:  { color: colors.text, fontFamily: typography.display, fontSize: typography.size.bodyLg, fontWeight: typography.weight.bold, flex: 1 },
-  groupCount:  { color: colors.textDim, fontSize: typography.size.caption },
+  groupCount:  { fontFamily: typography.body, color: colors.textDim, fontSize: typography.size.caption },
 
-  empty:      { alignItems: 'center', paddingVertical: 48, gap: spacing.md },
-  emptyEmoji: { fontSize: 36 },
-  emptyTitle: { color: colors.textMuted, fontSize: typography.size.subheading, fontWeight: typography.weight.medium },
-  emptyDesc:  { color: colors.textDim, fontSize: typography.size.body },
+  empty:      { marginHorizontal: spacing.xxl },
 
   signOutBtn: { marginHorizontal: spacing.xxl, paddingVertical: spacing.lg, borderRadius: radius.xl, borderWidth: 1, borderColor: 'rgba(224,90,90,0.25)', alignItems: 'center' },
-  signOutTxt: { color: colors.red, fontSize: typography.size.bodyLg },
+  signOutTxt: { fontFamily: typography.bodySemibold, color: colors.red, fontSize: typography.size.bodyLg },
 });

@@ -31,10 +31,7 @@ export function fmtDate(d) {
   return new Date(d).toLocaleDateString('fr-FR', { weekday:'short', day:'numeric', month:'short' });
 }
 
-function todayStr() { return new Date().toISOString().split('T')[0]; }
-
 export default function useProfil() {
-  const [tab,            setTab]            = useState('profil');
   const [authId,         setAuthId]         = useState(null);
   const [userId,         setUserId]         = useState(null);
   const [userEmail,      setUserEmail]      = useState('');
@@ -47,17 +44,13 @@ export default function useProfil() {
   const [uploading,      setUploading]      = useState(false);
   const [editingName,    setEditingName]    = useState(false);
   const [savingName,     setSavingName]     = useState(false);
-  const [reservations,   setReservations]   = useState([]);
-  const [resaLoading,    setResaLoading]    = useState(false);
-  const [favorites,      setFavorites]      = useState([]);
-  const [favLoading,     setFavLoading]     = useState(false);
-  const [cancelling,     setCancelling]     = useState(new Set());
+  const [reservationsCount, setReservationsCount] = useState(0);
+  const [favoritesCount,    setFavoritesCount]    = useState(0);
+  const [reviewsCount,      setReviewsCount]      = useState(0);
   const [activeSits,     setActiveSits]     = useState([]);
   const [activeCuisines, setActiveCuisines] = useState([]);
-  const [removing,       setRemoving]       = useState(new Set());
   const [isManager,      setIsManager]      = useState(false);
   const [isAdmin,        setIsAdmin]        = useState(false);
-  const [deletingHistory,setDeletingHistory]= useState(new Set());
 
   useEffect(() => {
     (async () => {
@@ -87,24 +80,15 @@ export default function useProfil() {
 
   useFocusEffect(useCallback(() => {
     if (!userId) return;
-    setResaLoading(true);
-    setFavLoading(true);
     (async () => {
-      try {
-        const [{ data: resas }, { data: favs }] = await Promise.all([
-          supabase.from('reservations')
-            .select('*, restaurants(id, name, cuisine_type, quartier)')
-            .eq('user_id', userId).order('date', { ascending: false }).limit(30),
-          supabase.from('favorites')
-            .select('id, restaurant_id, restaurants(id, name, cuisine_type, quartier, avg_rating, avg_ticket, photos)')
-            .eq('user_id', userId).order('created_at', { ascending: false }),
-        ]);
-        setReservations(resas ?? []);
-        setFavorites(favs ?? []);
-      } finally {
-        setResaLoading(false);
-        setFavLoading(false);
-      }
+      const [{ count: resaCount }, { count: favCount }, { count: revCount }] = await Promise.all([
+        supabase.from('reservations').select('id', { count: 'exact', head: true }).eq('user_id', userId),
+        supabase.from('favorites').select('id', { count: 'exact', head: true }).eq('user_id', userId),
+        supabase.from('reviews').select('id', { count: 'exact', head: true }).eq('user_id', userId),
+      ]);
+      setReservationsCount(resaCount ?? 0);
+      setFavoritesCount(favCount ?? 0);
+      setReviewsCount(revCount ?? 0);
     })();
   }, [userId]));
 
@@ -146,44 +130,6 @@ export default function useProfil() {
     }
   }, [firstName, lastName, phone, userId]);
 
-  const cancelResa = useCallback((id, restoName) => {
-    Alert.alert('Annuler la réservation', `Confirmer l'annulation chez ${restoName} ?`, [
-      { text: 'Retour', style: 'cancel' },
-      {
-        text: 'Annuler', style: 'destructive',
-        onPress: async () => {
-          setCancelling(p => new Set(p).add(id));
-          await supabase.from('reservations')
-            .update({ status: 'cancelled', cancelled_at: new Date().toISOString() }).eq('id', id);
-          setReservations(p => p.map(r => r.id === id ? { ...r, status: 'cancelled' } : r));
-          setCancelling(p => { const next = new Set(p); next.delete(id); return next; });
-        },
-      },
-    ]);
-  }, []);
-
-  const deleteHistoryItem = useCallback((id, restoName) => {
-    Alert.alert('Supprimer de l\'historique', `Supprimer définitivement cette réservation chez ${restoName} ?`, [
-      { text: 'Annuler', style: 'cancel' },
-      {
-        text: 'Supprimer', style: 'destructive',
-        onPress: async () => {
-          setDeletingHistory(p => new Set(p).add(id));
-          const { error } = await supabase.from('reservations').delete().eq('id', id);
-          if (!error) setReservations(p => p.filter(r => r.id !== id));
-          setDeletingHistory(p => { const next = new Set(p); next.delete(id); return next; });
-        },
-      },
-    ]);
-  }, []);
-
-  const removeFav = useCallback(async (favId) => {
-    setRemoving(p => new Set(p).add(favId));
-    await supabase.from('favorites').delete().eq('id', favId);
-    setFavorites(p => p.filter(f => f.id !== favId));
-    setRemoving(p => { const next = new Set(p); next.delete(favId); return next; });
-  }, []);
-
   const signOut = useCallback(() => supabase.auth.signOut(), []);
 
   const deleteAccount = useCallback(async () => {
@@ -196,32 +142,17 @@ export default function useProfil() {
     [firstName, lastName, userEmail],
   );
   const initial = useMemo(() => displayName[0]?.toUpperCase() || '?', [displayName]);
-  const today   = useMemo(() => todayStr(), []);
-
-  const upcoming = useMemo(
-    () => reservations.filter(r => r.date >= today && ['confirmed', 'pending'].includes(r.status)),
-    [reservations, today],
-  );
-  const history = useMemo(() => {
-    const ids = new Set(upcoming.map(r => r.id));
-    return reservations.filter(r => !ids.has(r.id));
-  }, [reservations, upcoming]);
-  const pendingCount = useMemo(
-    () => reservations.filter(r => r.status === 'pending').length,
-    [reservations],
-  );
 
   const toggleEditing = useCallback(() => setEditingName(v => !v), []);
 
   return {
-    tab, setTab,
     userEmail, firstName, setFirstName, lastName, setLastName,
     city, phone, setPhone, memberSince, avatarUri, uploading,
     editingName, savingName,
-    reservations, resaLoading, favorites, favLoading,
-    cancelling, activeSits, setActiveSits, activeCuisines, setActiveCuisines,
-    removing, isManager, isAdmin, deletingHistory,
-    displayName, initial, upcoming, history, pendingCount,
-    pickAvatar, saveName, cancelResa, removeFav, signOut, deleteAccount, toggleEditing, deleteHistoryItem,
+    reservationsCount, favoritesCount, reviewsCount,
+    activeSits, setActiveSits, activeCuisines, setActiveCuisines,
+    isManager, isAdmin,
+    displayName, initial,
+    pickAvatar, saveName, signOut, deleteAccount, toggleEditing,
   };
 }

@@ -3,10 +3,13 @@ import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   TextInput, ActivityIndicator, Alert, Image,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, typography, spacing, radius } from '../src/theme';
 import useClickCollect from '../src/hooks/useClickCollect';
 import useCart from '../src/hooks/useCart';
+import Button from '../src/components/Button';
+import Tag from '../src/components/Tag';
+import EmptyState from '../src/components/EmptyState';
 
 export default function ClickCollectScreen({ route, navigation }) {
   const restaurant = route?.params?.restaurant || {};
@@ -14,6 +17,8 @@ export default function ClickCollectScreen({ route, navigation }) {
   const { items, addItem, removeItem, qtyFor, clear, totalCount, totalAmount } = useCart();
   const [notes, setNotes] = useState('');
   const [showCart, setShowCart] = useState(false);
+  const [confirmed, setConfirmed] = useState(false);
+  const insets = useSafeAreaInsets();
 
   const categories = useMemo(() => [...new Set(dishes.map(d => d.category || 'Autre'))], [dishes]);
   const [activeCat, setActiveCat] = useState(null);
@@ -31,12 +36,8 @@ export default function ClickCollectScreen({ route, navigation }) {
     clear();
     setNotes('');
     setShowCart(false);
-    Alert.alert(
-      'Commande envoyée ✅',
-      `Votre commande chez ${restaurant.name} a été envoyée. Vous serez notifié dès qu'elle sera confirmée.`,
-      [{ text: 'OK', onPress: () => navigation.goBack() }],
-    );
-  }, [items, notes, submitOrder, clear, restaurant, navigation]);
+    setConfirmed(true);
+  }, [items, notes, submitOrder, clear]);
 
   return (
     <SafeAreaView style={s.root} edges={['top', 'left', 'right', 'bottom']}>
@@ -45,33 +46,28 @@ export default function ClickCollectScreen({ route, navigation }) {
           <Text style={s.backBtnTxt}>←</Text>
         </TouchableOpacity>
         <View style={{ flex: 1 }}>
-          <Text style={s.headerSub} numberOfLines={1}>CLICK & COLLECT</Text>
-          <Text style={s.headerTitle} numberOfLines={1}>{restaurant.name}</Text>
+          <Text style={s.headerTitle} numberOfLines={1}>{restaurant.name} — à emporter</Text>
+          <Text style={s.headerSub} numberOfLines={1}>Commande à emporter</Text>
         </View>
-        <View style={s.backBtn} />
       </View>
 
       {loading ? (
         <ActivityIndicator style={{ marginTop: 60 }} color={colors.text} />
       ) : dishes.length === 0 ? (
-        <View style={s.emptyWrap}>
-          <Text style={{ fontSize: 44 }}>🍽️</Text>
-          <Text style={s.emptyTitle}>Menu indisponible</Text>
-          <Text style={s.emptySub}>Ce restaurant n'a pas encore de plats disponibles à la commande.</Text>
-        </View>
+        <EmptyState
+          style={s.emptyWrap}
+          icon={<Text style={{ fontSize: 20 }}>🍽️</Text>}
+          title="Menu indisponible"
+          subtitle="Ce restaurant n'a pas encore de plats disponibles à la commande."
+        />
       ) : (
         <>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={s.catsWrap} contentContainerStyle={s.catsList}>
             {categories.map(cat => {
               const active = cat === currentCat;
               return (
-                <TouchableOpacity
-                  key={cat}
-                  style={[s.catChip, active && s.catChipOn]}
-                  onPress={() => setActiveCat(cat)}
-                  activeOpacity={0.7}
-                >
-                  <Text style={[s.catChipTxt, active && s.catChipTxtOn]}>{cat}</Text>
+                <TouchableOpacity key={cat} onPress={() => setActiveCat(cat)} activeOpacity={0.7}>
+                  <Tag variant={active ? 'filterActive' : 'filterInactive'} size="filter">{cat}</Tag>
                 </TouchableOpacity>
               );
             })}
@@ -90,38 +86,55 @@ export default function ClickCollectScreen({ route, navigation }) {
                   <View style={{ flex: 1 }}>
                     <Text style={s.dishName} numberOfLines={1}>{d.name}</Text>
                     {!!d.description && <Text style={s.dishDesc} numberOfLines={2}>{d.description}</Text>}
-                    <Text style={s.dishPrice}>{d.price ? `${Number(d.price).toLocaleString('fr-FR')} DA` : '—'}</Text>
-                  </View>
-                  <View style={s.stepper}>
-                    {qty > 0 && (
-                      <TouchableOpacity style={s.stepBtn} onPress={() => removeItem(d.id)}>
-                        <Text style={s.stepBtnTxt}>−</Text>
-                      </TouchableOpacity>
-                    )}
-                    {qty > 0 && <Text style={s.stepQty}>{qty}</Text>}
-                    <TouchableOpacity style={s.stepBtn} onPress={() => addItem(d)} disabled={!d.price}>
-                      <Text style={s.stepBtnTxt}>+</Text>
-                    </TouchableOpacity>
+                    <View style={s.dishPriceRow}>
+                      <Text style={s.dishPrice}>{d.price ? `${Number(d.price).toLocaleString('fr-FR')} DA` : '—'}</Text>
+                      {qty > 0 ? (
+                        <View style={s.stepPill}>
+                          <TouchableOpacity onPress={() => removeItem(d.id)}>
+                            <Text style={s.stepBtnTxt}>−</Text>
+                          </TouchableOpacity>
+                          <Text style={s.stepQty}>{qty}</Text>
+                          <TouchableOpacity onPress={() => addItem(d)} disabled={!d.price}>
+                            <Text style={s.stepBtnTxt}>+</Text>
+                          </TouchableOpacity>
+                        </View>
+                      ) : (
+                        <TouchableOpacity style={s.addBtn} onPress={() => addItem(d)} disabled={!d.price}>
+                          <Text style={s.addBtnTxt}>+</Text>
+                        </TouchableOpacity>
+                      )}
+                    </View>
                   </View>
                 </View>
               );
             })}
           </ScrollView>
 
-          {totalCount > 0 && !showCart && (
-            <View style={s.cartBar}>
+          {confirmed && (
+            <View style={[s.confirmPanel, { bottom: insets.bottom }]}>
+              <View style={s.confirmCheck}>
+                <Text style={s.confirmCheckTxt}>✓</Text>
+              </View>
+              <Text style={s.confirmTitle}>Commande envoyée</Text>
+              <Text style={s.confirmSub}>
+                Votre commande chez {restaurant.name} a été envoyée. Vous serez notifié dès qu'elle sera confirmée.
+              </Text>
+              <Button variant="primary" onPress={goBack} style={{ marginTop: spacing.sm }}>Retour</Button>
+            </View>
+          )}
+
+          {totalCount > 0 && !showCart && !confirmed && (
+            <View style={[s.cartBar, { bottom: insets.bottom + 12 }]}>
               <View>
                 <Text style={s.cartBarCount}>{totalCount} article{totalCount > 1 ? 's' : ''}</Text>
                 <Text style={s.cartBarTotal}>{totalAmount.toLocaleString('fr-FR')} DA</Text>
               </View>
-              <TouchableOpacity style={s.cartBarBtn} onPress={() => setShowCart(true)} activeOpacity={0.85}>
-                <Text style={s.cartBarBtnTxt}>Voir le panier</Text>
-              </TouchableOpacity>
+              <Button variant="pro" small fullWidth={false} onPress={() => setShowCart(true)}>Voir le panier</Button>
             </View>
           )}
 
           {showCart && (
-            <View style={s.cartPanel}>
+            <View style={[s.cartPanel, { bottom: insets.bottom }]}>
               <View style={s.cartPanelHeader}>
                 <Text style={s.cartPanelTitle}>Votre panier</Text>
                 <TouchableOpacity onPress={() => setShowCart(false)}>
@@ -149,9 +162,7 @@ export default function ClickCollectScreen({ route, navigation }) {
                 <Text style={s.cartTotalLbl}>Total</Text>
                 <Text style={s.cartTotalVal}>{totalAmount.toLocaleString('fr-FR')} DA</Text>
               </View>
-              <TouchableOpacity style={s.submitBtn} onPress={handleSubmit} disabled={submitting}>
-                <Text style={s.submitBtnTxt}>{submitting ? '···' : 'Envoyer la commande'}</Text>
-              </TouchableOpacity>
+              <Button variant="confirm" onPress={handleSubmit} loading={submitting}>Envoyer la commande</Button>
               <Text style={s.paymentNote}>Paiement sur place au retrait</Text>
             </View>
           )}
@@ -164,53 +175,52 @@ export default function ClickCollectScreen({ route, navigation }) {
 const s = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.bg },
 
-  header:      { height: 56, flexDirection: 'row', alignItems: 'center', paddingHorizontal: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
-  backBtn:     { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
-  backBtnTxt:  { color: colors.text, fontSize: 22 },
-  headerSub:   { color: colors.gold, fontSize: typography.size.xs, letterSpacing: 2, textAlign: 'center' },
-  headerTitle: { color: colors.text, fontFamily: typography.display, fontSize: typography.size.heading3, fontWeight: typography.weight.bold, textAlign: 'center' },
+  header:      { minHeight: 58, flexDirection: 'row', alignItems: 'center', gap: spacing.lg - 2, paddingHorizontal: spacing.xl, paddingTop: spacing.lg, paddingBottom: spacing.md },
+  backBtn:     { width: 34, height: 34, borderRadius: 17, backgroundColor: colors.tagNeutralBg, alignItems: 'center', justifyContent: 'center' },
+  backBtnTxt:  { color: colors.text, fontSize: 18 },
+  headerTitle: { fontFamily: typography.display, color: colors.text, fontSize: typography.size.subheading + 2, letterSpacing: -0.2 },
+  headerSub:   { fontFamily: typography.body, color: 'rgba(10,10,10,0.5)', fontSize: typography.size.caption + 0.5, marginTop: 2 },
 
-  emptyWrap:  { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing.md, padding: spacing.section },
-  emptyTitle: { color: colors.text, fontSize: typography.size.heading2, fontWeight: '300' },
-  emptySub:   { color: colors.textMuted, fontSize: typography.size.body, textAlign: 'center' },
+  emptyWrap:  { flex: 1, marginHorizontal: spacing.xl, marginTop: spacing.section },
 
   catsWrap: { maxHeight: 56, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   catsList: { paddingHorizontal: spacing.xl, paddingVertical: spacing.md, gap: spacing.sm, flexDirection: 'row' },
-  catChip:      { paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: radius.pill, backgroundColor: colors.tagNeutralBg },
-  catChipOn:    { backgroundColor: colors.noir },
-  catChipTxt:   { color: colors.text, fontSize: typography.size.body },
-  catChipTxtOn: { color: '#FFFFFF', fontWeight: typography.weight.semibold },
 
-  dishRow:     { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingVertical: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
-  dishPhoto:   { width: 56, height: 56, borderRadius: radius.md, backgroundColor: colors.cardHover, flexShrink: 0 },
+  dishRow:     { flexDirection: 'row', gap: spacing.md, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, borderRadius: radius.xl - 2, padding: spacing.lg },
+  dishPhoto:   { width: 72, height: 72, borderRadius: radius.lg - 2, backgroundColor: colors.cardHover, flexShrink: 0 },
   dishPhotoPlaceholder: { alignItems: 'center', justifyContent: 'center' },
-  dishName:    { color: colors.text, fontSize: typography.size.body, fontWeight: '500' },
-  dishDesc:    { color: colors.textDim, fontSize: typography.size.xs, marginTop: 2 },
-  dishPrice:   { color: colors.text, fontSize: typography.size.caption, marginTop: 4, fontWeight: '600' },
+  dishName:    { fontFamily: typography.display, color: colors.text, fontSize: typography.size.subheading + 0.5 },
+  dishDesc:    { fontFamily: typography.body, color: 'rgba(10,10,10,0.5)', fontSize: typography.size.body, marginTop: spacing.xs },
+  dishPriceRow:{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: spacing.sm },
+  dishPrice:   { fontFamily: typography.display, color: colors.text, fontSize: typography.size.subheading },
   stepper:     { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
-  stepBtn:     { width: 30, height: 30, borderRadius: 15, borderWidth: 1.5, borderColor: colors.green, alignItems: 'center', justifyContent: 'center' },
-  stepBtnTxt:  { color: colors.green, fontSize: 16, fontWeight: '700' },
-  stepQty:     { color: colors.text, fontSize: typography.size.body, fontWeight: '600', minWidth: 16, textAlign: 'center' },
+  addBtn:      { width: 26, height: 26, borderRadius: radius.sm + 3, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' },
+  addBtnTxt:   { fontFamily: typography.bodyBold, color: '#FFFFFF', fontSize: 15, lineHeight: 18 },
+  stepPill:    { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: colors.tagGreenBg, borderRadius: radius.sm + 3, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs },
+  stepBtnTxt:  { fontFamily: typography.bodyBold, color: colors.primary, fontSize: 14 },
+  stepQty:     { fontFamily: typography.bodyBold, color: colors.primary, fontSize: 14, minWidth: 14, textAlign: 'center' },
 
   cartBar:      { position: 'absolute', left: 0, right: 0, bottom: 0, backgroundColor: colors.noir, borderTopLeftRadius: radius.xl, borderTopRightRadius: radius.xl, paddingVertical: spacing.lg, paddingHorizontal: spacing.xl, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  cartBarCount: { color: 'rgba(255,255,255,0.55)', fontSize: typography.size.caption, fontWeight: typography.weight.medium },
-  cartBarTotal: { color: '#FFFFFF', fontFamily: typography.display, fontSize: typography.size.subheading, fontWeight: typography.weight.bold, marginTop: 2 },
-  cartBarBtn:   { backgroundColor: colors.gold, borderRadius: radius.lg, paddingVertical: spacing.md, paddingHorizontal: spacing.xxl },
-  cartBarBtnTxt:{ color: colors.noir, fontSize: typography.size.body, fontWeight: typography.weight.bold },
+  cartBarCount: { fontFamily: typography.bodyMedium, color: 'rgba(255,255,255,0.55)', fontSize: typography.size.caption },
+  cartBarTotal: { fontFamily: typography.display, color: '#FFFFFF', fontSize: typography.size.subheading + 3, marginTop: 2 },
 
   cartPanel:       { position: 'absolute', left: 0, right: 0, bottom: 0, backgroundColor: colors.bg, borderTopLeftRadius: radius.xxl, borderTopRightRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.xl, gap: spacing.md, shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 20, shadowOffset: { width: 0, height: -4 } },
   cartPanelHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  cartPanelTitle:  { color: colors.text, fontSize: typography.size.subheading, fontWeight: '600' },
+  cartPanelTitle:  { fontFamily: typography.bodySemibold, color: colors.text, fontSize: typography.size.subheading },
   cartPanelClose:  { color: colors.textMuted, fontSize: 18 },
   cartItemRow:     { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingVertical: spacing.sm },
-  cartItemQty:     { color: colors.blue, fontWeight: '700', width: 28 },
-  cartItemName:    { flex: 1, color: colors.text },
-  cartItemPrice:   { color: colors.textMuted, fontSize: typography.size.caption },
+  cartItemQty:     { fontFamily: typography.bodyBold, color: colors.blue, width: 28 },
+  cartItemName:    { flex: 1, fontFamily: typography.body, color: colors.text },
+  cartItemPrice:   { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.caption },
   notesInput:      { borderWidth: 1, borderColor: colors.cardBorder, borderRadius: radius.md, padding: spacing.md, color: colors.text, fontSize: typography.size.body, minHeight: 44, textAlignVertical: 'top' },
   cartTotalRow:    { flexDirection: 'row', justifyContent: 'space-between', paddingTop: spacing.sm, borderTopWidth: 1, borderTopColor: colors.cardBorder },
-  cartTotalLbl:    { color: colors.textMuted, fontSize: typography.size.body },
-  cartTotalVal:    { color: colors.text, fontSize: typography.size.subheading, fontWeight: '700' },
-  submitBtn:       { backgroundColor: colors.green, borderRadius: radius.lg, paddingVertical: spacing.lg, alignItems: 'center' },
-  submitBtnTxt:    { color: '#FFFFFF', fontSize: typography.size.body, fontWeight: '700' },
-  paymentNote:     { color: colors.textDim, fontSize: typography.size.xs, textAlign: 'center' },
+  cartTotalLbl:    { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.body },
+  cartTotalVal:    { fontFamily: typography.display, color: colors.text, fontSize: typography.size.subheading },
+  paymentNote:     { fontFamily: typography.body, color: colors.textDim, fontSize: typography.size.xs, textAlign: 'center' },
+
+  confirmPanel:    { position: 'absolute', left: 0, right: 0, bottom: 0, backgroundColor: colors.card, borderTopLeftRadius: radius.xxl, borderTopRightRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.xxl, alignItems: 'center', gap: spacing.sm, shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 20, shadowOffset: { width: 0, height: -4 } },
+  confirmCheck:    { width: 52, height: 52, borderRadius: 26, backgroundColor: colors.primarySoft, alignItems: 'center', justifyContent: 'center', marginBottom: spacing.xs },
+  confirmCheckTxt: { fontFamily: typography.bodyBold, color: colors.primary, fontSize: 26 },
+  confirmTitle:    { fontFamily: typography.display, color: colors.text, fontSize: typography.size.heading2 },
+  confirmSub:      { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.body, textAlign: 'center', lineHeight: 18 },
 });

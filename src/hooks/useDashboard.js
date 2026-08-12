@@ -222,6 +222,20 @@ export default function useDashboard() {
     }).length;
   }, [confirmedToday]);
 
+  // Prochaines réservations (aperçu dashboard) : en attente/confirmées, à venir, triées date+heure
+  const upcomingResas = useMemo(
+    () => reservations
+      .filter(r => (r.status === 'pending' || r.status === 'confirmed') && r.date >= t)
+      .slice(0, 2),
+    [reservations, t],
+  );
+
+  // Taux d'occupation du jour = couverts confirmés / capacité du resto
+  const occupancyPct = useMemo(() => {
+    if (!restaurant?.capacity || restaurant.capacity <= 0) return null;
+    return Math.round((totalCovers / restaurant.capacity) * 100);
+  }, [totalCovers, restaurant]);
+
   const filtered = useMemo(() => reservations.filter(r => {
     const statusOk = filter === 'Tout' || r.status === FILTER_MAP[filter];
     let dateOk = true;
@@ -250,6 +264,7 @@ export default function useDashboard() {
     acting,
     confirm, cancel, markArrived, signOut, onRefresh,
     todayResas, pendingAll, confirmedToday, totalCovers, revenue, upcomingCount,
+    upcomingResas, occupancyPct,
     filtered, showGroups, midi, soir,
     greetingTxt, t,
   };

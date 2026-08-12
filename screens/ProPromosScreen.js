@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import {
   View, Text, StyleSheet, TouchableOpacity, 
@@ -24,11 +24,21 @@ function Skeleton() {
 }
 
 export default function ProPromosScreen({ navigation }) {
-  const { view, restaurant, loading, goList, goCreate, goActive } = useProPromos();
+  const {
+    view, restaurant, activePromo, otherPromos, loading, saving,
+    goList, goCreate, goActive, createPromo, togglePause, incrementUse,
+  } = useProPromos();
   useEffect(() => {
     ScreenOrientation.unlockAsync();
     return () => ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
   }, []);
+
+  const [lastCreated, setLastCreated] = useState(null);
+  const handleActivate = async (fields) => {
+    const created = await createPromo(fields);
+    setLastCreated(created);
+    goActive();
+  };
 
   return (
     <SafeAreaView style={s.root} edges={['top', 'left', 'right']}>
@@ -54,9 +64,15 @@ export default function ProPromosScreen({ navigation }) {
       </View>
 
       {loading ? <Skeleton /> : (
-        view === 'list'   ? <PromoListView   restaurant={restaurant} onCreate={goCreate} /> :
-        view === 'create' ? <PromoCreateView onActivate={goActive} onBack={goList} /> :
-                            <PromoActiveView onViewAll={goList} onCreate={goCreate} />
+        view === 'list'   ? <PromoListView
+                               activePromo={activePromo}
+                               otherPromos={otherPromos}
+                               onCreate={goCreate}
+                               onTogglePause={togglePause}
+                               onIncrementUse={incrementUse}
+                             /> :
+        view === 'create' ? <PromoCreateView onActivate={handleActivate} onBack={goList} saving={saving} /> :
+                            <PromoActiveView promo={lastCreated} onViewAll={goList} onCreate={goCreate} />
       )}
       <View style={s.terminerBar}>
         <TouchableOpacity style={s.terminerBtn} onPress={() => navigation.navigate('Main', { screen: 'Manager' })}>

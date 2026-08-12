@@ -1,15 +1,13 @@
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { colors, typography, spacing, radius } from '../theme';
 
-const RECAP = [
-  ['Type',    "−20% sur l'addition"],
-  ['Créneau', '18h00 – 21h00'],
-  ['Jours',   'Lun–Ven'],
-  ['Limite',  '20 utilisations / soir'],
-  ['Statut',  '● Active'],
-];
-
-export default function PromoActiveView({ onViewAll, onCreate }) {
+export default function PromoActiveView({ promo, onViewAll, onCreate }) {
+  const recap = [
+    ['Type',    promo?.title || '—'],
+    ['Créneau', promo?.time_start && promo?.time_end ? `${promo.time_start} – ${promo.time_end}` : '—'],
+    ['Limite',  promo?.max_uses_per_day ? `${promo.max_uses_per_day} utilisations / soir` : 'Illimité'],
+    ['Statut',  '● Active'],
+  ];
   return (
     <ScrollView contentContainerStyle={s.wrap}>
       <View style={s.iconWrap}>
@@ -20,8 +18,8 @@ export default function PromoActiveView({ onViewAll, onCreate }) {
         Ta promo est maintenant visible par tous les clients sur ta fiche Mida.
       </Text>
       <View style={s.recapCard}>
-        {RECAP.map(([k, v], i) => (
-          <View key={k} style={[s.recapRow, i < RECAP.length - 1 && s.recapSep]}>
+        {recap.map(([k, v], i) => (
+          <View key={k} style={[s.recapRow, i < recap.length - 1 && s.recapSep]}>
             <Text style={s.recapKey}>{k}</Text>
             <Text style={[s.recapVal, k === 'Statut' && { color: colors.green }]}>{v}</Text>
           </View>

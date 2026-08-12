@@ -107,7 +107,7 @@ const s = StyleSheet.create({
     padding: spacing.xl,
     paddingBottom: spacing.md,
   },
-  cardTitle:  { color: colors.text, fontSize: typography.size.body, fontWeight: typography.weight.semibold },
+  cardTitle:  { fontFamily: typography.bodySemibold, color: colors.text, fontSize: typography.size.body },
   cardSub:    { color: colors.textDim, fontSize: typography.size.xs, marginTop: 2 },
   dismissTxt: { color: colors.gold, fontSize: typography.size.caption },
   resetTxt:   { color: colors.textDim, fontSize: 18 },
@@ -118,7 +118,7 @@ const s = StyleSheet.create({
   // Étapes complétées
   doneRow:   { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingHorizontal: spacing.xl, paddingVertical: spacing.sm, opacity: 0.5 },
   doneIcon:  { width: 28, height: 28, borderRadius: 8, backgroundColor: colors.greenSoft, borderWidth: 1, borderColor: 'rgba(76,175,130,0.3)', alignItems: 'center', justifyContent: 'center' },
-  doneCheck: { color: colors.green, fontSize: 13, fontWeight: '700' },
+  doneCheck: { fontFamily: typography.bodyBold, color: colors.green, fontSize: 13 },
   doneLabel: { color: colors.textMuted, fontSize: typography.size.caption, textDecorationLine: 'line-through' },
 
   // Étape active
@@ -134,10 +134,10 @@ const s = StyleSheet.create({
   activeTop:   { flexDirection: 'row', alignItems: 'center', gap: spacing.lg, marginBottom: spacing.lg },
   activeIcon:  { width: 44, height: 44, borderRadius: 12, backgroundColor: 'rgba(200,151,90,0.2)', borderWidth: 1, borderColor: 'rgba(200,151,90,0.4)', alignItems: 'center', justifyContent: 'center' },
   activeEmoji: { fontSize: 20 },
-  activeLabel: { color: colors.text, fontSize: typography.size.body, fontWeight: typography.weight.semibold },
+  activeLabel: { fontFamily: typography.bodySemibold, color: colors.text, fontSize: typography.size.body },
   activeDesc:  { color: colors.textMuted, fontSize: typography.size.xs, marginTop: 3 },
   activeBtn:   { backgroundColor: colors.gold, borderRadius: radius.md, paddingVertical: spacing.md, alignItems: 'center' },
-  activeBtnTxt:{ color: colors.noir, fontSize: typography.size.caption, fontWeight: typography.weight.extrabold },
+  activeBtnTxt:{ fontFamily: typography.bodyBold, color: colors.noir, fontSize: typography.size.caption },
 
   // Étapes à venir
   pendingRow:   { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingHorizontal: spacing.xl, paddingVertical: spacing.sm, opacity: 0.55, marginTop: spacing.xs },

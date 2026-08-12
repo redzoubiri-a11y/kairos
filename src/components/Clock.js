@@ -22,6 +22,6 @@ export default function Clock() {
 
 const s = StyleSheet.create({
   wrap: { alignItems: 'center', paddingVertical: spacing.md },
-  time: { color: colors.text, fontFamily: typography.display, fontSize: 44, fontWeight: typography.weight.bold, letterSpacing: -0.5, lineHeight: 50 },
-  date: { color: colors.textMuted, fontSize: typography.size.heading3, fontWeight: '300', letterSpacing: 1, textTransform: 'capitalize' },
+  time: { color: colors.text, fontFamily: typography.display, fontSize: 44, letterSpacing: -0.5, lineHeight: 50 },
+  date: { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.heading3, letterSpacing: 1, textTransform: 'capitalize' },
 });

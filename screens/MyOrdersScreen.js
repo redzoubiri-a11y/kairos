@@ -11,6 +11,9 @@ export default function MyOrdersScreen({ navigation }) {
   const goRestaurant = useCallback((restaurant) => {
     if (restaurant?.id) navigation.navigate('Restaurant', { restaurant });
   }, [navigation]);
+  const goTracking = useCallback((order) => {
+    navigation.navigate('OrderTracking', { order });
+  }, [navigation]);
 
   return (
     <SafeAreaView style={s.root} edges={['top', 'left', 'right', 'bottom']}>
@@ -45,7 +48,7 @@ export default function MyOrdersScreen({ navigation }) {
                     <OrderCard
                       order={o}
                       title={o.restaurants?.name || 'Restaurant'}
-                      onPressTitle={() => goRestaurant(o.restaurants)}
+                      onPressTitle={() => goTracking(o)}
                       onCancel={(order) => cancel(order.id)}
                       acting={cancelling.has(o.id)}
                     />

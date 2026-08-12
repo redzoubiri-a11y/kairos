@@ -4,12 +4,15 @@ import { useFocusEffect } from '@react-navigation/native';
 import { supabase } from '../../supabase';
 import { colors } from '../theme';
 
+// Libellés littéraux d'OrderCard.dc.html (vocabulaire commande, distinct du
+// vocabulaire réservation EN ATTENTE/CONFIRMÉE/ANNULÉE de la section 06 du
+// design system) : NOUVELLE → EN PRÉPARATION → PRÊTE → RÉCUPÉRÉE.
 export const ORDER_STATUS = {
-  pending:   { label: 'EN ATTENTE',  color: colors.statusPendingText,   bg: colors.statusPendingBg,   border: 'transparent' },
-  confirmed: { label: 'CONFIRMÉE',   color: colors.statusPendingText,   bg: colors.statusPendingBg,   border: 'transparent' },
-  ready:     { label: 'PRÊTE',       color: colors.statusConfirmedText, bg: colors.statusConfirmedBg, border: 'transparent' },
-  collected: { label: 'RÉCUPÉRÉE',   color: colors.textMuted,           bg: colors.tagNeutralBg,      border: 'transparent' },
-  cancelled: { label: 'ANNULÉE',     color: colors.statusCancelledText, bg: colors.statusCancelledBg, border: 'transparent' },
+  pending:   { label: 'NOUVELLE',        color: colors.statusPendingText,   bg: colors.statusPendingBg,   border: 'transparent' },
+  confirmed: { label: 'EN PRÉPARATION',  color: colors.statusPendingText,   bg: colors.statusPendingBg,   border: 'transparent' },
+  ready:     { label: 'PRÊTE',           color: colors.statusConfirmedText, bg: colors.statusConfirmedBg, border: 'transparent' },
+  collected: { label: 'RÉCUPÉRÉE',       color: colors.textMuted,           bg: colors.tagNeutralBg,      border: 'transparent' },
+  cancelled: { label: 'ANNULÉE',         color: colors.statusCancelledText, bg: colors.statusCancelledBg, border: 'transparent' },
 };
 
 const NEXT_STATUS = { pending: 'confirmed', confirmed: 'ready', ready: 'collected' };

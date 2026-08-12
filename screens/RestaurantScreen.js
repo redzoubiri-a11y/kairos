@@ -10,7 +10,8 @@ import { colors, typography, spacing, radius } from '../src/theme';
 import useRestaurant from '../src/hooks/useRestaurant';
 import RestaurantMenuTab from '../src/components/RestaurantMenuTab';
 import RestaurantAvisTab from '../src/components/RestaurantAvisTab';
-import RestaurantInfosTab from '../src/components/RestaurantInfosTab';
+import RestaurantInfosTab, { todaysHours, isOpenNow } from '../src/components/RestaurantInfosTab';
+import Tag from '../src/components/Tag';
 
 const SW   = Dimensions.get('window').width;
 const HERO = 310;
@@ -42,6 +43,9 @@ export default function RestaurantScreen({ route, navigation }) {
     tabAnim, photos, menu, rating, cuisineEmoji, desc,
     toggleFav, switchTab, clickCollectEnabled,
   } = useRestaurant(restaurant);
+
+  const todaysRange = todaysHours(restaurant.opening_hours);
+  const openNow = isOpenNow(restaurant.opening_hours);
 
   const goReserve = useCallback(() => navigation.navigate('ReservationForm', { restaurant }), [navigation, restaurant]);
   const goClickCollect = useCallback(() => navigation.navigate('ClickCollect', { restaurant }), [navigation, restaurant]);
@@ -156,6 +160,27 @@ export default function RestaurantScreen({ route, navigation }) {
         </View>
       </View>
 
+      {/* Aménités + horaires du jour */}
+      {!!restaurant.amenities?.length && (
+        <View style={s.amenitiesRow}>
+          {restaurant.amenities.map((a) => (
+            <Tag key={a} variant={String(a).toLowerCase() === 'terrasse' ? 'amenityHighlight' : 'cuisineNeutral'}>
+              {String(a).toUpperCase()}
+            </Tag>
+          ))}
+        </View>
+      )}
+      <View style={s.hoursBanner}>
+        {todaysRange ? (
+          <>
+            <Text style={s.hoursLabel}>{openNow === false ? 'Fermé actuellement' : "Ouvert aujourd'hui"}</Text>
+            <Text style={s.hoursValue}>{todaysRange}</Text>
+          </>
+        ) : (
+          <Text style={s.hoursValueMuted}>Horaires non renseignés</Text>
+        )}
+      </View>
+
       {/* Tabs */}
       <View style={s.tabBar}>
         {['Menu', 'Avis', 'Infos'].map(t => (
@@ -247,6 +272,16 @@ const s = StyleSheet.create({
 
   descWrap: { paddingHorizontal: spacing.xl, paddingVertical: spacing.xl - 2, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   descTxt:  { color: colors.textMuted, fontSize: typography.size.bodyLg, lineHeight: 20, fontWeight: typography.weight.regular },
+
+  amenitiesRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, paddingHorizontal: spacing.xl, paddingTop: spacing.lg, backgroundColor: colors.card },
+  hoursBanner: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    marginHorizontal: spacing.xl, marginTop: spacing.lg, marginBottom: spacing.lg,
+    backgroundColor: colors.cream, borderRadius: radius.lg, paddingVertical: spacing.lg + 1, paddingHorizontal: 15,
+  },
+  hoursLabel: { fontFamily: typography.bodySemibold, fontSize: typography.size.bodyLg - 0.5, color: colors.text },
+  hoursValue: { fontFamily: typography.bodySemibold, fontSize: typography.size.bodyLg - 0.5, color: colors.primary },
+  hoursValueMuted: { fontFamily: typography.bodyMedium, fontSize: typography.size.bodyLg - 0.5, color: colors.textDim },
 
   tabBar:  { flexDirection: 'row', backgroundColor: colors.card, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   tabBtn:  { flex: 1, alignItems: 'center', paddingVertical: spacing.lg + 1, position: 'relative' },

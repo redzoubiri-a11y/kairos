@@ -1,30 +1,36 @@
-import React, { useRef, useCallback } from 'react';
+import { useRef, useCallback } from 'react';
 import { TouchableOpacity, Text, Animated, ActivityIndicator, StyleSheet } from 'react-native';
 import { buttonVariants, typography, radius, spacing } from '../theme';
 
-export default function MButton({
+// Composant bouton unique du design system — consomme buttonVariants (theme.js).
+// variant: primary(Continuer) | confirm(Confirmer) | reserve(Réserver) | pro(Ajouter un créneau)
+//        | secondary(Plus tard) | link(Tout voir) | disabled(Indisponible) | ghost | danger
+export default function Button({
   children,
   variant = 'primary',
   onPress,
   disabled = false,
   loading = false,
   small = false,
+  fullWidth,
   style,
+  containerStyle,
+  textStyle,
 }) {
   const scale = useRef(new Animated.Value(1)).current;
+  const v = buttonVariants[variant] || buttonVariants.primary;
+  // "link" (Tout voir) n'est jamais pleine largeur par défaut ; tous les autres le sont.
+  const isFull = fullWidth ?? variant !== 'link';
 
   const handlePressIn = useCallback(() => {
     Animated.spring(scale, { toValue: 0.96, useNativeDriver: true }).start();
   }, []);
-
   const handlePressOut = useCallback(() => {
     Animated.spring(scale, { toValue: 1, useNativeDriver: true }).start();
   }, []);
 
-  const v = buttonVariants[variant] || buttonVariants.primary;
-
   return (
-    <Animated.View style={[{ transform: [{ scale }] }, style]}>
+    <Animated.View style={[{ transform: [{ scale }] }, isFull && styles.full, style]}>
       <TouchableOpacity
         onPress={onPress}
         onPressIn={handlePressIn}
@@ -32,16 +38,17 @@ export default function MButton({
         disabled={disabled || loading}
         activeOpacity={1}
         style={[
-          styles.base,
           v.container,
+          isFull && styles.full,
           small && styles.small,
-          (disabled || loading) && styles.disabled,
+          (disabled || loading) && variant !== 'disabled' && styles.disabledOpacity,
+          containerStyle,
         ]}
       >
         {loading ? (
           <ActivityIndicator size="small" color={v.text.color} />
         ) : (
-          <Text style={[v.text, small && styles.textSmall]}>{children}</Text>
+          <Text style={[v.text, small && styles.textSmall, textStyle]}>{children}</Text>
         )}
       </TouchableOpacity>
     </Animated.View>
@@ -49,22 +56,13 @@ export default function MButton({
 }
 
 const styles = StyleSheet.create({
-  base: {
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: 50,
-  },
+  full: { width: '100%' },
   small: {
     minHeight: 36,
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.lg,
     borderRadius: radius.md,
   },
-  disabled: {
-    opacity: 0.5,
-  },
-  textSmall: {
-    fontSize: typography.size.body,
-  },
+  disabledOpacity: { opacity: 0.5 },
+  textSmall: { fontSize: typography.size.body },
 });

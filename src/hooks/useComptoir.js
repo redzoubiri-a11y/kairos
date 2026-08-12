@@ -1,13 +1,18 @@
-import { useState, useCallback, useRef, useMemo } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { supabase } from '../../supabase';
 import { colors } from '../theme';
 
+// Couleurs pending/confirmed/cancelled alignées sur colors.statusXxx (valeurs
+// littérales de la section 06 du design system, déjà utilisées correctement
+// par ReservationCard.js) — remplace l'ancien mapping colors.gold/green/red
+// qui ne correspondait pas au fichier source. arrived/no_show sont des états
+// réels du comptoir absents de la maquette, conservés tels quels.
 export const STATUS_CFG = {
-  pending:   { label: 'EN ATTENTE', color: colors.gold,      bg: colors.goldSoft,   border: 'rgba(200,151,90,0.35)'  },
-  confirmed: { label: 'CONFIRMÉE',  color: colors.green,     bg: colors.greenSoft,  border: 'rgba(76,175,130,0.35)'  },
-  cancelled: { label: 'ANNULÉE',    color: colors.red,       bg: colors.redSoft,    border: 'rgba(224,90,90,0.35)'   },
+  pending:   { label: 'EN ATTENTE', color: colors.statusPendingText,   bg: colors.statusPendingBg,   border: 'rgba(138,106,53,0.30)'  },
+  confirmed: { label: 'CONFIRMÉE',  color: colors.statusConfirmedText, bg: colors.statusConfirmedBg, border: 'rgba(0,180,216,0.30)'   },
+  cancelled: { label: 'ANNULÉE',    color: colors.statusCancelledText, bg: colors.statusCancelledBg, border: 'rgba(138,70,51,0.30)'   },
   arrived:   { label: 'ARRIVÉ',     color: colors.blue,      bg: colors.blueSoft,   border: 'rgba(90,155,224,0.35)'  },
   no_show:   { label: 'NO SHOW',    color: colors.textMuted, bg: colors.cardBorder, border: colors.cardBorder        },
 };
@@ -20,6 +25,11 @@ export function clientName(resa) {
 }
 
 function todayStr() { return new Date().toISOString().split('T')[0]; }
+function shiftDateStr(dateStr, days) {
+  const d = new Date(dateStr + 'T12:00:00');
+  d.setDate(d.getDate() + days);
+  return d.toISOString().split('T')[0];
+}
 
 export default function useComptoir() {
   const [restaurant,     setRestaurant]     = useState(null);
@@ -28,7 +38,9 @@ export default function useComptoir() {
   const [refreshing,     setRefreshing]     = useState(false);
   const [acting,         setActing]         = useState(new Set());
   const [selectedResaId, setSelectedResaId] = useState(null);
+  const [selectedDate,   setSelectedDate]   = useState(todayStr());
   const autoRefreshRef = useRef(null);
+  const isToday = selectedDate === todayStr();
 
   const selectedResa = useMemo(
     () => reservations.find(r => r.id === selectedResaId) ?? null,
@@ -61,7 +73,7 @@ export default function useComptoir() {
         .from('reservations')
         .select('id, date, time_slot, nb_adults, nb_children, notes, status, user_id')
         .eq('restaurant_id', ownerRow.restaurant_id)
-        .eq('date', todayStr())
+        .eq('date', selectedDate)
         .order('time_slot', { ascending: true });
 
       const rows = res ?? [];
@@ -79,13 +91,20 @@ export default function useComptoir() {
       setLoading(false);
       setRefreshing(false);
     }
-  }, []);
+  }, [selectedDate]);
 
   useFocusEffect(useCallback(() => {
     load();
     autoRefreshRef.current = setInterval(() => load(), 120000);
     return () => clearInterval(autoRefreshRef.current);
   }, [load]));
+
+  const goPrevDay = useCallback(() => setSelectedDate(d => shiftDateStr(d, -1)), []);
+  const goNextDay = useCallback(() => setSelectedDate(d => shiftDateStr(d, 1)), []);
+  const goToday   = useCallback(() => setSelectedDate(todayStr()), []);
+
+  // Recharge explicitement au changement de date (indépendamment du cycle focus/blur de react-navigation)
+  useEffect(() => { load(); }, [selectedDate]);
 
   const act = useCallback(async (id, fn) => {
     setActing(prev => new Set(prev).add(id));
@@ -217,8 +236,8 @@ export default function useComptoir() {
   const selectResa = useCallback((id) => setSelectedResaId(id), []);
 
   const emptyDateStr = useMemo(
-    () => new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }),
-    [],
+    () => new Date(selectedDate + 'T12:00:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }),
+    [selectedDate],
   );
 
   return {
@@ -230,6 +249,7 @@ export default function useComptoir() {
     selectedResa, selectedResaId,
     stats,
     emptyDateStr,
+    selectedDate, isToday, goPrevDay, goNextDay, goToday,
     load,
     confirm, arrive, cancel, noShow,
     selectResa,

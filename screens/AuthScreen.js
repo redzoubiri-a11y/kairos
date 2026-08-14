@@ -57,10 +57,10 @@ export default function AuthScreen({ onAuth, userType, onSwitchType, onGuest }) 
 
           <View style={s.tabRow}>
             <TouchableOpacity style={[s.tabBtn, mode === 'signin' && s.tabBtnOn]} onPress={switchToSignin} activeOpacity={0.8}>
-              <Text style={[s.tabTxt, mode === 'signin' && s.tabTxtOn]}>Connexion</Text>
+              <Text style={[s.tabTxt, mode === 'signin' && s.tabTxtOn]} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8}>Connexion</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[s.tabBtn, mode === 'signup' && s.tabBtnOn]} onPress={switchToSignup} activeOpacity={0.8}>
-              <Text style={[s.tabTxt, mode === 'signup' && s.tabTxtOn]}>Inscription</Text>
+              <Text style={[s.tabTxt, mode === 'signup' && s.tabTxtOn]} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8}>Inscription</Text>
             </TouchableOpacity>
           </View>
 
@@ -198,10 +198,10 @@ const s = StyleSheet.create({
   heroTitle:     { fontFamily: typography.display, fontSize: 25, color: colors.text, letterSpacing: -0.5, lineHeight: 31.25, marginTop: spacing.xxl - 2 },
 
   tabRow:   { flexDirection: 'row', backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, padding: 4, marginBottom: spacing.xl },
-  tabBtn:   { flex: 1, paddingVertical: spacing.lg, alignItems: 'center', borderRadius: radius.xl },
-  tabBtnOn: { backgroundColor: colors.primarySoft, borderWidth: 1, borderColor: colors.primary, shadowColor: colors.primary, shadowOpacity: 0.25, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 5 },
-  tabTxt:   { color: colors.textDim, fontSize: typography.size.subheading },
-  tabTxtOn: { color: colors.primary, fontWeight: typography.weight.semibold },
+  tabBtn:   { flex: 1, paddingVertical: spacing.lg, paddingHorizontal: spacing.xs, alignItems: 'center', borderRadius: radius.xl },
+  tabBtnOn: { backgroundColor: colors.primarySoft, borderWidth: 1, borderColor: colors.primary },
+  tabTxt:   { fontFamily: typography.body, color: colors.textDim, fontSize: typography.size.body },
+  tabTxtOn: { fontFamily: typography.bodySemibold, color: colors.primary },
 
   card:      { backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.xxl, marginBottom: spacing.xl },
   cardHead:  { marginBottom: spacing.xxl },

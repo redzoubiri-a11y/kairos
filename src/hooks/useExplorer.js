@@ -1,5 +1,7 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
+import * as Location from 'expo-location';
 import { supabase } from '../../supabase';
+import { isOpenNow } from '../utils/openingHours';
 
 export const QUARTIER_COORDS = {
   'hydra':{ latitude:36.7539, longitude:3.0427 },
@@ -33,6 +35,21 @@ export const QUARTIER_COORDS = {
 
 const ALGER_DEFAULT = { latitude: 36.7538, longitude: 3.0588 };
 
+// Centre de chaque ville — filet de sécurité avant de retomber sur Alger,
+// pour les restos sans latitude/longitude ET dont le quartier n'est pas
+// dans QUARTIER_COORDS (ex. Tipaza : 'Chenoua'/'Parc de Loisirs' absents).
+const CITY_COORDS = {
+  alger:       { latitude: 36.7538, longitude: 3.0588 },
+  tipaza:      { latitude: 36.5911, longitude: 2.4475 },
+  oran:        { latitude: 35.6969, longitude: -0.6331 },
+  constantine: { latitude: 36.3650, longitude: 6.6147 },
+  tizi_ouzou:  { latitude: 36.7117, longitude: 4.0450 },
+  bejaia:      { latitude: 36.7509, longitude: 5.0564 },
+  setif:       { latitude: 36.1898, longitude: 5.4108 },
+  annaba:      { latitude: 36.9000, longitude: 7.7667 },
+  tlemcen:     { latitude: 34.8828, longitude: -1.3167 },
+};
+
 export const CUISINE_EMOJI = {
   algerien:'🥘', mediterraneen:'🐟', fast_casual:'☕',
   italien:'🍕', japonais:'🍣', turc:'🍢', libanais:'🌿', francais:'🍷',
@@ -52,7 +69,8 @@ export function haversineKm(lat1, lon1, lat2, lon2) {
 export function getCoord(r, cityDefault = ALGER_DEFAULT) {
   if (r.latitude && r.longitude) return { latitude: r.latitude, longitude: r.longitude };
   const key  = (r.quartier || '').toLowerCase();
-  const base = QUARTIER_COORDS[key] || cityDefault;
+  const cityKey = (r.city || '').toLowerCase().replace(/\s+/g, '_');
+  const base = QUARTIER_COORDS[key] || CITY_COORDS[cityKey] || cityDefault;
   const seed = typeof r.id === 'string'
     ? r.id.charCodeAt(0) + r.id.charCodeAt(r.id.length - 1)
     : (r.id || 0);
@@ -62,11 +80,39 @@ export function getCoord(r, cityDefault = ALGER_DEFAULT) {
   };
 }
 
+// Normalise un nom de ville (accents, espaces) pour matcher la convention
+// snake_case sans accent stockée dans restaurants.city (ex. "Tizi Ouzou" → "tizi_ouzou").
+const DIACRITICS_RE = new RegExp('[̀-ͯ]', 'g');
+function normalizeCity(str) {
+  return (str || '')
+    .toLowerCase()
+    .normalize('NFD').replace(DIACRITICS_RE, '')
+    .trim()
+    .replace(/\s+/g, '_');
+}
+
 export default function useExplorer() {
   const [restaurants, setRestaurants] = useState([]);
   const [loading,     setLoading]     = useState(false);
   const [query,       setQuery]       = useState('');
   const [sortBy,      setSortBy]      = useState('pertinence'); // 'pertinence' | 'note'
+  const [activeFilters, setActiveFilters] = useState(new Set());
+  const [userLocation, setUserLocation] = useState(null);
+
+  const toggleFilter = (id) => setActiveFilters(prev => {
+    const next = new Set(prev);
+    next.has(id) ? next.delete(id) : next.add(id);
+    return next;
+  });
+
+  const requestLocation = useCallback(async () => {
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') return;
+      const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
+      setUserLocation({ latitude: loc.coords.latitude, longitude: loc.coords.longitude });
+    } catch (_) {}
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -90,17 +136,24 @@ export default function useExplorer() {
       r.name?.toLowerCase().includes(q)
       || r.cuisine_type?.toLowerCase().includes(q)
       || r.quartier?.toLowerCase().includes(q)
+      || normalizeCity(r.city) === normalizeCity(q)
     ));
+    if (activeFilters.has('ouvert')) list = list.filter(r => isOpenNow(r.opening_hours));
+    if (activeFilters.has('price')) list = list.filter(r => r.avg_ticket >= 1500 && r.avg_ticket < 3000);
+    if (activeFilters.has('note')) list = list.filter(r => (r.avg_rating || 0) >= 4.5);
     if (sortBy === 'note') {
       list = [...list].sort((a, b) => (b.avg_rating || 0) - (a.avg_rating || 0));
     }
     return list;
-  }, [restaurants, query, sortBy]);
+  }, [restaurants, query, sortBy, activeFilters]);
 
   return {
+    allRestaurants: restaurants,
+    activeFilters, toggleFilter,
     restaurants: filteredRestaurants,
     loading,
     query, setQuery,
     sortBy, setSortBy,
+    userLocation, requestLocation,
   };
 }

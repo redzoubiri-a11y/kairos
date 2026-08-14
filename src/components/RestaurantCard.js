@@ -70,6 +70,11 @@ export default function RestaurantCard({ r, variant = 'compact', distance, slots
           ? <Image source={{ uri: photo }} style={s.compImg} resizeMode="cover" />
           : <View style={[s.compImg, s.imgPlaceholder]} />
         }
+        {!!promo && (
+          <View style={s.promoBadgeSm}>
+            <Text style={s.promoTxtSm} numberOfLines={1}>{promo}</Text>
+          </View>
+        )}
       </View>
       <View style={s.compBody}>
         <Text style={s.compName} numberOfLines={1}>{r.name}</Text>
@@ -125,6 +130,8 @@ const s = StyleSheet.create({
   compCard:    { flexDirection: 'row', gap: spacing.lg, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, borderRadius: radius.xl - 2, padding: spacing.lg - 1 },
   compImgWrap: { width: 88, height: 88, flexShrink: 0, borderRadius: radius.lg - 2, overflow: 'hidden' },
   compImg:     { width: '100%', height: '100%' },
+  promoBadgeSm:{ position: 'absolute', left: 4, right: 4, bottom: 4, backgroundColor: 'rgba(10,10,10,0.72)', borderRadius: radius.sm, paddingHorizontal: 5, paddingVertical: 2 },
+  promoTxtSm:  { fontFamily: typography.bodySemibold, color: '#FFFFFF', fontSize: 8.5, textAlign: 'center' },
   compBody:    { flex: 1, minWidth: 0 },
   compName:    { fontFamily: typography.display, fontSize: typography.size.subheading + 0.5, color: colors.text, letterSpacing: -0.3 },
   compRatingRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs + 2, marginTop: spacing.sm - 2 },

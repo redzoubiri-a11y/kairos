@@ -114,8 +114,8 @@ const s = StyleSheet.create({
   cancelBtn:  { alignItems: 'center', justifyContent: 'center', paddingVertical: spacing.md + 1, paddingHorizontal: spacing.lg, borderRadius: radius.md + 1, borderWidth: 1.5, borderColor: colors.redSoft },
   cancelBtnFull: { flex: 1 },
   cancelTxt:  { fontFamily: typography.bodySemibold, fontSize: typography.size.bodyLg - 0.5, color: colors.red },
-  advanceBtn: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: spacing.lg - 2, borderRadius: radius.md + 1, backgroundColor: colors.gold },
+  advanceBtn: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: spacing.lg - 2, borderRadius: radius.md + 1, backgroundColor: colors.primary },
   advanceBtnOutline: { backgroundColor: 'transparent', borderWidth: 1.5, borderColor: 'rgba(10,10,10,0.16)' },
-  advanceTxt: { fontFamily: typography.bodyBold, fontSize: typography.size.bodyLg - 0.5, color: colors.noir },
+  advanceTxt: { fontFamily: typography.bodyBold, fontSize: typography.size.bodyLg - 0.5, color: '#FFFFFF' },
   advanceTxtOutline: { fontFamily: typography.bodySemibold, color: colors.text },
 });

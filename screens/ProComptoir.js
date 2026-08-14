@@ -222,7 +222,7 @@ export default function ProComptoir({ navigation }) {
             />
           </View>
         </View>
-        <BottomTabBar navigation={navigation} isPro activeTab="Manager" />
+        <BottomTabBar navigation={navigation} isPro activeTab="Manager" transparent />
       </View>
     );
   }

@@ -10,12 +10,6 @@ const C = {
   activeBg: theme.primarySoft,
 };
 
-const C_DARK = {
-  accent:   '#FFFFFF',
-  dim:      'rgba(255,255,255,0.45)',
-  activeBg: 'rgba(255,255,255,0.10)',
-};
-
 const CLIENT_TABS = [
   { name: 'Accueil',   label: 'Accueil',  route: 'Accueil',  icon: 'home',     iconOff: 'home-outline' },
   { name: 'Recherche', label: 'Explorer', route: 'Recherche',icon: 'search',   iconOff: 'search-outline' },
@@ -32,9 +26,9 @@ const PRO_TABS = [
   { name: 'Profil',    label: 'Profil',   route: 'Profil',   icon: 'person',   iconOff: 'person-outline' },
 ];
 
-function TabItem({ tab, isActive, onPress, dark }) {
+function TabItem({ tab, isActive, onPress }) {
   const scale = useRef(new Animated.Value(1)).current;
-  const colors = dark ? C_DARK : C;
+  const colors = C;
 
   const handlePress = useCallback(() => {
     Animated.sequence([
@@ -108,7 +102,6 @@ export default function BottomTabBar({ navigation, isPro = false, activeTab = nu
             tab={tab}
             isActive={tab.name === activeTab}
             onPress={() => goTab(tab.route)}
-            dark={transparent}
           />
         ))}
       </View>
@@ -118,6 +111,10 @@ export default function BottomTabBar({ navigation, isPro = false, activeTab = nu
 
 const s = StyleSheet.create({
   outerWrap: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
     backgroundColor: 'transparent',
   },
   container: {
@@ -129,7 +126,7 @@ const s = StyleSheet.create({
     height: 58,
   },
   containerTransparent: {
-    backgroundColor: 'transparent',
+    backgroundColor: theme.glassBg,
     borderTopWidth: 0,
   },
   tab: {

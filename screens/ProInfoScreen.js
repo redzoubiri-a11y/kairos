@@ -270,7 +270,7 @@ const s = StyleSheet.create({
   terminerBar: { paddingHorizontal: spacing.xl, paddingVertical: spacing.md, backgroundColor: colors.card, borderTopWidth: 1, borderTopColor: colors.cardBorder },
   terminerBtn: { alignItems: 'center', paddingVertical: spacing.md },
   terminerTxt: { color: colors.gold, fontSize: typography.size.body, fontWeight: typography.weight.medium },
-  saveBtn:     { backgroundColor: PRO_ACCENT, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, opacity: 1 },
+  saveBtn:     { backgroundColor: colors.primary, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, opacity: 1 },
   saveBtnActive:{ opacity: 0.75 },
   saveBtnTxt:  { color: '#fff', fontSize: typography.size.caption, fontWeight: typography.weight.extrabold },
 
@@ -289,7 +289,7 @@ const s = StyleSheet.create({
 
   chips:       { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginTop: spacing.xs },
   chip:        { borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, backgroundColor: colors.card, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
-  chipOn:      { backgroundColor: PRO_ACCENT, borderColor: PRO_ACCENT },
+  chipOn:      { backgroundColor: colors.primary, borderColor: colors.primary },
   chipTxt:     { color: colors.textMuted, fontSize: typography.size.caption, fontWeight: typography.weight.medium },
   chipTxtOn:   { color: '#fff', fontWeight: typography.weight.semibold },
 

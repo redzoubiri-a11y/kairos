@@ -277,9 +277,9 @@ const f = StyleSheet.create({
   inputIcon:      { fontSize: typography.size.subheading, flexShrink: 0 },
   input:          { flex: 1, color: colors.text, fontSize: typography.size.body, paddingVertical: spacing.xs },
   catChip:        { paddingHorizontal: spacing.lg, paddingVertical: spacing.md, borderRadius: radius.pill, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder },
-  catChipOn:      { backgroundColor: colors.goldSoft, borderColor: 'rgba(200,151,90,0.4)' },
+  catChipOn:      { backgroundColor: colors.primarySoft, borderColor: colors.primary },
   catChipTxt:     { color: colors.textMuted, fontSize: typography.size.body },
-  catChipTxtOn:   { color: colors.gold, fontWeight: typography.weight.semibold },
+  catChipTxtOn:   { color: colors.primary, fontWeight: typography.weight.semibold },
   togglesWrap:    { backgroundColor: colors.card, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.cardBorder, paddingHorizontal: spacing.xl, marginBottom: spacing.xl },
   deleteBtn:      { color: colors.red, fontSize: typography.size.body },
 

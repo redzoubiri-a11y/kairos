@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   Modal, View, Text, StyleSheet, ScrollView,
   TouchableOpacity, SafeAreaView,
@@ -96,8 +95,8 @@ const s = StyleSheet.create({
     borderTopWidth: 1, borderTopColor: colors.cardBorder,
   },
   acceptBtn: {
-    backgroundColor: '#c8975a', borderRadius: radius.xl,
+    backgroundColor: colors.primary, borderRadius: radius.xl,
     paddingVertical: spacing.xl - 2, alignItems: 'center',
   },
-  acceptTxt: { color: colors.bg, fontSize: typography.size.bodyLg, fontWeight: typography.weight.bold },
+  acceptTxt: { color: '#FFFFFF', fontSize: typography.size.bodyLg, fontWeight: typography.weight.bold },
 });

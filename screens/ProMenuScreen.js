@@ -221,8 +221,8 @@ const s = StyleSheet.create({
   headerCenter: { flex: 1, alignItems: 'center' },
   headerSub:    { color: colors.gold, fontSize: typography.size.xs, letterSpacing: 3, marginBottom: 2 },
   headerTitle:  { color: colors.text, fontFamily: typography.display, fontSize: typography.size.title, fontWeight: typography.weight.bold, letterSpacing: -0.3 },
-  addBtn:       { backgroundColor: colors.gold, borderRadius: radius.lg, paddingHorizontal: spacing.lg, paddingVertical: spacing.md },
-  addBtnTxt:    { color: colors.noir, fontSize: typography.size.body, fontWeight: typography.weight.bold },
+  addBtn:       { backgroundColor: colors.primary, borderRadius: radius.lg, paddingHorizontal: spacing.lg, paddingVertical: spacing.md },
+  addBtnTxt:    { color: '#FFFFFF', fontSize: typography.size.body, fontWeight: typography.weight.bold },
 
   subBar:  { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingHorizontal: spacing.xxl, paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   subDot:  { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.green },

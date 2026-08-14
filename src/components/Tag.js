@@ -5,7 +5,7 @@ import { tagVariants, typography } from '../theme';
 // size: "tag" (défaut, cuisine/info/statuts — radius 6, DM Sans 700 10px tracké)
 //     | "filter" (chips de filtre — radius 7, DM Sans 500 11px, pas de tracking)
 //     | "choice" (chips de sélection unique, ex. cuisine à l'inscription — radius 9, DM Sans 500 11.5px)
-export default function Tag({ children, variant = 'default', size = 'tag', style }) {
+export default function Tag({ children, variant = 'default', size = 'tag', style, textStyle }) {
   const v = tagVariants[variant] || tagVariants.default;
   const isFilter = size === 'filter';
   const isChoice = size === 'choice';
@@ -27,7 +27,9 @@ export default function Tag({ children, variant = 'default', size = 'tag', style
           isFilter ? styles.filterText : isChoice ? styles.choiceText : styles.tagText,
           (isFilterActive || isChoiceActive) && styles.filterTextActive,
           { color: v.text },
+          textStyle,
         ]}
+        numberOfLines={1}
       >
         {children}
       </Text>

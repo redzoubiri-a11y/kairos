@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { Ionicons } from '@expo/vector-icons';
 import {
   Platform, StatusBar as RNStatusBar, Dimensions,
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
@@ -209,7 +210,7 @@ export default function RestaurantScreen({ route, navigation }) {
             </View>
           )}
           <TouchableOpacity style={s.directionsBtn} onPress={goDirections}>
-            <Text style={s.directionsIcon}>🧭</Text>
+            <Ionicons name="location" size={22} color={colors.text} />
           </TouchableOpacity>
           <TouchableOpacity
             style={[s.reserveBtn, !restaurant.avg_ticket && { flex: 1 }]}
@@ -298,7 +299,6 @@ const s = StyleSheet.create({
   reserveBtn:    { flex: 1, borderRadius: radius.card, paddingVertical: spacing.xl - 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.resa },
   reserveTxt:    { fontFamily: typography.bodyBold, color: '#FFFFFF', fontSize: typography.size.bodyLg, letterSpacing: 0.3 },
   directionsBtn: { width: 52, paddingVertical: spacing.xl - 1, borderRadius: radius.card, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder },
-  directionsIcon:{ fontSize: 20 },
   clickCollectBtn: { marginTop: spacing.md, borderRadius: radius.card, paddingVertical: spacing.lg, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.greenSoft },
   clickCollectTxt: { fontFamily: typography.bodySemibold, color: colors.green, fontSize: typography.size.bodyLg, letterSpacing: 0.2 },
 });

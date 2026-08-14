@@ -4,15 +4,15 @@
 // Jamais de couleurs ou tailles en dur
 // ─────────────────────────────────────────────
 
-// Rebrand Cyan/Magenta (08/2026) — remplace le vert/terracotta de la direction "Marché"
-const CYAN = '#00B4D8';
-const MAGENTA = '#E8006F';
+// Harmonisation vert TheFork (08/2026) — remplace le rebrand Cyan/Magenta,
+// une seule couleur d'accent (vert) au lieu de cyan (primary) + magenta (resa)
+const GREEN = '#0D6B3F';
 
 export const colors = {
-  // Palette principale MIDA — rebrand Cyan/Magenta (08/2026)
-  primary: CYAN,
-  primarySoft: 'rgba(0,180,216,0.10)',
-  primaryDim: 'rgba(0,180,216,0.06)',
+  // Palette principale MIDA — vert TheFork (08/2026)
+  primary: GREEN,
+  primarySoft: 'rgba(13,107,63,0.10)',
+  primaryDim: 'rgba(13,107,63,0.06)',
   noir: '#0A0A0A',
   cream: '#F5EDD6',
   greyBg: '#F5F6F8',
@@ -37,9 +37,15 @@ export const colors = {
   gold: '#c8975a',
   goldSoft: 'rgba(200,151,90,0.14)',
 
-  // CTA Réservation — magenta, exclusif à l'action de réserver
-  resa: MAGENTA,
-  resaSoft: 'rgba(232,0,111,0.18)',
+  // CTA Réservation — même vert que primary (harmonisation, plus de couleur distincte)
+  resa: GREEN,
+  resaSoft: 'rgba(13,107,63,0.18)',
+
+  // "Verre" blanc à faible transparence — barres de recherche, boutons, chips et
+  // barres de navigation flottant sur du contenu, pour laisser deviner ce qu'il y a derrière
+  glassBg: 'rgba(255,255,255,0.72)',
+  // Variante plus opaque — blocs qui doivent se détacher nettement du contenu qui défile dessous
+  glassBgStrong: 'rgba(255,255,255,0.94)',
 
   // Texte
   text: '#0A0A0A',
@@ -78,19 +84,19 @@ export const colors = {
   // Statuts réservation/commande (pro)
   statusPendingBg: '#F6ECDD',
   statusPendingText: '#8a6a35',
-  statusConfirmedBg: '#E0F7FA',
-  statusConfirmedText: CYAN,
+  statusConfirmedBg: '#E8F1EB',
+  statusConfirmedText: GREEN,
   statusCancelledBg: '#F3E3DE',
   statusCancelledText: '#8a4633',
 
-  // Badge note + tag "Terrasse" — Fiche Restaurant.dc.html : #E8F1EB (distinct de tagGreenBg #E0F7FA,
-  // valeur différente dans ce fichier source, pas fusionnée avec le token existant)
+  // Badge note + tag "Terrasse" — même teinte verte que tagGreenBg/statusConfirmedBg
+  // (harmonisation 08/2026, ces 3 tokens étaient des tons cyan/vert légèrement différents)
   ratingBg: '#E8F1EB',
 
   // Restaurant cards design system
   star: '#f5c842',
   separator: '#ECE7DC',
-  tagGreenBg: '#E0F7FA',
+  tagGreenBg: '#E8F1EB',
   tagNeutralBg: '#F1EEE6',
   textSecondary: 'rgba(10,10,10,0.55)',
   textTertiary: 'rgba(10,10,10,0.45)',
@@ -286,9 +292,9 @@ export const common = {
 };
 
 // Variantes de boutons — section 05 du design system, valeurs littérales
-// (padding 16px/26px, radius 12, DM Sans 700 15px), vert/terracotta remplacés
-// par cyan/magenta (rebrand acté). `bodyBold` (police chargée séparément, pas
-// fontWeight) car RN ignore fontWeight sur une police custom statique.
+// (padding 16px/26px, radius 12, DM Sans 700 15px). `bodyBold` (police
+// chargée séparément, pas fontWeight) car RN ignore fontWeight sur une
+// police custom statique.
 const BTN_TEXT_BASE = {
   fontFamily: typography.bodyBold,
   fontSize: typography.size.subheading + 2, // 15px, doc : "DM Sans 700 15px"
@@ -328,16 +334,17 @@ export const buttonVariants = {
     },
     text: { ...BTN_TEXT_BASE, color: '#FFFFFF' },
   },
-  // "Ajouter un créneau" — exclusif aux actions restaurateur, texte NOIR sur fond ambre
+  // "Ajouter un créneau" — exclusif aux actions restaurateur — fond or retiré sur demande,
+  // aligné sur l'accent vert de marque au lieu du gold
   pro: {
     container: {
-      backgroundColor: colors.gold,
+      backgroundColor: colors.primary,
       borderRadius: radius.lg,
       paddingVertical: spacing.xl,
       paddingHorizontal: spacing.xxl + 2,
       alignItems: 'center',
     },
-    text: { ...BTN_TEXT_BASE, color: colors.noir },
+    text: { ...BTN_TEXT_BASE, color: '#FFFFFF' },
   },
   // "Plus tard" — outline, padding vertical réduit de 1.5px (largeur de bordure)
   // pour garder la même hauteur totale que les boutons pleins

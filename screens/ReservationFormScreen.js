@@ -7,7 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, typography, spacing, radius } from '../src/theme';
-import useReservationForm, { OCCASIONS, DAYS, formatDateLong } from '../src/hooks/useReservationForm';
+import useReservationForm, { OCCASIONS, formatDateLong } from '../src/hooks/useReservationForm';
 import FormProgressBar from '../src/components/FormProgressBar';
 import FormStepper from '../src/components/FormStepper';
 import ReservationSuccess from '../src/components/ReservationSuccess';
@@ -354,10 +354,10 @@ const s = StyleSheet.create({
   slotChipOn:      { backgroundColor: colors.resaSoft, borderColor: colors.resa },
   slotTxt:         { color: colors.textMuted, fontSize: typography.size.heading3, fontWeight: typography.weight.regular },
   slotTxtOn:       { color: colors.resa, fontWeight: typography.weight.semibold },
-  slotBadge:       { marginTop: spacing.xs, paddingHorizontal: spacing.sm, paddingVertical: spacing.xxs, borderRadius: radius.sm, backgroundColor: colors.goldSoft },
-  slotBadgePopular:{ backgroundColor: colors.goldSoft },
+  slotBadge:       { marginTop: spacing.xs, paddingHorizontal: spacing.sm, paddingVertical: spacing.xxs, borderRadius: radius.sm, backgroundColor: colors.primarySoft },
+  slotBadgePopular:{ backgroundColor: colors.primarySoft },
   slotBadgeLast:   { backgroundColor: colors.redSoft },
-  slotBadgeTxt:    { color: colors.gold, fontSize: typography.size.xs },
+  slotBadgeTxt:    { color: colors.primary, fontSize: typography.size.xs },
 
   couvCard:    { marginHorizontal: spacing.xxl, backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, overflow: 'hidden' },
   couvRow:     { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xxl, paddingVertical: spacing.xl },

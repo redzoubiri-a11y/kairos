@@ -271,7 +271,7 @@ const s = StyleSheet.create({
   backBtn:        { marginRight: spacing.sm, padding: spacing.xs },
   backBtnTxt:     { color: colors.text, fontSize: 22 },
   title:          { color: colors.text, fontSize: typography.size.heading2, fontWeight: typography.weight.semibold },
-  saveBtn:        { backgroundColor: PRO_ACCENT, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
+  saveBtn:        { backgroundColor: colors.primary, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
   saveBtnActive:  { opacity: 0.75 },
   saveBtnTxt:     { color: '#fff', fontSize: typography.size.caption, fontWeight: typography.weight.extrabold },
 
@@ -280,7 +280,7 @@ const s = StyleSheet.create({
 
   durationRow:    { flexDirection: 'row', gap: spacing.sm },
   durationChip:   { flex: 1, alignItems: 'center', paddingVertical: spacing.md, borderRadius: radius.md, borderWidth: 1, borderColor: colors.cardBorder, backgroundColor: colors.card },
-  durationChipOn: { backgroundColor: PRO_ACCENT, borderColor: PRO_ACCENT },
+  durationChipOn: { backgroundColor: colors.primary, borderColor: colors.primary },
   durationTxt:    { color: colors.textMuted, fontSize: typography.size.caption, fontWeight: typography.weight.medium },
   durationTxtOn:  { color: '#fff', fontWeight: typography.weight.semibold },
 
@@ -310,7 +310,7 @@ const s = StyleSheet.create({
   pickerTitle:    { color: colors.text, fontSize: typography.size.bodyLg, fontWeight: typography.weight.semibold, marginBottom: spacing.lg, textAlign: 'center' },
   pickerGrid:     { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, justifyContent: 'center' },
   pickerChip:     { paddingHorizontal: spacing.xl, paddingVertical: spacing.md, borderRadius: radius.md, borderWidth: 1, borderColor: colors.cardBorder, backgroundColor: colors.card },
-  pickerChipOn:   { backgroundColor: PRO_ACCENT, borderColor: PRO_ACCENT },
+  pickerChipOn:   { backgroundColor: colors.primary, borderColor: colors.primary },
   pickerChipTxt:  { color: colors.textMuted, fontSize: typography.size.body, fontVariant: ['tabular-nums'] },
   pickerChipTxtOn:{ color: '#fff', fontWeight: typography.weight.semibold },
 

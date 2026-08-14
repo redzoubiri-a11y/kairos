@@ -106,6 +106,6 @@ const c = StyleSheet.create({
   del:       { fontSize: typography.size.subheading, marginLeft: spacing.sm },
   addRow:    { flexDirection: 'row', gap: spacing.md, marginTop: spacing.lg },
   addInput:  { flex: 1, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, borderRadius: radius.xl, paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, color: colors.text, fontSize: typography.size.body },
-  addBtn:    { width: 46, height: 46, borderRadius: radius.xl, backgroundColor: colors.goldSoft, borderWidth: 1, borderColor: 'rgba(200,151,90,0.4)', alignItems: 'center', justifyContent: 'center' },
-  addBtnTxt: { color: colors.gold, fontSize: typography.size.heading2, fontWeight: typography.weight.bold },
+  addBtn:    { width: 46, height: 46, borderRadius: radius.xl, backgroundColor: colors.primarySoft, borderWidth: 1, borderColor: colors.primary, alignItems: 'center', justifyContent: 'center' },
+  addBtnTxt: { color: colors.primary, fontSize: typography.size.heading2, fontWeight: typography.weight.bold },
 });

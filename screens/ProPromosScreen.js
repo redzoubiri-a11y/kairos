@@ -94,6 +94,6 @@ const s = StyleSheet.create({
   backBtnTxt:   { color: colors.text, fontSize: 22 },
   title:        { color: colors.text, fontFamily: typography.display, fontSize: typography.size.heading2, fontWeight: typography.weight.bold, letterSpacing: -0.2 },
   subtitle:     { color: colors.textMuted, fontSize: typography.size.caption, marginTop: 1 },
-  createBtn:    { backgroundColor: colors.gold, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
-  createBtnTxt: { color: colors.noir, fontSize: typography.size.caption, fontWeight: typography.weight.extrabold },
+  createBtn:    { backgroundColor: colors.primary, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
+  createBtnTxt: { color: '#FFFFFF', fontSize: typography.size.caption, fontWeight: typography.weight.extrabold },
 });

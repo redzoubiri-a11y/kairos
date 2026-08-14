@@ -21,6 +21,12 @@ export const OCCASION_OPTIONS = [
   { value: 'rapide',   label: 'Rapide' },
 ];
 
+// La ville est stockée en minuscules en base (recherche/filtres ailleurs dans l'app
+// comparent en exact match sur cette valeur) — on ne capitalise que pour l'affichage.
+function capitalize(s) {
+  return s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+}
+
 const DEFAULTS = {
   name: '', description: '', phone: '', address: '', quartier: '', city: '',
   cuisine_type: 'autre', occasion_tags: [], capacity: '', avg_ticket: '',
@@ -55,14 +61,14 @@ export default function useProInfo() {
         .select('name, description, phone, address, quartier, city, cuisine_type, occasion_tags, capacity, avg_ticket, has_kids_menu, has_kids_chairs, click_collect_enabled')
         .eq('id', owner.restaurant_id)
         .maybeSingle();
-      if (r && r.description) {
+      if (r) {
         setForm({
           name:           r.name           ?? '',
           description:    r.description    ?? '',
           phone:          r.phone          ?? '',
           address:        r.address        ?? '',
           quartier:       r.quartier       ?? '',
-          city:           r.city           ?? '',
+          city:           capitalize(r.city) ?? '',
           cuisine_type:   r.cuisine_type   ?? 'autre',
           occasion_tags:  r.occasion_tags  ?? [],
           capacity:       r.capacity != null ? String(r.capacity) : '',

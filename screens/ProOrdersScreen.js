@@ -1,7 +1,8 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl, ActivityIndicator } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { colors, typography, spacing, radius } from '../src/theme';
+import * as ScreenOrientation from 'expo-screen-orientation';
+import { colors, typography, spacing } from '../src/theme';
 import useProOrders from '../src/hooks/useProOrders';
 import OrderCard from '../src/components/OrderCard';
 import Tag from '../src/components/Tag';
@@ -16,6 +17,11 @@ export default function ProOrdersScreen({ navigation }) {
   const { orders, loading, refreshing, acting, onRefresh, advance, cancel, NEXT_LABEL } = useProOrders();
   const [filter, setFilter] = useState('Tout');
   const insets = useSafeAreaInsets();
+
+  useEffect(() => {
+    ScreenOrientation.unlockAsync();
+    return () => ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
+  }, []);
 
   const filtered = useMemo(() => {
     if (filter === 'Tout') return orders.filter(o => o.status !== 'collected' && o.status !== 'cancelled');
@@ -97,11 +103,11 @@ const s = StyleSheet.create({
   backBtn:     { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
   backBtnTxt:  { color: colors.text, fontSize: 22 },
 
-  filtersWrap: { maxHeight: 64, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
+  filtersWrap: { maxHeight: 72, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   filtersList: { paddingHorizontal: spacing.xl, paddingVertical: spacing.md, gap: 6, flexDirection: 'row', alignItems: 'center' },
 
   emptyWrap:  { alignItems: 'center', paddingVertical: spacing.section * 2, gap: spacing.md },
   emptyTitle: { color: colors.text, fontSize: typography.size.heading2, fontWeight: typography.weight.medium },
 
-  cardWrap: { marginHorizontal: spacing.xl, marginBottom: spacing.lg },
+  cardWrap: { marginHorizontal: spacing.xl, marginBottom: spacing.sm },
 });

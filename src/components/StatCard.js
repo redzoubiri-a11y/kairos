@@ -5,7 +5,7 @@ export default function StatCard({ icon, value, label, color, alert, sub }) {
   return (
     <View style={[s.card, alert && { borderColor: color + '55' }]}>
       {alert && <View style={[s.dot, { backgroundColor: color }]} />}
-      <Text style={s.icon}>{icon}</Text>
+      {!!icon && <Text style={s.icon}>{icon}</Text>}
       <Text style={[s.value, { color }]}>{value}</Text>
       <Text style={s.label}>{label}</Text>
       {!!sub && <Text style={s.sub}>{sub}</Text>}

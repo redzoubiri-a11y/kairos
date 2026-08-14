@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { colors, typography, spacing, radius } from '../theme';
 import ResaBadge from './ResaBadge';
-import { statusCfg, daysUntil, fmtLong } from '../hooks/useReservations';
+import { daysUntil, fmtLong } from '../hooks/useReservations';
 
 export default function NextResaCard({ r, onCancel, onViewRestaurant, onEdit }) {
   const resto = r.restaurants || {};

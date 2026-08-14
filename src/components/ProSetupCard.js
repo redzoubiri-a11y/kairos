@@ -136,8 +136,8 @@ const s = StyleSheet.create({
   activeEmoji: { fontSize: 20 },
   activeLabel: { fontFamily: typography.bodySemibold, color: colors.text, fontSize: typography.size.body },
   activeDesc:  { color: colors.textMuted, fontSize: typography.size.xs, marginTop: 3 },
-  activeBtn:   { backgroundColor: colors.gold, borderRadius: radius.md, paddingVertical: spacing.md, alignItems: 'center' },
-  activeBtnTxt:{ fontFamily: typography.bodyBold, color: colors.noir, fontSize: typography.size.caption },
+  activeBtn:   { backgroundColor: colors.primary, borderRadius: radius.md, paddingVertical: spacing.md, alignItems: 'center' },
+  activeBtnTxt:{ fontFamily: typography.bodyBold, color: '#FFFFFF', fontSize: typography.size.caption },
 
   // Étapes à venir
   pendingRow:   { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingHorizontal: spacing.xl, paddingVertical: spacing.sm, opacity: 0.55, marginTop: spacing.xs },

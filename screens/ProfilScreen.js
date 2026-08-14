@@ -49,7 +49,7 @@ export default function ProfilScreen({ navigation }) {
 
         <View style={s.topRow}>
           <TouchableOpacity style={s.editBtn} onPress={toggleEditing}>
-            <Text style={s.editBtnTxt}>{editingName ? '✕  Fermer' : '✏️  Modifier'}</Text>
+            <Text style={s.editBtnTxt}>{editingName ? 'Fermer' : 'Modifier'}</Text>
           </TouchableOpacity>
         </View>
 
@@ -85,7 +85,15 @@ export default function ProfilScreen({ navigation }) {
                 placeholderTextColor={colors.textDim}
                 keyboardType="phone-pad"
               />
-              <Button variant="confirm" onPress={saveName} loading={savingName}>Enregistrer</Button>
+              <Button
+                variant="secondary"
+                containerStyle={s.simpleBtn}
+                textStyle={s.simpleBtnTxt}
+                onPress={saveName}
+                loading={savingName}
+              >
+                Enregistrer
+              </Button>
             </View>
           ) : (
             <View style={s.heroInfo}>
@@ -145,7 +153,16 @@ export default function ProfilScreen({ navigation }) {
               <Text style={s.proCardTitle}>Vous êtes restaurateur ?</Text>
               <Text style={s.proCardSub}>Passez à l'espace pro MIDA.</Text>
             </View>
-            <Button variant="pro" small fullWidth={false} onPress={goProInscription}>Basculer</Button>
+            <Button
+              variant="secondary"
+              small
+              fullWidth={false}
+              containerStyle={[s.simpleBtn, s.proCardBtn]}
+              textStyle={s.proCardBtnTxt}
+              onPress={goProInscription}
+            >
+              Basculer
+            </Button>
           </View>
         )}
 
@@ -184,8 +201,15 @@ const s = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.bg },
 
   topRow:      { flexDirection: 'row', justifyContent: 'flex-end', paddingHorizontal: spacing.xxl, paddingTop: spacing.xl },
-  editBtn:     { paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: radius.md, backgroundColor: colors.greyBg, borderWidth: 1, borderColor: colors.cardBorder },
-  editBtnTxt:  { fontFamily: typography.body, color: colors.text, fontSize: typography.size.caption },
+  editBtn:     { paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, borderRadius: radius.sm, backgroundColor: 'transparent', borderWidth: 1, borderColor: colors.noir },
+  editBtnTxt:  { fontFamily: typography.bodyMedium, color: colors.text, fontSize: typography.size.caption },
+
+  // Boutons "simples" : cadre noir rectangulaire, fond transparent, texte foncé, pas d'icône
+  simpleBtn:      { backgroundColor: 'transparent', borderWidth: 1, borderColor: colors.noir, borderRadius: radius.sm },
+  simpleBtnTxt:   { color: colors.noir },
+  // Variante sur fond noir (proCard) : cadre/texte blancs pour rester visibles
+  proCardBtn:     { borderColor: '#FFFFFF' },
+  proCardBtnTxt:  { color: '#FFFFFF' },
 
   heroBlock:     { alignItems: 'center', paddingTop: spacing.md, paddingBottom: spacing.xxl, paddingHorizontal: spacing.xxl },
   avatarWrap:    { position: 'relative', marginBottom: spacing.lg },
@@ -208,7 +232,7 @@ const s = StyleSheet.create({
 
   // Doc : "font:700 20px Space Grotesk" (valeur) + "font:500 10.5px DM Sans" rgba(.55) (label), fond crème, radius13, padding14
   statsRow: { flexDirection: 'row', marginHorizontal: spacing.xxl, gap: spacing.md },
-  statItem: { flex: 1, alignItems: 'center', backgroundColor: colors.cream, borderRadius: 13, paddingVertical: 14 },
+  statItem: { flex: 1, alignItems: 'center', backgroundColor: colors.glassBg, borderRadius: 13, paddingVertical: 14 },
   statVal:  { color: colors.text, fontFamily: typography.display, fontSize: 20 },
   statLbl:  { fontFamily: typography.bodyMedium, color: 'rgba(10,10,10,0.55)', fontSize: 10.5, marginTop: 5 },
 

@@ -224,10 +224,10 @@ const s = StyleSheet.create({
   cardRating:{ color: colors.gold, fontSize: typography.size.caption, fontWeight: typography.weight.medium },
   cardArrow: {
     width: 32, height: 32, borderRadius: 16,
-    backgroundColor: colors.gold,
+    backgroundColor: colors.primary,
     alignItems: 'center', justifyContent: 'center',
   },
-  cardArrowTxt: { color: colors.noir, fontSize: 20, fontWeight: '700', marginTop: -1 },
+  cardArrowTxt: { color: '#FFFFFF', fontSize: 20, fontWeight: '700', marginTop: -1 },
 
   closeBtn: {
     width: 40, height: 40, borderRadius: 20,

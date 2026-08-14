@@ -1,25 +1,18 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   Animated, Platform, StatusBar, TextInput,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import { colors, typography, spacing, radius } from '../src/theme';
 import MLoader from '../src/components/MLoader';
 import RestaurantCard from '../src/components/RestaurantCard';
 import Tag from '../src/components/Tag';
 import EmptyState from '../src/components/EmptyState';
-import PromoBanner from '../src/components/PromoBanner';
 import useHomeData, { FILTERS } from '../src/hooks/useHomeData';
 import usePushNotifications from '../src/hooks/usePushNotifications';
 import useDeepLink from '../src/hooks/useDeepLink';
-
-function greetingWord() {
-  const h = new Date().getHours();
-  if (h < 12) return 'Bonjour';
-  if (h < 18) return 'Bonne après-midi';
-  return 'Bonsoir';
-}
 
 function SkeletonCard() {
   return (
@@ -37,11 +30,16 @@ const sk = StyleSheet.create({
   card: { marginHorizontal: spacing.xl, marginBottom: spacing.xl - 4, backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder },
 });
 
-// Bannière promo — placeholders auto-promo Mida, en attendant de vraies pubs
-const PROMO_SLIDES = [
-  { id: 'resa', title: 'Réservez votre table en 30 secondes', ctaLabel: 'Explorer', route: 'Explorer' },
-  { id: 'cc',   title: 'Commandez à emporter en un clic',      ctaLabel: 'Découvrir', route: 'Search', params: { initialCity: 'all' } },
-  { id: 'pro',  title: 'Vous êtes restaurateur ? Rejoignez MIDA Pro', ctaLabel: 'Découvrir', route: 'ProInscription' },
+// Ligne de villes — navigue vers Explorer (carte), pré-rempli avec le nom de la ville
+const CITY_ROW = [
+  { id: 'alger',       label: 'Alger' },
+  { id: 'oran',        label: 'Oran' },
+  { id: 'blida',       label: 'Blida' },
+  { id: 'tipaza',      label: 'Tipaza' },
+  { id: 'constantine', label: 'Constantine' },
+  { id: 'tizi_ouzou',  label: 'Tizi Ouzou' },
+  { id: 'bejaia',      label: 'Béjaïa' },
+  { id: 'setif',       label: 'Sétif' },
 ];
 
 export default function HomeScreen({ navigation }) {
@@ -50,7 +48,6 @@ export default function HomeScreen({ navigation }) {
 
   const {
     loading,
-    userName,
     unreadNotifs,
     quickFilter, setQuickFilter,
     list,
@@ -58,21 +55,19 @@ export default function HomeScreen({ navigation }) {
   } = useHomeData();
 
   const [searchText, setSearchText] = useState('');
+  const [headerH, setHeaderH] = useState(0);
+  const insets = useSafeAreaInsets();
 
   const goNotifications = useCallback(() => navigation.navigate('Notifications'), [navigation]);
   const goExplorer      = useCallback(() => navigation.navigate('Explorer'), [navigation]);
   const goOrderSearch   = useCallback(() => navigation.navigate('Search', { initialCity: 'all' }), [navigation]);
+  const goNearMe        = useCallback(() => navigation.navigate('Explorer'), [navigation]);
+  const goCity          = useCallback((label) => navigation.navigate('Explorer', { initialQuery: label }), [navigation]);
   const resetFilter     = useCallback(() => setQuickFilter('all'), [setQuickFilter]);
   const submitSearch    = useCallback(() => {
     navigation.navigate('Search', { initialQuery: searchText.trim(), initialCity: 'all' });
     setSearchText('');
   }, [navigation, searchText]);
-  const goPromoSlide     = useCallback((slide) => navigation.navigate(slide.route, slide.params), [navigation]);
-
-  const greeting = useMemo(
-    () => greetingWord(),
-    [],
-  );
 
   const emptyMessage = quickFilter === 'promo'
     ? { title: 'Aucune promo active', sub: 'Revenez bientôt, les restaurateurs pourront bientôt publier leurs offres.' }
@@ -81,15 +76,30 @@ export default function HomeScreen({ navigation }) {
       : { title: 'Aucun restaurant', sub: 'Réessayez plus tard.' };
 
   return (
-    <SafeAreaView style={s.root} edges={['top', 'left', 'right']}>
+    <SafeAreaView style={s.root} edges={['left', 'right']}>
       <StatusBar barStyle="dark-content" backgroundColor={colors.bg} />
 
-      {/* ── Zone header (couleur de marque) ── */}
-      <View style={s.headerZone}>
+      {/* ── Zone header — flotte en transparence au-dessus du contenu scrollable ── */}
+      <View
+        style={[s.headerZone, { paddingTop: insets.top + spacing.section }]}
+        onLayout={(e) => setHeaderH(e.nativeEvent.layout.height)}
+      >
         <View style={s.header}>
-          <View style={{ flex: 1 }} />
+          <View style={s.searchBar}>
+            <Ionicons name="search" size={16} color={colors.textMuted} />
+            <TextInput
+              style={s.searchInput}
+              placeholder="Restaurant, cuisine, quartier…"
+              placeholderTextColor={colors.textMuted}
+              value={searchText}
+              onChangeText={setSearchText}
+              returnKeyType="search"
+              onSubmitEditing={submitSearch}
+            />
+          </View>
+
           <TouchableOpacity style={s.iconBtn} onPress={goNotifications}>
-            <Text style={s.iconBtnTxt}>🔔</Text>
+            <Ionicons name="notifications-outline" size={19} color={colors.text} />
             {unreadNotifs > 0 && (
               <View style={s.notifBadge}>
                 <Text style={s.notifBadgeTxt}>{unreadNotifs > 9 ? '9+' : unreadNotifs}</Text>
@@ -97,52 +107,48 @@ export default function HomeScreen({ navigation }) {
             )}
           </TouchableOpacity>
         </View>
-
-        <Text style={s.greeting}>
-          {greeting}
-        </Text>
-
-        <PromoBanner slides={PROMO_SLIDES} onPressSlide={goPromoSlide} />
-
-        <View style={s.searchBar}>
-          <Text style={s.searchIcon}>🔍</Text>
-          <TextInput
-            style={s.searchInput}
-            placeholder="Restaurant, cuisine, quartier…"
-            placeholderTextColor={colors.textMuted}
-            value={searchText}
-            onChangeText={setSearchText}
-            returnKeyType="search"
-            onSubmitEditing={submitSearch}
-          />
-        </View>
       </View>
 
       {/* ── Contenu scrollable ── */}
-      <ScrollView showsVerticalScrollIndicator={false} style={s.scroll}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={s.scroll}
+        contentContainerStyle={{ paddingTop: headerH }}
+      >
 
         {/* Actions rapides */}
         <View style={s.quickActions}>
-          <TouchableOpacity style={s.quickAction} onPress={goExplorer} activeOpacity={0.88}>
-            <Text style={s.quickActionTxt} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8}>Réserver une table</Text>
+          <TouchableOpacity style={s.quickActionPrimary} onPress={goExplorer} activeOpacity={0.88}>
+            <Ionicons name="calendar-outline" size={16} color={colors.noir} />
+            <Text style={s.quickActionPrimaryTxt} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8}>Réserver une table</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={s.quickAction} onPress={goOrderSearch} activeOpacity={0.88}>
-            <Text style={s.quickActionTxt} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8}>Click & Collect</Text>
+          <TouchableOpacity style={s.quickActionSecondary} onPress={goOrderSearch} activeOpacity={0.88}>
+            <Ionicons name="bag-handle-outline" size={16} color={colors.noir} />
+            <Text style={s.quickActionSecondaryTxt} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8}>Click & Collect</Text>
           </TouchableOpacity>
         </View>
 
-        {/* Près de vous */}
-        <View style={s.sectionHead}>
-          <Text style={s.sectionLabel}>Près de vous</Text>
-          <TouchableOpacity onPress={resetFilter}>
-            <Text style={s.sectionRight}>Filtrer</Text>
+        {/* Villes */}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.cityRow}>
+          <TouchableOpacity onPress={goNearMe}>
+            <Tag size="filter" variant="filterInactive" style={s.glassChip}>Près de moi</Tag>
           </TouchableOpacity>
-        </View>
+          {CITY_ROW.map(c => (
+            <TouchableOpacity key={c.id} onPress={() => goCity(c.label)}>
+              <Tag size="filter" variant="filterInactive" style={s.glassChip}>{c.label}</Tag>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.filterRow} delayContentTouches={false}>
           {FILTERS.map(f => (
             <TouchableOpacity key={f.id} delayPressIn={0} onPress={() => setQuickFilter(f.id)}>
-              <Tag size="filter" variant={quickFilter === f.id ? 'filterActive' : 'filterInactive'}>
+              <Tag
+                size="filter"
+                variant={quickFilter === f.id ? 'filterActive' : 'filterInactive'}
+                style={s.glassChipGreen}
+                textStyle={quickFilter === f.id ? { color: colors.noir } : undefined}
+              >
                 {f.label}
               </Tag>
             </TouchableOpacity>
@@ -167,6 +173,7 @@ export default function HomeScreen({ navigation }) {
             {list.map((r, i) => (
               <RestaurantCard
                 key={r.id} r={r} variant={i === 0 ? 'featured' : 'compact'}
+                promo={r.promoLabel}
                 onPress={() => navigation.navigate('Restaurant', { restaurant: r })}
               />
             ))}
@@ -183,32 +190,32 @@ const s = StyleSheet.create({
   root:   { flex: 1, backgroundColor: colors.bg, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 },
   scroll: { flex: 1, backgroundColor: colors.greyBg },
 
-  /* Zone header */
-  headerZone: { backgroundColor: 'rgba(255,255,255,0.001)', paddingHorizontal: spacing.xl, paddingBottom: spacing.md, borderBottomLeftRadius: radius.xxl, borderBottomRightRadius: radius.xxl },
-  header:     { flexDirection: 'row', alignItems: 'center', paddingTop: spacing.xs },
-  iconBtn:    { width: 38, height: 38, borderRadius: 11, backgroundColor: 'rgba(245,237,214,0.14)', alignItems: 'center', justifyContent: 'center' },
-  iconBtnTxt: { fontSize: 17 },
-  notifBadge: { position: 'absolute', top: -4, right: -4, minWidth: 16, height: 16, borderRadius: 8, backgroundColor: colors.noir, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 3, borderWidth: 1.5, borderColor: colors.primary },
+  /* Zone header — overlay transparent, jusqu'au bord de l'écran */
+  headerZone: { position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10, backgroundColor: 'transparent', paddingHorizontal: spacing.xl, paddingBottom: spacing.sm },
+  header:     { flexDirection: 'row', alignItems: 'center', gap: spacing.sm + 2 },
+  iconBtn:    { width: 38, height: 38, borderRadius: 11, backgroundColor: colors.tagNeutralBg, alignItems: 'center', justifyContent: 'center' },
+  notifBadge: { position: 'absolute', top: -4, right: -4, minWidth: 16, height: 16, borderRadius: 8, backgroundColor: colors.noir, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 3, borderWidth: 1.5, borderColor: colors.bg },
   notifBadgeTxt: { fontFamily: typography.bodyBold, color: '#FFFFFF', fontSize: typography.size.xs },
 
-  greeting: { fontFamily: typography.display, fontSize: 19, color: colors.noir, letterSpacing: -0.3, marginTop: spacing.xs },
-
-  searchBar:  { flexDirection: 'row', alignItems: 'center', gap: spacing.md, backgroundColor: '#FFFFFF', borderRadius: 13, borderWidth: 1, borderColor: colors.noir, paddingHorizontal: 14, paddingVertical: 13, marginTop: spacing.lg },
-  searchIcon: { fontSize: 14 },
+  // Verre blanc, cadre vert — même ligne que le clochet
+  searchBar:  { flex: 1, flexDirection: 'row', alignItems: 'center', gap: spacing.md, backgroundColor: colors.glassBg, borderRadius: 13, borderWidth: 1.5, borderColor: colors.primary, paddingHorizontal: 14, paddingVertical: 13 },
   searchInput:{ flex: 1, fontFamily: typography.body, color: colors.text, fontSize: 13.5, letterSpacing: 0.3, padding: 0 },
 
-  /* Actions rapides */
-  quickActions:     { flexDirection: 'row', gap: spacing.sm + 2, paddingHorizontal: spacing.xl, paddingTop: spacing.xl },
-  quickAction:      { flex: 1, borderRadius: radius.xl - 2, paddingVertical: spacing.sm, paddingHorizontal: spacing.sm, backgroundColor: 'rgba(255,255,255,0.03)', borderWidth: 1.5, borderColor: colors.primary },
-  quickActionTxt:   { fontFamily: typography.display, fontSize: 14, letterSpacing: -0.1, color: colors.noir },
+  /* Villes — scroll jusqu'aux bords de l'écran, sans marge gauche/droite */
+  cityRow: { flexDirection: 'row', gap: spacing.xs + 2, paddingTop: spacing.lg },
+  glassChip: { backgroundColor: colors.glassBg, borderWidth: 0 },
+  // Chips Tout/Ouvert/Terrasse/Promo — même cadre vert que la recherche
+  glassChipGreen: { backgroundColor: colors.glassBg, borderWidth: 1.5, borderColor: colors.primary },
 
-  /* Section */
-  sectionHead:   { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', paddingHorizontal: spacing.xl, marginTop: spacing.xxl - 2, marginBottom: spacing.sm },
-  sectionLabel:  { color: colors.text, fontFamily: typography.display, fontSize: 14, letterSpacing: -0.3 },
-  sectionRight:  { fontFamily: typography.bodySemibold, color: colors.primary, fontSize: typography.size.caption + 0.5 },
+  /* Actions rapides — cadre rectangle sans couleur (noir), pas de vert */
+  quickActions:  { flexDirection: 'row', gap: spacing.sm + 2, paddingHorizontal: spacing.xl, paddingTop: spacing.sm },
+  quickActionPrimary:   { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.xs + 2, borderRadius: radius.sm, paddingVertical: spacing.md, backgroundColor: colors.glassBg },
+  quickActionPrimaryTxt:{ fontFamily: typography.bodySemibold, fontSize: 13.5, letterSpacing: -0.1, color: colors.noir },
+  quickActionSecondary: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.xs + 2, borderRadius: radius.sm, paddingVertical: spacing.md, backgroundColor: colors.glassBg },
+  quickActionSecondaryTxt:{ fontFamily: typography.bodySemibold, fontSize: 13.5, letterSpacing: -0.1, color: colors.noir },
 
   /* Filtres */
-  filterRow:   { paddingHorizontal: spacing.xl, gap: spacing.xs + 2, paddingBottom: spacing.xs },
+  filterRow:   { paddingHorizontal: spacing.xl, gap: spacing.xs + 2, paddingTop: spacing.xl, paddingBottom: spacing.xs },
 
   /* Empty */
   emptyWrap:   { marginHorizontal: spacing.xl, marginTop: spacing.lg },

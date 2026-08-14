@@ -44,11 +44,11 @@ const s = StyleSheet.create({
   message: { color: colors.textMuted, fontSize: typography.size.bodyLg, textAlign: 'center', lineHeight: 22 },
 
   primaryBtn: {
-    backgroundColor: colors.gold, borderRadius: radius.xl,
+    backgroundColor: colors.primary, borderRadius: radius.xl,
     paddingVertical: spacing.xl - 2, paddingHorizontal: spacing.xxxl,
     alignItems: 'center', width: '100%',
   },
-  primaryTxt: { color: colors.noir, fontSize: typography.size.bodyLg, fontWeight: typography.weight.bold, letterSpacing: 0.5 },
+  primaryTxt: { color: '#FFFFFF', fontSize: typography.size.bodyLg, fontWeight: typography.weight.bold, letterSpacing: 0.5 },
 
   secondaryBtn: { paddingVertical: spacing.md, paddingHorizontal: spacing.xxl },
   secondaryTxt: { color: colors.blue, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium },

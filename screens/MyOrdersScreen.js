@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors, typography, spacing, radius } from '../src/theme';
+import { colors, typography, spacing } from '../src/theme';
 import useMyOrders from '../src/hooks/useMyOrders';
 import OrderCard from '../src/components/OrderCard';
 

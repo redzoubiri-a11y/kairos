@@ -2,18 +2,12 @@ import { useCallback } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, typography, spacing, radius } from '../src/theme';
+import { colors, typography, spacing } from '../src/theme';
 import useFavoris from '../src/hooks/useFavoris';
 import RestaurantCard from '../src/components/RestaurantCard';
-import Tag from '../src/components/Tag';
 import EmptyState from '../src/components/EmptyState';
 import GuestWall from '../src/components/GuestWall';
 import { useGuestContext } from '../src/context/GuestContext';
-
-// Chips visibles mais non filtrantes : pas de catégorisation réelle des
-// favoris en base (aucune colonne équivalente) — même convention que
-// Home/Explorer.
-const FAKE_CHIPS = ['Envie de sortir', 'Business'];
 
 export default function FavorisScreen({ navigation }) {
   const { isGuest } = useGuestContext();
@@ -34,12 +28,7 @@ export default function FavorisScreen({ navigation }) {
       <View style={s.header}>
         <Text style={s.title}>Favoris</Text>
         {!loading && favorites.length > 0 && (
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.chipsRow}>
-            <Tag variant="filterActive" size="filter">Tous ({favorites.length})</Tag>
-            {FAKE_CHIPS.map((label) => (
-              <Tag key={label} variant="filterInactive" size="filter">{label}</Tag>
-            ))}
-          </ScrollView>
+          <Text style={s.subtitle}>Mes préférés</Text>
         )}
       </View>
 
@@ -90,7 +79,7 @@ const s = StyleSheet.create({
 
   header: { paddingTop: spacing.xl, paddingHorizontal: 20 },
   title: { fontFamily: typography.display, fontSize: typography.size.heading2 + 6, color: colors.text, letterSpacing: -0.44 },
-  chipsRow: { flexDirection: 'row', gap: 6, marginTop: spacing.lg, paddingRight: 20 },
+  subtitle: { fontFamily: typography.body, fontSize: typography.size.body, color: colors.textMuted, marginTop: spacing.xs },
 
   list: { paddingHorizontal: 20, paddingTop: spacing.xl, paddingBottom: 84, gap: 10 },
   cardWrap: { position: 'relative' },

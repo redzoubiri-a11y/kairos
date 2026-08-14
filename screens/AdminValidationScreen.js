@@ -4,6 +4,7 @@ import {
   TextInput, RefreshControl, ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import * as ScreenOrientation from 'expo-screen-orientation';
 import { colors, typography, spacing, radius } from '../src/theme';
 import { supabase } from '../supabase';
 import useAdminValidation from '../src/hooks/useAdminValidation';
@@ -88,6 +89,11 @@ export default function AdminValidationScreen({ navigation }) {
   const [checking, setChecking] = useState(true);
   const [isAdmin,  setIsAdmin]  = useState(false);
   const [expanded, setExpanded] = useState(null);
+
+  useEffect(() => {
+    ScreenOrientation.unlockAsync();
+    return () => ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
+  }, []);
 
   useEffect(() => {
     (async () => {

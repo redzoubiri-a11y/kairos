@@ -1,9 +1,10 @@
-import { useState, useCallback } from 'react';
+import { useCallback, useRef, useEffect, useState } from 'react';
 import {
-  View, Text, StyleSheet, TouchableOpacity, ScrollView,
-  ActivityIndicator, Platform, TextInput, FlatList,
+  View, Text, StyleSheet, TextInput, Platform, FlatList, TouchableOpacity, Image,
+  Animated, useWindowDimensions,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 let MapView, Marker;
 if (Platform.OS !== 'web') {
@@ -12,213 +13,239 @@ if (Platform.OS !== 'web') {
   Marker  = maps.Marker;
 }
 import { colors, typography, spacing, radius, shadows } from '../src/theme';
-import useExplorer, { getCoord } from '../src/hooks/useExplorer';
-import RestaurantCard from '../src/components/RestaurantCard';
-import Tag from '../src/components/Tag';
+import useExplorer, { getCoord, haversineKm } from '../src/hooks/useExplorer';
 import EmptyState from '../src/components/EmptyState';
 
-// Chips visibles mais non filtrantes : pas de donnée réelle en base
-// (open_time/close_time/amenities NULL, pas de table promotions) — même
-// convention que HomeScreen.
-const FAKE_CHIPS = ['Ouvert', 'Terrasse', '€€', 'Note 4,5+'];
+const ALGER_REGION = { latitude: 36.7538, longitude: 3.0588, latitudeDelta: 0.14, longitudeDelta: 0.14 };
+// Hauteur "repos" du panneau — bandeau + un aperçu de la liste (photos comprises),
+// pas juste le compteur seul (les images doivent être sur le même bandeau).
+const PANEL_PEEK_H = 300;
 
-const SORT_OPTIONS = [
-  { id: 'pertinence', label: 'Pertinence' },
-  { id: 'note', label: 'Note' },
-];
+function formatDistance(km) {
+  return km < 1 ? `${Math.round(km * 1000)} m` : `${km.toFixed(1)} km`;
+}
 
-export default function ExplorerScreen({ navigation }) {
-  const { restaurants, loading, query, setQuery, sortBy, setSortBy } = useExplorer();
-  const [sortOpen, setSortOpen] = useState(false);
+export default function ExplorerScreen({ navigation, route }) {
+  const { restaurants, loading, query, setQuery, userLocation, requestLocation } = useExplorer();
+  const mapRef = useRef(null);
+  const insets = useSafeAreaInsets();
+  const { height: screenH } = useWindowDimensions();
 
-  const goMap = useCallback(() => navigation.navigate('Map'), [navigation]);
+  // Bandeau "N restaurants à proximité" — les vignettes sont sur le même bandeau,
+  // dès l'état au repos. Tap sur l'en-tête = monte le bandeau vers la carte.
+  const [listExpanded, setListExpanded] = useState(false);
+  const panelAnim = useRef(new Animated.Value(0)).current;
+  const panelPeekH = PANEL_PEEK_H + insets.bottom;
+  const panelExpandedH = Math.round(screenH * 0.82);
+  const panelHeight = panelAnim.interpolate({ inputRange: [0, 1], outputRange: [panelPeekH, panelExpandedH] });
+  const toggleList = useCallback(() => {
+    setListExpanded(prev => {
+      const next = !prev;
+      Animated.timing(panelAnim, { toValue: next ? 1 : 0, duration: 320, useNativeDriver: false }).start();
+      return next;
+    });
+  }, [panelAnim]);
+
+  useEffect(() => { requestLocation(); }, [requestLocation]);
+
+  // Préremplit la recherche quand on arrive depuis une catégorie/ville de l'Accueil
+  useFocusEffect(useCallback(() => {
+    const initial = route?.params?.initialQuery;
+    if (initial) setQuery(initial);
+  }, [route?.params?.initialQuery]));
+
+  useEffect(() => {
+    if (!mapRef.current) return;
+    if (!query.trim() || restaurants.length === 0) {
+      mapRef.current.animateToRegion(ALGER_REGION, 400);
+      return;
+    }
+    const coords = restaurants.map(getCoord);
+    const lats = coords.map(c => c.latitude);
+    const lngs = coords.map(c => c.longitude);
+    const minLat = Math.min(...lats), maxLat = Math.max(...lats);
+    const minLng = Math.min(...lngs), maxLng = Math.max(...lngs);
+    mapRef.current.animateToRegion({
+      latitude: (minLat + maxLat) / 2,
+      longitude: (minLng + maxLng) / 2,
+      latitudeDelta: Math.max((maxLat - minLat) * 1.8, 0.03),
+      longitudeDelta: Math.max((maxLng - minLng) * 1.8, 0.03),
+    }, 450);
+  }, [query, restaurants]);
+
   const goRestaurant = useCallback(
     (r) => navigation.navigate('Restaurant', { restaurant: r }),
     [navigation],
   );
-  const pickSort = useCallback((id) => { setSortBy(id); setSortOpen(false); }, [setSortBy]);
-
-  const sortLabel = SORT_OPTIONS.find(o => o.id === sortBy)?.label ?? 'Trier';
-  const count = restaurants.length;
-
-  const renderItem = useCallback(({ item: r }) => (
-    <View style={s.cardWrap}>
-      <RestaurantCard r={r} variant="compact" onPress={() => goRestaurant(r)} />
-    </View>
-  ), [goRestaurant]);
 
   return (
-    <SafeAreaView style={s.root} edges={['top']}>
-      <FlatList
-        data={restaurants}
-        keyExtractor={(r) => String(r.id)}
-        renderItem={renderItem}
-        ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
-        contentContainerStyle={s.listContent}
-        showsVerticalScrollIndicator={false}
-        ListHeaderComponent={
-          <>
-            <View style={s.header}>
-              <Text style={s.title}>Explorer</Text>
-
-              <View style={s.searchBar}>
-                <Ionicons name="search-outline" size={14} color={colors.primary} />
-                <TextInput
-                  style={s.searchInput}
-                  value={query}
-                  onChangeText={setQuery}
-                  placeholder="Restaurant, cuisine, quartier…"
-                  placeholderTextColor={colors.textPlaceholder}
-                />
-              </View>
-
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={s.chipsRow}
+    <SafeAreaView style={s.root} edges={[]}>
+      {Platform.OS !== 'web' ? (
+        <MapView
+          ref={mapRef}
+          style={StyleSheet.absoluteFill}
+          initialRegion={ALGER_REGION}
+          showsCompass={false}
+          toolbarEnabled={false}
+          showsUserLocation={!!userLocation}
+        >
+          {restaurants.map((r) => {
+            const coord = getCoord(r);
+            const distance = userLocation
+              ? formatDistance(haversineKm(userLocation.latitude, userLocation.longitude, coord.latitude, coord.longitude))
+              : null;
+            return (
+              <Marker
+                key={String(r.id)}
+                coordinate={coord}
+                tracksViewChanges={true}
+                onPress={() => goRestaurant(r)}
+                anchor={{ x: 0.5, y: 0 }}
               >
-                <TouchableOpacity onPress={goMap}>
-                  <Tag variant="filterActive" size="filter">Carte</Tag>
-                </TouchableOpacity>
-                {FAKE_CHIPS.map((label) => (
-                  <Tag key={label} variant="filterInactive" size="filter">{label}</Tag>
-                ))}
-              </ScrollView>
-            </View>
+                <View style={s.pinWrap}>
+                  <View style={[s.pin, shadows.mapPin]}>
+                    <View style={s.pinDot} />
+                  </View>
+                  {!!distance && (
+                    <View style={s.distancePill}>
+                      <Text style={s.distanceTxt}>{distance}</Text>
+                    </View>
+                  )}
+                </View>
+              </Marker>
+            );
+          })}
+        </MapView>
+      ) : (
+        <View style={[StyleSheet.absoluteFill, s.webFallback]}>
+          <Text style={s.webFallbackTxt}>Carte disponible sur mobile</Text>
+        </View>
+      )}
 
-            <View style={s.miniMap}>
-              {Platform.OS !== 'web' ? (
-                <MapView
-                  style={StyleSheet.absoluteFill}
-                  initialRegion={{ latitude: 36.7538, longitude: 3.0588, latitudeDelta: 0.12, longitudeDelta: 0.12 }}
-                  scrollEnabled={false}
-                  zoomEnabled={false}
-                  rotateEnabled={false}
-                  pitchEnabled={false}
-                  showsCompass={false}
-                  toolbarEnabled={false}
-                  onPress={goMap}
-                >
-                  {restaurants.slice(0, 30).map((r) => (
-                    <Marker
-                      key={String(r.id)}
-                      coordinate={getCoord(r)}
-                      tracksViewChanges={false}
-                      onPress={() => goRestaurant(r)}
-                      anchor={{ x: 0.5, y: 0.5 }}
-                    >
-                      <View style={[s.pin, shadows.mapPin]}>
-                        <View style={s.pinDot} />
+      <View style={[s.topBar, { paddingTop: insets.top + spacing.xl }]}>
+        <View style={s.searchBar}>
+          <Ionicons name="search-outline" size={14} color={colors.primary} />
+          <TextInput
+            style={s.searchInput}
+            value={query}
+            onChangeText={setQuery}
+            placeholder="Restaurant, cuisine, quartier…"
+            placeholderTextColor={colors.textPlaceholder}
+          />
+        </View>
+      </View>
+
+      {!loading && restaurants.length === 0 && (
+        <EmptyState
+          icon={<Text style={{ fontSize: 20 }}>🔍</Text>}
+          title="Aucun restaurant trouvé"
+          subtitle="Essayez un autre nom, une autre cuisine ou un autre quartier."
+          style={s.emptyState}
+        />
+      )}
+
+      {/* Bandeau "N restaurants à proximité" — tap = monte en liste complète sur la carte */}
+      {!loading && (
+        <Animated.View style={[s.bottomPanel, { height: panelHeight, paddingBottom: insets.bottom }]}>
+          <TouchableOpacity style={s.bottomPanelHeader} onPress={toggleList} activeOpacity={0.8}>
+            <View style={s.bottomPanelHandle} />
+            <Text style={s.bottomPanelTitle}>
+              {restaurants.length} restaurant{restaurants.length !== 1 ? 's' : ''} à proximité
+            </Text>
+          </TouchableOpacity>
+
+          <FlatList
+            style={{ flex: 1 }}
+            data={restaurants}
+            keyExtractor={(r) => String(r.id)}
+            contentContainerStyle={s.bottomListContent}
+            showsVerticalScrollIndicator={false}
+            renderItem={({ item: r }) => {
+              const rating = r.avg_rating > 0 ? Number(r.avg_rating).toFixed(1).replace('.', ',') : null;
+              const meta = [(r.cuisine_type || '').replace(/_/g, ' '), r.quartier].filter(Boolean).join(' · ');
+              const photo = r.photos?.[0];
+              return (
+                <TouchableOpacity style={s.bottomRow} onPress={() => goRestaurant(r)} activeOpacity={0.85}>
+                  <View style={s.bottomRowInfo}>
+                    <Text style={s.bottomRowName} numberOfLines={1}>{r.name}</Text>
+                    {!!meta && <Text style={s.bottomRowMeta} numberOfLines={1}>{meta}</Text>}
+                    {!!rating && (
+                      <View style={s.bottomRowRating}>
+                        <Text style={s.bottomRowStar}>★</Text>
+                        <Text style={s.bottomRowRatingTxt}>{rating}</Text>
                       </View>
-                    </Marker>
-                  ))}
-                </MapView>
-              ) : (
-                <TouchableOpacity style={[StyleSheet.absoluteFill, s.miniMapWebFallback]} onPress={goMap}>
-                  <Text style={s.miniMapWebTxt}>Carte disponible sur mobile</Text>
+                    )}
+                  </View>
+                  {photo
+                    ? <Image source={{ uri: photo }} style={s.bottomRowImg} resizeMode="cover" />
+                    : <View style={[s.bottomRowImg, s.imgPlaceholder]} />
+                  }
                 </TouchableOpacity>
-              )}
-              <View style={s.miniMapBadge} pointerEvents="none">
-                <Text style={s.miniMapBadgeTxt}>{count} restaurant{count > 1 ? 's' : ''} ici</Text>
-              </View>
-              <TouchableOpacity style={[s.locateBtn, shadows.mapControl]} onPress={goMap}>
-                <Ionicons name="locate-outline" size={15} color={colors.text} />
-              </TouchableOpacity>
-            </View>
-
-            <View style={s.resultsRow}>
-              <Text style={s.resultsCount}>{count} résultat{count > 1 ? 's' : ''}</Text>
-              <TouchableOpacity onPress={() => setSortOpen((o) => !o)}>
-                <Text style={s.sortTxt}>{sortLabel} ▾</Text>
-              </TouchableOpacity>
-            </View>
-
-            {sortOpen && (
-              <View style={s.sortMenu}>
-                {SORT_OPTIONS.map((o) => (
-                  <TouchableOpacity key={o.id} style={s.sortItem} onPress={() => pickSort(o.id)}>
-                    <Text style={[s.sortItemTxt, sortBy === o.id && s.sortItemTxtActive]}>{o.label}</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            )}
-          </>
-        }
-        ListEmptyComponent={
-          loading ? (
-            <View style={s.loading}>
-              <ActivityIndicator color={colors.primary} size="large" />
-            </View>
-          ) : (
-            <EmptyState
-              icon={<Text style={{ fontSize: 20 }}>🔍</Text>}
-              title="Aucun restaurant trouvé"
-              subtitle="Essayez un autre nom, une autre cuisine ou un autre quartier."
-              style={s.emptyState}
-            />
-          )
-        }
-      />
+              );
+            }}
+          />
+        </Animated.View>
+      )}
     </SafeAreaView>
   );
 }
 
 const s = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.bg },
-  listContent: { paddingBottom: 84 },
 
-  header: { paddingTop: spacing.xl, paddingHorizontal: 20 },
-  title: { fontFamily: typography.display, fontSize: typography.size.heading2 + 6, color: colors.text, letterSpacing: -0.44 },
+  topBar: { position: 'absolute', top: 0, left: 0, right: 0, paddingHorizontal: 20 },
 
+  // Verre blanc, cadre vert — cohérent avec le reste de l'app
   searchBar: {
-    marginTop: 14, flexDirection: 'row', alignItems: 'center', gap: 9,
-    backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder,
+    flexDirection: 'row', alignItems: 'center', gap: 9,
+    backgroundColor: colors.glassBg,
+    borderWidth: 1.5, borderColor: colors.primary,
     borderRadius: radius.lg, paddingVertical: spacing.lg, paddingHorizontal: spacing.lg + 1,
   },
   searchInput: { flex: 1, fontFamily: typography.body, fontSize: typography.size.bodyLg, color: colors.text, padding: 0 },
 
-  chipsRow: { flexDirection: 'row', gap: 6, marginTop: spacing.lg, paddingRight: 20 },
-
-  miniMap: {
-    marginTop: 14, marginHorizontal: 20, height: 230,
-    borderRadius: radius.xl, overflow: 'hidden', backgroundColor: colors.cardHover,
-  },
-  miniMapWebFallback: { alignItems: 'center', justifyContent: 'center', backgroundColor: colors.cardHover, padding: spacing.xl },
-  miniMapWebTxt: { fontFamily: typography.body, fontSize: typography.size.body, color: colors.textMuted, textAlign: 'center' },
-  // Cible circulaire (pas de rotation, meilleure zone de clic que le losange pivoté)
+  // Cible circulaire, tap direct = ouvre la fiche resto
+  pinWrap: { alignItems: 'center' },
   pin: {
-    width: 28, height: 28, borderRadius: 14,
+    width: 30, height: 30, borderRadius: 15,
     backgroundColor: colors.primary, borderWidth: 3, borderColor: '#FFFFFF',
     alignItems: 'center', justifyContent: 'center',
   },
-  pinDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#FFFFFF' },
-  miniMapBadge: {
-    position: 'absolute', top: 12, left: 12, backgroundColor: 'rgba(255,255,255,0.92)',
-    paddingHorizontal: 10, paddingVertical: 5, borderRadius: radius.badgeSm,
+  pinDot: { width: 9, height: 9, borderRadius: 4.5, backgroundColor: '#FFFFFF' },
+
+  imgPlaceholder: { backgroundColor: colors.cardHover },
+  distancePill: {
+    marginTop: 3, backgroundColor: 'rgba(10,10,10,0.78)', borderRadius: radius.sm,
+    paddingHorizontal: spacing.xs + 1, paddingVertical: 2,
   },
-  miniMapBadgeTxt: { fontFamily: typography.bodySemibold, fontSize: typography.size.caption - 0.5, color: colors.text },
-  locateBtn: {
-    position: 'absolute', bottom: 12, right: 12, width: 34, height: 34,
-    borderRadius: radius.control, backgroundColor: colors.card, alignItems: 'center', justifyContent: 'center',
+  distanceTxt: { fontFamily: typography.bodySemibold, fontSize: typography.size.xs, color: '#FFFFFF' },
+
+  webFallback: { alignItems: 'center', justifyContent: 'center', backgroundColor: colors.cardHover, padding: spacing.xl },
+  webFallbackTxt: { fontFamily: typography.body, fontSize: typography.size.body, color: colors.textMuted },
+
+  emptyState: {
+    position: 'absolute', left: 20, right: 20, top: '45%',
   },
 
-  resultsRow: {
-    marginTop: 18, paddingHorizontal: 20, marginBottom: spacing.lg,
-    flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between',
+  // Bandeau bas — collé au bord de l'écran, monte en liste complète au tap
+  bottomPanel: {
+    position: 'absolute', left: 0, right: 0, bottom: 0,
+    backgroundColor: colors.glassBgStrong,
+    borderTopLeftRadius: radius.xxl, borderTopRightRadius: radius.xxl,
+    overflow: 'hidden',
+    ...shadows.md,
   },
-  resultsCount: { fontFamily: typography.display, fontSize: typography.size.heading3, color: colors.text, letterSpacing: -0.15 },
-  sortTxt: { fontFamily: typography.bodySemibold, fontSize: typography.size.caption + 0.5, color: colors.primary },
+  bottomPanelHeader: { alignItems: 'center', paddingTop: spacing.sm, paddingBottom: spacing.md },
+  bottomPanelHandle: { width: 36, height: 4, borderRadius: 2, backgroundColor: colors.cardBorder, marginBottom: spacing.sm },
+  bottomPanelTitle: { fontFamily: typography.bodySemibold, fontSize: typography.size.body, color: colors.text },
 
-  sortMenu: {
-    alignSelf: 'flex-end', marginRight: 20, marginTop: -spacing.sm, marginBottom: spacing.lg,
-    backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, borderRadius: radius.lg,
-    paddingVertical: spacing.xs, ...shadows.sm,
-  },
-  sortItem: { paddingVertical: spacing.sm, paddingHorizontal: spacing.xl },
-  sortItemTxt: { fontFamily: typography.body, fontSize: typography.size.bodyLg, color: colors.textMuted },
-  sortItemTxtActive: { fontFamily: typography.bodySemibold, color: colors.primary },
-
-  cardWrap: { paddingHorizontal: 20 },
-  loading: { paddingVertical: spacing.section, alignItems: 'center', justifyContent: 'center' },
-  emptyState: { marginHorizontal: 20 },
+  bottomListContent: { paddingHorizontal: spacing.xl, paddingBottom: spacing.xxl, gap: spacing.md },
+  bottomRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, backgroundColor: colors.card, borderRadius: radius.lg, padding: spacing.md, borderWidth: 1, borderColor: colors.cardBorder },
+  bottomRowInfo: { flex: 1, minWidth: 0 },
+  bottomRowName: { fontFamily: typography.display, fontSize: typography.size.subheading, color: colors.text },
+  bottomRowMeta: { fontFamily: typography.body, fontSize: typography.size.caption, color: colors.textMuted, marginTop: 2 },
+  bottomRowRating: { flexDirection: 'row', alignItems: 'center', gap: 3, marginTop: 4 },
+  bottomRowStar: { fontSize: 11, color: colors.gold },
+  bottomRowRatingTxt: { fontFamily: typography.bodyBold, fontSize: typography.size.caption, color: colors.text },
+  bottomRowImg: { width: 64, height: 64, borderRadius: radius.md, flexShrink: 0 },
 });

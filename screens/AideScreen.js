@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
 } from 'react-native';
@@ -245,37 +245,37 @@ const s = StyleSheet.create({
   mainBackBtnTxt: { color: colors.text, fontSize: 22 },
   backBtn:    { width: 36, height: 36, borderRadius: 18, backgroundColor: 'transparent', alignItems: 'center', justifyContent: 'center' },
   backBtnTxt: { color: colors.text, fontSize: typography.size.subheading },
-  title:      { color: colors.text, fontSize: typography.size.heading2, fontWeight: typography.weight.semibold },
-  subtitle:   { color: colors.textMuted, fontSize: typography.size.caption, marginTop: 1 },
+  title:      { fontFamily: typography.bodySemibold, color: colors.text, fontSize: typography.size.heading2 },
+  subtitle:   { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.caption, marginTop: 1 },
 
-  contactCard:    { backgroundColor: 'rgba(200,151,90,0.12)', borderRadius: radius.xxl, borderWidth: 1, borderColor: 'rgba(200,151,90,0.35)', padding: spacing.xl, alignItems: 'center', gap: spacing.xs, shadowColor: '#000', shadowOpacity: 0.3, shadowRadius: 10, shadowOffset: { width: 0, height: 0 }, elevation: 4 },
+  contactCard:    { backgroundColor: 'rgba(200,151,90,0.12)', borderRadius: radius.xxl, borderWidth: 1, borderColor: 'rgba(200,151,90,0.35)', padding: spacing.xl, alignItems: 'center', gap: spacing.xs },
   contactIcon:    { fontSize: 28 },
-  contactTitle:   { color: colors.gold, fontSize: typography.size.body, fontWeight: typography.weight.bold, textAlign: 'center' },
-  contactSub:     { color: colors.textMuted, fontSize: typography.size.xs, textAlign: 'center' },
+  contactTitle:   { fontFamily: typography.bodyBold, color: colors.gold, fontSize: typography.size.body, textAlign: 'center' },
+  contactSub:     { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.xs, textAlign: 'center' },
   onlineBadge:    { flexDirection: 'row', alignItems: 'center', gap: spacing.xs, backgroundColor: colors.greenSoft, borderRadius: radius.full, paddingHorizontal: spacing.md, paddingVertical: 3, borderWidth: 1, borderColor: 'rgba(76,175,130,0.3)', marginTop: spacing.xs },
   onlineDot:      { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.green },
-  onlineTxt:      { color: colors.green, fontSize: typography.size.xs },
+  onlineTxt:      { fontFamily: typography.body, color: colors.green, fontSize: typography.size.xs },
 
-sectionLabel: { color: colors.text, fontSize: typography.size.body, fontWeight: typography.weight.bold, marginBottom: spacing.md },
+  sectionLabel: { fontFamily: typography.bodyBold, color: colors.text, fontSize: typography.size.body, marginBottom: spacing.md },
 
   faqCard:        { backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, overflow: 'hidden' },
   faqItem:        {},
   faqBorder:      { borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   faqQ:           { flexDirection: 'row', alignItems: 'center', paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, gap: spacing.lg },
-  faqQTxt:        { color: colors.text, fontSize: typography.size.body },
-  faqSection:     { color: colors.textDim, fontSize: typography.size.xs, marginTop: 2 },
+  faqQTxt:        { fontFamily: typography.body, color: colors.text, fontSize: typography.size.body },
+  faqSection:     { fontFamily: typography.body, color: colors.textDim, fontSize: typography.size.xs, marginTop: 2 },
   faqChevron:     { color: colors.textDim, fontSize: typography.size.subheading },
   faqChevronOpen: { transform: [{ rotate: '90deg' }] },
   faqA:           { paddingHorizontal: spacing.xl, paddingBottom: spacing.lg, paddingTop: 0 },
-  faqATxt:        { color: colors.textMuted, fontSize: typography.size.body, lineHeight: 20 },
+  faqATxt:        { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.body, lineHeight: 20 },
 
   legalCard:   { backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, overflow: 'hidden' },
   legalRow:    { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xl, paddingVertical: spacing.lg },
   legalBorder: { borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
-  legalTxt:    { color: colors.text, fontSize: typography.size.body },
+  legalTxt:    { fontFamily: typography.body, color: colors.text, fontSize: typography.size.body },
   legalArrow:  { color: colors.textDim, fontSize: typography.size.subheading },
 
-  version:       { color: colors.textDim, fontSize: typography.size.xs, textAlign: 'center', letterSpacing: 1 },
-  legalBody:     { color: colors.textMuted, fontSize: typography.size.body, lineHeight: 22 },
-  legalPageTitle:{ color: colors.text, fontSize: typography.size.body, fontWeight: typography.weight.semibold, flex: 1 },
+  version:       { fontFamily: typography.body, color: colors.textDim, fontSize: typography.size.xs, textAlign: 'center', letterSpacing: 1 },
+  legalBody:     { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.body, lineHeight: 22 },
+  legalPageTitle:{ fontFamily: typography.bodySemibold, color: colors.text, fontSize: typography.size.body, flex: 1 },
 });

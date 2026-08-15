@@ -8,11 +8,21 @@
 // une seule couleur d'accent (vert) au lieu de cyan (primary) + magenta (resa)
 const GREEN = '#0D6B3F';
 
+// Règle d'usage de la palette d'accent (rappel demandé par l'utilisateur, 15/08/2026) :
+// #13502E = surface d'ancrage (fonds pleins, headers immersifs)
+// #2C7A35 = action unique — bouton principal, UN SEUL bouton par écran
+// #f5c842 = score et étoiles UNIQUEMENT, jamais un fond ou un texte de bouton
+// ⚠ Valeur actuelle de GREEN (colors.primary/resa) = #0D6B3F, distincte de #13502E/#2C7A35
+// ci-dessus — écart signalé à l'utilisateur, non résolu (cf. Lot 0), ne pas trancher seul.
+
 export const colors = {
   // Palette principale MIDA — vert TheFork (08/2026)
   primary: GREEN,
   primarySoft: 'rgba(13,107,63,0.10)',
   primaryDim: 'rgba(13,107,63,0.06)',
+  // Vert pin — surface d'ancrage (Lot 1, 15/08/2026), cf. règle d'usage ci-dessus.
+  // Distinct de `primary` : n'y touche pas tant que le remplacement de GREEN n'est pas validé.
+  anchorGreen: '#13502E',
   noir: '#0A0A0A',
   cream: '#F5EDD6',
   greyBg: '#F5F6F8',
@@ -77,6 +87,21 @@ export const colors = {
   tealMid: 'rgba(58,150,168,0.35)',
   tealDark: '#1A3D44',
 
+  // ── Neutres papier — Lot 0 (15/08/2026) ─────────────────────────────
+  // Demandés pour remplacer les hex codés en dur dans les composants.
+  // Hex absolus distincts de text/textMuted/textDim/textSecondary/textTertiary
+  // (ceux-ci sont des rgba sur noir, calibrés pour l'ancien bg quasi-blanc) —
+  // noms suffixés "Paper" là où un nom sans suffixe existait déjà avec une
+  // valeur différente, pour ne casser aucune clé existante.
+  bgPaper: '#F7F4EE', // fond papier — à terme remplace colors.bg comme fond d'écran (pas fait ici)
+  // surface carte #FFFFFF : déjà couvert par colors.card, pas de doublon créé
+  textPrimary: '#1C1C1A',
+  textSecondaryPaper: '#6B6B63',
+  textTertiaryPaper: '#8A897F', // texte discret
+  borderPaper: '#E2DFD6',
+  borderPaperStrong: '#C4C2B8',
+  unavailable: '#A32D2D', // état indisponible / complet
+
   // Overlay
   overlay: 'rgba(0,0,0,0.5)',
   overlayLight: 'rgba(0,0,0,0.15)',
@@ -100,6 +125,18 @@ export const colors = {
   tagNeutralBg: '#F1EEE6',
   textSecondary: 'rgba(10,10,10,0.55)',
   textTertiary: 'rgba(10,10,10,0.45)',
+
+  // Dégradé de repli quand un restaurant n'a aucune photo — tons sable chauds
+  // alignés sur la famille cream/cardBorder de la direction "Marché"
+  // (remplace un mauve/bleu-gris hors palette trouvé dans 6 écrans).
+  photoFallbackGradient: ['#EDE6D4', '#DED2B4', '#C7B78D'],
+
+  // Fond plein écran chaud — Espace Manager (remplace le blanc plat de colors.bg,
+  // couleur unie donc homogène quelle que soit la hauteur de scroll).
+  warmBg: '#F9F1DF',
+  // Halos décoratifs discrets posés sur warmBg (effet d'ambiance, faible opacité).
+  glowGold: 'rgba(200,151,90,0.16)',
+  glowWarm: 'rgba(216,150,104,0.13)',
 };
 
 export const typography = {

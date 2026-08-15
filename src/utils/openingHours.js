@@ -43,3 +43,21 @@ export function isOpenNow(oh) {
   const nowMin = now.getHours() * 60 + now.getMinutes();
   return nowMin >= toMin(today.open) && nowMin <= toMin(today.close);
 }
+
+// Créneaux d'affichage MVP (Lot 1, 15/08/2026) — PAS une vraie disponibilité : aucune
+// vérification de capacité (check_capacity), seulement 3 horaires plausibles dérivés du
+// créneau du jour, pour donner un aperçu visuel sur RestaurantListCard. À remplacer par un
+// vrai calcul de dispo si ce chantier est repris (cf. plan Lot 1, validé tel quel).
+export function mvpSlots(oh) {
+  if (!oh || typeof oh === 'string' || !Array.isArray(oh) || oh.length === 0) return [];
+  const day = new Date().getDay();
+  const today = oh.find(d => d.day === day);
+  if (!today) return [];
+  const toMin = s => { const [h, m] = (s || '0:0').split(':').map(Number); return h * 60 + (m || 0); };
+  const toHM  = min => { const h = Math.floor(min / 60) % 24; const m = min % 60; return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`; };
+  const open  = toMin(today.open);
+  const close = toMin(today.close);
+  if (close <= open) return [];
+  const span = close - open;
+  return [0.3, 0.5, 0.7].map(f => toHM(Math.round((open + span * f) / 30) * 30));
+}

@@ -92,22 +92,22 @@ const s = StyleSheet.create({
     paddingHorizontal: spacing.xxl, paddingVertical: spacing.xl,
     borderBottomWidth: 1, borderBottomColor: colors.cardBorder,
   },
-  title:    { color: colors.text, fontSize: typography.size.heading3, fontWeight: typography.weight.medium, flex: 1 },
+  title:    { color: colors.text, fontFamily: typography.displayMedium, fontSize: typography.size.heading3, fontWeight: typography.weight.medium, flex: 1 },
   closeBtn: { paddingVertical: spacing.sm, paddingHorizontal: spacing.md },
-  closeTxt: { color: colors.blue, fontSize: typography.size.bodyLg },
+  closeTxt: { color: colors.blue, fontFamily: typography.body, fontSize: typography.size.bodyLg },
 
   scroll:  { paddingHorizontal: spacing.xxl, paddingTop: spacing.xl },
-  updated: { color: colors.textDim, fontSize: typography.size.caption, marginBottom: spacing.md },
+  updated: { color: colors.textDim, fontFamily: typography.body, fontSize: typography.size.caption, marginBottom: spacing.md },
   law: {
-    color: colors.textMuted, fontSize: typography.size.caption,
+    color: colors.textMuted, fontFamily: typography.body, fontSize: typography.size.caption,
     borderLeftWidth: 2, borderLeftColor: colors.resa,
     paddingLeft: spacing.md, marginBottom: spacing.xxl,
     lineHeight: 18,
   },
 
   section:      { marginBottom: spacing.xxl },
-  sectionTitle: { color: colors.text, fontSize: typography.size.bodyLg, fontWeight: typography.weight.semibold, marginBottom: spacing.md },
-  sectionBody:  { color: colors.textMuted, fontSize: typography.size.body, lineHeight: 22 },
+  sectionTitle: { color: colors.text, fontFamily: typography.bodySemibold, fontSize: typography.size.bodyLg, fontWeight: typography.weight.semibold, marginBottom: spacing.md },
+  sectionBody:  { color: colors.textMuted, fontFamily: typography.body, fontSize: typography.size.body, lineHeight: 22 },
 
   footer: {
     paddingHorizontal: spacing.xxl, paddingVertical: spacing.xl,
@@ -117,5 +117,5 @@ const s = StyleSheet.create({
     backgroundColor: colors.primary, borderRadius: radius.xl,
     paddingVertical: spacing.xl - 2, alignItems: 'center',
   },
-  closeFullTxt: { color: colors.bg, fontSize: typography.size.bodyLg, fontWeight: typography.weight.bold },
+  closeFullTxt: { color: colors.bg, fontFamily: typography.bodyBold, fontSize: typography.size.bodyLg, fontWeight: typography.weight.bold },
 });

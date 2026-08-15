@@ -1,100 +1,43 @@
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { colors, typography, spacing, radius, shadows } from '../theme';
-
-function priceRangeFromTicket(avgTicket) {
-  if (!avgTicket) return null;
-  if (avgTicket < 1500) return '€';
-  if (avgTicket < 3000) return '€€';
-  return '€€€';
-}
+import PhotoCarouselHero from './PhotoCarouselHero';
 
 export default function RestaurantCard({ r, variant = 'compact', distance, slots, promo, onPress, onSlotPress }) {
   const isFeatured = variant === 'featured';
-  const photo = r.photos?.[0];
-  const priceRange = priceRangeFromTicket(r.avg_ticket);
   const rating = r.avg_rating > 0 ? Number(r.avg_rating).toFixed(1).replace('.', ',') : null;
-  const meta = [
-    (r.cuisine_type || '').replace(/_/g, ' '),
-    r.quartier,
-    distance,
-    priceRange,
-  ].filter(Boolean).join(' · ');
-
-  if (isFeatured) {
-    return (
-      <TouchableOpacity style={s.featCard} onPress={onPress} activeOpacity={0.9}>
-        <View style={s.featImgWrap}>
-          {photo
-            ? <Image source={{ uri: photo }} style={s.featImg} resizeMode="cover" />
-            : <View style={[s.featImg, s.imgPlaceholder]} />
-          }
-          {!!promo && (
-            <View style={s.promoBadge}>
-              <Text style={s.promoTxt}>{promo}</Text>
-            </View>
-          )}
-        </View>
-        <View style={s.featBody}>
-          <View style={s.featTop}>
-            <Text style={s.featName} numberOfLines={1}>{r.name}</Text>
-            {rating && (
-              <View style={s.ratingPill}>
-                <Text style={s.star}>★</Text>
-                <Text style={s.ratingTxt}>{rating}</Text>
-              </View>
-            )}
-          </View>
-          {!!meta && <Text style={s.featMeta} numberOfLines={1}>{meta}</Text>}
-          {!!slots?.length && (
-            <View style={s.slotsRow}>
-              {slots.slice(0, 3).map((slot, i) => (
-                <TouchableOpacity
-                  key={slot}
-                  style={[s.slot, i === 2 && s.slotCta]}
-                  onPress={() => onSlotPress?.(slot)}
-                >
-                  <Text style={[s.slotTxt, i === 2 && s.slotCtaTxt]}>{slot}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          )}
-        </View>
-      </TouchableOpacity>
-    );
-  }
+  const meta = [r.quartier, distance].filter(Boolean).join(' · ');
+  const imgHeight = isFeatured ? 300 : 170;
 
   return (
-    <TouchableOpacity style={s.compCard} onPress={onPress} activeOpacity={0.85}>
-      <View style={s.compImgWrap}>
-        {photo
-          ? <Image source={{ uri: photo }} style={s.compImg} resizeMode="cover" />
-          : <View style={[s.compImg, s.imgPlaceholder]} />
-        }
+    <TouchableOpacity style={isFeatured ? s.featCard : s.compCard} onPress={onPress} activeOpacity={0.9}>
+      <View>
+        <PhotoCarouselHero restaurant={r} height={imgHeight} showPrevArrow />
         {!!promo && (
-          <View style={s.promoBadgeSm}>
-            <Text style={s.promoTxtSm} numberOfLines={1}>{promo}</Text>
+          <View style={s.promoBadge}>
+            <Text style={s.promoTxt}>{promo}</Text>
           </View>
         )}
       </View>
-      <View style={s.compBody}>
-        <Text style={s.compName} numberOfLines={1}>{r.name}</Text>
-        {(rating || r.review_count > 0) && (
-          <View style={s.compRatingRow}>
-            {rating && <Text style={s.starSm}>★</Text>}
-            {rating && <Text style={s.compRating}>{rating}</Text>}
-            {r.review_count > 0 && <Text style={s.reviewCount}>({r.review_count})</Text>}
-          </View>
-        )}
-        {!!meta && <Text style={s.compMeta} numberOfLines={1}>{meta}</Text>}
+      <View style={isFeatured ? s.featBody : s.compBody}>
+        <View style={s.top}>
+          <Text style={isFeatured ? s.featName : s.compName} numberOfLines={1}>{r.name}</Text>
+          {rating && (
+            <View style={s.ratingPill}>
+              <Text style={s.ratingTxt}>{rating}</Text>
+              {r.review_count > 0 && <Text style={s.reviewCount}>({r.review_count})</Text>}
+            </View>
+          )}
+        </View>
+        {!!meta && <Text style={isFeatured ? s.featMeta : s.compMeta} numberOfLines={1}>{meta}</Text>}
         {!!slots?.length && (
-          <View style={s.slotsRowSm}>
+          <View style={s.slotsRow}>
             {slots.slice(0, 3).map((slot, i) => (
               <TouchableOpacity
                 key={slot}
-                style={[s.slotSm, i === 2 && s.slotCtaSm]}
+                style={[s.slot, i === 2 && s.slotCta]}
                 onPress={() => onSlotPress?.(slot)}
               >
-                <Text style={[s.slotSmTxt, i === 2 && s.slotCtaSmTxt]}>{slot}</Text>
+                <Text style={[s.slotTxt, i === 2 && s.slotCtaTxt]}>{slot}</Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -105,43 +48,29 @@ export default function RestaurantCard({ r, variant = 'compact', distance, slots
 }
 
 const s = StyleSheet.create({
-  imgPlaceholder: { backgroundColor: colors.cardHover },
+  featCard: { backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, borderRadius: radius.card, overflow: 'hidden', ...shadows.md },
+  compCard: { backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, borderRadius: radius.card, overflow: 'hidden' },
 
-  // Featured variant
-  featCard:    { backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, borderRadius: radius.card, overflow: 'hidden', ...shadows.md },
-  featImgWrap: { height: 172 },
-  featImg:     { width: '100%', height: '100%' },
-  promoBadge:  { position: 'absolute', top: 11, right: 11, backgroundColor: 'rgba(10,10,10,0.72)', borderRadius: radius.sm + 3, paddingHorizontal: spacing.lg - 2, paddingVertical: spacing.xs + 2 },
-  promoTxt:    { fontFamily: typography.bodySemibold, color: '#FFFFFF', fontSize: typography.size.caption - 0.5 },
-  featBody:    { paddingHorizontal: spacing.xl, paddingTop: spacing.lg + 3, paddingBottom: spacing.xl },
-  featTop:     { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', gap: spacing.lg - 2 },
-  featName:    { flex: 1, fontFamily: typography.display, fontSize: 18, color: colors.text, letterSpacing: -0.3 },
-  ratingPill:  { flexDirection: 'row', alignItems: 'center', gap: 4, flexShrink: 0, backgroundColor: colors.tagGreenBg, paddingHorizontal: spacing.sm, paddingVertical: 5, borderRadius: radius.sm + 3 },
-  star:        { fontSize: 11, color: colors.gold },
+  promoBadge: { position: 'absolute', top: 11, right: 11, backgroundColor: 'rgba(10,10,10,0.72)', borderRadius: radius.sm + 3, paddingHorizontal: spacing.lg - 2, paddingVertical: spacing.xs + 2 },
+  promoTxt:   { fontFamily: typography.bodySemibold, color: '#FFFFFF', fontSize: typography.size.caption - 0.5 },
+
+  featBody: { paddingHorizontal: spacing.xl, paddingTop: spacing.lg + 3, paddingBottom: spacing.xl },
+  compBody: { paddingHorizontal: spacing.lg, paddingTop: spacing.lg - 1, paddingBottom: spacing.lg },
+
+  top:      { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', gap: spacing.lg - 2 },
+  featName: { flex: 1, fontFamily: typography.display, fontSize: 18, color: colors.text, letterSpacing: -0.3 },
+  compName: { flex: 1, fontFamily: typography.display, fontSize: typography.size.subheading + 0.5, color: colors.text, letterSpacing: -0.3 },
+
+  ratingPill:  { flexDirection: 'row', alignItems: 'center', gap: 3, flexShrink: 0, backgroundColor: colors.tagGreenBg, paddingHorizontal: spacing.sm, paddingVertical: 5, borderRadius: radius.sm + 3 },
   ratingTxt:   { fontFamily: typography.bodyBold, fontSize: typography.size.body, color: colors.primary },
-  featMeta:    { fontFamily: typography.body, fontSize: typography.size.bodyLg - 0.5, color: colors.textMuted, marginTop: spacing.xs + 2 },
-  slotsRow:    { flexDirection: 'row', gap: spacing.sm - 2, marginTop: spacing.lg + 1 },
-  slot:        { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: spacing.sm + 1, borderRadius: radius.md, backgroundColor: colors.tagGreenBg },
-  slotCta:     { backgroundColor: colors.resa },
-  slotTxt:     { fontFamily: typography.bodySemibold, fontSize: typography.size.body, color: colors.primary },
-  slotCtaTxt:  { color: '#FFFFFF' },
+  reviewCount: { fontFamily: typography.body, fontSize: typography.size.caption, color: colors.primary, opacity: 0.7 },
 
-  // Compact variant
-  compCard:    { flexDirection: 'row', gap: spacing.lg, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, borderRadius: radius.xl - 2, padding: spacing.lg - 1 },
-  compImgWrap: { width: 88, height: 88, flexShrink: 0, borderRadius: radius.lg - 2, overflow: 'hidden' },
-  compImg:     { width: '100%', height: '100%' },
-  promoBadgeSm:{ position: 'absolute', left: 4, right: 4, bottom: 4, backgroundColor: 'rgba(10,10,10,0.72)', borderRadius: radius.sm, paddingHorizontal: 5, paddingVertical: 2 },
-  promoTxtSm:  { fontFamily: typography.bodySemibold, color: '#FFFFFF', fontSize: 8.5, textAlign: 'center' },
-  compBody:    { flex: 1, minWidth: 0 },
-  compName:    { fontFamily: typography.display, fontSize: typography.size.subheading + 0.5, color: colors.text, letterSpacing: -0.3 },
-  compRatingRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs + 2, marginTop: spacing.sm - 2 },
-  starSm:      { fontSize: 10, color: colors.gold },
-  compRating:  { fontFamily: typography.bodyMedium, fontSize: typography.size.caption, color: colors.text },
-  reviewCount: { fontFamily: typography.body, fontSize: typography.size.caption, color: 'rgba(10,10,10,0.42)' },
-  compMeta:    { fontFamily: typography.body, fontSize: typography.size.caption + 0.5, color: colors.textMuted, marginTop: spacing.sm - 1 },
-  slotsRowSm:  { flexDirection: 'row', gap: spacing.xs + 1, marginTop: spacing.sm + 1 },
-  slotSm:      { paddingHorizontal: spacing.sm, paddingVertical: spacing.xs + 2, backgroundColor: colors.tagGreenBg, borderRadius: radius.sm + 2 },
-  slotCtaSm:   { backgroundColor: colors.resa },
-  slotSmTxt:   { fontFamily: typography.bodySemibold, fontSize: typography.size.sm + 0.5, color: colors.primary },
-  slotCtaSmTxt: { color: '#FFFFFF' },
+  featMeta: { fontFamily: typography.body, fontSize: typography.size.bodyLg - 0.5, color: colors.textMuted, marginTop: spacing.xs + 2 },
+  compMeta: { fontFamily: typography.body, fontSize: typography.size.caption + 0.5, color: colors.textMuted, marginTop: spacing.sm - 1 },
+
+  slotsRow:   { flexDirection: 'row', gap: spacing.sm - 2, marginTop: spacing.lg + 1 },
+  slot:       { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: spacing.sm + 1, borderRadius: radius.md, backgroundColor: colors.tagGreenBg },
+  slotCta:    { backgroundColor: colors.resa },
+  slotTxt:    { fontFamily: typography.bodySemibold, fontSize: typography.size.body, color: colors.primary },
+  slotCtaTxt: { color: '#FFFFFF' },
 });

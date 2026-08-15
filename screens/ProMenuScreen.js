@@ -89,6 +89,8 @@ export default function ProMenuScreen({ navigation, route }) {
 
   return (
     <SafeAreaView style={s.root} edges={['top', 'left', 'right']}>
+      <View style={s.glowGold} pointerEvents="none" />
+      <View style={s.glowWarm} pointerEvents="none" />
       <View style={s.header}>
         {!onSetupComplete ? (
           <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
@@ -210,7 +212,9 @@ export default function ProMenuScreen({ navigation, route }) {
 }
 
 const s = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.bg },
+  root: { flex: 1, backgroundColor: colors.warmBg },
+  glowGold: { position: 'absolute', top: 30, right: -80, width: 280, height: 280, borderRadius: 140, backgroundColor: colors.glowGold },
+  glowWarm: { position: 'absolute', top: 310, left: -90, width: 240, height: 240, borderRadius: 120, backgroundColor: colors.glowWarm },
 
   terminerBar: { paddingHorizontal: spacing.xl, paddingVertical: spacing.md, backgroundColor: colors.card, borderTopWidth: 1, borderTopColor: colors.cardBorder },
   terminerBtn: { alignItems: 'center', paddingVertical: spacing.md },

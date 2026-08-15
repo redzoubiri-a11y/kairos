@@ -33,7 +33,7 @@ export default function ProInscriptionScreen({ navigation }) {
   if (success && rejected) {
     return (
       <SafeAreaView style={s.root}>
-        <LinearGradient colors={['#C4B8C8', '#8B9BB4', '#6B7F9E']} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
+        <LinearGradient colors={colors.photoFallbackGradient} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
         <View style={s.successWrap}>
           <View style={s.successRing}>
             <Text style={s.successEmoji}>❌</Text>
@@ -50,7 +50,7 @@ export default function ProInscriptionScreen({ navigation }) {
   if (success) {
     return (
       <SafeAreaView style={s.root}>
-        <LinearGradient colors={['#C4B8C8', '#8B9BB4', '#6B7F9E']} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
+        <LinearGradient colors={colors.photoFallbackGradient} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
         <View style={s.successWrap}>
           <View style={s.successRing}>
             <Text style={s.successEmoji}>🍽️</Text>

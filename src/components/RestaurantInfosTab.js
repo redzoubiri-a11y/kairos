@@ -87,7 +87,7 @@ export default function RestaurantInfosTab({ restaurant, desc }) {
 
 const s = StyleSheet.create({
   descWrap: { marginHorizontal: spacing.xl, marginTop: spacing.xl, marginBottom: spacing.sm, backgroundColor: colors.card, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.xl },
-  descTxt:  { color: colors.textMuted, fontSize: typography.size.bodyLg, lineHeight: 22, fontWeight: typography.weight.regular },
+  descTxt:  { color: colors.textMuted, fontFamily: typography.body, fontSize: typography.size.bodyLg, lineHeight: 22, fontWeight: typography.weight.regular },
   mapWrap:  { height: 120, marginHorizontal: spacing.xl, marginTop: spacing.xl, borderRadius: radius.xl - 2, overflow: 'hidden', backgroundColor: colors.cardHover },
   mapPin: {
     width: 26, height: 26, backgroundColor: colors.primary,
@@ -98,10 +98,10 @@ const s = StyleSheet.create({
   row:      { flexDirection: 'row', alignItems: 'center', gap: spacing.xl - 2, paddingHorizontal: spacing.xl + 2, paddingVertical: spacing.xl - 2 },
   rowBorder:{ borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   iconWrap: { width: 32, height: 32, borderRadius: radius.md, backgroundColor: colors.cardHover, alignItems: 'center', justifyContent: 'center' },
-  icon:     { fontSize: typography.size.heading2 },
-  label:    { color: colors.textDim, fontSize: typography.size.xs, letterSpacing: 2, marginBottom: spacing.xxs },
-  val:      { color: colors.text, fontSize: typography.size.bodyLg, fontWeight: typography.weight.regular },
+  icon:     { fontFamily: typography.body, fontSize: typography.size.heading2 },
+  label:    { color: colors.textDim, fontFamily: typography.body, fontSize: typography.size.xs, letterSpacing: 2, marginBottom: spacing.xxs },
+  val:      { color: colors.text, fontFamily: typography.body, fontSize: typography.size.bodyLg, fontWeight: typography.weight.regular },
   valLink:  { color: colors.primary },
-  rowArrow: { color: colors.textDim, fontSize: 20 },
-  note:     { marginHorizontal: spacing.xl, color: colors.textDim, fontSize: typography.size.caption, lineHeight: 17, fontStyle: 'italic' },
+  rowArrow: { color: colors.textDim, fontFamily: typography.body, fontSize: 20 },
+  note:     { marginHorizontal: spacing.xl, color: colors.textDim, fontFamily: typography.body, fontSize: typography.size.caption, lineHeight: 17, fontStyle: 'italic' },
 });

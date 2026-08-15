@@ -50,13 +50,13 @@ export default function HistResaCard({ r, onReserveAgain, onPress, onReview, has
 
 const s = StyleSheet.create({
   card:         { flexDirection:'row', alignItems:'center', gap: spacing.lg, paddingVertical: spacing.xl, paddingHorizontal: spacing.xxl, borderBottomWidth:1, borderBottomColor: colors.cardBorder, borderLeftWidth:3 },
-  name:         { color: colors.text, fontSize: typography.size.subheading, fontWeight: typography.weight.regular, marginBottom:3 },
-  meta:         { color: colors.textMuted, fontSize: typography.size.caption, marginBottom:2 },
-  note:         { color: colors.textDim, fontSize: typography.size.sm },
+  name:         { color: colors.text, fontFamily: typography.body, fontSize: typography.size.subheading, fontWeight: typography.weight.regular, marginBottom:3 },
+  meta:         { color: colors.textMuted, fontFamily: typography.body, fontSize: typography.size.caption, marginBottom:2 },
+  note:         { color: colors.textDim, fontFamily: typography.body, fontSize: typography.size.sm },
   actions:      { flexDirection:'row', flexWrap:'wrap', gap: spacing.lg, marginTop: spacing.xs },
-  reBook:       { color: colors.blue, fontSize: typography.size.caption },
+  reBook:       { color: colors.blue, fontFamily: typography.body, fontSize: typography.size.caption },
   reviewBtn:    { backgroundColor: 'rgba(200,151,90,0.14)', borderRadius: radius.md, paddingHorizontal: spacing.md, paddingVertical: spacing.xxs, borderWidth:1, borderColor:'rgba(200,151,90,0.4)', shadowColor:'#000', shadowOpacity:0.3, shadowRadius:6, shadowOffset:{ width:0, height:0 }, elevation:3 },
-  reviewBtnTxt: { color: colors.gold, fontSize: typography.size.caption, fontWeight: typography.weight.regular },
-  reviewed:     { color: colors.green, fontSize: typography.size.caption },
-  pending:      { color: colors.textMuted, fontSize: typography.size.caption, fontStyle: 'italic' },
+  reviewBtnTxt: { color: colors.gold, fontFamily: typography.body, fontSize: typography.size.caption, fontWeight: typography.weight.regular },
+  reviewed:     { color: colors.green, fontFamily: typography.body, fontSize: typography.size.caption },
+  pending:      { color: colors.textMuted, fontFamily: typography.body, fontSize: typography.size.caption, fontStyle: 'italic' },
 });

@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, RefreshControl, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
 import { colors, typography, spacing } from '../src/theme';
 import useFavoris from '../src/hooks/useFavoris';
 import RestaurantCard from '../src/components/RestaurantCard';
@@ -11,7 +10,7 @@ import { useGuestContext } from '../src/context/GuestContext';
 
 export default function FavorisScreen({ navigation }) {
   const { isGuest } = useGuestContext();
-  const { favorites, loading, refreshing, removing, removeFavorite, onRefresh } = useFavoris();
+  const { favorites, loading, refreshing, onRefresh } = useFavoris();
 
   const goExplorer = useCallback(() => navigation.navigate('Explorer'), [navigation]);
   const goRestaurant = useCallback(
@@ -51,21 +50,8 @@ export default function FavorisScreen({ navigation }) {
         >
           {favorites.map((fav) => {
             const r = fav.restaurants || {};
-            const isRemoving = removing.has(fav.id);
             return (
-              <View key={fav.id} style={s.cardWrap}>
-                <RestaurantCard r={r} variant="compact" onPress={() => goRestaurant(r)} />
-                <TouchableOpacity
-                  style={s.removeBtn}
-                  onPress={() => removeFavorite(fav)}
-                  disabled={isRemoving}
-                >
-                  {isRemoving
-                    ? <Text style={s.removingTxt}>···</Text>
-                    : <Ionicons name="heart" size={14} color={colors.resa} />
-                  }
-                </TouchableOpacity>
-              </View>
+              <RestaurantCard key={fav.id} r={r} variant="compact" onPress={() => goRestaurant(r)} />
             );
           })}
         </ScrollView>
@@ -82,13 +68,6 @@ const s = StyleSheet.create({
   subtitle: { fontFamily: typography.body, fontSize: typography.size.body, color: colors.textMuted, marginTop: spacing.xs },
 
   list: { paddingHorizontal: 20, paddingTop: spacing.xl, paddingBottom: 84, gap: 10 },
-  cardWrap: { position: 'relative' },
-  removeBtn: {
-    position: 'absolute', top: 8, right: 8, width: 26, height: 26, borderRadius: 13,
-    backgroundColor: 'rgba(255,255,255,0.92)', alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1, borderColor: colors.cardBorder,
-  },
-  removingTxt: { color: colors.textDim, fontSize: typography.size.sm },
 
   loading: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   emptyState: { marginHorizontal: 20, marginTop: spacing.section },

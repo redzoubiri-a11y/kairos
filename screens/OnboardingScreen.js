@@ -28,7 +28,7 @@ function Dots({ total, current, accentColor }) {
 }
 const d = StyleSheet.create({
   row: { flexDirection: 'row', justifyContent: 'center', gap: 6, alignItems: 'center' },
-  dot: { height: 6, borderRadius: 0 },
+  dot: { height: 6, borderRadius: radius.pill },
 });
 
 export default function OnboardingScreen({ onSelect, onGuest }) {
@@ -194,9 +194,9 @@ const s = StyleSheet.create({
   cityCountBadge:  { alignItems: 'center', marginRight: spacing.md },
   cityCount:       { color: colors.textMuted, fontSize: typography.size.heading1, fontWeight: typography.weight.regular },
   cityCountLbl:    { color: colors.textDim, fontSize: typography.size.xs },
-  cityCheck:       { width: 26, height: 26, borderRadius: 0, backgroundColor: colors.accent, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+  cityCheck:       { width: 26, height: 26, borderRadius: radius.pill, backgroundColor: colors.accent, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   cityCheckTxt:    { color: colors.bg, fontSize: typography.size.bodyLg, fontWeight: typography.weight.bold },
-  cityUncheck:     { width: 26, height: 26, borderRadius: 0, borderWidth: 1.5, borderColor: colors.textDim, flexShrink: 0 },
+  cityUncheck:     { width: 26, height: 26, borderRadius: radius.pill, borderWidth: 1.5, borderColor: colors.textDim, flexShrink: 0 },
 
   roleCard:      { flexDirection: 'row', alignItems: 'center', gap: spacing.xl, backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.xxl - 2 },
   roleCardClient:{ borderColor: 'rgba(90,155,224,0.3)' },

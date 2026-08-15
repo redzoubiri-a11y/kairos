@@ -40,6 +40,8 @@ export default function ProPhotosScreen({ navigation, route }) {
 
   return (
     <SafeAreaView style={s.root} edges={['top', 'left', 'right', 'bottom']}>
+      <View style={s.glowGold} pointerEvents="none" />
+      <View style={s.glowWarm} pointerEvents="none" />
       <View style={s.header}>
         {!onSetupComplete && (
           <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
@@ -100,14 +102,16 @@ export default function ProPhotosScreen({ navigation, route }) {
 }
 
 const s = StyleSheet.create({
-  root:   { flex: 1, backgroundColor: colors.bg },
+  root:   { flex: 1, backgroundColor: colors.warmBg },
+  glowGold: { position: 'absolute', top: 30, right: -80, width: 280, height: 280, borderRadius: 140, backgroundColor: colors.glowGold },
+  glowWarm: { position: 'absolute', top: 310, left: -90, width: 240, height: 240, borderRadius: 120, backgroundColor: colors.glowWarm },
 
   header:     { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   backBtn:    { padding: spacing.xs },
-  backBtnTxt: { color: colors.text, fontSize: 22 },
-  title:  { color: colors.text, fontSize: typography.size.subheading, fontWeight: typography.weight.semibold, letterSpacing: 1 },
+  backBtnTxt: { color: colors.text, fontSize: 22, fontFamily: typography.body },
+  title:  { color: colors.text, fontSize: typography.size.subheading, fontFamily: typography.bodySemibold, letterSpacing: 1 },
 
-  error:  { color: colors.red, fontSize: typography.size.caption, textAlign: 'center', margin: spacing.lg },
+  error:  { color: colors.red, fontSize: typography.size.caption, textAlign: 'center', margin: spacing.lg, fontFamily: typography.body },
 
   grid:      { padding: spacing.lg, paddingBottom: 140 },
   gridSetup: { paddingBottom: 210 },
@@ -115,20 +119,20 @@ const s = StyleSheet.create({
   card:   { flex: 1, aspectRatio: 4/3, borderRadius: radius.xl, overflow: 'hidden', marginBottom: spacing.md, backgroundColor: colors.card },
   img:    { width: '100%', height: '100%' },
   deleteBtn: { position: 'absolute', top: spacing.sm, right: spacing.sm, width: 28, height: 28, borderRadius: 14, backgroundColor: 'rgba(10,10,10,0.75)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)' },
-  deleteTxt: { color: '#FFFFFF', fontSize: 11, fontWeight: typography.weight.bold },
+  deleteTxt: { color: '#FFFFFF', fontSize: 11, fontFamily: typography.bodyBold },
 
   empty:    { alignItems: 'center', paddingTop: 80, gap: spacing.md },
   emptyEmoji: { fontSize: 48 },
-  emptyTxt:   { color: colors.text, fontSize: typography.size.subheading, fontWeight: typography.weight.medium },
-  emptySub:   { color: colors.textMuted, fontSize: typography.size.body, textAlign: 'center', paddingHorizontal: spacing.xxl },
+  emptyTxt:   { color: colors.text, fontSize: typography.size.subheading, fontFamily: typography.bodyMedium },
+  emptySub:   { color: colors.textMuted, fontSize: typography.size.body, textAlign: 'center', paddingHorizontal: spacing.xxl, fontFamily: typography.body },
 
   footer:     { position: 'absolute', bottom: 0, left: 0, right: 0, padding: spacing.xl, paddingBottom: spacing.xxl, backgroundColor: colors.bg, borderTopWidth: 1, borderTopColor: colors.cardBorder, gap: spacing.sm, zIndex: 10 },
   nextBtn:    { backgroundColor: colors.text, borderRadius: radius.xl, paddingVertical: spacing.md, alignItems: 'center', marginBottom: spacing.xs },
-  nextBtnTxt: { color: colors.bg, fontSize: typography.size.body, fontWeight: typography.weight.semibold },
+  nextBtnTxt: { color: colors.bg, fontSize: typography.size.body, fontFamily: typography.bodySemibold },
   addBtn:     { backgroundColor: colors.primary, borderRadius: radius.xl, paddingVertical: spacing.lg, alignItems: 'center' },
   addBtnDisabled: { opacity: 0.6 },
-  addBtnTxt:  { color: '#FFFFFF', fontSize: typography.size.subheading, fontWeight: typography.weight.semibold },
-  hint:       { color: colors.textDim, fontSize: typography.size.xs, textAlign: 'center', marginTop: spacing.sm },
+  addBtnTxt:  { color: '#FFFFFF', fontSize: typography.size.subheading, fontFamily: typography.bodySemibold },
+  hint:       { color: colors.textDim, fontSize: typography.size.xs, textAlign: 'center', marginTop: spacing.sm, fontFamily: typography.body },
   terminerBtn: { alignItems: 'center', paddingVertical: spacing.md },
-  terminerTxt: { color: colors.gold, fontSize: typography.size.body, fontWeight: typography.weight.medium },
+  terminerTxt: { color: colors.gold, fontSize: typography.size.body, fontFamily: typography.bodyMedium },
 });

@@ -58,6 +58,16 @@ function buildSlots(start, end, duration) {
   return slots;
 }
 
+function filterPastSlots(slots, isToday) {
+  if (!isToday) return slots;
+  const now = new Date();
+  const nowMin = now.getHours() * 60 + now.getMinutes();
+  return slots.filter(s => {
+    const [h, m] = s.h.split(':').map(Number);
+    return h * 60 + m > nowMin;
+  });
+}
+
 export function formatDateLong(dateStr) {
   if (!dateStr) return '—';
   const d = new Date(dateStr + 'T12:00:00');
@@ -137,15 +147,17 @@ export default function useReservationForm(restaurant, onSuccess, existingResa =
     return d ? scheduleMap[d.dayOfWeek] : null;
   }, [scheduleMap, date]);
 
+  const isSelectedToday = date === DAYS[0]?.value;
+
   const midiSlots = useMemo(() => {
-    if (!daySchedule) return MIDI_SLOTS;
-    return buildSlots(daySchedule.lunch_start, daySchedule.lunch_end, daySchedule.slot_duration || 30);
-  }, [daySchedule]);
+    const raw = !daySchedule ? MIDI_SLOTS : buildSlots(daySchedule.lunch_start, daySchedule.lunch_end, daySchedule.slot_duration || 30);
+    return filterPastSlots(raw, isSelectedToday);
+  }, [daySchedule, isSelectedToday]);
 
   const soirSlots = useMemo(() => {
-    if (!daySchedule) return SOIR_SLOTS;
-    return buildSlots(daySchedule.dinner_start, daySchedule.dinner_end, daySchedule.slot_duration || 30);
-  }, [daySchedule]);
+    const raw = !daySchedule ? SOIR_SLOTS : buildSlots(daySchedule.dinner_start, daySchedule.dinner_end, daySchedule.slot_duration || 30);
+    return filterPastSlots(raw, isSelectedToday);
+  }, [daySchedule, isSelectedToday]);
 
   const confirmer = useCallback(async () => {
     if (!date || !heure) {
@@ -154,6 +166,15 @@ export default function useReservationForm(restaurant, onSuccess, existingResa =
       return;
     }
     if (!restaurant.id) { setError('Restaurant introuvable.'); return; }
+    if (date === DAYS[0]?.value) {
+      const [h, m] = heure.split(':').map(Number);
+      const now = new Date();
+      if (h * 60 + m <= now.getHours() * 60 + now.getMinutes()) {
+        setError('Ce créneau est déjà passé. Choisissez une heure à venir.');
+        triggerShake();
+        return;
+      }
+    }
 
     setLoading(true);
     setError('');

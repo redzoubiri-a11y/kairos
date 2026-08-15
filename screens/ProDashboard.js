@@ -6,7 +6,6 @@ import {
   RefreshControl, Platform, StatusBar,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { LinearGradient } from 'expo-linear-gradient';
 import { colors, typography, spacing, radius } from '../src/theme';
 import MLoader from '../src/components/MLoader';
 import usePushNotifications from '../src/hooks/usePushNotifications';
@@ -91,7 +90,8 @@ export default function ProDashboard({ navigation }) {
 
   return (
     <SafeAreaView style={s.root}>
-      <LinearGradient colors={['#C4B8C8', '#8B9BB4', '#6B7F9E']} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
+      <View style={s.glowGold} pointerEvents="none" />
+      <View style={s.glowWarm} pointerEvents="none" />
 
       {/* Bandeau — flotte en fixe au-dessus du contenu scrollable */}
       <View style={[s.darkHeader, { paddingTop: insets.top }]} onLayout={(e) => setHeaderH(e.nativeEvent.layout.height)}>
@@ -320,8 +320,9 @@ export default function ProDashboard({ navigation }) {
 }
 
 const s = StyleSheet.create({
-  root:      { flex: 1, backgroundColor: colors.bg, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 },
-  bgOverlay: { ...StyleSheet.absoluteFillObject, opacity: 0.06 },
+  root:      { flex: 1, backgroundColor: colors.warmBg, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 },
+  glowGold:  { position: 'absolute', top: 30, right: -80, width: 280, height: 280, borderRadius: 140, backgroundColor: colors.glowGold },
+  glowWarm:  { position: 'absolute', top: 310, left: -90, width: 240, height: 240, borderRadius: 120, backgroundColor: colors.glowWarm },
 
   darkHeader:     { position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10, backgroundColor: colors.glassBgStrong, borderBottomLeftRadius: radius.xxl, borderBottomRightRadius: radius.xxl, paddingBottom: spacing.lg },
   header:         { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xl, paddingTop: spacing.lg, paddingBottom: spacing.lg },
@@ -329,7 +330,7 @@ const s = StyleSheet.create({
   headerEyebrow:  { fontFamily: typography.bodySemibold, color: colors.gold, fontSize: typography.size.caption - 0.5, letterSpacing: 1.6, textTransform: 'uppercase', marginBottom: spacing.xxs + 4 },
   headerTitle:    { fontFamily: typography.display, color: colors.text, fontSize: typography.size.heading1, letterSpacing: -0.4 },
   onlineBadge:    { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, flexShrink: 0, backgroundColor: 'rgba(76,175,130,0.15)', borderRadius: radius.full, paddingHorizontal: spacing.lg, paddingVertical: spacing.xs, borderWidth: 1, borderColor: 'rgba(76,175,130,0.35)' },
-  onlineDot:      { width: 6, height: 6, borderRadius: 0, backgroundColor: colors.green },
+  onlineDot:      { width: 6, height: 6, borderRadius: radius.pill, backgroundColor: colors.green },
   onlineTxt:      { fontFamily: typography.body, color: colors.green, fontSize: typography.size.sm },
 
   /* Tuiles stats dans le bandeau */

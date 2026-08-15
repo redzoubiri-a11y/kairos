@@ -2,7 +2,7 @@ import { useRef, useCallback, useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Platform, Animated } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { colors as theme } from '../theme';
+import { colors as theme, typography } from '../theme';
 
 const C = {
   accent:   theme.primary,
@@ -146,6 +146,7 @@ const s = StyleSheet.create({
     backgroundColor: C.activeBg,
   },
   label: {
+    fontFamily: typography.body,
     fontSize: 10,
     letterSpacing: 0.5,
     fontWeight: '400',
@@ -153,6 +154,7 @@ const s = StyleSheet.create({
   },
   labelActive: {
     color: C.accent,
+    fontFamily: typography.bodySemibold,
     fontWeight: '600',
   },
 });

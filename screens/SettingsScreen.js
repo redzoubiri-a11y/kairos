@@ -111,8 +111,8 @@ export default function SettingsScreen({ navigation }) {
 const r = StyleSheet.create({
   row:    { flexDirection: 'row', alignItems: 'center', paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, gap: spacing.lg },
   border: { borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
-  label:  { color: colors.text, fontSize: typography.size.body },
-  sub:    { color: colors.textDim, fontSize: typography.size.xs, marginTop: 2 },
+  label:  { color: colors.text, fontFamily: typography.body, fontSize: typography.size.body },
+  sub:    { color: colors.textDim, fontFamily: typography.body, fontSize: typography.size.xs, marginTop: 2 },
   arrow:  { color: colors.textDim, fontSize: typography.size.subheading },
 });
 
@@ -121,7 +121,7 @@ const s = StyleSheet.create({
   header:       { flexDirection: 'row', alignItems: 'center', gap: spacing.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.cardBorder, backgroundColor: colors.card },
   backBtn:      { padding: spacing.xs },
   backBtnTxt:   { color: colors.text, fontSize: 22 },
-  title:        { color: colors.text, fontSize: typography.size.heading2, fontWeight: typography.weight.semibold },
-  sectionLabel: { color: colors.primary, fontSize: typography.size.xs, fontWeight: typography.weight.bold, letterSpacing: 2, textTransform: 'uppercase', marginBottom: spacing.md },
+  title:        { color: colors.text, fontFamily: typography.display, fontSize: typography.size.heading2 },
+  sectionLabel: { color: colors.primary, fontFamily: typography.bodyBold, fontSize: typography.size.xs, letterSpacing: 2, textTransform: 'uppercase', marginBottom: spacing.md },
   card:         { backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, overflow: 'hidden' },
 });

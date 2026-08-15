@@ -1,13 +1,14 @@
 import { useCallback, useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  TextInput, Image, Animated,
+  TextInput, Animated,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, typography, spacing, radius } from '../src/theme';
 import useReservationForm, { OCCASIONS, formatDateLong } from '../src/hooks/useReservationForm';
+import PhotoCarouselHero from '../src/components/PhotoCarouselHero';
 import FormProgressBar from '../src/components/FormProgressBar';
 import FormStepper from '../src/components/FormStepper';
 import ReservationSuccess from '../src/components/ReservationSuccess';
@@ -75,7 +76,7 @@ export default function ReservationFormScreen({ route, navigation }) {
 
   return (
     <SafeAreaView style={s.root} edges={['top', 'left', 'right']}>
-      <LinearGradient colors={['#C4B8C8', '#8B9BB4', '#6B7F9E']} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
+      <LinearGradient colors={colors.photoFallbackGradient} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
 
       {/* Header */}
       <View style={s.header}>
@@ -101,17 +102,7 @@ export default function ReservationFormScreen({ route, navigation }) {
       <ScrollView showsVerticalScrollIndicator={false} automaticallyAdjustKeyboardInsets={true} keyboardDismissMode="interactive">
 
         {/* Banner */}
-        <View style={s.bannerWrap}>
-          {restaurant.photos?.[0]
-            ? <Image source={{ uri: restaurant.photos[0] }} style={s.banner} resizeMode="cover" />
-            : (
-              <View style={[s.banner, s.bannerPlaceholder]}>
-                <Text style={{ fontSize: 48, opacity: 0.5 }}>🍽️</Text>
-              </View>
-            )
-          }
-          <LinearGradient colors={['rgba(0,0,0,0.70)', 'transparent']} style={s.bannerVeil} pointerEvents="none" />
-        </View>
+        <PhotoCarouselHero restaurant={restaurant} height={180} showPrevArrow />
 
         {/* Date */}
         <View style={s.sectionHeader}>
@@ -315,12 +306,6 @@ const s = StyleSheet.create({
   headerSub:   { fontFamily: typography.body, fontSize: typography.size.bodyLg - 1.5, lineHeight: 15, color: colors.textCaption, marginTop: 2 },
   ratingPill:  { backgroundColor: colors.goldSoft, borderRadius: radius.md, borderWidth: 1, borderColor: 'rgba(200,151,90,0.3)', paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
   ratingTxt:   { color: colors.gold, fontSize: typography.size.body, fontWeight: typography.weight.medium },
-
-  bannerWrap:          { width: '100%', height: 180, position: 'relative' },
-  banner:              { width: '100%', height: 180 },
-  bannerVeil:          { position: 'absolute', top: 0, left: 0, right: 0, height: 80 },
-  bannerPlaceholder:   { backgroundColor: colors.card, alignItems: 'center', justifyContent: 'center', gap: spacing.md },
-  bannerPlaceholderTxt:{ color: colors.textMuted, fontSize: typography.size.bodyLg, fontWeight: typography.weight.regular },
 
   sectionHeader:   { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xxl, marginTop: spacing.xxxl, marginBottom: spacing.lg },
   sectionLeft:     { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },

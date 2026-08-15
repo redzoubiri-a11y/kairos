@@ -6,7 +6,7 @@ import { colors } from '../theme';
 
 export const STATUS = {
   confirmed: { label:'Confirmée',  color: colors.green   },
-  pending:   { label:'En attente', color: colors.accent  },
+  pending:   { label:'En attente', color: colors.statusPendingText },
   cancelled: { label:'Annulée',    color: colors.red     },
   arrived:   { label:'Arrivé',     color: colors.blue    },
   no_show:   { label:'No-show',    color: colors.textDim },

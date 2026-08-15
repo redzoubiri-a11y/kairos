@@ -192,6 +192,8 @@ export default function ProHorairesScreen({ navigation, route }) {
 
   return (
     <SafeAreaView style={s.root} edges={['top', 'left', 'right']}>
+      <View style={s.glowGold} pointerEvents="none" />
+      <View style={s.glowWarm} pointerEvents="none" />
       <View style={s.header}>
         <View style={s.headerLeft}>
           {!onSetupComplete && (
@@ -262,57 +264,59 @@ export default function ProHorairesScreen({ navigation, route }) {
 }
 
 const s = StyleSheet.create({
-  root:           { flex: 1, backgroundColor: colors.bg },
+  root:           { flex: 1, backgroundColor: colors.warmBg },
+  glowGold:       { position: 'absolute', top: 30, right: -80, width: 280, height: 280, borderRadius: 140, backgroundColor: colors.glowGold },
+  glowWarm:       { position: 'absolute', top: 310, left: -90, width: 240, height: 240, borderRadius: 120, backgroundColor: colors.glowWarm },
   terminerBar: { paddingHorizontal: spacing.xl, paddingVertical: spacing.md, backgroundColor: colors.card, borderTopWidth: 1, borderTopColor: colors.cardBorder },
   terminerBtn: { alignItems: 'center', paddingVertical: spacing.md },
-  terminerTxt: { color: colors.gold, fontSize: typography.size.body, fontWeight: typography.weight.medium },
+  terminerTxt: { color: colors.gold, fontSize: typography.size.body, fontFamily: typography.bodyMedium },
   header:         { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.cardBorder, backgroundColor: colors.card },
   headerLeft:     { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },
   backBtn:        { marginRight: spacing.sm, padding: spacing.xs },
-  backBtnTxt:     { color: colors.text, fontSize: 22 },
-  title:          { color: colors.text, fontSize: typography.size.heading2, fontWeight: typography.weight.semibold },
+  backBtnTxt:     { color: colors.text, fontSize: 22, fontFamily: typography.body },
+  title:          { color: colors.text, fontSize: typography.size.heading2, fontFamily: typography.display },
   saveBtn:        { backgroundColor: colors.primary, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
   saveBtnActive:  { opacity: 0.75 },
-  saveBtnTxt:     { color: '#fff', fontSize: typography.size.caption, fontWeight: typography.weight.extrabold },
+  saveBtnTxt:     { color: '#fff', fontSize: typography.size.caption, fontFamily: typography.bodyBold },
 
   content:        { padding: spacing.xl },
-  section:        { color: colors.textMuted, fontSize: typography.size.xs, fontWeight: typography.weight.semibold, letterSpacing: 1, textTransform: 'uppercase', marginBottom: spacing.md },
+  section:        { color: colors.textMuted, fontSize: typography.size.xs, fontFamily: typography.bodySemibold, letterSpacing: 1, textTransform: 'uppercase', marginBottom: spacing.md },
 
   durationRow:    { flexDirection: 'row', gap: spacing.sm },
   durationChip:   { flex: 1, alignItems: 'center', paddingVertical: spacing.md, borderRadius: radius.md, borderWidth: 1, borderColor: colors.cardBorder, backgroundColor: colors.card },
   durationChipOn: { backgroundColor: colors.primary, borderColor: colors.primary },
-  durationTxt:    { color: colors.textMuted, fontSize: typography.size.caption, fontWeight: typography.weight.medium },
-  durationTxtOn:  { color: '#fff', fontWeight: typography.weight.semibold },
+  durationTxt:    { color: colors.textMuted, fontSize: typography.size.caption, fontFamily: typography.bodyMedium },
+  durationTxtOn:  { color: '#fff', fontFamily: typography.bodySemibold },
 
   dayCard:        { backgroundColor: colors.card, borderRadius: radius.lg, borderWidth: 1, borderColor: colors.cardBorder, marginBottom: spacing.md, overflow: 'hidden' },
   dayHeader:      { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xl, paddingVertical: spacing.lg },
-  dayLabel:       { color: colors.text, fontSize: typography.size.bodyLg, fontWeight: typography.weight.semibold },
+  dayLabel:       { color: colors.text, fontSize: typography.size.bodyLg, fontFamily: typography.bodySemibold },
   dayLabelOff:    { color: colors.textMuted },
   dayRight:       { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
-  closedTxt:      { color: colors.textMuted, fontSize: typography.size.caption },
+  closedTxt:      { color: colors.textMuted, fontSize: typography.size.caption, fontFamily: typography.body },
 
   dayBody:        { borderTopWidth: 1, borderTopColor: colors.cardBorder, paddingHorizontal: spacing.xl, paddingBottom: spacing.lg },
 
   serviceRow:     { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingTop: spacing.md },
   serviceIcon:    { fontSize: 14 },
-  serviceLbl:     { color: colors.textMuted, fontSize: typography.size.caption, width: 56 },
+  serviceLbl:     { color: colors.textMuted, fontSize: typography.size.caption, width: 56, fontFamily: typography.body },
   timePill:       { backgroundColor: colors.bg, borderRadius: radius.md, borderWidth: 1, borderColor: colors.cardBorder, paddingHorizontal: spacing.md, paddingVertical: spacing.xs },
   timePillEmpty:  { borderColor: colors.redSoft },
-  timePillTxt:    { color: colors.text, fontSize: typography.size.body, fontWeight: typography.weight.medium, fontVariant: ['tabular-nums'] },
-  arrow:          { color: colors.textMuted, fontSize: typography.size.caption },
+  timePillTxt:    { color: colors.text, fontSize: typography.size.body, fontFamily: typography.bodyMedium, fontVariant: ['tabular-nums'] },
+  arrow:          { color: colors.textMuted, fontSize: typography.size.caption, fontFamily: typography.body },
 
   capRow:         { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: spacing.lg, borderTopWidth: 1, borderTopColor: colors.cardBorder, marginTop: spacing.md },
-  capLbl:         { color: colors.textMuted, fontSize: typography.size.caption },
-  capInput:       { backgroundColor: colors.bg, borderWidth: 1, borderColor: colors.cardBorder, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.xs, color: colors.text, fontSize: typography.size.body, fontWeight: typography.weight.semibold, minWidth: 60, textAlign: 'center' },
+  capLbl:         { color: colors.textMuted, fontSize: typography.size.caption, fontFamily: typography.body },
+  capInput:       { backgroundColor: colors.bg, borderWidth: 1, borderColor: colors.cardBorder, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.xs, color: colors.text, fontSize: typography.size.body, fontFamily: typography.bodySemibold, minWidth: 60, textAlign: 'center' },
 
   backdrop:       { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center', padding: spacing.xl },
   pickerBox:      { backgroundColor: colors.bg, borderRadius: radius.xl, padding: spacing.xl, width: '100%', maxHeight: '70%' },
-  pickerTitle:    { color: colors.text, fontSize: typography.size.bodyLg, fontWeight: typography.weight.semibold, marginBottom: spacing.lg, textAlign: 'center' },
+  pickerTitle:    { color: colors.text, fontSize: typography.size.bodyLg, fontFamily: typography.bodySemibold, marginBottom: spacing.lg, textAlign: 'center' },
   pickerGrid:     { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, justifyContent: 'center' },
   pickerChip:     { paddingHorizontal: spacing.xl, paddingVertical: spacing.md, borderRadius: radius.md, borderWidth: 1, borderColor: colors.cardBorder, backgroundColor: colors.card },
   pickerChipOn:   { backgroundColor: colors.primary, borderColor: colors.primary },
-  pickerChipTxt:  { color: colors.textMuted, fontSize: typography.size.body, fontVariant: ['tabular-nums'] },
-  pickerChipTxtOn:{ color: '#fff', fontWeight: typography.weight.semibold },
+  pickerChipTxt:  { color: colors.textMuted, fontSize: typography.size.body, fontFamily: typography.body, fontVariant: ['tabular-nums'] },
+  pickerChipTxtOn:{ color: '#fff', fontFamily: typography.bodySemibold },
 
-  error:          { color: colors.red, fontSize: typography.size.caption, marginTop: spacing.lg, textAlign: 'center' },
+  error:          { color: colors.red, fontSize: typography.size.caption, marginTop: spacing.lg, textAlign: 'center', fontFamily: typography.body },
 });

@@ -1,5 +1,4 @@
 import { useState, useCallback } from 'react';
-import { Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { supabase } from '../../supabase';
 
@@ -7,7 +6,6 @@ export default function useFavoris() {
   const [favorites,  setFavorites]  = useState([]);
   const [loading,    setLoading]    = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [removing,   setRemoving]   = useState(new Set());
 
   const load = useCallback(async (refresh = false) => {
     if (refresh) setRefreshing(true); else setLoading(true);
@@ -32,29 +30,7 @@ export default function useFavoris() {
 
   useFocusEffect(useCallback(() => { load(); }, [load]));
 
-  const removeFavorite = useCallback((fav) => {
-    Alert.alert(
-      'Retirer des favoris',
-      `Retirer ${fav.restaurants?.name || 'ce restaurant'} de vos favoris ?`,
-      [
-        { text: 'Annuler', style: 'cancel' },
-        {
-          text: 'Retirer', style: 'destructive',
-          onPress: async () => {
-            setRemoving(prev => new Set(prev).add(fav.id));
-            try {
-              await supabase.from('favorites').delete().eq('id', fav.id);
-              setFavorites(prev => prev.filter(f => f.id !== fav.id));
-            } finally {
-              setRemoving(prev => { const next = new Set(prev); next.delete(fav.id); return next; });
-            }
-          },
-        },
-      ]
-    );
-  }, []);
-
   const onRefresh = useCallback(() => load(true), [load]);
 
-  return { favorites, loading, refreshing, removing, removeFavorite, onRefresh };
+  return { favorites, loading, refreshing, onRefresh };
 }

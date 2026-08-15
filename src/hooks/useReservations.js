@@ -6,7 +6,7 @@ import { colors } from '../theme';
 
 export const SC = {
   confirmed: { label:'Confirmé',   color: colors.green,    bg: colors.greenSoft,  border:'rgba(76,175,130,0.3)'   },
-  pending:   { label:'En attente', color: colors.accent,   bg: colors.accentSoft, border:'rgba(232,160,69,0.3)'   },
+  pending:   { label:'En attente', color: colors.statusPendingText, bg: colors.statusPendingBg, border:'rgba(138,106,53,0.3)'   },
   arrived:   { label:'Arrivé',     color: colors.blue,     bg: colors.blueSoft,   border:'rgba(90,155,224,0.25)'  },
   no_show:   { label:'No Show',    color: colors.textMuted, bg:'rgba(138,154,176,0.1)', border:'rgba(138,154,176,0.2)' },
   cancelled: { label:'Annulé',     color: colors.red,      bg: colors.redSoft,    border:'rgba(224,90,90,0.25)'   },

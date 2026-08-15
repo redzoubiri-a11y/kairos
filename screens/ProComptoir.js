@@ -5,7 +5,6 @@ import {
   RefreshControl, useWindowDimensions, Platform, StatusBar,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { LinearGradient } from 'expo-linear-gradient';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import { colors, typography, spacing, radius } from '../src/theme';
 import MLoader from '../src/components/MLoader';
@@ -180,7 +179,8 @@ export default function ProComptoir({ navigation }) {
   if (isLandscape) {
     return (
       <View style={[s.root, { paddingTop: insets.top }]}>
-        <LinearGradient colors={['#C4B8C8', '#8B9BB4', '#6B7F9E']} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
+        <View style={s.glowGold} pointerEvents="none" />
+        <View style={s.glowWarm} pointerEvents="none" />
         {header}
         {toolRow}
         {statsMain}
@@ -230,7 +230,8 @@ export default function ProComptoir({ navigation }) {
   // Portrait — FlatList couvre tout l'écran, header+stats dans ListHeaderComponent
   return (
     <View style={s.root}>
-      <LinearGradient colors={['#C4B8C8', '#8B9BB4', '#6B7F9E']} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
+      <View style={s.glowGold} pointerEvents="none" />
+      <View style={s.glowWarm} pointerEvents="none" />
       <FlatList
         data={loading ? [] : visibleReservations}
         keyExtractor={item => String(item.id)}
@@ -261,8 +262,9 @@ export default function ProComptoir({ navigation }) {
 }
 
 const s = StyleSheet.create({
-  root:      { flex: 1, backgroundColor: colors.bg, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 },
-  bgOverlay: { ...StyleSheet.absoluteFillObject, opacity: 0 },
+  root:      { flex: 1, backgroundColor: colors.warmBg, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 },
+  glowGold:  { position: 'absolute', top: 30, right: -80, width: 280, height: 280, borderRadius: 140, backgroundColor: colors.glowGold },
+  glowWarm:  { position: 'absolute', top: 310, left: -90, width: 240, height: 240, borderRadius: 120, backgroundColor: colors.glowWarm },
 
   header:      { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xl, paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   headerLeft:  { flexDirection: 'row', alignItems: 'center', gap: spacing.lg, flex: 1 },

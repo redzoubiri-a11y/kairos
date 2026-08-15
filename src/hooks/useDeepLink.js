@@ -5,7 +5,8 @@ import { supabase } from '../../supabase';
 async function handleUrl(url, navigation) {
   if (!url || !navigation) return;
 
-  // mida://restaurant/<id>
+  // mida://restaurant/<id>[?table=<n>] — le paramètre table vient des QR imprimés
+  // par le pro (Lot 3, ProTableQrScreen) : ouvre directement Click & Collect en mode table.
   const restaurantMatch = url.match(/mida:\/\/restaurant\/([^?/\s]+)/);
   if (restaurantMatch) {
     const id = restaurantMatch[1];
@@ -14,7 +15,14 @@ async function handleUrl(url, navigation) {
       .select('*')
       .eq('id', id)
       .maybeSingle();
-    if (data) navigation.navigate('Restaurant', { restaurant: data });
+    if (!data) return;
+
+    const tableMatch = url.match(/[?&]table=(\d+)/);
+    if (tableMatch) {
+      navigation.navigate('ClickCollect', { restaurant: data, initialMode: 'table', initialTable: tableMatch[1] });
+    } else {
+      navigation.navigate('Restaurant', { restaurant: data });
+    }
     return;
   }
 

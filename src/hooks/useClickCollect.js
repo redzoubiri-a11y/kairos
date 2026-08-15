@@ -3,6 +3,7 @@ import { supabase } from '../../supabase';
 
 export default function useClickCollect(restaurantId) {
   const [dishes,  setDishes]  = useState([]);
+  const [waitTimeEstimates, setWaitTimeEstimates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
@@ -10,19 +11,25 @@ export default function useClickCollect(restaurantId) {
     if (!restaurantId) { setLoading(false); return; }
     (async () => {
       setLoading(true);
-      const { data } = await supabase
-        .from('dishes')
-        .select('id, name, description, price, category, is_available, photo')
-        .eq('restaurant_id', restaurantId)
-        .eq('is_available', true)
-        .order('category');
-      setDishes(data ?? []);
+      const [{ data: dishRows }, { data: restoRow }] = await Promise.all([
+        supabase.from('dishes')
+          .select('id, name, description, price, category, is_available, photo')
+          .eq('restaurant_id', restaurantId)
+          .eq('is_available', true)
+          .order('category'),
+        supabase.from('restaurants').select('wait_time_estimates').eq('id', restaurantId).maybeSingle(),
+      ]);
+      setDishes(dishRows ?? []);
+      setWaitTimeEstimates(restoRow?.wait_time_estimates ?? []);
       setLoading(false);
     })();
   }, [restaurantId]);
 
-  const submitOrder = useCallback(async (items, notes) => {
+  // mode: 'pickup' | 'table' — tableNumber requis uniquement en mode 'table'
+  // (miroir de la contrainte orders_table_number_check en base).
+  const submitOrder = useCallback(async (items, notes, { mode = 'pickup', tableNumber = null } = {}) => {
     if (!items || items.length === 0) return { error: 'Votre panier est vide.' };
+    if (mode === 'table' && !tableNumber) return { error: 'Indiquez votre numéro de table.' };
     setSubmitting(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -37,6 +44,8 @@ export default function useClickCollect(restaurantId) {
         user_id: userRow.id,
         notes: notes?.trim() || null,
         total_amount: total,
+        mode,
+        table_number: mode === 'table' ? tableNumber : null,
       }).select('id').single();
       if (orderErr) return { error: orderErr.message };
 
@@ -46,10 +55,12 @@ export default function useClickCollect(restaurantId) {
       const { error: itemsErr } = await supabase.from('order_items').insert(rows);
       if (itemsErr) return { error: itemsErr.message };
 
+      const modeLabel = mode === 'table' ? `Table n°${tableNumber}` : 'à emporter';
+
       try {
         await supabase.from('notifications').insert({
           recipient_id: userRow.id, recipient_type: 'user', type: 'new_order',
-          title: 'Commande envoyée', body: 'Votre commande à emporter a été envoyée, en attente de confirmation du restaurant.',
+          title: 'Commande envoyée', body: `Votre commande (${modeLabel}) a été envoyée, en attente de confirmation du restaurant.`,
         });
         supabase.functions.invoke('push-manager', {
           body: { user_id: userRow.id, title: 'Commande envoyée ✅', body: 'En attente de confirmation du restaurant.' },
@@ -65,7 +76,7 @@ export default function useClickCollect(restaurantId) {
             await supabase.from('notifications').insert({
               recipient_id: mgr.id, recipient_type: 'user', type: 'new_order',
               title: 'Nouvelle commande 🛍️',
-              body: `Commande à emporter · ${total.toLocaleString('fr-FR')} DA`,
+              body: `${modeLabel} · ${total.toLocaleString('fr-FR')} DA`,
             });
           }
         }
@@ -73,7 +84,7 @@ export default function useClickCollect(restaurantId) {
           body: {
             restaurant_id: restaurantId,
             title: 'Nouvelle commande 🛍️',
-            body: `Commande à emporter · ${total.toLocaleString('fr-FR')} DA`,
+            body: `${modeLabel} · ${total.toLocaleString('fr-FR')} DA`,
           },
         }).catch(() => {});
       } catch (_) {}
@@ -84,5 +95,5 @@ export default function useClickCollect(restaurantId) {
     }
   }, [restaurantId]);
 
-  return { dishes, loading, submitting, submitOrder };
+  return { dishes, waitTimeEstimates, loading, submitting, submitOrder };
 }

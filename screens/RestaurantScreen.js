@@ -1,48 +1,28 @@
 import { useCallback } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import {
-  Platform, StatusBar as RNStatusBar, Dimensions,
-  View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  Image, Animated, Share, Linking,
+  View, Text, StyleSheet, TouchableOpacity,
+  Animated, Linking,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, typography, spacing, radius } from '../src/theme';
 import useRestaurant from '../src/hooks/useRestaurant';
+import PhotoCarouselHero from '../src/components/PhotoCarouselHero';
 import RestaurantMenuTab from '../src/components/RestaurantMenuTab';
 import RestaurantAvisTab from '../src/components/RestaurantAvisTab';
 import RestaurantInfosTab, { todaysHours, isOpenNow } from '../src/components/RestaurantInfosTab';
 import Tag from '../src/components/Tag';
 
-const SW   = Dimensions.get('window').width;
 const HERO = 310;
-const TOP  = Platform.OS === 'android' ? (RNStatusBar.currentHeight || 0) + 10 : 16;
-
-function HeroGradient() {
-  return (
-    <>
-      <LinearGradient
-        colors={['rgba(0,0,0,0.80)', 'transparent']}
-        style={{ position: 'absolute', top: 0, left: 0, right: 0, height: HERO * 0.38 }}
-        pointerEvents="none"
-      />
-      <LinearGradient
-        colors={['transparent', 'rgba(0,0,0,0.88)']}
-        style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: HERO * 0.60 }}
-        pointerEvents="none"
-      />
-    </>
-  );
-}
 
 export default function RestaurantScreen({ route, navigation }) {
   const restaurant = route?.params?.restaurant || {};
 
   const {
-    tab, photoIndex, setPhotoIndex,
-    isFav, favLoading, reviews, loadingReviews,
+    tab, reviews, loadingReviews,
     tabAnim, photos, menu, rating, cuisineEmoji, desc,
-    toggleFav, switchTab, clickCollectEnabled,
+    switchTab, clickCollectEnabled,
   } = useRestaurant(restaurant);
 
   const todaysRange = todaysHours(restaurant.opening_hours);
@@ -50,12 +30,6 @@ export default function RestaurantScreen({ route, navigation }) {
 
   const goReserve = useCallback(() => navigation.navigate('ReservationForm', { restaurant }), [navigation, restaurant]);
   const goClickCollect = useCallback(() => navigation.navigate('ClickCollect', { restaurant }), [navigation, restaurant]);
-  const handleShare = useCallback(() => {
-    Share.share({
-      message: `🍽️ ${restaurant.name} sur MIDA\n${restaurant.address || ''}\n\nRéserve ta table : mida://restaurant/${restaurant.id}`,
-      title: restaurant.name,
-    });
-  }, [restaurant]);
   const goDirections = useCallback(() => {
     const query = restaurant.latitude && restaurant.longitude
       ? `${restaurant.latitude},${restaurant.longitude}`
@@ -66,98 +40,38 @@ export default function RestaurantScreen({ route, navigation }) {
 
   return (
     <SafeAreaView style={s.root} edges={['top', 'left', 'right', 'bottom']}>
-      <LinearGradient colors={['#C4B8C8', '#8B9BB4', '#6B7F9E']} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
+      <LinearGradient colors={colors.photoFallbackGradient} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
 
-      {/* Hero */}
-      <View style={s.hero}>
-        {photos ? (
-          <ScrollView
-            horizontal pagingEnabled showsHorizontalScrollIndicator={false}
-            style={StyleSheet.absoluteFill}
-            onMomentumScrollEnd={e => setPhotoIndex(Math.round(e.nativeEvent.contentOffset.x / SW))}
-          >
-            {photos.map((uri, i) => (
-              <Image key={i} source={{ uri }} style={{ width: SW, height: HERO }} resizeMode="cover" />
-            ))}
-          </ScrollView>
-        ) : (
-          <View style={[StyleSheet.absoluteFill, { backgroundColor: colors.cardHover, alignItems: 'center', justifyContent: 'center' }]}>
-            <Text style={{ fontSize: 80, opacity: 0.5 }}>{cuisineEmoji}</Text>
-          </View>
-        )}
+      {/* Hero — photo propre, aucun texte dessus */}
+      <PhotoCarouselHero
+        restaurant={{ ...restaurant, photos }}
+        height={HERO}
+        onBack={() => navigation.goBack()}
+        emptyIcon={cuisineEmoji}
+      />
 
-        <HeroGradient />
-
-        <TouchableOpacity style={s.heroBackBtn} onPress={() => navigation.goBack()}>
-          <Text style={s.heroBackBtnTxt}>←</Text>
-        </TouchableOpacity>
-
-        <View style={s.heroBottomRight}>
-          <TouchableOpacity style={s.sharePill} onPress={handleShare}>
-            <Text style={s.shareTxt}>Partage</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={s.favBtn} onPress={toggleFav} disabled={favLoading}>
-            <Text style={favLoading ? s.heroBtnActing : s.heroBtnIcon}>
-              {favLoading ? '···' : isFav ? '❤️' : '🤍'}
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={s.heroInfo}>
-          <View style={s.heroTopRow}>
-            <View style={s.heroCuisineBadge}>
-              <Text style={s.heroCuisineEmoji}>{cuisineEmoji}</Text>
-              <Text style={s.heroCuisineTxt}>{(restaurant.cuisine_type || '').replace(/_/g, ' ').toUpperCase()}</Text>
-            </View>
-            <View style={s.openBadge}>
-              <View style={s.openDot} />
-              <Text style={s.openTxt}>Ouvert</Text>
-            </View>
-          </View>
-          <Text style={s.heroName} numberOfLines={2}>{restaurant.name}</Text>
-          <View style={s.heroMeta}>
-            {rating && (
-              <>
-                <Text style={s.heroRatingTxt}>★ {rating}</Text>
-                {restaurant.review_count > 0 && (
-                  <Text style={s.heroReviewCount}>({restaurant.review_count} avis)</Text>
-                )}
-                <Text style={s.heroSep}>·</Text>
-              </>
-            )}
-            <Text style={s.heroAddr} numberOfLines={1}>
-              📍 {restaurant.quartier || restaurant.city || ''}
-            </Text>
-          </View>
-        </View>
-      </View>
-
-      {/* Stats strip */}
-      <View style={s.strip}>
-        <View style={s.stripItem}>
-          <Text style={s.stripIcon}>★</Text>
-          <Text style={s.stripVal}>{rating || '—'}</Text>
-          <Text style={s.stripLbl}>Note</Text>
-        </View>
-        <View style={s.stripDiv} />
-        <View style={s.stripItem}>
-          <Text style={s.stripIcon}>💰</Text>
-          <Text style={s.stripVal}>
-            {restaurant.avg_ticket > 0 ? (restaurant.avg_ticket / 1000).toFixed(1) + 'k' : '—'}
+      {/* Infos — sous la photo, plus aucun texte sur l'image */}
+      <View style={s.infoBlock}>
+        <Text style={s.infoName} numberOfLines={2}>{restaurant.name}</Text>
+        <View style={s.infoMetaRow}>
+          {rating && (
+            <>
+              <Text style={s.infoRating}>★ {rating}</Text>
+              {restaurant.review_count > 0 && (
+                <Text style={s.infoReviewCount}>({restaurant.review_count} avis)</Text>
+              )}
+              <Text style={s.infoSep}>·</Text>
+            </>
+          )}
+          <Text style={s.infoCuisine} numberOfLines={1}>
+            {cuisineEmoji} {(restaurant.cuisine_type || '').replace(/_/g, ' ')}
           </Text>
-          <Text style={s.stripLbl}>DA / pers.</Text>
         </View>
-        <View style={s.stripDiv} />
-        <View style={s.stripItem}>
-          <Text style={s.stripIcon}>🪑</Text>
-          <Text style={s.stripVal}>{restaurant.capacity > 0 ? restaurant.capacity : '—'}</Text>
-          <Text style={s.stripLbl}>Couverts</Text>
-        </View>
-        <View style={s.stripDiv} />
-        <View style={s.stripItem}>
-          <Text style={s.stripIcon}>💬</Text>
-          <Text style={s.stripVal}>{reviews.length > 0 ? reviews.length : restaurant.review_count || '—'}</Text>
-          <Text style={s.stripLbl}>Avis</Text>
+        <View style={s.infoAddrRow}>
+          <Ionicons name="location-outline" size={14} color={colors.textDim} />
+          <Text style={s.infoAddr} numberOfLines={1}>
+            {restaurant.address || restaurant.quartier || restaurant.city || ''}
+          </Text>
         </View>
       </View>
 
@@ -221,7 +135,7 @@ export default function RestaurantScreen({ route, navigation }) {
         </View>
         {clickCollectEnabled && (
           <TouchableOpacity style={s.clickCollectBtn} onPress={goClickCollect}>
-            <Text style={s.clickCollectTxt}>Commander à emporter</Text>
+            <Text style={s.clickCollectTxt}>Commander</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -234,42 +148,16 @@ const s = StyleSheet.create({
   root:      { flex: 1, backgroundColor: colors.bg },
   bgOverlay: { ...StyleSheet.absoluteFillObject, opacity: 0.06 },
 
-  hero:         { height: HERO, overflow: 'hidden' },
-  heroLogo:     { position: 'absolute', top: TOP + 2, alignSelf: 'center', left: 0, right: 0 },
-  heroBtnTxt:   { color: colors.noir, fontSize: typography.size.heading1 },
-  heroBtnIcon:  { fontSize: typography.size.heading1 },
-  heroBtnActing:{ color: colors.primary, fontSize: typography.size.bodyLg, fontWeight: typography.weight.bold },
-
-  heroBackBtn:     { position: 'absolute', top: TOP, left: spacing.xl, width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.92)', alignItems: 'center', justifyContent: 'center' },
-  heroBackBtnTxt:  { color: colors.noir, fontSize: 20, lineHeight: 24 },
-  heroBottomRight: { position: 'absolute', bottom: spacing.xl, right: spacing.xl, flexDirection: 'row', alignItems: 'center', gap: spacing.md },
-  favBtn:          { width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.92)', alignItems: 'center', justifyContent: 'center' },
-  sharePill:    { backgroundColor: 'rgba(255,255,255,0.92)', borderRadius: radius.pill, paddingHorizontal: 14, paddingVertical: 9 },
-  shareTxt:     { color: colors.noir, fontSize: typography.size.caption, fontWeight: typography.weight.semibold, letterSpacing: 0.5 },
-
-
-  openBadge: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs + 1, backgroundColor: 'rgba(10,10,10,0.76)', borderRadius: radius.full, paddingHorizontal: spacing.md + 2, paddingVertical: spacing.xs, borderWidth: 1, borderColor: 'rgba(76,175,130,0.3)' },
-  openDot:   { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.green },
-  openTxt:   { color: colors.green, fontSize: typography.size.sm },
-
-  heroInfo:        { position: 'absolute', bottom: 0, left: 0, right: 0, padding: spacing.xl, paddingBottom: spacing.xl + 2 },
-  heroTopRow:      { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.md },
-  heroCuisineBadge:{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs + 1, backgroundColor: 'rgba(13,107,63,0.85)', borderRadius: radius.card, paddingHorizontal: spacing.md + 1, paddingVertical: spacing.xs },
-  heroCuisineEmoji:{ fontSize: typography.size.body },
-  heroCuisineTxt:  { color: '#FFFFFF', fontSize: typography.size.xs, letterSpacing: 2.5 },
-  heroName:        { color: '#FFFFFF', fontFamily: typography.display, fontSize: typography.size.title + 4, fontWeight: typography.weight.bold, letterSpacing: -0.3, marginBottom: spacing.sm + 1 },
-  heroMeta:        { flexDirection: 'row', alignItems: 'center', gap: spacing.sm + 1, flexWrap: 'wrap' },
-  heroRatingTxt:   { color: colors.star, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium },
-  heroReviewCount: { color: 'rgba(255,255,255,0.6)', fontSize: typography.size.caption },
-  heroSep:         { color: 'rgba(255,255,255,0.5)' },
-  heroAddr:        { color: 'rgba(255,255,255,0.75)', fontSize: typography.size.body, flex: 1 },
-
-  strip:     { flexDirection: 'row', backgroundColor: colors.card, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
-  stripItem: { flex: 1, alignItems: 'center', paddingVertical: spacing.lg - 1, gap: spacing.xxs },
-  stripIcon: { fontSize: typography.size.bodyLg, marginBottom: spacing.xxs, color: colors.star },
-  stripVal:  { color: colors.text, fontSize: typography.size.bodyLg, fontWeight: typography.weight.regular },
-  stripLbl:  { color: colors.textDim, fontSize: typography.size.xs, letterSpacing: 0.3 },
-  stripDiv:  { width: 1, backgroundColor: colors.cardBorder, marginVertical: spacing.md },
+  // Infos resto — sous la photo (plus aucun texte sur l'image)
+  infoBlock:    { paddingHorizontal: spacing.xl, paddingTop: spacing.xl, paddingBottom: spacing.lg, backgroundColor: colors.card },
+  infoName:     { fontFamily: typography.display, fontSize: typography.size.title, color: colors.text, letterSpacing: -0.3, marginBottom: spacing.sm },
+  infoMetaRow:  { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, flexWrap: 'wrap' },
+  infoRating:   { fontFamily: typography.bodyBold, fontSize: typography.size.bodyLg, color: colors.gold },
+  infoReviewCount: { fontFamily: typography.body, color: colors.textDim, fontSize: typography.size.caption },
+  infoSep:      { color: colors.textDim },
+  infoCuisine:  { fontFamily: typography.body, fontSize: typography.size.bodyLg - 0.5, color: colors.textMuted, flexShrink: 1 },
+  infoAddrRow:  { flexDirection: 'row', alignItems: 'center', gap: spacing.xs + 1, marginTop: spacing.sm },
+  infoAddr:     { fontFamily: typography.body, fontSize: typography.size.body, color: colors.textDim, flex: 1 },
 
   descWrap: { paddingHorizontal: spacing.xl, paddingVertical: spacing.xl - 2, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   descTxt:  { color: colors.textMuted, fontSize: typography.size.bodyLg, lineHeight: 20, fontWeight: typography.weight.regular },

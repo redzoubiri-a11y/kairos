@@ -7,18 +7,27 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { colors, typography, spacing, radius } from '../src/theme';
 import useClickCollect from '../src/hooks/useClickCollect';
 import useCart from '../src/hooks/useCart';
+import { estimateWaitMinutes } from '../src/utils/waitTime';
 import Button from '../src/components/Button';
 import Tag from '../src/components/Tag';
 import EmptyState from '../src/components/EmptyState';
 
+const MODES = [
+  { id: 'pickup', label: 'À emporter' },
+  { id: 'table',  label: 'Je suis à table' },
+];
+
 export default function ClickCollectScreen({ route, navigation }) {
   const restaurant = route?.params?.restaurant || {};
-  const { dishes, loading, submitting, submitOrder } = useClickCollect(restaurant.id);
+  const { dishes, waitTimeEstimates, loading, submitting, submitOrder } = useClickCollect(restaurant.id);
   const { items, addItem, removeItem, qtyFor, clear, totalCount, totalAmount } = useCart();
   const [notes, setNotes] = useState('');
   const [showCart, setShowCart] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
+  const [mode, setMode] = useState(route?.params?.initialMode === 'table' ? 'table' : 'pickup');
+  const [tableNumber, setTableNumber] = useState(route?.params?.initialTable ? String(route.params.initialTable) : '');
   const insets = useSafeAreaInsets();
+  const waitMinutes = useMemo(() => estimateWaitMinutes(waitTimeEstimates), [waitTimeEstimates]);
 
   const categories = useMemo(() => [...new Set(dishes.map(d => d.category || 'Autre'))], [dishes]);
   const [activeCat, setActiveCat] = useState(null);
@@ -31,13 +40,19 @@ export default function ClickCollectScreen({ route, navigation }) {
   const goBack = useCallback(() => navigation.goBack(), [navigation]);
 
   const handleSubmit = useCallback(async () => {
-    const { orderId, error } = await submitOrder(items, notes);
+    if (mode === 'table' && !tableNumber.trim()) {
+      Alert.alert('Numéro de table', 'Indiquez votre numéro de table.');
+      return;
+    }
+    const { orderId, error } = await submitOrder(items, notes, {
+      mode, tableNumber: mode === 'table' ? parseInt(tableNumber, 10) : null,
+    });
     if (error) { Alert.alert('Erreur', error); return; }
     clear();
     setNotes('');
     setShowCart(false);
     setConfirmed(true);
-  }, [items, notes, submitOrder, clear]);
+  }, [items, notes, mode, tableNumber, submitOrder, clear]);
 
   return (
     <SafeAreaView style={s.root} edges={['top', 'left', 'right', 'bottom']}>
@@ -46,8 +61,8 @@ export default function ClickCollectScreen({ route, navigation }) {
           <Text style={s.backBtnTxt}>←</Text>
         </TouchableOpacity>
         <View style={{ flex: 1 }}>
-          <Text style={s.headerTitle} numberOfLines={1}>{restaurant.name} — à emporter</Text>
-          <Text style={s.headerSub} numberOfLines={1}>Commande à emporter</Text>
+          <Text style={s.headerTitle} numberOfLines={1}>{restaurant.name}</Text>
+          <Text style={s.headerSub} numberOfLines={1}>Commander</Text>
         </View>
       </View>
 
@@ -117,7 +132,7 @@ export default function ClickCollectScreen({ route, navigation }) {
               </View>
               <Text style={s.confirmTitle}>Commande envoyée</Text>
               <Text style={s.confirmSub}>
-                Votre commande chez {restaurant.name} a été envoyée. Vous serez notifié dès qu'elle sera confirmée.
+                Votre commande chez {restaurant.name}{mode === 'table' ? ` (table n°${tableNumber})` : ''} a été envoyée. Vous serez notifié dès qu'elle sera confirmée.
               </Text>
               <Button variant="primary" onPress={goBack} style={{ marginTop: spacing.sm }}>Retour</Button>
             </View>
@@ -150,6 +165,35 @@ export default function ClickCollectScreen({ route, navigation }) {
                   </View>
                 ))}
               </ScrollView>
+
+              {/* Choix du mode — Lot 3 : à emporter (créneau non géré) ou à table (numéro requis) */}
+              <View style={s.modeRow}>
+                {MODES.map(m => (
+                  <TouchableOpacity
+                    key={m.id}
+                    style={[s.modeBtn, mode === m.id && s.modeBtnActive]}
+                    onPress={() => setMode(m.id)}
+                  >
+                    <Text style={[s.modeTxt, mode === m.id && s.modeTxtActive]}>{m.label}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+
+              {mode === 'table' && (
+                <TextInput
+                  style={s.notesInput}
+                  placeholder="Numéro de table"
+                  placeholderTextColor={colors.textDim}
+                  value={tableNumber}
+                  onChangeText={setTableNumber}
+                  keyboardType="number-pad"
+                />
+              )}
+
+              {waitMinutes != null && (
+                <Text style={s.waitTxt}>⏱ Temps d'attente estimé : ~{waitMinutes} min</Text>
+              )}
+
               <TextInput
                 style={s.notesInput}
                 placeholder="Note pour le restaurant (optionnel)"
@@ -163,7 +207,9 @@ export default function ClickCollectScreen({ route, navigation }) {
                 <Text style={s.cartTotalVal}>{totalAmount.toLocaleString('fr-FR')} DA</Text>
               </View>
               <Button variant="confirm" onPress={handleSubmit} loading={submitting}>Envoyer la commande</Button>
-              <Text style={s.paymentNote}>Paiement sur place au retrait</Text>
+              <Text style={s.paymentNote}>
+                {mode === 'table' ? 'Paiement sur place, à table' : 'Paiement sur place au retrait'}
+              </Text>
             </View>
           )}
         </>
@@ -213,6 +259,14 @@ const s = StyleSheet.create({
   cartItemName:    { flex: 1, fontFamily: typography.body, color: colors.text },
   cartItemPrice:   { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.caption },
   notesInput:      { borderWidth: 1, borderColor: colors.cardBorder, borderRadius: radius.md, padding: spacing.md, color: colors.text, fontSize: typography.size.body, minHeight: 44, textAlignVertical: 'top' },
+
+  modeRow:      { flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.xs },
+  modeBtn:      { flex: 1, alignItems: 'center', paddingVertical: spacing.md - 2, borderRadius: radius.md, backgroundColor: colors.tagNeutralBg },
+  modeBtnActive:{ backgroundColor: colors.primary },
+  modeTxt:      { fontFamily: typography.bodySemibold, fontSize: typography.size.body, color: colors.text },
+  modeTxtActive:{ color: '#FFFFFF' },
+
+  waitTxt: { fontFamily: typography.bodyMedium, fontSize: typography.size.caption + 0.5, color: colors.textMuted, marginBottom: spacing.xs },
   cartTotalRow:    { flexDirection: 'row', justifyContent: 'space-between', paddingTop: spacing.sm, borderTopWidth: 1, borderTopColor: colors.cardBorder },
   cartTotalLbl:    { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.body },
   cartTotalVal:    { fontFamily: typography.display, color: colors.text, fontSize: typography.size.subheading },

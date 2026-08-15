@@ -25,6 +25,14 @@ const STATUS_MESSAGE = {
   collected: 'Commande récupérée. Bon appétit !',
 };
 
+// Mode table (Lot 3) — le client est déjà sur place, pas de "venir récupérer".
+const STATUS_MESSAGE_TABLE = {
+  pending:   'Commande envoyée, en attente de confirmation du restaurant.',
+  confirmed: 'Votre commande est en cuisine.',
+  ready:     'Votre commande arrive à votre table !',
+  collected: 'Commande servie. Bon appétit !',
+};
+
 function shortOrderNumber(id) {
   return '#' + (id || '').replace(/-/g, '').slice(-4).toUpperCase();
 }
@@ -33,7 +41,9 @@ export default function OrderTrackingScreen({ route, navigation }) {
   const order = route?.params?.order || {};
   const restaurant = order.restaurants || {};
   const isCancelled = order.status === 'cancelled';
+  const isTable = order.mode === 'table';
   const activeStep = useMemo(() => stepIndexFor(order.status), [order.status]);
+  const statusMessages = isTable ? STATUS_MESSAGE_TABLE : STATUS_MESSAGE;
 
   const goBack = useCallback(() => navigation.goBack(), [navigation]);
   const goDirections = useCallback(() => {
@@ -62,6 +72,7 @@ export default function OrderTrackingScreen({ route, navigation }) {
         <Text style={s.orderSub}>
           {restaurant.name || 'Restaurant'}{orderedAt ? ` · Commandée à ${orderedAt}` : ''}
         </Text>
+        {isTable && <Text style={s.tableTxt}>🍽️ Table n°{order.table_number}</Text>}
 
         {isCancelled ? (
           <View style={s.cancelledCard}>
@@ -86,7 +97,7 @@ export default function OrderTrackingScreen({ route, navigation }) {
                 );
               })}
             </View>
-            <Text style={s.statusMsg}>{STATUS_MESSAGE[order.status] || ''}</Text>
+            <Text style={s.statusMsg}>{statusMessages[order.status] || ''}</Text>
           </View>
         )}
 
@@ -103,6 +114,7 @@ export default function OrderTrackingScreen({ route, navigation }) {
           <Text style={s.totalVal}>{Number(order.total_amount || 0).toLocaleString('fr-FR')} DA</Text>
         </View>
 
+        {!isTable && (
         <TouchableOpacity style={s.addressCard} onPress={goDirections} activeOpacity={0.75}>
           <View style={s.addressIcon}>
             <Text style={{ fontSize: 16 }}>📍</Text>
@@ -113,6 +125,7 @@ export default function OrderTrackingScreen({ route, navigation }) {
           </View>
           <Text style={s.addressLink}>Itinéraire</Text>
         </TouchableOpacity>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -127,6 +140,7 @@ const s = StyleSheet.create({
 
   orderNumber: { fontFamily: typography.display, fontSize: typography.size.title - 3, color: colors.text, letterSpacing: -0.3 },
   orderSub:    { fontFamily: typography.body, fontSize: typography.size.bodyLg - 0.5, color: 'rgba(10,10,10,0.5)', marginTop: 5 },
+  tableTxt:    { fontFamily: typography.bodyBold, fontSize: typography.size.body, color: colors.primary, marginTop: spacing.sm },
 
   stepperCard: { marginTop: spacing.xxl, backgroundColor: colors.cream, borderRadius: radius.xl, padding: 20 },
   stepperRow:  { flexDirection: 'row', alignItems: 'flex-start' },

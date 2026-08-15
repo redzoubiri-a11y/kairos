@@ -42,6 +42,7 @@ import ClickCollectScreen from './screens/ClickCollectScreen';
 import ProOrdersScreen from './screens/ProOrdersScreen';
 import MyOrdersScreen from './screens/MyOrdersScreen';
 import OrderTrackingScreen from './screens/OrderTrackingScreen';
+import ProTableQrScreen from './screens/ProTableQrScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -114,7 +115,7 @@ function TabNavigator({ userRole }) {
         },
         tabBarActiveTintColor: C.accent,
         tabBarInactiveTintColor: C.dim,
-        tabBarLabelStyle: { fontSize: 10, letterSpacing: 0.5, fontWeight: '500', marginTop: 1 },
+        tabBarLabelStyle: { fontFamily: 'DM Sans Medium', fontSize: 10, letterSpacing: 0.5, marginTop: 1 },
       })}
     >
       <Tab.Screen name="Accueil" component={HomeScreen} />
@@ -178,7 +179,7 @@ export default function App() {
     if (loading || !fontsLoaded) {
       return (
         <View style={{ flex: 1, backgroundColor: C.bg, alignItems: 'center', justifyContent: 'center' }}>
-          <Text style={{ color: C.accent, fontSize: 28, fontWeight: '300', letterSpacing: 8 }}>MIDA</Text>
+          <Text style={{ color: C.accent, fontSize: 28, fontFamily: fontsLoaded ? 'Space Grotesk Medium' : undefined, fontWeight: fontsLoaded ? undefined : '300', letterSpacing: 8 }}>MIDA</Text>
         </View>
       );
     }
@@ -215,6 +216,7 @@ export default function App() {
             <Stack.Screen name="ProOrders" component={ProOrdersScreen} />
             <Stack.Screen name="MyOrders" component={MyOrdersScreen} />
             <Stack.Screen name="OrderTracking" component={OrderTrackingScreen} />
+            <Stack.Screen name="ProTableQr" component={ProTableQrScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </GuestContext.Provider>

@@ -17,6 +17,7 @@ export default function OrderCard({
 }) {
   const st = ORDER_STATUS[order.status] || ORDER_STATUS.pending;
   const isPro = context === 'pro';
+  const isTable = order.mode === 'table';
   const canAdvance = isPro && !!advanceLabel && ['pending', 'confirmed', 'ready'].includes(order.status);
   const canCancel = ['pending', 'confirmed'].includes(order.status);
   const isReadyStep = order.status === 'ready';
@@ -38,6 +39,13 @@ export default function OrderCard({
           <Text style={[s.statusTxt, { color: st.color }]}>{st.label}</Text>
         </View>
       </View>
+
+      {/* Numéro de table — bien visible, distinct des commandes à emporter (Lot 3) */}
+      {isTable && (
+        <View style={s.tableBadge}>
+          <Text style={s.tableBadgeTxt}>🍽️ Table n°{order.table_number}</Text>
+        </View>
+      )}
 
       <View style={s.itemsBlock}>
         {(order.order_items || []).map(it => (
@@ -96,6 +104,11 @@ const s = StyleSheet.create({
   subtitle:   { fontFamily: typography.body, fontSize: typography.size.bodyLg - 1.5, color: 'rgba(10,10,10,0.45)', marginTop: 3 },
   statusBadge: { flexShrink: 0, paddingHorizontal: spacing.sm, paddingVertical: 5, borderRadius: radius.sm + 2 },
   statusTxt:   { fontFamily: typography.bodyBold, fontSize: typography.size.xs + 0.5, letterSpacing: 0.2 },
+
+  // colors.gold est réservé à l'univers Pro (cf. theme.js) — cette puce est visible
+  // côté client aussi (MyOrdersScreen), donc palette neutre partagée à la place.
+  tableBadge:    { alignSelf: 'flex-start', marginTop: spacing.sm + 1, backgroundColor: colors.tagGreenBg, borderRadius: radius.sm + 2, paddingHorizontal: spacing.sm, paddingVertical: 4 },
+  tableBadgeTxt: { fontFamily: typography.bodyBold, fontSize: typography.size.caption, color: colors.primary },
 
   itemsBlock: { marginTop: spacing.lg - 2, gap: spacing.xs + 1 },
   itemRow:    { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },

@@ -36,7 +36,7 @@ export default function MyOrdersScreen({ navigation }) {
           <View style={s.emptyWrap}>
             <Text style={{ fontSize: 44 }}>🛍️</Text>
             <Text style={s.emptyTitle}>Aucune commande</Text>
-            <Text style={s.emptySub}>Vos commandes à emporter{'\n'}apparaîtront ici</Text>
+            <Text style={s.emptySub}>Vos commandes{'\n'}apparaîtront ici</Text>
           </View>
         ) : (
           <>

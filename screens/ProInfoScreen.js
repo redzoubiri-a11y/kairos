@@ -44,6 +44,8 @@ export default function ProInfoScreen({ navigation, route }) {
 
   return (
     <SafeAreaView style={s.root} edges={['top', 'left', 'right']}>
+      <View style={s.glowGold} pointerEvents="none" />
+      <View style={s.glowWarm} pointerEvents="none" />
       <View style={s.header}>
         <View style={s.headerLeft}>
           {!onSetupComplete && (
@@ -247,6 +249,67 @@ export default function ProInfoScreen({ navigation, route }) {
             />
           </View>
 
+          {form.click_collect_enabled && (
+            <>
+              {/* Temps d'attente par tranche horaire — Lot 3, saisie manuelle, pas de calcul auto */}
+              <Text style={s.label}>Temps d'attente estimé (par tranche horaire)</Text>
+              {form.wait_time_estimates.map((b, i) => (
+                <View key={i} style={s.waitRow}>
+                  <TextInput
+                    style={[s.input, s.waitInput]}
+                    placeholder="12:00"
+                    placeholderTextColor={colors.textDim}
+                    value={b.from}
+                    onChangeText={(v) => {
+                      const next = [...form.wait_time_estimates];
+                      next[i] = { ...next[i], from: v };
+                      set('wait_time_estimates')(next);
+                    }}
+                  />
+                  <Text style={s.waitSep}>→</Text>
+                  <TextInput
+                    style={[s.input, s.waitInput]}
+                    placeholder="14:00"
+                    placeholderTextColor={colors.textDim}
+                    value={b.to}
+                    onChangeText={(v) => {
+                      const next = [...form.wait_time_estimates];
+                      next[i] = { ...next[i], to: v };
+                      set('wait_time_estimates')(next);
+                    }}
+                  />
+                  <TextInput
+                    style={[s.input, s.waitInputMin]}
+                    placeholder="min"
+                    placeholderTextColor={colors.textDim}
+                    keyboardType="number-pad"
+                    value={b.minutes != null ? String(b.minutes) : ''}
+                    onChangeText={(v) => {
+                      const next = [...form.wait_time_estimates];
+                      next[i] = { ...next[i], minutes: parseInt(v, 10) || 0 };
+                      set('wait_time_estimates')(next);
+                    }}
+                  />
+                  <TouchableOpacity
+                    onPress={() => set('wait_time_estimates')(form.wait_time_estimates.filter((_, j) => j !== i))}
+                  >
+                    <Text style={s.waitRemove}>✕</Text>
+                  </TouchableOpacity>
+                </View>
+              ))}
+              <TouchableOpacity
+                style={s.waitAddBtn}
+                onPress={() => set('wait_time_estimates')([...form.wait_time_estimates, { from: '12:00', to: '14:00', minutes: 15 }])}
+              >
+                <Text style={s.waitAddTxt}>+ Ajouter une tranche</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={s.qrLinkBtn} onPress={() => navigation.navigate('ProTableQr')}>
+                <Text style={s.qrLinkTxt}>🔳 Générer les QR codes des tables</Text>
+              </TouchableOpacity>
+            </>
+          )}
+
           {!!error && <Text style={s.error}>{error}</Text>}
           <View style={{ height: 120 }} />
         </ScrollView>
@@ -261,28 +324,40 @@ export default function ProInfoScreen({ navigation, route }) {
 }
 
 const s = StyleSheet.create({
-  root:        { flex: 1, backgroundColor: colors.bg },
+  root:        { flex: 1, backgroundColor: colors.warmBg },
+  glowGold:    { position: 'absolute', top: 30, right: -80, width: 280, height: 280, borderRadius: 140, backgroundColor: colors.glowGold },
+  glowWarm:    { position: 'absolute', top: 310, left: -90, width: 240, height: 240, borderRadius: 120, backgroundColor: colors.glowWarm },
   header:      { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.cardBorder, backgroundColor: colors.card },
   headerLeft:  { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },
   backBtn:     { marginRight: spacing.sm, padding: spacing.xs },
-  backBtnTxt:  { color: colors.text, fontSize: 22 },
-  title:       { color: colors.text, fontSize: typography.size.heading2, fontWeight: typography.weight.semibold },
+  backBtnTxt:  { color: colors.text, fontSize: 22, fontFamily: typography.body },
+  title:       { color: colors.text, fontSize: typography.size.heading2, fontFamily: typography.display },
   terminerBar: { paddingHorizontal: spacing.xl, paddingVertical: spacing.md, backgroundColor: colors.card, borderTopWidth: 1, borderTopColor: colors.cardBorder },
   terminerBtn: { alignItems: 'center', paddingVertical: spacing.md },
-  terminerTxt: { color: colors.gold, fontSize: typography.size.body, fontWeight: typography.weight.medium },
+  terminerTxt: { color: colors.gold, fontSize: typography.size.body, fontFamily: typography.bodyMedium },
   saveBtn:     { backgroundColor: colors.primary, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, opacity: 1 },
   saveBtnActive:{ opacity: 0.75 },
-  saveBtnTxt:  { color: '#fff', fontSize: typography.size.caption, fontWeight: typography.weight.extrabold },
+  saveBtnTxt:  { color: '#fff', fontSize: typography.size.caption, fontFamily: typography.bodyBold },
 
   content:     { padding: spacing.xl, gap: 0 },
-  section:     { color: colors.textMuted, fontSize: typography.size.xs, fontWeight: typography.weight.semibold, letterSpacing: 1, textTransform: 'uppercase', marginTop: spacing.xxl, marginBottom: spacing.md },
-  label:       { color: colors.text, fontSize: typography.size.caption, fontWeight: typography.weight.medium, marginBottom: spacing.xs, marginTop: spacing.md },
+  section:     { color: colors.textMuted, fontSize: typography.size.xs, fontFamily: typography.bodySemibold, letterSpacing: 1, textTransform: 'uppercase', marginTop: spacing.xxl, marginBottom: spacing.md },
+  label:       { color: colors.text, fontSize: typography.size.caption, fontFamily: typography.bodyMedium, marginBottom: spacing.xs, marginTop: spacing.md },
   labelRow:    { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   aiBtn:       { borderRadius: radius.full, borderWidth: 1, borderColor: PRO_ACCENT, paddingHorizontal: spacing.md, paddingVertical: spacing.xxs },
   aiBtnActive: { opacity: 0.6 },
-  aiBtnTxt:    { color: PRO_ACCENT, fontSize: typography.size.xs, fontWeight: typography.weight.semibold },
-  input:       { backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.md, color: colors.text, fontSize: typography.size.body },
+  aiBtnTxt:    { color: PRO_ACCENT, fontSize: typography.size.xs, fontFamily: typography.bodySemibold },
+  input:       { backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.md, color: colors.text, fontSize: typography.size.body, fontFamily: typography.body },
   inputMulti:  { minHeight: 80, paddingTop: spacing.md },
+
+  waitRow:     { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.sm },
+  waitInput:   { flex: 1, paddingVertical: spacing.sm + 2 },
+  waitInputMin:{ width: 60, paddingVertical: spacing.sm + 2 },
+  waitSep:     { color: colors.textMuted },
+  waitRemove:  { color: colors.red, fontSize: 16, paddingHorizontal: spacing.xs },
+  waitAddBtn:  { alignSelf: 'flex-start', marginTop: spacing.xs, marginBottom: spacing.lg },
+  waitAddTxt:  { color: PRO_ACCENT, fontSize: typography.size.caption, fontFamily: typography.bodySemibold },
+  qrLinkBtn:   { backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, borderRadius: radius.md, paddingVertical: spacing.md, alignItems: 'center', marginTop: spacing.sm },
+  qrLinkTxt:   { color: colors.text, fontSize: typography.size.body, fontFamily: typography.bodySemibold },
 
   twoCol:      { flexDirection: 'row', gap: spacing.md },
   colItem:     { flex: 1 },
@@ -290,12 +365,12 @@ const s = StyleSheet.create({
   chips:       { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginTop: spacing.xs },
   chip:        { borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, backgroundColor: colors.card, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
   chipOn:      { backgroundColor: colors.primary, borderColor: colors.primary },
-  chipTxt:     { color: colors.textMuted, fontSize: typography.size.caption, fontWeight: typography.weight.medium },
-  chipTxtOn:   { color: '#fff', fontWeight: typography.weight.semibold },
+  chipTxt:     { color: colors.textMuted, fontSize: typography.size.caption, fontFamily: typography.bodyMedium },
+  chipTxtOn:   { color: '#fff', fontFamily: typography.bodySemibold },
 
   toggleRow:   { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
-  toggleLabel: { color: colors.text, fontSize: typography.size.body },
-  toggleSub:   { color: colors.textDim, fontSize: typography.size.caption, marginTop: 2 },
+  toggleLabel: { color: colors.text, fontSize: typography.size.body, fontFamily: typography.body },
+  toggleSub:   { color: colors.textDim, fontSize: typography.size.caption, marginTop: 2, fontFamily: typography.body },
 
-  error:       { color: colors.red, fontSize: typography.size.caption, marginTop: spacing.lg, textAlign: 'center' },
+  error:       { color: colors.red, fontSize: typography.size.caption, marginTop: spacing.lg, textAlign: 'center', fontFamily: typography.body },
 });

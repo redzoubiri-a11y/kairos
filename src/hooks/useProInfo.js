@@ -31,6 +31,7 @@ const DEFAULTS = {
   name: '', description: '', phone: '', address: '', quartier: '', city: '',
   cuisine_type: 'autre', occasion_tags: [], capacity: '', avg_ticket: '',
   has_kids_menu: false, has_kids_chairs: false, click_collect_enabled: false,
+  wait_time_estimates: [],
 };
 
 export default function useProInfo() {
@@ -58,7 +59,7 @@ export default function useProInfo() {
       setRestaurantId(owner.restaurant_id);
       const { data: r } = await supabase
         .from('restaurants')
-        .select('name, description, phone, address, quartier, city, cuisine_type, occasion_tags, capacity, avg_ticket, has_kids_menu, has_kids_chairs, click_collect_enabled')
+        .select('name, description, phone, address, quartier, city, cuisine_type, occasion_tags, capacity, avg_ticket, has_kids_menu, has_kids_chairs, click_collect_enabled, wait_time_estimates')
         .eq('id', owner.restaurant_id)
         .maybeSingle();
       if (r) {
@@ -76,6 +77,7 @@ export default function useProInfo() {
           has_kids_menu:  r.has_kids_menu  ?? false,
           has_kids_chairs:r.has_kids_chairs ?? false,
           click_collect_enabled: r.click_collect_enabled ?? false,
+          wait_time_estimates: r.wait_time_estimates ?? [],
         });
       }
     } finally {
@@ -116,6 +118,7 @@ export default function useProInfo() {
         has_kids_menu:   form.has_kids_menu,
         has_kids_chairs: form.has_kids_chairs,
         click_collect_enabled: form.click_collect_enabled,
+        wait_time_estimates: form.wait_time_estimates,
       }).eq('id', restaurantId);
       if (err) throw err;
       setSaved(true);

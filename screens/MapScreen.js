@@ -1,9 +1,10 @@
 import { useRef, useCallback, useEffect, useState } from 'react';
 import {
-  View, Text, StyleSheet, TouchableOpacity,
+  View, Text, StyleSheet, TouchableOpacity, Image,
   ActivityIndicator, Platform,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
 import * as Location from 'expo-location';
 import { colors, typography, spacing, radius } from '../src/theme';
 import useMapScreen, { INITIAL_REGION, CUISINE_EMOJI, getCoordinate } from '../src/hooks/useMapScreen';
@@ -17,6 +18,7 @@ if (Platform.OS !== 'web') {
 
 export default function MapScreen({ navigation }) {
   const mapRef = useRef(null);
+  const insets = useSafeAreaInsets();
   const { restaurants, loading, selected, setSelected } = useMapScreen();
   const [hasLocationPermission, setHasLocationPermission] = useState(false);
 
@@ -33,6 +35,21 @@ export default function MapScreen({ navigation }) {
       350,
     );
   }, [setSelected]);
+
+  const recenter = useCallback(async () => {
+    let granted = hasLocationPermission;
+    if (!granted) {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      granted = status === 'granted';
+      setHasLocationPermission(granted);
+    }
+    if (!granted) return;
+    const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
+    mapRef.current?.animateToRegion(
+      { latitude: loc.coords.latitude, longitude: loc.coords.longitude, latitudeDelta: 0.05, longitudeDelta: 0.05 },
+      400,
+    );
+  }, [hasLocationPermission]);
 
   const closeCard  = useCallback(() => setSelected(null), [setSelected]);
   const goSelected = useCallback(() => navigation.navigate('Restaurant', { restaurant: selected }), [navigation, selected]);
@@ -62,7 +79,7 @@ export default function MapScreen({ navigation }) {
                     <Text style={{ color: colors.text, fontSize: 13 }}>{r.name}</Text>
                     <Text style={{ color: colors.textMuted, fontSize: 11 }}>{r.quartier || '—'}</Text>
                   </View>
-                  {r.avg_rating > 0 && <Text style={{ color: colors.gold, fontSize: 11 }}>★ {Number(r.avg_rating).toFixed(1)}</Text>}
+                  {r.avg_rating > 0 && <Text style={{ color: colors.star, fontSize: 11 }}>★ {Number(r.avg_rating).toFixed(1)}</Text>}
                 </TouchableOpacity>
               ))}
               {restaurants.length > 6 && (
@@ -87,65 +104,62 @@ export default function MapScreen({ navigation }) {
         showsScale={false}
         toolbarEnabled={false}
       >
-        {restaurants.map((r) => (
-          <Marker
-            key={String(r.id)}
-            coordinate={getCoordinate(r)}
-            tracksViewChanges={false}
-            onPress={() => handleMarkerPress(r)}
-          >
-            <View style={[s.pin, selected?.id === r.id && s.pinActive]}>
-              <Text style={[s.pinEmoji, selected?.id === r.id && s.pinEmojiLg]}>
-                {CUISINE_EMOJI[r.cuisine_type] || '🍽️'}
-              </Text>
-            </View>
-          </Marker>
-        ))}
+        {restaurants.map((r) => {
+          const isOn = selected?.id === r.id;
+          const rating = r.avg_rating > 0 ? Number(r.avg_rating).toFixed(1).replace('.', ',') : null;
+          return (
+            <Marker
+              key={String(r.id)}
+              coordinate={getCoordinate(r)}
+              tracksViewChanges={false}
+              onPress={() => handleMarkerPress(r)}
+            >
+              <View style={[s.pin, isOn && s.pinOn]}>
+                <View style={s.pinInner}>
+                  {rating
+                    ? <Text style={[s.pinRating, isOn && s.pinRatingLg]}>{rating}</Text>
+                    : <Text style={s.pinEmoji}>{CUISINE_EMOJI[r.cuisine_type] || '🍽️'}</Text>
+                  }
+                </View>
+              </View>
+            </Marker>
+          );
+        })}
       </MapView>
 
-      <SafeAreaView style={s.headerWrap} pointerEvents="box-none">
-        <View style={s.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
-            <Text style={s.backBtnTxt}>←</Text>
-          </TouchableOpacity>
-          <View>
-            <Text style={s.headerSub}>Alger</Text>
-          </View>
-          <View style={s.countBadge}>
-            <View style={s.countDot} />
-            <Text style={s.countTxt}>
-              {loading ? '…' : restaurants.length + ' tables'}
-            </Text>
-          </View>
-        </View>
-      </SafeAreaView>
+      <TouchableOpacity
+        onPress={() => navigation.goBack()}
+        style={[s.backBtn, { top: insets.top + spacing.lg }]}
+      >
+        <Text style={s.backBtnTxt}>←</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={recenter} style={s.recenterBtn}>
+        <Text style={s.recenterTxt}>◎</Text>
+      </TouchableOpacity>
 
       {loading && (
         <View style={s.spinner}>
-          <ActivityIndicator color={colors.accent} size="small" />
+          <ActivityIndicator color={colors.text} size="small" />
         </View>
       )}
 
       {selected && (
         <View style={s.cardWrap}>
-          <TouchableOpacity style={s.card} activeOpacity={0.88} onPress={goSelected}>
-            <View style={s.cardThumb}>
-              <Text style={s.cardEmoji}>
-                {CUISINE_EMOJI[selected.cuisine_type] || '🍽️'}
-              </Text>
-            </View>
+          <TouchableOpacity style={s.card} activeOpacity={0.9} onPress={goSelected}>
+            {selected.photos?.[0]
+              ? <Image source={{ uri: selected.photos[0] }} style={s.cardThumb} resizeMode="cover" />
+              : <LinearGradient colors={colors.photoFallbackGradient} style={s.cardThumb} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
+            }
             <View style={s.cardInfo}>
-              <Text style={s.cardTag}>
-                {selected.cuisine_type ? selected.cuisine_type.toUpperCase() : '—'}
-              </Text>
               <Text style={s.cardName} numberOfLines={1}>{selected.name}</Text>
-              <Text style={s.cardAddr} numberOfLines={1}>{'📍 ' + (selected.quartier || 'Alger')}</Text>
               {selected.avg_rating > 0 && (
-                <Text style={s.cardRating}>{'★ ' + Number(selected.avg_rating).toFixed(1)}</Text>
+                <Text style={s.cardRating}>{'★ ' + Number(selected.avg_rating).toFixed(1).replace('.', ',')}</Text>
               )}
-            </View>
-            <View style={s.cardArrow}>
-              <Text style={s.cardArrowTxt}>›</Text>
+              <Text style={s.cardMeta} numberOfLines={1}>
+                {[(selected.cuisine_type || '').replace(/_/g, ' '), selected.quartier, selected.avg_ticket > 0 ? `${selected.avg_ticket.toLocaleString('fr-FR')} DA` : null]
+                  .filter(Boolean).join(' · ')}
+              </Text>
             </View>
           </TouchableOpacity>
           <TouchableOpacity style={s.closeBtn} onPress={closeCard}>
@@ -161,38 +175,39 @@ const s = StyleSheet.create({
   root: { flex: 1 },
   map:  { flex: 1 },
 
+  // Pin "goutte" — Carte plein écran.dc.html : carré tourné 45°, un coin resté droit,
+  // plus grand + accent quand sélectionné.
   pin: {
-    width: 38, height: 38, borderRadius: 19,
-    backgroundColor: 'rgba(10,10,10,0.9)',
-    borderWidth: 2, borderColor: '#FFFFFF',
+    width: 36, height: 36, backgroundColor: colors.noir,
+    borderTopLeftRadius: 18, borderTopRightRadius: 18, borderBottomRightRadius: 18, borderBottomLeftRadius: 3,
+    transform: [{ rotate: '45deg' }],
     alignItems: 'center', justifyContent: 'center',
+    shadowColor: '#000', shadowOpacity: 0.25, shadowRadius: 6, shadowOffset: { width: 0, height: 3 }, elevation: 4,
   },
-  pinActive: {
-    borderColor: colors.gold, borderWidth: 2.5,
-    backgroundColor: colors.card,
-    width: 46, height: 46, borderRadius: 23,
+  pinOn: {
+    backgroundColor: colors.primary, width: 42, height: 42,
+    borderTopLeftRadius: 21, borderTopRightRadius: 21, borderBottomRightRadius: 21, borderBottomLeftRadius: 4,
   },
-  pinEmoji:   { fontSize: 18 },
-  pinEmojiLg: { fontSize: 22 },
+  pinInner:    { transform: [{ rotate: '-45deg' }], alignItems: 'center', justifyContent: 'center' },
+  pinRating:   { fontFamily: typography.bodyBold, fontSize: 11.5, color: '#FFFFFF' },
+  pinRatingLg: { fontSize: 13 },
+  pinEmoji:    { fontSize: 16 },
 
-  headerWrap: { position: 'absolute', top: 0, left: 0, right: 0 },
-  header: {
-    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-    marginHorizontal: spacing.xl, marginTop: spacing.lg,
-    backgroundColor: 'rgba(10,10,10,0.92)',
-    borderRadius: radius.xxl, paddingHorizontal: spacing.xxl, paddingVertical: spacing.lg,
+  backBtn:    {
+    position: 'absolute', left: spacing.xl,
+    width: 38, height: 38, borderRadius: 19, backgroundColor: '#FFFFFF',
+    alignItems: 'center', justifyContent: 'center',
+    shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 12, shadowOffset: { width: 0, height: 4 }, elevation: 4,
   },
-  backBtn:    { marginRight: spacing.sm },
-  backBtnTxt: { color: '#FFFFFF', fontSize: 22 },
-  headerSub:  { color: 'rgba(255,255,255,0.65)', fontSize: typography.size.caption, marginTop: 1 },
-  countBadge: {
-    flexDirection: 'row', alignItems: 'center', gap: spacing.sm,
-    backgroundColor: 'rgba(200,151,90,0.18)',
-    borderRadius: radius.full, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm,
-    borderWidth: 1, borderColor: 'rgba(200,151,90,0.4)',
+  backBtnTxt: { color: colors.text, fontSize: 16 },
+
+  recenterBtn: {
+    position: 'absolute', right: spacing.xl, bottom: 210,
+    width: 42, height: 42, borderRadius: 21, backgroundColor: '#FFFFFF',
+    alignItems: 'center', justifyContent: 'center',
+    shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 12, shadowOffset: { width: 0, height: 4 }, elevation: 4,
   },
-  countDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.green },
-  countTxt:  { color: colors.gold, fontSize: typography.size.caption, fontWeight: typography.weight.medium },
+  recenterTxt: { color: colors.text, fontSize: 17 },
 
   spinner: {
     position: 'absolute', bottom: 140, alignSelf: 'center',
@@ -201,38 +216,27 @@ const s = StyleSheet.create({
   },
 
   cardWrap: {
-    position: 'absolute', bottom: 110, left: spacing.xl, right: spacing.xl,
-    flexDirection: 'row', alignItems: 'center', gap: spacing.md,
+    position: 'absolute', bottom: spacing.xxl - 4, left: spacing.lg, right: spacing.lg,
+    flexDirection: 'row', alignItems: 'flex-start', gap: spacing.md,
   },
   card: {
     flex: 1, flexDirection: 'row', alignItems: 'center',
-    backgroundColor: colors.card,
-    borderRadius: radius.xxl, overflow: 'hidden',
-    borderWidth: 1, borderColor: colors.cardBorder,
-    padding: spacing.xl, gap: spacing.lg,
+    backgroundColor: '#FFFFFF',
+    borderRadius: radius.floating, overflow: 'hidden',
+    padding: spacing.md + 2, gap: spacing.md + 2,
+    shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 20, shadowOffset: { width: 0, height: 8 }, elevation: 6,
   },
-  cardThumb: {
-    width: 50, height: 50, borderRadius: radius.xl,
-    backgroundColor: colors.cardHover,
-    alignItems: 'center', justifyContent: 'center',
-  },
-  cardEmoji: { fontSize: 24 },
+  cardThumb: { width: 64, height: 64, borderRadius: radius.md + 1, flexShrink: 0 },
   cardInfo:  { flex: 1 },
-  cardTag:   { color: colors.gold, fontSize: typography.size.xs, letterSpacing: 2.5, marginBottom: 3 },
-  cardName:  { color: colors.text, fontFamily: typography.display, fontSize: typography.size.heading3, fontWeight: typography.weight.bold, marginBottom: 3 },
-  cardAddr:  { color: colors.textMuted, fontSize: typography.size.caption, marginBottom: 4 },
-  cardRating:{ color: colors.gold, fontSize: typography.size.caption, fontWeight: typography.weight.medium },
-  cardArrow: {
-    width: 32, height: 32, borderRadius: 16,
-    backgroundColor: colors.primary,
-    alignItems: 'center', justifyContent: 'center',
-  },
-  cardArrowTxt: { color: '#FFFFFF', fontSize: 20, fontWeight: '700', marginTop: -1 },
+  cardName:  { fontFamily: typography.display, fontSize: typography.size.subheading, color: colors.text },
+  cardRating:{ fontFamily: typography.bodyBold, fontSize: typography.size.caption, color: colors.primary, marginTop: 2 },
+  cardMeta:  { fontFamily: typography.body, fontSize: typography.size.caption, color: colors.textMuted, marginTop: 4 },
 
   closeBtn: {
-    width: 40, height: 40, borderRadius: 20,
-    backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder,
+    width: 38, height: 38, borderRadius: 19,
+    backgroundColor: '#FFFFFF',
     alignItems: 'center', justifyContent: 'center',
+    shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 10, shadowOffset: { width: 0, height: 4 }, elevation: 4,
   },
   closeBtnTxt: { color: colors.textMuted, fontSize: typography.size.bodyLg },
 });

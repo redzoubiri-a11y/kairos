@@ -120,7 +120,7 @@ export default function useExplorer() {
       try {
         const { data } = await supabase
           .from('restaurants')
-          .select('id, name, cuisine_type, address, quartier, city, photos, avg_rating, avg_ticket, review_count, capacity, latitude, longitude, opening_hours, phone')
+          .select('id, name, cuisine_type, address, quartier, city, photos, avg_rating, avg_ticket, review_count, capacity, latitude, longitude, opening_hours, phone, terrasse, parking')
           .eq('status', 'active')
           .order('avg_rating', { ascending: false });
         setRestaurants(data ?? []);
@@ -141,6 +141,8 @@ export default function useExplorer() {
     if (activeFilters.has('ouvert')) list = list.filter(r => isOpenNow(r.opening_hours));
     if (activeFilters.has('price')) list = list.filter(r => r.avg_ticket >= 1500 && r.avg_ticket < 3000);
     if (activeFilters.has('note')) list = list.filter(r => (r.avg_rating || 0) >= 4.5);
+    if (activeFilters.has('terrasse')) list = list.filter(r => r.terrasse);
+    if (activeFilters.has('parking')) list = list.filter(r => r.parking);
     if (sortBy === 'note') {
       list = [...list].sort((a, b) => (b.avg_rating || 0) - (a.avg_rating || 0));
     }

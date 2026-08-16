@@ -50,7 +50,7 @@ export default function useMapScreen() {
       try {
         const { data, error } = await supabase
           .from('restaurants')
-          .select('id, name, cuisine_type, quartier, avg_rating, avg_ticket, latitude, longitude');
+          .select('id, name, cuisine_type, quartier, avg_rating, avg_ticket, latitude, longitude, photos');
         if (data) setRestaurants(data);
       } finally {
         setLoading(false);

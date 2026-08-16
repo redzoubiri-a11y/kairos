@@ -1,6 +1,6 @@
 import { useCallback, useRef, useEffect, useState } from 'react';
 import {
-  View, Text, StyleSheet, TextInput, Platform, FlatList, TouchableOpacity, Image,
+  View, Text, StyleSheet, TextInput, Platform, FlatList, ScrollView, TouchableOpacity, Image,
   Animated, useWindowDimensions,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -25,8 +25,14 @@ function formatDistance(km) {
   return km < 1 ? `${Math.round(km * 1000)} m` : `${km.toFixed(1)} km`;
 }
 
+const FILTER_CHIPS = [
+  { id: 'ouvert',   label: 'Ouvert maintenant' },
+  { id: 'terrasse', label: 'Terrasse' },
+  { id: 'parking',  label: 'Parking' },
+];
+
 export default function ExplorerScreen({ navigation, route }) {
-  const { restaurants, loading, query, setQuery, userLocation, requestLocation } = useExplorer();
+  const { restaurants, loading, query, setQuery, userLocation, requestLocation, activeFilters, toggleFilter } = useExplorer();
   const mapRef = useRef(null);
   const insets = useSafeAreaInsets();
   const { height: screenH } = useWindowDimensions();
@@ -94,6 +100,7 @@ export default function ExplorerScreen({ navigation, route }) {
             const distance = userLocation
               ? formatDistance(haversineKm(userLocation.latitude, userLocation.longitude, coord.latitude, coord.longitude))
               : null;
+            const rating = r.avg_rating > 0 ? Number(r.avg_rating).toFixed(1).replace('.', ',') : null;
             return (
               <Marker
                 key={String(r.id)}
@@ -104,7 +111,12 @@ export default function ExplorerScreen({ navigation, route }) {
               >
                 <View style={s.pinWrap}>
                   <View style={[s.pin, shadows.mapPin]}>
-                    <View style={s.pinDot} />
+                    <View style={s.pinInner}>
+                      {rating
+                        ? <Text style={s.pinRating}>{rating}</Text>
+                        : <View style={s.pinDot} />
+                      }
+                    </View>
                   </View>
                   {!!distance && (
                     <View style={s.distancePill}>
@@ -133,6 +145,16 @@ export default function ExplorerScreen({ navigation, route }) {
             placeholderTextColor={colors.textPlaceholder}
           />
         </View>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.chipsRow}>
+          {FILTER_CHIPS.map(c => {
+            const active = activeFilters.has(c.id);
+            return (
+              <TouchableOpacity key={c.id} style={[s.chip, active && s.chipOn]} onPress={() => toggleFilter(c.id)}>
+                <Text style={[s.chipTxt, active && s.chipTxtOn]}>{c.label}</Text>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
       </View>
 
       {!loading && restaurants.length === 0 && (
@@ -204,13 +226,22 @@ const s = StyleSheet.create({
   },
   searchInput: { flex: 1, fontFamily: typography.body, fontSize: typography.size.bodyLg, color: colors.text, padding: 0 },
 
-  // Cible circulaire, tap direct = ouvre la fiche resto
+  chipsRow: { flexDirection: 'row', gap: spacing.sm, paddingTop: spacing.md },
+  chip:     { paddingHorizontal: spacing.lg - 2, paddingVertical: spacing.sm + 1, borderRadius: radius.badgeSm, backgroundColor: colors.glassBgStrong, borderWidth: 1, borderColor: colors.cardBorder },
+  chipOn:   { backgroundColor: colors.noir, borderColor: colors.noir },
+  chipTxt:  { fontFamily: typography.bodyBold, fontSize: typography.size.caption + 0.5, color: colors.textMuted },
+  chipTxtOn:{ color: '#FFFFFF' },
+
+  // Pin "goutte" — Explorer.dc.html : carré tourné 45°, un coin resté droit
   pinWrap: { alignItems: 'center' },
   pin: {
-    width: 30, height: 30, borderRadius: 15,
-    backgroundColor: colors.primary, borderWidth: 3, borderColor: '#FFFFFF',
+    width: 34, height: 34, backgroundColor: colors.noir,
+    borderTopLeftRadius: 17, borderTopRightRadius: 17, borderBottomRightRadius: 17, borderBottomLeftRadius: 3,
+    transform: [{ rotate: '45deg' }],
     alignItems: 'center', justifyContent: 'center',
   },
+  pinInner:  { transform: [{ rotate: '-45deg' }], alignItems: 'center', justifyContent: 'center' },
+  pinRating: { fontFamily: typography.bodyBold, fontSize: 11, color: '#FFFFFF' },
   pinDot: { width: 9, height: 9, borderRadius: 4.5, backgroundColor: '#FFFFFF' },
 
   imgPlaceholder: { backgroundColor: colors.cardHover },
@@ -245,7 +276,7 @@ const s = StyleSheet.create({
   bottomRowName: { fontFamily: typography.display, fontSize: typography.size.subheading, color: colors.text },
   bottomRowMeta: { fontFamily: typography.body, fontSize: typography.size.caption, color: colors.textMuted, marginTop: 2 },
   bottomRowRating: { flexDirection: 'row', alignItems: 'center', gap: 3, marginTop: 4 },
-  bottomRowStar: { fontSize: 11, color: colors.gold },
+  bottomRowStar: { fontSize: 11, color: colors.star },
   bottomRowRatingTxt: { fontFamily: typography.bodyBold, fontSize: typography.size.caption, color: colors.text },
   bottomRowImg: { width: 64, height: 64, borderRadius: radius.md, flexShrink: 0 },
 });

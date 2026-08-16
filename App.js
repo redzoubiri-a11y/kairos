@@ -1,20 +1,19 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { View, Text, Platform } from 'react-native';
+import { View, Text } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useFonts } from 'expo-font';
-import { SpaceGrotesk_500Medium, SpaceGrotesk_700Bold } from '@expo-google-fonts/space-grotesk';
 import {
-  DMSans_400Regular, DMSans_500Medium, DMSans_600SemiBold, DMSans_700Bold,
-} from '@expo-google-fonts/dm-sans';
+  WorkSans_400Regular, WorkSans_500Medium, WorkSans_600SemiBold,
+  WorkSans_700Bold, WorkSans_800ExtraBold,
+} from '@expo-google-fonts/work-sans';
 import { supabase } from './supabase';
 import { GuestContext } from './src/context/GuestContext';
 import { linkingConfig } from './src/linking';
-import OnboardingScreen from './screens/OnboardingScreen';
 import HomeScreen from './screens/HomeScreen';
 import ExplorerScreen from './screens/ExplorerScreen';
 import FavorisScreen from './screens/FavorisScreen';
@@ -43,14 +42,15 @@ import ProOrdersScreen from './screens/ProOrdersScreen';
 import MyOrdersScreen from './screens/MyOrdersScreen';
 import OrderTrackingScreen from './screens/OrderTrackingScreen';
 import ProTableQrScreen from './screens/ProTableQrScreen';
+import QuickSearchScreen from './screens/QuickSearchScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 const C = {
-  bg: '#FDFCF9', bg2: 'transparent',
-  border: '#ECE7DC',
-  accent: '#0D6B3F', dim: 'rgba(10,10,10,0.62)', text: '#0A0A0A',
+  bg: '#F5F5F3', bg2: 'transparent',
+  border: '#E7E6E1',
+  accent: '#D8432B', dim: 'rgba(25,25,25,0.62)', text: '#191919',
 };
 
 const TAB_ICONS = {
@@ -70,7 +70,7 @@ function TabIcon({ name, focused }) {
       {focused && (
         <View style={{
           position: 'absolute', width: 40, height: 32, borderRadius: 16,
-          backgroundColor: 'rgba(13,107,63,0.10)',
+          backgroundColor: 'rgba(216,67,43,0.10)',
         }} />
       )}
       <Ionicons
@@ -115,7 +115,7 @@ function TabNavigator({ userRole }) {
         },
         tabBarActiveTintColor: C.accent,
         tabBarInactiveTintColor: C.dim,
-        tabBarLabelStyle: { fontFamily: 'DM Sans Medium', fontSize: 10, letterSpacing: 0.5, marginTop: 1 },
+        tabBarLabelStyle: { fontFamily: 'Work Sans Medium', fontSize: 10, letterSpacing: 0.5, marginTop: 1 },
       })}
     >
       <Tab.Screen name="Accueil" component={HomeScreen} />
@@ -129,18 +129,15 @@ function TabNavigator({ userRole }) {
 
 export default function App() {
   const [fontsLoaded] = useFonts({
-    'Space Grotesk': SpaceGrotesk_700Bold,
-    'Space Grotesk Medium': SpaceGrotesk_500Medium,
-    'DM Sans': DMSans_400Regular,
-    'DM Sans Medium': DMSans_500Medium,
-    'DM Sans SemiBold': DMSans_600SemiBold,
-    'DM Sans Bold': DMSans_700Bold,
+    'Work Sans': WorkSans_400Regular,
+    'Work Sans Medium': WorkSans_500Medium,
+    'Work Sans SemiBold': WorkSans_600SemiBold,
+    'Work Sans Bold': WorkSans_700Bold,
+    'Work Sans ExtraBold': WorkSans_800ExtraBold,
   });
-  const [userType, setUserType] = useState(null);
   const [session, setSession]       = useState(null);
   const [loading, setLoading]       = useState(true);
   const [userRole, setUserRole]     = useState('user');
-  const [guestMode, setGuestMode]   = useState(false);
 
   function applyRoleFromSession(s) {
     if (!s?.user) return;
@@ -167,29 +164,23 @@ export default function App() {
     return () => subscription.unsubscribe();
   }, []);
 
-  const [webUserType, setWebUserType] = useState('client');
-
-  const enterGuestMode = useCallback(() => setGuestMode(true), []);
-  const exitGuestMode  = useCallback(() => {
-    setGuestMode(false);
-    setUserType('client');
-  }, []);
+  // Type affiché sur l'écran de connexion (client/pro) — cosmétique uniquement,
+  // le rôle réel vient de app_metadata côté serveur après connexion.
+  const [authType, setAuthType] = useState('client');
 
   function renderContent() {
     if (loading || !fontsLoaded) {
       return (
         <View style={{ flex: 1, backgroundColor: C.bg, alignItems: 'center', justifyContent: 'center' }}>
-          <Text style={{ color: C.accent, fontSize: 28, fontFamily: fontsLoaded ? 'Space Grotesk Medium' : undefined, fontWeight: fontsLoaded ? undefined : '300', letterSpacing: 8 }}>MIDA</Text>
+          <Text style={{ color: C.accent, fontSize: 28, fontFamily: fontsLoaded ? 'Work Sans ExtraBold' : undefined, fontWeight: fontsLoaded ? undefined : '300', letterSpacing: 8 }}>MIDA</Text>
         </View>
       );
     }
-    if (!session && !userType && !guestMode) {
-      if (Platform.OS === 'web') return <AuthScreen userType={webUserType} onAuth={(s) => setSession(s)} onSwitchType={setWebUserType} onGuest={enterGuestMode} />;
-      return <OnboardingScreen onSelect={setUserType} onGuest={enterGuestMode} />;
-    }
-    if (!session && !guestMode) return <AuthScreen userType={userType} onAuth={(s) => setSession(s)} />;
+    // Entrée libre : jamais de gate au lancement (ni onboarding, ni connexion forcée).
+    // Sans session = invité, qui peut parcourir toute l'app ; les écrans sensibles
+    // (réserver, commander) affichent eux-mêmes un GuestWall qui renvoie vers "Auth".
     return (
-      <GuestContext.Provider value={{ isGuest: guestMode && !session, exitGuestMode }}>
+      <GuestContext.Provider value={{ isGuest: !session }}>
         <NavigationContainer linking={linkingConfig}>
           <StatusBar style="light" />
           <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -217,6 +208,17 @@ export default function App() {
             <Stack.Screen name="MyOrders" component={MyOrdersScreen} />
             <Stack.Screen name="OrderTracking" component={OrderTrackingScreen} />
             <Stack.Screen name="ProTableQr" component={ProTableQrScreen} />
+            <Stack.Screen name="QuickSearch" component={QuickSearchScreen} />
+            <Stack.Screen name="Auth">
+              {({ navigation }) => (
+                <AuthScreen
+                  userType={authType}
+                  onSwitchType={setAuthType}
+                  onAuth={(s) => { setSession(s); navigation.goBack(); }}
+                  onGuest={() => navigation.goBack()}
+                />
+              )}
+            </Stack.Screen>
           </Stack.Navigator>
         </NavigationContainer>
       </GuestContext.Provider>

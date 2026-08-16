@@ -4,52 +4,46 @@
 // Jamais de couleurs ou tailles en dur
 // ─────────────────────────────────────────────
 
-// Harmonisation vert TheFork (08/2026) — remplace le rebrand Cyan/Magenta,
-// une seule couleur d'accent (vert) au lieu de cyan (primary) + magenta (resa)
-const GREEN = '#0D6B3F';
-
-// Règle d'usage de la palette d'accent (rappel demandé par l'utilisateur, 15/08/2026) :
-// #13502E = surface d'ancrage (fonds pleins, headers immersifs)
-// #2C7A35 = action unique — bouton principal, UN SEUL bouton par écran
-// #f5c842 = score et étoiles UNIQUEMENT, jamais un fond ou un texte de bouton
-// ⚠ Valeur actuelle de GREEN (colors.primary/resa) = #0D6B3F, distincte de #13502E/#2C7A35
-// ci-dessus — écart signalé à l'utilisateur, non résolu (cf. Lot 0), ne pas trancher seul.
+// Refonte Tabelog × OpenTable (16/08/2026) — remplace l'accent vert par un
+// rouge/terracotta unique, cf. le projet claude.ai/design de référence.
+// `anchorGreen`/`gold` restent inchangés : ce sont les couleurs de l'icône et
+// du splash (identité de marque, hors périmètre de cette refonte in-app).
+const ACCENT = '#D8432B';
 
 export const colors = {
-  // Palette principale MIDA — vert TheFork (08/2026)
-  primary: GREEN,
-  primarySoft: 'rgba(13,107,63,0.10)',
-  primaryDim: 'rgba(13,107,63,0.06)',
-  // Vert pin — surface d'ancrage (Lot 1, 15/08/2026), cf. règle d'usage ci-dessus.
-  // Distinct de `primary` : n'y touche pas tant que le remplacement de GREEN n'est pas validé.
+  // Palette principale MIDA — accent unique (Tabelog × OpenTable, 16/08/2026)
+  primary: ACCENT,
+  primarySoft: 'rgba(216,67,43,0.10)',
+  primaryDim: 'rgba(216,67,43,0.06)',
+  // Vert pin — couleur de l'icône app / splash uniquement, jamais utilisée dans l'UI courante.
   anchorGreen: '#13502E',
-  noir: '#0A0A0A',
+  noir: '#191919',
   cream: '#F5EDD6',
   greyBg: '#F5F6F8',
 
   // Backgrounds
-  bg: '#FDFCF9',
+  bg: '#F5F5F3',
   card: '#FFFFFF',
-  cardBorder: '#ECE7DC',
-  cardHover: 'rgba(10,10,10,0.04)',
+  cardBorder: '#E7E6E1',
+  cardHover: 'rgba(25,25,25,0.04)',
 
   // Neutral light — boutons et éléments UI (thème blanc)
   navy: 'transparent',
-  navyBorder: '#ECE7DC',
-  navyDeep: 'rgba(10,10,10,0.04)',
+  navyBorder: '#E7E6E1',
+  navyDeep: 'rgba(25,25,25,0.04)',
 
   // Accent UI — neutre sombre (remplace l'ancien stone #9B9088)
-  accent: 'rgba(10,10,10,0.55)',
-  accentSoft: 'rgba(10,10,10,0.08)',
-  accentDim: 'rgba(10,10,10,0.35)',
+  accent: 'rgba(25,25,25,0.55)',
+  accentSoft: 'rgba(25,25,25,0.08)',
+  accentDim: 'rgba(25,25,25,0.35)',
 
   // CTA Pro — ambre, exclusif à l'univers restaurateur
   gold: '#c8975a',
   goldSoft: 'rgba(200,151,90,0.14)',
 
-  // CTA Réservation — même vert que primary (harmonisation, plus de couleur distincte)
-  resa: GREEN,
-  resaSoft: 'rgba(13,107,63,0.18)',
+  // CTA Réservation — même accent que primary (harmonisation, plus de couleur distincte)
+  resa: ACCENT,
+  resaSoft: 'rgba(216,67,43,0.18)',
 
   // "Verre" blanc à faible transparence — barres de recherche, boutons, chips et
   // barres de navigation flottant sur du contenu, pour laisser deviner ce qu'il y a derrière
@@ -57,24 +51,26 @@ export const colors = {
   // Variante plus opaque — blocs qui doivent se détacher nettement du contenu qui défile dessous
   glassBgStrong: 'rgba(255,255,255,0.94)',
 
-  // Texte
-  text: '#0A0A0A',
-  textMuted: 'rgba(10,10,10,0.55)',
-  textDim: 'rgba(10,10,10,0.38)',
-  // Placeholder de champ de recherche — Explorer.dc.html : rgba(10,10,10,.42), distinct de textDim
-  textPlaceholder: 'rgba(10,10,10,0.42)',
-  // Libellés de section (ex. "AUJOURD'HUI") — Notifications.dc.html : rgba(10,10,10,.4), distinct de textDim (.38)
-  textFaint: 'rgba(10,10,10,0.4)',
-  // Libellés de champ de formulaire — Inscription Restaurateur.dc.html : rgba(10,10,10,.45)
-  textLabel: 'rgba(10,10,10,0.45)',
-  // Sous-titre header (ex. "Méditerranéen · Hydra") — Formulaire de Reservation.dc.html : rgba(10,10,10,.5)
-  textCaption: 'rgba(10,10,10,0.5)',
+  // Texte — refonte 16/08/2026 : hex littéraux du nouveau système (2 paliers de gris),
+  // remplace les ~7 nuances de rgba(10,10,10,.38→.55) de l'ancien système "Marché"
+  // (elles étaient calibrées sur un fond quasi-blanc, plus cohérentes avec le nouveau bg).
+  text: '#191919',
+  textMuted: '#5F5F5B',
+  textDim: '#8F8F89',
+  // Placeholder de champ de recherche
+  textPlaceholder: '#8F8F89',
+  // Libellés de section (ex. "AUJOURD'HUI")
+  textFaint: '#8F8F89',
+  // Libellés de champ de formulaire
+  textLabel: '#5F5F5B',
+  // Sous-titre header (ex. "Méditerranéen · Hydra")
+  textCaption: '#5F5F5B',
 
-  // États
-  green: '#4CAF82',
-  greenSoft: 'rgba(76, 175, 130, 0.15)',
-  red: '#E05A5A',
-  redSoft: 'rgba(224, 90, 90, 0.15)',
+  // États — valeurs littérales du nouveau système (16/08/2026)
+  green: '#2E7D4F',
+  greenSoft: '#E5F3EA',
+  red: '#C23B2B',
+  redSoft: '#FBE9E5',
   blue: '#5A9BE0',
   blueSoft: 'rgba(90, 155, 224, 0.15)',
   purple: '#9B7FE8',
@@ -93,43 +89,53 @@ export const colors = {
   // (ceux-ci sont des rgba sur noir, calibrés pour l'ancien bg quasi-blanc) —
   // noms suffixés "Paper" là où un nom sans suffixe existait déjà avec une
   // valeur différente, pour ne casser aucune clé existante.
-  bgPaper: '#F7F4EE', // fond papier — à terme remplace colors.bg comme fond d'écran (pas fait ici)
-  // surface carte #FFFFFF : déjà couvert par colors.card, pas de doublon créé
-  textPrimary: '#1C1C1A',
-  textSecondaryPaper: '#6B6B63',
-  textTertiaryPaper: '#8A897F', // texte discret
-  borderPaper: '#E2DFD6',
+  // 16/08/2026 : alignés sur les valeurs littérales définitives du nouveau système
+  // (bg/text/textMuted/textDim ci-dessus portent maintenant les mêmes valeurs —
+  // ces clés "Paper" restent pour ne rien casser côté appelants du Lot 1).
+  bgPaper: '#F5F5F3',
+  textPrimary: '#191919',
+  textSecondaryPaper: '#5F5F5B',
+  textTertiaryPaper: '#8F8F89', // texte discret
+  borderPaper: '#E7E6E1',
   borderPaperStrong: '#C4C2B8',
-  unavailable: '#A32D2D', // état indisponible / complet
+  unavailable: '#C23B2B', // état indisponible / complet
 
   // Overlay
   overlay: 'rgba(0,0,0,0.5)',
   overlayLight: 'rgba(0,0,0,0.15)',
 
-  // Statuts réservation/commande (pro)
-  statusPendingBg: '#F6ECDD',
-  statusPendingText: '#8a6a35',
-  statusConfirmedBg: '#E8F1EB',
-  statusConfirmedText: GREEN,
-  statusCancelledBg: '#F3E3DE',
-  statusCancelledText: '#8a4633',
+  // Statuts réservation/commande (pro) — 16/08/2026 : décorrélés de `primary`/ACCENT.
+  // Un statut "confirmée" doit rester vert même si l'accent de marque devient rouge —
+  // avant cette refonte, statusConfirmedText référençait GREEN (= primary), ce qui
+  // aurait rendu "Confirmée" rouge une fois l'accent changé. Valeurs littérales fixes.
+  statusPendingBg: '#FBF0D9',
+  statusPendingText: '#96700E',
+  statusConfirmedBg: '#E5F3EA',
+  statusConfirmedText: '#2E7D4F',
+  statusCancelledBg: '#FBE9E5',
+  statusCancelledText: '#C23B2B',
 
   // Badge note + tag "Terrasse" — même teinte verte que tagGreenBg/statusConfirmedBg
-  // (harmonisation 08/2026, ces 3 tokens étaient des tons cyan/vert légèrement différents)
-  ratingBg: '#E8F1EB',
+  ratingBg: '#E5F3EA',
 
-  // Restaurant cards design system
-  star: '#f5c842',
-  separator: '#ECE7DC',
-  tagGreenBg: '#E8F1EB',
-  tagNeutralBg: '#F1EEE6',
-  textSecondary: 'rgba(10,10,10,0.55)',
-  textTertiary: 'rgba(10,10,10,0.45)',
+  // Restaurant cards design system — étoiles en accent rouge (motif OpenTable)
+  star: ACCENT,
+  separator: '#E7E6E1',
+  tagGreenBg: '#E5F3EA',
+  tagNeutralBg: '#EDECE7',
+  // Badge "Table n°X" — Pro Commandes.dc.html / Suivi de commande.dc.html : tan neutre, pas de statut
+  tableBadgeBg: '#F0EAD9',
+  textSecondary: '#5F5F5B',
+  textTertiary: '#8F8F89',
 
   // Dégradé de repli quand un restaurant n'a aucune photo — tons sable chauds
   // alignés sur la famille cream/cardBorder de la direction "Marché"
   // (remplace un mauve/bleu-gris hors palette trouvé dans 6 écrans).
   photoFallbackGradient: ['#EDE6D4', '#DED2B4', '#C7B78D'],
+
+  // Hero décoratif — Réserver ou Commander.dc.html (pas de photo resto réelle à ce stade
+  // du parcours, dégradé littéral de la maquette).
+  heroWarmGradient: ['#C9925A', '#8A5A34'],
 
   // Fond plein écran chaud — Espace Manager (remplace le blanc plat de colors.bg,
   // couleur unie donc homogène quelle que soit la hauteur de scroll).
@@ -140,31 +146,33 @@ export const colors = {
 };
 
 export const typography = {
-  // Familles — direction "Marché" : Space Grotesk (titres/chiffres) + DM Sans (tout le reste)
-  // Chaque famille = un fichier de poids précis (RN ignore fontWeight sur une police custom,
-  // surtout Android) — display/body couvrent les usages dominants (gras pour les titres,
-  // regular pour le texte courant) ; les variantes ci-dessous sont dispo pour les cas précis.
-  display: 'Space Grotesk',           // = SpaceGrotesk_700Bold — titres d'écran, chiffres clés
-  displayMedium: 'Space Grotesk Medium', // = SpaceGrotesk_500Medium
-  body: 'DM Sans',                    // = DMSans_400Regular — texte courant, interface
-  bodyMedium: 'DM Sans Medium',       // = DMSans_500Medium
-  bodySemibold: 'DM Sans SemiBold',   // = DMSans_600SemiBold
-  bodyBold: 'DM Sans Bold',           // = DMSans_700Bold
+  // Familles — refonte Tabelog × OpenTable (16/08/2026) : une seule famille sans-serif
+  // (Work Sans) partout, remplace la paire Space Grotesk (titres) + DM Sans (reste) —
+  // ni Tabelog ni OpenTable n'utilisent de serif éditorial, cf. maquettes de référence.
+  // Chaque nom = un fichier de poids précis chargé dans App.js (RN ignore fontWeight
+  // sur une police custom statique, surtout Android).
+  display: 'Work Sans ExtraBold',        // = WorkSans_800ExtraBold — titres, chiffres clés
+  displayMedium: 'Work Sans Bold',       // = WorkSans_700Bold
+  body: 'Work Sans',                     // = WorkSans_400Regular — texte courant
+  bodyMedium: 'Work Sans Medium',        // = WorkSans_500Medium
+  bodySemibold: 'Work Sans SemiBold',    // = WorkSans_600SemiBold
+  bodyBold: 'Work Sans Bold',            // = WorkSans_700Bold
 
-  // Tailles
+  // Tailles — augmentées d'un cran (retour utilisateur du 16/08/2026, "police plus grande
+  // partout"), même échelle relative, valeurs arrondies.
   size: {
-    xs: 9,
-    sm: 10,
-    caption: 11,
-    body: 12,
-    bodyLg: 13,
-    subheading: 14,
-    heading3: 15,
-    heading2: 16,
-    heading1: 19,
-    title: 24,
-    hero: 28,
-    display: 32,
+    xs: 10,
+    sm: 11,
+    caption: 12,
+    body: 13,
+    bodyLg: 14,
+    subheading: 16,
+    heading3: 17,
+    heading2: 18,
+    heading1: 21,
+    title: 26,
+    hero: 31,
+    display: 35,
   },
 
   // Poids
@@ -215,40 +223,42 @@ export const radius = {
   control: 10,
   // Badge "N restaurants ici" sur mini-carte — Explorer.dc.html : border-radius 20px
   badgeSm: 20,
+  // Barre panier flottante — Click and Collect.dc.html / Suivi de commande.dc.html : border-radius 14px
+  floating: 14,
 };
 
 export const shadows = {
   // xs — hairline (doc: 0 1px 2px rgba(10,10,10,.05)), palier manquant jusqu'ici
   xs: {
-    shadowColor: '#0A0A0A',
+    shadowColor: '#191919',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
     elevation: 1,
   },
   sm: {
-    shadowColor: '#0A0A0A',
+    shadowColor: '#191919',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.12,
     shadowRadius: 12,
     elevation: 2,
   },
   md: {
-    shadowColor: '#0A0A0A',
+    shadowColor: '#191919',
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.22,
     shadowRadius: 28,
     elevation: 4,
   },
   lg: {
-    shadowColor: '#0A0A0A',
+    shadowColor: '#191919',
     shadowOffset: { width: 0, height: 24 },
     shadowOpacity: 0.28,
     shadowRadius: 48,
     elevation: 8,
   },
   accent: {
-    shadowColor: '#0A0A0A',
+    shadowColor: '#191919',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 12,
@@ -256,7 +266,7 @@ export const shadows = {
   },
   // Pin de mini-carte — Explorer.dc.html : 0 4px 10px rgba(10,10,10,.25)
   mapPin: {
-    shadowColor: '#0A0A0A',
+    shadowColor: '#191919',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.25,
     shadowRadius: 10,
@@ -264,7 +274,7 @@ export const shadows = {
   },
   // Bouton de recentrage sur mini-carte — Explorer.dc.html : 0 4px 10px rgba(10,10,10,.15)
   mapControl: {
-    shadowColor: '#0A0A0A',
+    shadowColor: '#191919',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 10,
@@ -453,7 +463,9 @@ export const tagVariants = {
   filterInactive: { bg: colors.tagNeutralBg, text: colors.noir },
 
   // Tags cuisine / info — doc : DM Sans 700 10px tracké .04em, radius 6, padding 6px 9px
-  cuisineInfo:    { bg: colors.tagGreenBg, text: colors.primary },
+  // text: statusConfirmedText (vert fixe), pas `colors.primary` — un tag "positif" doit
+  // rester vert même si l'accent de marque devient rouge (16/08/2026).
+  cuisineInfo:    { bg: colors.tagGreenBg, text: colors.statusConfirmedText },
   cuisineNeutral: { bg: colors.tagNeutralBg, text: colors.textMuted },
 
   // Statuts réservation/commande (pro) — mêmes couleurs que colors.statusXxx
@@ -462,11 +474,11 @@ export const tagVariants = {
   statusCancelled: { bg: colors.statusCancelledBg, text: colors.statusCancelledText },
 
   // Aménité mise en avant ("Terrasse") — Fiche Restaurant.dc.html
-  amenityHighlight: { bg: colors.ratingBg, text: colors.primary },
+  amenityHighlight: { bg: colors.ratingBg, text: colors.statusConfirmedText },
 
   // Variantes additionnelles (hors fichier source, besoins réels de l'app)
   default: { bg: colors.tagNeutralBg, text: colors.text },
-  success: { bg: colors.tagGreenBg, text: colors.primary },
+  success: { bg: colors.tagGreenBg, text: colors.statusConfirmedText },
   error: { bg: colors.statusCancelledBg, text: colors.statusCancelledText },
   pending: { bg: colors.statusPendingBg, text: colors.statusPendingText },
   info: { bg: colors.blueSoft, text: colors.blue },

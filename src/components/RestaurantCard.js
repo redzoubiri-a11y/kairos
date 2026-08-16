@@ -62,8 +62,8 @@ const s = StyleSheet.create({
   compName: { flex: 1, fontFamily: typography.display, fontSize: typography.size.subheading + 0.5, color: colors.text, letterSpacing: -0.3 },
 
   ratingPill:  { flexDirection: 'row', alignItems: 'center', gap: 3, flexShrink: 0, backgroundColor: colors.tagGreenBg, paddingHorizontal: spacing.sm, paddingVertical: 5, borderRadius: radius.sm + 3 },
-  ratingTxt:   { fontFamily: typography.bodyBold, fontSize: typography.size.body, color: colors.primary },
-  reviewCount: { fontFamily: typography.body, fontSize: typography.size.caption, color: colors.primary, opacity: 0.7 },
+  ratingTxt:   { fontFamily: typography.bodyBold, fontSize: typography.size.body, color: colors.statusConfirmedText },
+  reviewCount: { fontFamily: typography.body, fontSize: typography.size.caption, color: colors.statusConfirmedText, opacity: 0.7 },
 
   featMeta: { fontFamily: typography.body, fontSize: typography.size.bodyLg - 0.5, color: colors.textMuted, marginTop: spacing.xs + 2 },
   compMeta: { fontFamily: typography.body, fontSize: typography.size.caption + 0.5, color: colors.textMuted, marginTop: spacing.sm - 1 },
@@ -71,6 +71,6 @@ const s = StyleSheet.create({
   slotsRow:   { flexDirection: 'row', gap: spacing.sm - 2, marginTop: spacing.lg + 1 },
   slot:       { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: spacing.sm + 1, borderRadius: radius.md, backgroundColor: colors.tagGreenBg },
   slotCta:    { backgroundColor: colors.resa },
-  slotTxt:    { fontFamily: typography.bodySemibold, fontSize: typography.size.body, color: colors.primary },
+  slotTxt:    { fontFamily: typography.bodySemibold, fontSize: typography.size.body, color: colors.statusConfirmedText },
   slotCtaTxt: { color: '#FFFFFF' },
 });

@@ -30,7 +30,7 @@ const s = StyleSheet.create({
   // Halo de focus (box-shadow 0 0 0 3px de la maquette) simulé par un anneau de padding,
   // compensé par une marge négative pour ne pas déplacer le champ.
   ringInactive: {},
-  ringActive:   { padding: 3, margin: -3, backgroundColor: colors.ratingBg, borderRadius: radius.lg + 3 },
+  ringActive:   { padding: 3, margin: -3, backgroundColor: colors.primarySoft, borderRadius: radius.lg + 3 },
   input: { backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, borderRadius: radius.lg, paddingHorizontal: 15, paddingVertical: spacing.lg + 1, color: colors.text, fontFamily: typography.body, fontSize: typography.size.subheading },
   inputFocused: { borderWidth: 1.5, borderColor: colors.primary },
 });

@@ -1,0 +1,806 @@
+<title>FAQ Espace Pro</title>
+<style>
+  :root {
+    --bg: #F5F5F3;
+    --card: #FFFFFF;
+    --card-hover: rgba(25,25,25,0.03);
+    --border: #E7E6E1;
+    --text: #191919;
+    --text-muted: #5F5F5B;
+    --text-dim: #8F8F89;
+    --accent: #D8432B;
+    --accent-soft: rgba(216,67,43,0.09);
+    --accent-border: rgba(216,67,43,0.28);
+    --gold: #A9762F;
+    --gold-soft: rgba(200,151,90,0.16);
+    --gold-border: rgba(200,151,90,0.4);
+    --green: #2F7D4F;
+    --green-soft: rgba(47,125,79,0.12);
+    --code-bg: rgba(25,25,25,0.05);
+    --shadow: 0 1px 2px rgba(25,20,15,0.04), 0 8px 24px -12px rgba(25,20,15,0.10);
+  }
+  :root:not([data-theme="light"]) {
+    @media (prefers-color-scheme: dark) {
+      --bg: #16130F;
+      --card: #201C17;
+      --card-hover: rgba(255,255,255,0.04);
+      --border: #34302A;
+      --text: #F3EFE9;
+      --text-muted: #B6AEA2;
+      --text-dim: #7E7568;
+      --accent: #EC6A4E;
+      --accent-soft: rgba(236,106,78,0.14);
+      --accent-border: rgba(236,106,78,0.35);
+      --gold: #D8AE72;
+      --gold-soft: rgba(216,174,114,0.16);
+      --gold-border: rgba(216,174,114,0.4);
+      --green: #6FC492;
+      --green-soft: rgba(111,196,146,0.14);
+      --code-bg: rgba(255,255,255,0.06);
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #16130F;
+    --card: #201C17;
+    --card-hover: rgba(255,255,255,0.04);
+    --border: #34302A;
+    --text: #F3EFE9;
+    --text-muted: #B6AEA2;
+    --text-dim: #7E7568;
+    --accent: #EC6A4E;
+    --accent-soft: rgba(236,106,78,0.14);
+    --accent-border: rgba(236,106,78,0.35);
+    --gold: #D8AE72;
+    --gold-soft: rgba(216,174,114,0.16);
+    --gold-border: rgba(216,174,114,0.4);
+    --green: #6FC492;
+    --green-soft: rgba(111,196,146,0.14);
+    --code-bg: rgba(255,255,255,0.06);
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "SF Pro Text", "Segoe UI", ui-sans-serif, "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4 {
+    font-family: -apple-system, "SF Pro Display", "Segoe UI Semibold", ui-sans-serif, Arial, sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+    color: var(--text);
+    margin: 0;
+  }
+  a { color: inherit; }
+  button { font-family: inherit; }
+
+  .page { max-width: 920px; margin: 0 auto; padding: 0 24px 120px; }
+
+  /* ---------- Masthead ---------- */
+  .masthead {
+    padding: 56px 0 40px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 8px;
+  }
+  .masthead-kicker {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border: 1px solid var(--accent-border);
+    padding: 5px 12px 5px 10px;
+    border-radius: 999px;
+    margin-bottom: 20px;
+  }
+  .masthead-kicker .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+  .masthead h1 { font-size: clamp(32px, 5vw, 44px); line-height: 1.08; max-width: 14ch; }
+  .masthead p.lede {
+    margin-top: 16px;
+    font-size: 17px;
+    color: var(--text-muted);
+    max-width: 56ch;
+    line-height: 1.6;
+  }
+
+  .callout {
+    display: flex; gap: 12px;
+    margin-top: 28px;
+    padding: 14px 16px;
+    background: var(--gold-soft);
+    border: 1px solid var(--gold-border);
+    border-radius: 12px;
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.55;
+  }
+  .callout .glyph { color: var(--gold); font-weight: 800; font-size: 15px; flex-shrink: 0; }
+  .callout.support-callout {
+    background: var(--gold-soft);
+    border: 1.5px solid var(--gold-border);
+    align-items: center;
+  }
+  .callout.support-callout .glyph { font-size: 20px; }
+
+  /* ---------- Table of contents ---------- */
+  nav.toc {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin: 32px 0 48px;
+  }
+  @media (max-width: 620px) { nav.toc { grid-template-columns: 1fr; } }
+  nav.toc a {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    text-decoration: none;
+    padding: 13px 16px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    transition: border-color .15s ease, background .15s ease;
+  }
+  nav.toc a:hover { border-color: var(--accent-border); background: var(--card-hover); }
+  nav.toc a .n { color: var(--text-dim); font-variant-numeric: tabular-nums; font-weight: 700; font-size: 12px; }
+
+  /* ---------- Sections ---------- */
+  section.chapter { margin-top: 64px; scroll-margin-top: 24px; }
+  .chapter-head {
+    display: flex; align-items: baseline; gap: 14px;
+    margin-bottom: 24px;
+    padding-bottom: 14px;
+    border-bottom: 2px solid var(--text);
+  }
+  .chapter-head .num {
+    font-size: 13px; font-weight: 800; color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+  .chapter-head h2 { font-size: 24px; }
+
+  .qa { margin-top: 28px; }
+  .qa:first-child { margin-top: 0; }
+  .qa h3 {
+    font-size: 16.5px;
+    font-weight: 700;
+    display: flex; gap: 10px; align-items: flex-start;
+    margin-bottom: 10px;
+  }
+  .qa h3::before {
+    content: "Q";
+    flex-shrink: 0;
+    width: 22px; height: 22px;
+    border-radius: 7px;
+    background: var(--text);
+    color: var(--bg);
+    font-size: 11px;
+    font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 2px;
+  }
+  .qa .answer {
+    padding-left: 32px;
+    color: var(--text-muted);
+    font-size: 15px;
+  }
+  .qa .answer p { margin: 0 0 12px; }
+  .qa .answer p:last-child { margin-bottom: 0; }
+  .qa .answer ul, .qa .answer ol { margin: 8px 0 12px; padding-left: 20px; }
+  .qa .answer li { margin-bottom: 6px; }
+  .qa .answer strong { color: var(--text); font-weight: 700; }
+  .qa .answer code {
+    background: var(--code-bg);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: 13px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    color: var(--text);
+  }
+
+  .path {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12.5px; font-weight: 700;
+    color: var(--text);
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 3px 10px;
+    border-radius: 7px;
+    margin: 2px 0;
+  }
+  .path .sep { color: var(--text-dim); font-weight: 400; }
+
+  .tag {
+    display: inline-flex; align-items: center;
+    font-size: 10.5px; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 6px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .tag.pro { background: var(--gold-soft); color: var(--gold); border: 1px solid var(--gold-border); }
+  .tag.new { background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent-border); }
+
+  .shot-note {
+    margin: 14px 0 4px 32px;
+    padding: 10px 14px;
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    font-size: 12.5px;
+    color: var(--text-dim);
+    display: flex; gap: 8px; align-items: flex-start;
+  }
+  .shot-note .glyph { flex-shrink: 0; }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 12px;
+    margin: 12px 0 20px 32px;
+  }
+  .stat-tile {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+  }
+  .stat-tile .k { font-size: 11.5px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-dim); }
+  .stat-tile .v { font-size: 14.5px; font-weight: 700; margin-top: 4px; color: var(--text); }
+  .stat-tile .d { font-size: 12.5px; color: var(--text-muted); margin-top: 3px; }
+
+  table.matrix {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 20px 32px;
+    font-size: 13.5px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  table.matrix th, table.matrix td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); }
+  table.matrix th { color: var(--text-dim); font-weight: 700; font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; background: var(--card-hover); }
+  table.matrix tr:last-child td { border-bottom: none; }
+  table.matrix td.status-ok { color: var(--green); font-weight: 700; }
+  .table-wrap { overflow-x: auto; }
+
+  hr.rule { border: none; border-top: 1px solid var(--border); margin: 56px 0 0; }
+
+  footer.page-foot {
+    margin-top: 56px;
+    padding-top: 24px;
+    display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+    font-size: 12.5px; color: var(--text-dim);
+  }
+</style>
+
+<div class="page">
+
+  <div class="masthead">
+    <span class="masthead-kicker"><span class="dot"></span>Espace Pro · Guide restaurateurs</span>
+    <h1>Tout comprendre de votre espace MIDA</h1>
+    <p class="lede">
+      Ce guide répond aux questions que se posent les nouveaux restaurateurs partenaires MIDA :
+      inscription, réservations, commandes, promotions, avis clients, et confidentialité des
+      données. Il décrit le fonctionnement réel de l'application, écran par écran.
+    </p>
+    <div class="callout support-callout">
+      <span class="glyph">📧</span>
+      <span>
+        <strong>Une question qui n'est pas dans ce guide ?</strong> Le support MIDA répond sous
+        24h à <a href="mailto:contact@mida-food.com" style="color:var(--gold);font-weight:700;">contact@mida-food.com</a>.
+        Dans l'app : <span class="path">Profil <span class="sep">→</span> Aide &amp; Support</span> —
+        voir la section <a href="#aide" style="color:var(--gold);font-weight:700;">Aide &amp; Support</a> ci-dessous.
+      </span>
+    </div>
+  </div>
+
+  <nav class="toc">
+    <a href="#demarrer"><span>Démarrer sur MIDA</span><span class="n">01</span></a>
+    <a href="#aide"><span>Aide &amp; Support</span><span class="n">02</span></a>
+    <a href="#dashboard"><span>Tableau de bord</span><span class="n">03</span></a>
+    <a href="#reservations"><span>Réservations (Comptoir)</span><span class="n">04</span></a>
+    <a href="#menu"><span>Menu</span><span class="n">05</span></a>
+    <a href="#commandes"><span>Commander (Click &amp; Collect)</span><span class="n">06</span></a>
+    <a href="#promotions"><span>Promotions</span><span class="n">07</span></a>
+    <a href="#avis"><span>Avis clients</span><span class="n">08</span></a>
+    <a href="#etablissement"><span>Votre établissement</span><span class="n">09</span></a>
+    <a href="#securite"><span>Sécurité &amp; données clients</span><span class="n">10</span></a>
+  </nav>
+
+  <!-- 01 — DÉMARRER -->
+  <section class="chapter" id="demarrer">
+    <div class="chapter-head"><span class="num">01</span><h2>Démarrer sur MIDA</h2></div>
+
+    <div class="qa">
+      <h3>Qu'est-ce que MIDA exactement ?</h3>
+      <div class="answer">
+        <p>
+          MIDA est une application de réservation et de commande pour les restaurants en
+          Algérie. Côté client, elle permet de trouver un restaurant, réserver une table, ou
+          commander à emporter/sur place. Côté restaurateur, l'<strong>Espace Pro</strong> vous
+          donne un tableau de bord complet pour gérer vos réservations, votre menu, vos
+          commandes, vos promotions et vos avis — sans jongler entre plusieurs outils.
+        </p>
+      </div>
+    </div>
+
+    <div class="qa">
+      <h3>Comment devenir partenaire ?</h3>
+      <div class="answer">
+        <p>
+          Depuis l'app, un client tape sur <span class="path">Profil <span class="sep">→</span> Vous êtes restaurateur ?</span>
+          ou sur la carte dédiée de l'accueil. Le formulaire d'inscription se fait en
+          <strong>3 étapes</strong> :
+        </p>
+        <ol>
+          <li><strong>Établissement</strong> — nom, type de cuisine, adresse, ville, téléphone</li>
+          <li><strong>Contact</strong> — votre prénom, nom, email</li>
+          <li><strong>Récapitulatif</strong> — vérification puis envoi de la demande</li>
+        </ol>
+        <p>
+          Après l'envoi, votre demande est vérifiée automatiquement (présence sur Google Maps,
+          cohérence des informations). Une demande bien renseignée est généralement approuvée
+          sous <strong>24 à 48h</strong>. Dans certains cas, l'équipe MIDA vous contactera par
+          email pour confirmer avant activation.
+        </p>
+      </div>
+    </div>
+
+    <div class="qa">
+      <h3>Une fois approuvé, comment j'accède à mon espace ?</h3>
+      <div class="answer">
+        <p>
+          Connectez-vous avec le même email/mot de passe que votre demande d'inscription.
+          L'onglet du bas normalement réservé à « Mes réservations » devient automatiquement
+          <strong>« Manager »</strong> et vous ouvre directement votre tableau de bord.
+        </p>
+        <p>
+          Si vous veniez de vous inscrire et que rien n'a changé, déconnectez-vous puis
+          reconnectez-vous une fois — l'app doit rafraîchir votre session pour reconnaître votre
+          nouveau statut de gérant.
+        </p>
+      </div>
+    </div>
+
+    <div class="qa">
+      <h3>Une carte « Configurez votre restaurant » apparaît sur mon Dashboard, c'est normal ?</h3>
+      <div class="answer">
+        <p>
+          Oui — à votre première connexion, une checklist en <strong>4 étapes</strong> vous guide
+          pour compléter votre fiche : <strong>✏️ Informations</strong> (cuisine, adresse,
+          description), <strong>📷 Photos</strong>, <strong>🍽️ Menu</strong> et
+          <strong>🕐 Horaires</strong>. Touchez une étape pour y accéder directement ; la carte se
+          referme toute seule une fois les 4 complétées, ou vous pouvez la fermer via « Passer »
+          (elle réapparaîtra tant que tout n'est pas fait).
+        </p>
+        <p>
+          Une seconde carte, plus discrète, peut apparaître juste en dessous pour signaler des
+          champs encore vides (ticket moyen, téléphone…) — elle disparaît d'elle-même une fois
+          votre fiche à 100%.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- 02 — AIDE & SUPPORT -->
+  <section class="chapter" id="aide">
+    <div class="chapter-head"><span class="num">02</span><h2>Aide &amp; Support</h2></div>
+
+    <div class="qa">
+      <h3>Comment contacter le support MIDA ?</h3>
+      <div class="answer">
+        <p>
+          Par email à <strong>contact@mida-food.com</strong> — réponse sous <strong>24h</strong>.
+          Depuis l'app, allez dans <span class="path">Profil <span class="sep">→</span> Aide &amp; Support</span>
+          puis touchez la carte <strong>« Contacter le support »</strong> tout en haut de l'écran,
+          qui ouvre directement votre application email avec l'adresse prête.
+        </p>
+      </div>
+    </div>
+
+    <div class="qa">
+      <h3>Y a-t-il une FAQ directement dans l'app ?</h3>
+      <div class="answer">
+        <p>
+          Oui, le même écran <span class="path">Aide &amp; Support</span> contient une FAQ
+          dépliable classée par thème (Démarrage, Réservations, Compte, Restaurateurs…) — utile
+          pour les questions rapides sans quitter l'app, en complément de ce guide qui va plus en
+          détail sur l'Espace Pro.
+        </p>
+      </div>
+    </div>
+
+    <div class="qa">
+      <h3>Où trouver les conditions d'utilisation et la politique de confidentialité ?</h3>
+      <div class="answer">
+        <p>
+          Toujours sur l'écran <span class="path">Aide &amp; Support</span>, section « Légal » en
+          bas — deux pages consultables directement dans l'app : Conditions d'utilisation et
+          Politique de confidentialité.
+        </p>
+      </div>
+    </div>
+
+    <div class="qa">
+      <h3>Un client ne s'est pas présenté, ou un litige avec un client — je fais quoi ?</h3>
+      <div class="answer">
+        <p>
+          Enregistrez d'abord le no-show depuis le <span class="path">Comptoir</span> (voir
+          section suivante) — cela reste dans l'historique du client. Pour tout litige qui dépasse
+          la gestion courante, contactez le support à contact@mida-food.com avec la date et le nom
+          du client concerné.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- 03 — DASHBOARD -->
+  <section class="chapter" id="dashboard">
+    <div class="chapter-head"><span class="num">03</span><h2>Tableau de bord</h2></div>
+
+    <div class="qa">
+      <h3>Qu'est-ce que je vois en arrivant sur mon Dashboard ?</h3>
+      <div class="answer">
+        <p>Trois blocs, du haut vers le bas :</p>
+        <div class="card-grid">
+          <div class="stat-tile"><div class="k">Bandeau du haut</div><div class="v">3 indicateurs du jour</div><div class="d">Couverts ce soir · Taux d'occupation · Chiffre d'affaires du jour</div></div>
+          <div class="stat-tile"><div class="k">Grille d'accès rapide</div><div class="v">8 raccourcis</div><div class="d">Comptoir, Commandes, Menu, Avis, Promos, Infos, Photos, Horaires</div></div>
+          <div class="stat-tile"><div class="k">Listes</div><div class="v">Aperçus en direct</div><div class="d">Prochaines réservations et commandes à emporter en attente</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa">
+      <h3>Comment est calculé le taux d'occupation ?</h3>
+      <div class="answer">
+        <p>
+          C'est le nombre de couverts réservés aujourd'hui divisé par la capacité de votre salle
+          (renseignée dans <span class="path">Mes informations</span>). Si vous n'avez pas
+          indiqué de capacité, l'indicateur affiche <code>—</code> plutôt qu'un chiffre inventé —
+          pensez à la renseigner pour avoir un vrai suivi.
+        </p>
+      </div>
+    </div>
+
+    <div class="qa">
+      <h3>À quoi sert le bilan mensuel plus bas sur le Dashboard ?</h3>
+      <div class="answer">
+        <p>
+          Il résume vos réservations sur le mois en cours (total, taux de présence, no-show) pour
+          repérer une tendance sans avoir à ouvrir le Comptoir jour par jour.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- 04 — RÉSERVATIONS -->
+  <section class="chapter" id="reservations">
+    <div class="chapter-head"><span class="num">04</span><h2>Réservations <span style="font-weight:400;color:var(--text-dim);font-size:16px;">— le Comptoir</span></h2></div>
+
+    <div class="qa">
+      <h3>Où je gère les réservations du jour ?</h3>
+      <div class="answer">
+        <p>
+          Dans <span class="path">Comptoir</span> (accessible depuis le Dashboard). Un
+          sélecteur de date en haut (précédent / aujourd'hui / suivant) vous permet de consulter
+          n'importe quel jour, avec 3 compteurs colorés : confirmées, en attente, et une ligne
+          discrète pour les arrivées/no-show déjà enregistrés.
+        </p>
+      </div>
+    </div>
+
+    <div class="qa">
+      <h3>Comment confirmer, modifier ou annuler une réservation ?</h3>
+      <div class="answer">
+        <p>
+          Chaque réservation apparaît en ligne, colorée selon son statut. La toucher ouvre un
+          panneau de détail avec 4 actions possibles : <strong>Confirmer</strong>,
+          <strong>Arrivée</strong> (le client est là), <strong>No-show</strong> (il ne s'est pas
+          présenté) et <strong>Annuler</strong>. Sur tablette ou en mode paysage, le Comptoir
+          s'affiche en 2 panneaux côte à côte pour aller plus vite pendant le service.
+        </p>
+      </div>
+    </div>
+
+    <div class="qa">
+      <h3>Puis-je voir le téléphone du client qui a réservé ?</h3>
+      <div class="answer">
+        <p>
+          Oui, uniquement pour vos <strong>propres</strong> clients — ceux qui ont une réservation
+          ou une commande chez vous. C'est une règle stricte côté serveur : vous ne pouvez jamais
+          voir les coordonnées d'un client d'un autre restaurant. Voir <a href="#securite">Sécurité &amp; données clients</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- 05 — MENU -->
+  <section class="chapter" id="menu">
+    <div class="chapter-head"><span class="num">05</span><h2>Menu</h2></div>
+
+    <div class="qa">
+      <h3>Comment ajouter ou modifier un plat ?</h3>
+      <div class="answer">
+        <p>
+          Dans <span class="path">Menu</span>, vos plats sont regroupés par catégorie. Un bouton
+          en pointillés en bas de chaque catégorie ouvre le formulaire d'ajout (nom, description,
+          prix, photo, catégorie). Toucher un plat existant l'ouvre en modification.
+        </p>
+      </div>
+    </div>
+
+    <div class="qa">
+      <h3>Comment marquer un plat en rupture sans le supprimer ?</h3>
+      <div class="answer">
+        <p>
+          Chaque plat a un petit interrupteur <strong>Disponible / Indisponible</strong> sur sa
+          carte. Le désactiver le grise immédiatement côté client (sur la fiche du restaurant et
+          en commande) sans effacer la fiche — pratique en cas de rupture temporaire.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- 06 — COMMANDES -->
+  <section class="chapter" id="commandes">
+    <div class="chapter-head"><span class="num">06</span><h2>Commander <span style="font-weight:400;color:var(--text-dim);font-size:16px;">— Click &amp; Collect et service à table</span></h2></div>
+
+    <div class="qa">
+      <h3>Comment activer la commande en ligne pour mon restaurant ?</h3>
+      <div class="answer">
+        <p>
+          Dans <span class="path">Mes informations</span>, activez l'interrupteur
+          <strong>Click &amp; Collect</strong>. Le bouton « Commander à emporter » apparaît alors
+          sur votre fiche côté client, et votre restaurant devient visible dans les recherches
+          filtrées sur les restaurants qui proposent la commande.
+        </p>
+      </div>
+    </div>
+
+    <div class="qa">
+      <h3>Où je vois et je gère les commandes qui arrivent ?</h3>
+      <div class="answer">
+        <p>
+          Dans <span class="path">Commandes</span> (accessible depuis le Dashboard). Trois
+          filtres : <strong>Nouvelles</strong>, <strong>En cours</strong>, <strong>Prêtes</strong>,
+          chacun avec un compteur. Chaque commande affiche le détail des articles et deux
+          actions : <strong>Annuler</strong> ou <strong>Marquer prête</strong> (qui avance la
+          commande à l'étape suivante et notifie le client).
+        </p>
+      </div>
+    </div>
+
+    <div class="qa">
+      <h3>Quelle différence entre « à emporter » et « à table » ?<span class="tag pro">Pro</span></h3>
+      <div class="answer">
+        <p>
+          Le client choisit son mode en passant commande. En mode <strong>à table</strong>, il
+          indique un numéro de table (ou scanne un QR code, voir ci-dessous) plutôt que de venir
+          chercher sa commande au comptoir.
+        </p>
+      </div>
+    </div>
+
+    <div class="qa">
+      <h3>À quoi servent les QR codes de table ?</h3>
+      <div class="answer">
+        <p>
+          Depuis <span class="path">Mes informations <span class="sep">→</span> QR codes des tables</span>,
+          indiquez votre nombre de tables : un QR code unique est généré pour chacune,
+          imprimable en un clic. Un client qui scanne le QR posé sur sa table ouvre directement
+          MIDA en mode « à table », avec le numéro déjà prérempli — aucune saisie manuelle pour
+          lui.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- 07 — PROMOTIONS -->
+  <section class="chapter" id="promotions">
+    <div class="chapter-head"><span class="num">07</span><h2>Promotions</h2></div>
+
+    <div class="qa">
+      <h3>Quels types de promotions puis-je créer ?</h3>
+      <div class="answer">
+        <div class="table-wrap">
+        <table class="matrix">
+          <thead><tr><th>Type</th><th>Exemple</th></tr></thead>
+          <tbody>
+            <tr><td>Réduction %</td><td>−20% sur l'addition</td></tr>
+            <tr><td>Montant fixe</td><td>−500 DA offerts</td></tr>
+            <tr><td>Offert</td><td>Dessert offert</td></tr>
+            <tr><td>2 pour 1</td><td>Le moins cher offert</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="qa">
+      <h3>Où mes clients voient-ils la promotion ?</h3>
+      <div class="answer">
+        <p>
+          Une fois active, elle apparaît en badge sur votre photo dans les résultats de recherche,
+          et en badge flottant directement sur votre pin, sur la carte de l'écran Explorer — les
+          clients qui filtrent sur « Promotion » ne voient que les restaurants avec une offre en
+          cours.
+        </p>
+      </div>
+    </div>
+
+    <div class="qa">
+      <h3>Comment mettre une promo en pause sans la supprimer ?</h3>
+      <div class="answer">
+        <p>
+          Dans <span class="path">Promotions</span>, chaque offre a un statut visible :
+          <strong>Active</strong>, <strong>Programmée</strong>, <strong>Suspendue</strong> ou
+          <strong>Terminée</strong>. La suspendre la retire immédiatement de l'app côté client
+          sans perdre sa configuration — utile si vous voulez la réactiver plus tard.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- 08 — AVIS -->
+  <section class="chapter" id="avis">
+    <div class="chapter-head"><span class="num">08</span><h2>Avis clients</h2></div>
+
+    <div class="qa">
+      <h3>Qui peut laisser un avis sur mon restaurant ?</h3>
+      <div class="answer">
+        <p>
+          Seul un client ayant réellement une réservation chez vous peut laisser un avis — ça
+          évite les faux avis. Chaque avis est modéré avant publication.
+        </p>
+      </div>
+    </div>
+
+    <div class="qa">
+      <h3>Puis-je répondre à un avis ?</h3>
+      <div class="answer">
+        <p>
+          Oui, depuis <span class="path">Avis</span>. Votre réponse apparaît directement sous le
+          commentaire du client, visible par tous les futurs visiteurs de votre fiche.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- 09 — ÉTABLISSEMENT -->
+  <section class="chapter" id="etablissement">
+    <div class="chapter-head"><span class="num">09</span><h2>Votre établissement</h2></div>
+
+    <div class="qa">
+      <h3>Comment ajouter des photos ?</h3>
+      <div class="answer">
+        <p>
+          Depuis <span class="path">Photos</span>, ou en bas de <span class="path">Mes informations</span>.
+          La première photo de la liste devient votre photo de couverture, visible en premier
+          partout dans l'app.
+        </p>
+      </div>
+    </div>
+
+    <div class="qa">
+      <h3>Comment écrire ma description sans passer une heure dessus ?</h3>
+      <div class="answer">
+        <p>
+          Dans <span class="path">Mes informations</span>, le bouton <strong>✨ Générer avec l'IA</strong>
+          propose une description à partir de vos informations déjà saisies (cuisine, quartier,
+          ticket moyen, plats du menu). La suggestion remplit le champ mais n'est jamais
+          enregistrée automatiquement — vous gardez la main pour l'ajuster avant de sauvegarder.
+        </p>
+      </div>
+    </div>
+
+    <div class="qa">
+      <h3>Comment activer les badges Terrasse, Parking, etc. ?</h3>
+      <div class="answer">
+        <p>
+          Toujours dans <span class="path">Mes informations</span>, section
+          <strong>Équipements</strong> — terrasse, parking, salle de fête, espace famille.
+          Cochés, ils apparaissent en tags sur votre fiche côté client.
+        </p>
+      </div>
+    </div>
+
+    <div class="qa">
+      <h3>Où je règle mes horaires d'ouverture ?</h3>
+      <div class="answer">
+        <p>
+          Écran <span class="path">Horaires</span>, jour par jour. Vos horaires du jour
+          s'affichent automatiquement sur votre fiche restaurant.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- 10 — SÉCURITÉ -->
+  <section class="chapter" id="securite">
+    <div class="chapter-head"><span class="num">10</span><h2>Sécurité &amp; données clients</h2></div>
+
+    <div class="qa">
+      <h3>Quelles informations client puis-je voir en tant que restaurateur ?</h3>
+      <div class="answer">
+        <p>
+          Nom et téléphone des clients ayant une réservation ou une commande <strong>chez
+          vous</strong> — pour pouvoir les joindre en cas de besoin (confirmer un couvert,
+          gérer un retard). Vous ne voyez jamais les coordonnées d'un client qui n'a jamais
+          interagi avec votre établissement.
+        </p>
+      </div>
+    </div>
+
+    <div class="qa">
+      <h3>Comment MIDA protège les données de mes clients ?</h3>
+      <div class="answer">
+        <p>
+          L'accès aux données personnelles (email, téléphone, nom) est contrôlé au niveau de la
+          base de données elle-même, pas seulement dans l'application — un principe de sécurité
+          appelé <em>row-level security</em>. Concrètement : même en interrogeant directement les
+          serveurs de MIDA, il est techniquement impossible de récupérer les coordonnées d'un
+          client avec lequel on n'a aucune relation (réservation, commande). Cette protection a
+          été renforcée le 16/08/2026.
+        </p>
+      </div>
+    </div>
+
+    <div class="qa">
+      <h3>Qui peut voir mes propres coordonnées en tant que restaurateur ?</h3>
+      <div class="answer">
+        <p>
+          Seulement vous, connecté à votre compte. Les autres restaurateurs et les clients de
+          l'app n'ont jamais accès à votre fiche <span class="path">restaurant_owners</span>.
+        </p>
+      </div>
+    </div>
+
+    <div class="qa">
+      <h3>Et les comptes de test créés pendant le développement de l'app ?</h3>
+      <div class="answer">
+        <p>
+          Même règle, sans exception : cette protection s'applique à <strong>tous</strong> les
+          comptes de la base — comptes de test, comptes de démonstration, comme comptes de vrais
+          clients. Un compte de test ne peut être lu que par lui-même (ou par le restaurateur chez
+          qui il a réservé/commandé), exactement comme n'importe quel autre compte.
+        </p>
+        <p>
+          Cette règle est appliquée directement au niveau de la base de données (pas seulement
+          dans l'app) — impossible de la contourner en passant par un autre chemin technique.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="page-foot">
+    <span>Guide Espace Pro MIDA — reflète la version de l'app au 17/08/2026.</span>
+    <span>Des questions non couvertes ici ? Elles seront ajoutées au fil des retours des restaurateurs.</span>
+  </footer>
+
+</div>

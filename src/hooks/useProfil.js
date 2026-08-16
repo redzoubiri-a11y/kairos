@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { supabase } from '../../supabase';
@@ -51,7 +51,10 @@ export default function useProfil() {
   const [isManager,      setIsManager]      = useState(false);
   const [isAdmin,        setIsAdmin]        = useState(false);
 
-  useEffect(() => {
+  // useFocusEffect (pas useEffect) : relit la session à chaque ouverture de l'onglet,
+  // sinon un changement de compte (déconnexion/reconnexion) laisse Profil affiché
+  // avec le rôle de l'ancienne session tant que l'app n'est pas relancée.
+  useFocusEffect(useCallback(() => {
     (async () => {
       const { data } = await supabase.auth.getUser();
       const u = data?.user;
@@ -75,7 +78,7 @@ export default function useProfil() {
       setCity(row.city ?? '');
       setPhone(row.phone ?? '');
     })();
-  }, []);
+  }, []));
 
   useFocusEffect(useCallback(() => {
     if (!userId) return;

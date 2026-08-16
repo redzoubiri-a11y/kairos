@@ -1,192 +1,140 @@
-import { useCallback } from 'react';
-import { Ionicons } from '@expo/vector-icons';
-import {
-  View, Text, StyleSheet, TouchableOpacity,
-  Animated, Linking,
-} from 'react-native';
+import { useCallback, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { LinearGradient } from 'expo-linear-gradient';
 import { colors, typography, spacing, radius } from '../src/theme';
 import useRestaurant from '../src/hooks/useRestaurant';
 import PhotoCarouselHero from '../src/components/PhotoCarouselHero';
+import RestaurantInfosTab from '../src/components/RestaurantInfosTab';
 import RestaurantMenuTab from '../src/components/RestaurantMenuTab';
 import RestaurantAvisTab from '../src/components/RestaurantAvisTab';
-import RestaurantInfosTab, { todaysHours, isOpenNow } from '../src/components/RestaurantInfosTab';
-import Tag from '../src/components/Tag';
+import RestaurantPhotosTab from '../src/components/RestaurantPhotosTab';
 
-const HERO = 310;
+const TABS = ['Infos', 'Menu', 'Avis', 'Photos'];
+// La maquette utilise un hero plus haut sur Infos (onglet d'atterrissage) et plus
+// compact sur les 3 autres, pour laisser plus de place au contenu.
+const HERO_INFOS = 280;
+const HERO_OTHER = 200;
 
 export default function RestaurantScreen({ route, navigation }) {
-  const restaurant = route?.params?.restaurant || {};
-
+  const restaurantParam = route?.params?.restaurant || {};
   const {
-    tab, reviews, loadingReviews,
+    restaurant, tab, reviews, loadingReviews,
     tabAnim, photos, menu, rating, cuisineEmoji, desc,
     switchTab, clickCollectEnabled,
-  } = useRestaurant(restaurant);
+  } = useRestaurant(restaurantParam);
 
-  const todaysRange = todaysHours(restaurant.opening_hours);
-  const openNow = isOpenNow(restaurant.opening_hours);
+  // Sélection sur le widget "Réservation en ligne" — reflète le libellé du CTA,
+  // mais n'est pas encore transmise au formulaire de réservation (pas de prefill
+  // côté useReservationForm pour l'instant, cf. résumé du lot).
+  const [selectedDateIdx, setSelectedDateIdx] = useState(0);
+  const [selectedSlot, setSelectedSlot] = useState(null);
 
   const goReserve = useCallback(() => navigation.navigate('ReservationForm', { restaurant }), [navigation, restaurant]);
   const goClickCollect = useCallback(() => navigation.navigate('ClickCollect', { restaurant }), [navigation, restaurant]);
-  const goDirections = useCallback(() => {
-    const query = restaurant.latitude && restaurant.longitude
-      ? `${restaurant.latitude},${restaurant.longitude}`
-      : restaurant.address || restaurant.quartier || restaurant.name;
-    if (!query) return;
-    Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`);
-  }, [restaurant]);
+
+  const reviewCount = restaurant.review_count || reviews.length;
+  const amenities = [
+    restaurant.terrasse && 'Terrasse',
+    restaurant.parking && 'Parking',
+    restaurant.espace_famille && 'Espace famille',
+    restaurant.salle_fete && 'Salle fête',
+  ].filter(Boolean);
 
   return (
     <SafeAreaView style={s.root} edges={['top', 'left', 'right', 'bottom']}>
-      <LinearGradient colors={colors.photoFallbackGradient} start={{ x: 0.2, y: 0 }} end={{ x: 0, y: 1 }} style={s.bgOverlay} pointerEvents="none" />
-
-      {/* Hero — photo propre, aucun texte dessus */}
       <PhotoCarouselHero
         restaurant={{ ...restaurant, photos }}
-        height={HERO}
+        height={tab === 'Infos' ? HERO_INFOS : HERO_OTHER}
         onBack={() => navigation.goBack()}
         emptyIcon={cuisineEmoji}
       />
 
-      {/* Infos — sous la photo, plus aucun texte sur l'image */}
-      <View style={s.infoBlock}>
-        <Text style={s.infoName} numberOfLines={2}>{restaurant.name}</Text>
-        <View style={s.infoMetaRow}>
-          {rating && (
-            <>
-              <Text style={s.infoRating}>★ {rating}</Text>
-              {restaurant.review_count > 0 && (
-                <Text style={s.infoReviewCount}>({restaurant.review_count} avis)</Text>
-              )}
-              <Text style={s.infoSep}>·</Text>
-            </>
-          )}
-          <Text style={s.infoCuisine} numberOfLines={1}>
-            {cuisineEmoji} {(restaurant.cuisine_type || '').replace(/_/g, ' ')}
-          </Text>
-        </View>
-        <View style={s.infoAddrRow}>
-          <Ionicons name="location-outline" size={14} color={colors.textDim} />
-          <Text style={s.infoAddr} numberOfLines={1}>
-            {restaurant.address || restaurant.quartier || restaurant.city || ''}
-          </Text>
-        </View>
-      </View>
-
-      {/* Aménités + horaires du jour */}
-      {!!restaurant.amenities?.length && (
-        <View style={s.amenitiesRow}>
-          {restaurant.amenities.map((a) => (
-            <Tag key={a} variant={String(a).toLowerCase() === 'terrasse' ? 'amenityHighlight' : 'cuisineNeutral'}>
-              {String(a).toUpperCase()}
-            </Tag>
-          ))}
-        </View>
-      )}
-      <View style={s.hoursBanner}>
-        {todaysRange ? (
-          <>
-            <Text style={s.hoursLabel}>{openNow === false ? 'Fermé actuellement' : "Ouvert aujourd'hui"}</Text>
-            <Text style={s.hoursValue}>{todaysRange}</Text>
-          </>
-        ) : (
-          <Text style={s.hoursValueMuted}>Horaires non renseignés</Text>
-        )}
-      </View>
-
-      {/* Tabs */}
-      <View style={s.tabBar}>
-        {['Menu', 'Avis', 'Infos'].map(t => (
-          <TouchableOpacity key={t} style={[s.tabBtn, tab === t && s.tabBtnOn]} onPress={() => switchTab(t)}>
-            <Text style={[s.tabTxt, tab === t && s.tabTxtOn]}>{t}</Text>
-            {tab === t && <View style={s.tabLine} />}
-          </TouchableOpacity>
-        ))}
-      </View>
-
-      {/* Content */}
       <Animated.ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1, opacity: tabAnim }}>
+        <View style={s.headBlock}>
+          <Text style={s.name} numberOfLines={2}>{restaurant.name}</Text>
+
+          {!!rating && (
+            <View style={s.rateline}>
+              <Text style={s.stars}>{'★'.repeat(Math.max(1, Math.min(5, Math.round(Number(rating)))))}</Text>
+              <Text style={s.scoreNum}>{rating.replace('.', ',')}</Text>
+              {reviewCount > 0 && <Text style={s.reviewCt}>({reviewCount} avis)</Text>}
+            </View>
+          )}
+
+          <Text style={s.meta} numberOfLines={1}>
+            {[(restaurant.cuisine_type || '').replace(/_/g, ' '), [restaurant.quartier, restaurant.city].filter(Boolean).join(', ')]
+              .filter(Boolean).join(' · ')}
+          </Text>
+
+          {amenities.length > 0 && (
+            <View style={s.tags}>
+              {amenities.map(a => (
+                <View key={a} style={s.tag}><Text style={s.tagTxt}>{a}</Text></View>
+              ))}
+            </View>
+          )}
+
+          <View style={s.tabBar}>
+            {TABS.map(t => (
+              <TouchableOpacity key={t} onPress={() => switchTab(t)}>
+                <Text style={[s.tabTxt, tab === t && s.tabTxtOn]}>{t}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+
+        {tab === 'Infos' && (
+          <RestaurantInfosTab
+            restaurant={restaurant} desc={desc}
+            selectedDateIdx={selectedDateIdx} onSelectDate={setSelectedDateIdx}
+            selectedSlot={selectedSlot} onSelectSlot={setSelectedSlot}
+          />
+        )}
         {tab === 'Menu' && <RestaurantMenuTab menu={menu} />}
         {tab === 'Avis' && <RestaurantAvisTab restaurant={restaurant} reviews={reviews} loadingReviews={loadingReviews} />}
-        {tab === 'Infos' && <RestaurantInfosTab restaurant={restaurant} desc={desc} />}
+        {tab === 'Photos' && <RestaurantPhotosTab photos={photos} />}
+
         <View style={{ height: 100 }} />
       </Animated.ScrollView>
 
-      {/* Footer */}
-      <View style={s.footer}>
-        <View style={s.footerInner}>
-          {restaurant.avg_ticket > 0 && (
-            <View style={s.footerPrice}>
-              <Text style={s.footerPriceLbl}>PRIX MOY.</Text>
-              <Text style={s.footerPriceVal}>{restaurant.avg_ticket.toLocaleString('fr-FR')} DA</Text>
-            </View>
-          )}
-          <TouchableOpacity style={s.directionsBtn} onPress={goDirections}>
-            <Ionicons name="location" size={22} color={colors.text} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[s.reserveBtn, !restaurant.avg_ticket && { flex: 1 }]}
-            onPress={goReserve}
-          >
-            <Text style={s.reserveTxt}>Réserver une table</Text>
-          </TouchableOpacity>
-        </View>
+      <View style={s.bottomBar}>
+        <TouchableOpacity style={s.cta} onPress={goReserve} activeOpacity={0.9}>
+          <Text style={s.ctaTxt}>
+            {selectedSlot ? `Réserver — ${selectedSlot}, 2 pers.` : 'Réserver une table'}
+          </Text>
+        </TouchableOpacity>
         {clickCollectEnabled && (
-          <TouchableOpacity style={s.clickCollectBtn} onPress={goClickCollect}>
-            <Text style={s.clickCollectTxt}>Commander</Text>
+          <TouchableOpacity style={s.ccBtn} onPress={goClickCollect} activeOpacity={0.85}>
+            <Text style={s.ccTxt}>Commander</Text>
           </TouchableOpacity>
         )}
       </View>
-
     </SafeAreaView>
   );
 }
 
 const s = StyleSheet.create({
-  root:      { flex: 1, backgroundColor: colors.bg },
-  bgOverlay: { ...StyleSheet.absoluteFillObject, opacity: 0.06 },
+  root: { flex: 1, backgroundColor: colors.card },
 
-  // Infos resto — sous la photo (plus aucun texte sur l'image)
-  infoBlock:    { paddingHorizontal: spacing.xl, paddingTop: spacing.xl, paddingBottom: spacing.lg, backgroundColor: colors.card },
-  infoName:     { fontFamily: typography.display, fontSize: typography.size.title, color: colors.text, letterSpacing: -0.3, marginBottom: spacing.sm },
-  infoMetaRow:  { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, flexWrap: 'wrap' },
-  infoRating:   { fontFamily: typography.bodyBold, fontSize: typography.size.bodyLg, color: colors.gold },
-  infoReviewCount: { fontFamily: typography.body, color: colors.textDim, fontSize: typography.size.caption },
-  infoSep:      { color: colors.textDim },
-  infoCuisine:  { fontFamily: typography.body, fontSize: typography.size.bodyLg - 0.5, color: colors.textMuted, flexShrink: 1 },
-  infoAddrRow:  { flexDirection: 'row', alignItems: 'center', gap: spacing.xs + 1, marginTop: spacing.sm },
-  infoAddr:     { fontFamily: typography.body, fontSize: typography.size.body, color: colors.textDim, flex: 1 },
+  headBlock: { paddingHorizontal: spacing.xl },
+  name:    { fontFamily: typography.display, fontSize: typography.size.title - 4, color: colors.text, marginTop: spacing.lg, letterSpacing: -0.2 },
+  rateline:{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs + 1, marginTop: spacing.sm - 1 },
+  stars:   { color: colors.star, fontSize: typography.size.bodyLg, letterSpacing: 1 },
+  scoreNum:{ fontFamily: typography.display, fontSize: typography.size.subheading, color: colors.text },
+  reviewCt:{ fontFamily: typography.body, fontSize: typography.size.caption, color: colors.textDim },
+  meta:    { fontFamily: typography.body, fontSize: typography.size.body, color: colors.textMuted, marginTop: spacing.sm - 1, textTransform: 'capitalize' },
 
-  descWrap: { paddingHorizontal: spacing.xl, paddingVertical: spacing.xl - 2, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
-  descTxt:  { color: colors.textMuted, fontSize: typography.size.bodyLg, lineHeight: 20, fontWeight: typography.weight.regular },
+  tags:   { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs + 2, marginTop: spacing.lg - 2 },
+  tag:    { paddingHorizontal: spacing.md + 1, paddingVertical: spacing.xs + 1, borderRadius: radius.sm + 2, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder },
+  tagTxt: { fontFamily: typography.bodyMedium, fontSize: typography.size.caption - 0.5, color: colors.textMuted },
 
-  amenitiesRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, paddingHorizontal: spacing.xl, paddingTop: spacing.lg, backgroundColor: colors.card },
-  hoursBanner: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    marginHorizontal: spacing.xl, marginTop: spacing.lg, marginBottom: spacing.lg,
-    backgroundColor: colors.cream, borderRadius: radius.lg, paddingVertical: spacing.lg + 1, paddingHorizontal: 15,
-  },
-  hoursLabel: { fontFamily: typography.bodySemibold, fontSize: typography.size.bodyLg - 0.5, color: colors.text },
-  hoursValue: { fontFamily: typography.bodySemibold, fontSize: typography.size.bodyLg - 0.5, color: colors.primary },
-  hoursValueMuted: { fontFamily: typography.bodyMedium, fontSize: typography.size.bodyLg - 0.5, color: colors.textDim },
+  tabBar: { flexDirection: 'row', gap: spacing.xxl - 2, marginTop: spacing.xxl - 4, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
+  tabTxt: { fontFamily: typography.bodyBold, fontSize: typography.size.bodyLg - 0.5, color: colors.textDim, paddingBottom: spacing.sm + 1 },
+  tabTxtOn: { color: colors.text, borderBottomWidth: 2, borderBottomColor: colors.primary },
 
-  tabBar:  { flexDirection: 'row', backgroundColor: colors.card, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
-  tabBtn:  { flex: 1, alignItems: 'center', paddingVertical: spacing.lg + 1, position: 'relative' },
-  tabBtnOn:{ backgroundColor: colors.primarySoft },
-  tabTxt:  { color: colors.textSecondary, fontSize: typography.size.bodyLg, fontWeight: typography.weight.regular },
-  tabTxtOn:{ color: colors.primary, fontWeight: typography.weight.semibold },
-  tabLine: { position: 'absolute', bottom: 0, left: '25%', right: '25%', height: 2, backgroundColor: colors.primary, borderRadius: 1 },
-
-  footer:        { paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, borderTopWidth: 1, borderTopColor: colors.cardBorder, backgroundColor: colors.card },
-  footerInner:   { flexDirection: 'row', alignItems: 'center', gap: spacing.xl - 2 },
-  footerPrice:   { gap: spacing.xxs },
-  footerPriceLbl:{ color: colors.textDim, fontSize: typography.size.xs, letterSpacing: 1.5 },
-  footerPriceVal:{ color: colors.primary, fontSize: typography.size.heading2, fontWeight: typography.weight.medium },
-  reserveBtn:    { flex: 1, borderRadius: radius.card, paddingVertical: spacing.xl - 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.resa },
-  reserveTxt:    { fontFamily: typography.bodyBold, color: '#FFFFFF', fontSize: typography.size.bodyLg, letterSpacing: 0.3 },
-  directionsBtn: { width: 52, paddingVertical: spacing.xl - 1, borderRadius: radius.card, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder },
-  clickCollectBtn: { marginTop: spacing.md, borderRadius: radius.card, paddingVertical: spacing.lg, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.greenSoft },
-  clickCollectTxt: { fontFamily: typography.bodySemibold, color: colors.green, fontSize: typography.size.bodyLg, letterSpacing: 0.2 },
+  bottomBar: { paddingHorizontal: spacing.xl, paddingVertical: spacing.lg - 1, borderTopWidth: 1, borderTopColor: colors.cardBorder, backgroundColor: colors.card },
+  cta:    { height: 50, borderRadius: radius.lg, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' },
+  ctaTxt: { fontFamily: typography.bodyBold, color: '#FFFFFF', fontSize: typography.size.subheading },
+  ccBtn:  { marginTop: spacing.sm + 2, height: 44, borderRadius: radius.lg, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: colors.cardBorder },
+  ccTxt:  { fontFamily: typography.bodySemibold, color: colors.text, fontSize: typography.size.body },
 });

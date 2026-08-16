@@ -44,13 +44,12 @@ export function isOpenNow(oh) {
   return nowMin >= toMin(today.open) && nowMin <= toMin(today.close);
 }
 
-// Créneaux d'affichage MVP (Lot 1, 15/08/2026) — PAS une vraie disponibilité : aucune
+// Créneaux d'affichage MVP (15/08/2026) — PAS une vraie disponibilité : aucune
 // vérification de capacité (check_capacity), seulement 3 horaires plausibles dérivés du
-// créneau du jour, pour donner un aperçu visuel sur RestaurantListCard. À remplacer par un
-// vrai calcul de dispo si ce chantier est repris (cf. plan Lot 1, validé tel quel).
-export function mvpSlots(oh) {
+// créneau d'ouverture du jour demandé (aujourd'hui par défaut). Repris pour le widget
+// "Réservation en ligne" de la fiche restaurant (refonte visuelle du 16/08/2026).
+export function mvpSlots(oh, day = new Date().getDay()) {
   if (!oh || typeof oh === 'string' || !Array.isArray(oh) || oh.length === 0) return [];
-  const day = new Date().getDay();
   const today = oh.find(d => d.day === day);
   if (!today) return [];
   const toMin = s => { const [h, m] = (s || '0:0').split(':').map(Number); return h * 60 + (m || 0); };
@@ -60,4 +59,19 @@ export function mvpSlots(oh) {
   if (close <= open) return [];
   const span = close - open;
   return [0.3, 0.5, 0.7].map(f => toHM(Math.round((open + span * f) / 30) * 30));
+}
+
+const DOW_SHORT = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+
+// Les n prochains jours (aujourd'hui inclus) pour la bande de dates de la fiche
+// restaurant — { day: jour de la semaine 0-6, num, dow, date } par entrée.
+export function nextDays(n = 5) {
+  const out = [];
+  const base = new Date();
+  for (let i = 0; i < n; i++) {
+    const d = new Date(base);
+    d.setDate(base.getDate() + i);
+    out.push({ day: d.getDay(), num: d.getDate(), dow: DOW_SHORT[d.getDay()], date: d });
+  }
+  return out;
 }

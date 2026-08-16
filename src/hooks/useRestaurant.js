@@ -7,12 +7,17 @@ export const CUISINE_EMOJI = {
   italien:'🍕', japonais:'🍣', turc:'🍢', libanais:'🌿', francais:'🍷', autre:'🍽️',
 };
 
-export default function useRestaurant(restaurant) {
-  const [tab,            setTab]            = useState('Menu');
+export default function useRestaurant(restaurantProp) {
+  const [tab,            setTab]            = useState('Infos');
   const [reviews,        setReviews]        = useState([]);
   const [loadingReviews, setLoadingReviews] = useState(false);
   const [dbDishes,       setDbDishes]       = useState([]);
   const [clickCollectEnabled, setClickCollectEnabled] = useState(false);
+  // Champs pas forcément sélectionnés par l'écran appelant (ex. Accueil ne les
+  // demande pas) — refetchés ici pour que la fiche reste correcte quelle que
+  // soit la provenance de la navigation.
+  const [extraFields, setExtraFields] = useState({});
+  const restaurant = useMemo(() => ({ ...restaurantProp, ...extraFields }), [restaurantProp, extraFields]);
   const tabAnim = useRef(new Animated.Value(1)).current;
 
   const photos = useMemo(
@@ -59,8 +64,10 @@ export default function useRestaurant(restaurant) {
 
       (async () => {
         const { data } = await supabase.from('restaurants')
-          .select('click_collect_enabled').eq('id', restaurant.id).maybeSingle();
+          .select('click_collect_enabled, espace_famille, terrasse, parking, salle_fete, address, phone, quartier, city, avg_ticket')
+          .eq('id', restaurant.id).maybeSingle();
         setClickCollectEnabled(!!data?.click_collect_enabled);
+        if (data) setExtraFields(data);
       })();
 
       setLoadingReviews(true);
@@ -97,6 +104,7 @@ export default function useRestaurant(restaurant) {
   }, [tabAnim]);
 
   return {
+    restaurant,
     tab, reviews, loadingReviews,
     tabAnim, photos, menu, rating, cuisineEmoji, desc,
     switchTab, clickCollectEnabled,

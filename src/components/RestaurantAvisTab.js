@@ -1,60 +1,26 @@
-import { useMemo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { colors, typography, spacing, radius } from '../theme';
 import MLoader from './MLoader';
 import Stars from './Stars';
 
-const AVATAR_COLORS = ['#E8A045','#5A9BE0','#4CAF82','#9b6cc8','#E05A5A','#5ab4c8'];
-function avatarColor(name) {
-  let h = 0;
-  for (let i = 0; i < (name||'').length; i++) h = (h * 31 + name.charCodeAt(i)) % AVATAR_COLORS.length;
-  return AVATAR_COLORS[Math.abs(h)];
-}
-
 export default function RestaurantAvisTab({ restaurant, reviews, loadingReviews }) {
   const rating = Number(restaurant.avg_rating || 0);
 
-  const dist = useMemo(() => {
-    return [5, 4, 3, 2, 1].map(n => ({
-      n,
-      pct: reviews.length > 0
-        ? Math.round((reviews.filter(r => Math.round(r.note || r.rating) === n).length / reviews.length) * 100)
-        : 0,
-    }));
-  }, [reviews]);
-
   if (loadingReviews) return (
-    <View style={{ padding: spacing.xxl }}>
+    <View style={{ paddingHorizontal: spacing.xl, paddingTop: spacing.xxl }}>
       {[1, 2, 3].map(i => (
-        <MLoader key={i} width="100%" height={90} borderRadius={radius.xl} style={{ marginBottom: spacing.lg }} />
+        <MLoader key={i} width="100%" height={70} borderRadius={radius.md} style={{ marginBottom: spacing.lg }} />
       ))}
     </View>
   );
 
   return (
-    <>
-      <View style={s.summary}>
-        <View style={s.summaryLeft}>
-          <Text style={s.bigRating}>{rating > 0 ? rating.toFixed(1) : '—'}</Text>
-          <Stars value={rating} size={15} />
-          <Text style={s.reviewCount}>
-            {reviews.length > 0 ? `${reviews.length} avis` : 'Aucun avis'}
-          </Text>
-        </View>
-        <View style={s.summaryRight}>
-          {dist.map(d => (
-            <View key={d.n} style={s.barRow}>
-              <Text style={s.barLabel}>{d.n}</Text>
-              <View style={s.barTrack}>
-                <View style={[s.barFill, { width: `${d.pct}%` }]} />
-              </View>
-              <Text style={s.barPct}>{d.pct}%</Text>
-            </View>
-          ))}
-        </View>
+    <View style={s.wrap}>
+      <View style={s.scoreHead}>
+        <Text style={s.scoreBig}>{rating > 0 ? rating.toFixed(1).replace('.', ',') : '—'}</Text>
+        <Stars value={rating} size={16} />
+        <Text style={s.scoreCt}>{reviews.length > 0 ? `${reviews.length} avis` : 'Aucun avis'}</Text>
       </View>
-
-      <View style={s.divider} />
 
       {reviews.length === 0 ? (
         <View style={s.empty}>
@@ -64,77 +30,50 @@ export default function RestaurantAvisTab({ restaurant, reviews, loadingReviews 
         </View>
       ) : reviews.map((a, i) => {
         const displayName = a.nom || `${a.first_name || ''}${a.last_name ? ' ' + a.last_name[0] + '.' : ''}`.trim() || 'Anonyme';
-        const note  = a.note || a.rating || 0;
-        const color = avatarColor(displayName);
+        const note = a.note || a.rating || 0;
         return (
-          <View key={a.id || i} style={s.card}>
-            <View style={s.cardTop}>
-              <View style={[s.avatar, { backgroundColor: color + '22', borderColor: color + '44' }]}>
-                <Text style={[s.avatarTxt, { color }]}>{displayName[0].toUpperCase()}</Text>
-              </View>
-              <View style={{ flex: 1 }}>
-                <Text style={s.nom}>{displayName}</Text>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md, marginTop: spacing.xxs }}>
-                  <Stars value={note} size={11} />
-                  <Text style={s.date}>{a.date || (a.created_at || '').slice(0, 10)}</Text>
-                </View>
-              </View>
-              <View style={[s.noteBadge, note >= 4 && s.noteBadgeGood]}>
-                <Text style={[s.noteBadgeTxt, note >= 4 && { color: colors.green }]}>{note}/5</Text>
-              </View>
+          <View key={a.id || i} style={[s.revRow, i < reviews.length - 1 && s.revRowBorder]}>
+            <View style={s.revTop}>
+              <Text style={s.revName}>{displayName}</Text>
+              <Stars value={note} size={12} />
             </View>
-            {(a.txt || a.comment) && <Text style={s.txt}>{a.txt || a.comment}</Text>}
+            <Text style={s.revDate}>{a.date || (a.created_at || '').slice(0, 10)}</Text>
+            {(a.txt || a.comment) && <Text style={s.revComment}>{a.txt || a.comment}</Text>}
           </View>
         );
       })}
 
-      <View style={s.ctaWrap}>
-        <View style={s.ctaDivider}>
-          <View style={{ flex: 1, height: 1, backgroundColor: colors.cardBorder }} />
-          <Text style={s.ctaDividerTxt}>Vous y étiez ?</Text>
-          <View style={{ flex: 1, height: 1, backgroundColor: colors.cardBorder }} />
-        </View>
-        <TouchableOpacity style={s.ctaBtn} onPress={() => Alert.alert('Laisser un avis', 'Après votre visite, vous pouvez laisser un avis depuis Profil → Mes réservations → Historique.')}>
-          <Text style={s.ctaIcon}>✏️</Text>
-          <Text style={s.ctaTxt}>Laisser un avis</Text>
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity
+        style={s.ctaBtn}
+        onPress={() => Alert.alert('Laisser un avis', 'Après votre visite, vous pouvez laisser un avis depuis Profil → Mes réservations → Historique.')}
+      >
+        <Text style={s.ctaTxt}>✏️ Laisser un avis</Text>
+      </TouchableOpacity>
 
-      <View style={{ height: 40 }} />
-    </>
+      <View style={{ height: 20 }} />
+    </View>
   );
 }
 
 const s = StyleSheet.create({
-  summary:      { flexDirection: 'row', gap: spacing.xl + 2, margin: spacing.xl, marginBottom: 0, backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.xl + 2 },
-  summaryLeft:  { alignItems: 'center', gap: spacing.md - 2, justifyContent: 'center' },
-  bigRating:    { color: colors.gold, fontFamily: typography.display, fontSize: 48, fontWeight: typography.weight.bold, lineHeight: 54 },
-  reviewCount:  { color: colors.textMuted, fontSize: typography.size.sm, marginTop: spacing.xxs },
-  summaryRight: { flex: 1, gap: spacing.sm + 1, justifyContent: 'center' },
-  barRow:       { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
-  barLabel:     { color: colors.textDim, fontSize: typography.size.caption, width: 10, textAlign: 'right' },
-  barTrack:     { flex: 1, height: 5, backgroundColor: colors.cardHover, borderRadius: 3, overflow: 'hidden' },
-  barFill:      { height: '100%', backgroundColor: colors.gold, borderRadius: 3 },
-  barPct:       { color: colors.textDim, fontSize: typography.size.sm, width: 28, textAlign: 'right' },
-  divider:      { height: 1, backgroundColor: colors.cardBorder, marginHorizontal: spacing.xl, marginVertical: spacing.xl },
-  card:         { marginHorizontal: spacing.xl, marginBottom: spacing.md + 2, backgroundColor: colors.card, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.xl },
-  cardTop:      { flexDirection: 'row', gap: spacing.lg, marginBottom: spacing.md + 2 },
-  avatar:       { width: 38, height: 38, borderRadius: 19, alignItems: 'center', justifyContent: 'center', borderWidth: 1 },
-  avatarTxt:    { fontSize: typography.size.heading3, fontWeight: typography.weight.regular },
-  nom:          { color: colors.text, fontSize: typography.size.bodyLg, fontWeight: typography.weight.regular },
-  date:         { color: colors.textDim, fontSize: typography.size.sm },
-  noteBadge:    { backgroundColor: colors.cardHover, borderRadius: radius.sm, paddingHorizontal: spacing.sm + 1, paddingVertical: spacing.xxs + 1, borderWidth: 1, borderColor: colors.cardBorder, alignSelf: 'flex-start' },
-  noteBadgeGood:{ backgroundColor: colors.greenSoft, borderColor: 'rgba(76,175,130,0.25)' },
-  noteBadgeTxt: { color: colors.textMuted, fontSize: typography.size.sm },
-  txt:          { color: colors.textMuted, fontSize: typography.size.bodyLg, fontWeight: typography.weight.regular, lineHeight: 20 },
-  empty:        { alignItems: 'center', paddingVertical: 48, gap: spacing.md },
-  emptyEmoji:   { fontSize: 36 },
-  emptyTxt:     { color: colors.textMuted, fontSize: typography.size.subheading, fontWeight: typography.weight.regular },
-  emptySub:     { color: colors.textDim, fontSize: typography.size.body, textAlign: 'center', paddingHorizontal: spacing.xl },
-  ctaWrap:      { margin: spacing.xl, gap: spacing.xl - 2 },
-  ctaDivider:   { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },
-  ctaDividerTxt:{ color: colors.textDim, fontSize: typography.size.caption },
-  ctaBtn:       { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.md, backgroundColor: 'rgba(200,151,90,0.14)', borderRadius: radius.xl, borderWidth: 1, borderColor: 'rgba(200,151,90,0.4)', paddingVertical: spacing.xl - 2, shadowColor: '#000', shadowOpacity: 0.25, shadowRadius: 8, shadowOffset: { width: 0, height: 0 }, elevation: 3 },
-  ctaIcon:      { fontSize: typography.size.heading3 },
-  ctaTxt:       { color: colors.text, fontSize: typography.size.subheading, fontWeight: typography.weight.regular },
+  wrap: { paddingHorizontal: spacing.xl },
+
+  scoreHead: { alignItems: 'center', paddingVertical: spacing.xxl - 4, borderBottomWidth: 1, borderBottomColor: colors.cardBorder, marginTop: spacing.md },
+  scoreBig:  { fontFamily: typography.display, fontSize: 36, color: colors.text },
+  scoreCt:   { fontFamily: typography.body, fontSize: typography.size.caption, color: colors.textDim, marginTop: 2 },
+
+  revRow:       { paddingVertical: spacing.lg + 2 },
+  revRowBorder: { borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
+  revTop:    { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  revName:   { fontFamily: typography.bodyBold, fontSize: typography.size.bodyLg - 0.5, color: colors.text },
+  revDate:   { fontFamily: typography.body, fontSize: typography.size.xs + 0.5, color: colors.textDim, marginTop: 2 },
+  revComment:{ fontFamily: typography.body, fontSize: typography.size.caption + 0.5, color: colors.textMuted, marginTop: spacing.sm, lineHeight: 19 },
+
+  empty:     { alignItems: 'center', paddingVertical: 48, gap: spacing.md },
+  emptyEmoji:{ fontSize: 36 },
+  emptyTxt:  { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.subheading },
+  emptySub:  { fontFamily: typography.body, color: colors.textDim, fontSize: typography.size.body, textAlign: 'center' },
+
+  ctaBtn: { marginTop: spacing.xxl - 4, borderRadius: radius.lg, borderWidth: 1, borderColor: colors.cardBorder, paddingVertical: spacing.lg, alignItems: 'center' },
+  ctaTxt: { fontFamily: typography.bodySemibold, fontSize: typography.size.body, color: colors.text },
 });

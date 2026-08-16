@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { supabase } from '../../supabase';
+import { computePromoStatus } from '../utils/promoStatus';
 
 export const PROMO_TYPES = [
   { id: 'percent', icon: '%',   label: 'Réduction %',  desc: "Ex : −20% sur l'addition" },
@@ -16,14 +17,6 @@ export const STATUS_LABEL = {
   ended:     'TERMINÉE',
   paused:    'SUSPENDUE',
 };
-
-function computeStatus(p) {
-  if (p.is_paused) return 'paused';
-  const today = new Date().toISOString().slice(0, 10);
-  if (p.end_date && p.end_date < today) return 'ended';
-  if (p.start_date && p.start_date > today) return 'scheduled';
-  return 'active';
-}
 
 export default function useProPromos() {
   const [view,       setView]       = useState('list');
@@ -55,7 +48,7 @@ export default function useProPromos() {
         .select('*')
         .eq('restaurant_id', restaurantId)
         .order('created_at', { ascending: false });
-      setPromos((promoRows ?? []).map(p => ({ ...p, status: computeStatus(p) })));
+      setPromos((promoRows ?? []).map(p => ({ ...p, status: computePromoStatus(p) })));
     } finally {
       setLoading(false);
     }
@@ -87,7 +80,7 @@ export default function useProPromos() {
     const nextPaused = !promo.is_paused;
     await supabase.from('promotions').update({ is_paused: nextPaused }).eq('id', promo.id);
     setPromos(prev => prev.map(p => p.id === promo.id
-      ? { ...p, is_paused: nextPaused, status: computeStatus({ ...p, is_paused: nextPaused }) }
+      ? { ...p, is_paused: nextPaused, status: computePromoStatus({ ...p, is_paused: nextPaused }) }
       : p));
   }, []);
 

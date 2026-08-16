@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 import { colors, typography, spacing, radius } from '../theme';
 
 export default function GuestWall({ title, message }) {
@@ -9,6 +10,11 @@ export default function GuestWall({ title, message }) {
 
   return (
     <SafeAreaView style={s.root}>
+      {navigation.canGoBack() && (
+        <TouchableOpacity style={s.backBtn} onPress={() => navigation.goBack()} activeOpacity={0.7}>
+          <Ionicons name="chevron-back" size={16} color={colors.text} />
+        </TouchableOpacity>
+      )}
       <View style={s.inner}>
         <View style={s.iconWrap}>
           <Text style={s.icon}>✦</Text>
@@ -30,6 +36,7 @@ export default function GuestWall({ title, message }) {
 
 const s = StyleSheet.create({
   root:  { flex: 1, backgroundColor: colors.bg },
+  backBtn: { width: 34, height: 34, borderRadius: 17, backgroundColor: colors.tagNeutralBg, alignItems: 'center', justifyContent: 'center', marginTop: spacing.md, marginLeft: spacing.xl },
   inner: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 40, gap: spacing.xl },
 
   iconWrap: {

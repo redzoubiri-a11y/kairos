@@ -112,14 +112,12 @@ export default function useReservations() {
                 .limit(1);
               const owner = ownerRows?.[0] ?? null;
               if (owner) {
-                const { data: managerUser } = await supabase
-                  .from('users')
-                  .select('id')
-                  .eq('auth_id', owner.auth_id)
-                  .maybeSingle();
-                if (managerUser) {
+                // RPC dédiée (pas de lecture directe de `users`, verrouillée par RLS) —
+                // cf. supabase/migrations/20260816_lock_down_users_pii.sql
+                const { data: managerId } = await supabase.rpc('get_user_id_by_auth', { p_auth_id: owner.auth_id });
+                if (managerId) {
                   await supabase.from('notifications').insert({
-                    recipient_id:   managerUser.id,
+                    recipient_id:   managerId,
                     recipient_type: 'user',
                     type:           'resa_cancelled',
                     title:          'Réservation annulée',

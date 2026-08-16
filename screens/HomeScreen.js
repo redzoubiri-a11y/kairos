@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  Animated, Platform, StatusBar,
+  Animated, Platform, StatusBar, Image,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -23,6 +23,12 @@ const AREA_TABS = [
   { id: 'oran',        label: 'Oran' },
   { id: 'constantine', label: 'Constantine' },
   { id: 'tizi_ouzou',  label: 'Tizi Ouzou' },
+  { id: 'tipaza',      label: 'Tipaza' },
+  { id: 'blida',       label: 'Blida' },
+  { id: 'setif',       label: 'Sétif' },
+  { id: 'bejaia',      label: 'Béjaïa' },
+  { id: 'tlemcen',     label: 'Tlemcen' },
+  { id: 'annaba',      label: 'Annaba' },
 ];
 
 function SkeletonTile() {
@@ -73,7 +79,10 @@ export default function HomeScreen({ navigation }) {
       <StatusBar barStyle="dark-content" backgroundColor={colors.bg} />
 
       <View style={[s.topbar, { paddingTop: insets.top + spacing.sm }]}>
-        <Text style={s.wordmark}>MIDA</Text>
+        <TouchableOpacity style={s.searchBar} onPress={() => goExplorer()} activeOpacity={0.8}>
+          <Ionicons name="search-outline" size={15} color={colors.textDim} />
+          <Text style={s.searchPlaceholder} numberOfLines={1}>Location, cuisine, restaurant</Text>
+        </TouchableOpacity>
         <TouchableOpacity style={s.bell} onPress={goNotifications}>
           <Ionicons name="notifications-outline" size={16} color={colors.text} />
           {unreadNotifs > 0 && (
@@ -95,7 +104,7 @@ export default function HomeScreen({ navigation }) {
           ))}
         </ScrollView>
 
-        <TouchableOpacity style={s.quickSearchCard} onPress={() => navigation.navigate('QuickSearch')} activeOpacity={0.85}>
+        <TouchableOpacity style={s.quickSearchCard} onPress={() => navigation.navigate('QuickSearch', { area, areaLabel })} activeOpacity={0.85}>
           <View style={{ flex: 1 }}>
             <Text style={s.quickSearchTitle}>Réserver ou commander</Text>
             <Text style={s.quickSearchSub}>Trouvez une table selon vos disponibilités</Text>
@@ -113,7 +122,10 @@ export default function HomeScreen({ navigation }) {
             <View style={s.tileGrid}>
               {topQuartiers.map(t => (
                 <TouchableOpacity key={t.id} style={s.tile} onPress={() => goExplorer(t.label)} activeOpacity={0.8}>
-                  <View style={[s.tilePhoto, { backgroundColor: t.gradient[0] }]} />
+                  {t.photo
+                    ? <Image source={{ uri: t.photo }} style={s.tilePhoto} resizeMode="cover" />
+                    : <View style={[s.tilePhoto, { backgroundColor: t.gradient[0] }]} />
+                  }
                   <Text style={s.tileLbl} numberOfLines={1}>{t.label}</Text>
                   <Text style={s.tileCt}>{t.count}</Text>
                 </TouchableOpacity>
@@ -132,7 +144,10 @@ export default function HomeScreen({ navigation }) {
             <View style={s.tileGrid}>
               {topCuisines.map(t => (
                 <TouchableOpacity key={t.id} style={s.tile} onPress={() => goExplorer(t.label)} activeOpacity={0.8}>
-                  <View style={[s.tilePhoto, { backgroundColor: t.gradient[0] }]} />
+                  {t.photo
+                    ? <Image source={{ uri: t.photo }} style={s.tilePhoto} resizeMode="cover" />
+                    : <View style={[s.tilePhoto, { backgroundColor: t.gradient[0] }]} />
+                  }
                   <Text style={s.tileLbl} numberOfLines={1}>{t.label}</Text>
                   <Text style={s.tileCt}>{t.count}</Text>
                 </TouchableOpacity>
@@ -179,19 +194,24 @@ const s = StyleSheet.create({
   root:   { flex: 1, backgroundColor: colors.bg, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 },
   scroll: { flex: 1 },
 
-  topbar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xl, paddingBottom: spacing.md },
-  wordmark: { fontFamily: typography.display, fontSize: typography.size.heading1 - 2, color: colors.text },
+  topbar: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingHorizontal: spacing.xl, paddingBottom: spacing.md },
+  searchBar: {
+    flex: 1, flexDirection: 'row', alignItems: 'center', gap: spacing.sm,
+    backgroundColor: colors.glassBg, borderWidth: 1, borderColor: colors.cardBorder,
+    borderRadius: radius.md, paddingHorizontal: spacing.lg, height: 36,
+  },
+  searchPlaceholder: { flex: 1, fontFamily: typography.body, fontSize: typography.size.caption + 0.5, color: colors.textDim },
   bell:    { width: 36, height: 36, borderRadius: radius.md + 2, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, alignItems: 'center', justifyContent: 'center' },
   notifBadge: { position: 'absolute', top: -4, right: -4, minWidth: 16, height: 16, borderRadius: 8, backgroundColor: colors.noir, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 3, borderWidth: 1.5, borderColor: colors.bg },
   notifBadgeTxt: { fontFamily: typography.bodyBold, color: '#FFFFFF', fontSize: typography.size.xs },
 
   areaTabs: { flexDirection: 'row', gap: spacing.sm, paddingHorizontal: spacing.xl },
-  areaTab:  { paddingHorizontal: spacing.lg + 3, paddingVertical: spacing.sm + 1, borderRadius: radius.pill, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder },
+  areaTab:  { paddingHorizontal: spacing.lg + 3, paddingVertical: spacing.sm + 1, borderRadius: radius.md, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder },
   areaTabOn:{ backgroundColor: colors.primary, borderColor: colors.primary },
   areaTabTxt:  { fontFamily: typography.bodyBold, fontSize: typography.size.body, color: colors.textMuted },
   areaTabTxtOn:{ color: '#FFFFFF' },
 
-  quickSearchCard: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, marginHorizontal: spacing.xl, marginTop: spacing.lg, backgroundColor: colors.noir, borderRadius: radius.lg + 1, paddingHorizontal: spacing.xl, paddingVertical: spacing.lg },
+  quickSearchCard: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, marginHorizontal: spacing.xl, marginTop: spacing.lg, backgroundColor: colors.noir, borderRadius: radius.md, paddingHorizontal: spacing.xl, paddingVertical: spacing.lg },
   quickSearchTitle: { fontFamily: typography.display, color: '#FFFFFF', fontSize: typography.size.body + 1 },
   quickSearchSub:   { fontFamily: typography.body, color: 'rgba(255,255,255,0.6)', fontSize: typography.size.caption, marginTop: 2 },
   quickSearchArrow: { color: 'rgba(255,255,255,0.6)', fontSize: 22 },

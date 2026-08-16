@@ -6,6 +6,7 @@ import {
 } from 'react-native';
 import CGUModal from '../src/components/CGUModal';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import { colors, typography, spacing, radius } from '../src/theme';
 import useAuth from '../src/hooks/useAuth';
 
@@ -43,6 +44,12 @@ export default function AuthScreen({ onAuth, userType, onSwitchType, onGuest }) 
     <SafeAreaView style={s.root}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={s.scroll} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+
+          {onGuest && (
+            <TouchableOpacity style={s.backBtn} onPress={onGuest} activeOpacity={0.7}>
+              <Ionicons name="chevron-back" size={16} color={colors.text} />
+            </TouchableOpacity>
+          )}
 
           <View style={s.hero}>
             <Text style={s.wordmark}>MIDA</Text>
@@ -193,7 +200,9 @@ const s = StyleSheet.create({
   root:   { flex: 1, backgroundColor: colors.bg },
   scroll: { flexGrow: 1, paddingHorizontal: spacing.xl, paddingBottom: spacing.section + 4 },
 
-  hero:          { alignItems: 'flex-start', paddingTop: 50, paddingBottom: spacing.xxl },
+  backBtn: { width: 34, height: 34, borderRadius: 17, backgroundColor: colors.tagNeutralBg, alignItems: 'center', justifyContent: 'center', marginTop: spacing.md },
+
+  hero:          { alignItems: 'flex-start', paddingTop: spacing.xl, paddingBottom: spacing.xxl },
   wordmark:      { fontFamily: typography.display, fontSize: 22, color: colors.primary, letterSpacing: -0.44 },
   heroTitle:     { fontFamily: typography.display, fontSize: 25, color: colors.text, letterSpacing: -0.5, lineHeight: 31.25, marginTop: spacing.xxl - 2 },
 

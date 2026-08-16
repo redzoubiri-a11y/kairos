@@ -73,18 +73,15 @@ export default function useRestaurant(restaurantProp) {
       setLoadingReviews(true);
       (async () => {
         try {
-          const { data } = await supabase.from('reviews')
-            .select('id, rating, comment, created_at, users(first_name, last_name)')
-            .eq('restaurant_id', restaurant.id)
-            .eq('moderation_status', 'approved')
-            .order('created_at', { ascending: false })
-            .limit(20);
+          // RPC dédiée (pas de lecture directe de `users`, verrouillée par RLS) —
+          // cf. supabase/migrations/20260816_lock_down_users_pii.sql
+          const { data } = await supabase.rpc('get_restaurant_reviews', { p_restaurant_id: restaurant.id });
           if (data?.length > 0) {
             setReviews(data.map(r => ({
               id:         r.id,
               note:       r.rating,
-              first_name: r.users?.first_name,
-              last_name:  r.users?.last_name,
+              first_name: r.first_name,
+              last_name:  r.last_name,
               comment:    r.comment,
               created_at: r.created_at,
             })));

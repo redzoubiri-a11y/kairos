@@ -13,12 +13,10 @@ export const SOIR_SLOTS = [
 ];
 
 export const OCCASIONS = [
-  { id:'normal',     label:'Repas normal', icon:'🍽️' },
-  { id:'anniv',      label:'Anniversaire', icon:'🎂' },
-  { id:'romantique', label:'Romantique',   icon:'💑' },
-  { id:'affaires',   label:'Affaires',     icon:'💼' },
-  { id:'famille',    label:'Famille',      icon:'👨‍👩‍👧' },
-  { id:'fete',       label:'Célébration',  icon:'🥂' },
+  { id:'famille',  label:'Famille' },
+  { id:'anniv',    label:'Anniversaire' },
+  { id:'affaires', label:'Affaires' },
+  { id:'amis',     label:'Amis' },
 ];
 
 function buildDays() {
@@ -75,14 +73,14 @@ export function formatDateLong(dateStr) {
 }
 
 function parseInitial(r) {
-  if (!r) return { occasion: 'normal', notes: '' };
+  if (!r) return { occasion: null, notes: '' };
   const raw = r.notes || '';
   const match = raw.match(/^Occasion : (.+?)(?:\n|$)([\s\S]*)/);
   if (match) {
     const occ = OCCASIONS.find(o => o.label === match[1]);
-    return { occasion: occ?.id || 'normal', notes: (match[2] || '').trim() };
+    return { occasion: occ?.id || null, notes: (match[2] || '').trim() };
   }
-  return { occasion: 'normal', notes: raw.trim() };
+  return { occasion: null, notes: raw.trim() };
 }
 
 export default function useReservationForm(restaurant, onSuccess, existingResa = null) {
@@ -187,7 +185,7 @@ export default function useReservationForm(restaurant, onSuccess, existingResa =
       const uid = userRow.id;
 
       const noteText = [
-        occasion !== 'normal' ? `Occasion : ${occasionObj?.label}` : null,
+        occasion ? `Occasion : ${occasionObj?.label}` : null,
         notes.trim() || null,
       ].filter(Boolean).join('\n') || null;
 
@@ -218,12 +216,12 @@ export default function useReservationForm(restaurant, onSuccess, existingResa =
             .eq('restaurant_id', restaurant.id).limit(1);
           const owner = ownerRows?.[0] ?? null;
           if (owner?.auth_id) {
-            const { data: mgr } = await supabase
-              .from('users').select('id')
-              .eq('auth_id', owner.auth_id).maybeSingle();
-            if (mgr) {
+            // RPC dédiée (pas de lecture directe de `users`, verrouillée par RLS) —
+            // cf. supabase/migrations/20260816_lock_down_users_pii.sql
+            const { data: mgrId } = await supabase.rpc('get_user_id_by_auth', { p_auth_id: owner.auth_id });
+            if (mgrId) {
               await supabase.from('notifications').insert({
-                recipient_id:   mgr.id,
+                recipient_id:   mgrId,
                 recipient_type: 'user',
                 type:           'new_resa',
                 title:          'Réservation modifiée',
@@ -273,12 +271,12 @@ export default function useReservationForm(restaurant, onSuccess, existingResa =
             .eq('restaurant_id', restaurant.id).limit(1);
           const owner = ownerRows?.[0] ?? null;
           if (owner?.auth_id) {
-            const { data: mgr } = await supabase
-              .from('users').select('id')
-              .eq('auth_id', owner.auth_id).maybeSingle();
-            if (mgr) {
+            // RPC dédiée (pas de lecture directe de `users`, verrouillée par RLS) —
+            // cf. supabase/migrations/20260816_lock_down_users_pii.sql
+            const { data: mgrId } = await supabase.rpc('get_user_id_by_auth', { p_auth_id: owner.auth_id });
+            if (mgrId) {
               await supabase.from('notifications').insert({
-                recipient_id:   mgr.id,
+                recipient_id:   mgrId,
                 recipient_type: 'user',
                 type:           'new_resa',
                 title:          'Nouvelle réservation',

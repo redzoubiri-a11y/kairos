@@ -1,4 +1,4 @@
-import { useCallback, useRef, useEffect, useState } from 'react';
+import { useCallback, useRef, useEffect, useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, TextInput, Platform, FlatList, ScrollView, TouchableOpacity, Image,
   Animated, useWindowDimensions,
@@ -26,16 +26,30 @@ function formatDistance(km) {
 }
 
 const FILTER_CHIPS = [
-  { id: 'ouvert',   label: 'Ouvert maintenant' },
-  { id: 'terrasse', label: 'Terrasse' },
-  { id: 'parking',  label: 'Parking' },
+  { id: 'promo', label: 'Promotion' },
 ];
 
+function promoLabel(promo) {
+  if (!promo) return '';
+  if (promo.type === 'percent' && promo.percent_value) return `−${promo.percent_value}%`;
+  if (promo.type === 'fixed' && promo.fixed_value) return `−${promo.fixed_value} DA`;
+  return promo.title || 'Promo';
+}
+
 export default function ExplorerScreen({ navigation, route }) {
-  const { restaurants, loading, query, setQuery, userLocation, requestLocation, activeFilters, toggleFilter } = useExplorer();
+  const { restaurants: baseRestaurants, loading, query, setQuery, userLocation, requestLocation, activeFilters, toggleFilter } = useExplorer();
   const mapRef = useRef(null);
   const insets = useSafeAreaInsets();
   const { height: screenH } = useWindowDimensions();
+
+  // Venant de "Réserver ou commander" en mode Commander : ne montrer que les
+  // restaurants qui proposent réellement le Click & Collect (sinon un tap
+  // renvoie vers la fiche resto sans option de commande, confus pour l'utilisateur).
+  const intent = route?.params?.mode; // 'reserver' | 'commander'
+  const restaurants = useMemo(
+    () => (intent === 'commander' ? baseRestaurants.filter(r => r.click_collect_enabled) : baseRestaurants),
+    [baseRestaurants, intent],
+  );
 
   // Bandeau "N restaurants à proximité" — les vignettes sont sur le même bandeau,
   // dès l'état au repos. Tap sur l'en-tête = monte le bandeau vers la carte.
@@ -79,9 +93,15 @@ export default function ExplorerScreen({ navigation, route }) {
     }, 450);
   }, [query, restaurants]);
 
+  // En mode Commander, la liste est déjà filtrée aux restaurants qui proposent
+  // le Click & Collect (cf. useMemo restaurants ci-dessus) — direct vers la
+  // commande, sans passer par la fiche resto (évite un flash d'écran).
   const goRestaurant = useCallback(
-    (r) => navigation.navigate('Restaurant', { restaurant: r }),
-    [navigation],
+    (r) => {
+      if (intent === 'commander') navigation.navigate('ClickCollect', { restaurant: r });
+      else navigation.navigate('Restaurant', { restaurant: r });
+    },
+    [navigation, intent],
   );
 
   return (
@@ -110,6 +130,11 @@ export default function ExplorerScreen({ navigation, route }) {
                 anchor={{ x: 0.5, y: 0 }}
               >
                 <View style={s.pinWrap}>
+                  {!!r.promo && (
+                    <View style={[s.promoBadge, shadows.mapPin]}>
+                      <Text style={s.promoBadgeTxt} numberOfLines={1}>{promoLabel(r.promo)}</Text>
+                    </View>
+                  )}
                   <View style={[s.pin, shadows.mapPin]}>
                     <View style={s.pinInner}>
                       {rating
@@ -135,15 +160,22 @@ export default function ExplorerScreen({ navigation, route }) {
       )}
 
       <View style={[s.topBar, { paddingTop: insets.top + spacing.xl }]}>
-        <View style={s.searchBar}>
-          <Ionicons name="search-outline" size={14} color={colors.primary} />
-          <TextInput
-            style={s.searchInput}
-            value={query}
-            onChangeText={setQuery}
-            placeholder="Restaurant, cuisine, quartier…"
-            placeholderTextColor={colors.textPlaceholder}
-          />
+        <View style={s.searchRow}>
+          {navigation.canGoBack() && (
+            <TouchableOpacity style={s.backBtn} onPress={() => navigation.goBack()}>
+              <Ionicons name="chevron-back" size={16} color={colors.text} />
+            </TouchableOpacity>
+          )}
+          <View style={s.searchBar}>
+            <Ionicons name="search-outline" size={14} color={colors.primary} />
+            <TextInput
+              style={s.searchInput}
+              value={query}
+              onChangeText={setQuery}
+              placeholder="Restaurant, cuisine, quartier…"
+              placeholderTextColor={colors.textPlaceholder}
+            />
+          </View>
         </View>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.chipsRow}>
           {FILTER_CHIPS.map(c => {
@@ -161,7 +193,9 @@ export default function ExplorerScreen({ navigation, route }) {
         <EmptyState
           icon={<Text style={{ fontSize: 20 }}>🔍</Text>}
           title="Aucun restaurant trouvé"
-          subtitle="Essayez un autre nom, une autre cuisine ou un autre quartier."
+          subtitle={intent === 'commander'
+            ? "Aucun restaurant ne propose la commande pour l'instant."
+            : "Essayez un autre nom, une autre cuisine ou un autre quartier."}
           style={s.emptyState}
         />
       )}
@@ -198,10 +232,17 @@ export default function ExplorerScreen({ navigation, route }) {
                       </View>
                     )}
                   </View>
-                  {photo
-                    ? <Image source={{ uri: photo }} style={s.bottomRowImg} resizeMode="cover" />
-                    : <View style={[s.bottomRowImg, s.imgPlaceholder]} />
-                  }
+                  <View style={s.bottomRowImgWrap}>
+                    {photo
+                      ? <Image source={{ uri: photo }} style={s.bottomRowImg} resizeMode="cover" />
+                      : <View style={[s.bottomRowImg, s.imgPlaceholder]} />
+                    }
+                    {!!r.promo && (
+                      <View style={s.bottomRowPromoBadge}>
+                        <Text style={s.bottomRowPromoTxt} numberOfLines={1}>{promoLabel(r.promo)}</Text>
+                      </View>
+                    )}
+                  </View>
                 </TouchableOpacity>
               );
             }}
@@ -217,9 +258,16 @@ const s = StyleSheet.create({
 
   topBar: { position: 'absolute', top: 0, left: 0, right: 0, paddingHorizontal: 20 },
 
+  searchRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  backBtn: {
+    width: 40, height: 40, borderRadius: 20,
+    backgroundColor: colors.glassBg, borderWidth: 1.5, borderColor: colors.primary,
+    alignItems: 'center', justifyContent: 'center',
+  },
+
   // Verre blanc, cadre vert — cohérent avec le reste de l'app
   searchBar: {
-    flexDirection: 'row', alignItems: 'center', gap: 9,
+    flex: 1, flexDirection: 'row', alignItems: 'center', gap: 9,
     backgroundColor: colors.glassBg,
     borderWidth: 1.5, borderColor: colors.primary,
     borderRadius: radius.lg, paddingVertical: spacing.lg, paddingHorizontal: spacing.lg + 1,
@@ -243,6 +291,12 @@ const s = StyleSheet.create({
   pinInner:  { transform: [{ rotate: '-45deg' }], alignItems: 'center', justifyContent: 'center' },
   pinRating: { fontFamily: typography.bodyBold, fontSize: 11, color: '#FFFFFF' },
   pinDot: { width: 9, height: 9, borderRadius: 4.5, backgroundColor: '#FFFFFF' },
+
+  promoBadge: {
+    backgroundColor: colors.primary, borderRadius: radius.sm + 2,
+    paddingHorizontal: spacing.sm, paddingVertical: 3, marginBottom: 3,
+  },
+  promoBadgeTxt: { fontFamily: typography.bodyBold, fontSize: 10, color: '#FFFFFF' },
 
   imgPlaceholder: { backgroundColor: colors.cardHover },
   distancePill: {
@@ -278,5 +332,13 @@ const s = StyleSheet.create({
   bottomRowRating: { flexDirection: 'row', alignItems: 'center', gap: 3, marginTop: 4 },
   bottomRowStar: { fontSize: 11, color: colors.star },
   bottomRowRatingTxt: { fontFamily: typography.bodyBold, fontSize: typography.size.caption, color: colors.text },
+  bottomRowImgWrap: { width: 64, height: 64, flexShrink: 0 },
   bottomRowImg: { width: 64, height: 64, borderRadius: radius.md, flexShrink: 0 },
+  bottomRowPromoBadge: {
+    position: 'absolute', top: -4, left: -4,
+    backgroundColor: colors.primary, borderRadius: radius.sm + 2,
+    paddingHorizontal: spacing.xs + 1, paddingVertical: 2,
+    borderWidth: 1.5, borderColor: '#FFFFFF',
+  },
+  bottomRowPromoTxt: { fontFamily: typography.bodyBold, fontSize: 9, color: '#FFFFFF' },
 });

@@ -1,0 +1,80 @@
+// Photos des tuiles "Quartiers populaires" / "Cuisines populaires" de l'Accueil.
+// Réutilise les photos déjà présentes en base (uploadées par les restaurateurs
+// ou déjà attribuées lors de l'onboarding), une par quartier/cuisine — pas de
+// nouvel hébergement, pas de photo générique hors du catalogue existant.
+// Si un quartier/une cuisine n'a pas d'entrée ici (aucun restaurant actif avec
+// photo dans ce groupe), la tuile retombe sur son dégradé de couleur (TILE_GRADIENTS).
+
+export const QUARTIER_PHOTOS = {
+  'Agadir': 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80',
+  'Ain El Kébira': 'https://images.unsplash.com/photo-1574484284002-952d92456975?w=800&q=80',
+  'Aïn Turk': 'https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800&q=80',
+  'Alger': 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&q=80',
+  'Annaba Centre': 'https://images.unsplash.com/photo-1574484284002-952d92456975?w=800&q=80',
+  'Bab El Oued': 'https://images.unsplash.com/photo-1574484284002-952d92456975?w=800&q=80',
+  'Béjaïa': 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&q=80',
+  'Béjaïa Centre': 'https://images.unsplash.com/photo-1574484284002-952d92456975?w=800&q=80',
+  'Ben Aknoun': 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&q=80',
+  'Ben Yahia': 'https://images.unsplash.com/photo-1552566626-52f8b828a9b4?w=800&q=80',
+  'Bir El Djir': 'https://images.unsplash.com/photo-1482049016688-2d3e1685571?w=800&q=80',
+  'Bir Mourad Raïs': 'https://images.unsplash.com/photo-1590846406792-0adc7f938f1d?w=800&q=80',
+  'Casbah': 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&q=80',
+  'Centre': 'https://rghjgyzpdadapmktislv.supabase.co/storage/v1/object/public/restaurant-photos/279427d4-ca04-47b4-a067-d5500ba96e89/facade.jpeg',
+  'Centre Sétif': 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80',
+  'Centre-ville': 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&q=80',
+  'Cheraga': 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&q=80',
+  'Chéraga': 'https://images.unsplash.com/photo-1621996346565-b53e2a66a6a1?w=800&q=80',
+  'Corniche': 'https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800&q=80',
+  'Daksi': 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800&q=80',
+  'Dely Ibrahim': 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=800&q=80',
+  'Didouche Mourad': 'https://images.unsplash.com/photo-1544025162-d76694265947?w=800&q=80',
+  'Eckmuhl': 'https://images.unsplash.com/photo-1574484284002-952d92456975?w=800&q=80',
+  'El Biar': 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&q=80',
+  'El Bouni': 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&q=80',
+  'El Eulma': 'https://images.unsplash.com/photo-1482049016688-2d3e1685571?w=800&q=80',
+  'El Kantara': 'https://images.unsplash.com/photo-1615361200141-f45040f367be?w=800&q=80',
+  'Faubourg Lamy': 'https://images.unsplash.com/photo-1482049016688-2d3e1685571?w=800&q=80',
+  'Hasnaoua': 'https://images.unsplash.com/photo-1574484284002-952d92456975?w=800&q=80',
+  'Hussein Dey': 'https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?w=800&q=80',
+  'Hydra': 'https://rghjgyzpdadapmktislv.supabase.co/storage/v1/object/public/restaurant-photos/b921b4e9-02ec-419c-9349-b56970e7d732/1781364220545.jpg',
+  'La Corniche': 'https://images.unsplash.com/photo-1519984388953-d2406bc725e1?w=800&q=80',
+  'Lalla Setti': 'https://images.unsplash.com/photo-1552566626-52f8b828a9b4?w=800&q=80',
+  'Le Plateau': 'https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=800&q=80',
+  'Les Falaises': 'https://images.unsplash.com/photo-1571167366136-b57658cfd04a?w=800&q=80',
+  'Mansourah': 'https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800&q=80',
+  'Médina': 'https://images.unsplash.com/photo-1590846406792-0adc7f938f1d?w=800&q=80',
+  'Médina Jedida': 'https://images.unsplash.com/photo-1544025162-d76538f0b1ea?w=800&q=80',
+  'Nouvelle Ville': 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80',
+  'Oued Aïssi': 'https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?w=800&q=80',
+  'Parc de Loisirs': 'https://cdn.res-discover.com/fontaine-dor/26241-albums-4.jpg',
+  'Pins Maritimes': 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=800&q=80',
+  "Port d'Annaba": 'https://images.unsplash.com/photo-1519984388953-d2406bc725e1?w=800&q=80',
+  'Port de Béjaïa': 'https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800&q=80',
+  'Port de Tipaza': 'https://rghjgyzpdadapmktislv.supabase.co/storage/v1/object/public/restaurant-photos/065b32c3-5cf9-4711-aa6f-274e9fcfcd20/1.jpg',
+  'Seraïdi': 'https://images.unsplash.com/photo-1519984388953-d2406bc725e1?w=800&q=80',
+  'Sétif': 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80',
+  'Sétif Nouvelle Ville': 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&q=80',
+  'Sid Abdellah': 'https://rghjgyzpdadapmktislv.supabase.co/storage/v1/object/public/restaurant-photos/5144eb48-1262-443f-ad06-0b77c4f8f8a5/1781380281588.jpg',
+  'Sidi Ahmed': 'https://images.unsplash.com/photo-1552566626-52f8b828a9b4?w=800&q=80',
+  'Sidi El Houari': 'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=800&q=80',
+  'Sidi Fredj': 'https://images.unsplash.com/photo-1559329007-40df8a9345d8?w=800&q=80',
+  "Sidi M'Cid": 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80',
+  'Tichy': 'https://images.unsplash.com/photo-1519984388953-d2406bc725e1?w=800&q=80',
+  'Tlemcen': 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&q=80',
+  'Tlemcen Centre': 'https://images.unsplash.com/photo-1580227974546-7d1bba4fd71a?w=800&q=80',
+  'Zouaghi': 'https://images.unsplash.com/photo-1574484284002-952d92456975?w=800&q=80',
+};
+
+// Une photo par cuisine réellement présente en base (photo de plat pour évoquer
+// la cuisine plutôt qu'un lieu). "asiatique" absent : aucun restaurant actif de
+// cette cuisine aujourd'hui, donc jamais affiché tant que ça reste vrai.
+export const CUISINE_PHOTOS = {
+  algerien: 'https://rghjgyzpdadapmktislv.supabase.co/storage/v1/object/public/restaurant-photos/279427d4-ca04-47b4-a067-d5500ba96e89/platsignature3.jpeg',
+  mediterraneen: 'https://cdn.res-discover.com/fontaine-dor/26241-albums-4.jpg',
+  italien: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&q=80',
+  turc: 'https://images.unsplash.com/photo-1571167366136-b57658cfd04a?w=800&q=80',
+  libanais: 'https://images.unsplash.com/photo-1590846406792-0adc7f938f1d?w=800&q=80',
+  francais: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80',
+  fast_casual: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&q=80',
+  autre: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800&q=80',
+};

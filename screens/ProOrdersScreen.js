@@ -103,7 +103,7 @@ const s = StyleSheet.create({
   backBtn:     { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
   backBtnTxt:  { color: colors.text, fontSize: 22 },
 
-  filtersWrap: { maxHeight: 72, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
+  filtersWrap: { height: 56, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   filtersList: { paddingHorizontal: spacing.xl, paddingVertical: spacing.md, gap: 6, flexDirection: 'row', alignItems: 'center' },
 
   emptyWrap:  { alignItems: 'center', paddingVertical: spacing.section * 2, gap: spacing.md },

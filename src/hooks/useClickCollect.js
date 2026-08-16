@@ -71,10 +71,12 @@ export default function useClickCollect(restaurantId) {
           .eq('restaurant_id', restaurantId).limit(1);
         const owner = ownerRows?.[0] ?? null;
         if (owner?.auth_id) {
-          const { data: mgr } = await supabase.from('users').select('id').eq('auth_id', owner.auth_id).maybeSingle();
-          if (mgr) {
+          // RPC dédiée (pas de lecture directe de `users`, verrouillée par RLS) —
+          // cf. supabase/migrations/20260816_lock_down_users_pii.sql
+          const { data: mgrId } = await supabase.rpc('get_user_id_by_auth', { p_auth_id: owner.auth_id });
+          if (mgrId) {
             await supabase.from('notifications').insert({
-              recipient_id: mgr.id, recipient_type: 'user', type: 'new_order',
+              recipient_id: mgrId, recipient_type: 'user', type: 'new_order',
               title: 'Nouvelle commande 🛍️',
               body: `${modeLabel} · ${total.toLocaleString('fr-FR')} DA`,
             });

@@ -14,6 +14,7 @@ export const CITIES = [
   { id: 'setif',       label: 'Sétif' },
   { id: 'annaba',      label: 'Annaba' },
   { id: 'tlemcen',     label: 'Tlemcen' },
+  { id: 'blida',       label: 'Blida' },
 ];
 
 export const SUGGESTIONS = [

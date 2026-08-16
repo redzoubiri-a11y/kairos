@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import * as Location from 'expo-location';
 import { supabase } from '../../supabase';
-import { isOpenNow } from '../utils/openingHours';
+import { computePromoStatus } from '../utils/promoStatus';
 
 export const QUARTIER_COORDS = {
   'hydra':{ latitude:36.7539, longitude:3.0427 },
@@ -31,6 +31,7 @@ export const QUARTIER_COORDS = {
   'el kantara':{ latitude:36.3450, longitude:6.6000 },
   'daksi':{ latitude:36.3750, longitude:6.6400 },
   'zouaghi':{ latitude:36.3300, longitude:6.5800 },
+  'port de tipaza':{ latitude:36.5943, longitude:2.4460 },
 };
 
 const ALGER_DEFAULT = { latitude: 36.7538, longitude: 3.0588 };
@@ -41,6 +42,9 @@ const ALGER_DEFAULT = { latitude: 36.7538, longitude: 3.0588 };
 const CITY_COORDS = {
   alger:       { latitude: 36.7538, longitude: 3.0588 },
   tipaza:      { latitude: 36.5911, longitude: 2.4475 },
+  // Alias : certains restos ont "Tipaza Centre" en city (chaîne littérale distincte
+  // de "tipaza"), ex. TERRAZA ZIANI'S — tombait sur Alger faute de correspondance exacte.
+  tipaza_centre: { latitude: 36.5911, longitude: 2.4475 },
   oran:        { latitude: 35.6969, longitude: -0.6331 },
   constantine: { latitude: 36.3650, longitude: 6.6147 },
   tizi_ouzou:  { latitude: 36.7117, longitude: 4.0450 },
@@ -48,6 +52,7 @@ const CITY_COORDS = {
   setif:       { latitude: 36.1898, longitude: 5.4108 },
   annaba:      { latitude: 36.9000, longitude: 7.7667 },
   tlemcen:     { latitude: 34.8828, longitude: -1.3167 },
+  blida:       { latitude: 36.4722, longitude: 2.8277 },
 };
 
 export const CUISINE_EMOJI = {
@@ -118,12 +123,21 @@ export default function useExplorer() {
     (async () => {
       setLoading(true);
       try {
-        const { data } = await supabase
-          .from('restaurants')
-          .select('id, name, cuisine_type, address, quartier, city, photos, avg_rating, avg_ticket, review_count, capacity, latitude, longitude, opening_hours, phone, terrasse, parking')
-          .eq('status', 'active')
-          .order('avg_rating', { ascending: false });
-        setRestaurants(data ?? []);
+        const [{ data }, { data: promoRows }] = await Promise.all([
+          supabase
+            .from('restaurants')
+            .select('id, name, cuisine_type, address, quartier, city, photos, avg_rating, avg_ticket, review_count, capacity, latitude, longitude, opening_hours, phone, terrasse, parking, click_collect_enabled')
+            .eq('status', 'active')
+            .order('avg_rating', { ascending: false }),
+          supabase.from('promotions').select('restaurant_id, title, type, percent_value, fixed_value, start_date, end_date, is_paused'),
+        ]);
+        // Une seule promo (la plus récente) affichée par resto si plusieurs sont actives.
+        const promoByRestaurant = {};
+        for (const p of promoRows ?? []) {
+          if (computePromoStatus(p) !== 'active') continue;
+          if (!promoByRestaurant[p.restaurant_id]) promoByRestaurant[p.restaurant_id] = p;
+        }
+        setRestaurants((data ?? []).map(r => ({ ...r, promo: promoByRestaurant[r.id] || null })));
       } finally {
         setLoading(false);
       }
@@ -138,11 +152,9 @@ export default function useExplorer() {
       || r.quartier?.toLowerCase().includes(q)
       || normalizeCity(r.city) === normalizeCity(q)
     ));
-    if (activeFilters.has('ouvert')) list = list.filter(r => isOpenNow(r.opening_hours));
     if (activeFilters.has('price')) list = list.filter(r => r.avg_ticket >= 1500 && r.avg_ticket < 3000);
     if (activeFilters.has('note')) list = list.filter(r => (r.avg_rating || 0) >= 4.5);
-    if (activeFilters.has('terrasse')) list = list.filter(r => r.terrasse);
-    if (activeFilters.has('parking')) list = list.filter(r => r.parking);
+    if (activeFilters.has('promo')) list = list.filter(r => !!r.promo);
     if (sortBy === 'note') {
       list = [...list].sort((a, b) => (b.avg_rating || 0) - (a.avg_rating || 0));
     }

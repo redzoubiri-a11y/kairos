@@ -121,13 +121,16 @@ const s = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: theme.bg,
     borderTopWidth: 1,
-    borderTopColor: theme.cardBorder,
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
+    borderColor: theme.cardBorder,
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
     paddingVertical: 8,
     height: 58,
   },
   containerTransparent: {
     backgroundColor: theme.glassBg,
-    borderTopWidth: 0,
   },
   tab: {
     flex: 1,

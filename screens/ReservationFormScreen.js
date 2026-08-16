@@ -15,10 +15,9 @@ import ReservationSuccess from '../src/components/ReservationSuccess';
 import GuestWall from '../src/components/GuestWall';
 import { useGuestContext } from '../src/context/GuestContext';
 
-function SumRow({ icon, label, val, accent, last }) {
+function SumRow({ label, val, accent, last }) {
   return (
     <View style={[s.sumRow, !last && s.sumBorder]}>
-      <Text style={s.sumIcon}>{icon}</Text>
       <Text style={s.sumLbl}>{label}</Text>
       <Text style={[s.sumVal, accent && { color: colors.resa }]}>{val}</Text>
     </View>
@@ -49,8 +48,8 @@ export default function ReservationFormScreen({ route, navigation }) {
   } = useReservationForm(restaurant, onSuccess, existingResa);
 
   const slotGroups = [
-    { label: 'Déjeuner', icon: '☀️', slots: midiSlots },
-    { label: 'Dîner',    icon: '🌙', slots: soirSlots },
+    { label: 'Déjeuner', slots: midiSlots },
+    { label: 'Dîner',    slots: soirSlots },
   ];
 
   const step = date ? (heure ? 2 : 1) : 0;
@@ -149,10 +148,9 @@ export default function ReservationFormScreen({ route, navigation }) {
           {heure && <Text style={[s.sectionChosen, { color: colors.resa }]}>{heure}</Text>}
         </View>
 
-        {slotGroups.map(({ label, icon, slots }, gi) => (
+        {slotGroups.map(({ label, slots }, gi) => (
           <View key={label} style={[s.slotSection, gi > 0 && { marginTop: spacing.lg }]}>
             <View style={s.slotGroupRow}>
-              <Text style={s.slotGroupIcon}>{icon}</Text>
               <Text style={s.slotGroupLabel}>{label}</Text>
             </View>
             <View style={s.slotsWrap}>
@@ -184,7 +182,6 @@ export default function ReservationFormScreen({ route, navigation }) {
         <View style={s.couvCard}>
           <View style={s.couvRow}>
             <View style={s.couvInfo}>
-              <View style={s.couvIconWrap}><Text style={s.couvEmoji}>🧑</Text></View>
               <View>
                 <Text style={s.couvLabel}>Adultes</Text>
                 <Text style={s.couvSub}>13 ans et plus</Text>
@@ -195,7 +192,6 @@ export default function ReservationFormScreen({ route, navigation }) {
           <View style={s.couvDivider} />
           <View style={s.couvRow}>
             <View style={s.couvInfo}>
-              <View style={s.couvIconWrap}><Text style={s.couvEmoji}>👶</Text></View>
               <View>
                 <Text style={s.couvLabel}>Enfants</Text>
                 <Text style={s.couvSub}>Moins de 13 ans</Text>
@@ -213,7 +209,7 @@ export default function ReservationFormScreen({ route, navigation }) {
             </View>
             <Text style={s.sectionLabel}>OCCASION</Text>
           </View>
-          <Text style={s.sectionChosen}>{occasionObj?.label}</Text>
+          <Text style={s.sectionChosen}>{occasionObj?.label || '—'}</Text>
         </View>
 
         <View style={s.occasionGrid}>
@@ -223,7 +219,6 @@ export default function ReservationFormScreen({ route, navigation }) {
               style={[s.occasionChip, occasion === o.id && s.occasionChipOn]}
               onPress={() => setOccasion(o.id)}
             >
-              <Text style={s.occasionIcon}>{o.icon}</Text>
               <Text style={[s.occasionLabel, occasion === o.id && s.occasionLabelOn]}>{o.label}</Text>
               {occasion === o.id && (
                 <View style={s.occasionCheck}>
@@ -257,17 +252,17 @@ export default function ReservationFormScreen({ route, navigation }) {
         {/* Récap */}
         <View style={s.summaryCard}>
           <Text style={s.summaryTitle}>RÉCAPITULATIF</Text>
-          <SumRow icon="🍽️" label="Restaurant" val={restaurant.name} />
-          <SumRow icon="📅" label="Date"        val={date ? formatDateLong(date) : '—'} />
-          <SumRow icon="🕐" label="Heure"       val={heure || '—'} accent />
-          <SumRow icon="👥" label="Couverts"    val={`${adults} adulte${adults > 1 ? 's' : ''}${children > 0 ? ` · ${children} enfant${children > 1 ? 's' : ''}` : ''}`} />
-          <SumRow icon={occasionObj?.icon || '🍽️'} label="Occasion" val={occasionObj?.label || '—'} last />
+          <SumRow label="Restaurant" val={restaurant.name} />
+          <SumRow label="Date"        val={date ? formatDateLong(date) : '—'} />
+          <SumRow label="Heure"       val={heure || '—'} accent />
+          <SumRow label="Couverts"    val={`${adults} adulte${adults > 1 ? 's' : ''}${children > 0 ? ` · ${children} enfant${children > 1 ? 's' : ''}` : ''}`} />
+          <SumRow label="Occasion" val={occasionObj?.label || '—'} last />
         </View>
 
         {/* Erreur */}
         {!!error && (
           <Animated.View style={[s.errorBox, { transform: [{ translateX: shakeTranslate }] }]}>
-            <Text style={s.errorTxt}>⚠️  {error}</Text>
+            <Text style={s.errorTxt}>{error}</Text>
           </Animated.View>
         )}
 
@@ -332,7 +327,6 @@ const s = StyleSheet.create({
 
   slotSection:     { paddingHorizontal: spacing.xxl },
   slotGroupRow:    { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.lg },
-  slotGroupIcon:   { fontSize: 14 },
   slotGroupLabel:  { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.body },
   slotsWrap:       { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md },
   slotChip:        { alignItems: 'center', paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, borderRadius: radius.lg, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, minWidth: 78 },
@@ -346,9 +340,7 @@ const s = StyleSheet.create({
 
   couvCard:    { marginHorizontal: spacing.xxl, backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, overflow: 'hidden' },
   couvRow:     { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xxl, paddingVertical: spacing.xl },
-  couvInfo:    { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },
-  couvIconWrap:{ width: 40, height: 40, borderRadius: radius.lg, backgroundColor: colors.cardHover, alignItems: 'center', justifyContent: 'center' },
-  couvEmoji:   { fontSize: 20 },
+  couvInfo:    { flexDirection: 'row', alignItems: 'center' },
   couvLabel:   { fontFamily: typography.bodyMedium, color: colors.text, fontSize: typography.size.bodyLg, marginBottom: 2 },
   couvSub:     { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.caption },
   couvDivider: { height: 1, backgroundColor: colors.cardBorder, marginHorizontal: spacing.xxl },
@@ -356,7 +348,6 @@ const s = StyleSheet.create({
   occasionGrid:   { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.lg, paddingHorizontal: spacing.xxl },
   occasionChip:   { width: '30%', flexGrow: 1, alignItems: 'center', paddingVertical: spacing.lg, borderRadius: radius.xl, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, gap: spacing.sm, position: 'relative' },
   occasionChipOn: { backgroundColor: colors.primaryDim, borderColor: colors.primary },
-  occasionIcon:   { fontSize: 22 },
   occasionLabel:  { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.caption, textAlign: 'center' },
   occasionLabelOn:{ color: colors.primary, fontFamily: typography.bodySemibold },
   occasionCheck:  { position: 'absolute', top: 7, right: 7, width: 16, height: 16, borderRadius: 8, backgroundColor: colors.primarySoft, alignItems: 'center', justifyContent: 'center' },
@@ -366,9 +357,8 @@ const s = StyleSheet.create({
 
   summaryCard:  { margin: spacing.xxl, backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.xl },
   summaryTitle: { fontFamily: typography.bodyBold, color: colors.textDim, fontSize: typography.size.xs, letterSpacing: 4, marginBottom: spacing.lg },
-  sumRow:       { flexDirection: 'row', alignItems: 'center', gap: spacing.lg, paddingVertical: spacing.sm + 2 },
+  sumRow:       { flexDirection: 'row', alignItems: 'center', paddingVertical: spacing.sm + 2 },
   sumBorder:    { borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
-  sumIcon:      { fontSize: 15, width: 22 },
   sumLbl:       { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.bodyLg, flex: 1 },
   sumVal:       { fontFamily: typography.bodyMedium, color: colors.text, fontSize: typography.size.bodyLg, textAlign: 'right', flexShrink: 1, maxWidth: '55%' },
 

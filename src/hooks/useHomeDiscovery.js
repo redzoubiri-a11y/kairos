@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { supabase } from '../../supabase';
 import { CUISINE_OPTIONS } from './useProInfo';
+import { QUARTIER_PHOTOS, CUISINE_PHOTOS } from '../data/discoveryPhotos';
 
 const CUISINE_LABELS = Object.fromEntries(CUISINE_OPTIONS.map(o => [o.value, o.label]));
 
@@ -49,7 +50,9 @@ export default function useHomeDiscovery(city) {
     return Object.entries(counts)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 4)
-      .map(([quartier, count], i) => ({ id: quartier, label: quartier, count, gradient: TILE_GRADIENTS[i] }));
+      .map(([quartier, count], i) => ({
+        id: quartier, label: quartier, count, gradient: TILE_GRADIENTS[i], photo: QUARTIER_PHOTOS[quartier],
+      }));
   }, [restaurants]);
 
   const topCuisines = useMemo(() => {
@@ -62,7 +65,8 @@ export default function useHomeDiscovery(city) {
       .sort((a, b) => b[1] - a[1])
       .slice(0, 4)
       .map(([cuisine, count], i) => ({
-        id: cuisine, label: CUISINE_LABELS[cuisine] || cuisine, count, gradient: TILE_GRADIENTS[i + 4],
+        id: cuisine, label: CUISINE_LABELS[cuisine] || cuisine, count,
+        gradient: TILE_GRADIENTS[i + 4], photo: CUISINE_PHOTOS[cuisine],
       }));
   }, [restaurants]);
 

@@ -1,10 +1,11 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
 import { colors, typography, spacing, radius } from '../theme';
-import { useGuestContext } from '../context/GuestContext';
 
 export default function GuestWall({ title, message }) {
-  const { exitGuestMode } = useGuestContext();
+  const navigation = useNavigation();
+  const goAuth = () => navigation.navigate('Auth');
 
   return (
     <SafeAreaView style={s.root}>
@@ -16,10 +17,10 @@ export default function GuestWall({ title, message }) {
         <Text style={s.message}>
           {message || 'Crée un compte gratuit pour accéder à cette fonctionnalité.'}
         </Text>
-        <TouchableOpacity style={s.primaryBtn} onPress={exitGuestMode} activeOpacity={0.85}>
+        <TouchableOpacity style={s.primaryBtn} onPress={goAuth} activeOpacity={0.85}>
           <Text style={s.primaryTxt}>Se connecter  →</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={s.secondaryBtn} onPress={exitGuestMode} activeOpacity={0.7}>
+        <TouchableOpacity style={s.secondaryBtn} onPress={goAuth} activeOpacity={0.7}>
           <Text style={s.secondaryTxt}>Créer un compte gratuit</Text>
         </TouchableOpacity>
       </View>

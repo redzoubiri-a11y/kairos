@@ -32,5 +32,10 @@ export default function useFavoris() {
 
   const onRefresh = useCallback(() => load(true), [load]);
 
-  return { favorites, loading, refreshing, onRefresh };
+  const removeFavorite = useCallback(async (favId) => {
+    setFavorites(prev => prev.filter(f => f.id !== favId));
+    await supabase.from('favorites').delete().eq('id', favId);
+  }, []);
+
+  return { favorites, loading, refreshing, onRefresh, removeFavorite };
 }

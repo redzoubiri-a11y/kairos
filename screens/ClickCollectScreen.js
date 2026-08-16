@@ -11,6 +11,8 @@ import { estimateWaitMinutes } from '../src/utils/waitTime';
 import Button from '../src/components/Button';
 import Tag from '../src/components/Tag';
 import EmptyState from '../src/components/EmptyState';
+import GuestWall from '../src/components/GuestWall';
+import { useGuestContext } from '../src/context/GuestContext';
 
 const MODES = [
   { id: 'pickup', label: 'À emporter' },
@@ -18,6 +20,7 @@ const MODES = [
 ];
 
 export default function ClickCollectScreen({ route, navigation }) {
+  const { isGuest } = useGuestContext();
   const restaurant = route?.params?.restaurant || {};
   const { dishes, waitTimeEstimates, loading, submitting, submitOrder } = useClickCollect(restaurant.id);
   const { items, addItem, removeItem, qtyFor, clear, totalCount, totalAmount } = useCart();
@@ -54,16 +57,17 @@ export default function ClickCollectScreen({ route, navigation }) {
     setConfirmed(true);
   }, [items, notes, mode, tableNumber, submitOrder, clear]);
 
+  if (isGuest) {
+    return <GuestWall title="Commander" message="Connectez-vous pour passer une commande." />;
+  }
+
   return (
     <SafeAreaView style={s.root} edges={['top', 'left', 'right', 'bottom']}>
       <View style={s.header}>
         <TouchableOpacity style={s.backBtn} onPress={goBack}>
           <Text style={s.backBtnTxt}>←</Text>
         </TouchableOpacity>
-        <View style={{ flex: 1 }}>
-          <Text style={s.headerTitle} numberOfLines={1}>{restaurant.name}</Text>
-          <Text style={s.headerSub} numberOfLines={1}>Commander</Text>
-        </View>
+        <Text style={s.headerTitle} numberOfLines={1}>{restaurant.name} — Commander</Text>
       </View>
 
       {loading ? (
@@ -89,14 +93,14 @@ export default function ClickCollectScreen({ route, navigation }) {
           </ScrollView>
 
           <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: spacing.xl, paddingBottom: 140 }}>
-            {visibleDishes.map(d => {
+            {visibleDishes.map((d, i) => {
               const qty = qtyFor(d.id);
               return (
-                <View key={d.id} style={s.dishRow}>
+                <View key={d.id} style={[s.dishRow, i < visibleDishes.length - 1 && s.dishRowBorder]}>
                   {d.photo ? (
                     <Image source={{ uri: d.photo }} style={s.dishPhoto} resizeMode="cover" />
                   ) : (
-                    <View style={[s.dishPhoto, s.dishPhotoPlaceholder]}><Text style={{ fontSize: 20 }}>🍽️</Text></View>
+                    <View style={[s.dishPhoto, s.dishPhotoPlaceholder]}><Text style={{ fontSize: 18 }}>🍽️</Text></View>
                   )}
                   <View style={{ flex: 1 }}>
                     <Text style={s.dishName} numberOfLines={1}>{d.name}</Text>
@@ -139,12 +143,14 @@ export default function ClickCollectScreen({ route, navigation }) {
           )}
 
           {totalCount > 0 && !showCart && !confirmed && (
-            <View style={[s.cartBar, { bottom: insets.bottom + 12 }]}>
+            <View style={[s.cartBar, { bottom: insets.bottom + 20 }]}>
               <View>
                 <Text style={s.cartBarCount}>{totalCount} article{totalCount > 1 ? 's' : ''}</Text>
                 <Text style={s.cartBarTotal}>{totalAmount.toLocaleString('fr-FR')} DA</Text>
               </View>
-              <Button variant="pro" small fullWidth={false} onPress={() => setShowCart(true)}>Voir le panier</Button>
+              <TouchableOpacity style={s.cartBtn} onPress={() => setShowCart(true)}>
+                <Text style={s.cartBtnTxt}>Voir le panier</Text>
+              </TouchableOpacity>
             </View>
           )}
 
@@ -221,34 +227,36 @@ export default function ClickCollectScreen({ route, navigation }) {
 const s = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.bg },
 
-  header:      { minHeight: 58, flexDirection: 'row', alignItems: 'center', gap: spacing.lg - 2, paddingHorizontal: spacing.xl, paddingTop: spacing.lg, paddingBottom: spacing.md },
-  backBtn:     { width: 34, height: 34, borderRadius: 17, backgroundColor: colors.tagNeutralBg, alignItems: 'center', justifyContent: 'center' },
-  backBtnTxt:  { color: colors.text, fontSize: 18 },
-  headerTitle: { fontFamily: typography.display, color: colors.text, fontSize: typography.size.subheading + 2, letterSpacing: -0.2 },
-  headerSub:   { fontFamily: typography.body, color: 'rgba(10,10,10,0.5)', fontSize: typography.size.caption + 0.5, marginTop: 2 },
+  header:      { minHeight: 54, flexDirection: 'row', alignItems: 'center', gap: spacing.lg, paddingHorizontal: spacing.xl, paddingTop: spacing.sm, paddingBottom: spacing.md },
+  backBtn:     { width: 36, height: 36, borderRadius: radius.control, backgroundColor: colors.bg, borderWidth: 1, borderColor: colors.cardBorder, alignItems: 'center', justifyContent: 'center' },
+  backBtnTxt:  { color: colors.text, fontSize: 15 },
+  headerTitle: { flex: 1, fontFamily: typography.display, color: colors.text, fontSize: typography.size.body + 2 },
 
   emptyWrap:  { flex: 1, marginHorizontal: spacing.xl, marginTop: spacing.section },
 
   catsWrap: { maxHeight: 56, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   catsList: { paddingHorizontal: spacing.xl, paddingVertical: spacing.md, gap: spacing.sm, flexDirection: 'row' },
 
-  dishRow:     { flexDirection: 'row', gap: spacing.md, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, borderRadius: radius.xl - 2, padding: spacing.lg },
-  dishPhoto:   { width: 72, height: 72, borderRadius: radius.lg - 2, backgroundColor: colors.cardHover, flexShrink: 0 },
+  dishRow:      { flexDirection: 'row', gap: spacing.lg, paddingVertical: spacing.lg + 1 },
+  dishRowBorder:{ borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
+  dishPhoto:    { width: 64, height: 64, borderRadius: radius.md + 1, backgroundColor: colors.cardHover, flexShrink: 0 },
   dishPhotoPlaceholder: { alignItems: 'center', justifyContent: 'center' },
-  dishName:    { fontFamily: typography.display, color: colors.text, fontSize: typography.size.subheading + 0.5 },
-  dishDesc:    { fontFamily: typography.body, color: 'rgba(10,10,10,0.5)', fontSize: typography.size.body, marginTop: spacing.xs },
+  dishName:    { fontFamily: typography.display, color: colors.text, fontSize: typography.size.body },
+  dishDesc:    { fontFamily: typography.body, color: colors.textDim, fontSize: typography.size.caption - 1, marginTop: 3 },
   dishPriceRow:{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: spacing.sm },
-  dishPrice:   { fontFamily: typography.display, color: colors.text, fontSize: typography.size.subheading },
+  dishPrice:   { fontFamily: typography.display, color: colors.text, fontSize: typography.size.caption + 1 },
   stepper:     { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   addBtn:      { width: 26, height: 26, borderRadius: radius.sm + 3, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' },
   addBtnTxt:   { fontFamily: typography.bodyBold, color: '#FFFFFF', fontSize: 15, lineHeight: 18 },
-  stepPill:    { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: colors.tagGreenBg, borderRadius: radius.sm + 3, paddingHorizontal: spacing.sm, paddingVertical: spacing.xs },
-  stepBtnTxt:  { fontFamily: typography.bodyBold, color: colors.primary, fontSize: 14 },
-  stepQty:     { fontFamily: typography.bodyBold, color: colors.primary, fontSize: 14, minWidth: 14, textAlign: 'center' },
+  stepPill:    { flexDirection: 'row', alignItems: 'center', gap: spacing.md, backgroundColor: colors.bg, borderRadius: radius.lg + 1, paddingHorizontal: spacing.md + 2, paddingVertical: spacing.xs },
+  stepBtnTxt:  { fontFamily: typography.bodyBold, color: colors.text, fontSize: 14 },
+  stepQty:     { fontFamily: typography.bodyBold, color: colors.text, fontSize: 14, minWidth: 14, textAlign: 'center' },
 
-  cartBar:      { position: 'absolute', left: 0, right: 0, bottom: 0, backgroundColor: colors.noir, borderTopLeftRadius: radius.xl, borderTopRightRadius: radius.xl, paddingVertical: spacing.lg, paddingHorizontal: spacing.xl, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  cartBarCount: { fontFamily: typography.bodyMedium, color: 'rgba(255,255,255,0.55)', fontSize: typography.size.caption },
-  cartBarTotal: { fontFamily: typography.display, color: '#FFFFFF', fontSize: typography.size.subheading + 3, marginTop: 2 },
+  cartBar:      { position: 'absolute', left: spacing.xl, right: spacing.xl, bottom: 0, backgroundColor: colors.noir, borderRadius: radius.floating, paddingVertical: spacing.lg + 2, paddingHorizontal: spacing.xl, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', shadowColor: '#000', shadowOpacity: 0.25, shadowRadius: 28, shadowOffset: { width: 0, height: 12 }, elevation: 8 },
+  cartBarCount: { fontFamily: typography.body, color: 'rgba(255,255,255,0.6)', fontSize: 11 },
+  cartBarTotal: { fontFamily: typography.bodyBold, color: '#FFFFFF', fontSize: 16, marginTop: 2 },
+  cartBtn:      { backgroundColor: colors.primary, paddingVertical: spacing.md + 2, paddingHorizontal: spacing.xl, borderRadius: radius.md + 1 },
+  cartBtnTxt:   { fontFamily: typography.bodyBold, color: '#FFFFFF', fontSize: 13 },
 
   cartPanel:       { position: 'absolute', left: 0, right: 0, bottom: 0, backgroundColor: colors.bg, borderTopLeftRadius: radius.xxl, borderTopRightRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.xl, gap: spacing.md, shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 20, shadowOffset: { width: 0, height: -4 } },
   cartPanelHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },

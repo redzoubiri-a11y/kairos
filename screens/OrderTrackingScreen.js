@@ -72,7 +72,11 @@ export default function OrderTrackingScreen({ route, navigation }) {
         <Text style={s.orderSub}>
           {restaurant.name || 'Restaurant'}{orderedAt ? ` · Commandée à ${orderedAt}` : ''}
         </Text>
-        {isTable && <Text style={s.tableTxt}>🍽️ Table n°{order.table_number}</Text>}
+        {isTable && (
+          <View style={s.tableBadge}>
+            <Text style={s.tableBadgeTxt}>🍽️ Table n°{order.table_number}</Text>
+          </View>
+        )}
 
         {isCancelled ? (
           <View style={s.cancelledCard}>
@@ -140,9 +144,10 @@ const s = StyleSheet.create({
 
   orderNumber: { fontFamily: typography.display, fontSize: typography.size.title - 3, color: colors.text, letterSpacing: -0.3 },
   orderSub:    { fontFamily: typography.body, fontSize: typography.size.bodyLg - 0.5, color: 'rgba(10,10,10,0.5)', marginTop: 5 },
-  tableTxt:    { fontFamily: typography.bodyBold, fontSize: typography.size.body, color: colors.primary, marginTop: spacing.sm },
+  tableBadge:    { alignSelf: 'center', marginTop: spacing.lg, backgroundColor: colors.statusPendingBg, borderRadius: radius.control, paddingVertical: spacing.md + 2, paddingHorizontal: spacing.lg + 2 },
+  tableBadgeTxt: { fontFamily: typography.bodyBold, fontSize: typography.size.body, color: colors.statusPendingText, textAlign: 'center' },
 
-  stepperCard: { marginTop: spacing.xxl, backgroundColor: colors.cream, borderRadius: radius.xl, padding: 20 },
+  stepperCard: { marginTop: spacing.xxl - 2, backgroundColor: colors.bg, borderRadius: radius.floating, padding: 20 },
   stepperRow:  { flexDirection: 'row', alignItems: 'flex-start' },
   stepGroup:   { flex: 1, flexDirection: 'row', alignItems: 'flex-start' },
   stepItem:    { alignItems: 'center', gap: spacing.sm, width: 60 },

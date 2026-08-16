@@ -87,7 +87,7 @@ const s = StyleSheet.create({
   backBtn:     { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
   backBtnTxt:  { color: colors.text, fontSize: 22 },
 
-  sectionLbl: { color: colors.textMuted, fontSize: typography.size.xs, letterSpacing: 3, paddingHorizontal: spacing.xxl, paddingTop: spacing.xxl, paddingBottom: spacing.md },
+  sectionLbl: { fontFamily: typography.bodyBold, color: colors.textDim, fontSize: typography.size.caption - 1, letterSpacing: 0.7, textTransform: 'uppercase', paddingHorizontal: spacing.xl, paddingTop: spacing.lg + 6, paddingBottom: spacing.lg - 2 },
 
   emptyWrap:  { alignItems: 'center', paddingVertical: spacing.section * 2, gap: spacing.md },
   emptyTitle: { color: colors.text, fontSize: typography.size.heading2, fontWeight: typography.weight.medium },

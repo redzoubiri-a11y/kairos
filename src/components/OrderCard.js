@@ -97,7 +97,7 @@ export default function OrderCard({
 }
 
 const s = StyleSheet.create({
-  card:       { backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, borderRadius: radius.xl - 2, padding: spacing.xl - 2 },
+  card:       { backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, borderRadius: radius.lg + 1, padding: spacing.xl - 2 },
   top:        { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: spacing.sm },
   titleWrap:  { flex: 1 },
   title:      { fontFamily: typography.display, fontSize: typography.size.heading3, color: colors.text, letterSpacing: -0.2 },
@@ -105,10 +105,9 @@ const s = StyleSheet.create({
   statusBadge: { flexShrink: 0, paddingHorizontal: spacing.sm, paddingVertical: 5, borderRadius: radius.sm + 2 },
   statusTxt:   { fontFamily: typography.bodyBold, fontSize: typography.size.xs + 0.5, letterSpacing: 0.2 },
 
-  // colors.gold est réservé à l'univers Pro (cf. theme.js) — cette puce est visible
-  // côté client aussi (MyOrdersScreen), donc palette neutre partagée à la place.
-  tableBadge:    { alignSelf: 'flex-start', marginTop: spacing.sm + 1, backgroundColor: colors.tagGreenBg, borderRadius: radius.sm + 2, paddingHorizontal: spacing.sm, paddingVertical: 4 },
-  tableBadgeTxt: { fontFamily: typography.bodyBold, fontSize: typography.size.caption, color: colors.primary },
+  // Pro Commandes.dc.html : badge tan neutre (pas un statut), littéral colors.tableBadgeBg
+  tableBadge:    { alignSelf: 'flex-start', marginTop: spacing.sm + 1, backgroundColor: colors.tableBadgeBg, borderRadius: radius.sm + 2, paddingHorizontal: spacing.sm, paddingVertical: 4 },
+  tableBadgeTxt: { fontFamily: typography.bodyBold, fontSize: typography.size.caption, color: colors.text },
 
   itemsBlock: { marginTop: spacing.lg - 2, gap: spacing.xs + 1 },
   itemRow:    { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },

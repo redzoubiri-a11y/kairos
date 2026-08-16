@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   Image, TextInput, Alert, Linking, StatusBar,
@@ -6,8 +6,10 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, typography, spacing, radius } from '../src/theme';
 import useProfil from '../src/hooks/useProfil';
+import usePoints from '../src/hooks/usePoints';
 import GuestWall from '../src/components/GuestWall';
 import Button from '../src/components/Button';
+import PointsHistoryModal from '../src/components/PointsHistoryModal';
 import { useGuestContext } from '../src/context/GuestContext';
 
 export default function ProfilScreen({ navigation }) {
@@ -22,6 +24,8 @@ export default function ProfilScreen({ navigation }) {
     displayName, initial,
     pickAvatar, saveName, signOut, deleteAccount, toggleEditing,
   } = useProfil();
+  const { balance: pointsBalance, history: pointsHistory, loading: pointsLoading } = usePoints();
+  const [showPointsHistory, setShowPointsHistory] = useState(false);
 
   const confirmDeleteAccount = useCallback(() => {
     Alert.alert(
@@ -121,6 +125,16 @@ export default function ProfilScreen({ navigation }) {
           </View>
         </View>
 
+        <View style={s.pointsCard}>
+          <View>
+            <Text style={s.pointsLbl}>Points fidélité</Text>
+            <Text style={s.pointsVal}>{pointsBalance.toLocaleString('fr-FR')}</Text>
+          </View>
+          <TouchableOpacity style={s.pointsCta} onPress={() => setShowPointsHistory(true)}>
+            <Text style={s.pointsCtaTxt}>Historique</Text>
+          </TouchableOpacity>
+        </View>
+
         <Text style={s.sectionLbl}>MES OCCASIONS PRÉFÉRÉES</Text>
         <View style={s.chipsWrap}>
           {SITUATIONS.map((sit, i) => (
@@ -190,6 +204,14 @@ export default function ProfilScreen({ navigation }) {
         </TouchableOpacity>
         <View style={{ height: 32 }} />
       </ScrollView>
+
+      <PointsHistoryModal
+        visible={showPointsHistory}
+        onClose={() => setShowPointsHistory(false)}
+        balance={pointsBalance}
+        history={pointsHistory}
+        loading={pointsLoading}
+      />
     </SafeAreaView>
   );
 }
@@ -235,6 +257,12 @@ const s = StyleSheet.create({
   statItem: { flex: 1, alignItems: 'center', backgroundColor: colors.glassBg, borderRadius: 13, paddingVertical: 14 },
   statVal:  { color: colors.text, fontFamily: typography.display, fontSize: 20 },
   statLbl:  { fontFamily: typography.bodyMedium, color: 'rgba(10,10,10,0.55)', fontSize: 10.5, marginTop: 5 },
+
+  pointsCard:    { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginHorizontal: spacing.xxl, marginTop: spacing.xl - 4, backgroundColor: colors.noir, borderRadius: 14, padding: spacing.xl + 2 },
+  pointsLbl:     { fontFamily: typography.bodyBold, color: 'rgba(255,255,255,0.6)', fontSize: 11.5, textTransform: 'uppercase', letterSpacing: 0.4 },
+  pointsVal:     { fontFamily: typography.display, color: '#FFFFFF', fontSize: 26, marginTop: 4 },
+  pointsCta:     { backgroundColor: colors.primary, borderRadius: radius.md, paddingHorizontal: spacing.lg + 2, paddingVertical: spacing.md + 1 },
+  pointsCtaTxt:  { fontFamily: typography.bodyBold, color: '#FFFFFF', fontSize: typography.size.caption },
 
   sectionLbl: { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.xs, letterSpacing: 3, paddingHorizontal: spacing.xxl, marginTop: spacing.xxl, marginBottom: spacing.lg },
 

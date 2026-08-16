@@ -1,9 +1,14 @@
 import { useState } from 'react';
 import {
-  Modal, View, Text, TextInput, TouchableOpacity,
+  Modal, View, Text, TextInput, TouchableOpacity, Image,
   StyleSheet, ActivityIndicator, KeyboardAvoidingView, Platform,
 } from 'react-native';
 import { colors, typography, spacing, radius } from '../theme';
+
+function fmtVisitDate(iso) {
+  if (!iso) return null;
+  return new Date(iso + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+}
 
 function StarPicker({ value, onChange }) {
   return (
@@ -44,11 +49,22 @@ export default function ReviewModal({ resa, visible, onClose, onSubmit, submitti
 
           <View style={s.drag} />
 
-          <Text style={s.title}>Votre avis</Text>
+          <Text style={s.title}>Laisser un avis</Text>
+
           {!!resa?.restaurants?.name && (
-            <Text style={s.sub}>{resa.restaurants.name}</Text>
+            <View style={s.rCtx}>
+              {resa.restaurants.photos?.[0]
+                ? <Image source={{ uri: resa.restaurants.photos[0] }} style={s.rPhoto} resizeMode="cover" />
+                : <View style={[s.rPhoto, { backgroundColor: colors.cardHover }]} />
+              }
+              <View>
+                <Text style={s.rName}>{resa.restaurants.name}</Text>
+                {!!fmtVisitDate(resa.date) && <Text style={s.rDate}>Visite du {fmtVisitDate(resa.date)}</Text>}
+              </View>
+            </View>
           )}
 
+          <Text style={s.starPrompt}>Comment était votre expérience ?</Text>
           <StarPicker value={rating} onChange={setRating} />
 
           {rating > 0 && (
@@ -78,7 +94,7 @@ export default function ReviewModal({ resa, visible, onClose, onSubmit, submitti
           >
             {submitting
               ? <ActivityIndicator color={colors.bg} />
-              : <Text style={s.btnSubmitTxt}>PUBLIER L'AVIS</Text>
+              : <Text style={s.btnSubmitTxt}>Publier l'avis</Text>
             }
           </TouchableOpacity>
 
@@ -97,23 +113,29 @@ const s = StyleSheet.create({
   sheet:        { backgroundColor: colors.card, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: spacing.xxl, paddingBottom: 40, gap: spacing.xl, borderTopWidth: 1, borderTopColor: colors.cardBorder },
   drag:         { width: 36, height: 4, borderRadius: 2, backgroundColor: colors.cardBorder, alignSelf: 'center', marginBottom: spacing.sm },
 
-  title:        { color: colors.text, fontFamily: typography.display, fontSize: typography.size.heading2, fontWeight: typography.weight.bold, textAlign: 'center' },
-  sub:          { color: colors.textMuted, fontSize: typography.size.bodyLg, textAlign: 'center', marginTop: -spacing.sm },
+  title:        { color: colors.text, fontFamily: typography.display, fontSize: typography.size.subheading + 2, textAlign: 'center' },
+  sub:          { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.bodyLg, textAlign: 'center', marginTop: -spacing.sm },
 
-  stars:        { flexDirection: 'row', justifyContent: 'center', gap: spacing.lg },
-  star:         { fontSize: 38, color: colors.cardBorder },
-  starOn:       { color: colors.gold },
-  label:        { color: colors.gold, fontSize: typography.size.body, textAlign: 'center', marginTop: -spacing.md },
+  rCtx:     { flexDirection: 'row', alignItems: 'center', gap: spacing.md + 2, backgroundColor: colors.bg, borderRadius: radius.lg, padding: spacing.lg + 2 },
+  rPhoto:   { width: 44, height: 44, borderRadius: radius.md + 1 },
+  rName:    { fontFamily: typography.display, fontSize: typography.size.body + 1, color: colors.text },
+  rDate:    { fontFamily: typography.body, fontSize: typography.size.xs + 1.5, color: colors.textDim, marginTop: 2 },
 
-  error:        { color: colors.red, fontSize: typography.size.body, textAlign: 'center' },
+  starPrompt: { fontFamily: typography.display, fontSize: typography.size.subheading, color: colors.text, textAlign: 'center' },
+  stars:        { flexDirection: 'row', justifyContent: 'center', gap: spacing.md + 2 },
+  star:         { fontSize: 34, color: colors.cardBorder },
+  starOn:       { color: colors.star },
+  label:        { fontFamily: typography.bodyMedium, color: colors.star, fontSize: typography.size.body, textAlign: 'center', marginTop: -spacing.md },
 
-  inputWrap:    { backgroundColor: colors.bg, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.cardBorder },
-  input:        { color: colors.text, fontSize: typography.size.bodyLg, padding: spacing.xl, minHeight: 90 },
-  charCount:    { color: colors.textDim, fontSize: typography.size.sm, textAlign: 'right', paddingRight: spacing.lg, paddingBottom: spacing.sm },
+  error:        { fontFamily: typography.body, color: colors.red, fontSize: typography.size.body, textAlign: 'center' },
 
-  btnSubmit:    { backgroundColor: colors.noir, borderRadius: radius.xxl, paddingVertical: 15, alignItems: 'center', shadowColor: '#000', shadowOpacity: 0.4, shadowRadius: 14, shadowOffset: { width: 0, height: 0 }, elevation: 7 },
+  inputWrap:    { backgroundColor: 'transparent', borderRadius: radius.lg, borderWidth: 1, borderColor: colors.cardBorder },
+  input:        { fontFamily: typography.body, color: colors.text, fontSize: typography.size.body, padding: spacing.lg + 2, minHeight: 100 },
+  charCount:    { fontFamily: typography.body, color: colors.textDim, fontSize: typography.size.sm, textAlign: 'right', paddingRight: spacing.lg, paddingBottom: spacing.sm },
+
+  btnSubmit:    { backgroundColor: colors.primary, borderRadius: radius.lg, paddingVertical: 15, alignItems: 'center' },
   btnDim:       { opacity: 0.4 },
-  btnSubmitTxt: { color: '#FFFFFF', fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium, letterSpacing: 1.5 },
+  btnSubmitTxt: { fontFamily: typography.display, color: '#FFFFFF', fontSize: typography.size.subheading - 1 },
   btnCancel:    { alignItems: 'center', paddingVertical: spacing.md },
-  btnCancelTxt: { color: colors.textMuted, fontSize: typography.size.bodyLg },
+  btnCancelTxt: { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.bodyLg },
 });

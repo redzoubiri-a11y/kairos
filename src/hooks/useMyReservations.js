@@ -31,7 +31,7 @@ export default function useMyReservations() {
         .from('reservations')
         .select(`
           id, date, time_slot, nb_adults, nb_children, status, notes,
-          restaurants!restaurant_id (id, name, phone, photos)
+          restaurants!restaurant_id (id, name, phone, photos, quartier, cuisine_type, avg_rating)
         `)
         .order('date',      { ascending: true })
         .order('time_slot', { ascending: true });

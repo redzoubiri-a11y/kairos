@@ -120,6 +120,21 @@ export default function ReservationCard({
   );
   const timeLabel = r.time_slot?.slice(0, 5);
 
+  // Pastille date en tête de carte — Mes réservations.dc.html : "Aujourd'hui ·
+  // 20:00" / "Ven. 21 août · 13:00", en accent au-dessus du statut.
+  const dateBadgeLabel = useMemo(() => {
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const diffDays = Math.round((new Date(r.date + 'T00:00:00') - today) / 86400000);
+    let dayPart;
+    if (diffDays === 0) dayPart = "Aujourd'hui";
+    else if (diffDays === 1) dayPart = 'Demain';
+    else {
+      const raw = new Date(r.date + 'T12:00:00').toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' });
+      dayPart = raw.charAt(0).toUpperCase() + raw.slice(1);
+    }
+    return `${dayPart} · ${timeLabel}`;
+  }, [r.date, timeLabel]);
+
   const openPanel = useCallback((p) => {
     onClearFeedback?.();
     setSelDate(r.date);
@@ -160,6 +175,12 @@ export default function ReservationCard({
     <View style={[c.card, isCancelled && c.cardDimmed]}>
 
       {/* ── Header ────────────────────────────────────────────── */}
+      <View style={c.cardTop}>
+        <Text style={c.dateBadge} numberOfLines={1}>{dateBadgeLabel}</Text>
+        <View style={[c.badge, { backgroundColor: cfg.bg }]}>
+          <Text style={[c.badgeTxt, { color: cfg.color }]}>{cfg.label}</Text>
+        </View>
+      </View>
       <View style={c.header}>
         <View style={c.photoWrap}>
           {r.restaurants?.photos?.[0]
@@ -167,17 +188,12 @@ export default function ReservationCard({
             : <View style={[c.photo, c.photoPlaceholder]} />
           }
         </View>
-        <View style={{ flex: 1, gap: spacing.xs }}>
-          <View style={c.titleRow}>
-            <Text style={c.restoName} numberOfLines={1}>
-              {r.restaurants?.name ?? '—'}
-            </Text>
-            <View style={[c.badge, { backgroundColor: cfg.bg }]}>
-              <Text style={[c.badgeTxt, { color: cfg.color }]}>{cfg.label}</Text>
-            </View>
-          </View>
+        <View style={{ flex: 1 }}>
+          <Text style={c.restoName} numberOfLines={1}>
+            {r.restaurants?.name ?? '—'}
+          </Text>
           <Text style={c.meta}>
-            {dateLabel}  ·  {timeLabel}  ·  {partyCount} pers.
+            {partyCount} personne{partyCount > 1 ? 's' : ''}{r.restaurants?.quartier ? ` · ${r.restaurants.quartier}` : ''}
           </Text>
         </View>
       </View>
@@ -317,16 +333,18 @@ export default function ReservationCard({
 }
 
 const c = StyleSheet.create({
-  card:       { marginHorizontal: spacing.xl, marginBottom: spacing.lg, backgroundColor: colors.card, borderRadius: radius.xl - 2, borderWidth: 1, borderColor: colors.cardBorder, overflow: 'hidden' },
+  card:       { marginHorizontal: spacing.xl, marginBottom: spacing.lg, backgroundColor: colors.card, borderRadius: radius.lg + 1, borderWidth: 1, borderColor: colors.cardBorder, overflow: 'hidden' },
   cardDimmed: { opacity: 0.55 },
 
-  header:    { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.lg, padding: spacing.xl },
-  photoWrap: { width: 56, height: 56, flexShrink: 0, borderRadius: radius.lg - 2, overflow: 'hidden' },
+  cardTop:   { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: spacing.sm, paddingHorizontal: spacing.xl, paddingTop: spacing.lg + 2 },
+  dateBadge: { flex: 1, fontFamily: typography.bodyBold, fontSize: typography.size.caption - 1, color: colors.primary, textTransform: 'uppercase', letterSpacing: 0.3 },
+
+  header:    { flexDirection: 'row', alignItems: 'center', gap: spacing.lg, padding: spacing.xl, paddingTop: spacing.md },
+  photoWrap: { width: 56, height: 56, flexShrink: 0, borderRadius: radius.md, overflow: 'hidden' },
   photo:     { width: '100%', height: '100%' },
   photoPlaceholder: { backgroundColor: colors.cardHover },
-  titleRow:  { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: spacing.sm },
-  restoName: { flex: 1, color: colors.text, fontFamily: typography.display, fontSize: typography.size.heading3, letterSpacing: -0.2 },
-  meta:      { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.body, lineHeight: 18, marginTop: spacing.sm - 2 },
+  restoName: { color: colors.text, fontFamily: typography.display, fontSize: typography.size.subheading - 1, letterSpacing: -0.2 },
+  meta:      { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.caption + 0.5, marginTop: 3 },
   badge:     { flexShrink: 0, borderRadius: radius.sm + 2, paddingHorizontal: spacing.sm, paddingVertical: 5, alignSelf: 'flex-start' },
   badgeTxt:  { fontFamily: typography.bodyBold, fontSize: typography.size.xs + 0.5, letterSpacing: 0.2 },
 
@@ -338,8 +356,8 @@ const c = StyleSheet.create({
   actionRow: { flexDirection: 'row', gap: spacing.sm },
   btnMod:    { flex: 1, backgroundColor: colors.bg, borderRadius: radius.lg, borderWidth: 1, borderColor: colors.cardBorder, paddingVertical: spacing.md, paddingHorizontal: spacing.sm, alignItems: 'center' },
   btnModTxt: { fontFamily: typography.bodyMedium, color: colors.text, fontSize: typography.size.body },
-  btnCancel: { backgroundColor: 'transparent', borderRadius: radius.lg, borderWidth: 1.5, borderColor: colors.resaSoft, paddingVertical: spacing.md, alignItems: 'center' },
-  btnCancelTxt: { fontFamily: typography.bodySemibold, color: colors.resa, fontSize: typography.size.bodyLg },
+  btnCancel: { backgroundColor: 'transparent', borderRadius: radius.lg, borderWidth: 1, borderColor: colors.cardBorder, paddingVertical: spacing.md, alignItems: 'center' },
+  btnCancelTxt: { fontFamily: typography.bodySemibold, color: colors.red, fontSize: typography.size.bodyLg },
   btnDis:    { opacity: 0.5 },
 
   panel:        { marginHorizontal: spacing.xl, marginBottom: spacing.xl, backgroundColor: colors.bg, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.xl, gap: spacing.md },

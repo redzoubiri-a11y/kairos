@@ -22,7 +22,7 @@ function Field({ icon, label, children }) {
 }
 const f = StyleSheet.create({
   wrap:  { marginBottom: spacing.xl },
-  label: { color: colors.textMuted, fontSize: typography.size.xs, letterSpacing: 2, fontWeight: typography.weight.semibold, marginBottom: spacing.sm, textTransform: 'uppercase' },
+  label: { fontFamily: typography.bodySemibold, color: colors.textMuted, fontSize: typography.size.xs, letterSpacing: 2, marginBottom: spacing.sm, textTransform: 'uppercase' },
   inner: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.card, borderRadius: radius.lg, borderWidth: 1.5, borderColor: colors.cardBorder, paddingHorizontal: spacing.xl, minHeight: 52 },
   icon:  { fontSize: typography.size.subheading, marginRight: spacing.md, opacity: 0.7 },
 });
@@ -205,40 +205,40 @@ const s = StyleSheet.create({
 
   card:      { backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.xxl, marginBottom: spacing.xl },
   cardHead:  { marginBottom: spacing.xxl },
-  cardTitle: { color: colors.text, fontFamily: typography.display, fontSize: typography.size.title, fontWeight: typography.weight.bold, letterSpacing: -0.3, marginBottom: spacing.xs },
-  cardSub:   { color: colors.textMuted, fontSize: typography.size.bodyLg, lineHeight: 19 },
+  cardTitle: { color: colors.text, fontFamily: typography.display, fontSize: typography.size.title, letterSpacing: -0.3, marginBottom: spacing.xs },
+  cardSub:   { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.bodyLg, lineHeight: 19 },
 
-  input:   { flex: 1, color: colors.text, fontSize: typography.size.heading3, fontWeight: typography.weight.regular, paddingVertical: 0 },
+  input:   { flex: 1, fontFamily: typography.body, color: colors.text, fontSize: typography.size.heading3, paddingVertical: 0 },
   eyeBtn:  { marginLeft: spacing.md },
-  eyeTxt:  { color: colors.blue, fontSize: typography.size.body },
+  eyeTxt:  { fontFamily: typography.bodyMedium, color: colors.blue, fontSize: typography.size.body },
 
   forgotBtn:  { alignSelf: 'flex-end', marginTop: spacing.sm, marginBottom: spacing.lg },
-  forgotTxt:  { color: colors.primary, fontSize: typography.size.caption, fontWeight: typography.weight.medium },
-  forgotSent: { color: colors.green, fontSize: typography.size.caption, fontWeight: typography.weight.medium },
+  forgotTxt:  { fontFamily: typography.bodyMedium, color: colors.primary, fontSize: typography.size.caption },
+  forgotSent: { fontFamily: typography.bodyMedium, color: colors.green, fontSize: typography.size.caption },
 
   errorBox:       { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.md, backgroundColor: colors.redSoft, borderRadius: radius.lg, padding: spacing.lg, borderWidth: 1, borderColor: 'rgba(224,90,90,0.25)', marginBottom: spacing.xl },
   errorIcon:      { fontSize: typography.size.bodyLg },
-  errorTxt:       { color: colors.red, fontSize: typography.size.body, lineHeight: 18, flex: 1 },
+  errorTxt:       { fontFamily: typography.body, color: colors.red, fontSize: typography.size.body, lineHeight: 18, flex: 1 },
   successBox:     { gap: spacing.md, backgroundColor: colors.greenSoft, borderRadius: radius.lg, padding: spacing.xl, borderWidth: 1, borderColor: 'rgba(76,175,130,0.25)', marginBottom: spacing.xl },
   successRow:     { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.md },
   successIcon:    { fontSize: typography.size.bodyLg },
-  successTxt:     { color: colors.green, fontSize: typography.size.body, lineHeight: 18, flex: 1 },
+  successTxt:     { fontFamily: typography.body, color: colors.green, fontSize: typography.size.body, lineHeight: 18, flex: 1 },
   successLink:    { alignSelf: 'flex-start' },
-  successLinkTxt: { color: colors.blue, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium },
+  successLinkTxt: { fontFamily: typography.bodyMedium, color: colors.blue, fontSize: typography.size.bodyLg },
 
   submitBtn: { backgroundColor: colors.primary, borderRadius: radius.xl, paddingVertical: spacing.xl - 2, alignItems: 'center', marginTop: spacing.xs, shadowColor: colors.primary, shadowOpacity: 0.4, shadowRadius: 14, shadowOffset: { width: 0, height: 0 }, elevation: 7 },
-  submitTxt: { color: '#FFFFFF', fontSize: typography.size.bodyLg, fontWeight: typography.weight.bold, letterSpacing: 0.5 },
+  submitTxt: { fontFamily: typography.bodyBold, color: '#FFFFFF', fontSize: typography.size.bodyLg, letterSpacing: 0.5 },
 
   roleBadge:    { alignSelf: 'center', flexDirection: 'row', alignItems: 'center', backgroundColor: colors.blueSoft, borderRadius: radius.pill, borderWidth: 1, borderColor: 'rgba(90,155,224,0.3)', paddingHorizontal: spacing.xl, paddingVertical: spacing.md, marginBottom: spacing.xl },
-  roleBadgeTxt: { color: colors.blue, fontSize: typography.size.body, fontWeight: typography.weight.medium, letterSpacing: 0.5 },
+  roleBadgeTxt: { fontFamily: typography.bodyMedium, color: colors.blue, fontSize: typography.size.body, letterSpacing: 0.5 },
 
-  proHint: { color: colors.textMuted, fontSize: typography.size.caption, lineHeight: 17, fontStyle: 'italic' },
+  proHint: { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.caption, lineHeight: 17, fontStyle: 'italic' },
 
-  legal:     { color: colors.textDim, fontSize: typography.size.sm, textAlign: 'center', lineHeight: 16 },
-  legalLink: { color: colors.textMuted },
+  legal:     { fontFamily: typography.body, color: colors.textDim, fontSize: typography.size.sm, textAlign: 'center', lineHeight: 16 },
+  legalLink: { fontFamily: typography.body, color: colors.textMuted },
 
   switchTypeBtn: { alignSelf: 'center', marginTop: spacing.xxl, paddingVertical: spacing.md, paddingHorizontal: spacing.xxl - 2, borderRadius: radius.lg, borderWidth: 1, borderColor: 'rgba(90,155,224,0.3)', backgroundColor: colors.blueSoft },
-  switchTypeTxt: { color: colors.blue, fontSize: typography.size.body, fontWeight: typography.weight.medium, letterSpacing: 0.3 },
+  switchTypeTxt: { fontFamily: typography.bodyMedium, color: colors.blue, fontSize: typography.size.body, letterSpacing: 0.3 },
   guestBtn:      { alignSelf: 'center', marginTop: spacing.xl, paddingVertical: spacing.md, paddingHorizontal: spacing.xxl },
-  guestTxt:      { color: colors.textMuted, fontSize: typography.size.bodyLg },
+  guestTxt:      { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.bodyLg },
 });

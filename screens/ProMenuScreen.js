@@ -89,8 +89,6 @@ export default function ProMenuScreen({ navigation, route }) {
 
   return (
     <SafeAreaView style={s.root} edges={['top', 'left', 'right']}>
-      <View style={s.glowGold} pointerEvents="none" />
-      <View style={s.glowWarm} pointerEvents="none" />
       <View style={s.header}>
         {!onSetupComplete ? (
           <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
@@ -212,21 +210,19 @@ export default function ProMenuScreen({ navigation, route }) {
 }
 
 const s = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.warmBg },
-  glowGold: { position: 'absolute', top: 30, right: -80, width: 280, height: 280, borderRadius: 140, backgroundColor: colors.glowGold },
-  glowWarm: { position: 'absolute', top: 310, left: -90, width: 240, height: 240, borderRadius: 120, backgroundColor: colors.glowWarm },
+  root: { flex: 1, backgroundColor: colors.bg },
 
   terminerBar: { paddingHorizontal: spacing.xl, paddingVertical: spacing.md, backgroundColor: colors.card, borderTopWidth: 1, borderTopColor: colors.cardBorder },
   terminerBtn: { alignItems: 'center', paddingVertical: spacing.md },
-  terminerTxt: { color: colors.gold, fontSize: typography.size.body, fontWeight: typography.weight.medium },
+  terminerTxt: { fontFamily: typography.bodyMedium, color: colors.primary, fontSize: typography.size.body },
   header:       { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xxl, paddingTop: spacing.xl, paddingBottom: spacing.xl, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   backBtn:      { width: 36, padding: spacing.xs },
   backBtnTxt:   { color: colors.text, fontSize: 22 },
   headerCenter: { flex: 1, alignItems: 'center' },
-  headerSub:    { color: colors.gold, fontSize: typography.size.xs, letterSpacing: 3, marginBottom: 2 },
-  headerTitle:  { color: colors.text, fontFamily: typography.display, fontSize: typography.size.title, fontWeight: typography.weight.bold, letterSpacing: -0.3 },
+  headerSub:    { fontFamily: typography.bodyBold, color: colors.primary, fontSize: typography.size.xs, letterSpacing: 3, marginBottom: 2 },
+  headerTitle:  { color: colors.text, fontFamily: typography.display, fontSize: typography.size.title, letterSpacing: -0.3 },
   addBtn:       { backgroundColor: colors.primary, borderRadius: radius.lg, paddingHorizontal: spacing.lg, paddingVertical: spacing.md },
-  addBtnTxt:    { color: '#FFFFFF', fontSize: typography.size.body, fontWeight: typography.weight.bold },
+  addBtnTxt:    { fontFamily: typography.bodyBold, color: '#FFFFFF', fontSize: typography.size.body },
 
   subBar:  { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingHorizontal: spacing.xxl, paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   subDot:  { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.green },
@@ -236,19 +232,19 @@ const s = StyleSheet.create({
   catsList:     { flexDirection: 'row', paddingHorizontal: spacing.xxl, paddingVertical: spacing.lg, gap: spacing.md },
   catChip:      { paddingHorizontal: spacing.lg, paddingVertical: spacing.md, borderRadius: radius.pill, backgroundColor: colors.tagNeutralBg },
   catChipOn:    { backgroundColor: colors.noir },
-  catChipTxt:   { color: colors.text, fontSize: typography.size.body },
-  catChipTxtOn: { color: '#FFFFFF', fontWeight: typography.weight.semibold },
-  catChipMuted: { color: colors.textDim, fontSize: typography.size.body },
+  catChipTxt:   { fontFamily: typography.body, color: colors.text, fontSize: typography.size.body },
+  catChipTxtOn: { fontFamily: typography.bodySemibold, color: '#FFFFFF' },
+  catChipMuted: { fontFamily: typography.body, color: colors.textDim, fontSize: typography.size.body },
 
   empty:      { alignItems: 'center', justifyContent: 'center', paddingVertical: 60, gap: spacing.lg },
   emptyEmoji: { fontSize: 48 },
-  emptyTitle: { color: colors.text, fontSize: typography.size.heading1, fontWeight: typography.weight.medium },
-  emptySub:   { color: colors.textMuted, fontSize: typography.size.body, textAlign: 'center' },
+  emptyTitle: { fontFamily: typography.display, color: colors.text, fontSize: typography.size.heading1 },
+  emptySub:   { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.body, textAlign: 'center' },
 
-  addDashed:     { borderWidth: 1, borderStyle: 'dashed', borderColor: 'rgba(200,151,90,0.35)', borderRadius: radius.xl, paddingVertical: spacing.xxl, alignItems: 'center', gap: spacing.sm, marginTop: spacing.sm },
-  addDashedPlus: { color: colors.gold, fontSize: 26 },
-  addDashedTxt:  { color: colors.textMuted, fontSize: typography.size.body },
+  addDashed:     { borderWidth: 1, borderStyle: 'dashed', borderColor: colors.primarySoft, borderRadius: radius.xl, paddingVertical: spacing.xxl, alignItems: 'center', gap: spacing.sm, marginTop: spacing.sm },
+  addDashedPlus: { color: colors.primary, fontSize: 26 },
+  addDashedTxt:  { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.body },
 
   nextBtn:    { backgroundColor: colors.text, borderRadius: radius.xl, paddingVertical: spacing.lg, alignItems: 'center', marginTop: spacing.xl },
-  nextBtnTxt: { color: colors.bg, fontSize: typography.size.body, fontWeight: typography.weight.semibold },
+  nextBtnTxt: { fontFamily: typography.bodySemibold, color: colors.bg, fontSize: typography.size.body },
 });

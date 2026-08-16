@@ -5,8 +5,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, typography, spacing, radius } from '../src/theme';
 import useProTableQr from '../src/hooks/useProTableQr';
 
-const PRO_ACCENT = '#c8975a';
-
 export default function ProTableQrScreen({ navigation }) {
   const { loading, tableCount, setTableCount, tableQrList, printing, printAll } = useProTableQr();
 
@@ -24,16 +22,17 @@ export default function ProTableQrScreen({ navigation }) {
       ) : (
         <>
           <View style={s.controls}>
-            <Text style={s.label}>Nombre de tables</Text>
-            <TextInput
-              style={s.input}
-              keyboardType="number-pad"
-              value={tableCount}
-              onChangeText={setTableCount}
-            />
-            <TouchableOpacity style={s.printBtn} onPress={printAll} disabled={printing || tableQrList.length === 0}>
-              <Text style={s.printBtnTxt}>{printing ? 'Préparation…' : '🖨️ Imprimer / Exporter PDF'}</Text>
-            </TouchableOpacity>
+            <View style={s.ctrlRow}>
+              <TextInput
+                style={s.input}
+                keyboardType="number-pad"
+                value={tableCount}
+                onChangeText={setTableCount}
+              />
+              <TouchableOpacity style={s.printBtn} onPress={printAll} disabled={printing || tableQrList.length === 0}>
+                <Text style={s.printBtnTxt}>{printing ? 'Préparation…' : '🖨️ Imprimer'}</Text>
+              </TouchableOpacity>
+            </View>
             <Text style={s.hint}>
               Chaque QR encode un lien direct vers la commande de cette table. Un client qui le
               scanne avec l'appareil photo de son téléphone ouvre MIDA en mode "à table" prérempli.
@@ -57,17 +56,17 @@ export default function ProTableQrScreen({ navigation }) {
 const s = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.bg },
 
-  header:     { flexDirection: 'row', alignItems: 'center', gap: spacing.lg - 2, paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
-  backBtn:    { width: 34, height: 34, borderRadius: 17, backgroundColor: colors.tagNeutralBg, alignItems: 'center', justifyContent: 'center' },
-  backBtnTxt: { color: colors.text, fontSize: 18 },
+  header:     { flexDirection: 'row', alignItems: 'center', gap: spacing.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
+  backBtn:    { width: 36, height: 36, borderRadius: radius.control, backgroundColor: colors.bg, borderWidth: 1, borderColor: colors.cardBorder, alignItems: 'center', justifyContent: 'center' },
+  backBtnTxt: { color: colors.text, fontSize: 15 },
   title:      { fontFamily: typography.display, fontSize: typography.size.heading2, color: colors.text },
 
-  controls: { padding: spacing.xl, gap: spacing.sm },
-  label:    { fontFamily: typography.bodyMedium, fontSize: typography.size.caption, color: colors.textMuted },
-  input:    { backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.md, color: colors.text, fontSize: typography.size.body, width: 100 },
-  printBtn: { backgroundColor: PRO_ACCENT, borderRadius: radius.md, paddingVertical: spacing.md, alignItems: 'center', marginTop: spacing.sm },
-  printBtnTxt: { color: '#FFFFFF', fontFamily: typography.bodyBold, fontSize: typography.size.body },
-  hint:     { fontFamily: typography.body, fontSize: typography.size.caption, color: colors.textMuted, marginTop: spacing.xs },
+  controls: { padding: spacing.xl, gap: spacing.md },
+  ctrlRow:  { flexDirection: 'row', alignItems: 'center', gap: spacing.sm + 2 },
+  input:    { width: 64, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, borderRadius: radius.control - 1, paddingVertical: spacing.md, color: colors.text, fontFamily: typography.bodyBold, fontSize: typography.size.body, textAlign: 'center' },
+  printBtn: { flex: 1, backgroundColor: colors.primary, borderRadius: radius.md + 1, paddingVertical: spacing.md + 2, alignItems: 'center' },
+  printBtnTxt: { fontFamily: typography.bodyBold, color: '#FFFFFF', fontSize: typography.size.body - 0.5 },
+  hint:     { fontFamily: typography.body, fontSize: typography.size.caption, color: colors.textMuted },
 
   grid: { flexDirection: 'row', flexWrap: 'wrap', padding: spacing.lg, gap: spacing.md },
   card: { width: 140, alignItems: 'center', backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, borderRadius: radius.lg, padding: spacing.md },

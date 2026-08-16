@@ -27,7 +27,7 @@ export default function ReviewCard({ review, onSaveResponse, onApprove, onReject
   const col         = avatarColor(name);
   const ini         = initials(review.users?.first_name, review.users?.last_name);
   const stars       = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
-  const ratingColor = review.rating >= 4 ? colors.green : review.rating === 3 ? colors.gold : colors.red;
+  const ratingColor = review.rating >= 4 ? colors.green : review.rating === 3 ? colors.statusPendingText : colors.red;
 
   const save = useCallback(async () => {
     if (!text.trim()) return;
@@ -119,9 +119,9 @@ export default function ReviewCard({ review, onSaveResponse, onApprove, onReject
 
 const s = StyleSheet.create({
   card:           { backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, marginHorizontal: spacing.xl, marginBottom: spacing.lg, padding: spacing.xl, gap: spacing.lg },
-  cardPending:    { borderColor: 'rgba(200,151,90,0.4)', borderLeftWidth: 3, borderLeftColor: colors.gold },
-  pendingBanner:  { backgroundColor: colors.goldSoft, borderRadius: radius.md, paddingVertical: spacing.sm, paddingHorizontal: spacing.md, alignItems: 'center' },
-  pendingBannerTxt: { color: colors.gold, fontFamily: typography.body, fontSize: typography.size.caption, fontWeight: typography.weight.regular },
+  cardPending:    { borderColor: colors.statusPendingBg, borderLeftWidth: 3, borderLeftColor: colors.statusPendingText },
+  pendingBanner:  { backgroundColor: colors.statusPendingBg, borderRadius: radius.md, paddingVertical: spacing.sm, paddingHorizontal: spacing.md, alignItems: 'center' },
+  pendingBannerTxt: { color: colors.statusPendingText, fontFamily: typography.body, fontSize: typography.size.caption },
   moderateRow:    { flexDirection: 'row', gap: spacing.md },
   rejectBtn:      { flex: 1, padding: spacing.md, borderRadius: radius.lg, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(224,90,90,0.35)', backgroundColor: 'rgba(224,90,90,0.08)' },
   rejectTxt:      { color: colors.red, fontFamily: typography.body, fontSize: typography.size.body },

@@ -37,10 +37,10 @@ export default function PromoActiveView({ promo, onViewAll, onCreate }) {
 
 const s = StyleSheet.create({
   wrap:          { alignItems: 'center', padding: spacing.xxl, gap: spacing.xl },
-  iconWrap:      { width: 70, height: 70, borderRadius: 35, backgroundColor: colors.goldSoft, borderWidth: 2, borderColor: 'rgba(200,151,90,0.4)', alignItems: 'center', justifyContent: 'center' },
-  title:         { color: colors.text, fontFamily: typography.display, fontSize: typography.size.title, fontWeight: typography.weight.black },
+  iconWrap:      { width: 70, height: 70, borderRadius: 35, backgroundColor: colors.primarySoft, borderWidth: 2, borderColor: colors.primarySoft, alignItems: 'center', justifyContent: 'center' },
+  title:         { color: colors.text, fontFamily: typography.display, fontSize: typography.size.title },
   sub:           { color: colors.textMuted, fontFamily: typography.body, fontSize: typography.size.body, textAlign: 'center', lineHeight: 20, maxWidth: 220 },
-  recapCard:     { backgroundColor: colors.card, borderRadius: radius.xl, padding: spacing.xl, borderWidth: 1, borderColor: 'rgba(232,160,69,0.3)', width: '100%' },
+  recapCard:     { backgroundColor: colors.card, borderRadius: radius.xl, padding: spacing.xl, borderWidth: 1, borderColor: colors.cardBorder, width: '100%' },
   recapRow:      { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: spacing.md },
   recapSep:      { borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   recapKey:      { color: colors.textMuted, fontFamily: typography.body, fontSize: typography.size.body },

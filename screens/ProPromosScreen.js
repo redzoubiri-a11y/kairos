@@ -42,8 +42,6 @@ export default function ProPromosScreen({ navigation }) {
 
   return (
     <SafeAreaView style={s.root} edges={['top', 'left', 'right']}>
-      <View style={s.glowGold} pointerEvents="none" />
-      <View style={s.glowWarm} pointerEvents="none" />
       <View style={s.header}>
         <View style={s.headerLeft}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
@@ -86,18 +84,16 @@ export default function ProPromosScreen({ navigation }) {
 }
 
 const s = StyleSheet.create({
-  root:         { flex: 1, backgroundColor: colors.warmBg },
-  glowGold:     { position: 'absolute', top: 30, right: -80, width: 280, height: 280, borderRadius: 140, backgroundColor: colors.glowGold },
-  glowWarm:     { position: 'absolute', top: 310, left: -90, width: 240, height: 240, borderRadius: 120, backgroundColor: colors.glowWarm },
+  root:         { flex: 1, backgroundColor: colors.bg },
   terminerBar: { paddingHorizontal: spacing.xl, paddingVertical: spacing.md, backgroundColor: colors.card, borderTopWidth: 1, borderTopColor: colors.cardBorder },
   terminerBtn: { alignItems: 'center', paddingVertical: spacing.md },
-  terminerTxt: { color: colors.gold, fontSize: typography.size.body, fontWeight: typography.weight.medium },
+  terminerTxt: { fontFamily: typography.bodyMedium, color: colors.primary, fontSize: typography.size.body },
   header:       { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.cardBorder, backgroundColor: colors.card },
   headerLeft:   { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },
   backBtn:      { padding: spacing.xs },
   backBtnTxt:   { color: colors.text, fontSize: 22 },
-  title:        { color: colors.text, fontFamily: typography.display, fontSize: typography.size.heading2, fontWeight: typography.weight.bold, letterSpacing: -0.2 },
-  subtitle:     { color: colors.textMuted, fontSize: typography.size.caption, marginTop: 1 },
+  title:        { fontFamily: typography.display, color: colors.text, fontSize: typography.size.heading2, letterSpacing: -0.2 },
+  subtitle:     { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.caption, marginTop: 1 },
   createBtn:    { backgroundColor: colors.primary, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
-  createBtnTxt: { color: '#FFFFFF', fontSize: typography.size.caption, fontWeight: typography.weight.extrabold },
+  createBtnTxt: { fontFamily: typography.bodyBold, color: '#FFFFFF', fontSize: typography.size.caption },
 });

@@ -4,7 +4,7 @@ import { STATUS_LABEL } from '../hooks/useProPromos';
 import EmptyState from './EmptyState';
 
 const BADGE_STYLE = {
-  active:    { bg: colors.gold,           text: colors.noir },
+  active:    { bg: colors.statusConfirmedBg, text: colors.statusConfirmedText },
   scheduled: { bg: colors.statusPendingBg, text: colors.statusPendingText },
   ended:     { bg: colors.tagNeutralBg,    text: colors.textMuted },
   paused:    { bg: colors.tagNeutralBg,    text: colors.textMuted },
@@ -88,7 +88,7 @@ const s = StyleSheet.create({
   badgeTxt: { fontFamily: typography.bodyBold, fontSize: 9.5, letterSpacing: 0.4 },
 
   activeCard: { backgroundColor: colors.noir, borderRadius: radius.xl, padding: spacing.xl, overflow: 'hidden' },
-  activeGlow: { position: 'absolute', top: -30, right: -30, width: 110, height: 110, borderRadius: 55, backgroundColor: colors.goldSoft },
+  activeGlow: { position: 'absolute', top: -30, right: -30, width: 110, height: 110, borderRadius: 55, backgroundColor: colors.primarySoft },
   activeTitle: { fontFamily: typography.display, fontSize: typography.size.title - 6, color: '#FFFFFF', letterSpacing: -0.2 },
   activeDesc: { fontFamily: typography.body, fontSize: typography.size.body, color: 'rgba(255,255,255,0.55)', marginTop: 5, lineHeight: 17 },
   statsRow: { flexDirection: 'row', alignItems: 'baseline', gap: 6, marginTop: spacing.lg },

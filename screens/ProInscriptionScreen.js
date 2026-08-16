@@ -166,11 +166,11 @@ const s = StyleSheet.create({
   bgOverlay: { ...StyleSheet.absoluteFillObject, opacity: 0.06 },
 
   header: { flexDirection: 'row', alignItems: 'center', gap: 14, paddingTop: spacing.xl, paddingHorizontal: 20 },
-  backBtn: { width: 34, height: 34, borderRadius: 17, backgroundColor: colors.tagNeutralBg, alignItems: 'center', justifyContent: 'center' },
+  backBtn: { width: 36, height: 36, borderRadius: radius.control, backgroundColor: colors.bg, borderWidth: 1, borderColor: colors.cardBorder, alignItems: 'center', justifyContent: 'center' },
   headerTitle: { fontFamily: typography.display, fontSize: typography.size.heading2, color: colors.text, letterSpacing: -0.16 },
 
   scroll: { paddingTop: spacing.xxl - 2, paddingHorizontal: 0 },
-  stepLabel: { fontFamily: typography.bodySemibold, color: colors.gold, fontSize: typography.size.caption - 0.5, letterSpacing: 0.84, textTransform: 'uppercase', marginHorizontal: 20, marginBottom: spacing.sm },
+  stepLabel: { fontFamily: typography.bodySemibold, color: colors.primary, fontSize: typography.size.caption - 0.5, letterSpacing: 0.84, textTransform: 'uppercase', marginHorizontal: 20, marginBottom: spacing.sm },
   stepHeading: { fontFamily: typography.display, fontSize: typography.size.heading2 + 6, color: colors.text, letterSpacing: -0.44, lineHeight: 27.5, marginHorizontal: 20, marginBottom: spacing.xxl },
 
   chipsLabel: { fontFamily: typography.bodySemibold, color: colors.textLabel, fontSize: typography.size.caption - 0.5, letterSpacing: 0.63, textTransform: 'uppercase', marginHorizontal: 20, marginBottom: spacing.sm },

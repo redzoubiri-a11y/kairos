@@ -68,6 +68,7 @@ export default function ProDashboard({ navigation }) {
     acting: orderActing, NEXT_LABEL,
   } = useProOrders();
   const nextOrder = proOrders.find(o => ['pending', 'confirmed', 'ready'].includes(o.status)) || null;
+  const ordersInProgressCount = proOrders.filter(o => ['pending', 'confirmed', 'ready'].includes(o.status)).length;
 
   const goPromos   = useCallback(() => navigation.navigate('ProPromos'),   [navigation]);
   const goComptoir = useCallback(() => navigation.navigate('ProComptoir'), [navigation]);
@@ -90,35 +91,19 @@ export default function ProDashboard({ navigation }) {
 
   return (
     <SafeAreaView style={s.root}>
-      <View style={s.glowGold} pointerEvents="none" />
-      <View style={s.glowWarm} pointerEvents="none" />
-
       {/* Bandeau — flotte en fixe au-dessus du contenu scrollable */}
       <View style={[s.darkHeader, { paddingTop: insets.top }]} onLayout={(e) => setHeaderH(e.nativeEvent.layout.height)}>
         <View style={s.header}>
           <View style={s.headerLeft}>
-            <Text style={s.headerEyebrow} numberOfLines={1}>ESPACE PRO</Text>
-            <Text style={s.headerTitle} numberOfLines={1}>{restaurant?.name || 'Manager'}</Text>
+            <View style={s.hRow}>
+              <Text style={s.headerTitle} numberOfLines={1}>{restaurant?.name || 'Manager'}</Text>
+              <View style={s.proBadge}><Text style={s.proBadgeTxt}>PRO</Text></View>
+            </View>
+            <Text style={s.headerSub} numberOfLines={1}>Bonjour, gérez votre établissement</Text>
           </View>
           <View style={s.onlineBadge}>
             <View style={s.onlineDot} />
             <Text style={s.onlineTxt} numberOfLines={1} maxFontSizeMultiplier={1.3}>En ligne</Text>
-          </View>
-        </View>
-
-        {/* Tuiles stats (Couverts / Taux d'occupation / CA du jour) */}
-        <View style={s.tilesRow}>
-          <View style={s.tile}>
-            <Text style={s.tileVal}>{totalCovers}</Text>
-            <Text style={s.tileLbl}>Couverts ce soir</Text>
-          </View>
-          <View style={s.tile}>
-            <Text style={[s.tileVal, s.tileValGold]}>{occupancyPct != null ? `${occupancyPct}%` : '—'}</Text>
-            <Text style={s.tileLbl}>Taux d'occupation</Text>
-          </View>
-          <View style={s.tile}>
-            <Text style={s.tileVal}>{revenue != null ? `${Math.round(revenue / 1000)}k` : '—'}</Text>
-            <Text style={s.tileLbl}>CA du jour (DA)</Text>
           </View>
         </View>
       </View>
@@ -128,30 +113,51 @@ export default function ProDashboard({ navigation }) {
         contentContainerStyle={{ paddingTop: headerH }}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
       >
+        {/* Statistiques du jour — cartes élevées chevauchant le bandeau, comme Pro Dashboard.dc.html */}
+        <View style={s.statRow}>
+          <View style={s.statCardFloat}>
+            <Text style={s.statCardVal}>{todayResas.length}</Text>
+            <Text style={s.statCardLbl}>Réservations aujourd'hui</Text>
+          </View>
+          <View style={s.statCardFloat}>
+            <Text style={s.statCardVal}>{ordersInProgressCount}</Text>
+            <Text style={s.statCardLbl}>Commandes en cours</Text>
+          </View>
+        </View>
+
         {/* Accès rapide */}
+        <Text style={s.sectionTitle}>Gérer</Text>
         <View style={s.quickGrid}>
-          <TouchableOpacity style={s.quickBtn} onPress={goMenu}>
-            <Text style={s.quickBtnTxt}>Menu</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={s.quickBtn} onPress={goAvis}>
-            <Text style={s.quickBtnTxt}>Avis</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={s.quickBtn} onPress={goPhotos}>
-            <Text style={s.quickBtnTxt}>Photos</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={s.quickBtn} onPress={goPromos}>
-            <Text style={s.quickBtnTxt}>Promos</Text>
-          </TouchableOpacity>
           <TouchableOpacity style={s.quickBtn} onPress={goComptoir}>
+            <Text style={s.quickBtnIco}>📋</Text>
             <Text style={s.quickBtnTxt}>Comptoir</Text>
           </TouchableOpacity>
           <TouchableOpacity style={s.quickBtn} onPress={goOrders}>
+            <Text style={s.quickBtnIco}>🛍️</Text>
             <Text style={s.quickBtnTxt}>Commandes</Text>
           </TouchableOpacity>
+          <TouchableOpacity style={s.quickBtn} onPress={goMenu}>
+            <Text style={s.quickBtnIco}>🍽️</Text>
+            <Text style={s.quickBtnTxt}>Menu</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={s.quickBtn} onPress={goAvis}>
+            <Text style={s.quickBtnIco}>⭐</Text>
+            <Text style={s.quickBtnTxt}>Avis</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={s.quickBtn} onPress={goPromos}>
+            <Text style={s.quickBtnIco}>🏷️</Text>
+            <Text style={s.quickBtnTxt}>Promotions</Text>
+          </TouchableOpacity>
           <TouchableOpacity style={s.quickBtn} onPress={goInfo}>
-            <Text style={s.quickBtnTxt}>Infos</Text>
+            <Text style={s.quickBtnIco}>⚙️</Text>
+            <Text style={s.quickBtnTxt}>Informations</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={s.quickBtn} onPress={goPhotos}>
+            <Text style={s.quickBtnIco}>📸</Text>
+            <Text style={s.quickBtnTxt}>Photos</Text>
           </TouchableOpacity>
           <TouchableOpacity style={s.quickBtn} onPress={goHoraires}>
+            <Text style={s.quickBtnIco}>🕐</Text>
             <Text style={s.quickBtnTxt}>Horaires</Text>
           </TouchableOpacity>
         </View>
@@ -320,30 +326,33 @@ export default function ProDashboard({ navigation }) {
 }
 
 const s = StyleSheet.create({
-  root:      { flex: 1, backgroundColor: colors.warmBg, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 },
-  glowGold:  { position: 'absolute', top: 30, right: -80, width: 280, height: 280, borderRadius: 140, backgroundColor: colors.glowGold },
-  glowWarm:  { position: 'absolute', top: 310, left: -90, width: 240, height: 240, borderRadius: 120, backgroundColor: colors.glowWarm },
+  root:      { flex: 1, backgroundColor: colors.bg, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 },
 
-  darkHeader:     { position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10, backgroundColor: colors.glassBgStrong, borderBottomLeftRadius: radius.xxl, borderBottomRightRadius: radius.xxl, paddingBottom: spacing.lg },
-  header:         { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xl, paddingTop: spacing.lg, paddingBottom: spacing.lg },
+  darkHeader:     { position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10, backgroundColor: colors.noir, paddingBottom: spacing.xxl },
+  header:         { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', paddingHorizontal: spacing.xl, paddingTop: spacing.lg, paddingBottom: spacing.md },
   headerLeft:     { flex: 1 },
-  headerEyebrow:  { fontFamily: typography.bodySemibold, color: colors.gold, fontSize: typography.size.caption - 0.5, letterSpacing: 1.6, textTransform: 'uppercase', marginBottom: spacing.xxs + 4 },
-  headerTitle:    { fontFamily: typography.display, color: colors.text, fontSize: typography.size.heading1, letterSpacing: -0.4 },
+  hRow:           { flexDirection: 'row', alignItems: 'center', gap: spacing.sm + 2 },
+  headerTitle:    { fontFamily: typography.display, color: '#FFFFFF', fontSize: typography.size.subheading + 2 },
+  proBadge:       { backgroundColor: colors.primary, borderRadius: radius.sm + 1, paddingHorizontal: spacing.sm - 1, paddingVertical: 3 },
+  proBadgeTxt:    { fontFamily: typography.bodyBold, color: '#FFFFFF', fontSize: 9.5, letterSpacing: 0.5 },
+  headerSub:      { fontFamily: typography.body, color: 'rgba(255,255,255,0.55)', fontSize: typography.size.caption, marginTop: spacing.xs },
   onlineBadge:    { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, flexShrink: 0, backgroundColor: 'rgba(76,175,130,0.15)', borderRadius: radius.full, paddingHorizontal: spacing.lg, paddingVertical: spacing.xs, borderWidth: 1, borderColor: 'rgba(76,175,130,0.35)' },
   onlineDot:      { width: 6, height: 6, borderRadius: radius.pill, backgroundColor: colors.green },
   onlineTxt:      { fontFamily: typography.body, color: colors.green, fontSize: typography.size.sm },
 
-  /* Tuiles stats dans le bandeau */
-  tilesRow:    { flexDirection: 'row', gap: spacing.sm, paddingHorizontal: spacing.xl, marginTop: spacing.lg + 6 },
-  tile:        { flex: 1, backgroundColor: 'rgba(10,10,10,0.05)', borderRadius: radius.lg, padding: spacing.lg },
-  tileVal:     { fontFamily: typography.display, fontSize: 21, color: colors.text },
-  tileValGold: { color: colors.gold },
-  tileLbl:     { fontFamily: typography.bodyMedium, color: colors.textMuted, fontSize: 10, marginTop: 5 },
+  /* Cartes stats élevées, chevauchent le bas du bandeau — Pro Dashboard.dc.html */
+  statRow:      { flexDirection: 'row', gap: spacing.sm + 2, paddingHorizontal: spacing.xl, marginTop: -spacing.lg },
+  statCardFloat:{ flex: 1, backgroundColor: colors.card, borderRadius: radius.lg + 1, padding: spacing.lg + 2, shadowColor: '#000', shadowOpacity: 0.08, shadowRadius: 16, shadowOffset: { width: 0, height: 6 }, elevation: 3 },
+  statCardVal:  { fontFamily: typography.display, fontSize: 22, color: colors.text },
+  statCardLbl:  { fontFamily: typography.body, color: colors.textDim, fontSize: typography.size.sm, marginTop: 3 },
+
+  sectionTitle: { fontFamily: typography.display, fontSize: typography.size.body + 1.5, color: colors.text, paddingHorizontal: spacing.xxl, marginTop: spacing.xxl - 2, marginBottom: spacing.md },
 
   /* Accès rapide (déplacé hors du bandeau noir) */
-  quickGrid:    { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, paddingHorizontal: spacing.xxl, paddingTop: spacing.xl, paddingBottom: spacing.md },
-  quickBtn:     { width: '23%', alignItems: 'center', paddingVertical: spacing.md, borderRadius: radius.lg, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder },
-  quickBtnTxt:  { fontFamily: typography.bodyBold, color: colors.text, fontSize: typography.size.xs },
+  quickGrid:    { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm + 2, paddingHorizontal: spacing.xxl, paddingBottom: spacing.md },
+  quickBtn:     { width: '48%', alignItems: 'flex-start', padding: spacing.lg, borderRadius: radius.lg, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder },
+  quickBtnIco:  { fontSize: 20 },
+  quickBtnTxt:  { fontFamily: typography.bodyBold, color: colors.text, fontSize: typography.size.body, marginTop: spacing.sm },
 
   /* Sections aperçu (résas / commandes) */
   previewSectionHead:  { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', paddingHorizontal: spacing.xxl, marginBottom: spacing.md },

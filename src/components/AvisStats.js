@@ -25,7 +25,7 @@ export default function AvisStats({ reviews }) {
               <View style={s.barTrack}>
                 <View style={[s.barFill, {
                   width: `${Math.round((d.count / max) * 100)}%`,
-                  backgroundColor: d.star >= 4 ? colors.green : d.star === 3 ? colors.gold : colors.red,
+                  backgroundColor: d.star >= 4 ? colors.green : d.star === 3 ? colors.statusPendingText : colors.red,
                 }]} />
               </View>
               <Text style={s.barCount}>{d.count}</Text>
@@ -55,7 +55,7 @@ const s = StyleSheet.create({
   scoreRow:      { flexDirection: 'row', gap: spacing.xl },
   scoreLeft:     { alignItems: 'center', justifyContent: 'center', gap: spacing.xs, minWidth: 70 },
   scoreNum:      { color: colors.text, fontFamily: typography.display, fontSize: 36, fontWeight: typography.weight.bold, lineHeight: 38 },
-  scoreStar:     { color: colors.gold, fontSize: typography.size.body, letterSpacing: 1 },
+  scoreStar:     { color: colors.star, fontSize: typography.size.body, letterSpacing: 1 },
   scoreCount:    { color: colors.textDim, fontSize: typography.size.xs, textAlign: 'center', marginTop: spacing.xxs },
   barBlock:      { flex: 1, gap: spacing.xs },
   barRow:        { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
@@ -68,5 +68,5 @@ const s = StyleSheet.create({
   responseTrack: { height: 5, backgroundColor: colors.cardBorder, borderRadius: 3, overflow: 'hidden' },
   responseFill:  { height: 5, backgroundColor: colors.green, borderRadius: 3 },
   responseVal:   { color: colors.green, fontSize: typography.size.subheading, fontWeight: typography.weight.medium, minWidth: 36, textAlign: 'right' },
-  responseTip:   { color: colors.gold, fontSize: typography.size.caption },
+  responseTip:   { color: colors.primary, fontSize: typography.size.caption },
 });

@@ -38,8 +38,6 @@ export default function ProAvisScreen({ navigation }) {
 
   return (
     <SafeAreaView style={s.root} edges={['top', 'left', 'right']}>
-      <View style={s.glowGold} pointerEvents="none" />
-      <View style={s.glowWarm} pointerEvents="none" />
       <View style={s.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
           <Text style={s.backBtnTxt}>←</Text>
@@ -119,10 +117,8 @@ export default function ProAvisScreen({ navigation }) {
 const s = StyleSheet.create({
   terminerBar: { paddingHorizontal: spacing.xl, paddingVertical: spacing.md, backgroundColor: colors.card, borderTopWidth: 1, borderTopColor: colors.cardBorder },
   terminerBtn: { alignItems: 'center', paddingVertical: spacing.md },
-  terminerTxt: { color: colors.gold, fontFamily: typography.bodyMedium, fontSize: typography.size.body },
-  root:   { flex: 1, backgroundColor: colors.warmBg },
-  glowGold: { position: 'absolute', top: 30, right: -80, width: 280, height: 280, borderRadius: 140, backgroundColor: colors.glowGold },
-  glowWarm: { position: 'absolute', top: 310, left: -90, width: 240, height: 240, borderRadius: 120, backgroundColor: colors.glowWarm },
+  terminerTxt: { color: colors.primary, fontFamily: typography.bodyMedium, fontSize: typography.size.body },
+  root:   { flex: 1, backgroundColor: colors.bg },
 
   header:     { flexDirection: 'row', alignItems: 'center', gap: spacing.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.cardBorder, backgroundColor: colors.card },
   backBtn:    { padding: spacing.xs },

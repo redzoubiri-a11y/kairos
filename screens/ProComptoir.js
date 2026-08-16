@@ -152,11 +152,11 @@ export default function ProComptoir({ navigation }) {
   const statsMain = (
     <View style={s.statsMain}>
       <View style={[s.statCard, { backgroundColor: colors.tagGreenBg }]}>
-        <Text style={[s.statCardVal, { color: colors.primary }]}>{total}</Text>
+        <Text style={[s.statCardVal, { color: colors.statusConfirmedText }]}>{total}</Text>
         <Text style={s.statCardLbl}>Réservations</Text>
       </View>
-      <View style={[s.statCard, { backgroundColor: colors.goldSoft }]}>
-        <Text style={[s.statCardVal, { color: colors.gold }]}>{pending}</Text>
+      <View style={[s.statCard, { backgroundColor: colors.statusPendingBg }]}>
+        <Text style={[s.statCardVal, { color: colors.statusPendingText }]}>{pending}</Text>
         <Text style={s.statCardLbl}>En attente</Text>
       </View>
       <View style={[s.statCard, { backgroundColor: colors.tagNeutralBg }]}>
@@ -179,8 +179,6 @@ export default function ProComptoir({ navigation }) {
   if (isLandscape) {
     return (
       <View style={[s.root, { paddingTop: insets.top }]}>
-        <View style={s.glowGold} pointerEvents="none" />
-        <View style={s.glowWarm} pointerEvents="none" />
         {header}
         {toolRow}
         {statsMain}
@@ -230,8 +228,6 @@ export default function ProComptoir({ navigation }) {
   // Portrait — FlatList couvre tout l'écran, header+stats dans ListHeaderComponent
   return (
     <View style={s.root}>
-      <View style={s.glowGold} pointerEvents="none" />
-      <View style={s.glowWarm} pointerEvents="none" />
       <FlatList
         data={loading ? [] : visibleReservations}
         keyExtractor={item => String(item.id)}
@@ -262,9 +258,7 @@ export default function ProComptoir({ navigation }) {
 }
 
 const s = StyleSheet.create({
-  root:      { flex: 1, backgroundColor: colors.warmBg, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 },
-  glowGold:  { position: 'absolute', top: 30, right: -80, width: 280, height: 280, borderRadius: 140, backgroundColor: colors.glowGold },
-  glowWarm:  { position: 'absolute', top: 310, left: -90, width: 240, height: 240, borderRadius: 120, backgroundColor: colors.glowWarm },
+  root:      { flex: 1, backgroundColor: colors.bg, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 },
 
   header:      { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xl, paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   headerLeft:  { flexDirection: 'row', alignItems: 'center', gap: spacing.lg, flex: 1 },
@@ -274,7 +268,7 @@ const s = StyleSheet.create({
   restoName:   { color: colors.text, fontFamily: typography.display, fontSize: typography.size.heading1, letterSpacing: -0.2 },
   dateStr:     { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.caption, textTransform: 'capitalize', marginTop: 1 },
   refreshBtn:  { width: 38, height: 38, backgroundColor: colors.card, borderRadius: 19, borderWidth: 1, borderColor: colors.cardBorder, alignItems: 'center', justifyContent: 'center' },
-  refreshTxt:  { color: colors.gold, fontSize: 18 },
+  refreshTxt:  { color: colors.primary, fontSize: 18 },
 
   // Sélecteur de date + "Plan de salle" — valeurs littérales de Comptoir Reservations.dc.html
   toolRow:        { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xl, paddingVertical: spacing.md, gap: spacing.md, backgroundColor: colors.card },

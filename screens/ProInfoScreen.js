@@ -8,8 +8,6 @@ import { colors, typography, spacing, radius } from '../src/theme';
 import MLoader from '../src/components/MLoader';
 import useProInfo, { CUISINE_OPTIONS, OCCASION_OPTIONS } from '../src/hooks/useProInfo';
 
-const PRO_ACCENT = '#c8975a';
-
 function Skeleton() {
   return (
     <View style={{ padding: spacing.xl, gap: spacing.lg }}>
@@ -44,8 +42,6 @@ export default function ProInfoScreen({ navigation, route }) {
 
   return (
     <SafeAreaView style={s.root} edges={['top', 'left', 'right']}>
-      <View style={s.glowGold} pointerEvents="none" />
-      <View style={s.glowWarm} pointerEvents="none" />
       <View style={s.header}>
         <View style={s.headerLeft}>
           {!onSetupComplete && (
@@ -153,6 +149,45 @@ export default function ProInfoScreen({ navigation, route }) {
             </View>
           </View>
 
+          {/* Équipements */}
+          <Text style={s.section}>Équipements</Text>
+          <View style={s.toggleRow}>
+            <Text style={s.toggleLabel}>Terrasse</Text>
+            <Switch
+              value={form.terrasse}
+              onValueChange={set('terrasse')}
+              trackColor={{ false: colors.cardBorder, true: colors.primary }}
+              thumbColor="#FFFFFF"
+            />
+          </View>
+          <View style={s.toggleRow}>
+            <Text style={s.toggleLabel}>Parking</Text>
+            <Switch
+              value={form.parking}
+              onValueChange={set('parking')}
+              trackColor={{ false: colors.cardBorder, true: colors.primary }}
+              thumbColor="#FFFFFF"
+            />
+          </View>
+          <View style={s.toggleRow}>
+            <Text style={s.toggleLabel}>Espace famille</Text>
+            <Switch
+              value={form.espace_famille}
+              onValueChange={set('espace_famille')}
+              trackColor={{ false: colors.cardBorder, true: colors.primary }}
+              thumbColor="#FFFFFF"
+            />
+          </View>
+          <View style={[s.toggleRow, { borderBottomWidth: 0 }]}>
+            <Text style={s.toggleLabel}>Salle fête</Text>
+            <Switch
+              value={form.salle_fete}
+              onValueChange={set('salle_fete')}
+              trackColor={{ false: colors.cardBorder, true: colors.primary }}
+              thumbColor="#FFFFFF"
+            />
+          </View>
+
           {/* Cuisine */}
           <Text style={s.section}>Type de cuisine</Text>
           <View style={s.chips}>
@@ -220,8 +255,8 @@ export default function ProInfoScreen({ navigation, route }) {
             <Switch
               value={form.has_kids_menu}
               onValueChange={set('has_kids_menu')}
-              trackColor={{ false: colors.cardBorder, true: `${PRO_ACCENT}55` }}
-              thumbColor={form.has_kids_menu ? PRO_ACCENT : '#bbb'}
+              trackColor={{ false: colors.cardBorder, true: colors.primary }}
+              thumbColor={form.has_kids_menu ? '#FFFFFF' : '#bbb'}
             />
           </View>
           <View style={[s.toggleRow, { borderBottomWidth: 0 }]}>
@@ -229,8 +264,8 @@ export default function ProInfoScreen({ navigation, route }) {
             <Switch
               value={form.has_kids_chairs}
               onValueChange={set('has_kids_chairs')}
-              trackColor={{ false: colors.cardBorder, true: `${PRO_ACCENT}55` }}
-              thumbColor={form.has_kids_chairs ? PRO_ACCENT : '#bbb'}
+              trackColor={{ false: colors.cardBorder, true: colors.primary }}
+              thumbColor={form.has_kids_chairs ? '#FFFFFF' : '#bbb'}
             />
           </View>
 
@@ -244,8 +279,8 @@ export default function ProInfoScreen({ navigation, route }) {
             <Switch
               value={form.click_collect_enabled}
               onValueChange={set('click_collect_enabled')}
-              trackColor={{ false: colors.cardBorder, true: `${PRO_ACCENT}55` }}
-              thumbColor={form.click_collect_enabled ? PRO_ACCENT : '#bbb'}
+              trackColor={{ false: colors.cardBorder, true: colors.primary }}
+              thumbColor={form.click_collect_enabled ? '#FFFFFF' : '#bbb'}
             />
           </View>
 
@@ -324,9 +359,7 @@ export default function ProInfoScreen({ navigation, route }) {
 }
 
 const s = StyleSheet.create({
-  root:        { flex: 1, backgroundColor: colors.warmBg },
-  glowGold:    { position: 'absolute', top: 30, right: -80, width: 280, height: 280, borderRadius: 140, backgroundColor: colors.glowGold },
-  glowWarm:    { position: 'absolute', top: 310, left: -90, width: 240, height: 240, borderRadius: 120, backgroundColor: colors.glowWarm },
+  root:        { flex: 1, backgroundColor: colors.bg },
   header:      { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.cardBorder, backgroundColor: colors.card },
   headerLeft:  { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },
   backBtn:     { marginRight: spacing.sm, padding: spacing.xs },
@@ -334,7 +367,7 @@ const s = StyleSheet.create({
   title:       { color: colors.text, fontSize: typography.size.heading2, fontFamily: typography.display },
   terminerBar: { paddingHorizontal: spacing.xl, paddingVertical: spacing.md, backgroundColor: colors.card, borderTopWidth: 1, borderTopColor: colors.cardBorder },
   terminerBtn: { alignItems: 'center', paddingVertical: spacing.md },
-  terminerTxt: { color: colors.gold, fontSize: typography.size.body, fontFamily: typography.bodyMedium },
+  terminerTxt: { color: colors.primary, fontSize: typography.size.body, fontFamily: typography.bodyMedium },
   saveBtn:     { backgroundColor: colors.primary, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, opacity: 1 },
   saveBtnActive:{ opacity: 0.75 },
   saveBtnTxt:  { color: '#fff', fontSize: typography.size.caption, fontFamily: typography.bodyBold },
@@ -343,9 +376,9 @@ const s = StyleSheet.create({
   section:     { color: colors.textMuted, fontSize: typography.size.xs, fontFamily: typography.bodySemibold, letterSpacing: 1, textTransform: 'uppercase', marginTop: spacing.xxl, marginBottom: spacing.md },
   label:       { color: colors.text, fontSize: typography.size.caption, fontFamily: typography.bodyMedium, marginBottom: spacing.xs, marginTop: spacing.md },
   labelRow:    { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  aiBtn:       { borderRadius: radius.full, borderWidth: 1, borderColor: PRO_ACCENT, paddingHorizontal: spacing.md, paddingVertical: spacing.xxs },
+  aiBtn:       { borderRadius: radius.full, borderWidth: 1, borderColor: colors.primary, paddingHorizontal: spacing.md, paddingVertical: spacing.xxs },
   aiBtnActive: { opacity: 0.6 },
-  aiBtnTxt:    { color: PRO_ACCENT, fontSize: typography.size.xs, fontFamily: typography.bodySemibold },
+  aiBtnTxt:    { color: colors.primary, fontSize: typography.size.xs, fontFamily: typography.bodySemibold },
   input:       { backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.md, color: colors.text, fontSize: typography.size.body, fontFamily: typography.body },
   inputMulti:  { minHeight: 80, paddingTop: spacing.md },
 
@@ -355,7 +388,7 @@ const s = StyleSheet.create({
   waitSep:     { color: colors.textMuted },
   waitRemove:  { color: colors.red, fontSize: 16, paddingHorizontal: spacing.xs },
   waitAddBtn:  { alignSelf: 'flex-start', marginTop: spacing.xs, marginBottom: spacing.lg },
-  waitAddTxt:  { color: PRO_ACCENT, fontSize: typography.size.caption, fontFamily: typography.bodySemibold },
+  waitAddTxt:  { color: colors.primary, fontSize: typography.size.caption, fontFamily: typography.bodySemibold },
   qrLinkBtn:   { backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, borderRadius: radius.md, paddingVertical: spacing.md, alignItems: 'center', marginTop: spacing.sm },
   qrLinkTxt:   { color: colors.text, fontSize: typography.size.body, fontFamily: typography.bodySemibold },
 

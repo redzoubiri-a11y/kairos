@@ -9,8 +9,6 @@ import { colors, typography, spacing, radius } from '../src/theme';
 import MLoader from '../src/components/MLoader';
 import useSchedule, { DOW_FULL, DOW_ORDER } from '../src/hooks/useSchedule';
 
-const PRO_ACCENT = '#c8975a';
-
 // ── Time option generators ────────────────────────────────────────────────
 function genTimes(fromH, fromM, toH, toM, step = 30) {
   const result = [];
@@ -84,8 +82,8 @@ function DayCard({ day, onSetDay, onPickTime }) {
               dinner_start: null,
               dinner_end:   null,
             })}
-            trackColor={{ false: colors.cardBorder, true: `${PRO_ACCENT}66` }}
-            thumbColor={day.is_open ? PRO_ACCENT : '#bbb'}
+            trackColor={{ false: colors.cardBorder, true: colors.primary }}
+            thumbColor={day.is_open ? '#FFFFFF' : '#bbb'}
           />
         </View>
       </View>
@@ -192,8 +190,6 @@ export default function ProHorairesScreen({ navigation, route }) {
 
   return (
     <SafeAreaView style={s.root} edges={['top', 'left', 'right']}>
-      <View style={s.glowGold} pointerEvents="none" />
-      <View style={s.glowWarm} pointerEvents="none" />
       <View style={s.header}>
         <View style={s.headerLeft}>
           {!onSetupComplete && (
@@ -264,12 +260,10 @@ export default function ProHorairesScreen({ navigation, route }) {
 }
 
 const s = StyleSheet.create({
-  root:           { flex: 1, backgroundColor: colors.warmBg },
-  glowGold:       { position: 'absolute', top: 30, right: -80, width: 280, height: 280, borderRadius: 140, backgroundColor: colors.glowGold },
-  glowWarm:       { position: 'absolute', top: 310, left: -90, width: 240, height: 240, borderRadius: 120, backgroundColor: colors.glowWarm },
+  root:           { flex: 1, backgroundColor: colors.bg },
   terminerBar: { paddingHorizontal: spacing.xl, paddingVertical: spacing.md, backgroundColor: colors.card, borderTopWidth: 1, borderTopColor: colors.cardBorder },
   terminerBtn: { alignItems: 'center', paddingVertical: spacing.md },
-  terminerTxt: { color: colors.gold, fontSize: typography.size.body, fontFamily: typography.bodyMedium },
+  terminerTxt: { color: colors.primary, fontSize: typography.size.body, fontFamily: typography.bodyMedium },
   header:         { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.cardBorder, backgroundColor: colors.card },
   headerLeft:     { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },
   backBtn:        { marginRight: spacing.sm, padding: spacing.xs },

@@ -61,7 +61,11 @@ export default function useAuth({ onAuth, userType, onSwitchType }) {
     if (!email.trim()) { setError("Entrez votre email d'abord."); shake(); return; }
     setResetLoading(true);
     try {
-      await supabase.auth.resetPasswordForEmail(email.trim());
+      // Page web dédiée (l'app n'a pas d'écran pour finaliser un reset) —
+      // cf. web-resa/app/reset-password, doit être dans le allow-list Supabase.
+      await supabase.auth.resetPasswordForEmail(email.trim(), {
+        redirectTo: 'https://web-resa.vercel.app/reset-password',
+      });
       setResetSent(true);
     } finally {
       setResetLoading(false);

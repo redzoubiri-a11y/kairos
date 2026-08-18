@@ -6,6 +6,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { supabase } from '../supabase';
 import { colors, typography, spacing, radius } from '../src/theme';
+import Logo from '../src/components/Logo';
 
 const SW = Dimensions.get('window').width;
 const CARD_W = Math.min((SW - 14 * 2 - 10) / 2, 300);
@@ -113,8 +114,8 @@ export default function ExplorerScreen({ navigation }) {
     <SafeAreaView style={s.root}>
       {/* Header */}
       <View style={s.header}>
-        <View>
-          <Text style={s.logo}>MIDA</Text>
+        <View style={{ gap: 2 }}>
+          <Logo size={26} />
           <Text style={s.logoSub}>Explorer</Text>
         </View>
         {!loading && (
@@ -162,7 +163,6 @@ export default function ExplorerScreen({ navigation }) {
 const s = StyleSheet.create({
   root:    { flex:1, backgroundColor:colors.bg },
   header:  { flexDirection:'row', justifyContent:'space-between', alignItems:'center', paddingHorizontal:spacing.xxl, paddingTop:spacing.xl, paddingBottom:spacing.lg, borderBottomWidth:1, borderBottomColor:colors.cardBorder },
-  logo:    { color:colors.primary, fontFamily: typography.display, fontSize:typography.size.heading2, fontWeight:'700', letterSpacing:1 },
   logoSub: { color:colors.textMuted, fontSize:typography.size.sm },
   countBadge: { flexDirection:'row', alignItems:'center', gap:5, backgroundColor:colors.card, borderRadius:radius.full, paddingHorizontal:spacing.md, paddingVertical:5, borderWidth:1, borderColor:colors.cardBorder },
   countDot:   { width:6, height:6, borderRadius:3, backgroundColor:colors.green },

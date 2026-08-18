@@ -5,6 +5,7 @@ import {
   Animated, Linking,
 } from 'react-native';
 import CGUModal from '../src/components/CGUModal';
+import Logo from '../src/components/Logo';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, typography, spacing, radius } from '../src/theme';
@@ -52,7 +53,7 @@ export default function AuthScreen({ onAuth, userType, onSwitchType, onGuest }) 
           )}
 
           <View style={s.hero}>
-            <Text style={s.wordmark}>MIDA</Text>
+            <Logo size={32} />
             <Text style={s.heroTitle}>Bienvenue.{'\n'}Réservons une table.</Text>
           </View>
 
@@ -203,7 +204,6 @@ const s = StyleSheet.create({
   backBtn: { width: 34, height: 34, borderRadius: 17, backgroundColor: colors.tagNeutralBg, alignItems: 'center', justifyContent: 'center', marginTop: spacing.md },
 
   hero:          { alignItems: 'flex-start', paddingTop: spacing.xl, paddingBottom: spacing.xxl },
-  wordmark:      { fontFamily: typography.display, fontSize: 22, color: colors.primary, letterSpacing: -0.44 },
   heroTitle:     { fontFamily: typography.display, fontSize: 25, color: colors.text, letterSpacing: -0.5, lineHeight: 31.25, marginTop: spacing.xxl - 2 },
 
   tabRow:   { flexDirection: 'row', backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, padding: 4, marginBottom: spacing.xl },

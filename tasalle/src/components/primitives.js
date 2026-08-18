@@ -33,7 +33,7 @@ export function MBadge({ label, tone = 'neutral', icon, size = 'md' }) {
       }}
     >
       {icon ? <Ionicons name={icon} size={small ? 10 : 12} color={t.fg} /> : null}
-      <Text style={{ color: t.fg, fontSize: small ? 10 : 12, fontWeight: '500' }} numberOfLines={1}>
+      <Text style={{ color: t.fg, fontSize: small ? 10 : 12, fontWeight: '600', fontFamily: 'Archivo_600SemiBold' }} numberOfLines={1}>
         {label}
       </Text>
     </View>
@@ -64,7 +64,7 @@ export function MChip({ label, active, onPress, icon }) {
       })}
     >
       {icon ? <Ionicons name={icon} size={13} color={active ? colors.onPrimary : colors.warmGray} /> : null}
-      <Text style={{ fontSize: 13, fontWeight: '500', color: active ? colors.onPrimary : colors.dark }}>
+      <Text style={{ fontSize: 13, fontWeight: '600', fontFamily: 'Archivo_600SemiBold', color: active ? colors.onPrimary : colors.dark }}>
         {label}
       </Text>
     </Pressable>

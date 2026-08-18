@@ -35,7 +35,7 @@ export default function ReviewCard({ review }) {
             justifyContent: 'center',
           }}
         >
-          <Text style={{ color: colors.primaryInk, fontWeight: '500', fontSize: 15 }}>{initial}</Text>
+          <Text style={{ color: colors.primaryInk, fontWeight: '600', fontFamily: 'Archivo_600SemiBold', fontSize: 15 }}>{initial}</Text>
         </View>
 
         <View style={{ flex: 1, gap: 3 }}>

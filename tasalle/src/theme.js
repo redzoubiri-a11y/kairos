@@ -128,16 +128,22 @@ export const darkColors = {
   // les deux thèmes, comme toute marque.
 };
 
-// §3.2 — Typographie (police système uniquement)
+// §3.2 — Typographie
+//
+// Archivo (piste Modernist), chargée par ThemeContext.js — voir la note à cet
+// endroit sur pourquoi App.js n'a pas à changer. Trois paliers seulement,
+// comme dans la source : 800 (ExtraBold) pour tout ce qui a valeur de titre,
+// 600 (SemiBold) pour les libellés qui doivent se détacher sans être un
+// titre, 400 (Regular) pour le corps de texte.
 export const typography = {
-  hero: { fontSize: 42, fontWeight: '500', lineHeight: 46 },
-  h1: { fontSize: 32, fontWeight: '500', lineHeight: 37 },
-  h2: { fontSize: 24, fontWeight: '500', lineHeight: 29 },
-  h3: { fontSize: 20, fontWeight: '500', lineHeight: 26 },
-  title: { fontSize: 17, fontWeight: '500', lineHeight: 24 },
-  body: { fontSize: 16, fontWeight: '400', lineHeight: 24 },
-  secondary: { fontSize: 14, fontWeight: '400', lineHeight: 21 },
-  caption: { fontSize: 12, fontWeight: '500', lineHeight: 17 },
+  hero: { fontSize: 42, fontWeight: '800', fontFamily: 'Archivo_800ExtraBold', lineHeight: 46 },
+  h1: { fontSize: 32, fontWeight: '800', fontFamily: 'Archivo_800ExtraBold', lineHeight: 37 },
+  h2: { fontSize: 24, fontWeight: '800', fontFamily: 'Archivo_800ExtraBold', lineHeight: 29 },
+  h3: { fontSize: 20, fontWeight: '800', fontFamily: 'Archivo_800ExtraBold', lineHeight: 26 },
+  title: { fontSize: 17, fontWeight: '600', fontFamily: 'Archivo_600SemiBold', lineHeight: 24 },
+  body: { fontSize: 16, fontWeight: '400', fontFamily: 'Archivo_400Regular', lineHeight: 24 },
+  secondary: { fontSize: 14, fontWeight: '400', fontFamily: 'Archivo_400Regular', lineHeight: 21 },
+  caption: { fontSize: 12, fontWeight: '600', fontFamily: 'Archivo_600SemiBold', lineHeight: 17 },
 };
 
 // §3.4 — Spacing

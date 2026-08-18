@@ -141,7 +141,7 @@ export default function HomeScreen({ navigation }) {
                 justifyContent: 'center',
               }}
             >
-              <Text style={{ color: '#FFFFFF', fontSize: 10, fontWeight: '600' }}>{unread}</Text>
+              <Text style={{ color: '#FFFFFF', fontSize: 10, fontWeight: '600', fontFamily: 'Archivo_600SemiBold' }}>{unread}</Text>
             </View>
           ) : null}
         </Pressable>

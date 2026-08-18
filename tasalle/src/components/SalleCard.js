@@ -27,7 +27,7 @@ function RatingOverlay({ rating }) {
       }}
     >
       <Ionicons name="star" size={11} color={colors.goldMark} />
-      <Text style={{ fontSize: 11, fontWeight: '500', color: '#1A1A1A' }}>{Number(rating).toFixed(1)}</Text>
+      <Text style={{ fontSize: 11, fontWeight: '600', fontFamily: 'Archivo_600SemiBold', color: '#1A1A1A' }}>{Number(rating).toFixed(1)}</Text>
     </View>
   );
 }
@@ -94,7 +94,7 @@ export default function SalleCard({ salle, onPress, onToggleFav, isFav, width })
           </Text>
 
           {salle.price_from != null ? (
-            <Text style={{ fontSize: 15, fontWeight: '500', color: colors.primaryInk, textAlign: 'left' }}>
+            <Text style={{ fontSize: 15, fontWeight: '600', fontFamily: 'Archivo_600SemiBold', color: colors.primaryInk, textAlign: 'left' }}>
               {t('common.from')} {formatDA(salle.price_from, t('common.currency'))}
             </Text>
           ) : null}

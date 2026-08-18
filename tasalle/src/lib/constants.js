@@ -90,6 +90,29 @@ export const STORAGE_PREFIX = 'tasale.';
 export const PROMO_KINDS = { PERCENT: 'percent', AMOUNT: 'amount' };
 export const PROMO_CODE_MAX_LENGTH = 24;
 
+// §13 — traiteurs et halouadjis (pâtissiers traditionnels), deux verticales
+// partenaires en plus des salles.
+export const PARTNER_TYPES = ['salle', 'traiteur', 'halouadji'];
+
+export const SPECIALITES_TRAITEUR = [
+  'cuisine_algerienne',
+  'cuisine_internationale',
+  'buffet',
+  'service_a_table',
+  'mechoui',
+  'livraison',
+];
+
+export const SPECIALITES_HALOUADJI = [
+  'patisserie_traditionnelle',
+  'patisserie_moderne',
+  'gateau_mariage',
+  'plateau_individuel',
+  'piece_montee',
+];
+
+export const DEVIS_STATUS = { PENDING: 'pending', ACCEPTED: 'accepted', DECLINED: 'declined' };
+
 // §12 Phase 4 — parrainage entre propriétaires
 export const REFERRAL_CODE_LENGTH = 6;
 /** Jours d'abonnement offerts, au parrain comme au filleul. */

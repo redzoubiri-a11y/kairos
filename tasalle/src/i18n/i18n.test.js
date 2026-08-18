@@ -1,7 +1,14 @@
 import fs from 'fs';
 import path from 'path';
 import fr from './fr';
-import { EVENT_TYPES, RESERVATION_STATUS, AMENITIES } from '../lib/constants';
+import {
+  EVENT_TYPES,
+  RESERVATION_STATUS,
+  AMENITIES,
+  PARTNER_TYPES,
+  SPECIALITES_TRAITEUR,
+  SPECIALITES_HALOUADJI,
+} from '../lib/constants';
 
 /**
  * `t()` renvoie la clé brute quand elle est absente du dictionnaire : le texte
@@ -109,6 +116,8 @@ describe('familles construites dynamiquement', () => {
     'events.': EVENT_TYPES,
     'status.': Object.values(RESERVATION_STATUS),
     'amenities.': AMENITIES,
+    'partnerTypes.': PARTNER_TYPES,
+    'specialites.': [...SPECIALITES_TRAITEUR, ...SPECIALITES_HALOUADJI],
   };
 
   Object.entries(familles).forEach(([prefixe, valeurs]) => {

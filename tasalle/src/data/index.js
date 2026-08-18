@@ -96,3 +96,19 @@ export const adminListPendingSalles = impl.adminListPendingSalles;
 export const adminReviewSalle = impl.adminReviewSalle;
 export const adminListFlaggedReviews = impl.adminListFlaggedReviews;
 export const adminResolveReview = impl.adminResolveReview;
+
+// Traiteurs et halouadjis (§13)
+export const registerTraiteur = impl.registerTraiteur;
+export const registerHalouadji = impl.registerHalouadji;
+export const listTraiteurs = impl.listTraiteurs;
+export const listHalouadjis = impl.listHalouadjis;
+export const getTraiteur = impl.getTraiteur;
+export const getHalouadji = impl.getHalouadji;
+export const proListPartners = impl.proListPartners;
+export const proUpdatePartner = impl.proUpdatePartner;
+export const createDevisRequest = impl.createDevisRequest;
+export const listMyDevisRequests = impl.listMyDevisRequests;
+export const proListDevisRequests = impl.proListDevisRequests;
+export const respondDevisRequest = impl.respondDevisRequest;
+export const adminListPendingPartners = impl.adminListPendingPartners;
+export const adminReviewPartner = impl.adminReviewPartner;

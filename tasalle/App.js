@@ -35,6 +35,8 @@ import MyReservationsScreen from './src/screens/client/MyReservationsScreen';
 import ReservationDetailScreen from './src/screens/client/ReservationDetailScreen';
 import FavoritesScreen from './src/screens/client/FavoritesScreen';
 import ReviewFormScreen from './src/screens/client/ReviewFormScreen';
+import PartnerScreen from './src/screens/client/PartnerScreen';
+import DevisRequestScreen from './src/screens/client/DevisRequestScreen';
 
 // Pro
 import ProDashboardScreen from './src/screens/pro/ProDashboardScreen';
@@ -163,6 +165,8 @@ function sharedScreens() {
       <Stack.Screen name="Booking" component={BookingScreen} />
       <Stack.Screen name="ReservationDetail" component={ReservationDetailScreen} />
       <Stack.Screen name="ReviewForm" component={ReviewFormScreen} />
+      <Stack.Screen name="Partner" component={PartnerScreen} />
+      <Stack.Screen name="DevisRequest" component={DevisRequestScreen} />
       <Stack.Screen name="Notifications" component={NotificationsScreen} />
       <Stack.Screen name="Conversations" component={ConversationsScreen} />
       <Stack.Screen name="Chat" component={ChatScreen} />

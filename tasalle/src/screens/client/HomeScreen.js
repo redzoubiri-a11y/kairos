@@ -5,13 +5,55 @@ import { useFocusEffect } from '@react-navigation/native';
 import { Screen, Body } from '../../components/Screen';
 import TasalleLogo from '../../components/TasalleLogo';
 import SalleCard from '../../components/SalleCard';
+import PartnerCard from '../../components/PartnerCard';
 import { SectionTitle, Loader, ErrorState, MCard } from '../../components/primitives';
 import { useTheme } from '../../context/ThemeContext';
 import { useI18n } from '../../i18n';
 import { useAuth } from '../../context/AuthContext';
 import { useFavorites } from '../../context/FavoritesContext';
-import { EVENT_TYPES, EVENT_EMOJI } from '../../lib/constants';
+import { EVENT_TYPES, EVENT_EMOJI, PARTNER_TYPES } from '../../lib/constants';
 import * as api from '../../data';
+
+/**
+ * Sélecteur de catégorie (§13) — Salles / Traiteurs / Halouadjis, trois
+ * verticales indépendantes. `Recherche` reste salle-only pour l'instant
+ * (voir le plan) : seule cette page bascule déjà entre les trois.
+ */
+function PartnerTypeTabs({ active, onChange }) {
+  const { colors, typography, spacing, radii } = useTheme();
+  const { t } = useI18n();
+
+  return (
+    <View style={{ flexDirection: 'row', gap: spacing.xs }}>
+      {PARTNER_TYPES.map((type) => {
+        const isActive = type === active;
+        return (
+          <Pressable
+            key={type}
+            onPress={() => onChange(type)}
+            accessibilityRole="button"
+            accessibilityState={{ selected: isActive }}
+            style={{
+              flex: 1,
+              paddingVertical: 8,
+              borderRadius: radii.sm,
+              alignItems: 'center',
+              backgroundColor: isActive ? colors.primary : colors.surface,
+              borderWidth: 1,
+              borderColor: isActive ? colors.primary : colors.border,
+            }}
+          >
+            <Text
+              style={[typography.secondary, { fontWeight: '500', color: isActive ? colors.onPrimary : colors.dark }]}
+            >
+              {t(`partnerTypes.${type}`)}
+            </Text>
+          </Pressable>
+        );
+      })}
+    </View>
+  );
+}
 
 function SearchBar({ onPress }) {
   const { colors, typography, spacing, radii } = useTheme();
@@ -69,6 +111,13 @@ function CategoryTile({ type, onPress, width }) {
   );
 }
 
+const LIST_BY_TYPE = { salle: api.listSalles, traiteur: api.listTraiteurs, halouadji: api.listHalouadjis };
+const RECOMMENDED_TITLE_KEY = {
+  salle: 'home.recommended',
+  traiteur: 'home.recommendedTraiteur',
+  halouadji: 'home.recommendedHalouadji',
+};
+
 export default function HomeScreen({ navigation }) {
   const { colors, typography, spacing } = useTheme();
   const { t } = useI18n();
@@ -76,7 +125,8 @@ export default function HomeScreen({ navigation }) {
   const { isFav, toggle } = useFavorites();
   const { width } = useWindowDimensions();
 
-  const [salles, setSalles] = useState([]);
+  const [partnerType, setPartnerType] = useState('salle');
+  const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(null);
@@ -85,8 +135,8 @@ export default function HomeScreen({ navigation }) {
   const load = useCallback(async () => {
     try {
       setError(null);
-      const [list, count] = await Promise.all([api.listSalles({}), api.unreadCount()]);
-      setSalles(list.slice(0, 6));
+      const [list, count] = await Promise.all([LIST_BY_TYPE[partnerType]({}), api.unreadCount()]);
+      setItems(list.slice(0, 6));
       setUnread(count);
     } catch (e) {
       setError(e.message);
@@ -94,10 +144,11 @@ export default function HomeScreen({ navigation }) {
       setLoading(false);
       setRefreshing(false);
     }
-  }, []);
+  }, [partnerType]);
 
   useFocusEffect(
     useCallback(() => {
+      setLoading(true);
       load();
     }, [load])
   );
@@ -158,34 +209,38 @@ export default function HomeScreen({ navigation }) {
 
         <SearchBar onPress={() => navigation.navigate('Recherche')} />
 
-        <View>
-          <SectionTitle title={t('home.categories')} />
-          <View style={{ flexDirection: 'row', gap: spacing.sm }}>
-            {EVENT_TYPES.filter((x) => x !== 'autre').map((type) => (
-              <CategoryTile
-                key={type}
-                type={type}
-                width={catWidth}
-                onPress={() => navigation.navigate('Recherche', { eventType: type })}
-              />
-            ))}
+        <PartnerTypeTabs active={partnerType} onChange={setPartnerType} />
+
+        {partnerType === 'salle' ? (
+          <View>
+            <SectionTitle title={t('home.categories')} />
+            <View style={{ flexDirection: 'row', gap: spacing.sm }}>
+              {EVENT_TYPES.filter((x) => x !== 'autre').map((type) => (
+                <CategoryTile
+                  key={type}
+                  type={type}
+                  width={catWidth}
+                  onPress={() => navigation.navigate('Recherche', { eventType: type })}
+                />
+              ))}
+            </View>
           </View>
-        </View>
+        ) : null}
 
         <View>
           <SectionTitle
-            title={t('home.recommended')}
-            action={t('common.seeAll')}
-            onAction={() => navigation.navigate('Recherche')}
+            title={t(RECOMMENDED_TITLE_KEY[partnerType])}
+            action={partnerType === 'salle' ? t('common.seeAll') : undefined}
+            onAction={partnerType === 'salle' ? () => navigation.navigate('Recherche') : undefined}
           />
 
           {loading ? (
             <Loader />
           ) : error ? (
             <ErrorState message={error} onRetry={load} />
-          ) : (
+          ) : partnerType === 'salle' ? (
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md }}>
-              {salles.map((salle) => (
+              {items.map((salle) => (
                 <SalleCard
                   key={salle.id}
                   salle={salle}
@@ -193,6 +248,17 @@ export default function HomeScreen({ navigation }) {
                   isFav={isFav(salle.id)}
                   onToggleFav={() => toggle(salle.id)}
                   onPress={() => navigation.navigate('Salle', { id: salle.id })}
+                />
+              ))}
+            </View>
+          ) : (
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md }}>
+              {items.map((partner) => (
+                <PartnerCard
+                  key={partner.id}
+                  partner={partner}
+                  width={cardWidth}
+                  onPress={() => navigation.navigate('Partner', { type: partnerType, id: partner.id })}
                 />
               ))}
             </View>

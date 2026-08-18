@@ -36,7 +36,7 @@
       ],
       "config": {
         "googleMaps": {
-          "apiKey": "REPLACE_WITH_ANDROID_GOOGLE_MAPS_API_KEY"
+          "apiKey": "AIzaSyDItXI-VUjF5ONSzHuM8GVNJRPbDQUlzto"
         }
       },
       "useNextNotificationsApi": true

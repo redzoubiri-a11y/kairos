@@ -48,8 +48,7 @@
         {
           "photosPermission": "Tasalle accède à vos photos pour illustrer votre salle et vos avis."
         }
-      ],
-      "expo-font"
+      ]
     ],
     "extra": {
       "supabaseUrl": null,

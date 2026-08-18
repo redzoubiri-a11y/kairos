@@ -73,7 +73,7 @@ export default function MButton({
       ) : (
         <>
           {icon ? <Ionicons name={icon} size={s.icon} color={v.fg} /> : null}
-          <Text style={{ color: v.fg, fontSize: s.font, fontWeight: '600', fontFamily: 'Archivo_600SemiBold' }} numberOfLines={1}>
+          <Text style={{ color: v.fg, fontSize: s.font, fontWeight: '500' }} numberOfLines={1}>
             {label}
           </Text>
           {iconRight ? <Ionicons name={iconRight} size={s.icon} color={v.fg} /> : null}

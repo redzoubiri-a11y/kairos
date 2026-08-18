@@ -1,7 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState, useCallback } from 'react';
 import { useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useFonts, Archivo_400Regular, Archivo_600SemiBold, Archivo_800ExtraBold } from '@expo-google-fonts/archivo';
 import { lightColors, darkColors, typography, spacing, radii, shadows, sizes } from '../theme';
 import { STORAGE_PREFIX } from '../lib/constants';
 
@@ -17,10 +16,6 @@ export function ThemeProvider({ children }) {
   const systemScheme = useColorScheme();
   const [mode, setMode] = useState('system');
   const [ready, setReady] = useState(false);
-  // Archivo (piste Modernist) : chargée ici plutôt qu'à la racine d'App.js,
-  // qu'on ne modifie jamais (§ règles absolues). Tant qu'elle n'est pas prête,
-  // le fournisseur ne rend rien — même garde que pour `ready` ci-dessous.
-  const [fontsReady] = useFonts({ Archivo_400Regular, Archivo_600SemiBold, Archivo_800ExtraBold });
 
   useEffect(() => {
     AsyncStorage.getItem(STORAGE_KEY)
@@ -50,7 +45,7 @@ export function ThemeProvider({ children }) {
     };
   }, [mode, systemScheme, setThemeMode]);
 
-  if (!ready || !fontsReady) return null;
+  if (!ready) return null;
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }

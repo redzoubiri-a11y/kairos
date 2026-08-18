@@ -1,0 +1,24 @@
+{
+  "_lisezmoi": [
+    "Photos des salles de démonstration : identifiant de salle → liste d'URL.",
+    "Une salle absente de ce fichier s'affiche avec son dégradé de repli.",
+    "",
+    "Sources autorisées pour un usage commercial :",
+    "  • Pexels   — https://www.pexels.com/license/   (libre, commercial, sans attribution)",
+    "  • Unsplash — https://unsplash.com/license      (idem)",
+    "  • Les photos que les propriétaires envoient eux-mêmes depuis l'app",
+    "",
+    "À NE PAS UTILISER : Instagram, Facebook, Google Images, sites de salles.",
+    "Ces images appartiennent à leurs auteurs et leur reprise est une contrefaçon.",
+    "",
+    "Le champ 'credit' n'est pas affiché ; il documente la provenance.",
+    "Ratio conseillé : 4:3 (Annexe A). Largeur 1200 px suffisante.",
+    "",
+    "Exemple :",
+    "  \"salle-001\": {",
+    "    \"credit\": \"Pexels — Prénom Nom\",",
+    "    \"urls\": [\"https://images.pexels.com/photos/XXXXX/pexels-photo-XXXXX.jpeg?w=1200\"]",
+    "  }"
+  ],
+  "salles": {}
+}

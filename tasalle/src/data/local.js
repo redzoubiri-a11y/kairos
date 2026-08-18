@@ -23,6 +23,7 @@ import {
   REVIEW_MODERATION_HOURS,
   TRIAL_DAYS,
   SUBSCRIPTION_PRICE,
+  PARTNER_SUBSCRIPTION_PRICES,
   SMS_MAX_PER_DAY,
   ROLES,
   STORAGE_PREFIX,
@@ -689,7 +690,7 @@ function registerPartner(type, payload) {
       trial_ends_at: addDays(todayISO(), TRIAL_DAYS),
       current_period_start: null,
       current_period_end: null,
-      amount: SUBSCRIPTION_PRICE,
+      amount: PARTNER_SUBSCRIPTION_PRICES[type],
       payment_method: null,
       payment_details: null,
       created_at: new Date().toISOString(),
@@ -1533,7 +1534,7 @@ export async function listSmsLog() {
 
 export async function getSubscription() {
   await load();
-  // Un abonnement par propriétaire : 500 DA donnent accès à toutes ses salles.
+  // Un abonnement par propriétaire : 5200 DA donnent accès à toutes ses salles.
   const user = requireUser();
   const sub = db.subscriptions.find((s) => s.pro_id === user.id);
   if (!sub) return null;
@@ -1861,8 +1862,13 @@ export async function adminGetOverview() {
     subscriptions: {
       trial: abonnements.filter((s) => s.status === SUBSCRIPTION_STATUS.TRIAL).length,
       active: payants.length,
-      // Revenu récurrent mensuel : seuls les abonnements payants comptent
-      mrr: payants.length * SUBSCRIPTION_PRICE,
+      // Revenu récurrent mensuel : seuls les abonnements payants comptent.
+      // Somme du montant réel de chaque abonnement (§13 : trois tarifs
+      // possibles selon le type — SUBSCRIPTION_PRICE ou
+      // PARTNER_SUBSCRIPTION_PRICES[type] — stocké sur chaque ligne) —
+      // jamais `count * un seul tarif`, faux dès que plusieurs tarifs
+      // coexistent.
+      mrr: payants.reduce((total, s) => total + (Number(s.amount) || 0), 0),
     },
   };
 }

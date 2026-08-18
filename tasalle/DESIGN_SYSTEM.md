@@ -20,8 +20,10 @@ un outil de génération visuelle.
 
 **Positionnement.** Application mobile et back-office de réservation de
 salles des fêtes (mariages, fiançailles, anniversaires, conférences) pour le
-marché algérien. Gratuite pour les familles ; 500 DA/mois par **propriétaire**
-(et non par salle) après 90 jours d'essai.
+marché algérien. Gratuite pour les familles ; 5200 DA/mois par
+**propriétaire de salle** (et non par salle) après 90 jours d'essai — 4200
+DA/mois pour un traiteur, 2100 DA/mois pour un halouadji (§13). Mise en
+avant (`is_premium`) disponible pour les trois types à 8000 DA/mois.
 
 **Ton.** Sobre et chaleureux plutôt qu'ostentatoire. La marque évoque la
 cérémonie et la fête sans tomber dans le doré criard : un noir profond, un or

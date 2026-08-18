@@ -25,6 +25,7 @@ import PhoneScreen from './src/screens/auth/PhoneScreen';
 import OtpScreen from './src/screens/auth/OtpScreen';
 import RoleScreen from './src/screens/auth/RoleScreen';
 import ProOnboardingScreen from './src/screens/auth/ProOnboardingScreen';
+import PartnerOnboardingScreen from './src/screens/auth/PartnerOnboardingScreen';
 
 // Client
 import HomeScreen from './src/screens/client/HomeScreen';
@@ -49,6 +50,7 @@ import ProReviewsScreen from './src/screens/pro/ProReviewsScreen';
 import ProPromoScreen from './src/screens/pro/ProPromoScreen';
 import ProReferralScreen from './src/screens/pro/ProReferralScreen';
 import ProMoreScreen from './src/screens/pro/ProMoreScreen';
+import ProPartnerScreen from './src/screens/pro/ProPartnerScreen';
 
 // Admin
 import AdminDashboardScreen from './src/screens/admin/AdminDashboardScreen';
@@ -175,10 +177,14 @@ function sharedScreens() {
 }
 
 function RootNavigator() {
-  const { user, loading, needsProfile } = useAuth();
+  const { user, loading, needsProfile, businessType, businessTypeLoading } = useAuth();
   const { colors } = useTheme();
 
-  if (loading) {
+  // Un pro fraîchement connecté doit attendre de savoir s'il possède une
+  // salle ou une fiche traiteur/halouadji avant de choisir entre ProTabs
+  // (spécifique salle) et ProPartner : router trop tôt renverrait vers le
+  // mauvais espace le temps d'un aller-retour réseau.
+  if (loading || (user?.role === ROLES.PRO && (businessTypeLoading || businessType === null))) {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.cream }}>
         <ActivityIndicator color={colors.primaryInk} />
@@ -198,11 +204,17 @@ function RootNavigator() {
         <>
           <Stack.Screen name="Role" component={RoleScreen} />
           <Stack.Screen name="ProOnboarding" component={ProOnboardingScreen} />
+          <Stack.Screen name="PartnerOnboarding" component={PartnerOnboardingScreen} />
         </>
       ) : user.role === ROLES.ADMIN ? (
         <>
           <Stack.Screen name="AdminTabs" component={AdminTabs} />
           <Stack.Screen name="Salle" component={SalleScreen} />
+          <Stack.Screen name="Notifications" component={NotificationsScreen} />
+        </>
+      ) : user.role === ROLES.PRO && businessType !== 'salle' ? (
+        <>
+          <Stack.Screen name="ProPartner" component={ProPartnerScreen} />
           <Stack.Screen name="Notifications" component={NotificationsScreen} />
         </>
       ) : user.role === ROLES.PRO ? (
@@ -220,6 +232,7 @@ function RootNavigator() {
         <>
           <Stack.Screen name="ClientTabs" component={ClientTabs} />
           <Stack.Screen name="ProOnboarding" component={ProOnboardingScreen} />
+          <Stack.Screen name="PartnerOnboarding" component={PartnerOnboardingScreen} />
           {sharedScreens()}
         </>
       )}

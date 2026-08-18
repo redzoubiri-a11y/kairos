@@ -11,6 +11,8 @@ import {
   REVIEW_STATUS,
   SUBSCRIPTION_STATUS,
   TRIAL_DAYS,
+  SUBSCRIPTION_PRICE,
+  PARTNER_SUBSCRIPTION_PRICES,
   ROLES,
 } from '../lib/constants';
 
@@ -161,6 +163,9 @@ export async function registerSalle(payload) {
         pro_id: id,
         status: SUBSCRIPTION_STATUS.TRIAL,
         trial_ends_at: addDays(todayISO(), TRIAL_DAYS),
+        // Posé explicitement : le défaut de la colonne (500, historique)
+        // ne reflète plus le vrai tarif depuis §13 (deux tarifs coexistent).
+        amount: SUBSCRIPTION_PRICE,
       })
     );
   }
@@ -483,7 +488,12 @@ async function registerPartner(type, payload) {
     unwrap(
       await supabase
         .from('subscriptions')
-        .insert({ pro_id: id, status: SUBSCRIPTION_STATUS.TRIAL, trial_ends_at: addDays(todayISO(), TRIAL_DAYS) })
+        .insert({
+          pro_id: id,
+          status: SUBSCRIPTION_STATUS.TRIAL,
+          trial_ends_at: addDays(todayISO(), TRIAL_DAYS),
+          amount: PARTNER_SUBSCRIPTION_PRICES[type],
+        })
     );
   }
 

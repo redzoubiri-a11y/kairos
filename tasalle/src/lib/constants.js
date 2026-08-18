@@ -56,7 +56,16 @@ export const CITIES = [
 
 // §10.3 — Abonnement
 export const TRIAL_DAYS = 90;
-export const SUBSCRIPTION_PRICE = 500;
+export const SUBSCRIPTION_PRICE = 5200;
+// §13 — chaque type de partenaire a son propre tarif d'abonnement, sur le
+// même abonnement (`subscriptions.amount` posé explicitement à
+// l'inscription, jamais laissé à une valeur par défaut unique côté base —
+// voir registerPartner dans local.js/remote.js).
+export const PARTNER_SUBSCRIPTION_PRICES = { traiteur: 4200, halouadji: 2100 };
+// Mise en avant (`is_premium`, tri prioritaire dans les listes) — même
+// tarif pour les trois types, en plus de l'abonnement de base. Constante
+// posée pour l'instant, aucun parcours d'achat associé.
+export const PREMIUM_PRICE = 8000;
 
 // §10.1 — Réservations
 export const PRO_RESPONSE_HOURS = 48;

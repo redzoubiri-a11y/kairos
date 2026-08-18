@@ -739,7 +739,7 @@ describe('multi-salles (§12 Phase 4)', () => {
     // Un seul abonnement, bien qu'il gère deux salles
     expect(sub.pro_id).toBe('user-pro-001');
     expect(sub.salle_id).toBeNull();
-    expect(sub.amount).toBe(500);
+    expect(sub.amount).toBe(5200);
   });
 
   it('n’ouvre pas un second essai en ajoutant une salle', async () => {
@@ -1084,8 +1084,11 @@ describe('traiteurs et halouadjis (§13)', () => {
     expect((await api.listTraiteurs({ city: 'Sétif' })).some((t) => t.id === partner.id)).toBe(false);
 
     // §10.3 — même règle d'abonnement qu'une salle : un essai est ouvert.
+    // §13 — mais pas le même tarif : 4200 DA pour un traiteur, ni les
+    // 5200 DA d'une salle, ni les 2100 DA d'un halouadji.
     const sub = await api.getSubscription();
     expect(sub.status).toBe('trial');
+    expect(sub.amount).toBe(4200);
   });
 
   it('rejette une demande de devis sans destinataire ou avec les deux', async () => {

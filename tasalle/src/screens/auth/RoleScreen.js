@@ -64,7 +64,10 @@ export default function RoleScreen({ navigation }) {
   const { t } = useI18n();
   const { user, updateProfile } = useAuth();
 
-  const [role, setRole] = useState(user?.role || ROLES.CLIENT);
+  // §13 — 'salle' | 'traiteur' | 'halouadji' partagent le même geste (le
+  // rôle DB reste 'client' tant que la fiche n'est pas créée), seul l'écran
+  // d'inscription qui suit diffère.
+  const [role, setRole] = useState(user?.role === ROLES.PRO ? 'salle' : ROLES.CLIENT);
   const [name, setName] = useState(user?.full_name || '');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -76,12 +79,13 @@ export default function RoleScreen({ navigation }) {
     }
     setLoading(true);
     try {
-      if (role === ROLES.PRO) {
-        // Le rôle pro n'est attribué qu'une fois la salle enregistrée.
-        await updateProfile({ full_name: name.trim() });
-        navigation.navigate('ProOnboarding');
-      } else {
+      if (role === ROLES.CLIENT) {
         await updateProfile({ full_name: name.trim(), role: ROLES.CLIENT });
+      } else {
+        // Le rôle pro n'est attribué qu'une fois la fiche enregistrée.
+        await updateProfile({ full_name: name.trim() });
+        if (role === 'salle') navigation.navigate('ProOnboarding');
+        else navigation.navigate('PartnerOnboarding', { type: role });
       }
     } catch (e) {
       setError(e.message || t('common.error'));
@@ -124,8 +128,24 @@ export default function RoleScreen({ navigation }) {
               title={t('auth.rolePro')}
               body={t('auth.roleProDesc')}
               badge="90 j"
-              selected={role === ROLES.PRO}
-              onPress={() => setRole(ROLES.PRO)}
+              selected={role === 'salle'}
+              onPress={() => setRole('salle')}
+            />
+            <RoleOption
+              icon="restaurant-outline"
+              title={t('auth.roleTraiteur')}
+              body={t('auth.roleTraiteurDesc')}
+              badge="90 j"
+              selected={role === 'traiteur'}
+              onPress={() => setRole('traiteur')}
+            />
+            <RoleOption
+              icon="gift-outline"
+              title={t('auth.roleHalouadji')}
+              body={t('auth.roleHalouadjiDesc')}
+              badge="90 j"
+              selected={role === 'halouadji'}
+              onPress={() => setRole('halouadji')}
             />
           </View>
 

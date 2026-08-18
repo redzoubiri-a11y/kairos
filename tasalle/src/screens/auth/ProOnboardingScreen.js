@@ -10,7 +10,7 @@ import { MChip, MCard } from '../../components/primitives';
 import { useTheme } from '../../context/ThemeContext';
 import { useI18n } from '../../i18n';
 import { useAuth } from '../../context/AuthContext';
-import { CITIES, AMENITIES, AMENITY_ICONS, TRIAL_DAYS } from '../../lib/constants';
+import { CITIES, AMENITIES, AMENITY_ICONS, TRIAL_DAYS, SUBSCRIPTION_PRICE } from '../../lib/constants';
 import * as api from '../../data';
 
 const STEPS = ['Salle', 'Tarifs', 'PIN'];
@@ -272,7 +272,7 @@ export default function ProOnboardingScreen({ navigation }) {
               >
                 <Ionicons name="gift-outline" size={20} color={colors.goldText} />
                 <Text style={[typography.secondary, { color: colors.goldText, flex: 1 }]}>
-                  {TRIAL_DAYS} jours offerts à partir d'aujourd'hui, puis 500 DA/mois sans engagement.
+                  {t('partnerOnboarding.trialBanner', { days: TRIAL_DAYS, price: SUBSCRIPTION_PRICE })}
                 </Text>
               </View>
 

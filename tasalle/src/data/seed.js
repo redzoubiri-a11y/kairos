@@ -8,6 +8,7 @@
 // dégradé déterministe (§4.1) et l'app reste utilisable hors ligne.
 
 import { toISODate, addDays, todayISO } from '../lib/format';
+import { SUBSCRIPTION_PRICE, PARTNER_SUBSCRIPTION_PRICES } from '../lib/constants';
 import photoManifest from './photos.json';
 
 /**
@@ -609,8 +610,10 @@ export const SEED_BLOCKED_DAYS = [
 export const SEED_SUBSCRIPTION = {
   id: 'sub-001',
   pro_id: 'user-pro-001',
-  // L'abonnement porte sur le propriétaire, pas sur une salle : 500 DA
-  // couvrent toutes celles qu'il gère.
+  // L'abonnement porte sur le propriétaire, pas sur une salle : 5200 DA
+  // couvrent toutes celles qu'il gère (§13 : 4200 DA pour un traiteur,
+  // 2100 DA pour un halouadji — tarifs distincts, voir OWNER_PARTNER_TYPE
+  // plus bas).
   salle_id: null,
   status: 'trial',
   // 45 jours consommés sur 90
@@ -618,11 +621,18 @@ export const SEED_SUBSCRIPTION = {
   trial_ends_at: addDays(T, 45),
   current_period_start: null,
   current_period_end: null,
-  amount: 500,
+  amount: SUBSCRIPTION_PRICE,
   payment_method: null,
   payment_details: null,
   created_at: `${addDays(T, -45)}T09:00:00Z`,
 };
+
+// §13 — les deux derniers PRO_OWNERS (traiteur, halouadji) paient le tarif
+// de leur type au lieu des 5200 DA d'un propriétaire de salle. Comparé par
+// id plutôt que par position dans le tableau : SEED_TRAITEURS/
+// SEED_HALOUADJIS ne sont déclarés que plus bas dans ce fichier, pas
+// utilisables ici.
+const OWNER_PARTNER_TYPE = { 'user-pro-012': 'traiteur', 'user-pro-013': 'halouadji' };
 
 // Un abonnement par propriétaire : aucun parcours pro ne tombe sur un
 // abonnement absent, quel que soit le compte connecté.
@@ -637,7 +647,7 @@ export const SEED_SUBSCRIPTIONS = [
     trial_ends_at: addDays(T, 70 - i * 5),
     current_period_start: null,
     current_period_end: null,
-    amount: 500,
+    amount: PARTNER_SUBSCRIPTION_PRICES[OWNER_PARTNER_TYPE[proId]] ?? SUBSCRIPTION_PRICE,
     payment_method: null,
     payment_details: null,
     created_at: `${addDays(T, -20 - i * 5)}T09:00:00Z`,

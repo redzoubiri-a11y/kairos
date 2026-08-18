@@ -130,7 +130,7 @@ const s = StyleSheet.create({
     height: 58,
   },
   containerTransparent: {
-    backgroundColor: theme.glassBg,
+    backgroundColor: theme.card,
   },
   tab: {
     flex: 1,

@@ -135,6 +135,6 @@ const s = StyleSheet.create({
   bottomBar: { paddingHorizontal: spacing.xl, paddingVertical: spacing.lg - 1, borderTopWidth: 1, borderTopColor: colors.cardBorder, backgroundColor: colors.card },
   cta:    { height: 50, borderRadius: radius.lg, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' },
   ctaTxt: { fontFamily: typography.bodyBold, color: '#FFFFFF', fontSize: typography.size.subheading },
-  ccBtn:  { marginTop: spacing.sm + 2, height: 44, borderRadius: radius.lg, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: colors.cardBorder },
-  ccTxt:  { fontFamily: typography.bodySemibold, color: colors.text, fontSize: typography.size.body },
+  ccBtn:  { marginTop: spacing.sm + 2, height: 50, borderRadius: radius.lg, backgroundColor: colors.tagNeutralBg, alignItems: 'center', justifyContent: 'center' },
+  ccTxt:  { fontFamily: typography.bodyBold, color: colors.text, fontSize: typography.size.subheading },
 });

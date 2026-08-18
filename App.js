@@ -99,7 +99,7 @@ function TabNavigator({ userRole }) {
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: 'rgba(255,255,255,0.72)',
+          backgroundColor: '#FFFFFF',
           borderTopWidth: 1,
           borderLeftWidth: 1,
           borderRightWidth: 1,

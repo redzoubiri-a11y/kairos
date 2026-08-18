@@ -20,9 +20,6 @@ function variantStyle(variant, colors) {
 }
 
 // §3.3 — Tailles sm / md / lg
-// `md` copie .btn { padding: var(--space-2) calc(var(--space-3)*1.2); font-size:14px }
-// = 8px / 14,4px, arrondi à 14 — Modernist n'a qu'une seule taille de bouton,
-// sm/lg restent une extrapolation proportionnée autour de cette base réelle.
 const SIZES = {
   sm: { pv: 5, ph: 10, font: 12, icon: 14 },
   md: { pv: 8, ph: 14, font: 14, icon: 16 },
@@ -79,10 +76,10 @@ export default function MButton({
       ) : (
         <>
           {icon ? <Ionicons name={icon} size={s.icon} color={v.fg} /> : null}
-          {/* .btn { font-family: var(--font-heading); font-weight: var(--font-heading-weight) }
-              — tous les boutons prennent la police et la graisse des titres, jamais celle du corps. */}
+          {/* Les boutons prennent la graisse des titres (500), jamais celle du
+              corps de texte (400) — §3.2. */}
           <Text
-            style={{ color: v.fg, fontSize: s.font, fontWeight: '800', fontFamily: 'Archivo_800ExtraBold' }}
+            style={{ color: v.fg, fontSize: s.font, fontWeight: '500' }}
             numberOfLines={1}
           >
             {label}

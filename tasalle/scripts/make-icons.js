@@ -45,9 +45,9 @@ function lireMonogramme() {
 // Doit rester en phase avec `logoInk` / `logoCanvas` dans src/theme.js — ce
 // script lit le tracé du monogramme dans le fichier mais pas ses couleurs
 // (rustique par choix, voir la note plus haut), donc rien ne le signalerait
-// automatiquement s'il divergeait. --color-accent (Modernist) / --color-neutral-100.
-const OR = '#EC3013';
-const CREME = '#F8F4F4';
+// automatiquement s'il divergeait.
+const OR = '#BE9A5E';
+const CREME = '#F1EFEA';
 
 const page = ({ size, bg, scale, radiusRatio }, m) => {
   const d = size * scale;

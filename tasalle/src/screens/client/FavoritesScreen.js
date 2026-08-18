@@ -31,7 +31,7 @@ function CompareTable({ salles }) {
             <View style={{ width: 110, padding: spacing.md }} />
             {salles.map((s) => (
               <View key={s.id} style={{ width: 130, padding: spacing.md }}>
-                <Text style={[typography.caption, { color: colors.dark, fontWeight: '600' }]} numberOfLines={2}>
+                <Text style={[typography.caption, { color: colors.dark, fontWeight: '500' }]} numberOfLines={2}>
                   {s.name}
                 </Text>
               </View>

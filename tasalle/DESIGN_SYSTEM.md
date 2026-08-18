@@ -23,36 +23,32 @@ salles des fêtes (mariages, fiançailles, anniversaires, conférences) pour le
 marché algérien. Gratuite pour les familles ; 500 DA/mois par **propriétaire**
 (et non par salle) après 90 jours d'essai.
 
-**Ton.** Direct et graphique plutôt que cérémonieux — la marque suit le
-système « Modernist » : un rouge vif unique sur un fond ivoire, une grille
-franche, des angles droits partout (aucun rayon sauf les formes réellement
-circulaires), une typo grotesque en capitales serrées pour les titres. Le
-vocabulaire de l'interface est en français exclusivement — aucune traduction
-anglaise ou arabe, aucun sens de lecture inversé.
+**Ton.** Sobre et chaleureux plutôt qu'ostentatoire. La marque évoque la
+cérémonie et la fête sans tomber dans le doré criard : un noir profond, un or
+mesuré, beaucoup de blanc. Le vocabulaire de l'interface est en français
+exclusivement — aucune traduction anglaise ou arabe, aucun sens de lecture
+inversé.
 
 **Verrouillage de marque.**
 
 ```
         ╭─────────╮
-        │    TS   │      ← monogramme, filet circulaire + lettres en rouge
+        │    TS   │      ← monogramme, filet circulaire + lettres en or
         ╰─────────╯
         T A S A L L E     ← mot-symbole, interlettrage large, encre de texte
         ───────────
-          ALGÉRIE          ← mention pays, capitales, en rouge de marque
+          ALGÉRIE          ← mention pays, capitales, en or
 ```
 
 - Le **T** et le **S** se chevauchent : le S descend sous la ligne du T et
   mord sur son pied — un chevauchement de dessin, impossible à obtenir par un
   simple interlettrage.
 - Les lettres sont des **tracés vectoriels** (glyphes de Liberation Serif,
-  extraits en contours — hérités d'une piste visuelle antérieure abandonnée,
-  jamais redessinés depuis car déjà soignés), jamais du texte rendu : une
-  marque ne peut pas dépendre des polices installées sur l'appareil qui
-  l'affiche. Le même fichier (`src/lib/monogramme.js`) alimente l'app, les
-  gabarits PDF (contrat, planning, facture) et le générateur d'icônes des
-  stores — un seul dessin, trois sorties. Seules la couleur (`logoInk`) et la
-  police du mot-symbole (Archivo, comme le reste de l'app) suivent Modernist
-  — la marque et l'interface parlent désormais d'une seule voix.
+  extraits en contours), jamais du texte rendu : une marque ne peut pas
+  dépendre des polices installées sur l'appareil qui l'affiche. Le même
+  fichier (`src/lib/monogramme.js`) alimente l'app, les gabarits PDF
+  (contrat, planning, facture) et le générateur d'icônes des stores — un seul
+  dessin, trois sorties.
 - Repère de coordonnées : carré `0 0 100 100`. Filet circulaire : centre
   `(50, 50)`, rayon `47.2`, épaisseur de trait `1.6`.
 - **Lisible jusqu'à 20 px.** En dessous, le filet se referme visuellement —
@@ -60,209 +56,187 @@ anglaise ou arabe, aucun sens de lecture inversé.
 - Le mot-symbole porte un **interlettrage large** (signature du verrouillage)
   et un **filet horizontal** séparant « TASALLE » de « ALGÉRIE ».
 - **Exemption WCAG** : le monogramme est un logotype, exempté du critère de
-  contraste 1.4.3. Son rouge (`logoInk`, 3,76:1 sur le fond clair) ne doit
-  **jamais** migrer vers une couleur de texte d'interface — voir §2.1.
+  contraste 1.4.3. Son or (`logoInk`, 2,63:1 sur blanc) ne doit **jamais**
+  migrer vers une couleur de texte d'interface — voir §3.4.
 
 ---
 
 ## 2 · Palette
 
-### 2.1 · La règle des rôles du rouge
+### 2.1 · La règle des trois ors
 
-La palette est celle de Modernist : **mono-teinte**, un seul rouge de marque
-décliné en rôles, plus des neutres chauds. (Les jetons gardent leurs noms
-historiques `gold`/`goldText`/`goldMark` — hérités d'une palette dorée
-antérieure — mais portent aujourd'hui le rouge `#EC3013`, pas de l'or ; ne
-pas se fier au nom du jeton pour deviner la teinte.)
+La palette est celle du logo : **noir et or**, rien d'autre. (L'émeraude du
+cahier des charges d'origine a été écartée — la marque ne la porte pas.)
 
-Le rouge de marque, `#EC3013`, ne peut pas tout faire : en aplat portant le
-texte de fond (la vraie recette de `.btn-primary` de Modernist) il ne tient
-que **3,76:1**, sous le seuil de 4,5:1 que WCAG 2.1 demande à du texte de
-corps. D'où **des jetons distincts** pour chaque rôle :
+L'or de marque, `#BE9A5E`, ne peut pas tout faire : il ne fait que **2,63:1**
+sur blanc, bien sous le seuil de 4,5:1 que WCAG 2.1 demande à du texte. D'où
+**trois jetons distincts** là où une palette plus permissive n'en
+demanderait qu'un :
 
 | Jeton | Rôle | Peut être utilisé pour… |
 |---|---|---|
-| `primary` / `gold` | **Décor et aplats** | Fonds de boutons pleins, logo, grands éléments — jamais du texte de corps |
-| `primaryInk` (`#AE1800`) | **Ce qui s'écrit** | Texte de marque, montants, onglet actif — 5,91:1 sur les cartes |
-| `goldText` (`#7C1405`) | **Texte sur fond pâle** | La vraie couleur de texte de `.tag-accent` — 9,59:1 sur le fond de page |
-| `goldMark` (`#DD2B0F`) | **Objets graphiques porteurs d'information** | Étoiles de notation, barres de graphique, puces — 3,91:1, au-dessus du seuil non-texte de 1.4.11 |
-| `accent` / `accentInk` | **Erreur, refus, annulation** | Rouge distinct du rouge de marque (voir §2.2) — `accent` reste l'aplat, `accentInk` porte le texte/les icônes |
+| `primary` (noir) | **Aplats** | Fonds de boutons, d'onglets actifs — porte du blanc à 17,4:1 |
+| `primaryInk` / `goldText` (or profond) | **Ce qui s'écrit** | Texte de marque, montants, liens, icônes actives — 5,09:1 |
+| `gold` (or de marque) | **Décor et logo uniquement** | Le monogramme, un filet, un dégradé — jamais du texte, jamais un composant porteur d'information |
+| `goldMark` (or assombri) | **Objets graphiques porteurs d'information** | Étoiles de notation, barres de graphique, puces — 3,49:1, au-dessus du seuil non-texte de 1.4.11 |
 
 Un test verrouille cette frontière **dans les deux sens** : `logoInk` doit
 rester sous le seuil des composants (pour ne jamais devenir un texte lisible
 par erreur), `goldText` doit rester au-dessus. Promouvoir l'un à la place de
-l'autre fait échouer la suite (`src/theme.test.js`).
+l'autre fait échouer la suite.
 
 ### 2.2 · Thème clair
 
-**Primaires — le rouge de marque en aplat**
+**Primaires — le noir du mot-symbole**
 
 | Jeton | Valeur | Contraste | Usage |
 |---|---|---|---|
-| `primary` | `#EC3013` | 3,76:1 (texte de fond dessus) | Aplats de boutons pleins |
-| `primaryDark` | `#AE1800` | — | État pressé (`:active`) |
-| `onPrimary` | `#F3F2F2` | — | Ce qui s'inscrit sur un aplat `primary` — le fond clair de la marque, pas du blanc en dur |
-| `primaryLight` | `#FFF2EF` | — | Fond doux (badges, zones actives) |
-| `primaryInk` | `#AE1800` | 5,91:1 (sur `surface`) / 6,41:1 (sur `cream`) | Texte de marque, montants, liens |
+| `primary` | `#1A1A1A` | 17,4:1 (sur blanc) | Aplats de boutons, onglet actif |
+| `primaryDark` | `#000000` | 21:1 | Variante la plus sombre |
+| `onPrimary` | `#FFFFFF` | — | Texte/icônes sur un aplat `primary` |
+| `primaryLight` | `#F7F2E8` | 1,12:1 | Fond doux (badges, zones actives) |
+| `primaryInk` | `#8B6914` | 5,09:1 | Texte de marque, montants, liens |
 
-**Rouge de la marque (jetons nommés « gold », historiques)**
+**Or de la marque**
 
 | Jeton | Valeur | Contraste | Usage |
 |---|---|---|---|
-| `gold` | `#EC3013` | 3,47:1 (sur `surface`) / 4,20:1 (blanc dessus) | **Décor et logo uniquement** |
-| `goldMark` | `#DD2B0F` | 3,91:1 (sur `surface`) / 4,34:1 (sur `goldLight`) | Étoiles, barres, puces porteuses d'info |
-| `goldText` | `#7C1405` | 9,59:1 (sur `cream`) | Texte sur fond pâle (`.tag-accent`) |
-| `goldLight` | `#FFF2EF` | — | Fond de badge « premium » |
+| `gold` | `#BE9A5E` | 2,63:1 | **Décor et logo uniquement** |
+| `goldMark` | `#A8834A` | 3,49:1 | Étoiles, barres, puces porteuses d'info |
+| `goldText` | `#8B6914` | 5,09:1 | Texte doré (= `primaryInk`) |
+| `goldLight` | `#FAF5EC` | 1,09:1 | Fond de badge « premium » |
 
 **Secondaires et accents**
 
 | Jeton | Valeur | Contraste | Usage |
 |---|---|---|---|
-| `secondary` | `#71261B` | 8,69:1 (sur `surface`) | Brun-rouge, assez sombre pour du texte |
-| `secondaryLight` | `#FFF2EF` | — | Fond associé |
-| `accent` | `#B3341F` | 5,06:1 (sur `surface`) / 6,13:1 (blanc dessus) | Aplat plein (bouton « accent », badge de notif) |
-| `accentInk` | `#B3341F` | *(même valeur qu'`accent` en clair)* | Texte/icônes d'erreur — se sépare d'`accent` en thème sombre, voir §2.3 |
-| `accentLight` | `#FDECEA` | — | Fond d'alerte douce |
-| `info` | `#3B82F6` | 3,04:1 (sur `surface`) | Liens informatifs |
+| `secondary` | `#8C6D4A` | 4,77:1 | Brun doré, assez sombre pour du texte |
+| `secondaryLight` | `#F6F0E7` | 1,13:1 | Fond associé |
+| `accent` | `#C0392B` | 5,44:1 (texte et aplat) | Erreur, refus, annulation |
+| `accentLight` | `#FDECEA` | 1,14:1 | Fond d'alerte douce |
+| `info` | `#3B82F6` | 3,68:1 | Liens informatifs, badge « terminé » |
 
-> `accent` n'existe pas dans Modernist (un kit générique n'a pas de rôle
-> « danger ») — seul jeton de cette liste qui n'est pas repris tel quel d'un
-> fichier source. Assombri à `#B3341F` pour tenir 4,5:1 en texte de corps et
-> rester distinct du rouge de marque.
+> `accent` a été assombri de `#D94E3B` (4,12:1, sous le seuil) à `#C0392B`
+> (5,44:1) — l'ancien rouge échouait aussi bien en texte sur blanc qu'en
+> aplat portant du blanc.
 
 **Neutres**
 
 | Jeton | Valeur | Contraste | Usage |
 |---|---|---|---|
-| `dark` | `#201E1D` | 14,86:1 (sur `cream`) | Texte principal |
-| `warmGray` | `rgba(32,30,29,0.55)` | ≈3,66:1 (sur `cream`) | Texte secondaire, placeholders |
-| `border` | `rgba(32,30,29,0.4)` | — | Séparateurs — une superposition translucide, pas un gris plat |
-| `cream` | `#F3F2F2` | — | Fond de page |
-| `surface` | `#EAE9E9` | 1,08:1 vs `cream` | Fond de carte — une nuance à peine plus grise que le fond de page ; les cartes n'ont **pas** de bordure (voir §4), c'est cette légère différence de teinte + l'ombre qui les détache |
-| `surfaceElevated` | `#F8F4F4` | — | Fond légèrement surélevé (lignes alternées) |
+| `dark` | `#1A1A1A` | 17,4:1 | Texte principal |
+| `warmGray` | `#8B7E72` | 3,94:1 | Texte secondaire, placeholders |
+| `border` | `#E8E4DF` | 1,27:1 | Contours 1 px (cartes, champs) |
+| `cream` / `surface` | `#FFFFFF` | — | Fond de page et fond de carte — **identiques** ; c'est le contour qui détache une carte, pas une ombre |
+| `surfaceElevated` | `#FAFAF8` | 1,05:1 | Fond légèrement surélevé (lignes alternées) |
 
 **Dérivés (fonds de badge)**
 
 | Jeton | Valeur |
 |---|---|
-| `successBg` | `rgba(174,24,0,0.10)` |
-| `warningBg` | `rgba(236,48,19,0.18)` |
-| `dangerBg` | `rgba(179,52,31,0.12)` |
+| `successBg` | `rgba(139,105,20,0.10)` |
+| `warningBg` | `rgba(190,154,94,0.18)` |
+| `dangerBg` | `rgba(192,57,43,0.12)` |
 | `infoBg` | `rgba(59,130,246,0.12)` |
 | `overlay` | `rgba(0,0,0,0.55)` |
-| `skeleton` | `#EAE7E7` |
+| `skeleton` | `#EFEBE5` |
 
 **Marque (logo)**
 
 | Jeton | Valeur | Usage |
 |---|---|---|
-| `logoInk` | `#EC3013` | Monogramme et filet — identique à `gold`/`primary`, 3,76:1, exempté (logotype, WCAG 1.4.3) |
-| `logoWordmark` | `#201E1D` | Mot-symbole « TASALLE » — 14,86:1 sur `cream` |
-| `logoCanvas` | `#F8F4F4` | Fond des icônes de store et de l'écran de lancement |
+| `logoInk` | `#BE9A5E` | Monogramme et filet — 2,63:1, exempté (logotype, WCAG 1.4.3) |
+| `logoWordmark` | `#1A1A1A` | Mot-symbole « TASALLE » |
+| `logoCanvas` | `#F1EFEA` | Fond des icônes de store et de l'écran de lancement |
 
 **Graphiques**
 
 | Jeton | Valeur | Note |
 |---|---|---|
-| `chartInk` | `#AE1800` | Toutes les séries dans la **même** encre — 5,91:1 sur `surface` |
-| `chartGrid` | `rgba(32,30,29,0.08)` | Grille discrète |
+| `chartInk` | `#8B6914` | Toutes les séries dans la **même** encre |
+| `chartGrid` | `rgba(26,26,26,0.08)` | Grille discrète |
 
 > Les répartitions (camemberts, séries) sont rendues en **lignes libellées
-> mono-teinte**, jamais en palette catégorielle : Modernist n'a qu'une seule
-> couleur de marque, il n'y a pas de palette catégorielle à disposition.
-> L'identité de la donnée passe par le texte, pas la couleur.
+> mono-teinte**, jamais en palette catégorielle : les teintes chaudes de la
+> marque sont trop proches (ΔE < 15 en vision normale) pour être
+> distinguées à l'œil. L'identité de la donnée passe par le texte, pas la
+> couleur.
 
 ### 2.3 · Thème sombre
 
-Modernist ne publie pas de variante sombre — ce thème est une extrapolation,
-construite sur les mêmes paliers de rampe que le clair (`accent-100…900`),
-pas sur des valeurs inventées. **Les rôles s'inversent** : un aplat rouge
-profond se fondrait sur fond sombre, donc un palier clair de la rampe
-remplit, et le texte sombre s'y inscrit.
+Seuls les neutres changent ; les accents (`accent`, `info`) restent
+identiques. **Les rôles de la marque s'inversent** : un aplat noir
+disparaîtrait sur fond sombre, donc c'est l'or qui remplit, et le noir qui
+s'y inscrit.
 
 | Jeton | Valeur | Contraste | Note |
 |---|---|---|---|
-| `primary` | `#FFC4B8` (accent-300) | 10,94:1 (aplat/`onPrimary`) | Un palier clair remplit les aplats |
-| `onPrimary` | `#201E1D` | 10,94:1 | Le texte sombre s'y inscrit |
-| `primaryDark` | `#FF9783` (accent-400) | — | |
-| `primaryInk` | `#FFC4B8` | 9,28:1 (sur `surface`) / 10,94:1 (sur `cream`) | |
-| `secondary` | `#FFC4B8` | — | Éclairci pour rester lisible |
-| `goldMark` | `#FF9783` | 6,71:1 (sur `surface`) / 7,91:1 (sur `cream`) | |
-| `goldText` | `#FFC4B8` | 9,66:1 (sur `goldLight`) / 9,31:1 (sur `warningBg`) | Sinon le texte se fondrait dans son propre fond assombri — bug réel corrigé le 18/08/2026 |
-| `accent` | `#B3341F` *(inchangé)* | 6,13:1 (blanc dessus) | **Reste sombre** : seul jeton de cette liste qui NE s'inverse PAS — il sert d'aplat plein portant du texte blanc (bouton « accent », badge de notif), inverser l'aurait cassé |
-| `accentInk` | `#FF9783` (accent-400) | 7,30:1 (sur `dangerBg`) / 6,92:1 (sur `accentLight`) / 6,71:1 (sur `surface`) | Porte le rôle d'encre (texte, icônes, badge « danger ») là où `accent` ne peut pas s'inverser |
-| `chartInk` | `#FFC4B8` | 9,28:1 (sur `surface`) | |
-| `dark` | `#F8F4F4` | 15,21:1 (sur `cream`) | Texte principal |
-| `surface` | `#2D2B2B` | | |
-| `surfaceElevated` | `#201E1D` | | |
-| `border` | `#444141` | | |
-| `cream` | `#201E1D` | | Fond de page |
-| `warmGray` | `#9B9797` | 4,87:1 (sur `surface`) | |
-| `logoWordmark` | `#F8F4F4` | 15,21:1 (sur `cream`) | Le mot-symbole s'inverse : sombre devient clair |
-| `logoCanvas` | `#201E1D` | | |
-| `logoInk` | *(non redéfini — reste `#EC3013`)* | 3,95:1 (sur `cream` sombre) | Le monogramme garde la même teinte dans les deux thèmes, comme toute marque |
+| `primary` | `#BE9A5E` | 6,61:1 (sur fond) | L'or remplit les aplats |
+| `onPrimary` | `#1A1A1A` | 6,61:1 | Le noir s'y inscrit |
+| `primaryDark` | `#A8834A` | — | |
+| `primaryInk` | `#BE9A5E` | 6,61:1 / 5,45:1 sur carte | L'or de marque devient lisible en texte sur fond sombre |
+| `secondary` | `#C9A96A` | — | Éclairci pour rester lisible |
+| `goldMark` | `#BE9A5E` | largement > 3:1 | Les étoiles reprennent la teinte pleine |
+| `dark` | `#FFFFFF` | | Texte principal |
+| `surface` | `#2A2A2A` | | |
+| `surfaceElevated` | `#1A1A1A` | | |
+| `border` | `#3A3A3A` | | |
+| `cream` | `#1A1A1A` | | Fond de page |
+| `warmGray` | `#A9A099` | | |
+| `logoWordmark` | `#FFFFFF` | | Le mot-symbole s'inverse : noir devient blanc |
+| `logoCanvas` | `#1A1A1A` | | |
+| `logoInk` | *(non redéfini — reste `#BE9A5E`)* | | Le monogramme garde le même or dans les deux thèmes, comme toute marque — il y gagne même en lisibilité |
 
-**Piège vérifié par les tests** : un même jeton ne peut pas toujours
-s'inverser en bloc. `accent` joue deux rôles incompatibles — aplat plein
-(besoin de rester sombre pour porter du blanc) et encre de texte (besoin de
-s'éclaircir pour rester lisible sur son fond assombri). D'où le jeton
-`accentInk`, séparé, qui porte spécifiquement le second rôle. Voir
-`src/theme.test.js`, describe `'contraste du thème sombre'`.
+Fonds de badge en thème sombre : `primaryLight` / `secondaryLight` /
+`goldLight` deviennent `rgba(190,154,94,0.20 / 0.14 / 0.14)` ;
+`accentLight` devient `rgba(192,57,43,0.20)` ; `successBg` / `warningBg`
+convergent toutes deux vers `rgba(190,154,94,0.18)`.
+
+> **Écart déclaré du 18/08/2026**, absent de cette doc source : `goldText`
+> et `chartInk` valent littéralement `primaryInk` en thème clair, mais sans
+> être listés ci-dessus pour le sombre — s'ils n'héritaient que du thème
+> clair, ils retomberaient à 2,82:1 sur `surface`. Réinversés comme
+> `primaryInk`, vers `#BE9A5E`. `accent`, lui, se scinde : il reste
+> `#C0392B` comme aplat plein portant du blanc (bouton "accent", badge de
+> notif), mais retombe à 2,64:1 sur `surface` en encre de texte — d'où
+> `accentInk` (`#D98880`, éclairci), qui porte ce second rôle séparément.
+> Voir `src/theme.test.js`.
 
 ### 2.4 · Dégradés de repli (photos de salle)
 
 Quand une salle n'a pas de photo, un dégradé déterministe (fonction de hash
 sur l'identifiant) porte son initiale — jamais deux salles voisines avec le
-même fond, jamais de flash de contenu au chargement (`src/components/SallePhoto.js`) :
+même fond, jamais de flash de contenu au chargement :
 
 ```
 #8B6914 → #BE9A5E     #C8956C → #E0B48F     #BE9A5E → #E8C989
 #3A2E14 → #8C6D4A     #6B5B4A → #A89684     #5C4A2E → #A8834A
 ```
 
-Cette palette de repli reste dans une gamme chaude ambrée héritée d'une
-itération antérieure — délibérément **distincte** du rouge vif de l'interface
-Modernist : un dégradé de la même intensité que le rouge de marque aurait
-été trop criard répété sur toute une grille de cartes. Un bleu franc,
-testé plus tôt, jurait au milieu des cartes ; celui-ci reste écarté.
+Toutes dans la gamme chaude de la marque — un bleu franc, hérité d'une
+première itération, jurait au milieu des cartes.
 
 ---
 
 ## 3 · Typographie
 
-**Archivo (Google Fonts), embarquée** — `@expo-google-fonts/archivo`,
-chargée dans `ThemeContext.js`. Une seule famille pour toute l'app, y
-compris le mot-symbole de la marque (voir §1) : l'interface et la marque
-parlent désormais d'une seule voix, depuis l'abandon d'une piste visuelle
-antérieure qui donnait une police serif distincte au logo.
-
-Trois graisses réellement utilisées dans le code — `Archivo_400Regular`,
-`Archivo_600SemiBold`, `Archivo_800ExtraBold` — jamais de 500 ni de 700 :
+**Police système uniquement — aucune fonte n'est embarquée.** Sur un parc
+d'appareils Android d'entrée de gamme et des connexions lentes (le cœur de
+cible), chaque fonte téléchargée retarde le premier affichage.
 
 | Jeton | Taille | Poids | Interligne | Usage |
 |---|---|---|---|---|
-| `hero` | 42 px | 800 | 46 px | Écrans de succès, montants héros |
-| `h1` | 32 px | 800 | 37 px | Titres d'écran majeurs |
-| `h2` | 25 px | 800 | 30 px | Titres de section |
-| `h3` | 20 px | 800 | 26 px | Sous-titres, clavier PIN |
-| `title` | 17 px | 800 | 20 px | Titres de carte, noms de salle |
-| `body` | 15 px | 400 | 23 px | Texte courant |
+| `hero` | 42 px | 500 | 46 px | Écrans de succès, montants héros |
+| `h1` | 32 px | 500 | 37 px | Titres d'écran majeurs |
+| `h2` | 24 px | 500 | 29 px | Titres de section |
+| `h3` | 20 px | 500 | 26 px | Sous-titres, clavier PIN |
+| `title` | 17 px | 500 | 24 px | Titres de carte, noms de salle |
+| `body` | 16 px | 400 | 24 px | Texte courant |
 | `secondary` | 14 px | 400 | 21 px | Texte de support, métadonnées |
-| `caption` | 13 px | 400 | 18 px | Étiquettes, badges, légendes |
+| `caption` | 12 px | 500 | 17 px | Étiquettes, badges, légendes |
 
-Ces huit rôles viennent directement de `styles.css` (Modernist) : `h1`…`h4`
-pour `hero`…`h3`, `.card-title` pour `title`, `body` pour `body`.
-
-**600 SemiBold, hors du tableau de rôles** : utilisé à la pièce (pas un
-jeton `typography` dédié) pour des éléments courts et denses — badge de
-notification, note en étoile, prix affiché, numéro d'étape, initiale
-d'avatar. Toujours `Archivo_600SemiBold`, jamais un poids intermédiaire
-improvisé.
-
-**800 ExtraBold est aussi la police des boutons** (`.btn { font-family:
-var(--font-heading); font-weight: var(--font-heading-weight) }` dans
-Modernist) — tous les boutons prennent la graisse des titres, jamais celle
-du corps de texte.
+Aucun poids en dehors de 400/500 : pas de gras appuyé, cohérent avec le ton
+sobre de la marque.
 
 ---
 
@@ -275,29 +249,22 @@ page ne sort de cette table :
 |---|---|---|---|---|---|---|
 | 4 px | 8 px | 12 px | 16 px | 20 px | 24 px | 32 px |
 
-**Rayons** — Modernist n'arrondit rien : `--radius-sm/md/lg: 0px` les trois,
-sans exception, dans le fichier source. Tout est carré, y compris boutons et
-champs de saisie :
+**Rayons** — sept valeurs, du carré adouci à la pastille :
 
 | `xs` | `sm` | `md` | `lg` | `xl` | `xxl` | `pill` |
 |---|---|---|---|---|---|---|
-| 0 px | 0 px | 0 px | 0 px | 0 px | 0 px | 999 px |
+| 4 px | 6 px | 8 px | 10 px | 12 px | 16 px | 999 px |
 
-`pill` (999) n'existe pas dans la source Modernist — elle ne sert plus qu'aux
-formes réellement circulaires (avatars, pastilles), jamais aux capsules de
-texte, puisque Modernist n'a aucune forme en pilule.
-
-**Élévation** — deux ombres, teintées d'encre plutôt que de noir pur
-(`shadowColor: #2D2B2B`, le neutre le plus sombre de la rampe — « soft
-ink-tinted shadows », comme le dit `styles.css`). Les cartes n'ont **pas**
-de bordure (la source ne leur en donne aucune) : c'est la légère différence
-de teinte `surface`/`cream` (§2.2) plus cette ombre qui les détachent du
-fond — pas un contour.
+**Élévation** — deux ombres seulement, et l'usage par défaut est de **ne pas
+en mettre** : le fond de page et le fond des cartes sont tous deux blancs en
+thème clair, c'est un contour de 1 px (`border`) qui détache une carte, pas
+une ombre. Le choix vient des écrans bon marché, où une ombre légère
+disparaît ou se pixellise.
 
 | Nom | Usage | Spec |
 |---|---|---|
-| `card` | Carte au-dessus du fond de page | `shadowColor #2D2B2B, opacity .16, radius 10, offset (0,3), elevation 3` |
-| `sticky` | Barre collée en bas d'écran | `shadowColor #2D2B2B, opacity .22, radius 32, offset (0,-12), elevation 8` |
+| `card` | Carte au-dessus d'un fond non blanc, élément pressé | `shadowOpacity .08, radius 12, offset (0,4), elevation 3` |
+| `sticky` | Barre collée en bas d'écran | `shadowOpacity .10, radius 16, offset (0,-2), elevation 8` |
 
 **Tailles de référence**
 
@@ -336,7 +303,7 @@ Vingt objets couvrent l'interface, en trois familles.
 | Composant | Variantes / états couverts |
 |---|---|
 | Boutons | 5 tons (primary, secondary, accent, ghost, gold) × 3 tailles, avec icône, désactivé, pleine largeur |
-| Champs de saisie | repos, focus (contour rouge de marque), erreur (contour rouge d'erreur), avec aide, avec icône, fantôme |
+| Champs de saisie | repos, focus (contour or), erreur (contour rouge), avec aide, avec icône, fantôme |
 | Badges et puces | 6 tons de badge (succès, attente, danger, info, or, neutre) ; puces de filtre actives/inactives |
 | Cartes et listes | carte simple, carte plate à lignes séparées, titre de section |
 | États d'écran | chargement, vide, erreur, bandeau hors ligne horodaté |
@@ -363,19 +330,14 @@ Vingt objets couvrent l'interface, en trois familles.
 
 1. **Aucune couleur en dur.** Toute valeur de style vient de `src/theme.js` ;
    c'est vérifié par des tests, pas seulement recommandé.
-2. **La teinte et l'ombre font le relief, pas le contour.** Modernist ne
-   donne aucune bordure à ses cartes ; c'est une nuance de gris à peine plus
-   soutenue (`surface` vs `cream`) plus une ombre teintée d'encre qui les
-   détache du fond (§4) — l'inverse de l'ancienne convention « contour sans
-   ombre » de ce projet.
+2. **Le contour fait le relief, pas l'ombre.** Compatible avec des écrans bon
+   marché et des rendus dégradés.
 3. **La couleur n'est jamais seule porteuse de sens.** Étoiles : forme
    (pleine/vide) + couleur. Statuts : libellé en toutes lettres + badge,
    jamais une pastille seule. Séries de graphique : libellé + une seule
    encre.
-4. **Un seul rouge, des rôles distincts** (§2.1) — la distinction la plus
-   spécifique de ce système, verrouillée par des tests dans les deux sens
-   pour le thème clair ET le thème sombre (où certains rôles s'inversent et
-   d'autres non — §2.3).
+4. **Trois ors, un seul rôle chacun** (§2.1) — la distinction la plus
+   spécifique de ce système, verrouillée par des tests dans les deux sens.
 5. **Français exclusivement.** Pas de bilinguisme français/arabe, pas de
    mécanique RTL : le public cible est francophone, et une langue que
    personne ne lit coûte à chaque écran sans rien apporter. Le passage par
@@ -391,15 +353,12 @@ Vingt objets couvrent l'interface, en trois familles.
    si ce qu'il lit est encore vrai.
 8. **Accessibilité WCAG 2.1 AA**, vérifiée et non supposée : texte ≥ 4,5:1,
    composants et objets graphiques porteurs d'information ≥ 3:1 (1.4.11),
-   logotypes exemptés (1.4.3) mais jamais promus en couleur de texte. Vérifié
-   séparément pour le thème clair et le thème sombre — un jeton qui tient le
-   seuil en clair peut y échouer en sombre si son fond s'inverse et pas lui
-   (§2.3).
+   logotypes exemptés (1.4.3) mais jamais promus en couleur de texte.
 
 ---
 
 *Généré à partir de `src/theme.js` et `src/lib/monogramme.js` — toute
 modification de la palette ou des tracés doit se faire dans ces fichiers ;
-ce document n'est qu'une lecture. Dernière synchronisation : 18/08/2026,
-après l'abandon de la piste « Broadsheet » et la correction du contraste en
-thème sombre.*
+ce document n'est qu'une lecture. Remigré littéralement depuis le projet
+Claude Design « Tasalle » le 18/08/2026, après l'abandon complet des pistes
+Modernist/Broadsheet.*

@@ -60,8 +60,7 @@ export default function SallePhoto({ salle, index = 0, height, style, radius, ch
         style={{
           fontSize: Math.max(28, (height || 140) * 0.32),
           color: 'rgba(255,255,255,0.35)',
-          fontWeight: '800',
-          fontFamily: 'Archivo_800ExtraBold',
+          fontWeight: '500',
         }}
       >
         {initial}

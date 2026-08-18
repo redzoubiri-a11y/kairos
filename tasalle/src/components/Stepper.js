@@ -41,7 +41,7 @@ export default function Stepper({ steps, current }) {
                 {done ? (
                   <Ionicons name="checkmark" size={13} color={fg} />
                 ) : (
-                  <Text style={{ fontSize: 11, fontWeight: '600', fontFamily: 'Archivo_600SemiBold', color: fg }}>{i + 1}</Text>
+                  <Text style={{ fontSize: 11, fontWeight: '500', color: fg }}>{i + 1}</Text>
                 )}
               </View>
               {/* trait droit */}
@@ -61,7 +61,7 @@ export default function Stepper({ steps, current }) {
                 {
                   marginTop: 5,
                   color: active ? colors.primaryInk : colors.warmGray,
-                  fontWeight: active ? '600' : '500',
+                  fontWeight: active ? '500' : '400',
                   textAlign: 'center',
                 },
               ]}

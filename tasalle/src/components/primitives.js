@@ -14,9 +14,6 @@ const BADGE_TONES = {
   neutral: (c) => ({ bg: c.surfaceElevated, fg: c.warmGray }),
 };
 
-// .tag { font-size:11px; letter-spacing:0.02em; padding:3px 10px;
-//   border-radius: calc(var(--radius-md) * 0.75) } — pas de graisse forcée,
-// le corps hérite du texte normal (Archivo_400Regular).
 export function MBadge({ label, tone = 'neutral', icon, size = 'md' }) {
   const { colors, radii } = useTheme();
   const t = (BADGE_TONES[tone] || BADGE_TONES.neutral)(colors);
@@ -40,7 +37,6 @@ export function MBadge({ label, tone = 'neutral', icon, size = 'md' }) {
         style={{
           color: t.fg,
           fontSize: small ? 10 : 11,
-          fontFamily: 'Archivo_400Regular',
           letterSpacing: 0.2,
         }}
         numberOfLines={1}
@@ -52,10 +48,6 @@ export function MBadge({ label, tone = 'neutral', icon, size = 'md' }) {
 }
 
 // ── Chip / filtre (§3.3) ──────────────────────────────────────────────────
-// Analogue le plus proche : .seg-opt { padding:7px 12px; font-size:13px }
-// :has(input:checked) { background: var(--color-accent); color: var(--color-bg) }
-// — pas de graisse ni de bordure d'accent distincte à l'état actif dans la
-// source, juste le changement de fond.
 
 export function MChip({ label, active, onPress, icon }) {
   const { colors, radii } = useTheme();
@@ -80,7 +72,7 @@ export function MChip({ label, active, onPress, icon }) {
     >
       {icon ? <Ionicons name={icon} size={13} color={active ? colors.onPrimary : colors.warmGray} /> : null}
       <Text
-        style={{ fontSize: 13, fontFamily: 'Archivo_400Regular', color: active ? colors.onPrimary : colors.dark }}
+        style={{ fontSize: 13, color: active ? colors.onPrimary : colors.dark }}
       >
         {label}
       </Text>

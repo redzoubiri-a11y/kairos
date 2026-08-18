@@ -15,10 +15,6 @@ export function contrast(a, b) {
   return (high + 0.05) / (low + 0.05);
 }
 
-// Seuils WCAG 2.1
-const AA_TEXTE = 4.5;
-const AA_COMPOSANT = 3;
-
 /**
  * Aplatit une couleur `rgba(...)` sur un fond opaque — les jetons de fond
  * du thème sombre (`goldLight`, `warningBg`, `dangerBg`, `accentLight`)
@@ -35,6 +31,10 @@ function flatten(rgbaOrHex, bgHex) {
   return '#' + [mix(r, br), mix(g, bgc), mix(b, bb)].map((v) => v.toString(16).padStart(2, '0')).join('');
 }
 
+// Seuils WCAG 2.1
+const AA_TEXTE = 4.5;
+const AA_COMPOSANT = 3;
+
 describe('contraste du thème clair', () => {
   it('le texte principal ressort sur le fond de page', () => {
     expect(contrast(lightColors.dark, lightColors.cream)).toBeGreaterThanOrEqual(AA_TEXTE);
@@ -44,27 +44,22 @@ describe('contraste du thème clair', () => {
     expect(contrast(lightColors.primaryInk, lightColors.surface)).toBeGreaterThanOrEqual(AA_TEXTE);
   });
 
-  /**
-   * `.btn-primary { background: var(--color-accent); color: var(--color-bg) }`
-   * — la recette réelle de Modernist, pas une réinterprétation : le libellé
-   * tient le seuil composant/grand texte (3,76:1 ≥ 3) mais pas le seuil texte
-   * de corps (< 4,5:1). Un bouton n'est pas du texte de paragraphe ; c'est
-   * pour ça que `primaryInk` (même rouge, sur `surface`) existe séparément
-   * pour tout ce qui doit vraiment s'écrire.
-   */
-  it('le libellé des boutons pleins tient le seuil composant', () => {
-    expect(contrast(lightColors.onPrimary, lightColors.primary)).toBeGreaterThanOrEqual(AA_COMPOSANT);
-    expect(contrast(lightColors.onPrimary, lightColors.primary)).toBeLessThan(AA_TEXTE);
+  it('le libellé des boutons pleins tient le seuil texte', () => {
+    // Contrairement à Modernist, l'aplat primaire ici est noir (#1A1A1A) :
+    // le blanc dessus tient très largement le seuil de texte, pas
+    // seulement le seuil composant.
+    expect(contrast(lightColors.onPrimary, lightColors.primary)).toBeGreaterThanOrEqual(AA_TEXTE);
   });
 
   /**
-   * `primary` et `gold` sont littéralement la même valeur (--color-accent) —
-   * le rouge vif de marque tient le seuil composant avec du blanc dessus
-   * (4,20:1 ≥ 3) mais pas le seuil texte de corps (< 4,5:1).
+   * `gold` (= `logoInk`) ne tient NI le seuil composant NI le seuil texte
+   * (2,63:1) — plus restrictif que Modernist : ce n'est pas un rouge de
+   * marque utilisable en aplat texte, c'est une teinte de décor et de
+   * logo, point. `goldText`/`primaryInk` existent séparément pour tout ce
+   * qui doit vraiment s'écrire.
    */
-  it('l’or de marque en aplat ne suffit pas pour du texte de corps', () => {
-    expect(contrast('#FFFFFF', lightColors.gold)).toBeGreaterThanOrEqual(AA_COMPOSANT);
-    expect(contrast('#FFFFFF', lightColors.gold)).toBeLessThan(AA_TEXTE);
+  it('l’or de marque en aplat ne tient aucun des deux seuils', () => {
+    expect(contrast('#FFFFFF', lightColors.gold)).toBeLessThan(AA_COMPOSANT);
   });
 
   it('le rouge d’erreur tient dans ses deux rôles', () => {
@@ -78,23 +73,17 @@ describe('contraste du thème clair', () => {
   });
 
   /**
-   * Trois rouges, trois emplois, tous copiés d'une règle réelle de
-   * styles.css :
-   *   gold      — --color-accent, décor et grands éléments. Tient le seuil
-   *               composant, pas le seuil texte de corps (test ci-dessus).
-   *   goldMark  — --color-accent-600 (`:hover`), objets graphiques porteurs
-   *               d'information (étoiles, barres). WCAG 2.1 §1.4.11 exige 3:1.
-   *   goldText  — --color-accent-800 (`.tag-accent`'s vraie couleur de texte). 4,5:1.
+   * Trois ors, trois emplois (§2.1) :
+   *   gold      — décor et logo uniquement. Ne tient aucun seuil (test ci-dessus).
+   *   goldMark  — objets porteurs d'information (étoiles, barres). WCAG 2.1
+   *               §1.4.11 exige 3:1.
+   *   goldText  — texte doré, = `primaryInk`. 4,5:1.
    */
   it('l’or des objets graphiques atteint le seuil des composants', () => {
     expect(contrast(lightColors.goldMark, lightColors.surface)).toBeGreaterThanOrEqual(AA_COMPOSANT);
     // Y compris sur le fond pâle des puces et vignettes, où il est le plus mis
     // à l'épreuve.
     expect(contrast(lightColors.goldMark, lightColors.goldLight)).toBeGreaterThanOrEqual(AA_COMPOSANT);
-  });
-
-  it('l’or de marque tient le seuil composant sur la surface', () => {
-    expect(contrast(lightColors.gold, lightColors.surface)).toBeGreaterThanOrEqual(AA_COMPOSANT);
   });
 
   it('les fonds pâles laissent lire l’encre de marque', () => {
@@ -144,19 +133,24 @@ describe('contraste du thème sombre', () => {
   });
 
   /**
-   * Bug trouvé en device réel (18/08/2026) : `goldText`/`accent` reprenaient
-   * tels quels du thème clair alors que leurs fonds (`goldLight`,
-   * `warningBg`, `dangerBg`, `accentLight`) s'assombrissent en thème sombre
-   * — le texte devenait quasi invisible (rouge sombre sur rouge quasi
-   * noir). `goldText` est réinversé comme `primaryInk` ; `accent` garde son
-   * rôle d'aplat plein (bouton "accent", badge de notif — texte blanc
-   * dessus) et `accentInk` prend le rôle d'encre.
+   * `goldText` vaut littéralement `primaryInk` en thème clair — la doc
+   * source (Claude Design, projet "Tasalle") ne redéfinit pas `goldText`
+   * pour le thème sombre, mais cette identité doit tenir : sans
+   * l'inversion, le texte doré se fondrait dans ses propres fonds
+   * assombris (`goldLight`, `warningBg`).
    */
   it('l’or de badge reste lisible sur ses propres fonds', () => {
     expect(contrast(darkColors.goldText, flatten(darkColors.goldLight, darkColors.cream))).toBeGreaterThanOrEqual(AA_TEXTE);
     expect(contrast(darkColors.goldText, flatten(darkColors.warningBg, darkColors.cream))).toBeGreaterThanOrEqual(AA_TEXTE);
   });
 
+  /**
+   * Écart déclaré vis-à-vis de la doc source : celle-ci dit "accent reste
+   * identique" en thème sombre, mais `accent` (#C0392B) tombe sous 3:1 sur
+   * les fonds sombres (2,64:1 sur `surface`) — invisible en encre de texte
+   * alors qu'il tient très bien comme aplat portant du blanc (test
+   * suivant). `accentInk`, éclairci, porte le rôle d'encre séparément.
+   */
   it('l’encre d’erreur reste lisible sur ses propres fonds', () => {
     expect(contrast(darkColors.accentInk, flatten(darkColors.dangerBg, darkColors.cream))).toBeGreaterThanOrEqual(AA_TEXTE);
     expect(contrast(darkColors.accentInk, flatten(darkColors.accentLight, darkColors.cream))).toBeGreaterThanOrEqual(AA_TEXTE);
@@ -184,21 +178,19 @@ describe('logo', () => {
   });
 
   /**
-   * L'encre du monogramme (--color-accent de Modernist, le rouge de marque —
-   * `logoInk` vaut littéralement `gold`) tient le seuil composant sur fond
-   * clair (3,76:1 ≥ 3) mais pas le seuil texte (< 4,5:1). Ce test fige la
-   * frontière : si quelqu'un promeut `logoInk` en couleur de texte de corps,
-   * la marge dont il croit disposer n'existe pas, et `goldText` est là pour
-   * ça.
+   * L'or du monogramme (2,63:1 sur fond clair) ne tient même pas le seuil
+   * composant — c'est un logotype exempté (WCAG 1.4.3), pas une couleur de
+   * texte. `goldText` existe séparément pour tout ce qui doit vraiment
+   * s'écrire, et lui tient largement le seuil texte.
    */
   it('l’or de la marque ne peut pas servir de couleur de texte de corps', () => {
-    expect(contrast(lightColors.logoInk, lightColors.cream)).toBeGreaterThanOrEqual(AA_COMPOSANT);
-    expect(contrast(lightColors.logoInk, lightColors.cream)).toBeLessThan(AA_TEXTE);
+    expect(contrast(lightColors.logoInk, lightColors.cream)).toBeLessThan(AA_COMPOSANT);
     expect(contrast(lightColors.goldText, lightColors.cream)).toBeGreaterThanOrEqual(AA_TEXTE);
   });
 
   it('le monogramme ressort sur le fond des icônes', () => {
-    // Filet et lettres sur le crème de marque : seuil des composants.
+    // Filet et lettres sur le fond sombre du thème inverse : seuil des
+    // composants, l'or gagne même en lisibilité sur fond sombre (§2.3).
     expect(contrast(lightColors.logoInk, darkColors.cream)).toBeGreaterThanOrEqual(AA_COMPOSANT);
   });
 });

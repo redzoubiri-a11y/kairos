@@ -15,16 +15,16 @@ import {
  * Les lettres sont des contours, pas du texte : une marque ne peut pas
  * dépendre des polices installées sur l'appareil. Leur tracé vit dans
  * lib/monogramme.js, que partagent aussi les documents PDF et le générateur
- * d'icônes — trois rendus, un seul dessin. Le tracé lui-même (issu de
- * Liberation Serif, hérité de la piste « Broadsheet » abandonnée) n'a pas été
- * redessiné pour Modernist — un empattement à la main, sans vrai outil
- * vectoriel, aurait fait moins bien qu'un tracé déjà soigné ; seules la
- * couleur (`colors.logoInk`, désormais le rouge de marque) et la police du
- * mot-symbole (Archivo, comme le reste de l'app, ci-dessous) suivent
- * Modernist — la marque et l'interface parlent maintenant d'une seule voix.
+ * d'icônes — trois rendus, un seul dessin. Le tracé lui-même vient de
+ * Liberation Serif, extrait en contours une fois pour toutes.
+ *
+ * Le mot-symbole, lui, est du texte rendu (pas un tracé) — en police
+ * système, comme le reste de l'app (§3.2 DESIGN_SYSTEM.md, aucune fonte
+ * embarquée) : `undefined` laisse React Native résoudre la police par
+ * défaut de la plateforme plutôt que de nommer une famille précise.
  */
-const MOT_SYMBOLE_FONT_REGULAR = 'Archivo_400Regular';
-const MOT_SYMBOLE_FONT_SEMIBOLD = 'Archivo_600SemiBold';
+const MOT_SYMBOLE_FONT_REGULAR = undefined;
+const MOT_SYMBOLE_FONT_SEMIBOLD = undefined;
 
 /** Monogramme seul — utilisable comme avatar, favicon ou puce d'en-tête. */
 export function TasalleMark({ size = 40, color }) {
@@ -81,7 +81,7 @@ export default function TasalleLogo({
           <Text
             style={{
               fontSize: size * 0.34,
-              fontWeight: '600',
+              fontWeight: '500',
               fontFamily: MOT_SYMBOLE_FONT_SEMIBOLD,
               color: encre,
               // L'interlettrage large est la signature du mot-symbole : sans
@@ -123,7 +123,7 @@ export default function TasalleLogo({
           style={{
             fontSize: typography.title.fontSize,
             lineHeight: typography.title.lineHeight,
-            fontWeight: '600',
+            fontWeight: '500',
             fontFamily: MOT_SYMBOLE_FONT_SEMIBOLD,
             color: encre,
             letterSpacing: 1.4,

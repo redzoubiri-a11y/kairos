@@ -1,6 +1,6 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { Text, TextInput } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useFonts } from 'expo-font';
 import {
@@ -16,17 +16,35 @@ import {
 } from '@expo-google-fonts/hanken-grotesk';
 import { SpaceMono_400Regular, SpaceMono_700Bold } from '@expo-google-fonts/space-mono';
 import RootNavigator from './src/navigation/RootNavigator';
-import { colors, fonts } from './src/theme';
+import { colors } from './src/theme';
 
-// Le reste de l'app appelle des <Text>/<TextInput> sans fontFamily explicite ;
-// ce defaultProps applique la police de corps par defaut sans toucher chaque ecran.
-Text.defaultProps = Text.defaultProps || {};
-Text.defaultProps.style = [{ fontFamily: fonts.body }, Text.defaultProps.style];
-TextInput.defaultProps = TextInput.defaultProps || {};
-TextInput.defaultProps.style = [{ fontFamily: fonts.body }, TextInput.defaultProps.style];
+// Un ecran blanc sans message est impossible a diagnostiquer a distance : mieux
+// vaut afficher l'erreur que planter en silence.
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { error };
+  }
+
+  render() {
+    if (this.state.error) {
+      return (
+        <View style={styles.errorScreen}>
+          <Text style={styles.errorTitle}>Erreur au demarrage</Text>
+          <Text style={styles.errorMessage}>{String(this.state.error?.message ?? this.state.error)}</Text>
+        </View>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 export default function App() {
-  const [fontsLoaded] = useFonts({
+  const [fontsLoaded, fontError] = useFonts({
     BricolageGrotesque_600SemiBold,
     BricolageGrotesque_700Bold,
     BricolageGrotesque_800ExtraBold,
@@ -38,14 +56,30 @@ export default function App() {
     SpaceMono_700Bold,
   });
 
-  if (!fontsLoaded) {
+  // Un echec de chargement des polices ne doit jamais bloquer l'app
+  // indefiniment sur un ecran vide : on continue avec les polices systeme.
+  if (!fontsLoaded && !fontError) {
     return null;
   }
 
   return (
-    <SafeAreaProvider style={{ backgroundColor: colors.background }}>
-      <StatusBar style="dark" />
-      <RootNavigator />
-    </SafeAreaProvider>
+    <ErrorBoundary>
+      <SafeAreaProvider style={{ backgroundColor: colors.background }}>
+        <StatusBar style="dark" />
+        <RootNavigator />
+      </SafeAreaProvider>
+    </ErrorBoundary>
   );
 }
+
+const styles = StyleSheet.create({
+  errorScreen: {
+    flex: 1,
+    backgroundColor: '#f5f0eb',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 24,
+  },
+  errorTitle: { fontSize: 18, fontWeight: '700', color: '#1a1a2e', marginBottom: 12 },
+  errorMessage: { fontSize: 13, color: '#1a1a2e', textAlign: 'center' },
+});

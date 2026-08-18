@@ -117,7 +117,7 @@ export default function ChatScreen({ route, navigation }) {
                 borderWidth: 1,
                 borderColor: colors.border,
                 backgroundColor: colors.surface,
-                borderRadius: radii.sm,
+                borderRadius: radii.pill,
                 paddingHorizontal: 12,
                 paddingVertical: 6,
               }}
@@ -152,7 +152,7 @@ export default function ChatScreen({ route, navigation }) {
                 flex: 1,
                 color: colors.dark,
                 backgroundColor: colors.cream,
-                borderRadius: radii.sm,
+                borderRadius: radii.pill,
                 paddingHorizontal: 14,
                 paddingVertical: 10,
                 outlineStyle: 'none',

@@ -252,7 +252,7 @@ export default function ReservationDetailScreen({ route, navigation }) {
           ) : null}
         </View>
 
-        {error ? <Text style={[typography.caption, { color: colors.accent }]}>{error}</Text> : null}
+        {error ? <Text style={[typography.caption, { color: colors.accentInk }]}>{error}</Text> : null}
       </Body>
     </Screen>
   );

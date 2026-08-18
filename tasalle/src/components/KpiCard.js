@@ -12,7 +12,7 @@ export default function KpiCard({ label, value, delta, deltaSuffix = '%', icon, 
 
   const hasDelta = delta != null && delta !== 0;
   const up = Number(delta) > 0;
-  const deltaColor = up ? colors.primaryInk : colors.accent;
+  const deltaColor = up ? colors.primaryInk : colors.accentInk;
 
   const iconTone =
     tone === 'gold' ? colors.goldMark : tone === 'secondary' ? colors.secondary : colors.primaryInk;

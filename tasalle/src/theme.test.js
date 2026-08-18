@@ -19,6 +19,22 @@ export function contrast(a, b) {
 const AA_TEXTE = 4.5;
 const AA_COMPOSANT = 3;
 
+/**
+ * Aplatit une couleur `rgba(...)` sur un fond opaque — les jetons de fond
+ * du thème sombre (`goldLight`, `warningBg`, `dangerBg`, `accentLight`)
+ * sont des rgba translucides (RN les compose nativement), que `luminance`
+ * ne sait pas lire directement.
+ */
+function flatten(rgbaOrHex, bgHex) {
+  const m = rgbaOrHex.match(/rgba\((\d+),(\d+),(\d+),([\d.]+)\)/);
+  if (!m) return rgbaOrHex;
+  const [, r, g, b, a] = m.map(Number);
+  const bg = bgHex.replace('#', '');
+  const [br, bgc, bb] = [0, 2, 4].map((i) => parseInt(bg.slice(i, i + 2), 16));
+  const mix = (fg, bgv) => Math.round(fg * a + bgv * (1 - a));
+  return '#' + [mix(r, br), mix(g, bgc), mix(b, bb)].map((v) => v.toString(16).padStart(2, '0')).join('');
+}
+
 describe('contraste du thème clair', () => {
   it('le texte principal ressort sur le fond de page', () => {
     expect(contrast(lightColors.dark, lightColors.cream)).toBeGreaterThanOrEqual(AA_TEXTE);
@@ -125,6 +141,34 @@ describe('contraste du thème sombre', () => {
 
   it('le texte secondaire reste lisible', () => {
     expect(contrast(darkColors.warmGray, darkColors.surface)).toBeGreaterThanOrEqual(AA_COMPOSANT);
+  });
+
+  /**
+   * Bug trouvé en device réel (18/08/2026) : `goldText`/`accent` reprenaient
+   * tels quels du thème clair alors que leurs fonds (`goldLight`,
+   * `warningBg`, `dangerBg`, `accentLight`) s'assombrissent en thème sombre
+   * — le texte devenait quasi invisible (rouge sombre sur rouge quasi
+   * noir). `goldText` est réinversé comme `primaryInk` ; `accent` garde son
+   * rôle d'aplat plein (bouton "accent", badge de notif — texte blanc
+   * dessus) et `accentInk` prend le rôle d'encre.
+   */
+  it('l’or de badge reste lisible sur ses propres fonds', () => {
+    expect(contrast(darkColors.goldText, flatten(darkColors.goldLight, darkColors.cream))).toBeGreaterThanOrEqual(AA_TEXTE);
+    expect(contrast(darkColors.goldText, flatten(darkColors.warningBg, darkColors.cream))).toBeGreaterThanOrEqual(AA_TEXTE);
+  });
+
+  it('l’encre d’erreur reste lisible sur ses propres fonds', () => {
+    expect(contrast(darkColors.accentInk, flatten(darkColors.dangerBg, darkColors.cream))).toBeGreaterThanOrEqual(AA_TEXTE);
+    expect(contrast(darkColors.accentInk, flatten(darkColors.accentLight, darkColors.cream))).toBeGreaterThanOrEqual(AA_TEXTE);
+    expect(contrast(darkColors.accentInk, darkColors.surface)).toBeGreaterThanOrEqual(AA_TEXTE);
+  });
+
+  it('l’aplat "accent" reste assez sombre pour porter du blanc', () => {
+    // MButton (variant="accent") et le badge de notif (HomeScreen) posent
+    // du texte blanc en dur sur `accent` — il ne doit PAS suivre
+    // l'inversion des autres rôles, contrairement à `accentInk`.
+    expect(darkColors.accent).toBe(lightColors.accent);
+    expect(contrast('#FFFFFF', darkColors.accent)).toBeGreaterThanOrEqual(AA_TEXTE);
   });
 });
 

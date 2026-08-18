@@ -19,7 +19,7 @@ import * as api from '../../data';
 
 function AlertRow({ icon, tone, label, onPress }) {
   const { colors, typography, spacing, radii } = useTheme();
-  const color = tone === 'danger' ? colors.accent : tone === 'gold' ? colors.goldText : colors.primaryInk;
+  const color = tone === 'danger' ? colors.accentInk : tone === 'gold' ? colors.goldText : colors.primaryInk;
   const bg = tone === 'danger' ? colors.accentLight : tone === 'gold' ? colors.goldLight : colors.primaryLight;
 
   return (

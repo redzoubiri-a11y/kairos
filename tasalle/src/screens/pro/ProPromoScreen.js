@@ -226,7 +226,7 @@ export default function ProPromoScreen({ navigation }) {
                     accessibilityLabel={t('pro.promoDelete')}
                     style={{ padding: spacing.sm }}
                   >
-                    <Ionicons name="trash-outline" size={17} color={colors.accent} />
+                    <Ionicons name="trash-outline" size={17} color={colors.accentInk} />
                   </Pressable>
                 </View>
               </MCard>
@@ -291,7 +291,7 @@ export default function ProPromoScreen({ navigation }) {
           />
 
           {formError ? (
-            <Text style={[typography.caption, { color: colors.accent, textAlign: 'left' }]}>
+            <Text style={[typography.caption, { color: colors.accentInk, textAlign: 'left' }]}>
               {formError}
             </Text>
           ) : null}

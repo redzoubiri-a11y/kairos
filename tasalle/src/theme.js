@@ -41,6 +41,10 @@ export const lightColors = {
   // de marque pour ne pas confondre action principale et erreur.
   accent: '#B3341F',
   accentLight: '#FDECEA',
+  // Même valeur qu'`accent` en thème clair : #B3341F sert déjà les deux
+  // rôles ici (assez sombre pour porter du texte ET pour recevoir du blanc
+  // en aplat). Les deux divergent en thème sombre — voir `darkColors`.
+  accentInk: '#B3341F',
   info: '#3B82F6',
 
   // Neutres — var(--color-text), var(--color-bg), var(--color-surface)
@@ -115,6 +119,24 @@ export const darkColors = {
   goldMark: '#FF9783',
   chartInk: '#FFC4B8',
   chartGrid: 'rgba(248,244,244,0.10)',
+
+  // `goldText` (§3.1) est taillé pour porter du texte sur un fond CLAIR
+  // (`.tag-accent`, l'aplat pâle des badges) — sur `goldLight`/`warningBg`
+  // assombris pour le thème sombre, ce même texte s'y fondrait (rouge
+  // sombre sur rouge quasi noir). Même inversion que `primary` ci-dessus :
+  // un palier clair de la rampe remplit le rôle d'encre.
+  goldText: '#FFC4B8', // --color-accent-300
+
+  // `accent` sert deux rôles incompatibles en thème sombre : aplat plein
+  // portant du texte blanc (bouton "accent", badge de notif — voir
+  // MButton.js, HomeScreen.js) où il doit RESTER sombre pour que le blanc
+  // s'y détache, et encre de texte/icône à même le fond (erreurs, badge
+  // "danger", cœur favori actif) où le même rouge sombre tombe sous 3:1
+  // sur les fonds sombres (mesuré : 2,3:1 sur `surface`). `accentInk`
+  // porte ce second rôle, un palier clair de la rampe comme `goldText` —
+  // volontairement pas le même palier (accent-400, pas 300), pour rester
+  // distinct du rouge de marque comme en thème clair.
+  accentInk: '#FF9783', // --color-accent-400
 
   // Le mot-symbole s'inverse : sombre sur clair devient clair sur fond
   // sombre. Le monogramme (piste Broadsheet) garde son bleu pétrole.

@@ -42,15 +42,15 @@ export default function PinPad({ value, onChange, onComplete, error, label }) {
               height: 16,
               borderRadius: radii.pill,
               borderWidth: 1.5,
-              borderColor: error ? colors.accent : value.length > i ? colors.primaryInk : colors.border,
-              backgroundColor: value.length > i ? (error ? colors.accent : colors.primaryInk) : 'transparent',
+              borderColor: error ? colors.accentInk : value.length > i ? colors.primaryInk : colors.border,
+              backgroundColor: value.length > i ? (error ? colors.accentInk : colors.primaryInk) : 'transparent',
             }}
           />
         ))}
       </View>
 
       {error ? (
-        <Text style={[typography.caption, { color: colors.accent }]}>{error}</Text>
+        <Text style={[typography.caption, { color: colors.accentInk }]}>{error}</Text>
       ) : null}
 
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', width: 246, gap: spacing.sm }}>

@@ -392,7 +392,7 @@ export default function BookingScreen({ route, navigation }) {
                 multiline
               />
 
-              {error ? <Text style={[typography.caption, { color: colors.accent }]}>{error}</Text> : null}
+              {error ? <Text style={[typography.caption, { color: colors.accentInk }]}>{error}</Text> : null}
             </View>
           ) : null}
         </Body>

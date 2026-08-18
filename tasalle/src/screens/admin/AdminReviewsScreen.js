@@ -72,8 +72,8 @@ export default function AdminReviewsScreen() {
           reviews.map((review) => (
             <View key={review.id} style={{ gap: spacing.sm }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
-                <Ionicons name="flag" size={14} color={colors.accent} />
-                <Text style={[typography.caption, { color: colors.accent, flex: 1, textAlign: 'left' }]}>
+                <Ionicons name="flag" size={14} color={colors.accentInk} />
+                <Text style={[typography.caption, { color: colors.accentInk, flex: 1, textAlign: 'left' }]}>
                   {review.salle?.name} · {t('admin.flaggedOn', { date: dateDepot(review.created_at) })}
                 </Text>
               </View>

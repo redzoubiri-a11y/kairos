@@ -143,7 +143,7 @@ export default function NotificationsScreen({ navigation }) {
                 </View>
 
                 {!n.is_read ? (
-                  <View style={{ width: 7, height: 7, borderRadius: 4, backgroundColor: colors.accent, marginTop: 5 }} />
+                  <View style={{ width: 7, height: 7, borderRadius: 4, backgroundColor: colors.accentInk, marginTop: 5 }} />
                 ) : null}
               </View>
             </MCard>

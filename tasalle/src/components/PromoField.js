@@ -106,7 +106,7 @@ export default function PromoField({ salleId, amount, applied, onApplied }) {
       </View>
 
       {error ? (
-        <Text style={[typography.caption, { color: colors.accent, textAlign: 'left' }]}>{error}</Text>
+        <Text style={[typography.caption, { color: colors.accentInk, textAlign: 'left' }]}>{error}</Text>
       ) : null}
     </View>
   );

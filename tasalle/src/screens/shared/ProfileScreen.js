@@ -22,8 +22,8 @@ function Row({ icon, label, value, onPress, danger }) {
       accessibilityRole={onPress ? 'button' : undefined}
       style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingVertical: spacing.md }}
     >
-      <Ionicons name={icon} size={18} color={danger ? colors.accent : colors.warmGray} />
-      <Text style={[typography.secondary, { color: danger ? colors.accent : colors.dark, flex: 1, textAlign: 'left' }]}>
+      <Ionicons name={icon} size={18} color={danger ? colors.accentInk : colors.warmGray} />
+      <Text style={[typography.secondary, { color: danger ? colors.accentInk : colors.dark, flex: 1, textAlign: 'left' }]}>
         {label}
       </Text>
       {value ? <Text style={[typography.caption, { color: colors.warmGray }]}>{value}</Text> : null}

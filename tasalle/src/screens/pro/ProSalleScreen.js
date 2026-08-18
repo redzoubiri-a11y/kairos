@@ -288,7 +288,7 @@ export default function ProSalleScreen() {
                       hitSlop={8}
                       accessibilityRole="button"
                     >
-                      <Ionicons name="trash-outline" size={16} color={colors.accent} />
+                      <Ionicons name="trash-outline" size={16} color={colors.accentInk} />
                     </Pressable>
                   </View>
 
@@ -322,7 +322,7 @@ export default function ProSalleScreen() {
             </>
           ) : null}
 
-          {error ? <Text style={[typography.caption, { color: colors.accent }]}>{error}</Text> : null}
+          {error ? <Text style={[typography.caption, { color: colors.accentInk }]}>{error}</Text> : null}
         </Body>
       </KeyboardAvoidingView>
 

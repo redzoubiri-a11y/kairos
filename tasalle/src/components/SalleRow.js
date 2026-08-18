@@ -85,7 +85,7 @@ export default function SalleRow({ salle, onPress, onToggleFav, isFav }) {
           <Ionicons
             name={isFav ? 'heart' : 'heart-outline'}
             size={18}
-            color={isFav ? colors.accent : colors.warmGray}
+            color={isFav ? colors.accentInk : colors.warmGray}
           />
         </Pressable>
       ) : null}

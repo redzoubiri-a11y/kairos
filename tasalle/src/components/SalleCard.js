@@ -54,7 +54,7 @@ function FavButton({ active, onPress }) {
         justifyContent: 'center',
       }}
     >
-      <Ionicons name={active ? 'heart' : 'heart-outline'} size={15} color={active ? colors.accent : '#1A1A1A'} />
+      <Ionicons name={active ? 'heart' : 'heart-outline'} size={15} color={active ? colors.accentInk : '#1A1A1A'} />
     </Pressable>
   );
 }

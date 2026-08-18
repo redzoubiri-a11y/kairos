@@ -238,7 +238,7 @@ export default function ReviewFormScreen({ route, navigation }) {
             </Text>
           </Pressable>
 
-          {error ? <Text style={[typography.caption, { color: colors.accent }]}>{error}</Text> : null}
+          {error ? <Text style={[typography.caption, { color: colors.accentInk }]}>{error}</Text> : null}
         </Body>
       </KeyboardAvoidingView>
 

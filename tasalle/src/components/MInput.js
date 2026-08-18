@@ -37,7 +37,7 @@ export default function MInput({
   const forcedLtr = direction === 'ltr';
   // .input:focus-visible { border-color: var(--color-accent) } — l'accent
   // brut, pas l'encre foncée : c'est la vraie règle, portée telle quelle.
-  const borderColor = error ? colors.accent : focused ? colors.gold : colors.border;
+  const borderColor = error ? colors.accentInk : focused ? colors.gold : colors.border;
 
   return (
     <View style={[{ gap: spacing.xs }, style]}>
@@ -109,7 +109,7 @@ export default function MInput({
       </View>
 
       {error ? (
-        <Text style={[typography.caption, { color: colors.accent, textAlign: 'left' }]}>{error}</Text>
+        <Text style={[typography.caption, { color: colors.accentInk, textAlign: 'left' }]}>{error}</Text>
       ) : hint ? (
         <Text style={[typography.caption, { color: colors.warmGray, textAlign: 'left' }]}>{hint}</Text>
       ) : null}

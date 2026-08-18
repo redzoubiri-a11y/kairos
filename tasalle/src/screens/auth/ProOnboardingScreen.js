@@ -291,7 +291,7 @@ export default function ProOnboardingScreen({ navigation }) {
           ) : null}
 
           {error && step !== 2 ? (
-            <Text style={[typography.caption, { color: colors.accent }]}>{error}</Text>
+            <Text style={[typography.caption, { color: colors.accentInk }]}>{error}</Text>
           ) : null}
         </Body>
       </KeyboardAvoidingView>

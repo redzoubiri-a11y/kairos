@@ -14,7 +14,7 @@ function Todo({ icon, label, count, tone, onPress }) {
   const { colors, typography, spacing, radii } = useTheme();
 
   if (!count) return null;
-  const color = tone === 'danger' ? colors.accent : colors.goldText;
+  const color = tone === 'danger' ? colors.accentInk : colors.goldText;
   const bg = tone === 'danger' ? colors.accentLight : colors.goldLight;
 
   return (

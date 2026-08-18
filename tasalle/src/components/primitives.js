@@ -8,7 +8,7 @@ import { useI18n } from '../i18n';
 const BADGE_TONES = {
   success: (c) => ({ bg: c.successBg, fg: c.primaryInk }),
   warning: (c) => ({ bg: c.warningBg, fg: c.goldText }),
-  danger: (c) => ({ bg: c.dangerBg, fg: c.accent }),
+  danger: (c) => ({ bg: c.dangerBg, fg: c.accentInk }),
   info: (c) => ({ bg: c.infoBg, fg: c.info }),
   gold: (c) => ({ bg: c.goldLight, fg: c.goldText }),
   neutral: (c) => ({ bg: c.surfaceElevated, fg: c.warmGray }),
@@ -187,7 +187,7 @@ export function ErrorState({ message, onRetry }) {
 
   return (
     <View style={{ padding: spacing.xxl, alignItems: 'center', gap: spacing.sm }}>
-      <Ionicons name="alert-circle-outline" size={30} color={colors.accent} />
+      <Ionicons name="alert-circle-outline" size={30} color={colors.accentInk} />
       <Text style={[typography.secondary, { color: colors.warmGray, textAlign: 'center' }]}>
         {message || t('common.error')}
       </Text>

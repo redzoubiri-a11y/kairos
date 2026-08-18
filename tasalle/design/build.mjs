@@ -277,8 +277,8 @@ const pages = [];
 // 1. Couleurs
 {
   const familles = {
-    'Primaires — le noir du mot-symbole': ['primary', 'primaryLight', 'primaryDark', 'onPrimary', 'primaryInk'],
-    'Or de la marque': ['gold', 'goldMark', 'goldText', 'goldLight'],
+    'Primaires — le rouge de marque en aplat': ['primary', 'primaryLight', 'primaryDark', 'onPrimary', 'primaryInk'],
+    'Rouge de la marque (jetons « gold », historiques)': ['gold', 'goldMark', 'goldText', 'goldLight'],
     'Secondaires et accents': ['secondary', 'secondaryLight', 'accent', 'accentLight', 'info'],
     Neutres: ['dark', 'warmGray', 'border', 'cream', 'surface', 'surfaceElevated'],
   };

@@ -29,6 +29,12 @@ export default function MInput({
   // Les champs de code — promo, parrainage — ne doivent pas être « corrigés »
   // par le clavier : il en ferait un mot.
   autoCorrect,
+  // iOS uniquement : désactive la barre de suggestion QuickType (contacts,
+  // adresses...) sur les champs où elle fait perdre le focus à chaque
+  // caractère (bug constaté sur le téléphone, voir PhoneScreen.js) —
+  // aucune valeur par défaut, elle ne doit pas s'appliquer partout (le code
+  // OTP a besoin de son propre comportement d'auto-remplissage SMS).
+  textContentType,
   style,
 }) {
   const { colors, typography, spacing, radii } = useTheme();
@@ -59,16 +65,17 @@ export default function MInput({
           paddingVertical: multiline ? 6 : 0,
           minHeight: multiline ? 90 : 36,
           backgroundColor: colors.surface,
-          // Focus ring §3.3
-          ...(focused && !error
-            ? {
-                shadowColor: colors.primary,
-                shadowOpacity: 0.18,
-                shadowRadius: 6,
-                shadowOffset: { width: 0, height: 0 },
-                elevation: 2,
-              }
-            : null),
+          // Focus ring §3.3 — les clés shadow*/elevation restent toujours
+          // présentes (seule leur intensité varie) : les ajouter/retirer
+          // dynamiquement selon `focused` forçait un recalcul de la
+          // composition native à chaque passage à `focused`, ce qui coupait
+          // le focus du TextInput enfant sur iOS (bug constaté sur l'écran
+          // téléphone le 18/08/2026).
+          shadowColor: colors.primary,
+          shadowOpacity: focused && !error ? 0.18 : 0,
+          shadowRadius: 6,
+          shadowOffset: { width: 0, height: 0 },
+          elevation: focused && !error ? 2 : 0,
         }}
       >
         {icon ? <Ionicons name={icon} size={18} color={focused ? colors.gold : colors.warmGray} /> : null}
@@ -83,6 +90,7 @@ export default function MInput({
             setFocused(false);
             onBlur?.(e);
           }}
+          textContentType={textContentType}
           autoCorrect={autoCorrect}
           multiline={multiline}
           keyboardType={keyboardType}

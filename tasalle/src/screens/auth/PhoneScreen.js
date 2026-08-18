@@ -66,7 +66,15 @@ export default function PhoneScreen({ navigation }) {
               if (error) setError(null);
             }}
             placeholder="0555 12 34 56"
-            keyboardType="phone-pad"
+            // Bug confirmé par logs onFocus/onChangeText/onBlur sur device
+            // réel (18/08/2026) : la vraie cause était le style d'ombre de
+            // MInput qui ajoutait/retirait ses clés shadow*/elevation au
+            // focus (fix dans MInput.js) — number-pad/textContentType="none"
+            // restent en place par prudence (aucune perte fonctionnelle,
+            // le numéro n'a besoin que de chiffres) mais n'étaient pas la
+            // vraie cause.
+            keyboardType="number-pad"
+            textContentType="none"
             direction="ltr"
             icon="call-outline"
             error={error}

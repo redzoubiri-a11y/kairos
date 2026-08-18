@@ -344,7 +344,10 @@ export default function BookingScreen({ route, navigation }) {
                 label={t('booking.phone')}
                 value={form.client_phone}
                 onChangeText={(v) => setForm((f) => ({ ...f, client_phone: v }))}
-                keyboardType="phone-pad"
+                keyboardType="number-pad"
+                // Voir PhoneScreen.js : la barre de suggestion QuickType iOS
+                // fait perdre le focus à chaque frappe sur ce type de champ.
+                textContentType="none"
                 direction="ltr"
                 icon="call-outline"
                 error={fieldErrors.client_phone}

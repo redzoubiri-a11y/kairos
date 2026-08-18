@@ -33,15 +33,12 @@ describe('contraste du thème clair', () => {
   });
 
   /**
-   * Le rouge vif de marque tient le seuil composant/grand texte avec du blanc
-   * dessus (4,20:1 ≥ 3) mais pas le seuil texte de corps (< 4,5:1) — c'est la
-   * raison d'être des trois jetons : `primary` remplit (rouge profond),
-   * `primaryInk` écrit (même rouge profond), `gold` décore et porte les
-   * grands éléments, jamais du texte de paragraphe.
+   * L'or de la marque ne peut pas remplir un bouton : le blanc n'y tiendrait
+   * que 2,63:1. C'est la raison d'être des trois jetons — `primary` remplit
+   * (noir), `primaryInk` écrit (or profond), `gold` décore.
    */
-  it('l’or de marque en aplat ne suffit pas pour du texte de corps', () => {
-    expect(contrast('#FFFFFF', lightColors.gold)).toBeGreaterThanOrEqual(AA_COMPOSANT);
-    expect(contrast('#FFFFFF', lightColors.gold)).toBeLessThan(AA_TEXTE);
+  it('l’or de marque en aplat porterait un libellé illisible', () => {
+    expect(contrast('#FFFFFF', lightColors.gold)).toBeLessThan(AA_COMPOSANT);
   });
 
   it('le rouge d’erreur tient dans ses deux rôles', () => {
@@ -55,14 +52,14 @@ describe('contraste du thème clair', () => {
   });
 
   /**
-   * Trois rouges, trois emplois :
-   *   gold      — décor et grands éléments. Tient le seuil composant (3:1)
-   *               mais pas le seuil texte (4,5:1) : jamais de texte de corps.
+   * Trois ors, trois emplois, et une frontière que ce test tient :
+   *   gold      — décor et logo. Sous tous les seuils, exempté à ce titre.
    *   goldMark  — objets graphiques porteurs d'information (étoiles de
-   *               notation, barres). WCAG 2.1 §1.4.11 exige 3:1 ; ce palier
-   *               (600 du second accent) vise plus de marge que `gold` sur
-   *               les fonds pâles.
+   *               notation, barres). WCAG 2.1 §1.4.11 exige 3:1.
    *   goldText  — texte. 4,5:1.
+   * Le glissement facile est d'utiliser `gold` pour une étoile ou une barre,
+   * parce que c'est « la couleur de la marque » : la note conviendrait alors
+   * à 2,63:1.
    */
   it('l’or des objets graphiques atteint le seuil des composants', () => {
     expect(contrast(lightColors.goldMark, lightColors.surface)).toBeGreaterThanOrEqual(AA_COMPOSANT);
@@ -71,8 +68,8 @@ describe('contraste du thème clair', () => {
     expect(contrast(lightColors.goldMark, lightColors.goldLight)).toBeGreaterThanOrEqual(AA_COMPOSANT);
   });
 
-  it('l’or de marque tient le seuil composant sur la surface', () => {
-    expect(contrast(lightColors.gold, lightColors.surface)).toBeGreaterThanOrEqual(AA_COMPOSANT);
+  it('l’or de marque ne conviendrait pas à ce rôle', () => {
+    expect(contrast(lightColors.gold, lightColors.surface)).toBeLessThan(AA_COMPOSANT);
   });
 
   it('les fonds pâles laissent lire l’encre de marque', () => {
@@ -134,15 +131,14 @@ describe('logo', () => {
   });
 
   /**
-   * L'encre du monogramme (bleu pétrole, piste Broadsheet) tient le seuil
-   * composant sur fond clair (3,65:1 ≥ 3) mais pas le seuil texte (< 4,5:1).
-   * Ce test fige la frontière : si quelqu'un promeut `logoInk` en couleur de
-   * texte de corps, la marge dont il croit disposer n'existe pas, et
-   * `goldText` est là pour ça.
+   * L'or de la marque ne passe aucun seuil sur fond clair (2,63:1). C'est
+   * admis pour un logotype, que WCAG 2.1 exempte explicitement (1.4.3) — mais
+   * seulement pour lui. Ce test fige la frontière : si quelqu'un promeut
+   * `logoInk` en couleur de texte, la marge dont il croit disposer n'existe
+   * pas, et `goldText` est là pour ça.
    */
-  it('l’or de la marque ne peut pas servir de couleur de texte de corps', () => {
-    expect(contrast(lightColors.logoInk, lightColors.cream)).toBeGreaterThanOrEqual(AA_COMPOSANT);
-    expect(contrast(lightColors.logoInk, lightColors.cream)).toBeLessThan(AA_TEXTE);
+  it('l’or de la marque ne peut pas servir de couleur de texte', () => {
+    expect(contrast(lightColors.logoInk, lightColors.cream)).toBeLessThan(AA_COMPOSANT);
     expect(contrast(lightColors.goldText, lightColors.cream)).toBeGreaterThanOrEqual(AA_TEXTE);
   });
 

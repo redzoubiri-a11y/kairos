@@ -28,24 +28,37 @@ export const useAuthStore = create((set, get) => ({
   bootstrap: async () => {
     setUnauthorizedHandler(() => get().signOut());
     try {
-      const [token, onboarded] = await Promise.all([
+      // allSettled, not all: a failure reading one key (e.g. TOKEN_KEY) must
+      // not discard a successful read of the other, otherwise a transient
+      // AsyncStorage hiccup on the token falls through to the catch below
+      // and wrongly resets a real, persisted onboarding flag to false.
+      const [tokenResult, onboardedResult] = await Promise.allSettled([
         AsyncStorage.getItem(TOKEN_KEY),
         AsyncStorage.getItem(ONBOARDING_KEY),
       ]);
+      const token = tokenResult.status === 'fulfilled' ? tokenResult.value : null;
+      const onboarded = onboardedResult.status === 'fulfilled' && onboardedResult.value === 'true';
 
       if (get().bootstrapTimedOut) return;
 
       if (!token) {
-        set({ status: 'signedOut', onboarded: onboarded === 'true' });
+        set({ status: 'signedOut', onboarded });
         return;
       }
 
       setAuthToken(token);
       try {
         const user = await authApi.me();
+        if (get().bootstrapTimedOut) {
+          // The failsafe already forced signedOut and cleared the client
+          // while this request was in flight — undo the setAuthToken(token)
+          // above instead of opening a socket for a session the UI has
+          // already dismissed.
+          setAuthToken(null);
+          return;
+        }
         connectSocket(token);
-        if (get().bootstrapTimedOut) return;
-        set({ token, user, status: 'signedIn', onboarded: onboarded === 'true' });
+        set({ token, user, status: 'signedIn', onboarded });
         registerForPushNotifications();
       } catch {
         // removeItem is best-effort: even if it throws, the token must be
@@ -58,7 +71,7 @@ export const useAuthStore = create((set, get) => ({
         }
         setAuthToken(null);
         if (get().bootstrapTimedOut) return;
-        set({ token: null, user: null, status: 'signedOut', onboarded: onboarded === 'true' });
+        set({ token: null, user: null, status: 'signedOut', onboarded });
       }
     } catch (error) {
       console.error('[authStore] bootstrap failed', error);
@@ -69,8 +82,14 @@ export const useAuthStore = create((set, get) => ({
   // Called by RootNavigator's failsafe timeout when bootstrap() never
   // resolves. Reads the real persisted onboarding flag itself instead of
   // guessing false, so a returning user isn't sent back through onboarding.
+  // Also tears down whatever bootstrap() may have already wired up
+  // (setAuthToken/connectSocket run before its own bootstrapTimedOut check),
+  // so the API client and socket don't keep a live session the UI now shows
+  // as signed out.
   forceSignedOutAfterTimeout: async () => {
     set({ bootstrapTimedOut: true });
+    setAuthToken(null);
+    disconnectSocket();
     let onboarded = false;
     try {
       onboarded = (await AsyncStorage.getItem(ONBOARDING_KEY)) === 'true';

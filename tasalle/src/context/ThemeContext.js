@@ -2,7 +2,6 @@ import { createContext, useContext, useEffect, useMemo, useState, useCallback } 
 import { useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts, Archivo_400Regular, Archivo_600SemiBold, Archivo_800ExtraBold } from '@expo-google-fonts/archivo';
-import { SourceSerif4_400Regular, SourceSerif4_600SemiBold } from '@expo-google-fonts/source-serif-4';
 import { lightColors, darkColors, typography, spacing, radii, shadows, sizes } from '../theme';
 import { STORAGE_PREFIX } from '../lib/constants';
 
@@ -18,16 +17,15 @@ export function ThemeProvider({ children }) {
   const systemScheme = useColorScheme();
   const [mode, setMode] = useState('system');
   const [ready, setReady] = useState(false);
-  // Archivo (UI, piste Modernist) et Source Serif 4 (marque seule, piste
-  // Broadsheet — voir TasalleLogo.js) : chargées ici plutôt qu'à la racine
-  // d'App.js, qu'on ne modifie jamais (§ règles absolues). Tant qu'elles ne
-  // sont pas prêtes, le fournisseur ne rend rien — même garde que `ready`.
+  // Archivo (Modernist) — UI et marque, une seule police pour toute l'app
+  // depuis l'abandon de la piste Broadsheet (Source Serif 4, voir
+  // TasalleLogo.js). Chargée ici plutôt qu'à la racine d'App.js, qu'on ne
+  // modifie jamais (§ règles absolues). Tant qu'elle n'est pas prête, le
+  // fournisseur ne rend rien — même garde que `ready`.
   const [fontsReady] = useFonts({
     Archivo_400Regular,
     Archivo_600SemiBold,
     Archivo_800ExtraBold,
-    SourceSerif4_400Regular,
-    SourceSerif4_600SemiBold,
   });
 
   useEffect(() => {

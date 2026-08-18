@@ -68,10 +68,10 @@ export const lightColors = {
   overlay: 'rgba(0,0,0,0.55)',
   skeleton: '#EAE7E7', // --color-neutral-200
 
-  // Logo : piste « Broadsheet », son propre fichier Claude Design (couleurs
-  // et police distinctes de Modernist — la marque et l'interface sont deux
-  // voix séparées, voir TasalleLogo.js).
-  logoInk: '#0088B0', // --color-accent (Broadsheet)
+  // Logo : Modernist, comme le reste de l'app — la marque et l'interface
+  // portent désormais la même voix (Broadsheet abandonné, voir
+  // TasalleLogo.js). `logoInk` reprend `gold`/`primary`, --color-accent.
+  logoInk: '#EC3013', // --color-accent (Modernist)
   logoWordmark: '#201E1D',
   logoCanvas: '#F8F4F4',
 
@@ -139,7 +139,7 @@ export const darkColors = {
   accentInk: '#FF9783', // --color-accent-400
 
   // Le mot-symbole s'inverse : sombre sur clair devient clair sur fond
-  // sombre. Le monogramme (piste Broadsheet) garde son bleu pétrole.
+  // sombre. Le monogramme garde son rouge de marque.
   logoWordmark: '#F8F4F4',
   logoCanvas: '#201E1D',
   // `logoInk` n'est pas redéfini : le monogramme garde la même teinte dans

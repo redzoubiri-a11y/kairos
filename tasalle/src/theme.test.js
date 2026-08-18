@@ -184,11 +184,12 @@ describe('logo', () => {
   });
 
   /**
-   * L'encre du monogramme (--color-accent de Broadsheet, bleu pétrole) tient
-   * le seuil composant sur fond clair (3,65:1 ≥ 3) mais pas le seuil texte
-   * (< 4,5:1). Ce test fige la frontière : si quelqu'un promeut `logoInk` en
-   * couleur de texte de corps, la marge dont il croit disposer n'existe pas,
-   * et `goldText` est là pour ça.
+   * L'encre du monogramme (--color-accent de Modernist, le rouge de marque —
+   * `logoInk` vaut littéralement `gold`) tient le seuil composant sur fond
+   * clair (3,76:1 ≥ 3) mais pas le seuil texte (< 4,5:1). Ce test fige la
+   * frontière : si quelqu'un promeut `logoInk` en couleur de texte de corps,
+   * la marge dont il croit disposer n'existe pas, et `goldText` est là pour
+   * ça.
    */
   it('l’or de la marque ne peut pas servir de couleur de texte de corps', () => {
     expect(contrast(lightColors.logoInk, lightColors.cream)).toBeGreaterThanOrEqual(AA_COMPOSANT);

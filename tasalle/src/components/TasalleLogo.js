@@ -16,14 +16,15 @@ import {
  * dépendre des polices installées sur l'appareil. Leur tracé vit dans
  * lib/monogramme.js, que partagent aussi les documents PDF et le générateur
  * d'icônes — trois rendus, un seul dessin. Le tracé lui-même (issu de
- * Liberation Serif) n'a pas été redessiné pour la piste « Broadsheet » — un
- * empattement à la main, sans vrai outil vectoriel, aurait fait moins bien
- * qu'un tracé déjà soigné. Seules la couleur (`colors.logoInk`, désormais un
- * bleu pétrole) et la police du mot-symbole (Source Serif 4, ci-dessous)
- * portent la nouvelle direction.
+ * Liberation Serif, hérité de la piste « Broadsheet » abandonnée) n'a pas été
+ * redessiné pour Modernist — un empattement à la main, sans vrai outil
+ * vectoriel, aurait fait moins bien qu'un tracé déjà soigné ; seules la
+ * couleur (`colors.logoInk`, désormais le rouge de marque) et la police du
+ * mot-symbole (Archivo, comme le reste de l'app, ci-dessous) suivent
+ * Modernist — la marque et l'interface parlent maintenant d'une seule voix.
  */
-const MOT_SYMBOLE_FONT_REGULAR = 'SourceSerif4_400Regular';
-const MOT_SYMBOLE_FONT_SEMIBOLD = 'SourceSerif4_600SemiBold';
+const MOT_SYMBOLE_FONT_REGULAR = 'Archivo_400Regular';
+const MOT_SYMBOLE_FONT_SEMIBOLD = 'Archivo_600SemiBold';
 
 /** Monogramme seul — utilisable comme avatar, favicon ou puce d'en-tête. */
 export function TasalleMark({ size = 40, color }) {

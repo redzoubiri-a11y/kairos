@@ -14,6 +14,9 @@ const BADGE_TONES = {
   neutral: (c) => ({ bg: c.surfaceElevated, fg: c.warmGray }),
 };
 
+// .tag { font-size:11px; letter-spacing:0.02em; padding:3px 10px;
+//   border-radius: calc(var(--radius-md) * 0.75) } — pas de graisse forcée,
+// le corps hérite du texte normal (Archivo_400Regular).
 export function MBadge({ label, tone = 'neutral', icon, size = 'md' }) {
   const { colors, radii } = useTheme();
   const t = (BADGE_TONES[tone] || BADGE_TONES.neutral)(colors);
@@ -27,13 +30,21 @@ export function MBadge({ label, tone = 'neutral', icon, size = 'md' }) {
         gap: 4,
         backgroundColor: t.bg,
         borderRadius: radii.sm,
-        paddingHorizontal: small ? 6 : 8,
-        paddingVertical: small ? 2 : 4,
+        paddingHorizontal: small ? 7 : 10,
+        paddingVertical: small ? 2 : 3,
         alignSelf: 'flex-start',
       }}
     >
       {icon ? <Ionicons name={icon} size={small ? 10 : 12} color={t.fg} /> : null}
-      <Text style={{ color: t.fg, fontSize: small ? 10 : 12, fontWeight: '500' }} numberOfLines={1}>
+      <Text
+        style={{
+          color: t.fg,
+          fontSize: small ? 10 : 11,
+          fontFamily: 'Archivo_400Regular',
+          letterSpacing: 0.2,
+        }}
+        numberOfLines={1}
+      >
         {label}
       </Text>
     </View>
@@ -41,6 +52,10 @@ export function MBadge({ label, tone = 'neutral', icon, size = 'md' }) {
 }
 
 // ── Chip / filtre (§3.3) ──────────────────────────────────────────────────
+// Analogue le plus proche : .seg-opt { padding:7px 12px; font-size:13px }
+// :has(input:checked) { background: var(--color-accent); color: var(--color-bg) }
+// — pas de graisse ni de bordure d'accent distincte à l'état actif dans la
+// source, juste le changement de fond.
 
 export function MChip({ label, active, onPress, icon }) {
   const { colors, radii } = useTheme();
@@ -56,15 +71,17 @@ export function MChip({ label, active, onPress, icon }) {
         gap: 6,
         backgroundColor: active ? colors.primary : colors.surface,
         borderWidth: 1,
-        borderColor: active ? colors.primaryInk : colors.border,
-        borderRadius: radii.pill,
+        borderColor: active ? colors.primary : colors.border,
+        borderRadius: radii.sm,
         paddingVertical: 7,
-        paddingHorizontal: 14,
+        paddingHorizontal: 12,
         opacity: pressed ? 0.8 : 1,
       })}
     >
       {icon ? <Ionicons name={icon} size={13} color={active ? colors.onPrimary : colors.warmGray} /> : null}
-      <Text style={{ fontSize: 13, fontWeight: '500', color: active ? colors.onPrimary : colors.dark }}>
+      <Text
+        style={{ fontSize: 13, fontFamily: 'Archivo_400Regular', color: active ? colors.onPrimary : colors.dark }}
+      >
         {label}
       </Text>
     </Pressable>
@@ -73,15 +90,16 @@ export function MChip({ label, active, onPress, icon }) {
 
 // ── Carte (§3.3) ──────────────────────────────────────────────────────────
 
+// .card { padding: var(--space-3); border-radius: var(--radius-md);
+//   background: var(--color-surface) } — pas de bordure : la surface se
+// détache du fond par sa propre teinte, pas par un contour.
 export function MCard({ children, onPress, style, padded = true, elevated = false }) {
   const { colors, radii, spacing, shadows } = useTheme();
 
   const base = {
     backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: radii.xl,
-    padding: padded ? spacing.lg : 0,
+    borderRadius: radii.md,
+    padding: padded ? spacing.md : 0,
     overflow: 'hidden',
     ...(elevated ? shadows.card : null),
   };
@@ -197,7 +215,7 @@ export function ProgressBar({ percent, tone = 'primary', height = 8, showLabel =
         style={{
           flex: 1,
           height,
-          borderRadius: radii.pill,
+          borderRadius: radii.sm,
           backgroundColor: colors.surfaceElevated,
           borderWidth: 1,
           borderColor: colors.border,

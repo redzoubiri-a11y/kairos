@@ -150,12 +150,12 @@ export default function SalleScreen({ route, navigation }) {
               accessibilityState={{ selected: fav }}
               style={{
                 flexDirection: 'row', alignItems: 'center', gap: 6,
-                paddingHorizontal: 12, height: 34, borderRadius: radii.pill,
+                paddingHorizontal: 12, height: 34, borderRadius: radii.sm,
                 backgroundColor: 'rgba(255,255,255,0.94)',
               }}
             >
               <Ionicons name={fav ? 'heart' : 'heart-outline'} size={16} color={fav ? colors.accent : '#1A1A1A'} />
-              <Text style={{ fontSize: 12, fontWeight: '500', color: '#1A1A1A' }}>
+              <Text style={{ fontSize: 12, fontWeight: '600', fontFamily: 'Archivo_600SemiBold', color: '#1A1A1A' }}>
                 {fav ? t('salle.saved') : t('salle.save')}
               </Text>
             </Pressable>

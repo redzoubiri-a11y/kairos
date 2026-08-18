@@ -17,10 +17,8 @@ export default function ReviewCard({ review }) {
     <View
       style={{
         backgroundColor: colors.surface,
-        borderWidth: 1,
-        borderColor: colors.border,
-        borderRadius: radii.xl,
-        padding: spacing.lg,
+        borderRadius: radii.md,
+        padding: spacing.md,
         gap: spacing.md,
       }}
     >
@@ -35,7 +33,7 @@ export default function ReviewCard({ review }) {
             justifyContent: 'center',
           }}
         >
-          <Text style={{ color: colors.primaryInk, fontWeight: '500', fontSize: 15 }}>{initial}</Text>
+          <Text style={{ color: colors.primaryInk, fontWeight: '600', fontFamily: 'Archivo_600SemiBold', fontSize: 15 }}>{initial}</Text>
         </View>
 
         <View style={{ flex: 1, gap: 3 }}>

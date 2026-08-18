@@ -20,10 +20,13 @@ function variantStyle(variant, colors) {
 }
 
 // §3.3 — Tailles sm / md / lg
+// `md` copie .btn { padding: var(--space-2) calc(var(--space-3)*1.2); font-size:14px }
+// = 8px / 14,4px, arrondi à 14 — Modernist n'a qu'une seule taille de bouton,
+// sm/lg restent une extrapolation proportionnée autour de cette base réelle.
 const SIZES = {
-  sm: { pv: 6, ph: 14, font: 12, icon: 14 },
-  md: { pv: 10, ph: 20, font: 14, icon: 16 },
-  lg: { pv: 14, ph: 28, font: 15, icon: 18 },
+  sm: { pv: 5, ph: 10, font: 12, icon: 14 },
+  md: { pv: 8, ph: 14, font: 14, icon: 16 },
+  lg: { pv: 12, ph: 20, font: 16, icon: 18 },
 };
 
 export default function MButton({
@@ -42,6 +45,9 @@ export default function MButton({
   const v = variantStyle(variant, colors);
   const s = SIZES[size] || SIZES.md;
   const isOff = disabled || loading;
+  // .btn-primary:active { background: var(--color-accent-700) } — RN n'a pas
+  // de :hover, mais l'état pressé est le même geste que :active.
+  const pressedBg = variant === 'primary' || variant === undefined ? colors.primaryDark : v.bg;
 
   return (
     <Pressable
@@ -52,17 +58,17 @@ export default function MButton({
       accessibilityState={{ disabled: isOff, busy: loading }}
       style={({ pressed }) => [
         {
-          backgroundColor: v.bg,
+          backgroundColor: pressed && !isOff ? pressedBg : v.bg,
           borderWidth: 1,
           borderColor: v.border,
-          borderRadius: radii.lg,
+          borderRadius: radii.md, // .btn { border-radius: var(--radius-md) }
           paddingVertical: s.pv,
           paddingHorizontal: s.ph,
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'center',
           gap: spacing.sm,
-          opacity: isOff ? 0.5 : pressed ? 0.85 : 1,
+          opacity: isOff ? 0.5 : 1,
           alignSelf: full ? 'stretch' : 'flex-start',
         },
         style,
@@ -73,7 +79,12 @@ export default function MButton({
       ) : (
         <>
           {icon ? <Ionicons name={icon} size={s.icon} color={v.fg} /> : null}
-          <Text style={{ color: v.fg, fontSize: s.font, fontWeight: '500' }} numberOfLines={1}>
+          {/* .btn { font-family: var(--font-heading); font-weight: var(--font-heading-weight) }
+              — tous les boutons prennent la police et la graisse des titres, jamais celle du corps. */}
+          <Text
+            style={{ color: v.fg, fontSize: s.font, fontWeight: '800', fontFamily: 'Archivo_800ExtraBold' }}
+            numberOfLines={1}
+          >
             {label}
           </Text>
           {iconRight ? <Ionicons name={iconRight} size={s.icon} color={v.fg} /> : null}

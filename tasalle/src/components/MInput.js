@@ -35,7 +35,9 @@ export default function MInput({
   const [focused, setFocused] = useState(false);
 
   const forcedLtr = direction === 'ltr';
-  const borderColor = error ? colors.accent : focused ? colors.primaryInk : colors.border;
+  // .input:focus-visible { border-color: var(--color-accent) } — l'accent
+  // brut, pas l'encre foncée : c'est la vraie règle, portée telle quelle.
+  const borderColor = error ? colors.accent : focused ? colors.gold : colors.border;
 
   return (
     <View style={[{ gap: spacing.xs }, style]}>
@@ -43,6 +45,8 @@ export default function MInput({
         <Text style={[typography.caption, { color: colors.warmGray, textAlign: 'left' }]}>{label}</Text>
       ) : null}
 
+      {/* .input { min-height:36px; padding:6px 10px; font-size:14px;
+          background: var(--color-surface); border: 1px solid var(--color-divider) } */}
       <View
         style={{
           flexDirection: forcedLtr ? 'row' : 'row',
@@ -50,10 +54,10 @@ export default function MInput({
           gap: spacing.sm,
           borderWidth: 1,
           borderColor,
-          borderRadius: radii.lg,
-          paddingHorizontal: 14,
-          paddingVertical: multiline ? 12 : 0,
-          minHeight: multiline ? 96 : 46,
+          borderRadius: radii.md,
+          paddingHorizontal: 10,
+          paddingVertical: multiline ? 6 : 0,
+          minHeight: multiline ? 90 : 36,
           backgroundColor: colors.surface,
           // Focus ring §3.3
           ...(focused && !error
@@ -67,7 +71,7 @@ export default function MInput({
             : null),
         }}
       >
-        {icon ? <Ionicons name={icon} size={18} color={focused ? colors.primaryInk : colors.warmGray} /> : null}
+        {icon ? <Ionicons name={icon} size={18} color={focused ? colors.gold : colors.warmGray} /> : null}
 
         <TextInput
           value={value}
@@ -88,11 +92,11 @@ export default function MInput({
           onSubmitEditing={onSubmitEditing}
           returnKeyType={returnKeyType}
           style={[
-            typography.body,
+            typography.secondary,
             {
               flex: 1,
               color: colors.dark,
-              paddingVertical: multiline ? 0 : 12,
+              paddingVertical: multiline ? 0 : 6,
               textAlignVertical: multiline ? 'top' : 'center',
               minHeight: multiline ? 72 : undefined,
               // Retire le contour bleu par défaut sur le web
@@ -134,14 +138,14 @@ export function MSelect({ label, value, options, onChange, placeholder }) {
           alignItems: 'center',
           justifyContent: 'space-between',
           borderWidth: 1,
-          borderColor: open ? colors.primaryInk : colors.border,
-          borderRadius: radii.lg,
-          paddingHorizontal: 14,
-          minHeight: 46,
+          borderColor: open ? colors.gold : colors.border,
+          borderRadius: radii.md,
+          paddingHorizontal: 10,
+          minHeight: 36,
           backgroundColor: colors.surface,
         }}
       >
-        <Text style={[typography.body, { color: selected ? colors.dark : `${colors.warmGray}CC` }]}>
+        <Text style={[typography.secondary, { color: selected ? colors.dark : `${colors.warmGray}CC` }]}>
           {selected ? selected.label : placeholder}
         </Text>
         <Ionicons name={open ? 'chevron-up' : 'chevron-down'} size={16} color={colors.warmGray} />
@@ -152,7 +156,7 @@ export function MSelect({ label, value, options, onChange, placeholder }) {
           style={{
             borderWidth: 1,
             borderColor: colors.border,
-            borderRadius: radii.lg,
+            borderRadius: radii.md,
             backgroundColor: colors.surface,
             overflow: 'hidden',
           }}
@@ -167,14 +171,14 @@ export function MSelect({ label, value, options, onChange, placeholder }) {
                   setOpen(false);
                 }}
                 style={{
-                  paddingVertical: 11,
-                  paddingHorizontal: 14,
+                  paddingVertical: 8,
+                  paddingHorizontal: 10,
                   backgroundColor: active ? colors.primaryLight : 'transparent',
                 }}
               >
                 <Text
                   style={[
-                    typography.body,
+                    typography.secondary,
                     { color: active ? colors.primaryInk : colors.dark, textAlign: 'left' },
                   ]}
                 >

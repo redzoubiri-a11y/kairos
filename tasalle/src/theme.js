@@ -6,138 +6,140 @@
 
 // §3.1 — Tokens de couleur (thème clair)
 //
-// La palette est celle du logo : noir et or. L'émeraude d'origine du cahier
-// des charges a été écartée — la marque ne la porte pas.
-//
-// L'or de marque, #BE9A5E, ne peut pas tout faire : il ne fait que 2,63:1 sur
-// blanc. Il décore, il n'écrit pas. D'où trois jetons distincts là où le vert
-// n'en demandait qu'un :
-//   · `primary`    — les aplats. Le noir du mot-symbole, blanc dessus à 17,4:1.
-//   · `primaryInk` — ce qui s'écrit : or profond #8B6914, 5,09:1 sur blanc.
-//   · `gold`       — l'or de marque lui-même, décor et logo uniquement.
+// Migré depuis les fichiers réels du système « Modernist » publié sur Claude
+// Design (styles.css, theme.json) — pas une réinterprétation : chaque valeur
+// ci-dessous est copiée depuis une règle CSS précise de ce fichier, citée en
+// commentaire. Le rouge de marque, #EC3013, ne peut pas tout faire : en aplat
+// avec le texte de fond dessus (la vraie recette de `.btn-primary`) il ne
+// tient que 3,76:1, sous le seuil de texte de corps (4,5:1). Il décore et
+// remplit les aplats, il n'écrit pas les petits corps de texte.
 export const lightColors = {
-  // Primaires — le noir du mot-symbole
-  primary: '#1A1A1A',
-  primaryLight: '#F7F2E8',
-  primaryDark: '#000000',
-  /** Ce qui s'inscrit sur un aplat primaire. */
-  onPrimary: '#FFFFFF',
+  // .btn-primary { background: var(--color-accent); color: var(--color-bg) }
+  // :hover → --color-accent-600, :active → --color-accent-700. RN n'a pas de
+  // :hover ; primaryDark sert à l'état pressé (:active).
+  primary: '#EC3013',
+  primaryLight: '#FFF2EF', // --color-accent-100
+  primaryDark: '#AE1800', // --color-accent-700 (:active)
+  /** Ce qui s'inscrit sur un aplat primaire — var(--color-bg), pas du blanc en dur. */
+  onPrimary: '#F3F2F2',
 
-  // Secondaires — brun doré, assez sombre pour servir aussi de texte (4,77:1)
-  secondary: '#8C6D4A',
-  secondaryLight: '#F6F0E7',
-  gold: '#BE9A5E',
-  goldLight: '#FAF5EC',
-  goldText: '#8B6914',
-  // Or des objets graphiques porteurs d'information — les étoiles de notation
-  // au premier chef. `gold` ne fait que 2,63:1 sur blanc, sous le seuil de
-  // 3:1 que WCAG 2.1 (1.4.11) demande à un élément non textuel dont la forme
-  // véhicule une donnée. Celui-ci atteint 3,49:1 tout en restant de l'or.
-  goldMark: '#A8834A',
+  // .tag-accent-2 { background: var(--color-accent-2-100); color: var(--color-accent-2-800) }
+  secondary: '#71261B', // --color-accent-2-800
+  secondaryLight: '#FFF2EF', // --color-accent-2-100
+  // .tag-accent { background: var(--color-accent-100); color: var(--color-accent-800) }
+  gold: '#EC3013', // --color-accent, décor et grands éléments
+  goldLight: '#FFF2EF', // --color-accent-100
+  goldText: '#7C1405', // --color-accent-800, la couleur de texte réelle du tag
+  // --color-accent-600 (:hover) : plus present que goldText, encore net sur
+  // fond pâle — sert aux objets graphiques (étoiles, barres).
+  goldMark: '#DD2B0F',
 
-  // Accents — le rouge d'erreur est assombri de #D94E3B à #C0392B : l'ancien
-  // ne faisait que 4,12:1, sous le seuil, aussi bien en texte sur blanc qu'en
-  // aplat portant du blanc. Le nouveau tient 5,44:1 dans les deux rôles.
-  accent: '#C0392B',
+  // Le rouge d'erreur n'existe pas dans Modernist (un kit générique n'a pas
+  // de rôle « danger ») — seul jeton de cette liste qui n'est pas repris tel
+  // quel d'un fichier. Assombri à #B3341F pour tenir 4,5:1 sur la nouvelle
+  // surface, plus grise que le blanc d'origine, et rester distinct du rouge
+  // de marque pour ne pas confondre action principale et erreur.
+  accent: '#B3341F',
   accentLight: '#FDECEA',
   info: '#3B82F6',
 
-  // Neutres
-  dark: '#1A1A1A',
-  warmGray: '#8B7E72',
-  border: '#E8E4DF',
-  // Fond de page blanc. Les cartes sont blanches elles aussi : leur contour
-  // 1px les détache, conformément à la définition de carte du §3.3.
-  cream: '#FFFFFF',
-  surface: '#FFFFFF',
-  surfaceElevated: '#FAFAF8',
+  // Neutres — var(--color-text), var(--color-bg), var(--color-surface)
+  dark: '#201E1D',
+  // .text-muted, figcaption { color: color-mix(in srgb, var(--color-text) 55%, transparent) }
+  warmGray: 'rgba(32,30,29,0.55)',
+  // --color-divider: color-mix(in srgb, var(--color-text) 40%, transparent).
+  // Une superposition à 40%, pas un gris plat : elle se marque davantage sur
+  // les fonds foncés que ne le ferait un neutre figé — la « recette »
+  // exacte du séparateur Modernist, RN sait très bien composer une rgba.
+  border: 'rgba(32,30,29,0.4)',
+  cream: '#F3F2F2', // --color-bg
+  surface: '#EAE9E9', // --color-surface
+  surfaceElevated: '#F8F4F4', // --color-neutral-100
 
   // Dérivés (badges, overlays)
-  successBg: 'rgba(139,105,20,0.10)',
-  warningBg: 'rgba(190,154,94,0.18)',
-  dangerBg: 'rgba(192,57,43,0.12)',
+  successBg: 'rgba(174,24,0,0.10)',
+  warningBg: 'rgba(236,48,19,0.18)',
+  dangerBg: 'rgba(179,52,31,0.12)',
   infoBg: 'rgba(59,130,246,0.12)',
   overlay: 'rgba(0,0,0,0.55)',
-  skeleton: '#EFEBE5',
+  skeleton: '#EAE7E7', // --color-neutral-200
 
-  // Logo : monogramme TS et filet circulaire dans l'or de la marque, sur fond
-  // libre — le mot-symbole ne porte plus de pavé coloré.
-  //
-  // Cet or ne fait que 2,63:1 sur blanc. C'est délibéré et sans conséquence :
-  // WCAG 2.1 exempte les logotypes du critère de contraste (1.4.3). Il ne doit
-  // en revanche JAMAIS servir de couleur de texte d'interface — `goldText`
-  // (#8B6914, 5,09:1) est là pour ça.
-  logoInk: '#BE9A5E',
-  // Le mot-symbole reste dans l'encre du texte : c'est lui qui porte la
-  // lisibilité de la marque, et il passe partout.
-  logoWordmark: '#1A1A1A',
-  // Fond des icônes d'application et de l'écran de lancement : le crème du
-  // document de marque, que les écrans de l'app n'utilisent plus.
-  logoCanvas: '#F1EFEA',
+  // Logo : piste « Broadsheet », son propre fichier Claude Design (couleurs
+  // et police distinctes de Modernist — la marque et l'interface sont deux
+  // voix séparées, voir TasalleLogo.js).
+  logoInk: '#0088B0', // --color-accent (Broadsheet)
+  logoWordmark: '#201E1D',
+  logoCanvas: '#F8F4F4',
 
-  // L'or qui s'écrit : texte, icônes, onglet actif, montants. 5,09:1 sur
-  // blanc, là où l'or de marque n'atteint que 2,63:1.
-  primaryInk: '#8B6914',
+  // --color-accent-700 (:active) : le rouge qui s'écrit vraiment (texte,
+  // montants, onglet actif) — 5,91:1 sur les cartes.
+  primaryInk: '#AE1800',
 
-  // Marques de graphique : même encre. Les séries sont mono-teinte —
-  // l'identité est portée par les libellés, pas par la couleur, ce qui évite
-  // une palette catégorielle dont les teintes chaudes (or, brun doré) sont
-  // trop proches pour être distinguées (ΔE < 15 en vision normale).
-  chartInk: '#8B6914',
-  chartGrid: 'rgba(26,26,26,0.08)',
+  // Marques de graphique : même encre. Séries mono-teinte, identité portée
+  // par les libellés.
+  chartInk: '#AE1800',
+  chartGrid: 'rgba(32,30,29,0.08)',
 };
 
-// §3.5 — Dark mode : seuls les neutres changent, les accents restent identiques
+// §3.5 — Dark mode
+//
+// Modernist ne publie pas de variante sombre (band: "light" uniquement) —
+// seul ce bloc reste une extrapolation, construite sur les mêmes paliers de
+// rampe que le thème clair (accent-100…900), pas sur des valeurs inventées.
 export const darkColors = {
   ...lightColors,
-  dark: '#FFFFFF',
-  surface: '#2A2A2A',
-  surfaceElevated: '#1A1A1A',
-  border: '#3A3A3A',
-  cream: '#1A1A1A',
-  warmGray: '#A9A099',
-  primaryLight: 'rgba(190,154,94,0.20)',
-  secondaryLight: 'rgba(190,154,94,0.14)',
-  goldLight: 'rgba(190,154,94,0.14)',
-  accentLight: 'rgba(192,57,43,0.20)',
-  successBg: 'rgba(190,154,94,0.18)',
-  warningBg: 'rgba(190,154,94,0.18)',
-  skeleton: '#333333',
+  dark: '#F8F4F4', // --color-neutral-100
+  surface: '#2D2B2B', // --color-neutral-900
+  surfaceElevated: '#201E1D',
+  border: '#444141', // --color-neutral-800
+  cream: '#201E1D',
+  warmGray: '#9B9797', // --color-neutral-500
+  primaryLight: 'rgba(236,48,19,0.20)',
+  secondaryLight: 'rgba(236,48,19,0.14)',
+  goldLight: 'rgba(236,48,19,0.14)',
+  accentLight: 'rgba(179,52,31,0.20)',
+  successBg: 'rgba(236,48,19,0.18)',
+  warningBg: 'rgba(236,48,19,0.18)',
+  skeleton: '#444141',
 
-  // Les rôles s'inversent. En thème clair l'aplat est noir et l'or écrit ;
-  // sur fond sombre un aplat noir disparaîtrait, alors c'est l'or de marque
-  // qui remplit — et le noir qui s'y inscrit (6,61:1). L'or devient aussi
-  // lisible en texte (6,61:1 sur le fond, 5,45:1 sur les cartes), ce qu'il
-  // n'est pas sur blanc.
-  primary: '#BE9A5E',
-  primaryDark: '#A8834A',
-  onPrimary: '#1A1A1A',
-  primaryInk: '#BE9A5E',
-  secondary: '#C9A96A',
-  // Sur fond sombre, l'or de marque dépasse largement le seuil : les étoiles
-  // reprennent la teinte pleine.
-  goldMark: '#BE9A5E',
-  chartInk: '#BE9A5E',
-  chartGrid: 'rgba(255,255,255,0.10)',
+  // Les rôles s'inversent. En thème clair l'aplat est le rouge profond
+  // (--color-accent-700) et le fond clair s'y inscrit ; sur fond sombre ce
+  // même rouge se fondrait dans le fond, alors c'est un palier clair de la
+  // rampe (--color-accent-300) qui remplit — et le texte sombre qui s'y
+  // inscrit.
+  primary: '#FFC4B8', // --color-accent-300
+  primaryDark: '#FF9783', // --color-accent-400
+  onPrimary: '#201E1D',
+  primaryInk: '#FFC4B8',
+  secondary: '#FFC4B8',
+  goldMark: '#FF9783',
+  chartInk: '#FFC4B8',
+  chartGrid: 'rgba(248,244,244,0.10)',
 
-  // Le mot-symbole s'inverse : noir sur crème devient blanc sur fond sombre.
-  // Le monogramme, lui, garde son or — il y gagne même (6,61:1).
-  logoWordmark: '#FFFFFF',
-  logoCanvas: '#1A1A1A',
-  // `logoInk` n'est pas redéfini : le monogramme garde le même or dans les
-  // deux thèmes, comme toute marque.
+  // Le mot-symbole s'inverse : sombre sur clair devient clair sur fond
+  // sombre. Le monogramme (piste Broadsheet) garde son bleu pétrole.
+  logoWordmark: '#F8F4F4',
+  logoCanvas: '#201E1D',
+  // `logoInk` n'est pas redéfini : le monogramme garde la même teinte dans
+  // les deux thèmes, comme toute marque.
 };
 
-// §3.2 — Typographie (police système uniquement)
+// §3.2 — Typographie
+//
+// Copié de styles.css (Modernist) : h1 42/32/25/20, `--font-heading-weight:
+// 800`, body 400. hero/h1/h2/h3 suivent les tailles réelles de h1-h4 ;
+// `title` reprend `.card-title` (17px, 800) ; `caption` reprend h6 (13px,
+// capitales et tracking large dans la source — non repris ici, déjà géré au
+// cas par cas par les écrans qui en ont besoin).
 export const typography = {
-  hero: { fontSize: 42, fontWeight: '500', lineHeight: 46 },
-  h1: { fontSize: 32, fontWeight: '500', lineHeight: 37 },
-  h2: { fontSize: 24, fontWeight: '500', lineHeight: 29 },
-  h3: { fontSize: 20, fontWeight: '500', lineHeight: 26 },
-  title: { fontSize: 17, fontWeight: '500', lineHeight: 24 },
-  body: { fontSize: 16, fontWeight: '400', lineHeight: 24 },
-  secondary: { fontSize: 14, fontWeight: '400', lineHeight: 21 },
-  caption: { fontSize: 12, fontWeight: '500', lineHeight: 17 },
+  hero: { fontSize: 42, fontWeight: '800', fontFamily: 'Archivo_800ExtraBold', lineHeight: 46 }, // h1
+  h1: { fontSize: 32, fontWeight: '800', fontFamily: 'Archivo_800ExtraBold', lineHeight: 37 }, // h2
+  h2: { fontSize: 25, fontWeight: '800', fontFamily: 'Archivo_800ExtraBold', lineHeight: 30 }, // h3
+  h3: { fontSize: 20, fontWeight: '800', fontFamily: 'Archivo_800ExtraBold', lineHeight: 26 }, // h4
+  title: { fontSize: 17, fontWeight: '800', fontFamily: 'Archivo_800ExtraBold', lineHeight: 20 }, // .card-title
+  body: { fontSize: 15, fontWeight: '400', fontFamily: 'Archivo_400Regular', lineHeight: 23 }, // body { font-size:15; line-height:1.55 }
+  secondary: { fontSize: 14, fontWeight: '400', fontFamily: 'Archivo_400Regular', lineHeight: 21 }, // .input/.btn
+  caption: { fontSize: 13, fontWeight: '400', fontFamily: 'Archivo_400Regular', lineHeight: 18 }, // h6
 };
 
 // §3.4 — Spacing
@@ -152,29 +154,36 @@ export const spacing = {
 };
 
 // §3.4 — Radii
+//
+// styles.css (Modernist) : --radius-sm/md/lg: 0px, les trois. `pill` (999)
+// n'existe pas dans la source — Modernist n'a aucune forme en pilule, pas
+// même ses boutons ni ses champs — et ne sert plus ici qu'aux formes
+// réellement circulaires (avatars, pastilles), jamais aux capsules texte.
 export const radii = {
-  xs: 4,
-  sm: 6,
-  md: 8,
-  lg: 10,
-  xl: 12,
-  xxl: 16,
+  xs: 0,
+  sm: 0,
+  md: 0,
+  lg: 0,
+  xl: 0,
+  xxl: 0,
   pill: 999,
 };
 
+// --shadow-md/lg (Modernist) : teintées de --color-neutral-900 (#2D2B2B), pas
+// de noir pur — « soft ink-tinted shadows », comme le dit le fichier source.
 export const shadows = {
   card: {
-    shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 4 },
+    shadowColor: '#2D2B2B',
+    shadowOpacity: 0.16,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 3 },
     elevation: 3,
   },
   sticky: {
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: -2 },
+    shadowColor: '#2D2B2B',
+    shadowOpacity: 0.22,
+    shadowRadius: 32,
+    shadowOffset: { width: 0, height: -12 },
     elevation: 8,
   },
 };

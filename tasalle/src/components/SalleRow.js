@@ -19,9 +19,7 @@ export default function SalleRow({ salle, onPress, onToggleFav, isFav }) {
       style={{
         flexDirection: 'row',
         backgroundColor: colors.surface,
-        borderWidth: 1,
-        borderColor: colors.border,
-        borderRadius: radii.xl,
+        borderRadius: radii.md,
         overflow: 'hidden',
       }}
     >
@@ -64,7 +62,7 @@ export default function SalleRow({ salle, onPress, onToggleFav, isFav }) {
 
           <View style={{ gap: spacing.xs }}>
             {salle.price_from != null ? (
-              <Text style={{ fontSize: 15, fontWeight: '500', color: colors.primaryInk, textAlign: 'left' }}>
+              <Text style={{ fontSize: 15, fontWeight: '600', fontFamily: 'Archivo_600SemiBold', color: colors.primaryInk, textAlign: 'left' }}>
                 {t('common.from')} {formatDA(salle.price_from, t('common.currency'))}
               </Text>
             ) : null}

@@ -22,7 +22,7 @@
         "NSPhotoLibraryUsageDescription": "AlloTruck accede a vos photos pour televerser vos documents (RC, patente, carte grise)."
       },
       "config": {
-        "googleMapsApiKey": "REPLACE_WITH_IOS_GOOGLE_MAPS_API_KEY"
+        "googleMapsApiKey": "AIzaSyDItXI-VUjF5ONSzHuM8GVNJRPbDQUlzto"
       }
     },
     "android": {

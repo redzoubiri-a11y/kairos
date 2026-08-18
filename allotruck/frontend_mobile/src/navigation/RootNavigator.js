@@ -114,7 +114,7 @@ export default function RootNavigator() {
     const timeout = setTimeout(() => {
       if (useAuthStore.getState().status === 'loading') {
         console.error('[RootNavigator] bootstrap timeout, forcing signedOut');
-        useAuthStore.setState({ status: 'signedOut', onboarded: false });
+        useAuthStore.getState().forceSignedOutAfterTimeout();
       }
     }, 8000);
     return () => clearTimeout(timeout);

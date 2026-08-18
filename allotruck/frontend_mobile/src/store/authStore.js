@@ -14,6 +14,12 @@ export const useAuthStore = create((set, get) => ({
   status: 'loading', // loading | signedOut | signedIn
   onboarded: false,
   error: null,
+  // Set by forceSignedOutAfterTimeout() when RootNavigator's 8s failsafe
+  // fires. Guards every subsequent `set()` in bootstrap() so a slow (but not
+  // actually stuck) bootstrap can't resolve later and clobber the forced
+  // signedOut state, which would bounce a logged-in user back to the login
+  // screen and then snap them back into the app.
+  bootstrapTimedOut: false,
 
   // Reads the persisted session and revalidates it against the API.
   // Wrapped end to end: any failure here (AsyncStorage unavailable, native
@@ -27,6 +33,8 @@ export const useAuthStore = create((set, get) => ({
         AsyncStorage.getItem(ONBOARDING_KEY),
       ]);
 
+      if (get().bootstrapTimedOut) return;
+
       if (!token) {
         set({ status: 'signedOut', onboarded: onboarded === 'true' });
         return;
@@ -36,17 +44,40 @@ export const useAuthStore = create((set, get) => ({
       try {
         const user = await authApi.me();
         connectSocket(token);
+        if (get().bootstrapTimedOut) return;
         set({ token, user, status: 'signedIn', onboarded: onboarded === 'true' });
         registerForPushNotifications();
       } catch {
-        await AsyncStorage.removeItem(TOKEN_KEY);
+        // removeItem is best-effort: even if it throws, the token must be
+        // cleared from the in-memory API client, otherwise it keeps sending
+        // a stale/rejected token on every request after this point.
+        try {
+          await AsyncStorage.removeItem(TOKEN_KEY);
+        } catch (removeError) {
+          console.error('[authStore] failed to clear stale token', removeError);
+        }
         setAuthToken(null);
+        if (get().bootstrapTimedOut) return;
         set({ token: null, user: null, status: 'signedOut', onboarded: onboarded === 'true' });
       }
     } catch (error) {
       console.error('[authStore] bootstrap failed', error);
-      set({ status: 'signedOut', onboarded: false });
+      if (!get().bootstrapTimedOut) set({ status: 'signedOut', onboarded: false });
     }
+  },
+
+  // Called by RootNavigator's failsafe timeout when bootstrap() never
+  // resolves. Reads the real persisted onboarding flag itself instead of
+  // guessing false, so a returning user isn't sent back through onboarding.
+  forceSignedOutAfterTimeout: async () => {
+    set({ bootstrapTimedOut: true });
+    let onboarded = false;
+    try {
+      onboarded = (await AsyncStorage.getItem(ONBOARDING_KEY)) === 'true';
+    } catch (error) {
+      console.error('[authStore] failed to read onboarding flag on timeout', error);
+    }
+    set({ status: 'signedOut', onboarded });
   },
 
   completeOnboarding: async () => {

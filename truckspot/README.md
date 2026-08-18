@@ -98,12 +98,15 @@ PENDING ──► ACCEPTED ──► IN_PROGRESS ──► COMPLETED
 Les transitions sont verifiees cote serveur. Seul le transporteur peut accepter, refuser,
 demarrer ou terminer ; seul le client peut annuler. Accepter une mission rattachee a un
 trajet decremente le volume et la charge libres de ce trajet ; une annulation les restitue.
+Une mission sans trajet declare (reservation directe d'un camion depuis la carte) suit le
+meme principe sur sa propre paire `Truck.freeVolumeM3` / `freeWeightKg`, independante du
+decompte du trajet — les deux pools ne se melangent pas.
 
 L'acceptation est refusee si la capacite restante ne suffit plus. Le controle ne peut pas
 se faire a la creation de la mission : plusieurs demandes en attente coexistent sur un meme
-trajet sans rien consommer, et deux demandes de 15 m3 sur un trajet de 20 m3 libres sont
-toutes les deux legitimes tant qu'aucune n'est acceptee. La verification est portee par la
-condition de l'ecriture, donc evaluee sous le verrou de ligne : deux acceptations
+trajet (ou le meme camion) sans rien consommer, et deux demandes de 15 m3 sur 20 m3 libres
+sont toutes les deux legitimes tant qu'aucune n'est acceptee. La verification est portee par
+la condition de l'ecriture, donc evaluee sous le verrou de ligne : deux acceptations
 simultanees ne peuvent pas la franchir ensemble.
 
 ## API
@@ -342,12 +345,12 @@ pour rejouer les migrations.
 cd truckspot/backend && npm test
 ```
 
-**157 tests d'integration** tournent contre une vraie base PostgreSQL et un vrai serveur
+**161 tests d'integration** tournent contre une vraie base PostgreSQL et un vrai serveur
 HTTP + Socket.IO, sans mock : authentification, cloisonnement des acces (un tiers ne peut
 lire ni une mission ni une conversation qui ne le concerne pas), recherche geographique,
 filtres de la carte, expiration des positions trop anciennes, transitions de statut
 interdites, comptabilite du volume libre (y compris deux acceptations simultanees sur
-un meme trajet), chat
+un meme trajet, ou sur un meme camion pour une mission sans trajet), chat
 temps reel (rejet d'un jeton invalide, absence de message en double), moderation admin,
 confidentialite des pieces justificatives (401 sans jeton, 403 pour un tiers, aucune
 lecture possible en statique), notifications push (purge des jetons obsoletes, panne

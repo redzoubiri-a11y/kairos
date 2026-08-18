@@ -446,6 +446,158 @@ export async function toggleFavorite(salleId) {
   return true;
 }
 
+// ── Traiteurs et halouadjis (§13) ────────────────────────────────────────
+// Voir local.js pour le contexte : tables sœurs de `salles`, pas de
+// réservation à date bloquée — une demande de devis à la place.
+
+const PARTNER_TABLES = { traiteur: 'traiteurs', halouadji: 'halouadjis' };
+const PARTNER_SELECT = 'id, owner_id, name, city, description, specialites, prix_min, prix_max, photos, status, is_premium, created_at';
+
+async function registerPartner(type, payload) {
+  const id = await currentUserId();
+  const table = PARTNER_TABLES[type];
+
+  const partner = unwrap(
+    await supabase
+      .from(table)
+      .insert({
+        owner_id: id,
+        name: payload.name,
+        city: payload.city,
+        description: payload.description || '',
+        specialites: payload.specialites || [],
+        prix_min: payload.prix_min != null ? Number(payload.prix_min) : null,
+        prix_max: payload.prix_max != null ? Number(payload.prix_max) : null,
+        photos: payload.photos || [],
+        status: 'pending',
+      })
+      .select()
+      .single()
+  );
+
+  const user = unwrap(await supabase.from('users').update({ role: ROLES.PRO }).eq('id', id).select().single());
+
+  // §10.3 — même règle qu'une salle : un seul essai par personne.
+  const abonnement = unwrap(await supabase.from('subscriptions').select('id').eq('pro_id', id).maybeSingle());
+  if (!abonnement) {
+    unwrap(
+      await supabase
+        .from('subscriptions')
+        .insert({ pro_id: id, status: SUBSCRIPTION_STATUS.TRIAL, trial_ends_at: addDays(todayISO(), TRIAL_DAYS) })
+    );
+  }
+
+  return { partner, user };
+}
+
+export async function registerTraiteur(payload) {
+  return registerPartner('traiteur', payload);
+}
+export async function registerHalouadji(payload) {
+  return registerPartner('halouadji', payload);
+}
+
+async function listPartners(type, filters = {}) {
+  let q = supabase.from(PARTNER_TABLES[type]).select(PARTNER_SELECT).eq('status', 'active');
+  if (filters.city) q = q.eq('city', filters.city);
+  if (filters.query) {
+    const term = `%${filters.query}%`;
+    q = q.or(`name.ilike.${term},city.ilike.${term}`);
+  }
+  return unwrap(await q.order('is_premium', { ascending: false }).limit(100)) || [];
+}
+
+export async function listTraiteurs(filters = {}) {
+  return listPartners('traiteur', filters);
+}
+export async function listHalouadjis(filters = {}) {
+  return listPartners('halouadji', filters);
+}
+
+export async function getTraiteur(id) {
+  return unwrap(await supabase.from('traiteurs').select(PARTNER_SELECT).eq('id', id).single());
+}
+export async function getHalouadji(id) {
+  return unwrap(await supabase.from('halouadjis').select(PARTNER_SELECT).eq('id', id).single());
+}
+
+export async function proListPartners(type) {
+  const id = await currentUserId();
+  return unwrap(await supabase.from(PARTNER_TABLES[type]).select(PARTNER_SELECT).eq('owner_id', id)) || [];
+}
+
+export async function proUpdatePartner(type, id, patch) {
+  return unwrap(await supabase.from(PARTNER_TABLES[type]).update(patch).eq('id', id).select().single());
+}
+
+// La notification au professionnel part du trigger SQL
+// `devis_requests_notify_owner` (0012_traiteurs_halouadjis.sql) — pas
+// dupliquée ici, contrairement au backend local qui n'a pas de triggers.
+export async function createDevisRequest(payload) {
+  const id = await currentUserId();
+  return unwrap(
+    await supabase
+      .from('devis_requests')
+      .insert({
+        client_id: id,
+        traiteur_id: payload.traiteurId || null,
+        halouadji_id: payload.halouadjiId || null,
+        event_date: payload.eventDate || null,
+        guest_count: payload.guestCount != null ? Number(payload.guestCount) : null,
+        message: payload.message || '',
+      })
+      .select()
+      .single()
+  );
+}
+
+export async function listMyDevisRequests() {
+  const id = await currentUserId();
+  return (
+    unwrap(
+      await supabase.from('devis_requests').select('*').eq('client_id', id).order('created_at', { ascending: false })
+    ) || []
+  );
+}
+
+export async function proListDevisRequests(type, partnerId) {
+  const key = type === 'traiteur' ? 'traiteur_id' : 'halouadji_id';
+  return (
+    unwrap(
+      await supabase
+        .from('devis_requests')
+        .select('*')
+        .eq(key, partnerId)
+        .order('created_at', { ascending: false })
+    ) || []
+  );
+}
+
+export async function respondDevisRequest(id, status, reply) {
+  return unwrap(await supabase.rpc('respond_devis_request', { p_id: id, p_status: status, p_reply: reply || null }));
+}
+
+export async function adminListPendingPartners() {
+  const results = await Promise.all(
+    ['traiteur', 'halouadji'].map(async (type) => {
+      const rows =
+        unwrap(
+          await supabase
+            .from(PARTNER_TABLES[type])
+            .select(`${PARTNER_SELECT}, owner:users ( id, full_name, phone )`)
+            .eq('status', 'pending')
+            .order('created_at', { ascending: true })
+        ) || [];
+      return rows.map((r) => ({ ...r, type }));
+    })
+  );
+  return results.flat().sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+}
+
+export async function adminReviewPartner(type, id, approved) {
+  return unwrap(await supabase.rpc('admin_review_partner', { p_type: type, p_id: id, p_approved: approved }));
+}
+
 // ── Réservations pro ──────────────────────────────────────────────────────
 
 /** Toutes les salles du propriétaire connecté. */

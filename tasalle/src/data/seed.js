@@ -294,6 +294,10 @@ const PRO_OWNERS = [
   ['user-pro-009', 'Nabil Hamdani', '0012369874 clé 52'],
   ['user-pro-010', 'Salim Merabet', '0023698741 clé 74'],
   ['user-pro-011', 'Farid Benhamou', '0034789612 clé 90'],
+  // §13 — traiteurs et halouadjis : deux nouveaux comptes pro dédiés,
+  // distincts des propriétaires de salle ci-dessus.
+  ['user-pro-012', 'Yamina Cherif', '0091234567 clé 08'],
+  ['user-pro-013', 'Amel Bouzid', '0092345678 clé 19'],
 ];
 
 // Familles ayant réservé — référencées par les réservations et les avis.
@@ -760,11 +764,100 @@ export const SEED_FAVORITES = [
   { user_id: 'user-client-001', salle_id: 'salle-005' },
 ];
 
+// ── Traiteurs et halouadjis (§13) ─────────────────────────────────────────
+// Pas de `photosOf` : pas de manifeste de photos de démo pour ces deux
+// verticales — `SallePhoto` retombe sur son dégradé avec l'initiale.
+
+export const SEED_TRAITEURS = [
+  {
+    id: 'traiteur-001',
+    owner_id: 'user-pro-012',
+    name: 'Traiteur El Feth',
+    city: 'Alger',
+    description:
+      "Traiteur événementiel depuis 15 ans : mariages, fiançailles, réceptions d'entreprise. Cuisine algéroise et internationale, service à table ou buffet, brigade complète sur place.",
+    specialites: ['cuisine_algerienne', 'cuisine_internationale', 'buffet', 'service_a_table'],
+    prix_min: 2500,
+    prix_max: 6000,
+    photos: [],
+    status: 'active',
+    is_premium: true,
+    created_at: '2026-03-10T09:00:00Z',
+  },
+  {
+    id: 'traiteur-002',
+    owner_id: 'user-pro-012',
+    name: 'Saveurs de Kabylie',
+    city: 'Tizi Ouzou',
+    description:
+      'Cuisine kabyle traditionnelle pour vos grandes occasions : couscous royal, méchoui, plats mijotés. Livraison ou service sur place dans toute la wilaya.',
+    specialites: ['cuisine_algerienne', 'mechoui', 'livraison'],
+    prix_min: 1800,
+    prix_max: 4500,
+    photos: [],
+    status: 'active',
+    is_premium: false,
+    created_at: '2026-04-02T09:00:00Z',
+  },
+];
+
+export const SEED_HALOUADJIS = [
+  {
+    id: 'halouadji-001',
+    owner_id: 'user-pro-013',
+    name: 'Halouadji Bouzid',
+    city: 'Alger',
+    description:
+      "Pâtisserie traditionnelle algérienne pour mariages et fiançailles : makrout, baklawa, qalb el louz, tcharek — présentés en pièces montées ou plateaux individuels.",
+    specialites: ['patisserie_traditionnelle', 'gateau_mariage', 'plateau_individuel'],
+    prix_min: 800,
+    prix_max: 3000,
+    photos: [],
+    status: 'active',
+    is_premium: true,
+    created_at: '2026-03-15T09:00:00Z',
+  },
+  {
+    id: 'halouadji-002',
+    owner_id: 'user-pro-013',
+    name: 'Douceurs de Blida',
+    city: 'Blida',
+    description:
+      'Gâteaux traditionnels et modernes : pièce montée, dragées, plateaux mixtes traditionnel/moderne pour toutes les cérémonies.',
+    specialites: ['patisserie_traditionnelle', 'patisserie_moderne', 'piece_montee'],
+    prix_min: 1000,
+    prix_max: 3500,
+    photos: [],
+    status: 'active',
+    is_premium: false,
+    created_at: '2026-04-10T09:00:00Z',
+  },
+];
+
+export const SEED_DEVIS_REQUESTS = [
+  {
+    id: 'devis-001',
+    client_id: 'user-client-001',
+    traiteur_id: 'traiteur-001',
+    halouadji_id: null,
+    event_date: addDays(T, 60),
+    guest_count: 250,
+    message: 'Bonjour, je cherche un traiteur pour un mariage de 250 personnes, cuisine algéroise si possible.',
+    status: 'pending',
+    pro_reply: null,
+    created_at: addDays(T, -2),
+    responded_at: null,
+  },
+];
+
 export function buildSeed() {
   return {
     users: SEED_USERS.map((u) => ({ ...u })),
     salles: SEED_SALLES.map((s) => ({ ...s })),
     tarifs: SEED_TARIFS.map((t) => ({ ...t })),
+    traiteurs: SEED_TRAITEURS.map((t) => ({ ...t })),
+    halouadjis: SEED_HALOUADJIS.map((h) => ({ ...h })),
+    devis_requests: SEED_DEVIS_REQUESTS.map((d) => ({ ...d })),
     reservations: SEED_RESERVATIONS.map((r) => ({ ...r })),
     reviews: SEED_REVIEWS.map((r) => ({ ...r })),
     messages: SEED_MESSAGES.map((m) => ({ ...m })),

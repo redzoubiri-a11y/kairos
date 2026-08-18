@@ -644,6 +644,274 @@ export async function toggleFavorite(salleId) {
   return idx < 0;
 }
 
+// ── Traiteurs et halouadjis (§13) ────────────────────────────────────────
+//
+// Deux verticales sœurs de « salle », pas de réservation à date bloquée :
+// le prix dépend du menu/du nombre d'invités, donc le client envoie une
+// demande de devis (`devis_requests`) plutôt que de bloquer un jour.
+// Implémentation générique (`PARTNER_COLLECTIONS`) partagée par les deux
+// tables, exposée sous des noms spécifiques pour que les écrans appellent
+// `listTraiteurs`/`listHalouadjis` sans connaître ce détail interne.
+
+const PARTNER_COLLECTIONS = { traiteur: 'traiteurs', halouadji: 'halouadjis' };
+
+function registerPartner(type, payload) {
+  const user = requireUser();
+  const partner = {
+    id: uid(type),
+    owner_id: user.id,
+    name: payload.name,
+    city: payload.city,
+    description: payload.description || '',
+    specialites: payload.specialites || [],
+    prix_min: payload.prix_min != null ? Number(payload.prix_min) : null,
+    prix_max: payload.prix_max != null ? Number(payload.prix_max) : null,
+    photos: payload.photos || [],
+    status: 'pending',
+    is_premium: false,
+    created_at: new Date().toISOString(),
+  };
+  db[PARTNER_COLLECTIONS[type]].push(partner);
+
+  user.role = ROLES.PRO;
+
+  // Même règle que pour une salle (§10.3) : un abonnement par personne,
+  // pas par fiche — la table est déjà partagée (`subscriptions.salle_id`
+  // reste simplement null ici).
+  const dejaAbonne = db.subscriptions.some((s) => s.pro_id === user.id);
+  if (!dejaAbonne) {
+    db.subscriptions.push({
+      id: uid('sub'),
+      pro_id: user.id,
+      salle_id: null,
+      status: SUBSCRIPTION_STATUS.TRIAL,
+      trial_started_at: todayISO(),
+      trial_ends_at: addDays(todayISO(), TRIAL_DAYS),
+      current_period_start: null,
+      current_period_end: null,
+      amount: SUBSCRIPTION_PRICE,
+      payment_method: null,
+      payment_details: null,
+      created_at: new Date().toISOString(),
+    });
+  }
+
+  persist();
+  return { partner: clone(partner), user: clone(user) };
+}
+
+function decoratePartner(partner) {
+  return { ...clone(partner) };
+}
+
+function listPartners(type, filters = {}) {
+  const { query, city } = filters;
+  let rows = db[PARTNER_COLLECTIONS[type]].filter((p) => p.status === 'active').map(decoratePartner);
+
+  if (query) {
+    const q = query.trim().toLowerCase();
+    rows = rows.filter((p) => p.name.toLowerCase().includes(q) || p.city.toLowerCase().includes(q));
+  }
+  if (city) rows = rows.filter((p) => p.city === city);
+
+  rows.sort((a, b) => (b.is_premium ? 1 : 0) - (a.is_premium ? 1 : 0));
+  return rows;
+}
+
+function getPartner(type, id) {
+  const partner = db[PARTNER_COLLECTIONS[type]].find((p) => p.id === id);
+  if (!partner) throw new Error('PARTNER_NOT_FOUND');
+  return decoratePartner(partner);
+}
+
+export async function registerTraiteur(payload) {
+  await load();
+  return registerPartner('traiteur', payload);
+}
+export async function registerHalouadji(payload) {
+  await load();
+  return registerPartner('halouadji', payload);
+}
+export async function listTraiteurs(filters = {}) {
+  await load();
+  return listPartners('traiteur', filters);
+}
+export async function listHalouadjis(filters = {}) {
+  await load();
+  return listPartners('halouadji', filters);
+}
+export async function getTraiteur(id) {
+  await load();
+  return getPartner('traiteur', id);
+}
+export async function getHalouadji(id) {
+  await load();
+  return getPartner('halouadji', id);
+}
+
+/** Fiche(s) du propriétaire connecté, quel qu'en soit le type. */
+export async function proListPartners(type) {
+  await load();
+  const user = requireUser();
+  return db[PARTNER_COLLECTIONS[type]]
+    .filter((p) => p.owner_id === user.id)
+    .map(decoratePartner);
+}
+
+export async function proUpdatePartner(type, id, patch) {
+  await load();
+  const user = requireUser();
+  const partner = db[PARTNER_COLLECTIONS[type]].find((p) => p.id === id);
+  if (!partner) throw new Error('PARTNER_NOT_FOUND');
+  if (partner.owner_id !== user.id) throw new Error('FORBIDDEN');
+  Object.assign(partner, patch);
+  persist();
+  return decoratePartner(partner);
+}
+
+/** §13 — demande de devis envoyée par un client à un traiteur ou un halouadji. */
+export async function createDevisRequest(payload) {
+  await load();
+  const user = requireUser();
+  const { traiteurId, halouadjiId, eventDate, guestCount, message } = payload;
+  if (!traiteurId === !halouadjiId) {
+    // Les deux absents ou les deux présents : ni l'un ni l'autre n'est valide.
+    throw new Error('INVALID_PARTNER');
+  }
+
+  const devis = {
+    id: uid('devis'),
+    client_id: user.id,
+    traiteur_id: traiteurId || null,
+    halouadji_id: halouadjiId || null,
+    event_date: eventDate || null,
+    guest_count: guestCount != null ? Number(guestCount) : null,
+    message: message || '',
+    status: 'pending',
+    pro_reply: null,
+    created_at: new Date().toISOString(),
+    responded_at: null,
+  };
+  db.devis_requests.push(devis);
+
+  const ownerId = traiteurId
+    ? db.traiteurs.find((t) => t.id === traiteurId)?.owner_id
+    : db.halouadjis.find((h) => h.id === halouadjiId)?.owner_id;
+  if (ownerId) {
+    pushNotifications(
+      buildNotifications({
+        type: 'new_devis_request',
+        userId: ownerId,
+        title: 'Nouvelle demande de devis',
+        body: 'Une nouvelle demande vous attend.',
+        data: { devis_id: devis.id },
+      })
+    );
+  }
+
+  persist();
+  return clone(devis);
+}
+
+export async function listMyDevisRequests() {
+  await load();
+  const user = requireUser();
+  return db.devis_requests
+    .filter((d) => d.client_id === user.id)
+    .map(clone)
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+}
+
+/** Demandes reçues par la fiche `partnerId` du propriétaire connecté. */
+export async function proListDevisRequests(type, partnerId) {
+  await load();
+  const user = requireUser();
+  const partner = db[PARTNER_COLLECTIONS[type]].find((p) => p.id === partnerId);
+  if (!partner || partner.owner_id !== user.id) throw new Error('FORBIDDEN');
+
+  const key = type === 'traiteur' ? 'traiteur_id' : 'halouadji_id';
+  return db.devis_requests
+    .filter((d) => d[key] === partnerId)
+    .map(clone)
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+}
+
+export async function respondDevisRequest(id, status, reply) {
+  await load();
+  const user = requireUser();
+  if (!['accepted', 'declined'].includes(status)) throw new Error('INVALID_STATUS');
+
+  const devis = db.devis_requests.find((d) => d.id === id);
+  if (!devis) throw new Error('DEVIS_NOT_FOUND');
+  if (devis.status !== 'pending') throw new Error('DEVIS_ALREADY_ANSWERED');
+
+  const owner = devis.traiteur_id
+    ? db.traiteurs.find((t) => t.id === devis.traiteur_id)?.owner_id
+    : db.halouadjis.find((h) => h.id === devis.halouadji_id)?.owner_id;
+  if (owner !== user.id) throw new Error('FORBIDDEN');
+
+  devis.status = status;
+  devis.pro_reply = reply || null;
+  devis.responded_at = new Date().toISOString();
+
+  pushNotifications(
+    buildNotifications({
+      type: status === 'accepted' ? 'devis_accepted' : 'devis_declined',
+      userId: devis.client_id,
+      title: status === 'accepted' ? 'Devis accepté' : 'Devis refusé',
+      body:
+        reply ||
+        (status === 'accepted'
+          ? 'Le professionnel a accepté votre demande de devis.'
+          : "Le professionnel n’a pas pu donner suite à votre demande."),
+      data: { devis_id: devis.id },
+    })
+  );
+
+  persist();
+  return clone(devis);
+}
+
+export async function adminListPendingPartners() {
+  await load();
+  requireAdmin();
+
+  const pending = (type) =>
+    db[PARTNER_COLLECTIONS[type]]
+      .filter((p) => p.status === 'pending')
+      .map((p) => ({ ...decoratePartner(p), type, owner: clone(db.users.find((u) => u.id === p.owner_id)) || null }));
+
+  return [...pending('traiteur'), ...pending('halouadji')].sort(
+    (a, b) => new Date(a.created_at) - new Date(b.created_at)
+  );
+}
+
+export async function adminReviewPartner(type, id, approved) {
+  await load();
+  requireAdmin();
+
+  const partner = db[PARTNER_COLLECTIONS[type]].find((p) => p.id === id);
+  if (!partner) throw new Error('PARTNER_NOT_FOUND');
+
+  partner.status = approved ? 'active' : 'inactive';
+  if (approved) rewardReferral(partner.owner_id);
+
+  pushNotifications(
+    buildNotifications({
+      type: approved ? 'partner_approved' : 'partner_rejected',
+      userId: partner.owner_id,
+      title: approved ? 'Votre fiche est en ligne' : 'Votre fiche n’a pas été validée',
+      body: approved
+        ? `${partner.name} est désormais visible par les familles.`
+        : `${partner.name} n’a pas pu être validée. Contactez le support pour en connaître la raison.`,
+      data: { partner_type: type, partner_id: partner.id },
+    })
+  );
+
+  persist();
+  return decoratePartner(partner);
+}
+
 // ── Réservations pro (§9.4) ───────────────────────────────────────────────
 
 /** Toutes les salles du propriétaire connecté, dans l'ordre de création. */

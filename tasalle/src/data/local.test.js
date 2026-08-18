@@ -1047,3 +1047,128 @@ describe('parrainage entre propriétaires (§12 Phase 4)', () => {
     expect(notifs.some((n) => n.type === 'referral_rewarded')).toBe(true);
   });
 });
+
+describe('traiteurs et halouadjis (§13)', () => {
+  const TRAITEUR_PHONE = '0555 10 00 12';
+  const HALOUADJI_PHONE = '0555 10 00 13';
+  const ADMIN = '0555 00 00 00';
+
+  it('ne liste que les fiches actives', async () => {
+    const traiteurs = await api.listTraiteurs({});
+    expect(traiteurs.every((t) => t.id)).toBe(true);
+    expect(traiteurs.some((t) => t.id === 'traiteur-001')).toBe(true);
+
+    const halouadjis = await api.listHalouadjis({});
+    expect(halouadjis.some((h) => h.id === 'halouadji-001')).toBe(true);
+  });
+
+  it('filtre par ville et par recherche texte', async () => {
+    expect(await api.listTraiteurs({ city: 'Tizi Ouzou' })).toHaveLength(1);
+    expect(await api.listTraiteurs({ query: 'kabylie' })).toHaveLength(1);
+  });
+
+  it('inscrit un nouveau traiteur en attente de validation', async () => {
+    await loginAs(CLIENT_PHONE);
+    const { partner, user } = await api.registerTraiteur({
+      name: 'Chez Nadia',
+      city: 'Sétif',
+      description: 'Traiteur familial',
+      specialites: ['cuisine_algerienne'],
+      prix_min: 1500,
+      prix_max: 3000,
+    });
+
+    expect(partner.status).toBe('pending');
+    expect(user.role).toBe('pro');
+    // Pas encore visible côté client tant qu'il n'est pas validé.
+    expect((await api.listTraiteurs({ city: 'Sétif' })).some((t) => t.id === partner.id)).toBe(false);
+
+    // §10.3 — même règle d'abonnement qu'une salle : un essai est ouvert.
+    const sub = await api.getSubscription();
+    expect(sub.status).toBe('trial');
+  });
+
+  it('rejette une demande de devis sans destinataire ou avec les deux', async () => {
+    await loginAs(CLIENT_PHONE);
+    await expect(api.createDevisRequest({ eventDate: T, guestCount: 100 })).rejects.toThrow(
+      'INVALID_PARTNER'
+    );
+    await expect(
+      api.createDevisRequest({ traiteurId: 'traiteur-001', halouadjiId: 'halouadji-001' })
+    ).rejects.toThrow('INVALID_PARTNER');
+  });
+
+  it('envoie une demande de devis et prévient le professionnel', async () => {
+    await loginAs(CLIENT_PHONE);
+    const devis = await api.createDevisRequest({
+      halouadjiId: 'halouadji-001',
+      eventDate: addDays(T, 30),
+      guestCount: 150,
+      message: 'Pièce montée pour 150 personnes',
+    });
+    expect(devis.status).toBe('pending');
+
+    await loginAs(HALOUADJI_PHONE);
+    const notifs = await api.listNotifications();
+    expect(notifs.some((n) => n.type === 'new_devis_request')).toBe(true);
+
+    const recues = await api.proListDevisRequests('halouadji', 'halouadji-001');
+    expect(recues.some((d) => d.id === devis.id)).toBe(true);
+  });
+
+  it('refuse qu’un autre professionnel réponde à une demande', async () => {
+    await loginAs(CLIENT_PHONE);
+    const devis = await api.createDevisRequest({ traiteurId: 'traiteur-001', eventDate: T });
+
+    await loginAs(HALOUADJI_PHONE);
+    await expect(api.respondDevisRequest(devis.id, 'accepted')).rejects.toThrow('FORBIDDEN');
+  });
+
+  it('accepte une demande et prévient le client', async () => {
+    await loginAs(CLIENT_PHONE);
+    const devis = await api.createDevisRequest({ traiteurId: 'traiteur-001', eventDate: T });
+
+    await loginAs(TRAITEUR_PHONE);
+    const reponse = await api.respondDevisRequest(devis.id, 'accepted', '3500 DA tout compris');
+    expect(reponse.status).toBe('accepted');
+    expect(reponse.pro_reply).toBe('3500 DA tout compris');
+
+    await loginAs(CLIENT_PHONE);
+    const notifs = await api.listNotifications();
+    expect(notifs.some((n) => n.type === 'devis_accepted')).toBe(true);
+  });
+
+  it('empêche de répondre deux fois à la même demande', async () => {
+    await loginAs(CLIENT_PHONE);
+    const devis = await api.createDevisRequest({ traiteurId: 'traiteur-001', eventDate: T });
+
+    await loginAs(TRAITEUR_PHONE);
+    await api.respondDevisRequest(devis.id, 'accepted');
+    await expect(api.respondDevisRequest(devis.id, 'declined')).rejects.toThrow(
+      'DEVIS_ALREADY_ANSWERED'
+    );
+  });
+
+  it('liste les fiches en attente pour l’administrateur, tous types confondus', async () => {
+    await loginAs(CLIENT_PHONE);
+    const { partner } = await api.registerTraiteur({ name: 'Chez Nadia', city: 'Sétif' });
+
+    await loginAs(ADMIN);
+    const attente = await api.adminListPendingPartners();
+    expect(attente.some((p) => p.id === partner.id && p.type === 'traiteur')).toBe(true);
+  });
+
+  it('publie la fiche validée et prévient son propriétaire', async () => {
+    await loginAs(CLIENT_PHONE);
+    const { partner } = await api.registerHalouadji({ name: 'Chez Nadia', city: 'Sétif' });
+
+    await loginAs(ADMIN);
+    const publiee = await api.adminReviewPartner('halouadji', partner.id, true);
+    expect(publiee.status).toBe('active');
+    expect((await api.listHalouadjis({ city: 'Sétif' })).some((h) => h.id === partner.id)).toBe(true);
+
+    await loginAs(CLIENT_PHONE);
+    const notifs = await api.listNotifications();
+    expect(notifs.some((n) => n.type === 'partner_approved')).toBe(true);
+  });
+});

@@ -257,6 +257,7 @@ export default function HomeScreen({ navigation }) {
                 <PartnerCard
                   key={partner.id}
                   partner={partner}
+                  type={partnerType}
                   width={cardWidth}
                   onPress={() => navigation.navigate('Partner', { type: partnerType, id: partner.id })}
                 />

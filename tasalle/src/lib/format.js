@@ -1,11 +1,15 @@
 // Formatage monétaire et calendaire — DA (dinar algérien), semaine lundi→dimanche.
 
 /** 45000 → "45 000 DA" (espace insécable fine, comme en usage algérien). */
+export function formatNumber(amount) {
+  if (amount == null || Number.isNaN(Number(amount))) return '';
+  const rounded = Math.round(Number(amount));
+  return String(rounded).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+}
+
 export function formatDA(amount, currency = 'DA') {
   if (amount == null || Number.isNaN(Number(amount))) return `— ${currency}`;
-  const rounded = Math.round(Number(amount));
-  const withSpaces = String(rounded).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-  return `${withSpaces} ${currency}`;
+  return `${formatNumber(amount)} ${currency}`;
 }
 
 /** 540000 → "540K DA" pour les KPI compacts (§5.2). */

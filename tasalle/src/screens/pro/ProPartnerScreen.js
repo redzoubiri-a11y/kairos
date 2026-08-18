@@ -9,7 +9,7 @@ import { MBadge, MCard, KeyValue, Loader, ErrorState } from '../../components/pr
 import { useTheme } from '../../context/ThemeContext';
 import { useI18n } from '../../i18n';
 import { useAuth } from '../../context/AuthContext';
-import { formatDA } from '../../lib/format';
+import { formatNumber } from '../../lib/format';
 import * as api from '../../data';
 
 const STATUS_TONE = { pending: 'warning', accepted: 'success', declined: 'danger' };
@@ -152,7 +152,11 @@ export default function ProPartnerScreen() {
           {partner.prix_min != null && partner.prix_max != null ? (
             <KeyValue
               label={t('partnerOnboarding.priceRange')}
-              value={`${formatDA(partner.prix_min, t('common.currency'))} – ${formatDA(partner.prix_max, t('common.currency'))}`}
+              value={t(`${businessType}.priceRange`, {
+                min: formatNumber(partner.prix_min),
+                max: formatNumber(partner.prix_max),
+                currency: t('common.currency'),
+              })}
             />
           ) : null}
         </MCard>

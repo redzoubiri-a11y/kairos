@@ -1,7 +1,7 @@
 import { View, Text, Pressable } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
 import { useI18n } from '../i18n';
-import { formatDA } from '../lib/format';
+import { formatNumber } from '../lib/format';
 import SallePhoto from './SallePhoto';
 import { MBadge } from './primitives';
 
@@ -11,7 +11,7 @@ import { MBadge } from './primitives';
  * devis, pas par réservation de date (§13). `SallePhoto` est générique
  * (lit `photos`/`id`/`name`) et se réutilise telle quelle.
  */
-export default function PartnerCard({ partner, onPress, width }) {
+export default function PartnerCard({ partner, type, onPress, width }) {
   const { colors, typography, spacing, radii, sizes } = useTheme();
   const { t } = useI18n();
 
@@ -40,7 +40,11 @@ export default function PartnerCard({ partner, onPress, width }) {
 
           {hasRange ? (
             <Text style={{ fontSize: 15, fontWeight: '500', color: colors.primaryInk, textAlign: 'left' }}>
-              {formatDA(partner.prix_min, t('common.currency'))} – {formatDA(partner.prix_max, t('common.currency'))}
+              {t(`${type}.priceRange`, {
+                min: formatNumber(partner.prix_min),
+                max: formatNumber(partner.prix_max),
+                currency: t('common.currency'),
+              })}
             </Text>
           ) : null}
 

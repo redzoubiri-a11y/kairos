@@ -7,7 +7,7 @@ import MButton from '../../components/MButton';
 import { MBadge, SectionTitle, Loader, ErrorState } from '../../components/primitives';
 import { useTheme } from '../../context/ThemeContext';
 import { useI18n } from '../../i18n';
-import { formatDA } from '../../lib/format';
+import { formatNumber } from '../../lib/format';
 import * as api from '../../data';
 
 /**
@@ -120,7 +120,11 @@ export default function PartnerScreen({ route, navigation }) {
             <Text style={[typography.secondary, { color: colors.warmGray, textAlign: 'left' }]}>{partner.city}</Text>
             {hasRange ? (
               <Text style={[typography.title, { fontSize: 17, color: colors.primaryInk, textAlign: 'left' }]}>
-                {formatDA(partner.prix_min, t('common.currency'))} – {formatDA(partner.prix_max, t('common.currency'))}
+                {t(`${type}.priceRange`, {
+                  min: formatNumber(partner.prix_min),
+                  max: formatNumber(partner.prix_max),
+                  currency: t('common.currency'),
+                })}
               </Text>
             ) : null}
           </View>

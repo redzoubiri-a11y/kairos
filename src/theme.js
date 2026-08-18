@@ -6,8 +6,6 @@
 
 // Refonte Tabelog × OpenTable (16/08/2026) — remplace l'accent vert par un
 // rouge/terracotta unique, cf. le projet claude.ai/design de référence.
-// `anchorGreen`/`gold` restent inchangés : ce sont les couleurs de l'icône et
-// du splash (identité de marque, hors périmètre de cette refonte in-app).
 const ACCENT = '#D8432B';
 
 export const colors = {
@@ -15,7 +13,8 @@ export const colors = {
   primary: ACCENT,
   primarySoft: 'rgba(216,67,43,0.10)',
   primaryDim: 'rgba(216,67,43,0.06)',
-  // Vert pin — couleur de l'icône app / splash uniquement, jamais utilisée dans l'UI courante.
+  // Vert pin historique — l'icône app/splash sont passées au rouge ACCENT le
+  // 18/08/2026 (nouveau logo Claude Design), plus aucun usage. Gardé au cas où.
   anchorGreen: '#13502E',
   noir: '#191919',
   cream: '#F5EDD6',

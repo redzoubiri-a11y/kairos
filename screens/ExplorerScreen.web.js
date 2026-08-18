@@ -3,6 +3,7 @@ import {
   View, Text, StyleSheet, TouchableOpacity,
   SafeAreaView, ActivityIndicator, Dimensions, Image, FlatList,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { supabase } from '../supabase';
 import { colors, typography, spacing, radius } from '../src/theme';
 
@@ -21,44 +22,35 @@ const CITIES = [
   { id:'tlemcen',     label:'Tlemcen',     emoji:'🕌' },
 ];
 
-const CUISINE_EMOJI = {
-  algerien:'🥘', mediterraneen:'🐟', fast_casual:'☕',
-  italien:'🍕', japonais:'🍣', turc:'🍢', libanais:'🌿', francais:'🍷', autre:'🍽️',
-};
+// Carte alignée sur le même langage visuel que FavoriteCard.js (radius.lg,
+// colors.card/cardBorder, typography.display pour le nom, étoiles en
+// colors.primary) — remplace l'ancien style maison (badges noirs translucides,
+// médailles or/argent/bronze codées en dur, emoji de cuisine en overlay)
+// jamais aligné avec la refonte rouge/Work Sans du 15-16/08.
+function RestoCard({ r, onPress, onReserve }) {
+  const rating = r.avg_rating > 0 ? Number(r.avg_rating).toFixed(1).replace('.', ',') : null;
+  const starCount = r.avg_rating > 0 ? Math.max(1, Math.min(5, Math.round(r.avg_rating))) : 0;
 
-
-function RestoCard({ r, rank, onPress, onReserve }) {
   return (
-    <TouchableOpacity style={lc.card} onPress={onPress} activeOpacity={0.88}>
-      <View style={lc.imgWrap}>
+    <TouchableOpacity style={lc.card} onPress={onPress} activeOpacity={0.9}>
+      <View style={lc.photoWrap}>
         {r.photos?.[0]
-          ? <Image source={{ uri: r.photos[0] }} style={lc.img} resizeMode="cover" />
-          : <View style={[lc.img, lc.imgPlaceholder]}><Text style={{ fontSize: 30 }}>🍽️</Text></View>
+          ? <Image source={{ uri: r.photos[0] }} style={lc.photo} resizeMode="cover" />
+          : <LinearGradient colors={colors.photoFallbackGradient} style={lc.photo} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
         }
-        {r.avg_rating > 0 && (
-          <View style={lc.ratingBadge}>
-            <Text style={lc.ratingBadgeTxt}>★ {Number(r.avg_rating).toFixed(1)}</Text>
-          </View>
-        )}
-        {rank != null && rank < 3 && (
-          <View style={[lc.medalWrap, rank === 0 && { backgroundColor:'#f0c040' }, rank === 1 && { backgroundColor:'#b0b0b0' }, rank === 2 && { backgroundColor:'#cd7f32' }]}>
-            <Text style={lc.medalTxt}>{rank + 1}</Text>
-          </View>
-        )}
-        <View style={lc.cuisinePill}>
-          <Text style={lc.cuisinePillTxt}>
-            {CUISINE_EMOJI[r.cuisine_type] || '🍽️'} {(r.cuisine_type || '').replace(/_/g,' ')}
-          </Text>
-        </View>
       </View>
       <View style={lc.body}>
         <Text style={lc.name} numberOfLines={1}>{r.name}</Text>
-        {r.quartier && <Text style={lc.quartier} numberOfLines={1}>📍 {r.quartier}</Text>}
-        <View style={lc.footer}>
-          <View>
-            {r.avg_ticket > 0 && <Text style={lc.price}>{r.avg_ticket.toLocaleString('fr-FR')} DA</Text>}
-            {r.review_count > 0 && <Text style={lc.reviews}>{r.review_count} avis</Text>}
+        {rating && (
+          <View style={lc.rateRow}>
+            <Text style={lc.stars}>{'★'.repeat(starCount)}</Text>
+            <Text style={lc.scoreNum}>{rating}</Text>
+            {r.review_count > 0 && <Text style={lc.reviewCount}>({r.review_count})</Text>}
           </View>
+        )}
+        {!!r.quartier && <Text style={lc.quartier} numberOfLines={1}>{r.quartier}</Text>}
+        <View style={lc.footer}>
+          {r.avg_ticket > 0 && <Text style={lc.price}>{r.avg_ticket.toLocaleString('fr-FR')} DA</Text>}
           <TouchableOpacity style={lc.reserveBtn} onPress={onReserve}>
             <Text style={lc.reserveTxt}>Réserver</Text>
           </TouchableOpacity>
@@ -69,24 +61,22 @@ function RestoCard({ r, rank, onPress, onReserve }) {
 }
 
 const lc = StyleSheet.create({
-  card:           { width: CARD_W, backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, overflow:'hidden', marginBottom: 10 },
-  imgWrap:        { position:'relative', width:'100%', height: 130 },
-  img:            { width:'100%', height:'100%' },
-  imgPlaceholder: { backgroundColor: colors.cardHover, alignItems:'center', justifyContent:'center' },
-  ratingBadge:    { position:'absolute', top:8, right:8, backgroundColor:'rgba(10,10,10,0.82)', borderRadius:radius.md, paddingHorizontal:7, paddingVertical:3 },
-  ratingBadgeTxt: { color:colors.gold, fontSize:typography.size.sm, fontWeight:'600' },
-  medalWrap:      { position:'absolute', top:8, left:8, width:22, height:22, borderRadius:11, alignItems:'center', justifyContent:'center' },
-  medalTxt:       { color:colors.bg, fontSize:typography.size.sm, fontWeight:'700' },
-  cuisinePill:    { position:'absolute', bottom:8, left:8, backgroundColor:'rgba(10,10,10,0.78)', borderRadius:radius.sm, paddingHorizontal:7, paddingVertical:3 },
-  cuisinePillTxt: { color:'#FFFFFF', fontSize:typography.size.xs },
-  body:           { padding:10, gap:4 },
-  name:           { color:colors.text, fontSize:typography.size.bodyLg, fontWeight:'400', letterSpacing:0.2 },
-  quartier:       { color:colors.textMuted, fontSize:typography.size.sm },
-  footer:         { flexDirection:'row', justifyContent:'space-between', alignItems:'flex-end', marginTop:4 },
-  price:          { color:colors.primary, fontSize:typography.size.sm, fontWeight:'500' },
-  reviews:        { color:colors.textDim, fontSize:typography.size.xs, marginTop:1 },
-  reserveBtn:     { backgroundColor:colors.resaSoft, borderRadius:radius.sm, paddingHorizontal:8, paddingVertical:5 },
-  reserveTxt:     { color:colors.resa, fontSize:typography.size.sm, fontWeight:'500' },
+  card:      { width: CARD_W, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, borderRadius: radius.lg, overflow: 'hidden', marginBottom: 12 },
+  photoWrap: { height: 120 },
+  photo:     { width: '100%', height: '100%' },
+
+  body:       { padding: spacing.md + 2, gap: 3 },
+  name:       { fontFamily: typography.display, fontSize: typography.size.bodyLg, color: colors.text },
+  rateRow:    { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  stars:      { color: colors.primary, fontSize: 10, letterSpacing: 1 },
+  scoreNum:   { fontFamily: typography.display, fontSize: typography.size.xs + 1, color: colors.text },
+  reviewCount:{ fontFamily: typography.body, fontSize: typography.size.xs, color: colors.textDim },
+  quartier:   { fontFamily: typography.body, fontSize: typography.size.sm, color: colors.textMuted },
+
+  footer:     { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 6 },
+  price:      { fontFamily: typography.bodyMedium, fontSize: typography.size.sm, color: colors.primary },
+  reserveBtn: { backgroundColor: colors.resaSoft, borderRadius: radius.sm, paddingHorizontal: 8, paddingVertical: 5 },
+  reserveTxt: { fontFamily: typography.bodyMedium, fontSize: typography.size.sm, color: colors.resa },
 });
 
 export default function ExplorerScreen({ navigation }) {
@@ -111,10 +101,9 @@ export default function ExplorerScreen({ navigation }) {
     })();
   }, [city]);
 
-  const renderItem = useCallback(({ item: r, index }) => (
+  const renderItem = useCallback(({ item: r }) => (
     <RestoCard
       r={r}
-      rank={index}
       onPress={() => navigation.navigate('Restaurant', { restaurant: r })}
       onReserve={() => navigation.navigate('ReservationForm', { restaurant: r })}
     />
@@ -180,10 +169,10 @@ const s = StyleSheet.create({
   countTxt:   { color:colors.text, fontSize:typography.size.caption, fontWeight:'500' },
 
   cityGrid:  { flexDirection:'row', flexWrap:'wrap', paddingHorizontal:14, paddingVertical:10, gap:8 },
-  cityChip:  { flexDirection:'row', alignItems:'center', gap:6, paddingHorizontal:14, paddingVertical:9, borderRadius:radius.xl, backgroundColor:colors.card, borderWidth:1, borderColor:colors.cardBorder },
+  cityChip:  { flexDirection:'row', alignItems:'center', justifyContent:'center', gap:6, height:38, paddingHorizontal:14, borderRadius:radius.xl, backgroundColor:colors.card, borderWidth:1, borderColor:colors.cardBorder },
   cityChipOn:{ backgroundColor:colors.noir, borderColor:colors.noir },
-  cityEmoji: { fontSize:14 },
-  cityTxt:   { color:colors.text, fontSize:typography.size.bodyLg },
+  cityEmoji: { fontSize:14, lineHeight:16 },
+  cityTxt:   { color:colors.text, fontSize:typography.size.bodyLg, lineHeight:16 },
   cityTxtOn: { color:colors.bg, fontWeight:'600' },
 
   gridRow:     { paddingHorizontal:14, justifyContent:'space-between' },

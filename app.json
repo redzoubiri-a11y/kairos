@@ -10,7 +10,7 @@
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#13502e"
+      "backgroundColor": "#D8432B"
     },
     "ios": {
       "supportsTablet": true,
@@ -31,7 +31,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#13502e"
+        "backgroundColor": "#D8432B"
       },
       "edgeToEdgeEnabled": true,
       "package": "com.midadz.app",

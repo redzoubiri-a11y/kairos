@@ -36,7 +36,10 @@ export const QUARTIER_PHOTOS = {
   'Faubourg Lamy': 'https://images.unsplash.com/photo-1482049016688-2d3e1685571?w=800&q=80',
   'Hasnaoua': 'https://images.unsplash.com/photo-1574484284002-952d92456975?w=800&q=80',
   'Hussein Dey': 'https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?w=800&q=80',
-  'Hydra': 'https://rghjgyzpdadapmktislv.supabase.co/storage/v1/object/public/restaurant-photos/b921b4e9-02ec-419c-9349-b56970e7d732/1781364220545.jpg',
+  // 'Hydra' retiré le 18/08/2026 : pointait vers le photos[0] du resto Darmak'a
+  // (b921b4e9-...), qui s'est avéré être une capture de pub Facebook, pas une
+  // vraie photo — cf. aussi les 3 autres photos de ce resto (photos perso sans
+  // rapport). Retombe sur le dégradé par défaut en attendant une vraie photo.
   'La Corniche': 'https://images.unsplash.com/photo-1519984388953-d2406bc725e1?w=800&q=80',
   'Lalla Setti': 'https://images.unsplash.com/photo-1552566626-52f8b828a9b4?w=800&q=80',
   'Le Plateau': 'https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=800&q=80',

@@ -10,20 +10,13 @@ import {
 } from '../lib/monogramme';
 
 /**
- * Marque Tasalle — monogramme TS dans un filet circulaire, sur fond libre.
+ * Marque Tasalle — monogramme TS dans un filet circulaire, or sur fond libre.
  *
  * Les lettres sont des contours, pas du texte : une marque ne peut pas
  * dépendre des polices installées sur l'appareil. Leur tracé vit dans
  * lib/monogramme.js, que partagent aussi les documents PDF et le générateur
- * d'icônes — trois rendus, un seul dessin. Le tracé lui-même (issu de
- * Liberation Serif) n'a pas été redessiné pour la piste « Broadsheet » — un
- * empattement à la main, sans vrai outil vectoriel, aurait fait moins bien
- * qu'un tracé déjà soigné. Seules la couleur (`colors.logoInk`, désormais un
- * bleu pétrole) et la police du mot-symbole (Source Serif 4, ci-dessous)
- * portent la nouvelle direction.
+ * d'icônes — trois rendus, un seul dessin.
  */
-const MOT_SYMBOLE_FONT_REGULAR = 'SourceSerif4_400Regular';
-const MOT_SYMBOLE_FONT_SEMIBOLD = 'SourceSerif4_600SemiBold';
 
 /** Monogramme seul — utilisable comme avatar, favicon ou puce d'en-tête. */
 export function TasalleMark({ size = 40, color }) {
@@ -80,8 +73,7 @@ export default function TasalleLogo({
           <Text
             style={{
               fontSize: size * 0.34,
-              fontWeight: '600',
-              fontFamily: MOT_SYMBOLE_FONT_SEMIBOLD,
+              fontWeight: '400',
               color: encre,
               // L'interlettrage large est la signature du mot-symbole : sans
               // lui, « TASALLE » n'est plus la marque, juste un mot.
@@ -99,7 +91,6 @@ export default function TasalleLogo({
           <Text
             style={{
               fontSize: size * 0.19,
-              fontFamily: MOT_SYMBOLE_FONT_REGULAR,
               color: colors.logoInk,
               letterSpacing: size * 0.09,
               marginLeft: size * 0.09,
@@ -118,25 +109,14 @@ export default function TasalleLogo({
     <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
       <TasalleMark size={size} />
       <View>
-        <Text
-          style={{
-            fontSize: typography.title.fontSize,
-            lineHeight: typography.title.lineHeight,
-            fontWeight: '600',
-            fontFamily: MOT_SYMBOLE_FONT_SEMIBOLD,
-            color: encre,
-            letterSpacing: 1.4,
-          }}
-        >
+        <Text style={[typography.title, { color: encre, letterSpacing: 1.4 }]}>
           {t('common.appName').toUpperCase()}
         </Text>
         <Text
-          style={{
-            fontSize: typography.caption.fontSize,
-            lineHeight: typography.caption.lineHeight,
-            fontFamily: MOT_SYMBOLE_FONT_REGULAR,
-            color: onDark ? 'rgba(255,255,255,0.75)' : colors.warmGray,
-          }}
+          style={[
+            typography.caption,
+            { color: onDark ? 'rgba(255,255,255,0.75)' : colors.warmGray },
+          ]}
         >
           {t('common.tagline')}
         </Text>

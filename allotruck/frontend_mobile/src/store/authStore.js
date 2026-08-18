@@ -16,28 +16,36 @@ export const useAuthStore = create((set, get) => ({
   error: null,
 
   // Reads the persisted session and revalidates it against the API.
+  // Wrapped end to end: any failure here (AsyncStorage unavailable, native
+  // module issue) must still leave `status`, otherwise the app is stuck on
+  // the splash screen forever with no way to diagnose it remotely.
   bootstrap: async () => {
     setUnauthorizedHandler(() => get().signOut());
-    const [token, onboarded] = await Promise.all([
-      AsyncStorage.getItem(TOKEN_KEY),
-      AsyncStorage.getItem(ONBOARDING_KEY),
-    ]);
-
-    if (!token) {
-      set({ status: 'signedOut', onboarded: onboarded === 'true' });
-      return;
-    }
-
-    setAuthToken(token);
     try {
-      const user = await authApi.me();
-      connectSocket(token);
-      set({ token, user, status: 'signedIn', onboarded: onboarded === 'true' });
-      registerForPushNotifications();
-    } catch {
-      await AsyncStorage.removeItem(TOKEN_KEY);
-      setAuthToken(null);
-      set({ token: null, user: null, status: 'signedOut', onboarded: onboarded === 'true' });
+      const [token, onboarded] = await Promise.all([
+        AsyncStorage.getItem(TOKEN_KEY),
+        AsyncStorage.getItem(ONBOARDING_KEY),
+      ]);
+
+      if (!token) {
+        set({ status: 'signedOut', onboarded: onboarded === 'true' });
+        return;
+      }
+
+      setAuthToken(token);
+      try {
+        const user = await authApi.me();
+        connectSocket(token);
+        set({ token, user, status: 'signedIn', onboarded: onboarded === 'true' });
+        registerForPushNotifications();
+      } catch {
+        await AsyncStorage.removeItem(TOKEN_KEY);
+        setAuthToken(null);
+        set({ token: null, user: null, status: 'signedOut', onboarded: onboarded === 'true' });
+      }
+    } catch (error) {
+      console.error('[authStore] bootstrap failed', error);
+      set({ status: 'signedOut', onboarded: false });
     }
   },
 

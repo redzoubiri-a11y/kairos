@@ -109,6 +109,15 @@ export default function RootNavigator() {
 
   useEffect(() => {
     bootstrap();
+    // Filet de secours : si bootstrap() ne resout jamais (module natif qui
+    // pend au lieu de rejeter), le splash ne doit pas rester bloque a vie.
+    const timeout = setTimeout(() => {
+      if (useAuthStore.getState().status === 'loading') {
+        console.error('[RootNavigator] bootstrap timeout, forcing signedOut');
+        useAuthStore.setState({ status: 'signedOut', onboarded: false });
+      }
+    }, 8000);
+    return () => clearTimeout(timeout);
   }, [bootstrap]);
 
   return (

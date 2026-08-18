@@ -1,0 +1,46 @@
+const path = require('path');
+const express = require('express');
+const cors = require('cors');
+const helmet = require('helmet');
+const morgan = require('morgan');
+const rateLimit = require('express-rate-limit');
+
+const env = require('./config/env');
+const routes = require('./routes');
+const { notFoundHandler, errorHandler } = require('./middleware/errorHandler');
+
+const app = express();
+
+app.set('trust proxy', 1);
+app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
+app.use(
+  cors({
+    origin: env.corsOrigins.includes('*') ? true : env.corsOrigins,
+    credentials: true,
+  })
+);
+app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ extended: true }));
+if (env.nodeEnv !== 'test') {
+  app.use(morgan(env.isProduction ? 'combined' : 'dev'));
+}
+app.use(
+  rateLimit({
+    windowMs: 60 * 1000,
+    max: 300,
+    standardHeaders: true,
+    legacyHeaders: false,
+    skip: () => env.disableRateLimit,
+  })
+);
+
+// Identity documents are deliberately NOT served statically: they are readable
+// only through GET /api/transporters/documents/:id, which checks the caller.
+
+app.use('/api', routes);
+app.get('/', (req, res) => res.json({ name: 'AlloTruck API', version: '1.0.0', docs: '/api/health' }));
+
+app.use(notFoundHandler);
+app.use(errorHandler);
+
+module.exports = app;

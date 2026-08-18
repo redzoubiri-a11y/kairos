@@ -1,0 +1,21 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: allotruck-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: allotruck
+      POSTGRES_PASSWORD: allotruck
+      POSTGRES_DB: allotruck
+    ports:
+      - '5432:5432'
+    volumes:
+      - allotruck_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U allotruck']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  allotruck_pgdata:

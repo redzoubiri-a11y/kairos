@@ -194,7 +194,7 @@ export function BreakdownBars({ rows, tone = 'primary', suffix = '%' }) {
           <View
             style={{
               height: 8,
-              borderRadius: radii.pill,
+              borderRadius: radii.sm,
               backgroundColor: colors.chartGrid,
               overflow: 'hidden',
             }}
@@ -204,7 +204,7 @@ export function BreakdownBars({ rows, tone = 'primary', suffix = '%' }) {
                 width: `${Math.max(0, Math.min(100, r.value))}%`,
                 height: '100%',
                 backgroundColor: fill,
-                borderRadius: radii.pill,
+                borderRadius: radii.sm,
               }}
             />
           </View>

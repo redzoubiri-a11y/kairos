@@ -57,7 +57,7 @@ export function MChip({ label, active, onPress, icon }) {
         backgroundColor: active ? colors.primary : colors.surface,
         borderWidth: 1,
         borderColor: active ? colors.primaryInk : colors.border,
-        borderRadius: radii.pill,
+        borderRadius: radii.sm,
         paddingVertical: 7,
         paddingHorizontal: 14,
         opacity: pressed ? 0.8 : 1,
@@ -197,7 +197,7 @@ export function ProgressBar({ percent, tone = 'primary', height = 8, showLabel =
         style={{
           flex: 1,
           height,
-          borderRadius: radii.pill,
+          borderRadius: radii.sm,
           backgroundColor: colors.surfaceElevated,
           borderWidth: 1,
           borderColor: colors.border,

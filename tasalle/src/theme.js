@@ -158,13 +158,19 @@ export const spacing = {
 };
 
 // §3.4 — Radii
+//
+// Angles droits (piste Modernist) : les six paliers rectangulaires tombent à
+// 0, comme les --radius-sm/md/lg de la source. `pill` reste à 999 — il ne
+// sert plus qu'aux formes réellement circulaires (avatars, pastilles,
+// indicateurs), jamais aux capsules texte (puces, champs, barres de
+// progression), retouchées une à une pour prendre un palier rectangulaire.
 export const radii = {
-  xs: 4,
-  sm: 6,
-  md: 8,
-  lg: 10,
-  xl: 12,
-  xxl: 16,
+  xs: 0,
+  sm: 0,
+  md: 0,
+  lg: 0,
+  xl: 0,
+  xxl: 0,
   pill: 999,
 };
 

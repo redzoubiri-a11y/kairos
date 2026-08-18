@@ -150,7 +150,7 @@ export default function SalleScreen({ route, navigation }) {
               accessibilityState={{ selected: fav }}
               style={{
                 flexDirection: 'row', alignItems: 'center', gap: 6,
-                paddingHorizontal: 12, height: 34, borderRadius: radii.pill,
+                paddingHorizontal: 12, height: 34, borderRadius: radii.sm,
                 backgroundColor: 'rgba(255,255,255,0.94)',
               }}
             >

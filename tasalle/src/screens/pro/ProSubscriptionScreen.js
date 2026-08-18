@@ -172,7 +172,7 @@ export default function ProSubscriptionScreen({ navigation }) {
                     gap: 5,
                     paddingHorizontal: 12,
                     paddingVertical: 7,
-                    borderRadius: radii.pill,
+                    borderRadius: radii.sm,
                     borderWidth: 1,
                     borderColor: active ? colors.primaryInk : colors.border,
                     backgroundColor: active ? colors.primaryLight : colors.surface,

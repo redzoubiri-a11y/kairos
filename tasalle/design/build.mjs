@@ -136,7 +136,7 @@ const BASE = `
 
   /* ── Composants, repris des sources de l'application ── */
   .btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--sp-sm);
-         border: 1px solid transparent; border-radius: var(--r-lg); font-weight: 500;
+         border: 1px solid transparent; border-radius: var(--r-lg); font-weight: 600;
          cursor: default; white-space: nowrap; }
   .btn--md { padding: 10px 20px; font-size: 14px; }
   .btn--sm { padding: 6px 14px; font-size: 12px; }
@@ -150,17 +150,18 @@ const BASE = `
   .btn--full { display: flex; width: 100%; }
 
   .badge { display: inline-flex; align-items: center; gap: 4px; border-radius: var(--r-sm);
-           padding: 4px 8px; font-size: 12px; font-weight: 500; }
+           padding: 4px 8px; font-size: 12px; font-weight: 600; }
   .badge--sm { padding: 2px 6px; font-size: 10px; }
 
   .chip { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--c-border);
           background: var(--c-surface); color: var(--c-dark); border-radius: var(--r-pill);
-          padding: 7px 13px; font-size: 13px; font-weight: 500; }
+          padding: 7px 13px; font-size: 13px; font-weight: 600; }
   .chip--actif { background: var(--c-primary); color: var(--c-onPrimary); border-color: var(--c-primary); }
 
-  .carte { border: 1px solid var(--c-border); border-radius: var(--r-xl);
-           background: var(--c-surface); padding: var(--sp-lg); }
-  .carte--plate { padding: 0; }
+  .carte { border-radius: var(--r-xl);
+           background: var(--c-surface); padding: var(--sp-lg);
+           box-shadow: 0 3px 10px rgba(45,43,43,0.16); }
+  .carte--plate { padding: 0; box-shadow: none; }
   .separateur { height: 1px; background: var(--c-border); }
 
   .champ { border: 1px solid var(--c-border); border-radius: var(--r-lg);
@@ -168,7 +169,7 @@ const BASE = `
            color: var(--c-dark); width: 100%; display: flex; align-items: center; gap: 10px; }
   .champ--focus { border-color: var(--c-primaryInk); }
   .champ--erreur { border-color: var(--c-accent); }
-  .champ__label { font-size: 12px; font-weight: 500; color: var(--c-warmGray); margin-bottom: 6px; }
+  .champ__label { font-size: 12px; font-weight: 600; color: var(--c-warmGray); margin-bottom: 6px; }
   .champ__aide { font-size: 11px; color: var(--c-warmGray); margin-top: 6px; }
   .champ__erreur { font-size: 11px; color: var(--c-accent); margin-top: 6px; }
   .fantome { color: var(--c-warmGray); opacity: .55; }
@@ -181,7 +182,7 @@ const BASE = `
   .point-pin--erreur { background: var(--c-accent); border-color: var(--c-accent); }
   .touche-pin { width: 74px; height: 52px; border-radius: var(--r-lg); border: 1px solid var(--c-border);
                 background: var(--c-surface); display: flex; align-items: center; justify-content: center;
-                font-size: 20px; font-weight: 500; color: var(--c-dark); }
+                font-size: 20px; font-weight: 600; color: var(--c-dark); }
   .touche-pin--vide { border: none; background: transparent; }
 
   .jour { flex: 1; aspect-ratio: 1; border-radius: var(--r-md); display: flex; align-items: center;
@@ -195,7 +196,7 @@ const BASE = `
   .jour--passee { background: transparent; color: var(--c-warmGray); opacity: .4; }
   .puce-jour { width: 4px; height: 4px; border-radius: 2px; background: var(--c-secondary); }
 
-  .ligne-salle { display: flex; border: 1px solid var(--c-border); border-radius: var(--r-xl);
+  .ligne-salle { display: flex; border-radius: var(--r-xl);
                  overflow: hidden; background: var(--c-surface); }
   .ligne-salle__photo { width: 140px; height: 140px; flex: none; display: flex; align-items: center;
                          justify-content: center; }
@@ -309,18 +310,18 @@ const pages = [];
       titre: 'Couleurs',
       largeur: 780,
       intro:
-        "La palette vient du logo : noir et or. L'or de marque ne fait que 2,63:1 sur blanc — il décore, il n'écrit pas. D'où trois jetons là où une couleur suffirait ailleurs : <b>primary</b> remplit les aplats, <b>primaryInk</b> écrit, <b>gold</b> décore, <b>goldMark</b> dessine les objets porteurs d'information. Les rapports affichés sont calculés selon WCAG 2.1 contre le fond de la page.",
+        "La palette est mono-teinte, celle du système Modernist : un rouge de marque unique sur des neutres chauds. Ce rouge (<code>gold</code> — les jetons gardent leurs noms hérités d'une palette dorée antérieure, mais portent aujourd'hui du rouge) ne fait que 3,76:1 en aplat portant du texte de fond — il décore, il n'écrit pas de texte de corps. D'où des jetons distincts : <b>primary</b> remplit les aplats, <b>primaryInk</b> écrit, <b>gold</b> décore, <b>goldMark</b> dessine les objets porteurs d'information. Les rapports affichés sont calculés selon WCAG 2.1 contre le fond de la page.",
       corps: `${bloc(T.clair, T.clair.cream)}
         <h2>Thème sombre</h2>
         <div class="cadre" data-theme="sombre" style="background:${T.sombre.cream};color:${T.sombre.dark}">
-          <div class="etiquette">Les rôles s'inversent : l'aplat devient or, le texte qui s'y inscrit devient noir</div>
+          <div class="etiquette">Les rôles s'inversent : l'aplat devient un rouge clair, le texte qui s'y inscrit devient sombre</div>
           <div class="rangee">
             ${['primary', 'onPrimary', 'primaryInk', 'goldMark', 'surface', 'border']
               .map((k) => pastille(k, T.sombre[k], T.sombre.cream))
               .join('')}
           </div>
         </div>
-        <p class="note">Un test fige ces frontières dans les deux sens : <code>logoInk</code> doit rester sous le seuil des composants, <code>goldText</code> au-dessus de celui du texte. Promouvoir l'or de marque en couleur de texte fait échouer la suite.</p>`,
+        <p class="note">Un test fige ces frontières dans les deux sens : <code>logoInk</code> doit rester sous le seuil des composants, <code>goldText</code> au-dessus de celui du texte. Promouvoir le rouge de marque en couleur de texte fait échouer la suite.</p>`,
     })
   );
 }
@@ -345,7 +346,7 @@ const pages = [];
       titre: 'Typographie',
       largeur: 720,
       intro:
-        "Police système uniquement — aucune fonte n'est embarquée. Sur un parc d'appareils Android d'entrée de gamme, chaque fonte téléchargée retarde le premier affichage, et le cahier des charges vise des connexions lentes.",
+        "Archivo (Google Fonts), embarquée — une seule famille pour toute l'app, y compris le mot-symbole de la marque. Trois graisses réellement utilisées : 400, 600 et 800, jamais de poids intermédiaire improvisé.",
       corps: echelle,
     })
   );
@@ -439,7 +440,7 @@ const pages = [];
       titre: 'Boutons',
       largeur: 760,
       intro:
-        "Cinq variantes, trois tailles. En thème clair l'aplat primaire est noir et porte du blanc à 17,4:1 ; en thème sombre les rôles s'inversent, l'or remplit et le noir s'y inscrit — d'où le jeton <b>onPrimary</b>, sans lequel le libellé serait resté blanc en dur.",
+        "Cinq variantes, trois tailles. En thème clair l'aplat primaire est le rouge de marque et porte le fond clair à 3,76:1 (sous le seuil texte, au-dessus du seuil composant — un bouton n'est pas du texte de paragraphe) ; en thème sombre les rôles s'inversent, un rouge clair remplit et le texte sombre s'y inscrit — d'où le jeton <b>onPrimary</b>, sans lequel le libellé serait resté blanc en dur (illisible sur le rouge clair, 1,52:1).",
       corps: `<h2>Variantes</h2>
         <div class="rangee">${variantes.map((v) => btn(v)).join('')}</div>
         <h2>Tailles</h2>
@@ -488,7 +489,7 @@ const pages = [];
       titre: 'Champs de saisie',
       largeur: 760,
       intro:
-        "Le contour se teinte d'or à la saisie, de rouge à l'erreur. Les champs numériques — téléphone, montants, codes — sont forcés en lecture gauche-à-droite, quel que soit le reste.",
+        "Le contour se teinte du rouge de marque à la saisie, du rouge d'erreur au refus — deux rouges distincts, jamais le même jeton. Les champs numériques — téléphone, montants, codes — sont forcés en lecture gauche-à-droite, quel que soit le reste.",
       corps: `<div class="duo">
         <div class="colonne">
           ${champ({ label: 'Nom complet', valeur: 'Amina Cherif', icone: 'person' })}
@@ -561,19 +562,19 @@ const pages = [];
       titre: 'Cartes et listes',
       largeur: 760,
       intro:
-        "Le fond de page et celui des cartes sont tous deux blancs : c'est le contour d'un pixel qui les détache, pas une ombre. Le choix vient des écrans bon marché, où une ombre légère disparaît.",
+        "Les cartes n'ont pas de contour dans Modernist : c'est une nuance de gris à peine plus soutenue que le fond de page, plus une ombre teintée d'encre (pas de noir pur), qui les détache.",
       corps: `<div class="duo">
         <div>
           <div class="etiquette">Carte simple</div>
           <div class="carte">
-            <div style="font-weight:500;margin-bottom:4px">Salle El Widad</div>
+            <div style="font-weight:600;margin-bottom:4px">Salle El Widad</div>
             <div style="font-size:13px;color:var(--c-warmGray)">Alger · 450 places · 127 avis</div>
           </div>
         </div>
         <div>
           <div class="etiquette">Titre de section</div>
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-            <div style="font-weight:500">Prochaines réservations</div>
+            <div style="font-weight:600">Prochaines réservations</div>
             <div style="font-size:13px;color:var(--c-primaryInk)">Tout voir</div>
           </div>
           <div class="carte carte--plate">
@@ -611,7 +612,7 @@ const pages = [];
         </div>
         <div class="cadre" style="text-align:center;padding:30px">
           <div style="width:56px;height:56px;border-radius:var(--r-xxl);background:var(--c-primaryLight);display:flex;align-items:center;justify-content:center;margin:0 auto;color:var(--c-primaryInk)">${ic('calendar', '22px')}</div>
-          <div style="font-weight:500;margin-top:14px">Aucune réservation</div>
+          <div style="font-weight:600;margin-top:14px">Aucune réservation</div>
           <div style="font-size:12px;color:var(--c-warmGray);margin-top:4px">Vos demandes apparaîtront ici.</div>
         </div>
       </div>
@@ -656,7 +657,7 @@ const pages = [];
       titre: 'Progression',
       largeur: 720,
       intro:
-        "Barre de progression et fil d'étapes. La barre or sert au décompte de l'essai gratuit ; son libellé est toujours affiché, car la teinte seule ne suffirait pas à donner la valeur.",
+        "Barre de progression et fil d'étapes. La barre rouge sert au décompte de l'essai gratuit ; son libellé est toujours affiché, car la teinte seule ne suffirait pas à donner la valeur.",
       corps: `<h2>Barres</h2>
         <div class="colonne">
           ${barre(50, 'var(--c-primaryInk)')}
@@ -686,7 +687,7 @@ const pages = [];
       titre: 'Notation',
       largeur: 700,
       intro:
-        "Les étoiles utilisent <b>goldMark</b>, pas l'or de marque : à 2,63:1 celui-ci passe sous le seuil de 3:1 que WCAG demande à un objet graphique porteur d'information. La forme distingue aussi le plein du vide, la couleur n'étant jamais seule à porter le sens.",
+        "Les étoiles utilisent <b>goldMark</b>, pas <b>gold</b> : à 3,47:1 ce dernier reste sous le seuil de 3:1... de justesse, alors que <b>goldMark</b> tient 3,91:1, la marge que WCAG demande à un objet graphique porteur d'information. La forme distingue aussi le plein du vide, la couleur n'étant jamais seule à porter le sens.",
       corps: `<h2>Affichage</h2>
         <div class="colonne">
           <div class="rangee">${etoiles(5)}<span style="font-size:12px;color:var(--c-warmGray)">5,0 (127)</span></div>
@@ -731,13 +732,13 @@ const pages = [];
         ]
           .map(
             ([nom, meta, prix, note, [d1, d2], initiale, premium]) => `
-          <div style="width:224px;border:1px solid var(--c-border);border-radius:var(--r-xl);overflow:hidden;background:var(--c-surface)">
+          <div style="width:224px;border-radius:var(--r-xl);overflow:hidden;background:var(--c-surface)">
             <div style="height:130px;background:linear-gradient(135deg,${d1},${d2});position:relative;display:flex;align-items:center;justify-content:center">
-              <span style="font-size:44px;color:rgba(255,255,255,.35);font-weight:600">${initiale}</span>
+              <span style="font-size:44px;color:rgba(255,255,255,.35);font-weight:800">${initiale}</span>
               <span class="badge badge--sm" style="position:absolute;top:9px;left:9px;background:var(--c-surface);color:var(--c-dark)">★ ${note}</span>
             </div>
             <div style="padding:12px">
-              <div style="font-weight:500;font-size:15px">${nom}</div>
+              <div style="font-weight:600;font-size:15px">${nom}</div>
               <div style="font-size:12px;color:var(--c-warmGray);margin-top:2px">${meta}</div>
               <div style="font-size:14px;color:var(--c-primaryInk);font-weight:600;margin-top:8px">À partir de ${prix}</div>
               <div class="rangee" style="gap:6px;margin-top:8px">
@@ -760,7 +761,7 @@ const pages = [];
       <div style="display:flex;align-items:center;gap:12px">
         <div style="width:40px;height:40px;border-radius:var(--r-lg);background:var(--c-goldLight);display:flex;align-items:center;justify-content:center;font-size:19px">💍</div>
         <div style="flex:1">
-          <div style="font-weight:500">${nom}</div>
+          <div style="font-weight:600">${nom}</div>
           <div style="font-size:12px;color:var(--c-warmGray)">${type}</div>
         </div>
         <span class="badge badge--sm" style="background:${ton[0]};color:${ton[1]}">${statut}</span>
@@ -797,7 +798,7 @@ const pages = [];
         <span style="font-size:12px;color:var(--c-warmGray)">${label}</span>
         <span style="width:26px;height:26px;border-radius:var(--r-md);background:${ton[1]};color:${ton[0]};display:flex;align-items:center;justify-content:center">${ic('star', '13px')}</span>
       </div>
-      <div style="font-size:26px;font-weight:500;margin-top:8px">${valeur}</div>
+      <div style="font-size:25px;font-weight:800;margin-top:8px">${valeur}</div>
       ${delta ? `<div style="font-size:11px;color:${delta.startsWith('−') ? 'var(--c-accent)' : 'var(--c-primaryInk)'};margin-top:2px">${delta}</div>` : ''}
     </div>`;
 
@@ -889,7 +890,7 @@ const pages = [];
           <div class="etiquette" style="margin-top:14px">Total remisé</div>
           <div style="display:flex;align-items:baseline;gap:10px">
             <span style="font-size:12px;color:var(--c-warmGray);text-decoration:line-through">35 000 DA</span>
-            <span style="font-size:17px;font-weight:500;color:var(--c-primaryInk)">31 500 DA</span>
+            <span style="font-size:17px;font-weight:600;color:var(--c-primaryInk)">31 500 DA</span>
           </div>
         </div>
       </div>`,
@@ -1061,7 +1062,7 @@ const pages = [];
         </div>
         <div style="display:flex;margin-bottom:2px">
           ${['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
-            .map((j) => `<div style="flex:1;text-align:center;font-size:11px;font-weight:500;color:var(--c-warmGray)">${j}</div>`)
+            .map((j) => `<div style="flex:1;text-align:center;font-size:11px;font-weight:600;color:var(--c-warmGray)">${j}</div>`)
             .join('')}
         </div>
         <div style="display:flex;flex-wrap:wrap">${grille(monthGrid(2026, 7))}</div>
@@ -1084,12 +1085,12 @@ const pages = [];
   const ligne = (nom, ville, capacite, avis, note, prix, [d1, d2], initiale, fav, premium) => `
     <div class="ligne-salle">
       <div class="ligne-salle__photo" style="background:linear-gradient(135deg,${d1},${d2})">
-        <span style="font-size:44px;color:rgba(255,255,255,.35);font-weight:500">${initiale}</span>
+        <span style="font-size:44px;color:rgba(255,255,255,.35);font-weight:800">${initiale}</span>
       </div>
       <div style="flex:1;padding:12px;display:flex;flex-direction:column;justify-content:space-between;gap:6px">
         <div style="display:flex;flex-direction:column;gap:5px">
           <div class="rangee" style="justify-content:space-between;gap:8px">
-            <span style="font-weight:500;font-size:15px">${nom}</span>
+            <span style="font-weight:600;font-size:15px">${nom}</span>
             ${icCoeur(fav, '18px', fav ? 'var(--c-accent)' : 'var(--c-warmGray)')}
           </div>
           <div class="rangee" style="gap:4px">
@@ -1100,7 +1101,7 @@ const pages = [];
           <div style="font-size:12px;color:var(--c-warmGray)">${ville} · ${capacite} places</div>
         </div>
         <div style="display:flex;flex-direction:column;gap:6px">
-          <div style="font-size:15px;font-weight:500;color:var(--c-primaryInk)">À partir de ${prix}</div>
+          <div style="font-size:15px;font-weight:600;color:var(--c-primaryInk)">À partir de ${prix}</div>
           <div class="rangee" style="gap:6px">
             <span class="badge badge--sm" style="background:var(--c-successBg);color:var(--c-primaryInk)">Disponible</span>
             ${premium ? `<span class="badge badge--sm" style="background:var(--c-goldLight);color:var(--c-goldText)">Premium</span>` : ''}

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
 import SplashScreen from '../screens/SplashScreen';
@@ -42,25 +43,37 @@ const TAB_ICONS = {
   Profile: ['person', 'person-outline'],
 };
 
-function tabScreenOptions({ route }) {
-  return {
+function useTabScreenOptions() {
+  // A fixed tabBarStyle height opts out of react-navigation's automatic
+  // safe-area handling, so on Android edge-to-edge devices (edgeToEdgeEnabled
+  // in app.json) the bar was drawn underneath the system gesture nav bar and
+  // effectively unreachable/invisible. Add the inset back in manually.
+  const insets = useSafeAreaInsets();
+
+  return ({ route }) => ({
     headerShown: false,
     tabBarActiveTintColor: colors.primaryDark,
     tabBarInactiveTintColor: colors.textMuted,
-    tabBarStyle: { borderTopColor: colors.border, height: 62, paddingBottom: 8, paddingTop: 6 },
+    tabBarStyle: {
+      borderTopColor: colors.border,
+      height: 62 + insets.bottom,
+      paddingBottom: insets.bottom + 8,
+      paddingTop: 6,
+    },
     tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },
     tabBarIcon: ({ focused, color, size }) => {
       const [active, inactive] = TAB_ICONS[route.name] ?? ['ellipse', 'ellipse-outline'];
       return <Ionicons name={focused ? active : inactive} size={size - 2} color={color} />;
     },
-  };
+  });
 }
 
 function ClientTabs() {
   const unread = useNotificationStore((s) => s.items.filter((n) => !n.readAt).length);
+  const screenOptions = useTabScreenOptions();
 
   return (
-    <Tab.Navigator screenOptions={tabScreenOptions}>
+    <Tab.Navigator screenOptions={screenOptions}>
       <Tab.Screen name="Home" component={HomeMapScreen} options={{ title: 'Carte' }} />
       <Tab.Screen name="Missions" component={MissionsScreen} options={{ title: 'Missions' }} />
       <Tab.Screen
@@ -76,9 +89,10 @@ function ClientTabs() {
 function TransporterTabs() {
   const pending = useMissionStore((s) => s.items.filter((m) => m.status === 'PENDING').length);
   const unread = useNotificationStore((s) => s.items.filter((n) => !n.readAt).length);
+  const screenOptions = useTabScreenOptions();
 
   return (
-    <Tab.Navigator screenOptions={tabScreenOptions}>
+    <Tab.Navigator screenOptions={screenOptions}>
       <Tab.Screen
         name="MissionsReceived"
         component={MissionsReceivedScreen}

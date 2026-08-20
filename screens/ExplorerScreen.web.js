@@ -1,15 +1,17 @@
 import { useState, useEffect, useCallback } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity,
-  SafeAreaView, ActivityIndicator, Dimensions, Image, FlatList,
+  SafeAreaView, ActivityIndicator, useWindowDimensions, Image, FlatList,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { supabase } from '../supabase';
 import { colors, typography, spacing, radius } from '../src/theme';
 import Logo from '../src/components/Logo';
 
-const SW = Dimensions.get('window').width;
-const CARD_W = Math.min((SW - 14 * 2 - 10) / 2, 300);
+const GRID_PADDING = 14;
+const GRID_GAP = 12;
+const MIN_CARD_W = 220;
+const MAX_CARD_W = 300;
 
 const CITIES = [
   { id:'alger',       label:'Alger',       emoji:'🏛️' },
@@ -28,12 +30,12 @@ const CITIES = [
 // colors.primary) — remplace l'ancien style maison (badges noirs translucides,
 // médailles or/argent/bronze codées en dur, emoji de cuisine en overlay)
 // jamais aligné avec la refonte rouge/Work Sans du 15-16/08.
-function RestoCard({ r, onPress, onReserve }) {
+function RestoCard({ r, onPress, onReserve, cardWidth }) {
   const rating = r.avg_rating > 0 ? Number(r.avg_rating).toFixed(1).replace('.', ',') : null;
   const starCount = r.avg_rating > 0 ? Math.max(1, Math.min(5, Math.round(r.avg_rating))) : 0;
 
   return (
-    <TouchableOpacity style={lc.card} onPress={onPress} activeOpacity={0.9}>
+    <TouchableOpacity style={[lc.card, { width: cardWidth }]} onPress={onPress} activeOpacity={0.9}>
       <View style={lc.photoWrap}>
         {r.photos?.[0]
           ? <Image source={{ uri: r.photos[0] }} style={lc.photo} resizeMode="cover" />
@@ -62,7 +64,7 @@ function RestoCard({ r, onPress, onReserve }) {
 }
 
 const lc = StyleSheet.create({
-  card:      { width: CARD_W, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, borderRadius: radius.lg, overflow: 'hidden', marginBottom: 12 },
+  card:      { backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, borderRadius: radius.lg, overflow: 'hidden', marginBottom: 12 },
   photoWrap: { height: 120 },
   photo:     { width: '100%', height: '100%' },
 
@@ -84,6 +86,11 @@ export default function ExplorerScreen({ navigation }) {
   const [city,        setCity]        = useState('alger');
   const [restaurants, setRestaurants] = useState([]);
   const [loading,     setLoading]     = useState(false);
+  const { width } = useWindowDimensions();
+
+  const available = width - GRID_PADDING * 2;
+  const numColumns = Math.max(2, Math.floor((available + GRID_GAP) / (MIN_CARD_W + GRID_GAP)));
+  const cardWidth  = Math.min(MAX_CARD_W, (available - GRID_GAP * (numColumns - 1)) / numColumns);
 
   useEffect(() => {
     (async () => {
@@ -105,10 +112,11 @@ export default function ExplorerScreen({ navigation }) {
   const renderItem = useCallback(({ item: r }) => (
     <RestoCard
       r={r}
+      cardWidth={cardWidth}
       onPress={() => navigation.navigate('Restaurant', { restaurant: r })}
       onReserve={() => navigation.navigate('ReservationForm', { restaurant: r })}
     />
-  ), [navigation]);
+  ), [navigation, cardWidth]);
 
   return (
     <SafeAreaView style={s.root}>
@@ -146,9 +154,10 @@ export default function ExplorerScreen({ navigation }) {
         </View>
       ) : (
         <FlatList
+          key={numColumns}
           data={restaurants}
           keyExtractor={r => String(r.id)}
-          numColumns={2}
+          numColumns={numColumns}
           columnWrapperStyle={s.gridRow}
           contentContainerStyle={s.gridContent}
           showsVerticalScrollIndicator={false}
@@ -175,7 +184,7 @@ const s = StyleSheet.create({
   cityTxt:   { color:colors.text, fontSize:typography.size.bodyLg, lineHeight:16 },
   cityTxtOn: { color:colors.bg, fontWeight:'600' },
 
-  gridRow:     { paddingHorizontal:14, justifyContent:'space-between' },
+  gridRow:     { paddingHorizontal:GRID_PADDING, gap:GRID_GAP },
   gridContent: { paddingTop:6 },
 
   center:     { flex:1, alignItems:'center', justifyContent:'center', gap:8 },

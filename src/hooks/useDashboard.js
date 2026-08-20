@@ -73,10 +73,20 @@ export default function useDashboard() {
 
       const { data: resto } = await supabase
         .from('restaurants')
-        .select('id, name, city, quartier, cuisine_type, photos, avg_rating, avg_ticket, capacity')
+        .select('id, name, city, quartier, cuisine_type, photos, avg_rating, avg_ticket, capacity, dashboard_first_opened_at')
         .eq('id', restaurantId)
         .maybeSingle();
       if (resto) setRestaurant(resto);
+
+      // Premier accès dashboard -- alimente city_activation_status.qualified_count
+      // (jamais réécrit une fois posé, best-effort, ne doit jamais bloquer le dashboard).
+      if (resto && !resto.dashboard_first_opened_at) {
+        supabase.from('restaurants')
+          .update({ dashboard_first_opened_at: new Date().toISOString() })
+          .eq('id', restaurantId)
+          .is('dashboard_first_opened_at', null)
+          .then(() => {});
+      }
 
       const { data: res } = await supabase
         .from('reservations')

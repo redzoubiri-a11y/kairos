@@ -26,6 +26,11 @@ export const SUGGESTIONS = [
   { label: 'Libanais',      q: 'libanais',      emoji: '🌿' },
 ];
 
+// cuisine_type est un enum Postgres : .eq() plante avec une erreur serveur pour
+// toute valeur qui n'en fait pas partie, donc on ne l'utilise que pour ces
+// valeurs connues, jamais pour une recherche par nom libre.
+const CUISINE_VALUES = new Set(SUGGESTIONS.map(s => s.q));
+
 function haversineKm(lat1, lon1, lat2, lon2) {
   const R = 6371;
   const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -67,7 +72,11 @@ export default function useSearch({ initialQuery = '', initialCity = 'alger' } =
           .eq('status', 'active')
           .limit(25);
 
-        if (q) req = req.ilike('name', `%${q}%`);
+        if (q) {
+          req = CUISINE_VALUES.has(q.toLowerCase())
+            ? req.or(`name.ilike.%${q}%,cuisine_type.eq.${q.toLowerCase()}`)
+            : req.ilike('name', `%${q}%`);
+        }
         if (qr) req = req.ilike('quartier', `%${qr}%`);
         if (!nearMe && city !== 'all') req = req.eq('city', city);
 

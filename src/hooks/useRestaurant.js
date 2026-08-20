@@ -7,6 +7,11 @@ export const CUISINE_EMOJI = {
   italien:'🍕', japonais:'🍣', turc:'🍢', libanais:'🌿', francais:'🍷', autre:'🍽️',
 };
 
+// Compte placeholder de restaurant_owners assigné aux fiches importées non
+// revendiquées (cf. scripts/import-restaurants-*.js) -- aucun vrai restaurateur
+// derrière tant que la fiche n'est pas revendiquée via /revendiquer/[slug].
+export const UNCLAIMED_OWNER_ID = '00000000-0000-0000-0000-000000000099';
+
 export default function useRestaurant(restaurantProp) {
   const [tab,            setTab]            = useState('Infos');
   const [reviews,        setReviews]        = useState([]);
@@ -46,6 +51,7 @@ export default function useRestaurant(restaurantProp) {
   const rating       = useMemo(() => restaurant.avg_rating > 0 ? Number(restaurant.avg_rating).toFixed(1) : null, [restaurant.avg_rating]);
   const cuisineEmoji = useMemo(() => CUISINE_EMOJI[restaurant.cuisine_type] || '🍽️', [restaurant.cuisine_type]);
   const desc         = useMemo(() => restaurant.description || null, [restaurant.description]);
+  const isUnclaimed  = restaurant.owner_id === UNCLAIMED_OWNER_ID;
 
   useEffect(() => {
     if (restaurant.id) {
@@ -64,7 +70,7 @@ export default function useRestaurant(restaurantProp) {
 
       (async () => {
         const { data } = await supabase.from('restaurants')
-          .select('click_collect_enabled, espace_famille, terrasse, parking, salle_fete, address, phone, quartier, city, avg_ticket')
+          .select('click_collect_enabled, espace_famille, terrasse, parking, salle_fete, address, phone, quartier, city, avg_ticket, owner_id')
           .eq('id', restaurant.id).maybeSingle();
         setClickCollectEnabled(!!data?.click_collect_enabled);
         if (data) setExtraFields(data);
@@ -104,6 +110,6 @@ export default function useRestaurant(restaurantProp) {
     restaurant,
     tab, reviews, loadingReviews,
     tabAnim, photos, menu, rating, cuisineEmoji, desc,
-    switchTab, clickCollectEnabled,
+    switchTab, clickCollectEnabled, isUnclaimed,
   };
 }

@@ -8,6 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, typography, spacing, radius } from '../src/theme';
 import useReservationForm, { OCCASIONS, formatDateLong } from '../src/hooks/useReservationForm';
+import { UNCLAIMED_OWNER_ID } from '../src/hooks/useRestaurant';
 import PhotoCarouselHero from '../src/components/PhotoCarouselHero';
 import FormProgressBar from '../src/components/FormProgressBar';
 import FormStepper from '../src/components/FormStepper';
@@ -30,6 +31,7 @@ export default function ReservationFormScreen({ route, navigation }) {
   const restaurant   = route?.params?.restaurant || { name: 'Restaurant', id: null, photo_url: null, avg_rating: null };
   const existingResa = route?.params?.reservation || null;
   const isEdit       = !!existingResa;
+  const isUnclaimed  = restaurant.owner_id === UNCLAIMED_OWNER_ID;
 
   const [success, setSuccess] = useState(false);
 
@@ -102,6 +104,12 @@ export default function ReservationFormScreen({ route, navigation }) {
 
         {/* Banner */}
         <PhotoCarouselHero restaurant={restaurant} height={180} showPrevArrow />
+
+        {isUnclaimed && (
+          <View style={s.testNotice}>
+            <Text style={s.testNoticeTxt}>🧪 Fiche en test — pas encore revendiquée par le restaurateur, réservation indisponible pour le moment.</Text>
+          </View>
+        )}
 
         {/* Date */}
         <View style={s.sectionHeader}>
@@ -268,15 +276,15 @@ export default function ReservationFormScreen({ route, navigation }) {
 
         {/* Confirmer */}
         <TouchableOpacity
-          style={[s.confirmBtn, (!date || !heure || loading) && s.confirmBtnDim]}
+          style={[s.confirmBtn, (!date || !heure || loading || isUnclaimed) && s.confirmBtnDim]}
           onPress={confirmer}
-          disabled={loading || !date || !heure}
+          disabled={loading || !date || !heure || isUnclaimed}
         >
           {loading
             ? <Text style={s.confirmBtnTxt}>···</Text>
             : <>
-                <Text style={s.confirmBtnTxt}>{isEdit ? 'MODIFIER LA RÉSERVATION' : 'CONFIRMER LA RÉSERVATION'}</Text>
-                <Text style={s.confirmBtnArrow}>→</Text>
+                <Text style={s.confirmBtnTxt}>{isUnclaimed ? 'RÉSERVATION INDISPONIBLE' : isEdit ? 'MODIFIER LA RÉSERVATION' : 'CONFIRMER LA RÉSERVATION'}</Text>
+                {!isUnclaimed && <Text style={s.confirmBtnArrow}>→</Text>}
               </>
           }
         </TouchableOpacity>
@@ -364,6 +372,9 @@ const s = StyleSheet.create({
 
   errorBox: { marginHorizontal: spacing.xxl, marginBottom: spacing.lg, backgroundColor: colors.redSoft, borderRadius: radius.lg, padding: spacing.lg, borderWidth: 1, borderColor: 'rgba(224,90,90,0.3)' },
   errorTxt: { fontFamily: typography.body, color: colors.red, fontSize: typography.size.body },
+
+  testNotice:   { marginHorizontal: spacing.xxl, marginTop: spacing.lg, backgroundColor: colors.redSoft, borderRadius: radius.lg, padding: spacing.lg, borderWidth: 1, borderColor: 'rgba(224,90,90,0.3)' },
+  testNoticeTxt:{ fontFamily: typography.bodyMedium, fontSize: typography.size.caption, color: colors.red, lineHeight: 17 },
 
   confirmBtn:     { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.lg, marginHorizontal: spacing.xxl, borderRadius: radius.xxl, paddingVertical: 17, overflow: 'hidden', backgroundColor: colors.resa },
   confirmBtnDim:  { opacity: 0.4 },

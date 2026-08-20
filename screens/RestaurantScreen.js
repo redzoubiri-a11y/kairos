@@ -20,7 +20,7 @@ export default function RestaurantScreen({ route, navigation }) {
   const {
     restaurant, tab, reviews, loadingReviews,
     tabAnim, photos, menu, rating, cuisineEmoji, desc,
-    switchTab, clickCollectEnabled,
+    switchTab, clickCollectEnabled, isUnclaimed,
   } = useRestaurant(restaurantParam);
 
   // Sélection sur le widget "Réservation en ligne" — reflète le libellé du CTA,
@@ -51,6 +51,11 @@ export default function RestaurantScreen({ route, navigation }) {
 
       <Animated.ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1, opacity: tabAnim }}>
         <View style={s.headBlock}>
+          {isUnclaimed && (
+            <View style={s.testBanner}>
+              <Text style={s.testBannerTxt}>🧪 Fiche en test — pas encore revendiquée par le restaurateur, réservation indisponible pour le moment.</Text>
+            </View>
+          )}
           <Text style={s.name} numberOfLines={2}>{restaurant.name}</Text>
 
           {!!rating && (
@@ -98,9 +103,14 @@ export default function RestaurantScreen({ route, navigation }) {
       </Animated.ScrollView>
 
       <View style={s.bottomBar}>
-        <TouchableOpacity style={s.cta} onPress={goReserve} activeOpacity={0.9}>
+        <TouchableOpacity
+          style={[s.cta, isUnclaimed && s.ctaDisabled]}
+          onPress={isUnclaimed ? undefined : goReserve}
+          disabled={isUnclaimed}
+          activeOpacity={0.9}
+        >
           <Text style={s.ctaTxt}>
-            {selectedSlot ? `Réserver — ${selectedSlot}, 2 pers.` : 'Réserver une table'}
+            {isUnclaimed ? 'Réservation indisponible (test)' : selectedSlot ? `Réserver — ${selectedSlot}, 2 pers.` : 'Réserver une table'}
           </Text>
         </TouchableOpacity>
         {clickCollectEnabled && (
@@ -117,6 +127,8 @@ const s = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.card },
 
   headBlock: { paddingHorizontal: spacing.xl },
+  testBanner:   { marginTop: spacing.lg, backgroundColor: colors.redSoft, borderRadius: radius.md, borderWidth: 1, borderColor: 'rgba(224,90,90,0.3)', padding: spacing.md },
+  testBannerTxt:{ fontFamily: typography.bodyMedium, fontSize: typography.size.caption, color: colors.red, lineHeight: 17 },
   name:    { fontFamily: typography.display, fontSize: typography.size.title - 4, color: colors.text, marginTop: spacing.lg, letterSpacing: -0.2 },
   rateline:{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs + 1, marginTop: spacing.sm - 1 },
   stars:   { color: colors.star, fontSize: typography.size.bodyLg, letterSpacing: 1 },
@@ -134,6 +146,7 @@ const s = StyleSheet.create({
 
   bottomBar: { paddingHorizontal: spacing.xl, paddingVertical: spacing.lg - 1, borderTopWidth: 1, borderTopColor: colors.cardBorder, backgroundColor: colors.card },
   cta:    { height: 50, borderRadius: radius.lg, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' },
+  ctaDisabled: { backgroundColor: colors.textDim, opacity: 0.6 },
   ctaTxt: { fontFamily: typography.bodyBold, color: '#FFFFFF', fontSize: typography.size.subheading },
   ccBtn:  { marginTop: spacing.sm + 2, height: 50, borderRadius: radius.lg, backgroundColor: colors.tagNeutralBg, alignItems: 'center', justifyContent: 'center' },
   ccTxt:  { fontFamily: typography.bodyBold, color: colors.text, fontSize: typography.size.subheading },

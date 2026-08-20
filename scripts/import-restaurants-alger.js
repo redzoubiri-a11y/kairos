@@ -193,11 +193,13 @@ async function main() {
     results.push({ name: r.name, slug: data.slug, claim_token: data.claim_token, action: 'inserted' });
   }
 
-  const SITE_URL = 'https://mida-food.com';
+  // mida-food.com est le site vitrine (projet Vercel distinct, sans route /revendiquer) --
+  // la page de revendication vit dans web-resa, pas encore sur un sous-domaine mida-food.com.
+  const SITE_URL = 'https://web-resa.vercel.app';
   console.log('\nnom | slug | claim_token | URL de revendication | action');
   console.log('----|------|-------------|------------------------|-------');
   for (const row of results) {
-    const url = `${SITE_URL}/r/${row.slug}?t=${row.claim_token}`;
+    const url = `${SITE_URL}/revendiquer/${row.slug}?t=${row.claim_token}`;
     console.log(`${row.name} | ${row.slug} | ${row.claim_token} | ${url} | ${row.action}`);
   }
   console.log(`\n${results.length} restaurants traites (${results.filter(r => r.action === 'inserted').length} inseres, ${results.filter(r => r.action === 'updated').length} deja existants/rafraichis).`);

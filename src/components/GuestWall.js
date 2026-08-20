@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
@@ -17,7 +17,7 @@ export default function GuestWall({ title, message }) {
       )}
       <View style={s.inner}>
         <View style={s.iconWrap}>
-          <Text style={s.icon}>✦</Text>
+          <Image source={require('../../assets/logo.png')} style={s.icon} resizeMode="cover" />
         </View>
         <Text style={s.title}>{title || 'Connexion requise'}</Text>
         <Text style={s.message}>
@@ -40,13 +40,12 @@ const s = StyleSheet.create({
   inner: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 40, gap: spacing.xl },
 
   iconWrap: {
-    width: 88, height: 88, borderRadius: radius.xxl,
-    backgroundColor: colors.goldSoft,
-    borderWidth: 1.5, borderColor: 'rgba(200,151,90,0.3)',
+    width: 88, height: 88, borderRadius: radius.full,
+    overflow: 'hidden',
     alignItems: 'center', justifyContent: 'center',
     marginBottom: spacing.lg,
   },
-  icon: { color: colors.gold, fontSize: 32 },
+  icon: { width: 88, height: 88 },
 
   title:   { color: colors.text, fontFamily: typography.display, fontSize: typography.size.title, fontWeight: typography.weight.bold, letterSpacing: -0.3, textAlign: 'center' },
   message: { color: colors.textMuted, fontSize: typography.size.bodyLg, textAlign: 'center', lineHeight: 22 },

@@ -23,15 +23,15 @@ export default function DashResaCard({ r, onConfirm, onCancel, onArrived, isActi
           <Text style={[s.avatarTxt, { color: col }]}>{initials || '?'}</Text>
         </View>
         <View style={{ flex: 1 }}>
-          <Text style={s.name}>{nom}</Text>
+          <Text style={s.name} numberOfLines={1} ellipsizeMode="tail">{nom}</Text>
           <View style={s.coverRow}>
-            <Text style={s.coverTxt}>👥 {covers} couvert{covers > 1 ? 's' : ''}</Text>
-            {r.nb_children > 0 && <Text style={s.childTxt}>· {r.nb_children} enfant{r.nb_children > 1 ? 's' : ''}</Text>}
+            <Text style={s.coverTxt} numberOfLines={1}>👥 {covers} couvert{covers > 1 ? 's' : ''}</Text>
+            {r.nb_children > 0 && <Text style={s.childTxt} numberOfLines={1}>· {r.nb_children} enfant{r.nb_children > 1 ? 's' : ''}</Text>}
           </View>
         </View>
-        <View style={[s.badge, { backgroundColor: st.bg, borderColor: st.border }]}>
-          <Text style={[s.badgeTxt, { color: st.color }]}>{st.label}</Text>
-        </View>
+      </View>
+      <View style={[s.badge, { backgroundColor: st.bg, borderColor: st.border, alignSelf: 'flex-end' }]}>
+        <Text style={[s.badgeTxt, { color: st.color }]} numberOfLines={1}>{st.label}</Text>
       </View>
 
       {!!r.notes && (

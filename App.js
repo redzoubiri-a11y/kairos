@@ -123,7 +123,7 @@ function TabNavigator({ userRole }) {
       })}
     >
       <Tab.Screen name="Accueil" component={HomeScreen} />
-      <Tab.Screen name="Recherche" component={ExplorerScreen} />
+      <Tab.Screen name="Recherche" component={SearchScreen} />
       <Tab.Screen name={lastName} component={LastScreen} />
       <Tab.Screen name="Favoris" component={FavorisScreen} />
       <Tab.Screen name="Profil" component={ProfilScreen} />

@@ -1,0 +1,59 @@
+{
+  "expo": {
+    "name": "Tasalle",
+    "slug": "tasalle",
+    "version": "1.0.0",
+    "scheme": "tasalle",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#F1EFEA"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "dz.tasalle.app",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSPhotoLibraryUsageDescription": "Tasalle accède à vos photos pour illustrer votre salle et vos avis."
+      }
+    },
+    "android": {
+      "package": "dz.tasalle.app",
+      "edgeToEdgeEnabled": true,
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#F1EFEA"
+      }
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single",
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/adaptive-icon.png",
+          "color": "#BE9A5E"
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Tasalle accède à vos photos pour illustrer votre salle et vos avis."
+        }
+      ],
+      "expo-font"
+    ],
+    "extra": {
+      "supabaseUrl": null,
+      "supabaseAnonKey": null
+    }
+  }
+}

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { Keyboard, Alert } from 'react-native';
 import * as Location from 'expo-location';
 import { supabase } from '../../supabase';
+import { CUISINE_OPTIONS } from './useProInfo';
 
 export const CITIES = [
   { id: 'all',         label: 'Toutes' },
@@ -27,9 +28,16 @@ export const SUGGESTIONS = [
 ];
 
 // cuisine_type est un enum Postgres : .eq() plante avec une erreur serveur pour
-// toute valeur qui n'en fait pas partie, donc on ne l'utilise que pour ces
-// valeurs connues, jamais pour une recherche par nom libre.
-const CUISINE_VALUES = new Set(SUGGESTIONS.map(s => s.q));
+// toute valeur qui n'en fait pas partie (vérifié en direct — même une valeur
+// plausible comme 'japonais', absente de l'enum réel, fait échouer la requête).
+// CUISINE_OPTIONS est la liste canonique des valeurs réellement valides ; on y
+// reconnaît aussi bien le code ('algerien') que le libellé français affiché sur
+// les tuiles Cuisines populaires de l'Accueil ('Algérien').
+const CUISINE_BY_INPUT = new Map();
+for (const { value, label } of CUISINE_OPTIONS) {
+  CUISINE_BY_INPUT.set(value.toLowerCase(), value);
+  CUISINE_BY_INPUT.set(label.toLowerCase(), value);
+}
 
 function haversineKm(lat1, lon1, lat2, lon2) {
   const R = 6371;
@@ -73,9 +81,10 @@ export default function useSearch({ initialQuery = '', initialCity = 'alger' } =
           .limit(25);
 
         if (q) {
-          req = CUISINE_VALUES.has(q.toLowerCase())
-            ? req.or(`name.ilike.%${q}%,cuisine_type.eq.${q.toLowerCase()}`)
-            : req.ilike('name', `%${q}%`);
+          const cuisineValue = CUISINE_BY_INPUT.get(q.toLowerCase());
+          req = cuisineValue
+            ? req.or(`name.ilike.%${q}%,quartier.ilike.%${q}%,cuisine_type.eq.${cuisineValue}`)
+            : req.or(`name.ilike.%${q}%,quartier.ilike.%${q}%`);
         }
         if (qr) req = req.ilike('quartier', `%${qr}%`);
         if (!nearMe && city !== 'all') req = req.eq('city', city);

@@ -49,3 +49,6 @@ cert.der
 
 # Supabase CLI local state
 supabase/.temp/
+
+# Backups with potentially sensitive data (never commit)
+backups/

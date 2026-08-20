@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useMemo, useEffect } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   Animated, Platform, StatusBar, Image,
@@ -12,24 +12,11 @@ import EmptyState from '../src/components/EmptyState';
 import useHomeData from '../src/hooks/useHomeData';
 import useHomeDiscovery from '../src/hooks/useHomeDiscovery';
 import useMostViewed from '../src/hooks/useMostViewed';
+import useLiveCities from '../src/hooks/useLiveCities';
 import usePushNotifications from '../src/hooks/usePushNotifications';
 import useDeepLink from '../src/hooks/useDeepLink';
 
-// Onglets de zone — motif "Japan / Near me / Tokyo / Osaka" de l'app Tabelog,
-// villes réelles reprises de useSearch.js (CITIES).
-const AREA_TABS = [
-  { id: 'alger',       label: 'Alger' },
-  { id: 'near',        label: 'Près de moi' },
-  { id: 'oran',        label: 'Oran' },
-  { id: 'constantine', label: 'Constantine' },
-  { id: 'tizi_ouzou',  label: 'Tizi Ouzou' },
-  { id: 'tipaza',      label: 'Tipaza' },
-  { id: 'blida',       label: 'Blida' },
-  { id: 'setif',       label: 'Sétif' },
-  { id: 'bejaia',      label: 'Béjaïa' },
-  { id: 'tlemcen',     label: 'Tlemcen' },
-  { id: 'annaba',      label: 'Annaba' },
-];
+const NEAR_TAB = { id: 'near', label: 'Près de moi' };
 
 function SkeletonTile() {
   return (
@@ -56,7 +43,23 @@ export default function HomeScreen({ navigation }) {
   useDeepLink(navigation);
 
   const { unreadNotifs, fadeAnim, slideAnim } = useHomeData();
-  const [area, setArea] = useState('alger');
+  const { cities: liveCities, loading: citiesLoading } = useLiveCities();
+  // Onglets de zone — motif "Japan / Near me / Tokyo / Osaka" de l'app Tabelog,
+  // villes réelles (is_live=true dans `cities`), "Près de moi" fixe en 2e position.
+  const AREA_TABS = useMemo(() => {
+    const cityTabs = liveCities.map(c => ({ id: c.slug, label: c.name }));
+    if (cityTabs.length === 0) return [NEAR_TAB];
+    return [cityTabs[0], NEAR_TAB, ...cityTabs.slice(1)];
+  }, [liveCities]);
+
+  const [area, setArea] = useState(null);
+  useEffect(() => {
+    // Attend la fin du chargement réel des villes avant de choisir un défaut —
+    // sinon AREA_TABS vaut [NEAR_TAB] le temps du fetch et "Près de moi" reste
+    // figé comme sélection par défaut même une fois les villes arrivées.
+    if (area !== null || citiesLoading) return;
+    setArea(liveCities.length > 0 ? liveCities[0].slug : 'near');
+  }, [citiesLoading, liveCities, area]);
   const [sortTab, setSortTab] = useState('week'); // cosmétique pour l'instant, cf. résumé du lot
   const { topQuartiers, topCuisines, loading: discoveryLoading } = useHomeDiscovery(area);
   const { restaurants: mostViewed, loading: mostViewedLoading } = useMostViewed(area);

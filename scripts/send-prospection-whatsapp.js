@@ -54,10 +54,14 @@ async function sendWhatsApp(phone, message) {
   });
   const json = await res.json().catch(() => ({}));
   // Piège vécu (2026-08-20) : res.ok (HTTP 200) est vrai même quand l'instance
-  // n'est pas connectée à WhatsApp (message jamais réellement pris en charge,
-  // absent de GET /messages) -- ne JAMAIS se fier à res.ok seul, uniquement au
-  // champ `sent` du corps de réponse.
-  return { ok: json?.sent === true, raw: json };
+  // n'est pas connectée à WhatsApp -- ne jamais s'y fier seul.
+  // Piège vécu (2026-08-21) : `sent` est une STRING "true"/"false", pas un
+  // booléen -- et même "sent":"true" ne garantit pas la livraison réelle
+  // (l'API accepte juste la demande ; le vrai statut arrive plus tard dans
+  // GET /messages : sent/queue/invalid/unsent). Considérer "accepté par
+  // l'API" comme un succès d'ENVOI ici ; le vrai suivi de livraison se fait
+  // séparément via GET /messages (cf. reconciliation manuelle du 2026-08-21).
+  return { ok: json?.sent === true || json?.sent === 'true', raw: json };
 }
 
 async function main() {

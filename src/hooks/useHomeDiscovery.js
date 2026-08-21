@@ -21,7 +21,7 @@ const TILE_GRADIENTS = [
 
 // Quartiers/cuisines populaires de l'Accueil — pas de RPC dédiée, agrégation
 // client-side sur la liste des restaurants actifs (~90 lignes, volume négligeable).
-export default function useHomeDiscovery(city) {
+export default function useHomeDiscovery(cityId) {
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -31,7 +31,7 @@ export default function useHomeDiscovery(city) {
       setLoading(true);
       try {
         let req = supabase.from('restaurants').select('id, quartier, cuisine_type').eq('status', 'active');
-        if (city && city !== 'near') req = req.eq('city', city);
+        if (cityId) req = req.eq('city_id', cityId);
         const { data } = await req;
         if (!cancelled) setRestaurants(data ?? []);
       } finally {
@@ -39,7 +39,7 @@ export default function useHomeDiscovery(city) {
       }
     })();
     return () => { cancelled = true; };
-  }, [city]);
+  }, [cityId]);
 
   const topQuartiers = useMemo(() => {
     const counts = {};

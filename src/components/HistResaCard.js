@@ -14,7 +14,7 @@ function Thumb({ url, size = 56 }) {
 export default function HistResaCard({ r, onReserveAgain, onPress, onReview, hasReview, isPendingReview }) {
   const sc        = statusCfg(r.status);
   const canRebook = ['completed', 'arrived', 'no_show'].includes(r.status);
-  const canReview = ['arrived', 'completed', 'confirmed'].includes(r.status) && !!r.restaurants?.id;
+  const canReview = r.status === 'arrived' && !!r.restaurants?.id;
   const partyCount = (r.nb_adults || 0) + (r.nb_children || 0);
 
   return (

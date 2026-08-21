@@ -13,7 +13,7 @@ export default function useLiveCities() {
       try {
         const { data, error } = await supabase
           .from('cities')
-          .select('slug, name')
+          .select('id, slug, name')
           .eq('is_live', true)
           .order('name');
         if (!cancelled) setCities(error ? [] : (data ?? []));

@@ -78,6 +78,7 @@ export default function usePushNotifications(navigation) {
 
   useEffect(() => {
     if (Platform.OS === 'web') return;
+    Notifications.setBadgeCountAsync(0).catch(() => {});
     registerForPushNotifications().then(savePushToken);
 
     // Cold start: handle once per session — not on every HomeScreen remount

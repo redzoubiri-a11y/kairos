@@ -85,17 +85,19 @@ export default function ReservationScreen({ navigation }) {
 
   const [reviewTarget, setReviewTarget] = useState(null);
   const [submitting,   setSubmitting]   = useState(false);
+  const [reviewError,  setReviewError]  = useState('');
 
-  const openReview  = useCallback((r) => setReviewTarget(r), []);
-  const closeReview = useCallback(() => setReviewTarget(null), []);
+  const openReview  = useCallback((r) => { setReviewError(''); setReviewTarget(r); }, []);
+  const closeReview = useCallback(() => { setReviewError(''); setReviewTarget(null); }, []);
 
   const handleSubmitReview = useCallback(async (resa, rating, comment) => {
     setSubmitting(true);
+    setReviewError('');
     try {
       await submitReview(resa, rating, comment);
       setReviewTarget(null);
     } catch (e) {
-      // error stays visible in modal via thrown error — re-throw so modal can catch
+      setReviewError("Impossible de publier l'avis pour le moment. Réessayez plus tard.");
     } finally {
       setSubmitting(false);
     }
@@ -275,6 +277,7 @@ export default function ReservationScreen({ navigation }) {
         onClose={closeReview}
         onSubmit={handleSubmitReview}
         submitting={submitting}
+        serverError={reviewError}
       />
 
     </SafeAreaView>

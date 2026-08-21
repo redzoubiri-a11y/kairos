@@ -150,7 +150,7 @@ export default function useExplorer() {
       r.name?.toLowerCase().includes(q)
       || r.cuisine_type?.toLowerCase().includes(q)
       || r.quartier?.toLowerCase().includes(q)
-      || normalizeCity(r.city) === normalizeCity(q)
+      || normalizeCity(r.city).startsWith(normalizeCity(q))
     ));
     if (activeFilters.has('price')) list = list.filter(r => r.avg_ticket >= 1500 && r.avg_ticket < 3000);
     if (activeFilters.has('note')) list = list.filter(r => (r.avg_rating || 0) >= 4.5);

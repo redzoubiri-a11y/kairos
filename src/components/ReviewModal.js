@@ -24,7 +24,7 @@ function StarPicker({ value, onChange }) {
 
 const LABELS = { 1: 'Très décevant', 2: 'Décevant', 3: 'Correct', 4: 'Très bien', 5: 'Excellent !' };
 
-export default function ReviewModal({ resa, visible, onClose, onSubmit, submitting }) {
+export default function ReviewModal({ resa, visible, onClose, onSubmit, submitting, serverError }) {
   const [rating,  setRating]  = useState(0);
   const [comment, setComment] = useState('');
   const [error,   setError]   = useState('');
@@ -71,7 +71,7 @@ export default function ReviewModal({ resa, visible, onClose, onSubmit, submitti
             <Text style={s.label}>{LABELS[rating]}</Text>
           )}
 
-          {!!error && <Text style={s.error}>{error}</Text>}
+          {!!(error || serverError) && <Text style={s.error}>{error || serverError}</Text>}
 
           <View style={s.inputWrap}>
             <TextInput

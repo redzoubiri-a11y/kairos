@@ -6,7 +6,7 @@ const RESTO_FIELDS = 'id,name,cuisine_type,quartier,avg_rating,avg_ticket,photos
 
 // "Les plus consultés" — Accueil, scope sur la ville sélectionnée dans les
 // onglets de zone (ou tout le pays pour "Près de moi", pas de vrai tri géo).
-export default function useMostViewed(city) {
+export default function useMostViewed(cityId) {
   const [restaurants, setRestaurants] = useState([]);
   const [loading,     setLoading]     = useState(true);
 
@@ -19,7 +19,7 @@ export default function useMostViewed(city) {
           .eq('status', 'active')
           .order('view_count', { ascending: false })
           .limit(20);
-        if (city && city !== 'near') req = req.eq('city', city);
+        if (cityId) req = req.eq('city_id', cityId);
 
         const { data, error } = await req;
         if (!cancelled) setRestaurants(error ? [] : (data ?? []));
@@ -28,7 +28,7 @@ export default function useMostViewed(city) {
       }
     })();
     return () => { cancelled = true; };
-  }, [city]);
+  }, [cityId]);
 
   return { restaurants, loading };
 }

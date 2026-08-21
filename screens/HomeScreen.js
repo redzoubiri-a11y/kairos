@@ -61,8 +61,11 @@ export default function HomeScreen({ navigation }) {
     setArea(liveCities.length > 0 ? liveCities[0].slug : 'near');
   }, [citiesLoading, liveCities, area]);
   const [sortTab, setSortTab] = useState('week'); // cosmétique pour l'instant, cf. résumé du lot
-  const { topQuartiers, topCuisines, loading: discoveryLoading } = useHomeDiscovery(area);
-  const { restaurants: mostViewed, loading: mostViewedLoading } = useMostViewed(area);
+  // `restaurants.city` est un texte libre incohérent ("tipaza" vs "tipaza centre") —
+  // on filtre sur city_id (FK propre vers `cities`) plutôt que sur le slug en texte.
+  const areaCityId = liveCities.find(c => c.slug === area)?.id ?? null;
+  const { topQuartiers, topCuisines, loading: discoveryLoading } = useHomeDiscovery(areaCityId);
+  const { restaurants: mostViewed, loading: mostViewedLoading } = useMostViewed(areaCityId);
 
   const insets = useSafeAreaInsets();
   const areaLabel = AREA_TABS.find(a => a.id === area)?.label || 'Alger';

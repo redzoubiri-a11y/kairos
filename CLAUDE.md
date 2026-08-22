@@ -1,81 +1,32 @@
-# MIDA — Brief Claude Code
+# CLAUDE.md — Mida
 
-## Projet
-Application mobile de réservation de restaurants à Alger.
-Équivalent TheFork pour le marché algérien.
-Site actuel : mida-food.com
+## Contexte
+- Quoi : app de réservation de restaurants (marché algérien, B2B restaurateurs + B2C clients)
+- Stack : Expo / React Native, Supabase (projet "Kairos", ref rghjgyzpdadapmktislv), domaine mida-food.com
+- Racine : ~/Desktop/KAIROS/APP
+- Compte GitHub : redzoubiri-a11y/kairos (monorepo — contient aussi allotruck/ et tasalle/, sans rapport avec Mida) — compte Expo : zlabia
+- Bundle : iOS com.kairos.mida (App Store "MIDA DZ", ASC ID 6776171199) — Android com.midadz.app
+- État : en production (Android test fermé + soumission App Store en revue), catalogue multi-villes en cours de peuplement
 
-## Stack technique
-- React Native 0.81.5 + Expo 54
-- React Navigation (Stack + Bottom Tabs)
-- Supabase (auth + PostgreSQL)
-- Mapbox / React Native Maps
-- TypeScript
-- AsyncStorage
+## Fichiers protégés — NE JAMAIS modifier
+- App.js (point d'entrée)
+- supabase.js (config client)
+Si une tâche semble l'exiger : s'arrêter et me prévenir.
 
-## Structure des fichiers
-```
-App.js                        ← Navigation principale (NE PAS MODIFIER)
-supabase.js                   ← Config Supabase (NE PAS MODIFIER)
-screens/
-  AuthScreen.js               ← Connexion + Inscription
-  OnboardingScreen.js         ← Introduction app
-  HomeScreen.js               ← Accueil client
-  SearchScreen.js             ← Recherche
-  ExplorerScreen.js           ← Exploration carte
-  MapScreen.js                ← Vue carte
-  RestaurantScreen.js         ← Fiche restaurant
-  ReservationScreen.js        ← Réservations
-  ReservationFormScreen.js    ← Formulaire réservation
-  FavorisScreen.js            ← Favoris
-  NotificationsScreen.js      ← Notifications
-  ProfilScreen.js             ← Profil utilisateur
-  ProDashboard.js             ← Dashboard restaurateur
-  ProComptoir.js              ← Gestion réservations pro
-  ProInscriptionScreen.js     ← Inscription restaurateur
-wireframes/
-  mida-wireframes.jsx               ← Écrans principaux
-  mida-auth-wireframes.jsx          ← Auth & accès
-  mida-client-wireframes.jsx        ← Côté client
-  mida-restaurateur-wireframes.jsx  ← Côté restaurateur
-  mida-transversal-wireframes.jsx   ← Transversal
-```
+## Architecture obligatoire
+- Pattern hook `useX` + composant : logique/données dans `src/hooks/useX.js`, affichage dans le composant
+- Styles : UNIQUEMENT via `src/theme.js` — jamais de hex ou de taille en dur
+- Un composant = un fichier, PascalCase. Hooks : `useNomFonctionnel.js`
+- Écran qui grossit → découper (hook + sous-composants)
 
-## Règles absolues
-1. NE JAMAIS modifier App.js (navigation) ni supabase.js
-2. NE JAMAIS supprimer la logique métier existante (appels Supabase, state, fonctions)
-3. TOUJOURS garder les props et callbacks existants
-4. UNIQUEMENT modifier le JSX retourné et les styles
-5. Utiliser EXCLUSIVEMENT les tokens de src/theme.js pour les styles
-6. Tous les nouveaux composants dans src/components/
+## Vérification (définition de "fini")
+- `npx expo start` démarre sans erreur rouge
+- Aucun fichier protégé modifié
+- Nouvelles données → hook dédié, pas de fetch dans le composant
 
-## Design de référence
-Les wireframes dans /wireframes/ sont la référence visuelle.
-Palette dans src/theme.js — NE JAMAIS utiliser de couleurs en dur.
-
-## Rôles utilisateur
-- "client" → TabNavigator avec tabs : Accueil, Recherche, Favoris, Profil
-- "pro" → TabNavigator avec tabs : Dashboard, Réservations, Menu, Profil
-
-## Ordre de travail recommandé
-1. src/theme.js (design tokens)
-2. src/components/ (composants de base)
-3. AuthScreen + OnboardingScreen
-4. HomeScreen + SearchScreen
-5. RestaurantScreen + ReservationFormScreen
-6. FavorisScreen + NotificationsScreen + ProfilScreen
-7. ProDashboard + ProComptoir + ProInscriptionScreen
-8. MapScreen + ExplorerScreen
-
-## RÈGLE ABSOLUE — REFONTE VISUELLE MIDA PREMIUM (LECTURE LITTÉRALE)
-
-Les fichiers .dc.html du système "Refonte Visuelle Mida Premium" sont la SOURCE DE VÉRITÉ UNIQUE pour tout le visuel.
-
-1. LIS le fichier .dc.html de l'écran AVANT d'écrire une ligne de code. Ne code jamais de mémoire.
-2. REPRODUIS À LA LETTRE : couleurs exactes (hex), tailles de police, poids, espacements, rayons de bordure, ombres, ordre des éléments, wording des labels.
-3. INTERDIT : improviser, "améliorer", interpréter, remplacer une valeur par un équivalent du theme.js existant si elle diffère de la maquette. Si la maquette dit 14px, c'est 14px — pas "text-sm parce que c'est proche".
-4. Si une valeur de la maquette n'existe pas dans src/theme.js : AJOUTE-LA au theme (ne la hardcode pas dans le composant, mais ne la remplace pas non plus par une valeur existante différente).
-5. Si un élément de la maquette est ambigu ou en conflit avec une contrainte technique : STOP, pose-moi la question. Ne tranche jamais seul.
-6. À la fin de chaque écran : liste tout écart entre ton code et le .dc.html, même mineur. Zéro écart non déclaré.
-
-Toute déviation non validée par moi = travail à refaire.
+## Spécifique projet
+- Identité visuelle (rebrand du 18/08/2026) : accent rouge-terracotta `#D8432B` (`theme.colors.primary`), vert `#13502E` en secondaire, fond clair `#F5F5F3` — ne pas réintroduire l'ancienne palette vert sapin/doré ni proposer un thème cyan/magenta sans demande explicite
+- Décision explicite : garder le logo plat 2D (icône/splash), pas de rendu 3D (ni image figée ni WebGL live) — ne pas reproposer sans nouvelle demande
+- Le dossier `android/` est natif, gitignored, jamais régénéré automatiquement depuis `app.json` — un comportement natif qui persiste malgré un code JS/app.json corrects vient souvent de là (AndroidManifest.xml)
+- Edge Function `send-reminders` tourne via pg_cron (J-1 à 17h UTC/18h Alger, H-2 toutes les 30 min) — ne pas toucher sans vérifier `cron.job`/`cron.job_run_details` en base, pas seulement le code
+- 93 restaurants multi-villes ajoutés en `status='active'` avant revendication réelle par les restaurateurs (décision produit assumée) — bandeau "fiche non revendiquée" géré par `useRestaurant.js`/`isUnclaimed`

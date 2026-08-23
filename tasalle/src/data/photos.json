@@ -20,5 +20,75 @@
     "    \"urls\": [\"https://images.pexels.com/photos/XXXXX/pexels-photo-XXXXX.jpeg?w=1200\"]",
     "  }"
   ],
-  "salles": {}
+  "salles": {
+    "salle-001": {
+      "credit": "Pexels — Matheus Bertelli ; Jenkin Shen",
+      "urls": [
+        "https://images.pexels.com/photos/17206153/pexels-photo-17206153.jpeg?auto=compress&cs=tinysrgb&w=1200",
+        "https://images.pexels.com/photos/16043728/pexels-photo-16043728.jpeg?auto=compress&cs=tinysrgb&w=1200"
+      ]
+    },
+    "salle-002": {
+      "credit": "Pexels",
+      "urls": [
+        "https://images.pexels.com/photos/20792106/pexels-photo-20792106.jpeg?auto=compress&cs=tinysrgb&w=1200"
+      ]
+    },
+    "salle-003": {
+      "credit": "Pexels",
+      "urls": [
+        "https://images.pexels.com/photos/33852660/pexels-photo-33852660.jpeg?auto=compress&cs=tinysrgb&w=1200",
+        "https://images.pexels.com/photos/35560665/pexels-photo-35560665.jpeg?auto=compress&cs=tinysrgb&w=1200"
+      ]
+    },
+    "salle-004": {
+      "credit": "Pexels",
+      "urls": [
+        "https://images.pexels.com/photos/3835638/pexels-photo-3835638.jpeg?auto=compress&cs=tinysrgb&w=1200"
+      ]
+    },
+    "salle-005": {
+      "credit": "Pexels — Angel Ayala",
+      "urls": [
+        "https://images.pexels.com/photos/28976226/pexels-photo-28976226.jpeg?auto=compress&cs=tinysrgb&w=1200",
+        "https://images.pexels.com/photos/28976220/pexels-photo-28976220.jpeg?auto=compress&cs=tinysrgb&w=1200"
+      ]
+    },
+    "salle-006": {
+      "credit": "Pexels — Adrien Olichon",
+      "urls": [
+        "https://images.pexels.com/photos/34672232/pexels-photo-34672232.jpeg?auto=compress&cs=tinysrgb&w=1200"
+      ]
+    },
+    "salle-007": {
+      "credit": "Pexels",
+      "urls": [
+        "https://images.pexels.com/photos/5825355/pexels-photo-5825355.jpeg?auto=compress&cs=tinysrgb&w=1200"
+      ]
+    },
+    "salle-008": {
+      "credit": "Pexels",
+      "urls": [
+        "https://images.pexels.com/photos/29698107/pexels-photo-29698107.jpeg?auto=compress&cs=tinysrgb&w=1200"
+      ]
+    },
+    "salle-009": {
+      "credit": "Pexels — Igor Starkov",
+      "urls": [
+        "https://images.pexels.com/photos/914388/pexels-photo-914388.jpeg?auto=compress&cs=tinysrgb&w=1200"
+      ]
+    },
+    "salle-010": {
+      "credit": "Pexels",
+      "urls": [
+        "https://images.pexels.com/photos/5103610/pexels-photo-5103610.jpeg?auto=compress&cs=tinysrgb&w=1200"
+      ]
+    },
+    "salle-011": {
+      "credit": "Pexels",
+      "urls": [
+        "https://images.pexels.com/photos/4846221/pexels-photo-4846221.jpeg?auto=compress&cs=tinysrgb&w=1200"
+      ]
+    }
+  }
 }

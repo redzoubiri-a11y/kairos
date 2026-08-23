@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, TouchableOpacity,
+  View, Text, StyleSheet, ScrollView, TouchableOpacity, Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, typography, spacing, radius } from '../src/theme';
@@ -206,6 +206,9 @@ export default function AideScreen({ navigation }) {
                     {isOpen && (
                       <View style={s.faqA}>
                         <Text style={s.faqATxt}>{faq.answer}</Text>
+                        {faq.image && (
+                          <Image source={faq.image} style={s.faqImg} resizeMode="cover" />
+                        )}
                       </View>
                     )}
                   </View>
@@ -268,6 +271,7 @@ const s = StyleSheet.create({
   faqChevronOpen: { transform: [{ rotate: '90deg' }] },
   faqA:           { paddingHorizontal: spacing.xl, paddingBottom: spacing.lg, paddingTop: 0 },
   faqATxt:        { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.body, lineHeight: 20 },
+  faqImg:         { width: '100%', aspectRatio: 16 / 10, borderRadius: radius.lg, marginTop: spacing.md, backgroundColor: colors.cardBorder },
 
   legalCard:   { backgroundColor: colors.card, borderRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, overflow: 'hidden' },
   legalRow:    { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xl, paddingVertical: spacing.lg },

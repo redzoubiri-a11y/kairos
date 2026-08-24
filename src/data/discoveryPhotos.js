@@ -18,9 +18,15 @@ export const QUARTIER_PHOTOS = {
   'Aïn Turk': 'https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800&q=80',
   'Alger': 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&q=80',
   'Annaba Centre': 'https://images.unsplash.com/photo-1574484284002-952d92456975?w=800&q=80',
+  // Bab El Kantara (Constantine) : salle de Fast Food le Coq d'or (source
+  // winrouh.com via navigateur, hébergée en interne le 24/08/2026).
+  'Bab El Kantara': 'https://rghjgyzpdadapmktislv.supabase.co/storage/v1/object/public/restaurant-photos/quartier-tiles/bab-el-kantara.jpg',
   'Bab El Oued': 'https://images.unsplash.com/photo-1574484284002-952d92456975?w=800&q=80',
   'Béjaïa': 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&q=80',
   'Béjaïa Centre': 'https://images.unsplash.com/photo-1574484284002-952d92456975?w=800&q=80',
+  // Belle Vue (Constantine) : façade du Tropical Lounge (source winrouh.com via
+  // navigateur, hébergée en interne le 24/08/2026).
+  'Belle Vue': 'https://rghjgyzpdadapmktislv.supabase.co/storage/v1/object/public/restaurant-photos/quartier-tiles/belle-vue.jpg',
   'Ben Aknoun': 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&q=80',
   'Ben Yahia': 'https://images.unsplash.com/photo-1552566626-52f8b828a9b4?w=800&q=80',
   'Bir El Djir': 'https://images.unsplash.com/photo-1482049016688-2d3e1685571?w=800&q=80',
@@ -34,12 +40,21 @@ export const QUARTIER_PHOTOS = {
   'Chenoua': 'https://rghjgyzpdadapmktislv.supabase.co/storage/v1/object/public/restaurant-photos/quartier-tiles/chenoua.jpg',
   'Cheraga': 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&q=80',
   'Chéraga': 'https://images.unsplash.com/photo-1621996346565-b53e2a66a6a1?w=800&q=80',
+  // Cité 5 Juillet (Tizi Ouzou) : entrée décorée du Mystic (source TripAdvisor,
+  // hébergée en interne le 24/08/2026).
+  'Cité 5 Juillet': 'https://rghjgyzpdadapmktislv.supabase.co/storage/v1/object/public/restaurant-photos/quartier-tiles/cite-5-juillet.jpg',
+  // Cité 600 Logements (Sétif) : salle de Naturalia Setif (source winrouh.com
+  // via navigateur, hébergée en interne le 24/08/2026).
+  'Cité 600 Logements': 'https://rghjgyzpdadapmktislv.supabase.co/storage/v1/object/public/restaurant-photos/quartier-tiles/cite-600-logements.jpg',
   // Cité Amara Youcef (Blida) : calamars frits du Grand Bleu (source blog
   // dédié, hébergée en interne le 24/08/2026).
   'Cité Amara Youcef': 'https://rghjgyzpdadapmktislv.supabase.co/storage/v1/object/public/restaurant-photos/quartier-tiles/cite-amara-youcef.jpg',
   // Cité des 750 Logements (Sétif) : plateau indien du Restaurant Maharaja
   // (source Evendo, hébergée en interne le 24/08/2026).
   'Cité des 750 Logements': 'https://rghjgyzpdadapmktislv.supabase.co/storage/v1/object/public/restaurant-photos/quartier-tiles/cite-750-logements.jpg',
+  // Cité Dallas (Sétif) : pizza au four à bois de Pizza Pino Sétif (source
+  // TripAdvisor, hébergée en interne le 24/08/2026).
+  'Cité Dallas': 'https://rghjgyzpdadapmktislv.supabase.co/storage/v1/object/public/restaurant-photos/quartier-tiles/cite-dallas.jpg',
   // Cité Rizi Omar (Annaba) : terrasse bord de mer de Bigben Town (source
   // TripAdvisor, hébergée en interne le 24/08/2026).
   'Cité Rizi Omar': 'https://rghjgyzpdadapmktislv.supabase.co/storage/v1/object/public/restaurant-photos/quartier-tiles/cite-rizi-omar.jpg',
@@ -92,17 +107,29 @@ export const QUARTIER_PHOTOS = {
   "Port d'Annaba": 'https://images.unsplash.com/photo-1519984388953-d2406bc725e1?w=800&q=80',
   'Port de Béjaïa': 'https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800&q=80',
   'Port de Tipaza': 'https://rghjgyzpdadapmktislv.supabase.co/storage/v1/object/public/restaurant-photos/065b32c3-5cf9-4711-aa6f-274e9fcfcd20/1.jpg',
+  // Seddikia (Oran) : dessert gastronomique du Ciel D'Oran (source TripAdvisor,
+  // hébergée en interne le 24/08/2026).
+  'Seddikia': 'https://rghjgyzpdadapmktislv.supabase.co/storage/v1/object/public/restaurant-photos/quartier-tiles/seddikia.jpg',
   'Seraïdi': 'https://images.unsplash.com/photo-1519984388953-d2406bc725e1?w=800&q=80',
+  // Sghir (Béjaïa) : salle décorée de plantes suspendues de L'Oiseau Bleu
+  // (source Google Maps via navigateur, hébergée en interne le 24/08/2026).
+  'Sghir': 'https://rghjgyzpdadapmktislv.supabase.co/storage/v1/object/public/restaurant-photos/quartier-tiles/sghir.jpg',
   'Sétif': 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80',
   'Sétif Nouvelle Ville': 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&q=80',
   'Sid Abdellah': 'https://rghjgyzpdadapmktislv.supabase.co/storage/v1/object/public/restaurant-photos/5144eb48-1262-443f-ad06-0b77c4f8f8a5/1781380281588.jpg',
   'Sidi Ahmed': 'https://images.unsplash.com/photo-1552566626-52f8b828a9b4?w=800&q=80',
   'Sidi El Houari': 'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=800&q=80',
   'Sidi Fredj': 'https://images.unsplash.com/photo-1559329007-40df8a9345d8?w=800&q=80',
+  // Sidi Hamed (Tlemcen) : plat de viande grillée du Loft (source Evendo,
+  // hébergée en interne le 24/08/2026).
+  'Sidi Hamed': 'https://rghjgyzpdadapmktislv.supabase.co/storage/v1/object/public/restaurant-photos/quartier-tiles/sidi-hamed.jpg',
   "Sidi M'Cid": 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80',
   // Sidi M'Hamed : salle du Bardo (source restoalgerie.com, hébergée en interne
   // le 24/08/2026) — aucun resto de Sidi M'Hamed n'a de photo en base actuellement.
   "Sidi M'Hamed": 'https://rghjgyzpdadapmktislv.supabase.co/storage/v1/object/public/restaurant-photos/quartier-tiles/sidi-mhamed.jpg',
+  // Sidi Mabrouk (Constantine) : comptoir de Piano Piano Food (source Evendo,
+  // hébergée en interne le 24/08/2026).
+  'Sidi Mabrouk': 'https://rghjgyzpdadapmktislv.supabase.co/storage/v1/object/public/restaurant-photos/quartier-tiles/sidi-mabrouk.jpg',
   'Tichy': 'https://images.unsplash.com/photo-1519984388953-d2406bc725e1?w=800&q=80',
   'Tlemcen': 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&q=80',
   'Tlemcen Centre': 'https://images.unsplash.com/photo-1580227974546-7d1bba4fd71a?w=800&q=80',

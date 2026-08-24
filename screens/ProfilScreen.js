@@ -10,6 +10,7 @@ import usePoints from '../src/hooks/usePoints';
 import GuestWall from '../src/components/GuestWall';
 import Button from '../src/components/Button';
 import PointsHistoryModal from '../src/components/PointsHistoryModal';
+import PrivacyPolicyModal from '../src/components/PrivacyPolicyModal';
 import { useGuestContext } from '../src/context/GuestContext';
 
 export default function ProfilScreen({ navigation }) {
@@ -26,6 +27,7 @@ export default function ProfilScreen({ navigation }) {
   } = useProfil();
   const { balance: pointsBalance, history: pointsHistory, loading: pointsLoading } = usePoints();
   const [showPointsHistory, setShowPointsHistory] = useState(false);
+  const [showPrivacy, setShowPrivacy] = useState(false);
 
   const confirmDeleteAccount = useCallback(() => {
     Alert.alert(
@@ -39,7 +41,7 @@ export default function ProfilScreen({ navigation }) {
   }, [deleteAccount]);
 
   const goProInscription = useCallback(() => navigation.navigate('ProInscription'), [navigation]);
-  const goPrivacy        = useCallback(() => Linking.openSettings(), []);
+  const goPrivacy        = useCallback(() => setShowPrivacy(true), []);
   const goReview         = useCallback(() => Linking.openURL('https://apps.apple.com/app/id6776171199?action=write-review'), []);
 
   if (isGuest) {
@@ -212,6 +214,7 @@ export default function ProfilScreen({ navigation }) {
         history={pointsHistory}
         loading={pointsLoading}
       />
+      <PrivacyPolicyModal visible={showPrivacy} onClose={() => setShowPrivacy(false)} />
     </SafeAreaView>
   );
 }

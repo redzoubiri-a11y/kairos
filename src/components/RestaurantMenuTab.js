@@ -40,7 +40,7 @@ export default function RestaurantMenuTab({ menu }) {
               {item.popular && <Text style={s.popularTag}>★ Populaire</Text>}
             </View>
             {!!item.desc && <Text style={s.dDesc} numberOfLines={2}>{item.desc}</Text>}
-            <Text style={s.dPrice}>{item.prix.toLocaleString('fr-FR')} DA</Text>
+            {item.prix > 0 && <Text style={s.dPrice}>{item.prix.toLocaleString('fr-FR')} DA</Text>}
           </View>
         </View>
       ))}

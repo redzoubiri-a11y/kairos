@@ -18,7 +18,7 @@ const UNCLAIMED_OWNER_ID = '00000000-0000-0000-0000-000000000099';
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://rghjgyzpdadapmktislv.supabase.co';
 const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const ULTRAMSG_INSTANCE = process.env.ULTRAMSG_INSTANCE_ID || 'instance184179';
-const ULTRAMSG_TOKEN = process.env.ULTRAMSG_TOKEN || 'ap08eucof1ac1kb8';
+const ULTRAMSG_TOKEN = process.env.ULTRAMSG_TOKEN; // repo PUBLIC : jamais de token en dur
 const SITE_URL = 'https://web-resa.vercel.app';
 const DRY_RUN = process.argv.includes('--dry-run');
 

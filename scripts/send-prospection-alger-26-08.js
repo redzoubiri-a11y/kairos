@@ -17,9 +17,16 @@
 //
 // Usage : node scripts/send-prospection-alger-26-08.js [--dry-run]
 
-const ULTRAMSG_INSTANCE = 'instance184179';
-const ULTRAMSG_TOKEN = 'ap08eucof1ac1kb8';
+// Jamais de token en dur : ce repo est PUBLIC (github.com/redzoubiri-a11y/kairos).
+// Fournir le token a l'execution : ULTRAMSG_TOKEN=xxx node scripts/...
+const ULTRAMSG_INSTANCE = process.env.ULTRAMSG_INSTANCE_ID || 'instance184179';
+const ULTRAMSG_TOKEN = process.env.ULTRAMSG_TOKEN;
 const SITE_URL = 'https://web-resa.vercel.app';
+
+if (!ULTRAMSG_TOKEN && !process.argv.includes('--dry-run')) {
+  console.error('Erreur : variable ULTRAMSG_TOKEN manquante.');
+  process.exit(1);
+}
 const DELAY_MS = 3 * 60 * 1000;
 const DRY_RUN = process.argv.includes('--dry-run');
 

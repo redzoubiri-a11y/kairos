@@ -886,7 +886,7 @@ export const SEED_DEVIS_REQUESTS = [
  * indéfiniment sa copie enregistrée dans AsyncStorage et n'affiche jamais les
  * nouvelles salles, formules ou notifications.
  */
-export const SEED_VERSION = 2;
+export const SEED_VERSION = 3;
 
 export function buildSeed() {
   return {

@@ -17,7 +17,7 @@
  * photos.json.
  */
 export const LOCAL_SALLE_PHOTOS = {
-  // 'salle-001': [require('../../assets/salles/salle-001/photo-1.jpg')],
+  'salle-006': [require('../../assets/salles/salle-006/photo-1.jpg')],
 };
 
 /** Photos embarquées d'une salle, dans l'ordre d'affichage de la galerie. */

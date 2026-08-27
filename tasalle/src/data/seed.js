@@ -129,22 +129,25 @@ export const SEED_SALLES = [
   {
     id: 'salle-006',
     owner_id: 'user-pro-006',
-    name: 'Complexe Es-Salam',
-    city: 'Sétif',
-    address: 'Avenue du 8 Mai 1945, Sétif',
-    capacity_max: 520,
-    parking_places: 100,
-    description:
-      "Complexe moderne avec deux salles indépendantes, permettant d'accueillir simultanément la réception des hommes et celle des femmes selon la tradition.",
-    amenities: ['clim', 'cuisine', 'sono', 'parking', 'pmr', 'wifi'],
+    name: 'Palais Layel',
+    city: 'Alger',
+    // Salle réelle, fiche non revendiquée : seuls le nom et la commune sont
+    // renseignés. Adresse exacte, capacité, équipements, coordonnées et
+    // tarifs restent vides tant que le propriétaire ne les a pas fournis —
+    // ne rien inventer ici, la fiche porte un nom d'établissement existant.
+    address: 'Bordj El Bahri, Alger',
+    capacity_max: null,
+    parking_places: null,
+    description: '',
+    amenities: [],
     photos: photosOf('salle-006'),
-    latitude: 36.19,
-    longitude: 5.41,
+    latitude: null,
+    longitude: null,
     status: 'active',
-    is_premium: true,
-    rating: 4.5,
-    reviews_count: 118,
-    created_at: '2025-12-05T09:00:00Z',
+    is_premium: false,
+    rating: null,
+    reviews_count: 0,
+    created_at: `${addDays(T, -20)}T09:00:00Z`,
   },
   {
     id: 'salle-007',
@@ -189,42 +192,42 @@ export const SEED_SALLES = [
   {
     id: 'salle-009',
     owner_id: 'user-pro-009',
-    name: 'Salle El Feth',
-    city: 'Tipaza',
-    address: 'Route Nationale 11, Tipaza',
-    capacity_max: 200,
-    parking_places: 35,
-    description:
-      "À dix minutes des ruines romaines, une salle à taille humaine pour vos fiançailles et anniversaires. Formule tout compris avec pâtisserie traditionnelle.",
-    amenities: ['clim', 'cuisine', 'parking', 'terrasse'],
+    name: 'Gardiena',
+    city: 'Alger',
+    // Fiche non revendiquée — voir le commentaire de salle-006.
+    address: 'Alger',
+    capacity_max: null,
+    parking_places: null,
+    description: '',
+    amenities: [],
     photos: photosOf('salle-009'),
-    latitude: 36.59,
-    longitude: 2.448,
+    latitude: null,
+    longitude: null,
     status: 'active',
     is_premium: false,
-    rating: 4.2,
-    reviews_count: 29,
-    created_at: '2026-05-19T09:00:00Z',
+    rating: null,
+    reviews_count: 0,
+    created_at: `${addDays(T, -14)}T09:00:00Z`,
   },
   {
     id: 'salle-010',
     owner_id: 'user-pro-010',
-    name: 'Résidence Ibn Khaldoun',
+    name: 'Villa Beggar',
     city: 'Alger',
-    address: 'Rue Hassiba Ben Bouali, Alger Centre',
-    capacity_max: 600,
-    parking_places: 120,
-    description:
-      "Salle de conférence et de réception au centre d'Alger. Équipement audiovisuel professionnel, régie, traduction simultanée disponible sur demande.",
-    amenities: ['clim', 'sono', 'parking', 'pmr', 'wifi', 'traiteur'],
+    // Fiche non revendiquée — voir le commentaire de salle-006.
+    address: 'Alger',
+    capacity_max: null,
+    parking_places: null,
+    description: '',
+    amenities: [],
     photos: photosOf('salle-010'),
-    latitude: 36.764,
-    longitude: 3.056,
+    latitude: null,
+    longitude: null,
     status: 'active',
     is_premium: false,
-    rating: 4.5,
-    reviews_count: 77,
-    created_at: '2026-02-22T09:00:00Z',
+    rating: null,
+    reviews_count: 0,
+    created_at: `${addDays(T, -7)}T09:00:00Z`,
   },
   {
     id: 'salle-011',
@@ -249,9 +252,24 @@ export const SEED_SALLES = [
   },
 ];
 
-// §4.3.6 — trois formules par salle
-export const SEED_TARIFS = SEED_SALLES.flatMap((s, i) => {
-  const base = [35000, 30000, 55000, 25000, 38000, 42000, 33000, 48000, 28000, 40000, 32000][i];
+// §4.3.6 — trois formules par salle, indexées par identifiant plutôt que par
+// position : les salles réelles non revendiquées (§ salle-006, 009, 010)
+// n'ont pas encore de grille tarifaire, et une salle absente d'ici s'affiche
+// avec « — DA » au lieu d'un prix inventé.
+const TARIF_BASE = {
+  'salle-001': 35000,
+  'salle-002': 30000,
+  'salle-003': 55000,
+  'salle-004': 25000,
+  'salle-005': 38000,
+  'salle-007': 33000,
+  'salle-008': 48000,
+  'salle-011': 32000,
+};
+
+export const SEED_TARIFS = SEED_SALLES.flatMap((s) => {
+  const base = TARIF_BASE[s.id];
+  if (!base) return [];
   return [
     {
       id: `tarif-${s.id}-1`,

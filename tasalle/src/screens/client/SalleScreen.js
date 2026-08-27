@@ -215,8 +215,16 @@ export default function SalleScreen({ route, navigation }) {
             }}
           >
             <QuickStat icon="star" value={salle.rating ? Number(salle.rating).toFixed(1) : '—'} label={t('salle.rating')} />
-            <QuickStat icon="people-outline" value={String(salle.capacity_max)} label={t('salle.capacity')} />
-            <QuickStat icon="car-outline" value={String(salle.parking_places || 0)} label={t('salle.parking')} />
+            <QuickStat
+              icon="people-outline"
+              value={salle.capacity_max ? String(salle.capacity_max) : '—'}
+              label={t('salle.capacity')}
+            />
+            <QuickStat
+              icon="car-outline"
+              value={salle.parking_places ? String(salle.parking_places) : '—'}
+              label={t('salle.parking')}
+            />
             <QuickStat
               icon="location-outline"
               value={formatDistance(distanceKm(position, salle)) ?? '—'}
@@ -381,14 +389,25 @@ export default function SalleScreen({ route, navigation }) {
 
       {/* 8 — Barre collée en bas */}
       <StickyBar>
+        {/* Une salle réelle pas encore revendiquée n'a ni tarifs ni formules :
+            proposer « Réserver » mènerait à une étape « Formule » vide. */}
         <View>
-          <Text style={[typography.caption, { color: colors.warmGray }]}>{t('common.from')}</Text>
-          <Text style={[typography.title, { color: colors.dark }]}>
-            {formatDA(salle.price_from, t('common.currency'))}
-          </Text>
+          {salle.price_from != null ? (
+            <>
+              <Text style={[typography.caption, { color: colors.warmGray }]}>{t('common.from')}</Text>
+              <Text style={[typography.title, { color: colors.dark }]}>
+                {formatDA(salle.price_from, t('common.currency'))}
+              </Text>
+            </>
+          ) : (
+            <Text style={[typography.caption, { color: colors.warmGray }]}>
+              {t('common.priceOnRequest')}
+            </Text>
+          )}
         </View>
         <MButton
-          label={t('salle.bookNow')}
+          label={salle.tarifs?.length ? t('salle.bookNow') : t('booking.noFormulasTitle')}
+          disabled={!salle.tarifs?.length}
           size="lg"
           onPress={() => navigation.navigate('Booking', { salleId: salle.id })}
           style={{ flex: 1 }}

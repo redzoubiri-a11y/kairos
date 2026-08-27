@@ -87,7 +87,8 @@ export default function SalleCard({ salle, onPress, onToggleFav, isFav, width })
           </Text>
 
           <Text style={[typography.caption, { color: colors.warmGray, textAlign: 'left' }]} numberOfLines={1}>
-            {salle.city} · {t('salle.places', { count: salle.capacity_max })}
+            {salle.city}
+            {salle.capacity_max ? ` · ${t('salle.places', { count: salle.capacity_max })}` : ''}
             {salle.reviews_count ? ` · ${t('salle.reviewsCount', { count: salle.reviews_count })}` : ''}
           </Text>
 
@@ -95,7 +96,11 @@ export default function SalleCard({ salle, onPress, onToggleFav, isFav, width })
             <Text style={{ fontSize: 15, fontWeight: '500', color: colors.primaryInk, textAlign: 'left' }}>
               {t('common.from')} {formatDA(salle.price_from, t('common.currency'))}
             </Text>
-          ) : null}
+          ) : (
+            <Text style={[typography.caption, { color: colors.warmGray, textAlign: 'left' }]}>
+              {t('common.priceOnRequest')}
+            </Text>
+          )}
 
           <View style={{ flexDirection: 'row', gap: spacing.xs, flexWrap: 'wrap', marginTop: 2 }}>
             <MBadge label={t('salle.available')} tone="success" size="sm" />

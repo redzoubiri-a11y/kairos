@@ -7,7 +7,7 @@ import Stepper from '../../components/Stepper';
 import MInput from '../../components/MInput';
 import MButton from '../../components/MButton';
 import PromoField from '../../components/PromoField';
-import { MChip, Loader, ErrorState, KeyValue } from '../../components/primitives';
+import { MChip, Loader, ErrorState, KeyValue, EmptyState } from '../../components/primitives';
 import { useTheme } from '../../context/ThemeContext';
 import { useI18n } from '../../i18n';
 import { useAuth } from '../../context/AuthContext';
@@ -278,7 +278,15 @@ export default function BookingScreen({ route, navigation }) {
                 {t('booking.pickFormula')}
               </Text>
 
-              {salle.tarifs.map((tarif, i) => {
+              {!salle.tarifs?.length ? (
+                <EmptyState
+                  icon="pricetags-outline"
+                  title={t('booking.noFormulasTitle')}
+                  body={t('booking.noFormulasBody')}
+                />
+              ) : null}
+
+              {(salle.tarifs || []).map((tarif, i) => {
                 const selected = tarif.id === formulaId;
                 return (
                   <Pressable

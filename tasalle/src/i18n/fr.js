@@ -22,6 +22,7 @@ export default {
     retry: 'Réessayer',
     error: 'Une erreur est survenue',
     from: 'À partir de',
+    priceOnRequest: 'Tarif sur demande',
     currency: 'DA',
     guests: 'invités',
     people: 'pers.',
@@ -264,6 +265,9 @@ export default {
     legendUnavailable: 'Indisponible',
     legendBooked: 'Réservée',
     pickFormula: 'Choisissez votre formule',
+    noFormulasTitle: 'Tarifs non publiés',
+    noFormulasBody:
+      "Cette salle n'a pas encore renseigné ses formules. Contactez-la directement pour obtenir un devis.",
     yourInfos: 'Vos informations',
     fullName: 'Nom complet',
     phone: 'Téléphone',

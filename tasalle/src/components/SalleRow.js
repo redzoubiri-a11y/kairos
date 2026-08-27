@@ -56,7 +56,8 @@ export default function SalleRow({ salle, onPress, onToggleFav, isFav }) {
             ) : null}
 
             <Text style={[typography.caption, { color: colors.warmGray, textAlign: 'left' }]} numberOfLines={1}>
-              {salle.city} · {t('salle.places', { count: salle.capacity_max })}
+              {salle.city}
+              {salle.capacity_max ? ` · ${t('salle.places', { count: salle.capacity_max })}` : ''}
             </Text>
           </View>
 
@@ -65,7 +66,11 @@ export default function SalleRow({ salle, onPress, onToggleFav, isFav }) {
               <Text style={{ fontSize: 15, fontWeight: '500', color: colors.primaryInk, textAlign: 'left' }}>
                 {t('common.from')} {formatDA(salle.price_from, t('common.currency'))}
               </Text>
-            ) : null}
+            ) : (
+              <Text style={[typography.caption, { color: colors.warmGray, textAlign: 'left' }]}>
+                {t('common.priceOnRequest')}
+              </Text>
+            )}
 
             <View style={{ flexDirection: 'row', gap: spacing.xs, flexWrap: 'wrap' }}>
               <MBadge label={t('salle.available')} tone="success" size="sm" />

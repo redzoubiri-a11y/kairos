@@ -4,7 +4,7 @@
 // n'est configurée, ce qui permet de faire tourner l'app de bout en bout.
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { buildSeed } from './seed';
+import { buildSeed, SEED_VERSION } from './seed';
 import { buildNotifications, SMS_TEMPLATES } from '../services/notify';
 import {
   todayISO,
@@ -72,7 +72,18 @@ async function load() {
   if (db) return db;
   try {
     const raw = await AsyncStorage.getItem(STORAGE_KEY);
-    db = raw ? completerCollections(JSON.parse(raw)) : buildSeed();
+    const stockee = raw ? JSON.parse(raw) : null;
+
+    // Un jeu de démonstration plus ancien que le code embarqué est reconstruit
+    // à neuf : compléter collection par collection ne corrige pas une salle
+    // renommée ou un tarif modifié, et l'appareil resterait bloqué sur des
+    // données périmées sans aucun signe visible.
+    if (stockee && stockee.seed_version === SEED_VERSION) {
+      db = completerCollections(stockee);
+    } else {
+      db = buildSeed();
+      persist();
+    }
   } catch {
     db = buildSeed();
   }

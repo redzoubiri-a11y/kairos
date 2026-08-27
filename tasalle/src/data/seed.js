@@ -880,8 +880,17 @@ export const SEED_DEVIS_REQUESTS = [
   },
 ];
 
+/**
+ * Version du jeu de démonstration. À incrémenter dès qu'une donnée de ce
+ * fichier change : sans ça, un appareil qui a déjà lancé l'application relit
+ * indéfiniment sa copie enregistrée dans AsyncStorage et n'affiche jamais les
+ * nouvelles salles, formules ou notifications.
+ */
+export const SEED_VERSION = 2;
+
 export function buildSeed() {
   return {
+    seed_version: SEED_VERSION,
     users: SEED_USERS.map((u) => ({ ...u })),
     salles: SEED_SALLES.map((s) => ({ ...s })),
     tarifs: SEED_TARIFS.map((t) => ({ ...t })),

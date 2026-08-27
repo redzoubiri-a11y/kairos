@@ -2,8 +2,9 @@
 // Le jeu de démonstration est reconstruit avant chaque test.
 
 import * as api from './local';
+import { SEED_VERSION, buildSeed } from './seed';
 import { todayISO, addDays } from '../lib/format';
-import { SMS_MAX_PER_DAY } from '../lib/constants';
+import { SMS_MAX_PER_DAY, STORAGE_PREFIX } from '../lib/constants';
 
 const PRO_PHONE = '0555 10 00 01';
 const CLIENT_PHONE = '0661 23 45 67';
@@ -405,6 +406,32 @@ describe('quota de SMS (§10.4)', () => {
 
     // 8 SMS ne peuvent viser que 2 jours au plus : le plafond force des abandons
     expect(log.filter((n) => !n.sent_at).length).toBeGreaterThan(0);
+  });
+});
+
+describe('version du jeu de démonstration', () => {
+  it('reconstruit une base enregistrée par une version antérieure', async () => {
+    const cle = `${STORAGE_PREFIX}db.v1`;
+
+    // Une base telle qu'un appareil l'aurait gardée d'une version antérieure :
+    // salle renommée depuis, et numéro de version plus ancien que le code.
+    const perimee = { ...buildSeed(), seed_version: 0 };
+    perimee.salles[0].name = 'Nom hérité d’une version précédente';
+
+    jest.resetModules();
+    // eslint-disable-next-line global-require
+    const module = require('@react-native-async-storage/async-storage');
+    const stockage = module.default ?? module;
+    await stockage.setItem(cle, JSON.stringify(perimee));
+
+    // eslint-disable-next-line global-require
+    const frais = require('./local');
+    const salle = await frais.getSalle(perimee.salles[0].id);
+    expect(salle.name).toBe(buildSeed().salles[0].name);
+
+    // …et la base neuve est réenregistrée, pas seulement gardée en mémoire
+    await new Promise((r) => setTimeout(r, 200));
+    expect(JSON.parse(await stockage.getItem(cle)).seed_version).toBe(SEED_VERSION);
   });
 });
 

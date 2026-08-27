@@ -414,23 +414,38 @@ describe('photos des salles', () => {
     rows.forEach((s) => expect(Array.isArray(s.photos)).toBe(true));
   });
 
-  it('reprend les URL déclarées dans photos.json', async () => {
+  it('concatène les photos embarquées puis les URL de photos.json', async () => {
     // eslint-disable-next-line global-require
     const manifeste = require('./photos.json');
-    const declarees = Object.entries(manifeste.salles || {});
+    // eslint-disable-next-line global-require
+    const { LOCAL_SALLE_PHOTOS } = require('./photosLocales');
 
-    if (declarees.length === 0) {
-      // Manifeste vide : toutes les salles retombent sur le dégradé
+    const attendues = {};
+    Object.entries(LOCAL_SALLE_PHOTOS).forEach(([id, modules]) => {
+      attendues[id] = [...modules];
+    });
+    Object.entries(manifeste.salles || {}).forEach(([id, entree]) => {
+      attendues[id] = [...(attendues[id] || []), ...(entree.urls || [])];
+    });
+
+    if (Object.keys(attendues).length === 0) {
+      // Aucune source renseignée : toutes les salles retombent sur le dégradé
       const rows = await api.listSalles({});
       expect(rows.every((s) => s.photos.length === 0)).toBe(true);
       return;
     }
 
-    for (const [salleId, entree] of declarees) {
+    for (const [salleId, photos] of Object.entries(attendues)) {
       // eslint-disable-next-line no-await-in-loop
       const salle = await api.getSalle(salleId);
-      expect(salle.photos).toEqual(entree.urls);
+      expect(salle.photos).toEqual(photos);
     }
+
+    // Une salle sans photo déclarée garde un tableau vide (dégradé de repli)
+    const rows = await api.listSalles({});
+    rows
+      .filter((s) => !attendues[s.id])
+      .forEach((s) => expect(s.photos).toEqual([]));
   });
 });
 

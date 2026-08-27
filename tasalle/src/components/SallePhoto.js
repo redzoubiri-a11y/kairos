@@ -25,19 +25,29 @@ function hashOf(str) {
 }
 
 /**
+ * Une entrée de `photos` est soit une URL (Supabase, photos.json), soit un
+ * module d'image bundlé par Metro (photosLocales.js), que `require` résout en
+ * nombre. `Image` attend `{ uri }` dans le premier cas et le module tel quel
+ * dans le second.
+ */
+function imageSource(photo) {
+  return typeof photo === 'string' ? { uri: photo } : photo;
+}
+
+/**
  * Photo de salle avec repli en dégradé portant l'initiale.
  * `photos` est le tableau JSONB de la salle ; `index` sélectionne la vue.
  */
 export default function SallePhoto({ salle, index = 0, height, style, radius, children }) {
   const { radii } = useTheme();
   const photos = salle?.photos || [];
-  const uri = photos[index];
+  const photo = photos[index];
   const r = radius ?? 0;
 
-  if (uri) {
+  if (photo) {
     return (
       <View style={[{ height, borderRadius: r, overflow: 'hidden' }, style]}>
-        <Image source={{ uri }} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
+        <Image source={imageSource(photo)} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
         {children}
       </View>
     );

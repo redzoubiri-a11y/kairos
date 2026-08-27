@@ -10,14 +10,16 @@
 import { toISODate, addDays, todayISO } from '../lib/format';
 import { SUBSCRIPTION_PRICE, PARTNER_SUBSCRIPTION_PRICES } from '../lib/constants';
 import photoManifest from './photos.json';
+import { localPhotosOf } from './photosLocales';
 
 /**
- * Photos réelles des salles de démonstration, renseignées dans photos.json.
- * Le fichier est vide par défaut : les salles s'affichent alors avec le
- * dégradé de repli (§4.1), et l'app reste utilisable hors ligne.
+ * Photos réelles des salles de démonstration : d'abord celles embarquées dans
+ * `assets/salles/` (photosLocales.js), puis les URL de photos.json. Sans
+ * aucune des deux, la salle s'affiche avec le dégradé de repli (§4.1) et
+ * l'app reste utilisable hors ligne.
  */
 function photosOf(salleId) {
-  return photoManifest?.salles?.[salleId]?.urls ?? [];
+  return [...localPhotosOf(salleId), ...(photoManifest?.salles?.[salleId]?.urls ?? [])];
 }
 
 const T = todayISO();

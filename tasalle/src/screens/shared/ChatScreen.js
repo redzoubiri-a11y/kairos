@@ -8,8 +8,10 @@ import { useI18n } from '../../i18n';
 import { useAuth } from '../../context/AuthContext';
 import { ROLES } from '../../lib/constants';
 import * as api from '../../data';
+import { useGoBack } from '../../lib/navigation';
 
 export default function ChatScreen({ route, navigation }) {
+  const goBack = useGoBack(navigation);
   const { reservationId, title } = route.params;
   const { colors, typography, spacing, radii } = useTheme();
   const { t, list } = useI18n();
@@ -53,7 +55,7 @@ export default function ChatScreen({ route, navigation }) {
 
   return (
     <Screen edges={['top']}>
-      <Header title={title || t('messages.title')} onBack={navigation.goBack} />
+      <Header title={title || t('messages.title')} onBack={goBack} />
 
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}

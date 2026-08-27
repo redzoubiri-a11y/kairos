@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { View, Text, ScrollView, Pressable, Image, useWindowDimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Screen, StickyBar } from '../../components/Screen';
 import SallePhoto from '../../components/SallePhoto';
 import SalleMap from '../../components/SalleMap';
@@ -15,6 +16,7 @@ import { AMENITY_ICONS, EVENT_TYPES } from '../../lib/constants';
 import { distanceKm, formatDistance } from '../../lib/geo';
 import { getUserPosition, getCachedPosition } from '../../services/location';
 import * as api from '../../data';
+import { useGoBack } from '../../lib/navigation';
 
 function QuickStat({ icon, value, label }) {
   const { colors, typography, spacing, radii } = useTheme();
@@ -45,8 +47,10 @@ function QuickStat({ icon, value, label }) {
 }
 
 export default function SalleScreen({ route, navigation }) {
+  const goBack = useGoBack(navigation);
   const { id } = route.params;
   const { colors, typography, spacing, radii, sizes } = useTheme();
+  const insets = useSafeAreaInsets();
   const { t } = useI18n();
   const { isFav, toggle } = useFavorites();
   const { width } = useWindowDimensions();
@@ -131,9 +135,9 @@ export default function SalleScreen({ route, navigation }) {
             ))}
           </ScrollView>
 
-          <View style={{ position: 'absolute', top: spacing.xxl, left: spacing.lg, right: spacing.lg, flexDirection: 'row', justifyContent: 'space-between' }}>
+          <View style={{ position: 'absolute', top: Math.max(insets.top + spacing.md, spacing.xxl), left: spacing.lg, right: spacing.lg, flexDirection: 'row', justifyContent: 'space-between' }}>
             <Pressable
-              onPress={navigation.goBack}
+              onPress={goBack}
               accessibilityRole="button"
               accessibilityLabel={t('common.back')}
               style={{

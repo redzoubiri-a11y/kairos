@@ -15,10 +15,12 @@ import { buildInvoiceHtml, exportToPdf, pdfLabels } from '../../services/pdf';
 import { useAuth } from '../../context/AuthContext';
 import { useProSalle } from '../../context/ProSalleContext';
 import * as api from '../../data';
+import { useGoBack } from '../../lib/navigation';
 
 const FEATURES = ['f1', 'f2', 'f3', 'f4', 'f5', 'f6'];
 
 export default function ProSubscriptionScreen({ navigation }) {
+  const goBack = useGoBack(navigation);
   const { colors, typography, spacing, radii } = useTheme();
   const { t } = useI18n();
   const { user } = useAuth();
@@ -90,7 +92,7 @@ export default function ProSubscriptionScreen({ navigation }) {
   if (loading) {
     return (
       <Screen>
-        <Header title={t('pro.subscriptionTitle')} bordered={false} onBack={navigation.goBack} />
+        <Header title={t('pro.subscriptionTitle')} bordered={false} onBack={goBack} />
         <Loader />
       </Screen>
     );
@@ -98,7 +100,7 @@ export default function ProSubscriptionScreen({ navigation }) {
   if (error || !sub) {
     return (
       <Screen>
-        <Header title={t('pro.subscriptionTitle')} bordered={false} onBack={navigation.goBack} />
+        <Header title={t('pro.subscriptionTitle')} bordered={false} onBack={goBack} />
         <ErrorState message={error} onRetry={load} />
       </Screen>
     );
@@ -108,7 +110,7 @@ export default function ProSubscriptionScreen({ navigation }) {
 
   return (
     <Screen>
-      <Header title={t('pro.subscriptionTitle')} bordered={false} onBack={navigation.goBack} />
+      <Header title={t('pro.subscriptionTitle')} bordered={false} onBack={goBack} />
 
       <Body>
         {/* Panneau essai gratuit (§5.7) */}

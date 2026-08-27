@@ -12,11 +12,13 @@ import { useI18n } from '../../i18n';
 import { useAuth } from '../../context/AuthContext';
 import { CITIES, AMENITIES, AMENITY_ICONS, TRIAL_DAYS, SUBSCRIPTION_PRICE } from '../../lib/constants';
 import * as api from '../../data';
+import { useGoBack } from '../../lib/navigation';
 
 const STEPS = ['Salle', 'Tarifs', 'PIN'];
 
 /** Inscription pro — création de la salle, des formules et du PIN de signature. */
 export default function ProOnboardingScreen({ navigation }) {
+  const goBack = useGoBack(navigation);
   const { colors, typography, spacing, radii } = useTheme();
   const { t } = useI18n();
   const { registerSalle } = useAuth();
@@ -127,7 +129,7 @@ export default function ProOnboardingScreen({ navigation }) {
       <Header
         title={t('pro.onboardingTitle')}
         subtitle={t('pro.onboardingSubtitle')}
-        onBack={step === 0 ? navigation.goBack : () => setStep((s) => s - 1)}
+        onBack={step === 0 ? goBack : () => setStep((s) => s - 1)}
       />
 
       <View style={{ paddingVertical: spacing.lg }}>

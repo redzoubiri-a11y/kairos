@@ -14,8 +14,10 @@ import { useAuth } from '../../context/AuthContext';
 import { formatDA, formatLongDate, isValidPhone, displayPhone } from '../../lib/format';
 import { EVENT_TYPES } from '../../lib/constants';
 import * as api from '../../data';
+import { useGoBack } from '../../lib/navigation';
 
 export default function BookingScreen({ route, navigation }) {
+  const goBack = useGoBack(navigation);
   const { salleId } = route.params;
   const { colors, typography, spacing, radii } = useTheme();
   const { t, list } = useI18n();
@@ -229,7 +231,7 @@ export default function BookingScreen({ route, navigation }) {
       <Header
         title={salle.name}
         subtitle={steps[step]}
-        onBack={step === 0 ? navigation.goBack : () => setStep((s) => s - 1)}
+        onBack={step === 0 ? goBack : () => setStep((s) => s - 1)}
       />
 
       <View style={{ paddingVertical: spacing.lg }}>

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { View, Text, ScrollView, Pressable, useWindowDimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Screen, StickyBar } from '../../components/Screen';
 import SallePhoto from '../../components/SallePhoto';
 import MButton from '../../components/MButton';
@@ -9,6 +10,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { useI18n } from '../../i18n';
 import { formatNumber } from '../../lib/format';
 import * as api from '../../data';
+import { useGoBack } from '../../lib/navigation';
 
 /**
  * Fiche traiteur/halouadji (§13) — même schéma de galerie que `SalleScreen`
@@ -17,8 +19,10 @@ import * as api from '../../data';
  * de date. `route.params.type` vaut 'traiteur' ou 'halouadji'.
  */
 export default function PartnerScreen({ route, navigation }) {
+  const goBack = useGoBack(navigation);
   const { type, id } = route.params;
   const { colors, typography, spacing, radii, sizes } = useTheme();
+  const insets = useSafeAreaInsets();
   const { t } = useI18n();
   const { width } = useWindowDimensions();
 
@@ -76,9 +80,9 @@ export default function PartnerScreen({ route, navigation }) {
             ))}
           </ScrollView>
 
-          <View style={{ position: 'absolute', top: spacing.xxl, left: spacing.lg }}>
+          <View style={{ position: 'absolute', top: Math.max(insets.top + spacing.md, spacing.xxl), left: spacing.lg }}>
             <Pressable
-              onPress={navigation.goBack}
+              onPress={goBack}
               accessibilityRole="button"
               accessibilityLabel={t('common.back')}
               style={{

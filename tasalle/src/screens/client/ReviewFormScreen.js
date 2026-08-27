@@ -12,10 +12,12 @@ import { useTheme } from '../../context/ThemeContext';
 import { useI18n } from '../../i18n';
 import { REVIEW_MAX_PHOTOS } from '../../lib/constants';
 import * as api from '../../data';
+import { useGoBack } from '../../lib/navigation';
 
 const CRITERIA = ['salle', 'traiteur', 'proprete', 'value'];
 
 export default function ReviewFormScreen({ route, navigation }) {
+  const goBack = useGoBack(navigation);
   const { reservationId, salleName } = route.params;
   const { colors, typography, spacing, radii } = useTheme();
   const { t } = useI18n();
@@ -90,7 +92,7 @@ export default function ReviewFormScreen({ route, navigation }) {
   if (done) {
     return (
       <Screen>
-        <Header title={t('reviews.title')} onBack={() => navigation.goBack()} />
+        <Header title={t('reviews.title')} onBack={() => goBack()} />
         <Body>
           <View style={{ alignItems: 'center', gap: spacing.lg, paddingTop: spacing.xxxl }}>
             <View
@@ -108,7 +110,7 @@ export default function ReviewFormScreen({ route, navigation }) {
             <Text style={[typography.title, { color: colors.dark, textAlign: 'center' }]}>
               {t('reviews.submitted')}
             </Text>
-            <MButton label={t('common.close')} size="lg" onPress={() => navigation.goBack()} />
+            <MButton label={t('common.close')} size="lg" onPress={() => goBack()} />
           </View>
         </Body>
       </Screen>
@@ -117,7 +119,7 @@ export default function ReviewFormScreen({ route, navigation }) {
 
   return (
     <Screen>
-      <Header title={t('reviews.title')} onBack={navigation.goBack} />
+      <Header title={t('reviews.title')} onBack={goBack} />
 
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
         <Body bottomInset={80}>

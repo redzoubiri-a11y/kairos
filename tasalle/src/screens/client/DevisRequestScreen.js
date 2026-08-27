@@ -8,6 +8,7 @@ import { KeyValue } from '../../components/primitives';
 import { useTheme } from '../../context/ThemeContext';
 import { useI18n } from '../../i18n';
 import * as api from '../../data';
+import { useGoBack } from '../../lib/navigation';
 
 /**
  * Demande de devis (§13) — un seul écran, pas d'étapes : contrairement à
@@ -16,6 +17,7 @@ import * as api from '../../data';
  * d'invités et un message ; le professionnel répond de son côté.
  */
 export default function DevisRequestScreen({ route, navigation }) {
+  const goBack = useGoBack(navigation);
   const { type, id, name } = route.params;
   const { colors, typography, spacing, radii } = useTheme();
   const { t } = useI18n();
@@ -96,7 +98,7 @@ export default function DevisRequestScreen({ route, navigation }) {
 
   return (
     <Screen>
-      <Header title={t('devis.title')} subtitle={name} onBack={navigation.goBack} />
+      <Header title={t('devis.title')} subtitle={name} onBack={goBack} />
 
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1, padding: spacing.xl, gap: spacing.lg }}>
         <MInput

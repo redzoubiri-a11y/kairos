@@ -11,6 +11,7 @@ import { formatDA, formatLongDate, daysBetween, todayISO } from '../../lib/forma
 import { RESERVATION_STATUS, REVIEW_DELAY_HOURS } from '../../lib/constants';
 import { buildContractHtml, exportToPdf, pdfLabels } from '../../services/pdf';
 import * as api from '../../data';
+import { useGoBack } from '../../lib/navigation';
 
 /** Confirmation multiplateforme : Alert n'existe pas sur le web. */
 function confirmAction(title, message, onConfirm, labels) {
@@ -26,6 +27,7 @@ function confirmAction(title, message, onConfirm, labels) {
 }
 
 export default function ReservationDetailScreen({ route, navigation }) {
+  const goBack = useGoBack(navigation);
   const { id } = route.params;
   const { colors, typography, spacing, radii } = useTheme();
   const { t, list } = useI18n();
@@ -106,7 +108,7 @@ export default function ReservationDetailScreen({ route, navigation }) {
   if (loading) {
     return (
       <Screen>
-        <Header title={t('common.details')} onBack={navigation.goBack} />
+        <Header title={t('common.details')} onBack={goBack} />
         <Loader />
       </Screen>
     );
@@ -114,7 +116,7 @@ export default function ReservationDetailScreen({ route, navigation }) {
   if (!resa) {
     return (
       <Screen>
-        <Header title={t('common.details')} onBack={navigation.goBack} />
+        <Header title={t('common.details')} onBack={goBack} />
         <ErrorState message={error} onRetry={load} />
       </Screen>
     );
@@ -130,7 +132,7 @@ export default function ReservationDetailScreen({ route, navigation }) {
 
   return (
     <Screen>
-      <Header title={resa.reference} subtitle={resa.salle?.name} onBack={navigation.goBack} />
+      <Header title={resa.reference} subtitle={resa.salle?.name} onBack={goBack} />
 
       <Body>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>

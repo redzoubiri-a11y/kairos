@@ -14,6 +14,7 @@ import { useProSalle } from '../../context/ProSalleContext';
 import { formatDA, formatLongDate, todayISO } from '../../lib/format';
 import { PROMO_KINDS } from '../../lib/constants';
 import * as api from '../../data';
+import { useGoBack } from '../../lib/navigation';
 
 const VIDE = { code: '', kind: PROMO_KINDS.PERCENT, value: '', starts_on: '', ends_on: '', max_uses: '' };
 
@@ -26,6 +27,7 @@ function etat(promo, aujourdhui) {
 }
 
 export default function ProPromoScreen({ navigation }) {
+  const goBack = useGoBack(navigation);
   const { colors, typography, spacing, radii } = useTheme();
   const { t, list } = useI18n();
   const { currentId } = useProSalle();
@@ -89,7 +91,7 @@ export default function ProPromoScreen({ navigation }) {
   if (loading) {
     return (
       <Screen>
-        <Header title={t('pro.promoTitle')} bordered={false} onBack={navigation.goBack} />
+        <Header title={t('pro.promoTitle')} bordered={false} onBack={goBack} />
         <Loader />
       </Screen>
     );
@@ -97,7 +99,7 @@ export default function ProPromoScreen({ navigation }) {
   if (error) {
     return (
       <Screen>
-        <Header title={t('pro.promoTitle')} bordered={false} onBack={navigation.goBack} />
+        <Header title={t('pro.promoTitle')} bordered={false} onBack={goBack} />
         <ErrorState message={error} onRetry={load} />
       </Screen>
     );
@@ -111,7 +113,7 @@ export default function ProPromoScreen({ navigation }) {
         title={t('pro.promoTitle')}
         subtitle={t('pro.promoSubtitle')}
         bordered={false}
-        onBack={navigation.goBack}
+        onBack={goBack}
         right={
           <MButton
             label={t('pro.promoNew')}

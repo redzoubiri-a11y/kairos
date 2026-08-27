@@ -8,6 +8,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { useI18n } from '../../i18n';
 import { useProSalle } from '../../context/ProSalleContext';
 import * as api from '../../data';
+import { useGoBack } from '../../lib/navigation';
 
 const SOURCE_LABEL = {
   app: 'pro.sourceApp',
@@ -17,6 +18,7 @@ const SOURCE_LABEL = {
 };
 
 export default function ProStatsScreen({ navigation }) {
+  const goBack = useGoBack(navigation);
   const { spacing } = useTheme();
   const { t, list } = useI18n();
   const { currentId } = useProSalle();
@@ -45,7 +47,7 @@ export default function ProStatsScreen({ navigation }) {
   if (loading) {
     return (
       <Screen>
-        <Header title={t('pro.statsTitle')} bordered={false} onBack={navigation.goBack} />
+        <Header title={t('pro.statsTitle')} bordered={false} onBack={goBack} />
         <Loader />
       </Screen>
     );
@@ -53,7 +55,7 @@ export default function ProStatsScreen({ navigation }) {
   if (error || !stats) {
     return (
       <Screen>
-        <Header title={t('pro.statsTitle')} bordered={false} onBack={navigation.goBack} />
+        <Header title={t('pro.statsTitle')} bordered={false} onBack={goBack} />
         <ErrorState message={error} onRetry={load} />
       </Screen>
     );
@@ -63,7 +65,7 @@ export default function ProStatsScreen({ navigation }) {
 
   return (
     <Screen>
-      <Header title={t('pro.statsTitle')} bordered={false} onBack={navigation.goBack} />
+      <Header title={t('pro.statsTitle')} bordered={false} onBack={goBack} />
 
       <Body>
         {/* Types d'événements — lignes libellées, teinte unique */}

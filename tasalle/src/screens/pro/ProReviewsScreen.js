@@ -13,8 +13,10 @@ import { useI18n } from '../../i18n';
 import { REVIEW_MODERATION_HOURS } from '../../lib/constants';
 import { useProSalle } from '../../context/ProSalleContext';
 import * as api from '../../data';
+import { useGoBack } from '../../lib/navigation';
 
 export default function ProReviewsScreen({ navigation }) {
+  const goBack = useGoBack(navigation);
   const { colors, typography, spacing, radii } = useTheme();
   const { t } = useI18n();
 
@@ -57,7 +59,7 @@ export default function ProReviewsScreen({ navigation }) {
 
   return (
     <Screen>
-      <Header title={t('pro.reviewsToModerate')} bordered={false} onBack={navigation.goBack} />
+      <Header title={t('pro.reviewsToModerate')} bordered={false} onBack={goBack} />
 
       <Body>
         {loading ? (

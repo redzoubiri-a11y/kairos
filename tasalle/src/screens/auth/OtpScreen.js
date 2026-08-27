@@ -8,8 +8,10 @@ import { useI18n } from '../../i18n';
 import { useAuth } from '../../context/AuthContext';
 import { displayPhone } from '../../lib/format';
 import * as api from '../../data';
+import { useGoBack } from '../../lib/navigation';
 
 export default function OtpScreen({ route, navigation }) {
+  const goBack = useGoBack(navigation);
   const { phone, demoCode } = route.params || {};
   const { colors, typography, spacing } = useTheme();
   const { t } = useI18n();
@@ -49,7 +51,7 @@ export default function OtpScreen({ route, navigation }) {
 
   return (
     <Screen>
-      <Header title={t('auth.otpTitle')} onBack={navigation.goBack} />
+      <Header title={t('auth.otpTitle')} onBack={goBack} />
 
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}

@@ -9,6 +9,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { useI18n } from '../../i18n';
 import { REFERRAL_DAYS, REFERRAL_STATUS } from '../../lib/constants';
 import * as api from '../../data';
+import { useGoBack } from '../../lib/navigation';
 
 /**
  * Parrainage entre propriétaires (§12 Phase 4).
@@ -18,6 +19,7 @@ import * as api from '../../data';
  * jours d'attente.
  */
 export default function ProReferralScreen({ navigation }) {
+  const goBack = useGoBack(navigation);
   const { colors, typography, spacing, radii } = useTheme();
   const { t } = useI18n();
 
@@ -63,7 +65,7 @@ export default function ProReferralScreen({ navigation }) {
   if (loading) {
     return (
       <Screen>
-        <Header title={t('pro.referralTitle')} bordered={false} onBack={navigation.goBack} />
+        <Header title={t('pro.referralTitle')} bordered={false} onBack={goBack} />
         <Loader />
       </Screen>
     );
@@ -71,7 +73,7 @@ export default function ProReferralScreen({ navigation }) {
   if (error || !data) {
     return (
       <Screen>
-        <Header title={t('pro.referralTitle')} bordered={false} onBack={navigation.goBack} />
+        <Header title={t('pro.referralTitle')} bordered={false} onBack={goBack} />
         <ErrorState message={error} onRetry={load} />
       </Screen>
     );
@@ -85,7 +87,7 @@ export default function ProReferralScreen({ navigation }) {
         title={t('pro.referralTitle')}
         subtitle={t('pro.referralSubtitle')}
         bordered={false}
-        onBack={navigation.goBack}
+        onBack={goBack}
       />
 
       <Body>

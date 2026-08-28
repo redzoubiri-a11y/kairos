@@ -72,6 +72,8 @@ export default function SalleCard({ salle, onPress, onToggleFav, isFav, width })
       style={{
         width,
         backgroundColor: colors.surface,
+        borderWidth: 1,
+        borderColor: colors.border,
         borderRadius: radii.md,
         overflow: 'hidden',
       }}

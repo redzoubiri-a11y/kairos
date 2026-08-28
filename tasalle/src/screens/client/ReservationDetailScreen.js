@@ -172,7 +172,7 @@ export default function ReservationDetailScreen({ route, navigation }) {
         {resa.deposit_amount ? (
           <MCard style={{ gap: spacing.md }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
-              <Ionicons name="cash-outline" size={18} color={colors.gold} />
+              <Ionicons name="cash-outline" size={18} color={colors.primaryInk} />
               <Text style={[typography.title, { fontSize: 15, color: colors.dark, flex: 1 }]}>
                 {t('reservations.depositRequested')}
               </Text>

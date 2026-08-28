@@ -88,7 +88,9 @@ export default function ChatScreen({ route, navigation }) {
                     paddingVertical: spacing.sm,
                   }}
                 >
-                  <Text style={[typography.secondary, { color: mine ? '#FFFFFF' : colors.dark }]}>
+                  {/* `onPrimary`, pas un blanc en dur : en thème sombre l'aplat
+                      `primary` devient l'or et le libellé s'y inscrit en noir. */}
+                  <Text style={[typography.secondary, { color: mine ? colors.onPrimary : colors.dark }]}>
                     {m.content}
                   </Text>
                 </View>
@@ -175,7 +177,11 @@ export default function ChatScreen({ route, navigation }) {
               justifyContent: 'center',
             }}
           >
-            <Ionicons name="send" size={17} color="#FFFFFF" />
+            <Ionicons
+              name="send"
+              size={17}
+              color={draft.trim() ? colors.onPrimary : colors.warmGray}
+            />
           </Pressable>
         </View>
       </KeyboardAvoidingView>

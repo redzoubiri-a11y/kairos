@@ -135,7 +135,7 @@ export default function Calendar({
                   opacity: cell.inMonth ? 1 : 0.25,
                 }}
               >
-                <Text style={{ fontSize: 13, fontWeight: isSelected ? '600' : '400', color: s.fg }}>
+                <Text style={{ fontSize: 13, fontWeight: isSelected ? '500' : '400', color: s.fg }}>
                   {cell.day}
                 </Text>
                 {marker ? (

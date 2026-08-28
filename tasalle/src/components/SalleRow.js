@@ -19,6 +19,8 @@ export default function SalleRow({ salle, onPress, onToggleFav, isFav }) {
       style={{
         flexDirection: 'row',
         backgroundColor: colors.surface,
+        borderWidth: 1,
+        borderColor: colors.border,
         borderRadius: radii.md,
         overflow: 'hidden',
       }}

@@ -22,6 +22,8 @@ export default function PartnerCard({ partner, type, onPress, width }) {
       style={{
         width,
         backgroundColor: colors.surface,
+        borderWidth: 1,
+        borderColor: colors.border,
         borderRadius: radii.md,
         overflow: 'hidden',
       }}

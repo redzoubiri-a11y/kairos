@@ -42,8 +42,8 @@ export default function MButton({
   const v = variantStyle(variant, colors);
   const s = SIZES[size] || SIZES.md;
   const isOff = disabled || loading;
-  // .btn-primary:active { background: var(--color-accent-700) } — RN n'a pas
-  // de :hover, mais l'état pressé est le même geste que :active.
+  // L'état pressé du bouton plein descend à `primaryDark` : RN n'a pas de
+  // :hover, l'appui est le seul retour possible.
   const pressedBg = variant === 'primary' || variant === undefined ? colors.primaryDark : v.bg;
 
   return (

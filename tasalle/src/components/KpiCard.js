@@ -24,6 +24,8 @@ export default function KpiCard({ label, value, delta, deltaSuffix = '%', icon, 
       style={{
         width,
         backgroundColor: colors.surface,
+        borderWidth: 1,
+        borderColor: colors.border,
         borderRadius: radii.md,
         padding: spacing.md,
         gap: spacing.sm,

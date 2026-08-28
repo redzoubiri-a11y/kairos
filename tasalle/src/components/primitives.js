@@ -82,14 +82,18 @@ export function MChip({ label, active, onPress, icon }) {
 
 // ── Carte (§3.3) ──────────────────────────────────────────────────────────
 
-// .card { padding: var(--space-3); border-radius: var(--radius-md);
-//   background: var(--color-surface) } — pas de bordure : la surface se
-// détache du fond par sa propre teinte, pas par un contour.
+// .carte { border: 1px solid var(--c-border); border-radius: var(--r-md);
+//   background: var(--c-surface) } — §4 : le fond de page et le fond des
+// cartes sont tous deux blancs en thème clair, c'est le contour de 1px qui
+// détache une carte, pas une ombre (§7.2). `elevated` reste disponible pour
+// les cartes posées sur un fond non blanc, où l'ombre `card` a un sens.
 export function MCard({ children, onPress, style, padded = true, elevated = false }) {
   const { colors, radii, spacing, shadows } = useTheme();
 
   const base = {
     backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
     borderRadius: radii.md,
     padding: padded ? spacing.md : 0,
     overflow: 'hidden',

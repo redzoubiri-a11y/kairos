@@ -131,7 +131,7 @@ export default function NotificationsScreen({ navigation }) {
                   <Text
                     style={[
                       typography.secondary,
-                      { color: colors.dark, fontWeight: n.is_read ? '400' : '600', textAlign: 'left' },
+                      { color: colors.dark, fontWeight: n.is_read ? '400' : '500', textAlign: 'left' },
                     ]}
                   >
                     {n.title}

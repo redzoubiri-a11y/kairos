@@ -117,7 +117,7 @@ export default function ProfileScreen({ navigation }) {
         {user?.role === ROLES.CLIENT ? (
           <MCard style={{ gap: spacing.md }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
-              <Ionicons name="business-outline" size={20} color={colors.gold} />
+              <Ionicons name="business-outline" size={20} color={colors.primaryInk} />
               <Text style={[typography.title, { fontSize: 15, color: colors.dark, flex: 1 }]}>
                 {t('profile.becomePro')}
               </Text>

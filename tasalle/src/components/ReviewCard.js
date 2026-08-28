@@ -17,6 +17,8 @@ export default function ReviewCard({ review }) {
     <View
       style={{
         backgroundColor: colors.surface,
+        borderWidth: 1,
+        borderColor: colors.border,
         borderRadius: radii.md,
         padding: spacing.md,
         gap: spacing.md,

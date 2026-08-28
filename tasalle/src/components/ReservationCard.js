@@ -39,6 +39,8 @@ export default function ReservationCard({ reservation, onPress, perspective = 'c
       accessibilityRole={onPress ? 'button' : undefined}
       style={({ pressed }) => ({
         backgroundColor: colors.surface,
+        borderWidth: 1,
+        borderColor: colors.border,
         borderRadius: radii.md,
         padding: spacing.md,
         gap: spacing.md,

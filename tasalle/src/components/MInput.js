@@ -5,7 +5,8 @@ import { useTheme } from '../context/ThemeContext';
 import { useI18n } from '../i18n';
 
 /**
- * Champ de saisie — §3.3 (border 1px, radius 10, focus ring primary-light).
+ * Champ de saisie — contour de 1 px, teinté d'encre de marque à la saisie et
+ * de rouge à l'erreur (§6).
  * `direction="ltr"` force le sens latin pour les numéros de téléphone en arabe.
  */
 export default function MInput({
@@ -41,9 +42,10 @@ export default function MInput({
   const [focused, setFocused] = useState(false);
 
   const forcedLtr = direction === 'ltr';
-  // .input:focus-visible { border-color: var(--color-accent) } — l'accent
-  // brut, pas l'encre foncée : c'est la vraie règle, portée telle quelle.
-  const borderColor = error ? colors.accentInk : focused ? colors.gold : colors.border;
+  // .champ--focus { border-color: var(--c-primaryInk) } — l'encre de marque,
+  // pas `gold` : un contour de focus porte de l'information, il lui faut le
+  // seuil de 3:1 (§7.8) que l'or de marque ne tient pas (2,63:1, §2.1).
+  const borderColor = error ? colors.accentInk : focused ? colors.primaryInk : colors.border;
 
   return (
     <View style={[{ gap: spacing.xs }, style]}>
@@ -51,8 +53,8 @@ export default function MInput({
         <Text style={[typography.caption, { color: colors.warmGray, textAlign: 'left' }]}>{label}</Text>
       ) : null}
 
-      {/* .input { min-height:36px; padding:6px 10px; font-size:14px;
-          background: var(--color-surface); border: 1px solid var(--color-divider) } */}
+      {/* .champ { min-height:36px; padding:6px 10px; font-size:14px;
+          background: var(--c-surface); border: 1px solid var(--c-border) } */}
       <View
         style={{
           flexDirection: forcedLtr ? 'row' : 'row',
@@ -78,7 +80,7 @@ export default function MInput({
           elevation: focused && !error ? 2 : 0,
         }}
       >
-        {icon ? <Ionicons name={icon} size={18} color={focused ? colors.gold : colors.warmGray} /> : null}
+        {icon ? <Ionicons name={icon} size={18} color={focused ? colors.primaryInk : colors.warmGray} /> : null}
 
         <TextInput
           value={value}
@@ -146,7 +148,7 @@ export function MSelect({ label, value, options, onChange, placeholder }) {
           alignItems: 'center',
           justifyContent: 'space-between',
           borderWidth: 1,
-          borderColor: open ? colors.gold : colors.border,
+          borderColor: open ? colors.primaryInk : colors.border,
           borderRadius: radii.md,
           paddingHorizontal: 10,
           minHeight: 36,

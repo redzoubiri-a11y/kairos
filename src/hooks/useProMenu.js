@@ -48,9 +48,17 @@ export default function useProMenu() {
         .order('created_at', { ascending: true });
 
       const list = rows ?? [];
-      setDishes(list);
 
+      // L'ordre des catégories suit l'ordre de création : c'est celui que le
+      // restaurateur a suivi en saisissant sa carte, et le trier autrement
+      // ferait remonter « Boissons » avant « Entrées ». On le calcule donc
+      // avant de réordonner les plats.
       const dishCats = [...new Set(list.map(d => d.category).filter(Boolean))];
+
+      // Affichage : du plus cher au moins cher. `price` arrive en texte depuis
+      // Postgres et peut être absent — Number(...) || 0 évite un NaN qui
+      // rendrait le tri imprévisible, et pousse les plats sans prix en fin.
+      setDishes([...list].sort((a, b) => (Number(b.price) || 0) - (Number(a.price) || 0)));
       setCategories(prev => [...new Set([...prev, ...dishCats])]);
 
       if (list.length > 0) {

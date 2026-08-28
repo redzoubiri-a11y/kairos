@@ -37,6 +37,13 @@ export default function useRestaurant(restaurantProp) {
         cat,
         items: dbDishes
           .filter(d => d.category === cat)
+          // Du plus cher au moins cher : le premier prix vu sert de repère au
+          // client, les suivants paraissent plus abordables. Les plats sans
+          // prix ferment la marche.
+          // `price` arrive en texte depuis Postgres (numeric) et peut être
+          // absent : Number(...) || 0 évite un NaN qui rendrait le tri
+          // imprévisible.
+          .sort((a, b) => (Number(b.price) || 0) - (Number(a.price) || 0))
           .map(d => ({
             nom:     d.name,
             desc:    d.description || '',

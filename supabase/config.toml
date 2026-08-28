@@ -7,3 +7,6 @@ verify_jwt = false
 [cron.send-reminders-daily]
 schedule = "0 17 * * *"
 function = "send-reminders"
+
+[functions.notify-founder]
+verify_jwt = false

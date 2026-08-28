@@ -12,15 +12,23 @@ import { supabase } from '../../supabase';
 const LARGEUR_MAX = 1600;
 const QUALITE = 0.7;
 
+// API contextuelle d'expo-image-manipulator 14. `manipulateAsync`, l'ancienne
+// fonction, est depreciee : elle a echoue en silence sur un vrai appareil
+// (photos stockees en 4624x3468, soit la resolution brute de l'appareil).
 async function alleger(asset) {
-  // On ne redimensionne QUE vers le bas. `resize: { width: 1600 }` agrandit
-  // une image plus petite : le recadrage 4:3 du picker sort souvent en
-  // 1152 px, qui serait gonflee a 1600 — plus lourde et plus floue pour rien.
-  const actions = asset.width > LARGEUR_MAX ? [{ resize: { width: LARGEUR_MAX } }] : [];
+  const contexte = ImageManipulator.ImageManipulator.manipulate(asset.uri);
 
-  // Avec un tableau d'actions vide, l'image est seulement recompressee en
-  // JPEG : format normalise et metadonnees EXIF supprimees au passage.
-  const { uri } = await ImageManipulator.manipulateAsync(asset.uri, actions, {
+  // On ne redimensionne QUE vers le bas. Un resize vers 1600 agrandit une
+  // image plus petite : le recadrage 4:3 du picker sort souvent en 1152 px,
+  // qui serait gonflee — plus lourde et plus floue, l'inverse du but.
+  if (asset.width > LARGEUR_MAX) {
+    contexte.resize({ width: LARGEUR_MAX });
+  }
+
+  // Sans redimensionnement, l'image est seulement recompressee en JPEG :
+  // format normalise et metadonnees EXIF supprimees au passage.
+  const image = await contexte.renderAsync();
+  const { uri } = await image.saveAsync({
     compress: QUALITE,
     format: ImageManipulator.SaveFormat.JPEG,
   });
@@ -79,12 +87,20 @@ export default function useProPhotos(restaurantId) {
 
       // Si l'allegement echoue (format exotique, memoire), on tente quand
       // meme l'envoi de l'original plutot que de bloquer le restaurateur.
+      //
+      // ATTENTION : ce repli a deja masque un vrai defaut. `manipulateAsync`
+      // echouait a chaque appel et les photos partaient en pleine resolution
+      // sans que rien ne le signale — decouvert en mesurant les dimensions
+      // des fichiers en base, pas depuis l'app. Apres toute modification ici,
+      // verifier une photo reellement envoyee :
+      //   select (metadata->>'size') from storage.objects order by created_at desc
+      // et controler ses dimensions, pas seulement son poids.
       const asset = result.assets[0];
       let uri = asset.uri;
       try {
         uri = await alleger(asset);
       } catch (e) {
-        console.warn('[photos] redimensionnement impossible, envoi de l\'original', e);
+        console.warn('[photos] allegement impossible, envoi de l\'original', e);
       }
 
       const response    = await fetch(uri);

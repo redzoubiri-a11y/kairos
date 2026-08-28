@@ -29,6 +29,15 @@ Deno.serve(async (_req) => {
 
   for (const row of requests) {
     try {
+      // Une demande sans user_id ne peut pas etre approuvee : il n'y a aucun
+      // compte a passer en manager. Sans ce garde, getUserById(null) lance
+      // "Expected parameter to be UUID but is not" et la ligne repasse en
+      // erreur a chaque execution horaire du cron, indefiniment.
+      if (!row.user_id) {
+        errors.push({ id: row.id, error: "user_id absent — demande ignoree" });
+        continue;
+      }
+
       const { data: authUser } = await admin.auth.admin.getUserById(row.user_id);
       const userEmail = authUser?.user?.email ?? "";
 

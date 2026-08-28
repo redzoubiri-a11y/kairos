@@ -1,7 +1,25 @@
 import { useState, useCallback, useEffect } from 'react';
 import { Linking, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import * as ImageManipulator from 'expo-image-manipulator';
 import { supabase } from '../../supabase';
+
+// Le picker compresse (quality) mais ne redimensionne jamais : une photo de
+// 12 Mpx reste lourde meme a qualite reduite. On la ramene a 1600 px de large
+// avant l'envoi — invisible sur une fiche restaurant, et decisif sur une
+// connexion algerienne. Sans ca, une photo trop lourde etait simplement
+// refusee, et le restaurateur n'avait aucun moyen de la reduire lui-meme.
+const LARGEUR_MAX = 1600;
+const QUALITE = 0.7;
+
+async function alleger(uri) {
+  const { uri: uriAllege } = await ImageManipulator.manipulateAsync(
+    uri,
+    [{ resize: { width: LARGEUR_MAX } }],
+    { compress: QUALITE, format: ImageManipulator.SaveFormat.JPEG },
+  );
+  return uriAllege;
+}
 
 export default function useProPhotos(restaurantId) {
   const [photos,    setPhotos]    = useState([]);
@@ -39,7 +57,10 @@ export default function useProPhotos(restaurantId) {
 
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
-      quality: 0.5,
+      // On compresse nous-memes juste apres : compresser deja ici degraderait
+      // l'image deux fois. On garde tout de meme une marge pour ne pas charger
+      // un original plein format en memoire sur un vieux telephone.
+      quality: 0.8,
       allowsEditing: true,
       aspect: [4, 3],
     });
@@ -48,14 +69,24 @@ export default function useProPhotos(restaurantId) {
     setUploading(true);
     setError('');
     try {
-      const uri  = result.assets[0].uri;
       const path = `${restaurantId}/${Date.now()}.jpg`;
+
+      // Si l'allegement echoue (format exotique, memoire), on tente quand
+      // meme l'envoi de l'original plutot que de bloquer le restaurateur.
+      let uri = result.assets[0].uri;
+      try {
+        uri = await alleger(uri);
+      } catch (e) {
+        console.warn('[photos] redimensionnement impossible, envoi de l\'original', e);
+      }
 
       const response    = await fetch(uri);
       const arrayBuffer = await response.arrayBuffer();
 
+      // Garde-fou : la limite du bucket est de 3 Mo. Apres redimensionnement
+      // on en est tres loin, donc y arriver signale une image inhabituelle.
       if (arrayBuffer.byteLength > 3 * 1024 * 1024) {
-        setError('Photo trop lourde (max 3 Mo). Choisissez une image plus petite.');
+        setError('Cette image est trop lourde même après réduction. Essayez-en une autre.');
         return;
       }
 

@@ -12,13 +12,19 @@ import { supabase } from '../../supabase';
 const LARGEUR_MAX = 1600;
 const QUALITE = 0.7;
 
-async function alleger(uri) {
-  const { uri: uriAllege } = await ImageManipulator.manipulateAsync(
-    uri,
-    [{ resize: { width: LARGEUR_MAX } }],
-    { compress: QUALITE, format: ImageManipulator.SaveFormat.JPEG },
-  );
-  return uriAllege;
+async function alleger(asset) {
+  // On ne redimensionne QUE vers le bas. `resize: { width: 1600 }` agrandit
+  // une image plus petite : le recadrage 4:3 du picker sort souvent en
+  // 1152 px, qui serait gonflee a 1600 — plus lourde et plus floue pour rien.
+  const actions = asset.width > LARGEUR_MAX ? [{ resize: { width: LARGEUR_MAX } }] : [];
+
+  // Avec un tableau d'actions vide, l'image est seulement recompressee en
+  // JPEG : format normalise et metadonnees EXIF supprimees au passage.
+  const { uri } = await ImageManipulator.manipulateAsync(asset.uri, actions, {
+    compress: QUALITE,
+    format: ImageManipulator.SaveFormat.JPEG,
+  });
+  return uri;
 }
 
 export default function useProPhotos(restaurantId) {
@@ -73,9 +79,10 @@ export default function useProPhotos(restaurantId) {
 
       // Si l'allegement echoue (format exotique, memoire), on tente quand
       // meme l'envoi de l'original plutot que de bloquer le restaurateur.
-      let uri = result.assets[0].uri;
+      const asset = result.assets[0];
+      let uri = asset.uri;
       try {
-        uri = await alleger(uri);
+        uri = await alleger(asset);
       } catch (e) {
         console.warn('[photos] redimensionnement impossible, envoi de l\'original', e);
       }

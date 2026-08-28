@@ -16,7 +16,11 @@ export default function useClickCollect(restaurantId) {
           .select('id, name, description, price, category, is_available, photo')
           .eq('restaurant_id', restaurantId)
           .eq('is_available', true)
-          .order('category'),
+          // Du plus cher au moins cher dans chaque catégorie, comme sur la
+          // fiche restaurant et dans l'espace pro. Les plats sans prix
+          // ferment la marche.
+          .order('category')
+          .order('price', { ascending: false, nullsFirst: false }),
         supabase.from('restaurants').select('wait_time_estimates').eq('id', restaurantId).maybeSingle(),
       ]);
       setDishes(dishRows ?? []);

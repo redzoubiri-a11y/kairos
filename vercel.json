@@ -3,9 +3,21 @@
   "outputDirectory": "dist",
   "cleanUrls": true,
   "rewrites": [
-    { "source": "/fondateurs", "destination": "/fondateurs.html" },
-    { "source": "/cgu", "destination": "/cgu/index.html" },
-    { "source": "/confidentialite", "destination": "/confidentialite/index.html" },
-    { "source": "/(.*)", "destination": "/index.html" }
+    {
+      "source": "/fondateurs",
+      "destination": "/fondateurs.html"
+    },
+    {
+      "source": "/cgu",
+      "destination": "/cgu/index.html"
+    },
+    {
+      "source": "/confidentialite",
+      "destination": "/confidentialite/index.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/"
+    }
   ]
 }

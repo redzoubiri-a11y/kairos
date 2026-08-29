@@ -98,7 +98,7 @@ export default function ExplorerScreen({ navigation }) {
       try {
         const { data } = await supabase
           .from('restaurants')
-          .select('id, name, cuisine_type, address, quartier, city, photos, avg_rating, avg_ticket, review_count, capacity')
+          .select('id, name, cuisine_type, address, quartier, city, photos, avg_rating, avg_ticket, review_count, capacity, opening_hours')
           .eq('city', city)
           .eq('status', 'active')
           .order('avg_rating', { ascending: false });

@@ -4,6 +4,10 @@
 // sans Supabase, la fonction renonce en silence. Une notification est un
 // confort, jamais une raison de bloquer la connexion.
 
+// En premier, et volontairement : ce module pose les filtres de journal qui
+// doivent être en place avant le chargement d'`expo-notifications`.
+import './logbox';
+
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
 import * as Device from 'expo-device';

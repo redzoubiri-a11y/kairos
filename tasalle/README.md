@@ -7,12 +7,18 @@
 Application de réservation de salles des fêtes en Algérie, développée d'après
 les *Spécifications Techniques Complètes v1.0.0*.
 
-Une seule base de code sert les deux publics :
+Une seule base de code sert les familles et les professionnels :
 
 | Public | Accès | Tarif |
 |--------|-------|-------|
 | **Client** (familles) | iOS · Android · Web | Gratuit |
-| **Pro** (propriétaires) | Back-office iOS · Android · Web | 90 jours offerts, puis 500 DA/mois |
+| **Pro** — propriétaire de salle | Back-office iOS · Android · Web | 90 jours offerts, puis 5200 DA/mois |
+| **Pro** — traiteur (§13) | idem | 90 jours offerts, puis 4200 DA/mois |
+| **Pro** — halouadji, pâtissier traditionnel (§13) | idem | 90 jours offerts, puis 2100 DA/mois |
+
+Les trois tarifs vivent dans `src/lib/constants.js` (`SUBSCRIPTION_PRICE`,
+`PARTNER_SUBSCRIPTION_PRICES`) — c'est cette table qui fait foi, pas ce
+tableau.
 
 ---
 
@@ -104,6 +110,7 @@ psql "$DATABASE_URL" -f supabase/migrations/0008_multi_salles.sql # plusieurs sa
 psql "$DATABASE_URL" -f supabase/migrations/0009_francais_seul.sql # retrait de la préférence de langue
 psql "$DATABASE_URL" -f supabase/migrations/0010_promo_codes.sql # codes promotionnels
 psql "$DATABASE_URL" -f supabase/migrations/0011_referrals.sql  # parrainage entre propriétaires
+psql "$DATABASE_URL" -f supabase/migrations/0012_traiteurs_halouadjis.sql # traiteurs et halouadjis
 ```
 
 `0003` suppose le schéma `storage` : il ne s'applique que sur Supabase.
@@ -159,13 +166,13 @@ puis rejouer `0004_cron.sql`.
 ## Tests
 
 ```bash
-npm test                        # 275 tests JS (jest-expo)
+npm test                        # 291 tests JS (jest-expo)
 npm run test:sql                # 97 assertions SQL, sur une base neuve
 npm run test:edge               # 28 vérifications des fonctions Edge
 ```
 
 `test:sql` attend une base vide dans `DATABASE_URL` ; il y applique le
-préambule, les neuf migrations puis les quatre suites.
+préambule, les douze migrations puis les quatre suites.
 
 ```bash
 createdb tasalle_test && DATABASE_URL=postgres:///tasalle_test npm run test:sql
@@ -195,15 +202,16 @@ psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/tests/_bootstrap_local.sql
 | Suite | Portée |
 |-------|--------|
 | `src/services/notify.test.js` (24) | Heures calmes 22 h–08 h, report au lendemain, quota journalier, blackout Ramadan, troncature à 160 caractères, priorités d'envoi |
-| `src/data/local.test.js` (98) | Backend local : authentification, disponibilités, création et annulation, signature PIN, acompte, avis et modération, quota SMS, photos, favoris, recherche, tableau de bord, planning, abonnement, messagerie, cloisonnement entre propriétaires |
+| `src/data/local.test.js` (109) | Backend local : authentification, disponibilités, création et annulation, signature PIN, acompte, avis et modération, quota SMS, photos, favoris, recherche, tableau de bord, planning, abonnement, messagerie, cloisonnement entre propriétaires |
 | `src/lib/storage.test.js` (10) | Décodage base64 des images (les 256 valeurs d'octet), unicité et extension des chemins de destination |
 | `src/data/cache.test.js` (11) | Cache hors ligne : repli sur la dernière réponse connue, refus d'une donnée périmée, propagation de l'erreur quand aucun cache n'existe |
+| `src/data/index.test.js` (1) | Le point d'entrée réexporte bien chaque fonction des adaptateurs — une fonction ajoutée aux deux backends mais oubliée dans `index.js` vaudrait `undefined` en silence, sans erreur avant l'appel en plein écran |
 | `src/services/pdfTemplates.test.js` (35) | Contrat, planning et facture : montants et solde, mention de signature, salles couvertes par l'abonnement, échappement HTML d'un nom de client piégé, traduction des énumérations |
 | `src/lib/referral.test.js` (15) | Règles du parrainage : plafond de récompense, report d'échéance qui ne fait pas perdre les jours restants, refus de l'auto-parrainage, alphabet sans caractères ambigus |
 | `src/lib/promo.test.js` (28) | Règles des codes promo : remise bornée au montant — un code de 50 000 DA sur une formule à 35 000 ne crée pas de total négatif — bornes de validité, quota, refus d'un code sans effet, contrôle de la saisie du propriétaire |
 | `src/lib/geo.test.js` (26) | Distance orthodromique vérifiée sur des écarts connus (Alger–Oran, un degré de latitude), tri par proximité, liens d'itinéraire par plateforme |
-| `src/i18n/i18n.test.js` (7) | Chaque clé appelée dans le code existe — une clé absente s'afficherait telle quelle à l'écran, sans erreur — et aucun libellé n'est écrit en dur dans le JSX |
-| `src/theme.test.js` (21) | Contrastes calculés selon WCAG 2.1 : encre de marque ≥ 4,5:1 dans les deux thèmes, libellé lisible sur les aplats — y compris après l'inversion des rôles en thème sombre — rouge d'erreur tenant dans ses deux emplois, et l'or de marque verrouillé **sous** le seuil, pour qu'il ne devienne jamais une couleur de texte |
+| `src/i18n/i18n.test.js` (9) | Chaque clé appelée dans le code existe — une clé absente s'afficherait telle quelle à l'écran, sans erreur — et aucun libellé n'est écrit en dur dans le JSX |
+| `src/theme.test.js` (23) | Contrastes calculés selon WCAG 2.1 : encre de marque ≥ 4,5:1 dans les deux thèmes, libellé lisible sur les aplats — y compris après l'inversion des rôles en thème sombre — rouge d'erreur tenant dans ses deux emplois, et l'or de marque verrouillé **sous** le seuil, pour qu'il ne devienne jamais une couleur de texte |
 | `supabase/tests/business_rules.sql` (19) | Les mêmes règles §10, mais côté PostgreSQL : unicité du jour confirmé, PIN, délai d'avis, publication automatique, agrégats, absence de policy `DELETE` sur les avis, et l'index d'unicité attaqué directement — la vérification applicative et l'index protègent deux chemins différents, seul le premier était couvert |
 | `supabase/tests/admin.sql` (14) | Autorisations de la console : un client n'obtient pas les chiffres, un pro ne valide pas sa propre salle, un avis retiré reste en base |
 | `supabase/tests/lifecycle.sql` (16) | Clôture des événements passés, rappel J-1, demande d'avis à J+48 h, rappels et expiration d'essai — chaque tâche vérifiée aussi pour son idempotence |
@@ -291,7 +299,15 @@ applicative.
 - **§12 Phase 4 — plusieurs salles par propriétaire** — un sélecteur en tête de
   l'espace pro, chaque écran cloisonné sur la salle choisie, choix mémorisé
   d'une session à l'autre. L'abonnement reste **par propriétaire** : ajouter
-  une salle ne relance pas l'essai et ne double pas les 500 DA
+  une salle ne relance pas l'essai et ne double pas les 5200 DA
+- **§13 — traiteurs et halouadjis** — deux verticales partenaires à côté des
+  salles : fiche avec spécialités et fourchette de prix par personne, demande
+  de devis (date, nombre d'invités, message) plutôt que réservation d'une date
+  bloquée, réponse du professionnel avec statut *en attente* / *acceptée* /
+  *déclinée*. Deux tables sœurs de `salles` (`0012_traiteurs_halouadjis.sql`)
+  plutôt qu'une table `listings` polymorphe : le schéma existant est nommé et
+  câblé pour « salle », le reprendre aurait un risque disproportionné. Chaque
+  type porte son propre tarif d'abonnement sur le même mécanisme
 
 ### Non livré
 
@@ -386,8 +402,8 @@ seconde langue possible sans rouvrir chaque écran.
 
 ## Vérification effectuée
 
-- `npm test` — 275 tests au vert, `npm run test:sql` — 97 assertions, `npm run test:edge` — 28 vérifications
-- `npx expo export --platform web` — 917 modules, aucune erreur
+- `npm test` — 291 tests au vert, `npm run test:sql` — 97 assertions, `npm run test:edge` — 28 vérifications
+- `npx expo export --platform web` — 933 modules, aucune erreur
 - Parcours pro complet en navigateur (Playwright) : connexion OTP → tableau de
   bord → confirmation d'une demande avec acompte et signature PIN → planning →
   statistiques → abonnement

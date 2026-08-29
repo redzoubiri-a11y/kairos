@@ -2,19 +2,58 @@
 // (filtre "Ouvert") et RestaurantInfosTab.js (bandeau horaires de la Fiche Restaurant),
 // regroupés ici pour éviter la duplication entre un hook et un composant écran.
 
+const DOW_LABEL = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+// Ordre d'affichage : la semaine commence le lundi, pas le dimanche (qui vaut 0
+// dans Date.getDay()).
+const WEEK_ORDER = [1, 2, 3, 4, 5, 6, 0];
+
+// "Tous les jours", "Lun–Ven", ou "Lun, Mar, Jeu" selon les jours fournis.
+function joursLabel(days) {
+  const presents = WEEK_ORDER.filter(d => days.includes(d));
+  if (presents.length === 7) return 'Tous les jours';
+  if (presents.length === 0) return '';
+  const idx = presents.map(d => WEEK_ORDER.indexOf(d));
+  const contigus = idx.every((v, i) => i === 0 || v === idx[i - 1] + 1);
+  if (contigus && presents.length > 2)
+    return `${DOW_LABEL[presents[0]]}–${DOW_LABEL[presents[presents.length - 1]]}`;
+  // 5 ou 6 jours sur 7 : la liste devient illisible sur une ligne, l'exception
+  // se lit mieux que l'énumération.
+  if (presents.length >= 5) {
+    const absents = WEEK_ORDER.filter(d => !presents.includes(d));
+    return `Tous les jours sauf ${absents.map(d => DOW_LABEL[d]).join(' et ')}`;
+  }
+  return presents.map(d => DOW_LABEL[d]).join(', ');
+}
+
 export function fmtHours(oh) {
   if (!oh) return null;
   if (typeof oh === 'string') return oh;
   if (!Array.isArray(oh) || oh.length === 0) return null;
   const hm = s => (s || '').replace(':', 'h');
   if (typeof oh[0].day === 'number') {
-    const opens  = [...new Set(oh.map(d => d.open))];
-    const closes = [...new Set(oh.map(d => d.close))];
-    if (opens.length === 1 && closes.length === 1)
-      return `Tous les jours  ${hm(opens[0])} – ${hm(closes[0])}`;
+    // Les jours sont regroupés par créneau identique. Avant le 30/08/2026 cette
+    // branche affichait "Lun–Sam" EN DUR dès que deux jours différaient : un
+    // restaurant ouvert 7j/7 avec un seul jour décalé était annoncé fermé le
+    // dimanche, ce qui coûtait des réservations.
+    const groupes = new Map();
+    for (const d of oh) {
+      const cle = `${d.open}|${d.close}`;
+      if (!groupes.has(cle)) groupes.set(cle, []);
+      groupes.get(cle).push(d.day);
+    }
+    const parts = [...groupes.entries()]
+      .sort((a, b) => Math.min(...a[1].map(d => WEEK_ORDER.indexOf(d)))
+                    - Math.min(...b[1].map(d => WEEK_ORDER.indexOf(d))))
+      .map(([cle, days]) => {
+        const [open, close] = cle.split('|');
+        return `${joursLabel(days)}  ${hm(open)} – ${hm(close)}`;
+      });
+    if (parts.length <= 2) return parts.join('  ·  ');
+    // Trop de variantes pour tenir sur une ligne : on résume sur l'amplitude,
+    // mais avec les vrais jours d'ouverture.
     const minOpen  = oh.reduce((mn, d) => d.open  < mn ? d.open  : mn, oh[0].open);
     const maxClose = oh.reduce((mx, d) => d.close > mx ? d.close : mx, oh[0].close);
-    return `Lun–Sam  ${hm(minOpen)} – ${hm(maxClose)}`;
+    return `${joursLabel(oh.map(d => d.day))}  ${hm(minOpen)} – ${hm(maxClose)}`;
   }
   return oh.map(d => `${d.day}  ${hm(d.open)} – ${hm(d.close)}`).join('  ·  ');
 }

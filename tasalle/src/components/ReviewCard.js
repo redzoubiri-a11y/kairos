@@ -3,7 +3,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../context/ThemeContext';
 import { useI18n } from '../i18n';
 import { Stars } from './Stars';
-import { MBadge, ProgressBar } from './primitives';
+import { MBadge, MCard, ProgressBar } from './primitives';
 import { timeAgo } from '../lib/format';
 
 /** Avis client — §7.3 (badge vérifié, réponse du propriétaire encadrée). */
@@ -14,16 +14,7 @@ export default function ReviewCard({ review }) {
   const initial = (review.client_name || '?').trim().charAt(0).toUpperCase();
 
   return (
-    <View
-      style={{
-        backgroundColor: colors.surface,
-        borderWidth: 1,
-        borderColor: colors.border,
-        borderRadius: radii.md,
-        padding: spacing.md,
-        gap: spacing.md,
-      }}
-    >
+    <MCard style={{ gap: spacing.md }}>
       <View style={{ flexDirection: 'row', gap: spacing.md, alignItems: 'flex-start' }}>
         <View
           style={{
@@ -80,7 +71,7 @@ export default function ReviewCard({ review }) {
           <Text style={[typography.caption, { color: colors.dark, textAlign: 'left' }]}>{review.pro_reply}</Text>
         </View>
       ) : null}
-    </View>
+    </MCard>
   );
 }
 

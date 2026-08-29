@@ -4,7 +4,7 @@ import { useTheme } from '../context/ThemeContext';
 import { useI18n } from '../i18n';
 import { formatDA } from '../lib/format';
 import SallePhoto from './SallePhoto';
-import { MBadge } from './primitives';
+import { MBadge, MCard } from './primitives';
 
 /** Pastille de note superposée en haut de la photo (§4.1). */
 function RatingOverlay({ rating }) {
@@ -64,20 +64,11 @@ function FavButton({ active, onPress }) {
  * Photo 140px, badge note, nom, ville · capacité · avis, prix, badges.
  */
 export default function SalleCard({ salle, onPress, onToggleFav, isFav, width }) {
-  const { colors, typography, spacing, radii, sizes } = useTheme();
+  const { colors, typography, spacing, sizes } = useTheme();
   const { t } = useI18n();
 
   return (
-    <View
-      style={{
-        width,
-        backgroundColor: colors.surface,
-        borderWidth: 1,
-        borderColor: colors.border,
-        borderRadius: radii.md,
-        overflow: 'hidden',
-      }}
-    >
+    <MCard padded={false} style={{ width }}>
       <Pressable onPress={onPress} accessibilityRole="button" style={({ pressed }) => ({ opacity: pressed ? 0.92 : 1 })}>
         <SallePhoto salle={salle} height={sizes.cardPhoto}>
           <RatingOverlay rating={salle.rating} />
@@ -112,6 +103,6 @@ export default function SalleCard({ salle, onPress, onToggleFav, isFav, width })
       </Pressable>
 
       <FavButton active={isFav} onPress={onToggleFav} />
-    </View>
+    </MCard>
   );
 }

@@ -67,17 +67,19 @@ export default function MInput({
           paddingVertical: multiline ? 6 : 0,
           minHeight: multiline ? 90 : 36,
           backgroundColor: colors.surface,
-          // Focus ring §3.3 — les clés shadow*/elevation restent toujours
-          // présentes (seule leur intensité varie) : les ajouter/retirer
-          // dynamiquement selon `focused` forçait un recalcul de la
-          // composition native à chaque passage à `focused`, ce qui coupait
-          // le focus du TextInput enfant sur iOS (bug constaté sur l'écran
-          // téléphone le 18/08/2026).
-          shadowColor: colors.primary,
-          shadowOpacity: focused && !error ? 0.18 : 0,
-          shadowRadius: 6,
-          shadowOffset: { width: 0, height: 0 },
-          elevation: focused && !error ? 2 : 0,
+          // Pas d'ombre de focus. Le système n'en compte que deux — `card` et
+          // `sticky` (§4) — et « l'usage par défaut est de ne pas en mettre » :
+          // le halo qui vivait ici n'était ni l'une ni l'autre, c'était un
+          // reste du système Modernist abandonné. Le contour, qui passe à
+          // `primaryInk` à la saisie, porte seul le signal — c'est la règle du
+          // §7.2, « le contour fait le relief, pas l'ombre », et il tient le
+          // seuil de 3:1 que l'ombre ne garantissait pas.
+          //
+          // Ne pas réintroduire d'ombre pilotée par `focused` : ajouter ou
+          // retirer des clés shadow*/elevation au changement d'état coupait le
+          // focus du TextInput enfant sur iOS (bug constaté sur l'écran
+          // téléphone le 18/08/2026). Ce bloc est désormais constant dans le
+          // temps, donc hors d'atteinte de ce piège.
         }}
       >
         {icon ? <Ionicons name={icon} size={18} color={focused ? colors.primaryInk : colors.warmGray} /> : null}

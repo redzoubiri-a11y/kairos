@@ -2,6 +2,7 @@ import { View, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../context/ThemeContext';
 import { useI18n } from '../i18n';
+import { MCard } from './primitives';
 
 /**
  * Tuile de KPI (§5.2) — un chiffre principal, pas de graphique.
@@ -20,17 +21,7 @@ export default function KpiCard({ label, value, delta, deltaSuffix = '%', icon, 
     tone === 'gold' ? colors.goldLight : tone === 'secondary' ? colors.secondaryLight : colors.primaryLight;
 
   return (
-    <View
-      style={{
-        width,
-        backgroundColor: colors.surface,
-        borderWidth: 1,
-        borderColor: colors.border,
-        borderRadius: radii.md,
-        padding: spacing.md,
-        gap: spacing.sm,
-      }}
-    >
+    <MCard style={{ width, gap: spacing.sm }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <Text style={[typography.caption, { color: colors.warmGray, flex: 1, textAlign: 'left' }]} numberOfLines={2}>
           {label}
@@ -65,6 +56,6 @@ export default function KpiCard({ label, value, delta, deltaSuffix = '%', icon, 
           </Text>
         </View>
       ) : null}
-    </View>
+    </MCard>
   );
 }

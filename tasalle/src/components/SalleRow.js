@@ -4,27 +4,18 @@ import { useTheme } from '../context/ThemeContext';
 import { useI18n } from '../i18n';
 import { formatDA } from '../lib/format';
 import SallePhoto from './SallePhoto';
-import { MBadge } from './primitives';
+import { MBadge, MCard } from './primitives';
 
 /**
  * Carte salle horizontale — écran de recherche (§4.2).
  * Photo carrée 140px à gauche (droite en RTL), informations à côté.
  */
 export default function SalleRow({ salle, onPress, onToggleFav, isFav }) {
-  const { colors, typography, spacing, radii, sizes } = useTheme();
+  const { colors, typography, spacing, sizes } = useTheme();
   const { t } = useI18n();
 
   return (
-    <View
-      style={{
-        flexDirection: 'row',
-        backgroundColor: colors.surface,
-        borderWidth: 1,
-        borderColor: colors.border,
-        borderRadius: radii.md,
-        overflow: 'hidden',
-      }}
-    >
+    <MCard padded={false} style={{ flexDirection: 'row' }}>
       <Pressable
         onPress={onPress}
         accessibilityRole="button"
@@ -96,6 +87,6 @@ export default function SalleRow({ salle, onPress, onToggleFav, isFav }) {
           />
         </Pressable>
       ) : null}
-    </View>
+    </MCard>
   );
 }

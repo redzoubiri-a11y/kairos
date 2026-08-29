@@ -3,7 +3,7 @@ import { useTheme } from '../context/ThemeContext';
 import { useI18n } from '../i18n';
 import { formatNumber } from '../lib/format';
 import SallePhoto from './SallePhoto';
-import { MBadge } from './primitives';
+import { MBadge, MCard } from './primitives';
 
 /**
  * Carte traiteur/halouadji — même grille que `SalleCard` (§4.1) mais sans
@@ -12,22 +12,13 @@ import { MBadge } from './primitives';
  * (lit `photos`/`id`/`name`) et se réutilise telle quelle.
  */
 export default function PartnerCard({ partner, type, onPress, width }) {
-  const { colors, typography, spacing, radii, sizes } = useTheme();
+  const { colors, typography, spacing, sizes } = useTheme();
   const { t } = useI18n();
 
   const hasRange = partner.prix_min != null && partner.prix_max != null;
 
   return (
-    <View
-      style={{
-        width,
-        backgroundColor: colors.surface,
-        borderWidth: 1,
-        borderColor: colors.border,
-        borderRadius: radii.md,
-        overflow: 'hidden',
-      }}
-    >
+    <MCard padded={false} style={{ width }}>
       <Pressable onPress={onPress} accessibilityRole="button" style={({ pressed }) => ({ opacity: pressed ? 0.92 : 1 })}>
         <SallePhoto salle={partner} height={sizes.cardPhoto} />
 
@@ -57,6 +48,6 @@ export default function PartnerCard({ partner, type, onPress, width }) {
           ) : null}
         </View>
       </Pressable>
-    </View>
+    </MCard>
   );
 }

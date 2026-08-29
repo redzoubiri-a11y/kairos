@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, typography, spacing, radius } from '../src/theme';
 
@@ -17,6 +17,7 @@ export default function QuickSearchScreen({ navigation, route }) {
   // Ville affichée = celle sélectionnée sur l'Accueil (onglets Alger/Oran/…), pas
   // une valeur figée — avant ce fix, le bandeau affichait toujours "Alger" même
   // si l'utilisateur avait choisi une autre ville sur l'Accueil.
+  const insets    = useSafeAreaInsets();
   const area      = route?.params?.area || 'alger';
   const areaLabel = route?.params?.areaLabel || 'Alger';
   const { greeting, moment } = getGreeting();
@@ -46,7 +47,16 @@ export default function QuickSearchScreen({ navigation, route }) {
         start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
         style={s.hero}
       >
-        <TouchableOpacity style={s.backBtn} onPress={() => navigation.goBack()}>
+        {/* L'écran est en edges={['left','right']} : sans top, le bouton se
+            posait à 32 px du haut, donc sous la barre d'état sur un téléphone à
+            encoche (44-59 px) — son tiers supérieur n'attrapait pas les taps et
+            il fallait insister. Le max() garde l'apparence d'origine là où
+            l'inset est nul (web, anciens écrans). */}
+        <TouchableOpacity
+          style={[s.backBtn, { marginTop: Math.max(insets.top, spacing.xxl) + spacing.sm }]}
+          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+          onPress={() => navigation.goBack()}
+        >
           <Text style={s.backBtnTxt}>←</Text>
         </TouchableOpacity>
         <View style={s.heroText}>
@@ -116,7 +126,7 @@ const s = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.card },
 
   hero: { height: 430, paddingHorizontal: spacing.xl },
-  backBtn:    { marginTop: spacing.xxl + 8, width: 36, height: 36, borderRadius: radius.control, backgroundColor: 'rgba(255,255,255,0.85)', alignItems: 'center', justifyContent: 'center' },
+  backBtn:    { width: 36, height: 36, borderRadius: radius.control, backgroundColor: 'rgba(255,255,255,0.85)', alignItems: 'center', justifyContent: 'center' },
   backBtnTxt: { color: colors.text, fontSize: 15 },
 
   heroText:   { position: 'absolute', left: spacing.xl, right: spacing.xl, top: 110 },

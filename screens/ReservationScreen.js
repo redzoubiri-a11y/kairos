@@ -106,7 +106,7 @@ export default function ReservationScreen({ navigation }) {
   const goExplorer   = useCallback(() => navigation?.navigate('Explorer'), [navigation]);
   const onCancelNext = useCallback(() => next && myResas.cancel(next.id), [myResas.cancel, next]);
   const onViewNext   = useCallback(
-    () => next?.restaurants?.id && navigation?.navigate('Restaurant', { restaurant: next.restaurants }),
+    () => next?.restaurants?.id && navigation?.navigate('Restaurant', { id: next.restaurants.id, restaurant: next.restaurants }),
     [navigation, next],
   );
   const onEditResa   = useCallback(
@@ -253,7 +253,7 @@ export default function ReservationScreen({ navigation }) {
                   <HistResaCard
                     key={r.id}
                     r={r}
-                    onPress={() => r.restaurants?.id && navigation?.navigate('Restaurant', { restaurant: r.restaurants })}
+                    onPress={() => r.restaurants?.id && navigation?.navigate('Restaurant', { id: r.restaurants.id, restaurant: r.restaurants })}
                     onReserveAgain={r.restaurants?.id
                       ? () => navigation?.navigate('ReservationForm', { restaurant: r.restaurants })
                       : null

@@ -16,7 +16,17 @@ const HERO_INFOS = 280;
 const HERO_OTHER = 200;
 
 export default function RestaurantScreen({ route, navigation }) {
-  const restaurantParam = route?.params?.restaurant || {};
+  // Trois provenances possibles :
+  //  - navigation interne : l'objet complet, affichage immediat
+  //  - lien partage /restaurant/<id> : seulement l'id, useRestaurant complete
+  //  - URL copiee depuis la barre d'adresse : le param `restaurant` a ete
+  //    serialise en la CHAINE "[object Object]". Sans le test de type, elle
+  //    passait pour un objet et l'etalement produisait { 0:'[', 1:'o', ... }
+  //    sans id : fiche vide et aucune requete.
+  const paramRestaurant = route?.params?.restaurant;
+  const objetRecu = paramRestaurant && typeof paramRestaurant === 'object' ? paramRestaurant : null;
+  const idRecu    = route?.params?.id || objetRecu?.id || null;
+  const restaurantParam = objetRecu || (idRecu ? { id: idRecu } : {});
   const {
     restaurant, tab, reviews, loadingReviews,
     tabAnim, photos, menu, rating, cuisineEmoji, desc,

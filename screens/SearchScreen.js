@@ -20,7 +20,7 @@ export default function SearchScreen({ navigation, route }) {
     searchSuggestion, clearQuery,
   } = useSearch({ initialQuery, initialCity });
 
-  const goRestaurant = useCallback((r) => navigation.navigate('Restaurant', { restaurant: r }), [navigation]);
+  const goRestaurant = useCallback((r) => navigation.navigate('Restaurant', { id: r.id, restaurant: r }), [navigation]);
 
   return (
     <SafeAreaView style={s.root} edges={['top', 'left', 'right']}>

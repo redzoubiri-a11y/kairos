@@ -113,7 +113,7 @@ export default function ExplorerScreen({ navigation }) {
     <RestoCard
       r={r}
       cardWidth={cardWidth}
-      onPress={() => navigation.navigate('Restaurant', { restaurant: r })}
+      onPress={() => navigation.navigate('Restaurant', { id: r.id, restaurant: r })}
       onReserve={() => navigation.navigate('ReservationForm', { restaurant: r })}
     />
   ), [navigation, cardWidth]);

@@ -76,8 +76,13 @@ export default function useRestaurant(restaurantProp) {
       })();
 
       (async () => {
+        // Ligne entiere, et non une liste figee de colonnes : la fiche se
+        // remplit alors meme quand on n'a recu qu'un { id } (lien partage ouvert
+        // a froid), et un ecran appelant qui oublie une colonne ne peut plus
+        // trouer l'affichage -- c'est ce qui avait fait disparaitre les horaires
+        // en web (opening_hours absent du select d'ExplorerScreen.web).
         const { data } = await supabase.from('restaurants')
-          .select('click_collect_enabled, espace_famille, terrasse, parking, salle_fete, address, phone, quartier, city, avg_ticket, owner_id')
+          .select('*')
           .eq('id', restaurant.id).maybeSingle();
         setClickCollectEnabled(!!data?.click_collect_enabled);
         if (data) setExtraFields(data);

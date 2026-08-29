@@ -9,7 +9,7 @@ export default function MyOrdersScreen({ navigation }) {
   const { loading, refreshing, active, history, cancelling, onRefresh, cancel } = useMyOrders();
 
   const goRestaurant = useCallback((restaurant) => {
-    if (restaurant?.id) navigation.navigate('Restaurant', { restaurant });
+    if (restaurant?.id) navigation.navigate('Restaurant', { id: restaurant.id, restaurant });
   }, [navigation]);
   const goTracking = useCallback((order) => {
     navigation.navigate('OrderTracking', { order });

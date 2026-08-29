@@ -99,7 +99,7 @@ export default function ExplorerScreen({ navigation, route }) {
   const goRestaurant = useCallback(
     (r) => {
       if (intent === 'commander') navigation.navigate('ClickCollect', { restaurant: r });
-      else navigation.navigate('Restaurant', { restaurant: r });
+      else navigation.navigate('Restaurant', { id: r.id, restaurant: r });
     },
     [navigation, intent],
   );

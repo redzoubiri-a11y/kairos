@@ -52,7 +52,7 @@ export default function MapScreen({ navigation }) {
   }, [hasLocationPermission]);
 
   const closeCard  = useCallback(() => setSelected(null), [setSelected]);
-  const goSelected = useCallback(() => navigation.navigate('Restaurant', { restaurant: selected }), [navigation, selected]);
+  const goSelected = useCallback(() => navigation.navigate('Restaurant', { id: selected?.id, restaurant: selected }), [navigation, selected]);
 
   if (Platform.OS === 'web') {
     return (
@@ -72,7 +72,7 @@ export default function MapScreen({ navigation }) {
                 <TouchableOpacity
                   key={r.id}
                   style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: colors.cardBorder }}
-                  onPress={() => navigation.navigate('Restaurant', { restaurant: r })}
+                  onPress={() => navigation.navigate('Restaurant', { id: r.id, restaurant: r })}
                 >
                   <Text style={{ fontSize: 18 }}>{CUISINE_EMOJI[r.cuisine_type] || '🍽️'}</Text>
                   <View style={{ flex: 1 }}>

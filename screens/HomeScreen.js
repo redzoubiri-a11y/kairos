@@ -72,7 +72,7 @@ export default function HomeScreen({ navigation }) {
 
   const goNotifications = useCallback(() => navigation.navigate('Notifications'), [navigation]);
   const openRestaurant = useCallback(
-    (r) => navigation.navigate('Restaurant', { restaurant: r }),
+    (r) => navigation.navigate('Restaurant', { id: r.id, restaurant: r }),
     [navigation],
   );
   const goExplorer = useCallback(

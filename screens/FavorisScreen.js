@@ -14,7 +14,7 @@ export default function FavorisScreen({ navigation }) {
 
   const goExplorer = useCallback(() => navigation.navigate('Explorer'), [navigation]);
   const goRestaurant = useCallback(
-    (r) => navigation.navigate('Restaurant', { restaurant: r }),
+    (r) => navigation.navigate('Restaurant', { id: r.id, restaurant: r }),
     [navigation],
   );
 

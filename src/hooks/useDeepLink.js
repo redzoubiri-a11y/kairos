@@ -21,7 +21,7 @@ async function handleUrl(url, navigation) {
     if (tableMatch) {
       navigation.navigate('ClickCollect', { restaurant: data, initialMode: 'table', initialTable: tableMatch[1] });
     } else {
-      navigation.navigate('Restaurant', { restaurant: data });
+      navigation.navigate('Restaurant', { id: data.id, restaurant: data });
     }
     return;
   }

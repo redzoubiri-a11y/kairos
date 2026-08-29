@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { Animated } from 'react-native';
+import { useState, useCallback, useRef } from 'react';
+import { Animated, Platform } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { supabase } from '../../supabase';
 
@@ -27,17 +27,25 @@ export default function useHomeData() {
     })();
   }, []));
 
-  useEffect(() => {
+  // L'animation d'entree ne part plus au montage de l'ecran : a cet instant la
+  // liste "Les plus consultes" n'est pas encore rendue (squelettes en cours), et
+  // l'animation se terminait AVANT que la vue existe. Elle restait alors figee
+  // sur ses valeurs de depart -- opacity 0 -- donc invisible, avec un blanc a la
+  // place des restaurants. C'est a l'ecran d'appeler playEntrance() quand son
+  // contenu est pret.
+  const playEntrance = useCallback(() => {
     fadeAnim.setValue(0);
     slideAnim.setValue(20);
     Animated.parallel([
-      Animated.timing(fadeAnim,  { toValue: 1, duration: 420, useNativeDriver: true }),
-      Animated.timing(slideAnim, { toValue: 0, duration: 380, useNativeDriver: true }),
+      // Pas de pilote natif sur le web : react-native-web n'en a pas, et la
+      // valeur n'etait jamais repercutee sur le noeud du DOM.
+      Animated.timing(fadeAnim,  { toValue: 1, duration: 420, useNativeDriver: Platform.OS !== 'web' }),
+      Animated.timing(slideAnim, { toValue: 0, duration: 380, useNativeDriver: Platform.OS !== 'web' }),
     ]).start();
-  }, []);
+  }, [fadeAnim, slideAnim]);
 
   return {
     unreadNotifs,
-    fadeAnim, slideAnim,
+    fadeAnim, slideAnim, playEntrance,
   };
 }

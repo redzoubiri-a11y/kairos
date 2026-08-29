@@ -42,7 +42,7 @@ export default function HomeScreen({ navigation }) {
   usePushNotifications(navigation);
   useDeepLink(navigation);
 
-  const { unreadNotifs, fadeAnim, slideAnim } = useHomeData();
+  const { unreadNotifs, fadeAnim, slideAnim, playEntrance } = useHomeData();
   const { cities: liveCities, loading: citiesLoading } = useLiveCities();
   // Onglets de zone — motif "Japan / Near me / Tokyo / Osaka" de l'app Tabelog,
   // villes réelles (is_live=true dans `cities`), "Près de moi" fixe en 2e position.
@@ -66,6 +66,10 @@ export default function HomeScreen({ navigation }) {
   const areaCityId = liveCities.find(c => c.slug === area)?.id ?? null;
   const { topQuartiers, topCuisines, loading: discoveryLoading } = useHomeDiscovery(areaCityId);
   const { restaurants: mostViewed, loading: mostViewedLoading } = useMostViewed(areaCityId);
+
+  // La liste n'est montee qu'une fois chargee : on lance l'animation d'entree a
+  // ce moment-la, pas au montage de l'ecran (sinon elle se joue dans le vide).
+  useEffect(() => { if (!mostViewedLoading) playEntrance(); }, [mostViewedLoading, playEntrance]);
 
   const insets = useSafeAreaInsets();
   const areaLabel = AREA_TABS.find(a => a.id === area)?.label || 'Alger';

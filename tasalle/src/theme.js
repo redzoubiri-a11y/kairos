@@ -19,14 +19,19 @@ export const lightColors = {
   primaryDark: '#7D5E18',
   onPrimary: '#FFFFFF',
   primaryLight: '#F9F3E5', // 4,60:1 sous `primaryInk` — #F7EFDD tombait à 4,44:1
-  primaryInk: '#8B6914',
+  // Assombri de #8B6914 le 30/08/2026 : il tombait à 4,30:1 sur
+  // `surfaceElevated` une fois les fonds passés à l'ivoire.
+  primaryInk: '#856310',
 
   gold: '#BE9A5E', // décor et logo uniquement — jamais de texte
   goldMark: '#A8834A', // objets graphiques porteurs d'information (étoiles, barres)
-  goldText: '#8B6914', // = primaryInk, texte doré
+  goldText: '#856310', // = primaryInk, texte doré
   goldLight: '#FAF5EC',
 
-  secondary: '#8C6D4A',
+  // Assombri de #8C6D4A (4,03:1 sur `surfaceElevated`) le 30/08/2026 : le
+  // passage du fond de page en ivoire a fait tomber sous le seuil ce qui
+  // tenait tout juste sur blanc.
+  secondary: '#856445',
   secondaryLight: '#F6F0E7',
   // Assombri de #D94E3B (4,12:1, sous le seuil) à #C0392B (5,44:1) —
   // l'ancien rouge échouait aussi bien en texte sur blanc qu'en aplat
@@ -40,7 +45,11 @@ export const lightColors = {
   info: '#3B82F6',
 
   dark: '#1A1A1A',
-  warmGray: '#8B7E72',
+  // Assombri de #8B7E72 le 30/08/2026. Il ne faisait que 3,94:1 sur blanc —
+  // déjà sous le seuil texte avant le passage à l'ivoire, qui l'a fait
+  // descendre à 3,33:1 sur `surfaceElevated`. C'est le texte secondaire de
+  // toute l'application (ville, capacité, sous-titres).
+  warmGray: '#736659',
   // Écart déclaré vs DESIGN_SYSTEM.md §2 (qui fixe #E8E4DF, 1,27:1) :
   // assombri à #BDB3A4 (2,07:1). Le contour est le SEUL signal qui détache
   // une carte — fond de page et fond de carte sont tous deux #FFFFFF — et à
@@ -68,7 +77,7 @@ export const lightColors = {
   logoWordmark: '#1A1A1A',
   logoCanvas: '#F7F0E2',
 
-  chartInk: '#8B6914', // toutes les séries dans la même encre
+  chartInk: '#856310', // toutes les séries dans la même encre
   chartGrid: 'rgba(26,26,26,0.08)',
 };
 

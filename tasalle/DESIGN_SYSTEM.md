@@ -106,7 +106,7 @@ l'autre fait échouer la suite.
 | `primaryDark` | `#7D5E18` | 6,02:1 | État pressé |
 | `onPrimary` | `#FFFFFF` | — | Texte/icônes sur un aplat `primary` |
 | `primaryLight` | `#F9F3E5` | 4,60:1 sous `primaryInk` | Fond doux (badges, zones actives) |
-| `primaryInk` | `#8B6914` | 5,09:1 | Texte de marque, montants, liens |
+| `primaryInk` | `#856310` | 5,54:1 (blanc) / 4,68:1 (surélevé) | Texte de marque, montants, liens — assombri depuis `#8B6914`, qui tombait à 4,30:1 sur le fond surélevé ivoire |
 
 **Or de la marque**
 
@@ -114,14 +114,14 @@ l'autre fait échouer la suite.
 |---|---|---|---|
 | `gold` | `#BE9A5E` | 2,63:1 | **Décor et logo uniquement** |
 | `goldMark` | `#A8834A` | 3,49:1 | Étoiles, barres, puces porteuses d'info |
-| `goldText` | `#8B6914` | 5,09:1 | Texte doré (= `primaryInk`) |
+| `goldText` | `#856310` | 5,54:1 | Texte doré (= `primaryInk`) |
 | `goldLight` | `#FAF5EC` | 1,09:1 | Fond de badge « premium » |
 
 **Secondaires et accents**
 
 | Jeton | Valeur | Contraste | Usage |
 |---|---|---|---|
-| `secondary` | `#8C6D4A` | 4,77:1 | Brun doré, assez sombre pour du texte |
+| `secondary` | `#856445` | 5,38:1 (blanc) / 4,54:1 (surélevé) | Brun doré, assez sombre pour du texte — assombri depuis `#8C6D4A` |
 | `secondaryLight` | `#F6F0E7` | 1,13:1 | Fond associé |
 | `accent` | `#C0392B` | 5,44:1 (texte et aplat) | Erreur, refus, annulation |
 | `accentLight` | `#FDECEA` | 1,14:1 | Fond d'alerte douce |
@@ -136,7 +136,7 @@ l'autre fait échouer la suite.
 | Jeton | Valeur | Contraste | Usage |
 |---|---|---|---|
 | `dark` | `#1A1A1A` | 17,4:1 | Texte principal |
-| `warmGray` | `#8B7E72` | 3,94:1 | Texte secondaire, placeholders |
+| `warmGray` | `#736659` | 5,56:1 (blanc) / 4,70:1 (surélevé) | Texte secondaire, placeholders — assombri depuis `#8B7E72`, qui ne faisait que **3,94:1** et ne tenait donc le seuil texte sur aucun fond |
 | `border` | `#BDB3A4` | 2,07:1 | Contours 1 px (cartes, champs) — **écart déclaré** : la source fixe `#E8E4DF` (1,27:1), invisible sur device réel (30/08/2026) |
 | `cream` | `#FAF4E8` | 15,9:1 sous le texte | Fond de page, ivoire — **écart déclaré**, la source dit `#FFFFFF` |
 | `surface` | `#FFFFFF` | — | Fond de carte : la carte se détache désormais par son fond **et** par son contour |
@@ -165,7 +165,7 @@ l'autre fait échouer la suite.
 
 | Jeton | Valeur | Note |
 |---|---|---|
-| `chartInk` | `#8B6914` | Toutes les séries dans la **même** encre |
+| `chartInk` | `#856310` | Toutes les séries dans la **même** encre |
 | `chartGrid` | `rgba(26,26,26,0.08)` | Grille discrète |
 
 > Les répartitions (camemberts, séries) sont rendues en **lignes libellées

@@ -89,6 +89,33 @@ describe('contraste du thème clair', () => {
   it('les fonds pâles laissent lire l’encre de marque', () => {
     expect(contrast(lightColors.primaryInk, lightColors.primaryLight)).toBeGreaterThanOrEqual(AA_TEXTE);
   });
+
+  /**
+   * Angle mort révélé le 30/08/2026 : tous les tests ci-dessus mesurent sur
+   * `surface`, le blanc des cartes. Le passage du fond de page à l'ivoire a
+   * fait tomber le texte secondaire à 3,33:1 sur `surfaceElevated` sans
+   * qu'aucun test ne bronche. Les trois fonds clairs sont désormais
+   * éprouvés, en commençant par le plus sombre d'entre eux.
+   */
+  it('les textes tiennent sur les TROIS fonds clairs, pas seulement sur la carte', () => {
+    const fonds = [lightColors.surface, lightColors.cream, lightColors.surfaceElevated];
+    for (const fond of fonds) {
+      expect(contrast(lightColors.dark, fond)).toBeGreaterThanOrEqual(AA_TEXTE);
+      expect(contrast(lightColors.warmGray, fond)).toBeGreaterThanOrEqual(AA_TEXTE);
+      expect(contrast(lightColors.secondary, fond)).toBeGreaterThanOrEqual(AA_TEXTE);
+      expect(contrast(lightColors.primaryInk, fond)).toBeGreaterThanOrEqual(AA_TEXTE);
+      expect(contrast(lightColors.accent, fond)).toBeGreaterThanOrEqual(AA_TEXTE);
+    }
+  });
+
+  /**
+   * `primary` n'est plus un aplat noir mais un or : il sert aussi de trait
+   * (barre du Stepper) sur le fond de page, où il devient un objet porteur
+   * d'information au sens de WCAG 1.4.11.
+   */
+  it('l’or d’aplat reste visible en trait sur le fond de page', () => {
+    expect(contrast(lightColors.primary, lightColors.cream)).toBeGreaterThanOrEqual(AA_COMPOSANT);
+  });
 });
 
 describe('contraste du thème sombre', () => {

@@ -12,10 +12,13 @@
 // sur blanc, sous le seuil de 4,5:1 que WCAG 2.1 demande à du texte. D'où
 // des jetons distincts pour chaque rôle (§2.1) plutôt qu'une seule couleur.
 export const lightColors = {
-  primary: '#1A1A1A',
-  primaryDark: '#000000',
+  // Ivoire et or (30/08/2026) : l'or prend la place du noir sur les aplats
+  // d'action. #95701A est l'or le plus lumineux qui porte encore du blanc
+  // à 4,55:1 — au-dessus, le libellé des boutons passe sous le seuil.
+  primary: '#95701A',
+  primaryDark: '#7D5E18',
   onPrimary: '#FFFFFF',
-  primaryLight: '#F7F2E8',
+  primaryLight: '#F9F3E5', // 4,60:1 sous `primaryInk` — #F7EFDD tombait à 4,44:1
   primaryInk: '#8B6914',
 
   gold: '#BE9A5E', // décor et logo uniquement — jamais de texte
@@ -47,20 +50,23 @@ export const lightColors = {
   border: '#BDB3A4',
   // Fond de page et fond de carte — identiques ; c'est le contour de 1px
   // qui détache une carte, pas une ombre.
-  cream: '#FFFFFF',
+  // Le fond de page passe en ivoire, la carte reste blanche : la carte se
+  // détache maintenant par son fond ET par son contour, plus seulement par
+  // le contour.
+  cream: '#FAF4E8',
   surface: '#FFFFFF',
-  surfaceElevated: '#FAFAF8',
+  surfaceElevated: '#F4EBDA',
 
   successBg: 'rgba(139,105,20,0.10)',
   warningBg: 'rgba(190,154,94,0.18)',
   dangerBg: 'rgba(192,57,43,0.12)',
   infoBg: 'rgba(59,130,246,0.12)',
   overlay: 'rgba(0,0,0,0.55)',
-  skeleton: '#EFEBE5',
+  skeleton: '#EDE3D0',
 
   logoInk: '#BE9A5E', // monogramme et filet — 2,63:1, exempté (logotype, WCAG 1.4.3)
   logoWordmark: '#1A1A1A',
-  logoCanvas: '#F1EFEA',
+  logoCanvas: '#F7F0E2',
 
   chartInk: '#8B6914', // toutes les séries dans la même encre
   chartGrid: 'rgba(26,26,26,0.08)',
@@ -90,11 +96,11 @@ export const darkColors = {
   chartInk: '#BE9A5E',
 
   dark: '#FFFFFF',
-  surface: '#2A2A2A',
-  surfaceElevated: '#1A1A1A',
-  border: '#5A5A5A', // même écart qu'en clair : 1,26:1 → 2,08:1 sur `surface`
-  cream: '#1A1A1A',
-  warmGray: '#A9A099',
+  surface: '#2A211C',
+  surfaceElevated: '#171210',
+  border: '#5C4B3D', // réchauffé pour s'accorder à la nuit brunie ; même écart de lisibilité qu'en clair
+  cream: '#1C1613', // nuit chaude plutôt que gris neutre, pendant sombre de l'ivoire
+  warmGray: '#AFA294',
 
   primaryLight: 'rgba(190,154,94,0.20)',
   secondaryLight: 'rgba(190,154,94,0.14)',
@@ -102,7 +108,7 @@ export const darkColors = {
   accentLight: 'rgba(192,57,43,0.20)',
   successBg: 'rgba(190,154,94,0.18)',
   warningBg: 'rgba(190,154,94,0.18)',
-  skeleton: '#3A3A3A',
+  skeleton: '#332A24',
 
   // Écart déclaré : la doc source dit "accent reste identique" en thème
   // sombre, mais `accent` (#C0392B) tombe sous 3:1 sur les fonds sombres
@@ -116,7 +122,7 @@ export const darkColors = {
   accentInk: '#D98880',
 
   logoWordmark: '#FFFFFF', // le mot-symbole s'inverse : noir devient blanc
-  logoCanvas: '#1A1A1A',
+  logoCanvas: '#1C1613',
   // `logoInk` n'est pas redéfini : le monogramme garde le même or dans les
   // deux thèmes, comme toute marque — il y gagne même en lisibilité.
 };

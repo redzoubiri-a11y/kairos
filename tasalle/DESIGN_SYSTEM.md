@@ -67,8 +67,17 @@ inversé.
 
 ### 2.1 · La règle des trois ors
 
-La palette est celle du logo : **noir et or**, rien d'autre. (L'émeraude du
-cahier des charges d'origine a été écartée — la marque ne la porte pas.)
+La palette est celle du logo : **ivoire et or**. (L'émeraude du cahier des
+charges d'origine a été écartée — la marque ne la porte pas.)
+
+> **Écart déclaré — 30/08/2026.** La source Claude Design décrit un système
+> **noir et or** : fond de page blanc, aplats d'action noirs. À l'usage, sur
+> une application de réservation de salles de mariage, l'aplat noir sur
+> chaque bouton donnait un ton administratif, à contre-emploi du sujet.
+> Décision du commanditaire : fond de page **ivoire** (`#FAF4E8`) et aplats
+> d'action **or** (`#95701A`). Le noir reste la couleur du texte. Tout le
+> reste du système — les trois ors, la règle du contour, la typographie —
+> est inchangé.
 
 L'or de marque, `#BE9A5E`, ne peut pas tout faire : il ne fait que **2,63:1**
 sur blanc, bien sous le seuil de 4,5:1 que WCAG 2.1 demande à du texte. D'où
@@ -77,7 +86,7 @@ demanderait qu'un :
 
 | Jeton | Rôle | Peut être utilisé pour… |
 |---|---|---|
-| `primary` (noir) | **Aplats** | Fonds de boutons, d'onglets actifs — porte du blanc à 17,4:1 |
+| `primary` (or d'aplat) | **Aplats** | Fonds de boutons, d'onglets actifs — porte du blanc à 4,55:1. Plus bronze que l'or de marque : au-dessus de `#95701A`, le libellé blanc passe sous le seuil |
 | `primaryInk` / `goldText` (or profond) | **Ce qui s'écrit** | Texte de marque, montants, liens, icônes actives — 5,09:1 |
 | `gold` (or de marque) | **Décor et logo uniquement** | Le monogramme, un filet, un dégradé — jamais du texte, jamais un composant porteur d'information |
 | `goldMark` (or assombri) | **Objets graphiques porteurs d'information** | Étoiles de notation, barres de graphique, puces — 3,49:1, au-dessus du seuil non-texte de 1.4.11 |
@@ -93,10 +102,10 @@ l'autre fait échouer la suite.
 
 | Jeton | Valeur | Contraste | Usage |
 |---|---|---|---|
-| `primary` | `#1A1A1A` | 17,4:1 (sur blanc) | Aplats de boutons, onglet actif |
-| `primaryDark` | `#000000` | 21:1 | Variante la plus sombre |
+| `primary` | `#95701A` | 4,55:1 (blanc dessus) | Aplats de boutons, onglet actif — **écart déclaré**, la source dit `#1A1A1A` |
+| `primaryDark` | `#7D5E18` | 6,02:1 | État pressé |
 | `onPrimary` | `#FFFFFF` | — | Texte/icônes sur un aplat `primary` |
-| `primaryLight` | `#F7F2E8` | 1,12:1 | Fond doux (badges, zones actives) |
+| `primaryLight` | `#F9F3E5` | 4,60:1 sous `primaryInk` | Fond doux (badges, zones actives) |
 | `primaryInk` | `#8B6914` | 5,09:1 | Texte de marque, montants, liens |
 
 **Or de la marque**
@@ -129,8 +138,9 @@ l'autre fait échouer la suite.
 | `dark` | `#1A1A1A` | 17,4:1 | Texte principal |
 | `warmGray` | `#8B7E72` | 3,94:1 | Texte secondaire, placeholders |
 | `border` | `#BDB3A4` | 2,07:1 | Contours 1 px (cartes, champs) — **écart déclaré** : la source fixe `#E8E4DF` (1,27:1), invisible sur device réel (30/08/2026) |
-| `cream` / `surface` | `#FFFFFF` | — | Fond de page et fond de carte — **identiques** ; c'est le contour qui détache une carte, pas une ombre |
-| `surfaceElevated` | `#FAFAF8` | 1,05:1 | Fond légèrement surélevé (lignes alternées) |
+| `cream` | `#FAF4E8` | 15,9:1 sous le texte | Fond de page, ivoire — **écart déclaré**, la source dit `#FFFFFF` |
+| `surface` | `#FFFFFF` | — | Fond de carte : la carte se détache désormais par son fond **et** par son contour |
+| `surfaceElevated` | `#F4EBDA` | — | Fond légèrement surélevé (lignes alternées) |
 
 **Dérivés (fonds de badge)**
 
@@ -180,10 +190,10 @@ s'y inscrit.
 | `secondary` | `#C9A96A` | — | Éclairci pour rester lisible |
 | `goldMark` | `#BE9A5E` | largement > 3:1 | Les étoiles reprennent la teinte pleine |
 | `dark` | `#FFFFFF` | | Texte principal |
-| `surface` | `#2A2A2A` | | |
-| `surfaceElevated` | `#1A1A1A` | | |
-| `border` | `#5A5A5A` | 2,08:1 | Même écart qu'en clair (source : `#3A3A3A`, 1,26:1) |
-| `cream` | `#1A1A1A` | | Fond de page |
+| `surface` | `#2A211C` | | Brun profond, pendant sombre de l'ivoire |
+| `surfaceElevated` | `#171210` | | |
+| `border` | `#5C4B3D` | | Réchauffé pour s'accorder à la nuit brunie (source : `#3A3A3A`, 1,26:1) |
+| `cream` | `#1C1613` | | Fond de page — nuit chaude plutôt que gris neutre |
 | `warmGray` | `#A9A099` | | |
 | `logoWordmark` | `#FFFFFF` | | Le mot-symbole s'inverse : noir devient blanc |
 | `logoCanvas` | `#1A1A1A` | | |

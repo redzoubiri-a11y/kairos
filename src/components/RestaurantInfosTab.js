@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, TouchableOpacity, Linking, Platform } from 'react-native';
 import { colors, typography, spacing, radius, shadows } from '../theme';
 export { todaysHours, isOpenNow } from '../utils/openingHours';
-import { fmtHours, mvpSlots, nextDays } from '../utils/openingHours';
+import { fmtHours, mvpSlots, slotsFromSchedule, nextDays } from '../utils/openingHours';
 let MapView, Marker;
 if (Platform.OS !== 'web') {
   const maps = require('react-native-maps');
@@ -20,11 +20,18 @@ function openInMaps(restaurant) {
 }
 
 export default function RestaurantInfosTab({
-  restaurant, desc,
+  restaurant, desc, scheduleMap = null,
   selectedDateIdx = 0, onSelectDate, selectedSlot, onSelectSlot,
 }) {
   const hasCoords = !!(restaurant.latitude && restaurant.longitude);
-  const slots = mvpSlots(restaurant.opening_hours, DATES[selectedDateIdx]?.day);
+  const dayOfWeek = DATES[selectedDateIdx]?.day;
+  // Les services déclarés par le restaurateur priment : eux seuls connaissent la
+  // coupure midi/soir. L'amplitude d'`opening_hours` ne sert plus que de repli
+  // pour les fiches sans ligne dans `restaurant_schedules`.
+  const daySchedule = scheduleMap?.[dayOfWeek];
+  const slots = daySchedule
+    ? slotsFromSchedule(daySchedule)
+    : mvpSlots(restaurant.opening_hours, dayOfWeek);
 
   const infoRows = [
     { icon: '💰', label: 'Prix moyen', val: restaurant.avg_ticket > 0 ? `${restaurant.avg_ticket.toLocaleString('fr-FR')} DA / pers.` : null },

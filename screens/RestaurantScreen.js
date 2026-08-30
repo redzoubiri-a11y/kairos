@@ -30,7 +30,7 @@ export default function RestaurantScreen({ route, navigation }) {
   const {
     restaurant, tab, reviews, loadingReviews,
     tabAnim, photos, menu, rating, cuisineEmoji, desc,
-    switchTab, clickCollectEnabled, isUnclaimed,
+    switchTab, clickCollectEnabled, isUnclaimed, scheduleMap,
   } = useRestaurant(restaurantParam);
 
   // Sélection sur le widget "Réservation en ligne" — reflète le libellé du CTA,
@@ -100,7 +100,7 @@ export default function RestaurantScreen({ route, navigation }) {
 
         {tab === 'Infos' && (
           <RestaurantInfosTab
-            restaurant={restaurant} desc={desc}
+            restaurant={restaurant} desc={desc} scheduleMap={scheduleMap}
             selectedDateIdx={selectedDateIdx} onSelectDate={setSelectedDateIdx}
             selectedSlot={selectedSlot} onSelectSlot={setSelectedSlot}
           />

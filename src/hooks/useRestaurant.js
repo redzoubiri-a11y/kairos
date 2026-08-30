@@ -18,6 +18,9 @@ export default function useRestaurant(restaurantProp) {
   const [loadingReviews, setLoadingReviews] = useState(false);
   const [dbDishes,       setDbDishes]       = useState([]);
   const [clickCollectEnabled, setClickCollectEnabled] = useState(false);
+  // Services midi/soir déclarés par le restaurateur — alimentent les créneaux de
+  // la fiche (cf. slotsFromSchedule). null tant que rien n'est chargé.
+  const [scheduleMap, setScheduleMap] = useState(null);
   // Champs pas forcément sélectionnés par l'écran appelant (ex. Accueil ne les
   // demande pas) — refetchés ici pour que la fiche reste correcte quelle que
   // soit la provenance de la navigation.
@@ -88,6 +91,27 @@ export default function useRestaurant(restaurantProp) {
         if (data) setExtraFields(data);
       })();
 
+      (async () => {
+        // Mêmes horaires que le formulaire de réservation, pour que les créneaux
+        // proposés sur la fiche ne tombent pas en pleine coupure midi/soir.
+        const { data } = await supabase.from('restaurant_schedules')
+          .select('day_of_week, is_open, lunch_start, lunch_end, dinner_start, dinner_end')
+          .eq('restaurant_id', restaurant.id);
+        if (data?.length > 0) {
+          const m = {};
+          data.forEach(r => {
+            m[r.day_of_week] = {
+              is_open:      r.is_open,
+              lunch_start:  r.lunch_start  ? String(r.lunch_start).slice(0, 5)  : null,
+              lunch_end:    r.lunch_end    ? String(r.lunch_end).slice(0, 5)    : null,
+              dinner_start: r.dinner_start ? String(r.dinner_start).slice(0, 5) : null,
+              dinner_end:   r.dinner_end   ? String(r.dinner_end).slice(0, 5)   : null,
+            };
+          });
+          setScheduleMap(m);
+        }
+      })();
+
       setLoadingReviews(true);
       (async () => {
         try {
@@ -122,6 +146,6 @@ export default function useRestaurant(restaurantProp) {
     restaurant,
     tab, reviews, loadingReviews,
     tabAnim, photos, menu, rating, cuisineEmoji, desc,
-    switchTab, clickCollectEnabled, isUnclaimed,
+    switchTab, clickCollectEnabled, isUnclaimed, scheduleMap,
   };
 }

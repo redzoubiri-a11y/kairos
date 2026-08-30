@@ -100,6 +100,45 @@ export function mvpSlots(oh, day = new Date().getDay()) {
   return [0.3, 0.5, 0.7].map(f => toHM(Math.round((open + span * f) / 30) * 30));
 }
 
+// Créneaux d'affichage tirés des VRAIS services du restaurateur
+// (`restaurant_schedules`, la même source que le parcours de réservation dans
+// useReservationForm) — à préférer systématiquement à mvpSlots, qui étale ses 3
+// horaires sur l'amplitude de la journée et tombe donc en pleine fermeture dès
+// qu'il y a une coupure midi/soir (La Fontaine d'Or, 12:00–16:00 / 19:00–23:00,
+// annonçait 15:30 et 17:30 — corrigé le 30/08/2026).
+// Toujours pas une vraie disponibilité : aucune vérification de capacité.
+export function slotsFromSchedule(daySchedule) {
+  if (!daySchedule || daySchedule.is_open === false) return [];
+  const toMin = s => { const [h, m] = (s || '0:0').split(':').map(Number); return h * 60 + (m || 0); };
+  const toHM  = min => { const h = Math.floor(min / 60) % 24; const m = min % 60; return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`; };
+  const services = [
+    [daySchedule.lunch_start,  daySchedule.lunch_end],
+    [daySchedule.dinner_start, daySchedule.dinner_end],
+  ]
+    .filter(([a, b]) => a && b)
+    .map(([a, b]) => {
+      const start = toMin(a);
+      let end = toMin(b);
+      if (end <= start) end += 24 * 60; // service qui passe minuit (ex. 19:00 → 01:00)
+      return { start, end };
+    })
+    .filter(sv => sv.end - sv.start >= 30);
+  if (services.length === 0) return [];
+  // Un seul service : 3 horaires étalés dessus, comme mvpSlots. Deux services :
+  // un au déjeuner, deux au dîner (le plus demandé).
+  const fractions = services.length === 1 ? [[0.3, 0.5, 0.7]] : [[0.35], [0.3, 0.65]];
+  const out = [];
+  services.forEach((sv, i) => {
+    for (const f of fractions[i] || []) {
+      // Arrondi à la demi-heure, borné au service : jamais avant l'ouverture ni
+      // sur l'heure de fermeture (dernier couvert = 30 min avant).
+      const min = Math.min(Math.max(Math.round((sv.start + (sv.end - sv.start) * f) / 30) * 30, sv.start), sv.end - 30);
+      if (!out.includes(min)) out.push(min);
+    }
+  });
+  return out.sort((a, b) => a - b).map(toHM);
+}
+
 const DOW_SHORT = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
 
 // Les n prochains jours (aujourd'hui inclus) pour la bande de dates de la fiche

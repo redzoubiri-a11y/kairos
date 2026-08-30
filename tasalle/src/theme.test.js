@@ -119,6 +119,22 @@ describe('contraste du thème clair', () => {
 });
 
 describe('contraste du thème sombre', () => {
+  /**
+   * Pendant sombre du test des trois fonds clairs : `surfaceElevated`
+   * (#171210) est plus sombre que le fond de page, et n'était éprouvé par
+   * aucun test.
+   */
+  it('les textes tiennent sur les TROIS fonds sombres', () => {
+    const fonds = [darkColors.surface, darkColors.cream, darkColors.surfaceElevated];
+    for (const fond of fonds) {
+      expect(contrast(darkColors.dark, fond)).toBeGreaterThanOrEqual(AA_TEXTE);
+      expect(contrast(darkColors.warmGray, fond)).toBeGreaterThanOrEqual(AA_TEXTE);
+      expect(contrast(darkColors.secondary, fond)).toBeGreaterThanOrEqual(AA_TEXTE);
+      expect(contrast(darkColors.primaryInk, fond)).toBeGreaterThanOrEqual(AA_TEXTE);
+      expect(contrast(darkColors.accentInk, fond)).toBeGreaterThanOrEqual(AA_TEXTE);
+    }
+  });
+
   it('le texte principal ressort sur le fond de page', () => {
     expect(contrast(darkColors.dark, darkColors.cream)).toBeGreaterThanOrEqual(AA_TEXTE);
   });

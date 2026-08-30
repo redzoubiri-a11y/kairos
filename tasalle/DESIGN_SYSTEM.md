@@ -128,7 +128,7 @@ l'autre fait échouer la suite.
 |---|---|---|---|
 | `dark` | `#1A1A1A` | 17,4:1 | Texte principal |
 | `warmGray` | `#8B7E72` | 3,94:1 | Texte secondaire, placeholders |
-| `border` | `#E8E4DF` | 1,27:1 | Contours 1 px (cartes, champs) |
+| `border` | `#BDB3A4` | 2,07:1 | Contours 1 px (cartes, champs) — **écart déclaré** : la source fixe `#E8E4DF` (1,27:1), invisible sur device réel (30/08/2026) |
 | `cream` / `surface` | `#FFFFFF` | — | Fond de page et fond de carte — **identiques** ; c'est le contour qui détache une carte, pas une ombre |
 | `surfaceElevated` | `#FAFAF8` | 1,05:1 | Fond légèrement surélevé (lignes alternées) |
 
@@ -182,7 +182,7 @@ s'y inscrit.
 | `dark` | `#FFFFFF` | | Texte principal |
 | `surface` | `#2A2A2A` | | |
 | `surfaceElevated` | `#1A1A1A` | | |
-| `border` | `#3A3A3A` | | |
+| `border` | `#5A5A5A` | 2,08:1 | Même écart qu'en clair (source : `#3A3A3A`, 1,26:1) |
 | `cream` | `#1A1A1A` | | Fond de page |
 | `warmGray` | `#A9A099` | | |
 | `logoWordmark` | `#FFFFFF` | | Le mot-symbole s'inverse : noir devient blanc |

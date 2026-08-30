@@ -38,7 +38,13 @@ export const lightColors = {
 
   dark: '#1A1A1A',
   warmGray: '#8B7E72',
-  border: '#E8E4DF',
+  // Écart déclaré vs DESIGN_SYSTEM.md §2 (qui fixe #E8E4DF, 1,27:1) :
+  // assombri à #BDB3A4 (2,07:1). Le contour est le SEUL signal qui détache
+  // une carte — fond de page et fond de carte sont tous deux #FFFFFF — et à
+  // 1,27:1 sur 1 px il est imperceptible sur un écran de téléphone (constaté
+  // en test sur device réel le 30/08/2026). Reste sous le 3:1 de WCAG 1.4.11,
+  // mais visible.
+  border: '#BDB3A4',
   // Fond de page et fond de carte — identiques ; c'est le contour de 1px
   // qui détache une carte, pas une ombre.
   cream: '#FFFFFF',
@@ -86,7 +92,7 @@ export const darkColors = {
   dark: '#FFFFFF',
   surface: '#2A2A2A',
   surfaceElevated: '#1A1A1A',
-  border: '#3A3A3A',
+  border: '#5A5A5A', // même écart qu'en clair : 1,26:1 → 2,08:1 sur `surface`
   cream: '#1A1A1A',
   warmGray: '#A9A099',
 

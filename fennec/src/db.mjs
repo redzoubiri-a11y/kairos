@@ -6,7 +6,7 @@
  *   - `words`        : copie locale du référentiel (mots + calendrier nominal),
  *                      téléchargée une fois en Wi-Fi puis réutilisée hors-ligne.
  *   - `word_state`    : état SRS par mot pour l'élève actif sur cet appareil
- *                      (voir fennec/src/srs.js pour le format WordState).
+ *                      (voir fennec/src/srs.mjs pour le format WordState).
  *   - `pending_sync`  : file d'événements en attente d'envoi vers Supabase
  *                      (réponses aux écrans, sessions terminées, boss).
  *
@@ -140,7 +140,7 @@ class FennecStore {
    *
    * @param {string} studentId
    * @param {number} wordId
-   * @param {object} state - WordState (voir srs.js), sérialisé (Date -> ISO)
+   * @param {object} state - WordState (voir srs.mjs), sérialisé (Date -> ISO)
    * @param {object} syncPayload - événement à pousser vers Supabase
    */
   async saveWordState(studentId, wordId, state, syncPayload) {
@@ -213,7 +213,7 @@ function serializeState(state) {
   };
 }
 
-/** Désérialise l'inverse de serializeState, pour repasser par srs.js. */
+/** Désérialise l'inverse de serializeState, pour repasser par srs.mjs. */
 function deserializeState(row) {
   if (!row) return null;
   return {

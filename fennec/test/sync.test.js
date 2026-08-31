@@ -3,11 +3,11 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 
-// sync.js est écrit en ESM (il tourne dans la PWA) ; on l'importe dynamiquement
+// sync.mjs est écrit en ESM (il tourne dans la PWA) ; on l'importe dynamiquement
 // depuis ce test CommonJS plutôt que de dupliquer le module.
 const syncPromise = import('../src/sync.mjs');
 
-/** Store minimal en mémoire, respectant l'interface utilisée par sync.js. */
+/** Store minimal en mémoire, respectant l'interface utilisée par sync.mjs. */
 function makeFakeStore(initialPending) {
   let pending = initialPending;
   const cleared = [];
@@ -97,7 +97,7 @@ test('pushPending sur une file vide ne fait rien et ne plante pas', async () => 
   assert.deepEqual(result, { sent: 0, remaining: 0 });
 });
 
-test('pullCatalog normalise les lignes Supabase (snake_case) vers le format attendu par db.js (camelCase)', async () => {
+test('pullCatalog normalise les lignes Supabase (snake_case) vers le format attendu par db.mjs (camelCase)', async () => {
   const { pullCatalog } = await syncPromise;
   const saved = [];
   const store = { saveCatalog: async (rows) => { saved.push(...rows); } };

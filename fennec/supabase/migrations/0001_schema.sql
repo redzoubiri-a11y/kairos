@@ -33,7 +33,7 @@ create table if not exists words (
   -- calendrier SRS nominal (labels de semaine 'S21', 'VH1'...), généré à la
   -- conception et rejoué par le moteur offline à partir de la date réelle
   -- d'introduction de l'élève — ces colonnes servent de référence/QA, pas
-  -- de source de vérité runtime (voir fennec/src/srs.js).
+  -- de source de vérité runtime (voir fennec/src/srs.mjs).
   review_1     text not null,
   review_2     text not null,
   review_3     text not null,
@@ -94,7 +94,7 @@ create table if not exists classroom_students (
 
 -- ---------------------------------------------------------------- état SRS
 -- Une ligne par (élève, mot). C'est la synchronisation en base de l'état géré
--- en local par fennec/src/srs.js — voir ce fichier pour l'algorithme complet
+-- en local par fennec/src/srs.mjs — voir ce fichier pour l'algorithme complet
 -- (intervalles [1,3,7,16,35] jours, recul d'un cran sur échec).
 
 create table if not exists student_word_state (
@@ -116,7 +116,7 @@ create index if not exists idx_sws_mastered on student_word_state(student_id) wh
 
 -- -------------------------------------------------------------- sessions
 -- Une session = les ~18 écrans d'un jour (cf. docs/script-semaine-type-s21.md).
--- Écrite par la sync depuis la file locale (fennec/src/sync.js), potentiellement
+-- Écrite par la sync depuis la file locale (fennec/src/sync.mjs), potentiellement
 -- bien après que la session s'est réellement déroulée hors-ligne : `started_at`
 -- fait foi, pas la date d'insertion.
 

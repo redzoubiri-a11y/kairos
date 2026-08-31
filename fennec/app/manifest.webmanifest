@@ -1,0 +1,14 @@
+{
+  "name": "Fennec — apprendre l'anglais",
+  "short_name": "Fennec",
+  "description": "Apprendre l'anglais en 15 minutes par jour, du primaire au BEM.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#EFE3CB",
+  "theme_color": "#177245",
+  "lang": "fr",
+  "icons": [
+    { "src": "./icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

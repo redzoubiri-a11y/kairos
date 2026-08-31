@@ -2,7 +2,7 @@
  * Fennec — moteur de répétition espacée (SRS).
  *
  * Module pur, sans dépendance : mêmes entrées → mêmes sorties, aucun accès
- * réseau ni stockage. C'est ce qui le rend utilisable hors-ligne (fennec/src/db.js
+ * réseau ni stockage. C'est ce qui le rend utilisable hors-ligne (fennec/src/db.mjs
  * l'appelle depuis IndexedDB) et testable sans backend (fennec/test/srs.test.js).
  *
  * Algorithme : SM-2 simplifié avec palier fixe d'intervalles, conforme au
@@ -20,8 +20,6 @@
  * consécutives — cohérent avec la règle du script : "une révision ratée fait
  * reculer l'item d'un cran, non modélisé comme un retour à zéro".
  */
-
-'use strict';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -209,7 +207,7 @@ function addDays(date, days) {
   return new Date(date.getTime() + days * DAY_MS);
 }
 
-module.exports = {
+export {
   STEPS,
   MASTERY_REPS,
   freshState,

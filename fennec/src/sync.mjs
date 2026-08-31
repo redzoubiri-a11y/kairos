@@ -4,7 +4,7 @@
  * Ne contient AUCUNE logique pédagogique : c'est un pont mécanique entre la
  * file locale (fennec/src/db.mjs, store `pending_sync`) et les tables
  * Supabase (fennec/supabase/migrations/0001_schema.sql). Le moteur SRS
- * (fennec/src/srs.js) tourne déjà en local avant que ce module intervienne —
+ * (fennec/src/srs.mjs) tourne déjà en local avant que ce module intervienne —
  * si le réseau tombe, l'enfant n'attend jamais après lui.
  *
  * Deux directions :

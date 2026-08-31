@@ -1,0 +1,119 @@
+/* Fennec — feuille de style de l'app réelle.
+   Identité reprise des maquettes wireframes/fennec-maquette-*.html : sable
+   chaud, encre brune, vert de réussite, safran d'accent, corail d'action.
+   Formalisation complète en cours dans Claude Design (voir conversation) —
+   ces tokens seront remplacés par le design système final le moment venu. */
+
+:root{
+  --desk:#EFE3CB; --sand:#FBF0DC; --card:#FFFFFF; --ink:#33291C; --ink-soft:#7A6A52;
+  --green:#177245; --green-soft:#DDEFE4; --saffron:#E09E3C; --saffron-soft:#FBEFD8;
+  --coral:#D96A4E; --line:#E5D8BE;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--desk); color:var(--ink); font-family:'Baloo 2',system-ui,sans-serif;
+  margin:0; min-height:100vh; display:flex; flex-direction:column; align-items:center;
+}
+
+.devbar{
+  width:100%; background:var(--ink); color:var(--sand); font-family:var(--mono);
+  font-size:.72rem; padding:.4rem 1rem; display:flex; gap:1rem; align-items:center;
+  flex-wrap:wrap; justify-content:center;
+}
+.devbar button{
+  font-family:var(--mono); font-size:.7rem; background:var(--saffron); color:var(--ink);
+  border:none; border-radius:6px; padding:.25rem .6rem; cursor:pointer;
+}
+.devbar button:focus-visible{outline:2px solid var(--sand)}
+
+.phone{
+  width:min(400px,96vw); height:min(760px,84vh); background:var(--sand);
+  border-radius:34px; border:6px solid #2B2118; box-shadow:0 18px 50px rgba(43,33,24,.35);
+  display:flex; flex-direction:column; overflow:hidden; position:relative; margin-top:1rem;
+}
+.topbar{display:flex; align-items:center; gap:.6rem; padding:.8rem 1rem .5rem}
+.pbar{flex:1; height:12px; background:#EADFC6; border-radius:999px; overflow:hidden}
+.pfill{height:100%; width:0%; background:var(--green); border-radius:999px; transition:width .4s ease}
+.phase{
+  font-family:var(--mono); font-size:.6rem; letter-spacing:.1em; text-transform:uppercase;
+  border-radius:999px; padding:.2rem .6rem; white-space:nowrap; background:var(--green-soft); color:var(--green);
+}
+.hintbtn{
+  width:34px; height:34px; border-radius:50%; border:2px solid var(--line); background:var(--card);
+  font-family:'Baloo 2'; font-weight:800; font-size:1.05rem; color:var(--ink-soft); cursor:pointer; flex:none;
+}
+.hintbtn:focus-visible{outline:3px solid var(--saffron)}
+
+#stage{flex:1; display:flex; flex-direction:column; padding:.7rem 1rem 1rem; overflow-y:auto; min-height:0}
+.say{font-size:1.25rem; font-weight:700; text-align:center; margin:.2rem 0 .6rem; text-wrap:balance; line-height:1.25}
+.say .en{color:var(--green)}
+.sub{font-size:.9rem; color:var(--ink-soft); text-align:center; font-weight:600; margin:-.3rem 0 .6rem}
+
+.fennec{font-size:3rem; text-align:center; line-height:1; margin:.2rem 0; transition:transform .25s; user-select:none}
+.fennec.happy{transform:scale(1.25) rotate(-8deg)}
+@media (prefers-reduced-motion: reduce){.fennec,.pfill{transition:none}}
+
+.speaker{
+  display:block; margin:.2rem auto .8rem; width:74px; height:74px; border-radius:50%;
+  border:none; background:var(--saffron); color:#fff; font-size:2rem; cursor:pointer; box-shadow:0 4px 0 #B87E2C;
+}
+.speaker:active{transform:translateY(3px); box-shadow:0 1px 0 #B87E2C}
+.speaker:focus-visible{outline:3px solid var(--green)}
+
+.grid{display:grid; grid-template-columns:1fr 1fr; gap:.8rem; margin-top:auto; margin-bottom:auto}
+.grid.three{grid-template-columns:1fr 1fr 1fr}
+.opt{
+  background:var(--card); border:3px solid var(--line); border-radius:20px; padding:1rem .5rem;
+  font-size:1.1rem; font-weight:700; text-align:center; cursor:pointer; transition:transform .12s; line-height:1.2;
+}
+.opt:active{transform:scale(.95)}
+.opt:focus-visible{outline:3px solid var(--saffron)}
+.opt.good{border-color:var(--green); background:var(--green-soft)}
+.opt.show{border-color:var(--saffron); background:var(--saffron-soft)}
+.opt.dis{pointer-events:none; opacity:.85}
+
+.card-word{
+  font-size:2rem; font-weight:800; text-align:center; background:var(--card);
+  border:3px solid var(--line); border-radius:18px; padding:.5rem; margin:0 0 .9rem; letter-spacing:.02em;
+}
+
+.tfrow{display:flex; gap:1rem; margin-top:auto; margin-bottom:auto}
+.tf{flex:1; border:none; border-radius:20px; font-size:2.2rem; padding:1rem; cursor:pointer; color:#fff}
+.tf.yes{background:var(--green); box-shadow:0 4px 0 #0E4A2C}
+.tf.no{background:var(--coral); box-shadow:0 4px 0 #A34A34}
+.tf:active{transform:translateY(3px); box-shadow:none}
+.tf:focus-visible{outline:3px solid var(--ink)}
+
+.mic{
+  display:block; margin:auto; width:110px; height:110px; border-radius:50%; border:none;
+  background:var(--coral); color:#fff; font-size:2.6rem; cursor:pointer; box-shadow:0 5px 0 #A34A34;
+}
+.mic:focus-visible{outline:3px solid var(--ink)}
+.meter{height:16px; background:#EADFC6; border-radius:999px; margin:1rem 2rem 0; overflow:hidden}
+.meter div{height:100%; width:0%; background:var(--saffron); transition:width .1s linear}
+.alt{
+  display:block; margin:.9rem auto 0; background:none; border:none; color:var(--ink-soft);
+  font-family:'Baloo 2'; font-weight:600; font-size:.9rem; text-decoration:underline; cursor:pointer;
+}
+
+.chips{display:flex; gap:.6rem; justify-content:center; flex-wrap:wrap; margin:.8rem 0}
+.chip{background:var(--card); border:3px solid var(--line); border-radius:14px; padding:.45rem 1rem; font-size:1.1rem; font-weight:700; cursor:pointer}
+.chip:focus-visible{outline:3px solid var(--saffron)}
+.chip.used{opacity:.25; pointer-events:none}
+.slots{display:flex; gap:.5rem; justify-content:center; margin:.6rem 0; flex-wrap:wrap}
+.slot{min-width:64px; height:52px; border-bottom:4px solid var(--saffron); font-size:1.1rem; font-weight:700; display:flex; align-items:center; justify-content:center}
+
+.next{
+  display:block; margin:1rem auto 0; background:var(--green); color:#fff; border:none; border-radius:16px;
+  font-family:'Baloo 2'; font-weight:800; font-size:1.15rem; padding:.7rem 2rem; cursor:pointer; box-shadow:0 4px 0 #0E4A2C;
+}
+.next:active{transform:translateY(3px); box-shadow:none}
+.next:focus-visible{outline:3px solid var(--ink)}
+
+.win{margin:auto; text-align:center}
+.win .n{font-size:3.2rem; font-weight:800; color:var(--green); line-height:1}
+.burst{font-size:2rem; letter-spacing:.3rem}
+
+.credit{font-family:var(--mono); font-size:.65rem; color:var(--ink-soft); margin:.8rem 0 1.2rem; text-align:center; padding:0 1rem}

@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fennec</title>
+<meta name="theme-color" content="#177245">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div id="devbar" class="devbar" aria-label="Barre de développement (horloge virtuelle, réinitialisation)"></div>
+
+  <div class="phone">
+    <div class="topbar">
+      <span class="phase" id="phase">Réveil</span>
+      <div class="pbar"><div class="pfill" id="pfill"></div></div>
+      <button class="hintbtn" aria-label="Aide (à venir : darja/arabe)">؟</button>
+    </div>
+    <div id="stage" role="main" aria-live="polite"></div>
+  </div>
+  <p class="credit">Fennec — prototype technique branché sur le vrai moteur SRS (db.mjs / srs.mjs / queue.mjs / sync.mjs).<br>
+  Assets audio/image pas encore produits : texte + synthèse vocale du navigateur en attendant.</p>
+
+  <script type="module" src="./main.mjs"></script>
+</body>
+</html>

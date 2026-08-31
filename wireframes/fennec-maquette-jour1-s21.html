@@ -1,0 +1,509 @@
+<title>Fennec — Jour 1 jouable</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  /* Univers enfant assumé : thème unique clair, peint explicitement. */
+  :root{
+    --desk:#EFE3CB; --sand:#FBF0DC; --card:#FFFFFF; --ink:#33291C; --ink-soft:#7A6A52;
+    --green:#177245; --green-soft:#DDEFE4; --saffron:#E09E3C; --saffron-soft:#FBEFD8;
+    --coral:#D96A4E; --line:#E5D8BE;
+    --mono:'IBM Plex Mono',ui-monospace,monospace;
+  }
+  body{background:var(--desk);color:var(--ink);font-family:'Baloo 2',system-ui,sans-serif;margin:0;
+       min-height:100vh;display:flex;flex-direction:column;align-items:center}
+  .meta{font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;
+        color:var(--ink-soft);margin:1.1rem 0 .6rem;text-align:center;padding:0 1rem}
+  .meta b{color:var(--green);font-weight:500}
+
+  .phone{
+    width:min(400px,96vw);height:min(760px,88vh);background:var(--sand);
+    border-radius:34px;border:6px solid #2B2118;box-shadow:0 18px 50px rgba(43,33,24,.35);
+    display:flex;flex-direction:column;overflow:hidden;position:relative;
+  }
+  .topbar{display:flex;align-items:center;gap:.6rem;padding:.8rem 1rem .5rem}
+  .pbar{flex:1;height:12px;background:#EADFC6;border-radius:999px;overflow:hidden}
+  .pfill{height:100%;width:0%;background:var(--green);border-radius:999px;transition:width .4s ease}
+  .phase{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;
+         border-radius:999px;padding:.2rem .6rem;white-space:nowrap;background:var(--green-soft);color:var(--green)}
+  .hintbtn{width:34px;height:34px;border-radius:50%;border:2px solid var(--line);background:var(--card);
+           font-family:'Baloo 2';font-weight:800;font-size:1.05rem;color:var(--ink-soft);cursor:pointer;flex:none}
+  .hintbtn:focus-visible{outline:3px solid var(--saffron)}
+  .hint{display:none;margin:.2rem 1rem 0;background:var(--card);border:2px dashed var(--saffron);
+        border-radius:14px;padding:.5rem .8rem;font-size:.95rem;text-align:center}
+  .hint .ar{font-size:1.05rem;direction:rtl}
+  .hint.on{display:block}
+
+  #stage{flex:1;display:flex;flex-direction:column;padding:.7rem 1rem 1rem;overflow-y:auto;min-height:0}
+  .say{font-size:1.25rem;font-weight:700;text-align:center;margin:.2rem 0 .6rem;text-wrap:balance;line-height:1.25}
+  .say .en{color:var(--green)}
+  .sub{font-size:.9rem;color:var(--ink-soft);text-align:center;font-weight:600;margin:-.3rem 0 .6rem}
+
+  .fennec{font-size:3rem;text-align:center;line-height:1;margin:.2rem 0;transition:transform .25s;user-select:none}
+  .fennec.happy{transform:scale(1.25) rotate(-8deg)}
+  @media (prefers-reduced-motion: reduce){.fennec,.pfill{transition:none}}
+
+  .speaker{display:block;margin:.2rem auto .8rem;width:74px;height:74px;border-radius:50%;
+           border:none;background:var(--saffron);color:#fff;font-size:2rem;cursor:pointer;
+           box-shadow:0 4px 0 #B87E2C}
+  .speaker:active{transform:translateY(3px);box-shadow:0 1px 0 #B87E2C}
+  .speaker:focus-visible{outline:3px solid var(--green)}
+
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-top:auto;margin-bottom:auto}
+  .grid.three{grid-template-columns:1fr 1fr 1fr}
+  .opt{background:var(--card);border:3px solid var(--line);border-radius:20px;padding:1rem .5rem;
+       font-size:2.6rem;text-align:center;cursor:pointer;transition:transform .12s;line-height:1.15}
+  .opt .lbl{display:block;font-size:1rem;font-weight:700;color:var(--ink)}
+  .opt:active{transform:scale(.95)}
+  .opt:focus-visible{outline:3px solid var(--saffron)}
+  .opt.good{border-color:var(--green);background:var(--green-soft)}
+  .opt.show{border-color:var(--saffron);background:var(--saffron-soft);animation:pulse .6s 2}
+  @keyframes pulse{50%{transform:scale(1.06)}}
+  @media (prefers-reduced-motion: reduce){.opt.show{animation:none}}
+
+  .bigword{font-size:2.4rem;font-weight:800;text-align:center;background:var(--card);
+           border:3px solid var(--line);border-radius:18px;padding:.5rem;margin:0 0 .9rem;letter-spacing:.04em}
+
+  .tfrow{display:flex;gap:1rem;margin-top:auto;margin-bottom:auto}
+  .tf{flex:1;border:none;border-radius:20px;font-size:2.2rem;padding:1rem;cursor:pointer;color:#fff}
+  .tf.yes{background:var(--green);box-shadow:0 4px 0 #0E4A2C}
+  .tf.no{background:var(--coral);box-shadow:0 4px 0 #A34A34}
+  .tf:active{transform:translateY(3px);box-shadow:none}
+  .tf:focus-visible{outline:3px solid var(--ink)}
+  .tfpic{font-size:4.5rem;text-align:center;margin:.4rem 0}
+
+  .mic{display:block;margin:auto;width:110px;height:110px;border-radius:50%;border:none;
+       background:var(--coral);color:#fff;font-size:2.6rem;cursor:pointer;box-shadow:0 5px 0 #A34A34}
+  .mic:focus-visible{outline:3px solid var(--ink)}
+  .meter{height:16px;background:#EADFC6;border-radius:999px;margin:1rem 2rem 0;overflow:hidden}
+  .meter div{height:100%;width:0%;background:var(--saffron);transition:width .1s linear}
+  .alt{display:block;margin:.9rem auto 0;background:none;border:none;color:var(--ink-soft);
+       font-family:'Baloo 2';font-weight:600;font-size:.9rem;text-decoration:underline;cursor:pointer}
+
+  .chips{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin:.8rem 0}
+  .chip{background:var(--card);border:3px solid var(--line);border-radius:14px;padding:.45rem 1rem;
+        font-size:1.3rem;font-weight:700;cursor:pointer}
+  .chip:focus-visible{outline:3px solid var(--saffron)}
+  .chip.used{opacity:.25;pointer-events:none}
+  .slots{display:flex;gap:.5rem;justify-content:center;margin:.6rem 0}
+  .slot{min-width:64px;height:52px;border-bottom:4px solid var(--saffron);font-size:1.3rem;font-weight:700;
+        display:flex;align-items:center;justify-content:center}
+
+  .scene{position:relative;flex:1;background:linear-gradient(#BFE3F2 55%,#E8D5A8 55%);border-radius:20px;
+         display:flex;align-items:center;justify-content:center;gap:1.1rem;min-height:220px}
+  .glow{font-size:3.2rem;background:var(--card);border-radius:18px;border:3px solid var(--saffron);
+        padding:.55rem;cursor:pointer;animation:glow 1.2s infinite alternate}
+  .glow:focus-visible{outline:3px solid var(--green)}
+  @keyframes glow{to{box-shadow:0 0 18px 4px rgba(224,158,60,.75)}}
+  @media (prefers-reduced-motion: reduce){.glow{animation:none;box-shadow:0 0 12px 3px rgba(224,158,60,.6)}}
+  .glow.done{animation:none;border-color:var(--green);background:var(--green-soft);box-shadow:none;cursor:default}
+
+  canvas.trace{background:var(--card);border:3px dashed var(--saffron);border-radius:20px;touch-action:none;
+               display:block;margin:0 auto}
+  .next{display:block;margin:1rem auto 0;background:var(--green);color:#fff;border:none;border-radius:16px;
+        font-family:'Baloo 2';font-weight:800;font-size:1.15rem;padding:.7rem 2rem;cursor:pointer;box-shadow:0 4px 0 #0E4A2C}
+  .next:active{transform:translateY(3px);box-shadow:none}
+  .next:focus-visible{outline:3px solid var(--ink)}
+
+  .bins{display:flex;gap:1rem;margin-top:.8rem}
+  .bin{flex:1;border:3px dashed var(--line);border-radius:18px;padding:.8rem;text-align:center;
+       font-size:1.6rem;font-weight:800;cursor:pointer;background:var(--card)}
+  .bin:focus-visible{outline:3px solid var(--saffron)}
+  .bin small{display:block;font-size:.8rem;color:var(--ink-soft)}
+
+  .storypic{font-size:4.2rem;text-align:center;margin:.5rem 0}
+  .pagedots{display:flex;gap:.35rem;justify-content:center;margin-top:.6rem}
+  .pagedots span{width:9px;height:9px;border-radius:50%;background:var(--line)}
+  .pagedots span.on{background:var(--green)}
+
+  .win{margin:auto;text-align:center}
+  .win .n{font-size:3.2rem;font-weight:800;color:var(--green);line-height:1}
+  .burst{font-size:2rem;letter-spacing:.3rem}
+  .credit{font-family:var(--mono);font-size:.65rem;color:var(--ink-soft);margin:.8rem 0 1.2rem;text-align:center;padding:0 1rem}
+</style>
+
+<p class="meta">Maquette cliquable · <b>Foundations S21 · Jour 1</b> · « The market » — activez le son 🔊 (voix du navigateur)</p>
+
+<div class="phone">
+  <div class="topbar">
+    <span class="phase" id="phase">Réveil</span>
+    <div class="pbar"><div class="pfill" id="pfill"></div></div>
+    <button class="hintbtn" id="hintbtn" aria-label="Aide en darja">؟</button>
+  </div>
+  <div class="hint" id="hint"></div>
+  <div id="stage"></div>
+</div>
+<p class="credit">Prototype — images en emoji, voix = synthèse du navigateur. Dans le produit : illustrations + audio enregistré (voix enfant + adulte algériennes).</p>
+
+<script>
+'use strict';
+const stage = document.getElementById('stage');
+const pfill = document.getElementById('pfill');
+const phaseEl = document.getElementById('phase');
+const hintEl = document.getElementById('hint');
+let hintText = {fr:'', ar:''};
+document.getElementById('hintbtn').onclick = () => {
+  hintEl.innerHTML = '<span class="ar">' + hintText.ar + '</span><br>' + hintText.fr;
+  hintEl.classList.toggle('on');
+};
+
+/* ---------- audio ---------- */
+function speak(text, slow){
+  try{
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'en-US'; u.rate = slow ? 0.75 : 0.9; u.pitch = 1.1;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+function chime(ok){
+  try{
+    const ctx = chime.ctx || (chime.ctx = new (window.AudioContext||window.webkitAudioContext)());
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.frequency.value = ok ? 660 : 220; o.type = 'sine';
+    g.gain.setValueAtTime(.18, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001, ctx.currentTime + .35);
+    o.start(); o.stop(ctx.currentTime + .35);
+    if(ok){
+      const o2 = ctx.createOscillator(), g2 = ctx.createGain();
+      o2.connect(g2); g2.connect(ctx.destination);
+      o2.frequency.value = 880;
+      g2.gain.setValueAtTime(.15, ctx.currentTime + .12);
+      g2.gain.exponentialRampToValueAtTime(.001, ctx.currentTime + .45);
+      o2.start(ctx.currentTime + .12); o2.stop(ctx.currentTime + .45);
+    }
+  }catch(e){}
+}
+
+/* ---------- moteur ---------- */
+let flow = [], idx = -1, correct = 0, total = 0;
+const PHASES = [[0,'Réveil','#177245'],[8,'Nouveau','#E09E3C'],[16,'Immersion','#7A6A52'],[17,'Victoire','#33291C']];
+function setPhase(origId){
+  let name = 'Réveil';
+  for(const [start,n] of PHASES) if(origId >= start) name = n;
+  phaseEl.textContent = name;
+}
+function next(){
+  idx++;
+  if(idx >= flow.length) return;
+  const s = flow[idx];
+  pfill.style.width = Math.round(idx / flow.length * 100) + '%';
+  setPhase(s.origId ?? idx);
+  hintText = s.hint || {fr:'', ar:''};
+  hintEl.classList.remove('on');
+  stage.innerHTML = '';
+  s.render(s);
+}
+function finishScreen(ok, s){
+  total++;
+  if(ok){ correct++; chime(true); }
+  else if(s && s.retest && !s.isRetest){
+    const clone = Object.assign({}, s, {isRetest:true});
+    flow.splice(Math.min(idx + 3, flow.length - 1), 0, clone); // re-test à +2 écrans
+  }
+  setTimeout(next, ok ? 650 : 1400);
+}
+function fennec(cls){
+  return '<div class="fennec ' + (cls||'') + '" aria-hidden="true">🦊</div>';
+}
+function happyFennec(){
+  const f = stage.querySelector('.fennec'); if(f) f.classList.add('happy');
+}
+
+/* ---------- types d'écrans ---------- */
+function listenTouch(s){
+  stage.innerHTML = fennec() +
+    '<p class="say">Listen and touch!</p>' +
+    '<button class="speaker" aria-label="Écouter">🔊</button>' +
+    '<div class="grid ' + (s.options.length === 3 ? 'three' : '') + '"></div>';
+  stage.querySelector('.speaker').onclick = () => speak(s.word);
+  const grid = stage.querySelector('.grid');
+  s.options.forEach(o => {
+    const b = document.createElement('button');
+    b.className = 'opt'; b.innerHTML = o.pic; b.setAttribute('aria-label', o.w);
+    b.onclick = () => {
+      if(o.w === s.word){ b.classList.add('good'); happyFennec(); speak(s.word); finishScreen(true, s); }
+      else{
+        chime(false); speak(s.word, true);
+        grid.querySelectorAll('.opt').forEach(x => { if(x.getAttribute('aria-label') === s.word) x.classList.add('show'); });
+        finishScreen(false, s);
+      }
+      grid.querySelectorAll('.opt').forEach(x => x.disabled = true);
+    };
+    grid.appendChild(b);
+  });
+  setTimeout(() => speak(s.word), 400);
+}
+function readTouch(s){
+  stage.innerHTML = fennec() +
+    '<p class="say">Read and touch!</p>' +
+    '<div class="bigword">' + s.word + '</div>' +
+    '<div class="grid three"></div>';
+  const grid = stage.querySelector('.grid');
+  s.options.forEach(o => {
+    const b = document.createElement('button');
+    b.className = 'opt'; b.innerHTML = o.pic; b.setAttribute('aria-label', o.w);
+    b.onclick = () => {
+      if(o.w === s.word){ b.classList.add('good'); happyFennec(); speak(s.word); finishScreen(true, s); }
+      else{
+        chime(false); speak(s.word, true);
+        grid.querySelectorAll('.opt').forEach(x => { if(x.getAttribute('aria-label') === s.word) x.classList.add('show'); });
+        finishScreen(false, s);
+      }
+      grid.querySelectorAll('.opt').forEach(x => x.disabled = true);
+    };
+    grid.appendChild(b);
+  });
+}
+function sayIt(s){
+  stage.innerHTML = fennec() +
+    '<p class="say">Say it: <span class="en">' + s.word + '</span></p>' +
+    '<button class="speaker" aria-label="Écouter">🔊</button>' +
+    '<button class="mic" aria-label="Maintiens et parle">🎤</button>' +
+    '<div class="meter"><div id="m"></div></div>' +
+    '<button class="alt">Je l\'ai dit ✓</button>';
+  stage.querySelector('.speaker').onclick = () => speak(s.word);
+  const m = document.getElementById('m');
+  let t = null, v = 0;
+  const mic = stage.querySelector('.mic');
+  const start = e => { e.preventDefault();
+    t = setInterval(() => { v = Math.min(100, v + 9); m.style.width = v + '%';
+      if(v >= 100){ clearInterval(t); happyFennec(); finishScreen(true, s); } }, 90); };
+  const stop = () => { if(t) clearInterval(t); };
+  mic.onpointerdown = start; mic.onpointerup = stop; mic.onpointerleave = stop;
+  stage.querySelector('.alt').onclick = () => { m.style.width = '100%'; happyFennec(); finishScreen(true, s); };
+  setTimeout(() => speak(s.word), 400);
+}
+function trueFalse(s){
+  let round = 0, allOk = true;
+  function show(){
+    const r = s.rounds[round];
+    stage.innerHTML = fennec() +
+      '<p class="say">True or false?</p>' +
+      '<p class="sub">' + (round + 1) + ' / ' + s.rounds.length + '</p>' +
+      '<div class="tfpic">' + r.pic + '</div>' +
+      '<button class="speaker" aria-label="Écouter">🔊</button>' +
+      '<div class="tfrow"><button class="tf yes" aria-label="Vrai">👍</button><button class="tf no" aria-label="Faux">👎</button></div>';
+    stage.querySelector('.speaker').onclick = () => speak(r.q);
+    const answer = yes => {
+      const ok = (yes === r.truth);
+      if(!ok){ allOk = false; chime(false); speak(r.correction, true); } else { chime(true); happyFennec(); }
+      round++;
+      setTimeout(() => { if(round < s.rounds.length) show(); else finishScreen(allOk, s); }, ok ? 500 : 1300);
+    };
+    stage.querySelector('.yes').onclick = () => answer(true);
+    stage.querySelector('.no').onclick = () => answer(false);
+    setTimeout(() => speak(r.q), 400);
+  }
+  show();
+}
+function orderWords(s){
+  const words = [...s.words].sort(() => Math.random() - .5);
+  let placed = [];
+  stage.innerHTML = fennec() +
+    '<p class="say">Put it in order!</p>' +
+    '<button class="speaker" aria-label="Écouter">🔊</button>' +
+    '<div class="slots">' + s.words.map(() => '<div class="slot"></div>').join('') + '</div>' +
+    '<div class="chips"></div>';
+  stage.querySelector('.speaker').onclick = () => speak(s.words.join(' '));
+  const chips = stage.querySelector('.chips');
+  const slots = stage.querySelectorAll('.slot');
+  words.forEach(w => {
+    const c = document.createElement('button');
+    c.className = 'chip'; c.textContent = w;
+    c.onclick = () => {
+      c.classList.add('used');
+      slots[placed.length].textContent = w;
+      placed.push(w);
+      if(placed.length === s.words.length){
+        const ok = placed.join(' ') === s.words.join(' ');
+        if(ok){ happyFennec(); speak(s.words.join(' ')); }
+        else{
+          chime(false);
+          slots.forEach((sl, i) => sl.textContent = s.words[i]);
+          speak(s.words.join(' '), true);
+        }
+        finishScreen(ok, s);
+      }
+    };
+    chips.appendChild(c);
+  });
+  setTimeout(() => speak(s.words.join(' ')), 400);
+}
+function marketScene(s){
+  const items = [
+    {w:'bread', pic:'🥖'}, {w:'milk', pic:'🥛'}, {w:'water', pic:'💧'}
+  ];
+  let found = 0;
+  stage.innerHTML =
+    '<p class="say">The market! Touch everything ✨</p>' + fennec() +
+    '<div class="scene"></div>';
+  const scene = stage.querySelector('.scene');
+  items.forEach(it => {
+    const b = document.createElement('button');
+    b.className = 'glow'; b.innerHTML = it.pic; b.setAttribute('aria-label', it.w);
+    b.onclick = () => {
+      if(b.classList.contains('done')) { speak(it.w); return; }
+      b.classList.add('done');
+      speak(it.w); chime(true); happyFennec();
+      found++;
+      if(found === items.length) setTimeout(() => finishScreen(true, s), 900);
+    };
+    scene.appendChild(b);
+  });
+}
+function phonicsIntro(s){
+  stage.innerHTML = fennec() +
+    '<p class="say">The sound <span class="en">sh</span> — « shhh ! » 🤫</p>' +
+    '<p class="sub">« Shhh! The sheep is sleeping. » 🐑</p>' +
+    '<button class="speaker" aria-label="Écouter">🔊</button>' +
+    '<canvas class="trace" width="300" height="170" aria-label="Trace les lettres sh avec ton doigt"></canvas>' +
+    '<button class="next" disabled style="opacity:.4">Continue ➜</button>';
+  stage.querySelector('.speaker').onclick = () => speak('shhh. Shhh! The sheep is sleeping.', true);
+  const cv = stage.querySelector('canvas'), ctx = cv.getContext('2d');
+  ctx.font = '120px "Baloo 2"'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.setLineDash([6,6]); ctx.strokeStyle = '#E09E3C'; ctx.lineWidth = 2;
+  ctx.strokeText('sh', 150, 90);
+  ctx.setLineDash([]); ctx.strokeStyle = '#177245'; ctx.lineWidth = 9; ctx.lineCap = 'round';
+  let draw = false, drew = 0;
+  const next = stage.querySelector('.next');
+  const pos = e => { const r = cv.getBoundingClientRect();
+    return [(e.clientX - r.left) * cv.width / r.width, (e.clientY - r.top) * cv.height / r.height]; };
+  cv.onpointerdown = e => { draw = true; const [x,y] = pos(e); ctx.beginPath(); ctx.moveTo(x,y); };
+  cv.onpointermove = e => { if(!draw) return; const [x,y] = pos(e); ctx.lineTo(x,y); ctx.stroke(); drew++;
+    if(drew > 15){ next.disabled = false; next.style.opacity = 1; } };
+  cv.onpointerup = () => draw = false;
+  next.onclick = () => { happyFennec(); finishScreen(true, s); };
+  setTimeout(() => speak('shhh. Shhh! The sheep is sleeping.', true), 400);
+}
+function earSort(s){
+  let round = 0, allOk = true;
+  function show(){
+    const r = s.rounds[round];
+    stage.innerHTML = fennec() +
+      '<p class="say">/sh/ 🤫 or /s/ 🐍 ?</p>' +
+      '<p class="sub">' + (round + 1) + ' / ' + s.rounds.length + '</p>' +
+      '<button class="speaker" aria-label="Écouter">🔊</button>' +
+      '<div class="bins">' +
+        '<button class="bin" data-b="sh">🤫<small>sh</small></button>' +
+        '<button class="bin" data-b="s">🐍<small>s</small></button>' +
+      '</div>';
+    stage.querySelector('.speaker').onclick = () => speak(r.w, true);
+    stage.querySelectorAll('.bin').forEach(b => b.onclick = () => {
+      const ok = b.dataset.b === r.k;
+      if(ok){ chime(true); happyFennec(); } else { allOk = false; chime(false); speak(r.w, true); }
+      round++;
+      setTimeout(() => { if(round < s.rounds.length) show(); else finishScreen(allOk, s); }, ok ? 450 : 1200);
+    });
+    setTimeout(() => speak(r.w, true), 350);
+  }
+  show();
+}
+function story(s){
+  let page = 0;
+  function show(){
+    const p = s.pages[page];
+    stage.innerHTML =
+      '<p class="say">' + p.text + '</p>' +
+      '<button class="speaker" aria-label="Écouter">🔊</button>' +
+      '<div class="grid three" style="margin-top:.4rem"></div>' +
+      '<div class="storypic">🦊</div>' +
+      '<div class="pagedots">' + s.pages.map((_, i) =>
+        '<span class="' + (i <= page ? 'on' : '') + '"></span>').join('') + '</div>';
+    stage.querySelector('.speaker').onclick = () => speak(p.text);
+    const grid = stage.querySelector('.grid');
+    p.opts.forEach(o => {
+      const b = document.createElement('button');
+      b.className = 'opt'; b.innerHTML = o.pic; b.setAttribute('aria-label', o.w);
+      b.onclick = () => {
+        if(o.w === p.target){
+          b.classList.add('good'); chime(true); speak(p.target);
+          page++;
+          setTimeout(() => { if(page < s.pages.length) show(); else finishScreen(true, s); }, 700);
+        } else { chime(false); speak(p.target, true); }
+      };
+      grid.appendChild(b);
+    });
+    setTimeout(() => speak(p.text), 350);
+  }
+  show();
+}
+function victory(s){
+  pfill.style.width = '100%';
+  const pct = total ? Math.round(correct / total * 100) : 100;
+  stage.innerHTML =
+    '<div class="win">' +
+      '<div class="burst">🎉 ⭐ 🎉</div>' + fennec('happy') +
+      '<p class="say">Well done!</p>' +
+      '<div class="n">208</div><p class="sub">mots dans ton trésor · +3 aujourd\'hui : bread, milk, water · + le son sh !</p>' +
+      '<p class="sub">Réussite de la session : ' + pct + ' % · 🔥 flamme de la semaine : 1/4</p>' +
+      '<button class="next">Rejouer la session ↻</button>' +
+    '</div>';
+  speak('Well done! Three new words, and the sound sh!');
+  stage.querySelector('.next').onclick = () => { flow = buildFlow(); idx = -1; correct = 0; total = 0; next(); };
+}
+function intro(s){
+  stage.innerHTML =
+    '<div class="win">' + fennec() +
+      '<p class="say">Hello! 👋</p>' +
+      '<p class="sub">Session du Jour 1 — 15 min dans la vraie app, ~3 min ici.<br>Touche pour commencer (et pour activer le son).</p>' +
+      '<button class="next">C\'est parti ! ➜</button>' +
+    '</div>';
+  stage.querySelector('.next').onclick = () => { speak('Hello! Let\'s go!'); next(); };
+}
+
+/* ---------- la session du Jour 1 (S21) ---------- */
+const HINTS = {
+  listen: {fr:'Écoute et touche la bonne image', ar:'اسمع والمس الصورة الصحيحة'},
+  read:   {fr:'Lis le mot et touche la bonne image', ar:'اقرأ الكلمة والمس الصورة الصحيحة'},
+  say:    {fr:'Maintiens le micro et dis le mot', ar:'اضغط على الميكرو وقل الكلمة'},
+  tf:     {fr:'C\'est vrai 👍 ou faux 👎 ?', ar:'صحيح 👍 ولا غالط 👎؟'},
+  order:  {fr:'Mets les mots dans l\'ordre', ar:'رتّب الكلمات'},
+  scene:  {fr:'Touche les objets qui brillent', ar:'المس الأشياء اللي تلمع'},
+  trace:  {fr:'Écoute le son, puis trace sh avec ton doigt', ar:'اسمع الصوت ثم ارسم sh بصبعك'},
+  sort:   {fr:'Ce mot commence par sh 🤫 ou s 🐍 ?', ar:'الكلمة تبدأ بـ sh 🤫 ولا s 🐍؟'},
+  story:  {fr:'Écoute l\'histoire et touche ce qui est nommé', ar:'اسمع القصة والمس المذكور'},
+};
+function buildFlow(){
+  let id = 0;
+  const S = (render, extra) => Object.assign({render, retest:true, origId:id++}, extra);
+  return [
+    Object.assign({render:intro, origId:-1, retest:false}, {}),
+    /* ---- RÉVEIL : 8 cartes SRS ---- */
+    S(listenTouch, {word:'goat', options:[{w:'goat',pic:'🐐'},{w:'sheep',pic:'🐑'},{w:'cow',pic:'🐄'}], hint:HINTS.listen}),
+    S(sayIt,      {word:'I can jump', hint:HINTS.say, retest:false}),
+    S(readTouch,  {word:'rain', options:[{w:'rain',pic:'🌧️'},{w:'sun',pic:'☀️'},{w:'boat',pic:'⛵'}], hint:HINTS.read}),
+    S(listenTouch,{word:'snake', options:[{w:'snake',pic:'🐍'},{w:'monkey',pic:'🐒'},{w:'bird',pic:'🐦'}], hint:HINTS.listen}),
+    S(trueFalse,  {rounds:[{pic:'🐔', q:"It's a fish?", truth:false, correction:"No! It's a hen."}], hint:HINTS.tf}),
+    S(readTouch,  {word:'coat', options:[{w:'coat',pic:'🧥'},{w:'hat',pic:'🧢'},{w:'bag',pic:'🎒'}], hint:HINTS.read}),
+    S(sayIt,      {word:'hungry', hint:HINTS.say, retest:false}),
+    S(orderWords, {words:['It','can','fly'], hint:HINTS.order}),
+    /* ---- NOUVEAU ---- */
+    S(marketScene,{hint:HINTS.scene, retest:false}),
+    S(listenTouch,{word:'bread', options:[{w:'bread',pic:'🥖'},{w:'milk',pic:'🥛'},{w:'water',pic:'💧'}], hint:HINTS.listen}),
+    S(listenTouch,{word:'milk', options:[{w:'milk',pic:'🥛'},{w:'water',pic:'💧'},{w:'juice',pic:'🧃'},{w:'tea',pic:'🍵'}], hint:HINTS.listen}),
+    S(trueFalse,  {rounds:[
+        {pic:'🥖', q:'Water?', truth:false, correction:'No! Bread.'},
+        {pic:'🥛', q:'Milk?', truth:true, correction:'Yes! Milk.'},
+        {pic:'💧', q:'Bread?', truth:false, correction:'No! Water.'}], hint:HINTS.tf}),
+    S(sayIt,      {word:'bread', hint:HINTS.say, retest:false}),
+    S(sayIt,      {word:'water', hint:HINTS.say, retest:false}),
+    S(phonicsIntro,{hint:HINTS.trace, retest:false}),
+    S(earSort,    {rounds:[
+        {w:'ship', k:'sh'},{w:'sun', k:'s'},{w:'shop', k:'sh'},
+        {w:'sock', k:'s'},{w:'sheep', k:'sh'},{w:'sat', k:'s'}], hint:HINTS.sort}),
+    /* ---- IMMERSION ---- */
+    S(story, {retest:false, hint:HINTS.story, pages:[
+      {text:'Fennec goes to the market.', target:'market', opts:[{w:'market',pic:'🏪'},{w:'house',pic:'🏠'},{w:'boat',pic:'⛵'}]},
+      {text:'Look! Bread!', target:'bread', opts:[{w:'bread',pic:'🥖'},{w:'cheese',pic:'🧀'},{w:'apple',pic:'🍎'}]},
+      {text:'Milk, please!', target:'milk', opts:[{w:'juice',pic:'🧃'},{w:'milk',pic:'🥛'},{w:'tea',pic:'🍵'}]},
+      {text:"Water! It's blue.", target:'water', opts:[{w:'water',pic:'💧'},{w:'sun',pic:'☀️'},{w:'hat',pic:'🧢'}]},
+      {text:'A big fish! It can swim.', target:'fish', opts:[{w:'bird',pic:'🐦'},{w:'cat',pic:'🐱'},{w:'fish',pic:'🐟'}]},
+      {text:'Goodbye, market!', target:'wave', opts:[{w:'wave',pic:'👋'},{w:'sock',pic:'🧦'},{w:'moon',pic:'🌙'}]},
+    ]}),
+    /* ---- VICTOIRE ---- */
+    Object.assign({render:victory, origId:17, retest:false}, {}),
+  ];
+}
+flow = buildFlow();
+next();
+</script>

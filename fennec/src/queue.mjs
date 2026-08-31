@@ -116,6 +116,47 @@ function buildScreenPlan({ dueEntries, newWordIds, catalog, rng = Math.random })
   return screens;
 }
 
+/**
+ * Construit le plan du Boss du jeudi (jour 5) : `count` défis piochant dans
+ * les mots introduits pendant `week` (cf. "Pas de nouveau contenu" du
+ * script), en boucle si la semaine compte moins de mots que `count`.
+ * Chaque appel (premier essai ou variante après un échec) redonne un ordre
+ * et des distracteurs différents — c'est ce qui tient lieu de "Market 2"
+ * du script sans dupliquer de contenu écrit à la main par semaine.
+ *
+ * Ne modifie aucun état SRS : le Boss teste la maîtrise du contenu de la
+ * semaine, il n'est pas un événement de révision au sens de srs.review().
+ *
+ * @param {Object} args
+ * @param {Array<object>} args.catalog
+ * @param {number} args.week
+ * @param {number} [args.count=12] - nombre de défis (seuil de réussite : 80%, cf. srs.bossVerdict)
+ * @param {() => number} [args.rng]
+ * @returns {Array<object>} liste de défis {phase:'boss', kind, word, options?, tokens?}
+ */
+function buildBossPlan({ catalog, week, count = 12, rng = Math.random }) {
+  const weekWords = catalog.filter((w) => w.introWeek === week);
+  if (weekWords.length === 0) return [];
+
+  const screens = [];
+  let pool = [];
+  let lastWordId = null;
+  for (let i = 0; i < count; i++) {
+    if (pool.length === 0) pool = shuffle(weekWords, rng);
+    let word = pool.pop();
+    // Évite de répéter le même mot deux défis de suite quand le pool se
+    // renouvelle pile à cette frontière (visible seulement si peu de mots).
+    if (word.wordId === lastWordId && pool.length > 0) {
+      const swap = pool.pop();
+      pool.push(word);
+      word = swap;
+    }
+    lastWordId = word.wordId;
+    screens.push(makeScreen('boss', word, catalog, rng));
+  }
+  return screens;
+}
+
 function makeScreen(phase, word, catalog, rng) {
   const kind = screenKindFor(word);
   const screen = { phase, kind, word, isRetest: false };
@@ -147,4 +188,4 @@ function insertRetest(remainingScreens, failedScreen) {
   return next;
 }
 
-export { buildDailyQueue, buildScreenPlan, pickDistractors, screenKindFor, insertRetest, freshState };
+export { buildDailyQueue, buildScreenPlan, buildBossPlan, pickDistractors, screenKindFor, insertRetest, freshState };

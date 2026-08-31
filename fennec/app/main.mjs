@@ -18,10 +18,12 @@
 import { FennecStore } from '../src/db.mjs';
 import { pullCatalog, pushPending } from '../src/sync.mjs';
 import { runSession } from './session.mjs';
+import { runBossSession } from './bossSession.mjs';
 
 const CLOCK_KEY = 'fennec_clock_offset_ms';
 const STUDENT_KEY = 'fennec_student_id';
 const POINTER_KEY = 'fennec_pointer';
+const BOSS_ATTEMPT_KEY = 'fennec_boss_attempt';
 
 function now() {
   const offset = Number(localStorage.getItem(CLOCK_KEY) || '0');
@@ -49,6 +51,14 @@ function getPointer() {
 
 function savePointer(pointer) {
   localStorage.setItem(POINTER_KEY, JSON.stringify(pointer));
+}
+
+function getBossAttempt() {
+  return Number(localStorage.getItem(BOSS_ATTEMPT_KEY) || '1');
+}
+
+function saveBossAttempt(n) {
+  localStorage.setItem(BOSS_ATTEMPT_KEY, String(n));
 }
 
 /**
@@ -102,11 +112,12 @@ async function registerServiceWorker() {
   }
 }
 
-function renderDevBar(pointer) {
+function renderDevBar(pointer, attempt) {
   const bar = document.getElementById('devbar');
+  const dayLabel = pointer.day === 5 ? `jour 5 · Boss${attempt > 1 ? ` (essai ${attempt})` : ''}` : `jour ${pointer.day}`;
   bar.innerHTML = `
     <span>Élève : ${getOrCreateStudentId().slice(0, 8)}</span>
-    <span>Position : S${pointer.week} · jour ${pointer.day}</span>
+    <span>Position : S${pointer.week} · ${dayLabel}</span>
     <span>Horloge : ${now().toLocaleDateString('fr-FR')}</span>
     <button id="advance-day">⏭ +1 jour</button>
     <button id="advance-week">⏭⏭ +7 jours</button>
@@ -118,6 +129,7 @@ function renderDevBar(pointer) {
     localStorage.removeItem(CLOCK_KEY);
     localStorage.removeItem(STUDENT_KEY);
     localStorage.removeItem(POINTER_KEY);
+    localStorage.removeItem(BOSS_ATTEMPT_KEY);
     indexedDB.deleteDatabase('fennec');
     location.reload();
   };
@@ -130,7 +142,20 @@ async function boot() {
 
   const studentId = getOrCreateStudentId();
   const pointer = getPointer();
-  renderDevBar(pointer);
+  const attempt = getBossAttempt();
+  renderDevBar(pointer, attempt);
+
+  if (pointer.day === 5) {
+    await runBossSession({
+      store, studentId, now, pointer, attempt,
+      onBossEnd: ({ pointer: nextPointer, attempt: nextAttempt }) => {
+        savePointer(nextPointer);
+        saveBossAttempt(nextAttempt);
+        boot(); // le bouton "Continuer"/"Nouvel essai" enchaîne réellement, sans reload manuel
+      },
+    });
+    return;
+  }
 
   await runSession({
     store,
@@ -139,6 +164,9 @@ async function boot() {
     pointer,
     onSessionEnd: (nextPointer) => {
       savePointer(nextPointer);
+      // La session quotidienne se termine sur un écran de fin (pas de bouton
+      // "continuer" : une seule session par jour). Le pointeur est prêt pour
+      // la prochaine visite ou le prochain clic "+1 jour" de la barre de dev.
     },
   });
 }

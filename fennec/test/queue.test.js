@@ -115,3 +115,34 @@ test('insertRetest place le clone en fin si moins de 2 écrans restent', async (
   const result = insertRetest([{ id: 'a' }], { id: 'x' });
   assert.deepEqual(result.map((s) => s.id), ['a', 'x']);
 });
+
+test('buildBossPlan construit exactement `count` défis phase="boss" à partir des mots de la semaine', async () => {
+  const { buildBossPlan } = await queuePromise;
+  const plan = buildBossPlan({ catalog: CATALOG, week: 21, count: 12, rng: () => 0.4 });
+  assert.equal(plan.length, 12);
+  assert.ok(plan.every((s) => s.phase === 'boss'));
+  assert.ok(plan.every((s) => CATALOG.some((w) => w.wordId === s.word.wordId && w.introWeek === 21)));
+});
+
+test('buildBossPlan boucle sur les mots de la semaine si count dépasse leur nombre', async () => {
+  const { buildBossPlan } = await queuePromise;
+  // S21 dans CATALOG ne compte que 5 mots (2,3,4,5,6) ; on en redemande 12.
+  const plan = buildBossPlan({ catalog: CATALOG, week: 21, count: 12 });
+  assert.equal(plan.length, 12);
+  const distinctWords = new Set(plan.map((s) => s.word.wordId));
+  assert.ok(distinctWords.size <= 5);
+});
+
+test('buildBossPlan évite de répéter le même mot sur deux défis consécutifs quand c\'est évitable', async () => {
+  const { buildBossPlan } = await queuePromise;
+  const plan = buildBossPlan({ catalog: CATALOG, week: 21, count: 12, rng: () => 0.9 });
+  for (let i = 1; i < plan.length; i++) {
+    assert.notEqual(plan[i].word.wordId, plan[i - 1].word.wordId, `défis ${i - 1} et ${i} portent sur le même mot`);
+  }
+});
+
+test('buildBossPlan retourne un plan vide si aucun mot n\'est programmé pour cette semaine', async () => {
+  const { buildBossPlan } = await queuePromise;
+  const plan = buildBossPlan({ catalog: CATALOG, week: 999 });
+  assert.deepEqual(plan, []);
+});

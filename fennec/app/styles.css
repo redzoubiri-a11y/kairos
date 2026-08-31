@@ -111,9 +111,14 @@ body{
 }
 .next:active{transform:translateY(3px); box-shadow:none}
 .next:focus-visible{outline:3px solid var(--ink)}
+.next.warm{background:var(--saffron); box-shadow:0 4px 0 #B87E2C}
 
 .win{margin:auto; text-align:center}
 .win .n{font-size:3.2rem; font-weight:800; color:var(--green); line-height:1}
 .burst{font-size:2rem; letter-spacing:.3rem}
+.parentcard{
+  background:var(--card); border:3px solid var(--green); border-radius:18px; padding:.8rem 1rem;
+  margin:1rem auto 0; max-width:290px; font-size:.88rem; text-align:center; color:var(--ink-soft);
+}
 
 .credit{font-family:var(--mono); font-size:.65rem; color:var(--ink-soft); margin:.8rem 0 1.2rem; text-align:center; padding:0 1rem}

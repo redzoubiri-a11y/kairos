@@ -1,0 +1,336 @@
+id,anglais,francais,categorie,monde,semaine_intro,jour_intro,r1,r2,r3,r4,r5,maitrise
+1,hello,bonjour,lexique,M1 · Hello !,S1,1,S1,S1,S2,S3,S6,S6
+2,hi,salut,lexique,M1 · Hello !,S1,2,S1,S1,S2,S3,S6,S6
+3,goodbye,au revoir,lexique,M1 · Hello !,S1,3,S1,S2,S2,S3,S6,S6
+4,bye,salut (départ),lexique,M1 · Hello !,S1,4,S1,S2,S2,S4,S6,S6
+5,yes,oui,lexique,M1 · Hello !,S1,1,S1,S1,S2,S3,S6,S6
+6,no,non,lexique,M1 · Hello !,S1,2,S1,S1,S2,S3,S6,S6
+7,I'm …,je suis …,structure,M1 · Hello !,S1,3,S1,S2,S2,S3,S6,S6
+8,OK,d'accord,lexique,M1 · Hello !,S1,4,S1,S2,S2,S4,S6,S6
+9,well done!,bravo !,lexique,M1 · Hello !,S1,1,S1,S1,S2,S3,S6,S6
+10,great!,super !,lexique,M1 · Hello !,S1,2,S1,S1,S2,S3,S6,S6
+11,good morning,bonjour (le matin),lexique,M1 · Hello !,S1,3,S1,S2,S2,S3,S6,S6
+12,name,prénom,lexique,M1 · Hello !,S2,1,S2,S2,S3,S4,S7,S7
+13,what,quoi / quel,fonction,M1 · Hello !,S2,2,S2,S2,S3,S4,S7,S7
+14,my,mon / ma,fonction,M1 · Hello !,S2,3,S2,S3,S3,S4,S7,S7
+15,your,ton / ta,fonction,M1 · Hello !,S2,4,S2,S3,S3,S5,S7,S7
+16,What's your name?,comment tu t'appelles ?,structure,M1 · Hello !,S2,1,S2,S2,S3,S4,S7,S7
+17,My name is …,je m'appelle …,structure,M1 · Hello !,S2,2,S2,S2,S3,S4,S7,S7
+18,please,s'il te plaît,lexique,M1 · Hello !,S2,3,S2,S3,S3,S4,S7,S7
+19,thank you,merci,lexique,M1 · Hello !,S2,4,S2,S3,S3,S5,S7,S7
+20,sorry,pardon,lexique,M1 · Hello !,S2,1,S2,S2,S3,S4,S7,S7
+21,friend,ami,lexique,M1 · Hello !,S2,2,S2,S2,S3,S4,S7,S7
+22,welcome,bienvenue,lexique,M1 · Hello !,S2,3,S2,S3,S3,S4,S7,S7
+23,one,un,lexique,M1 · Hello !,S3,1,S3,S3,S4,S5,S8,S8
+24,two,deux,lexique,M1 · Hello !,S3,2,S3,S3,S4,S5,S8,S8
+25,three,trois,lexique,M1 · Hello !,S3,3,S3,S4,S4,S5,S8,S8
+26,four,quatre,lexique,M1 · Hello !,S3,4,S3,S4,S4,S6,S8,S8
+27,five,cinq,lexique,M1 · Hello !,S3,1,S3,S3,S4,S5,S8,S8
+28,how,comment,fonction,M1 · Hello !,S3,2,S3,S3,S4,S5,S8,S8
+29,fine,bien,lexique,M1 · Hello !,S3,3,S3,S4,S4,S5,S8,S8
+30,How are you?,comment ça va ?,structure,M1 · Hello !,S3,4,S3,S4,S4,S6,S8,S8
+31,I'm fine,ça va bien,structure,M1 · Hello !,S3,1,S3,S3,S4,S5,S8,S8
+32,zero,zéro,lexique,M1 · Hello !,S3,2,S3,S3,S4,S5,S8,S8
+33,sat,(mot de lecture),décodable,M1 · Hello !,S3,3,S3,S4,S4,S5,S8,S8
+34,pin,(mot de lecture),décodable,M1 · Hello !,S3,4,S3,S4,S4,S6,S8,S8
+35,tin,(mot de lecture),décodable,M1 · Hello !,S3,1,S3,S3,S4,S5,S8,S8
+36,tap,(mot de lecture),décodable,M1 · Hello !,S3,2,S3,S3,S4,S5,S8,S8
+37,tip,(mot de lecture),décodable,M1 · Hello !,S3,3,S3,S4,S4,S5,S8,S8
+38,at,(mot de lecture),décodable,M1 · Hello !,S3,4,S3,S4,S4,S6,S8,S8
+39,nap,(mot de lecture),décodable,M1 · Hello !,S3,1,S3,S3,S4,S5,S8,S8
+40,red,rouge,lexique,M2 · Colours & Numbers,S5,1,S5,S5,S6,S7,S10,S10
+41,blue,bleu,lexique,M2 · Colours & Numbers,S5,2,S5,S5,S6,S7,S10,S10
+42,green,vert,lexique,M2 · Colours & Numbers,S5,3,S5,S6,S6,S7,S10,S10
+43,yellow,jaune,lexique,M2 · Colours & Numbers,S5,4,S5,S6,S6,S8,S10,S10
+44,colour,couleur,lexique,M2 · Colours & Numbers,S5,1,S5,S5,S6,S7,S10,S10
+45,it,il / ça (objet),fonction,M2 · Colours & Numbers,S5,2,S5,S5,S6,S7,S10,S10
+46,It's red!,c'est rouge !,structure,M2 · Colours & Numbers,S5,3,S5,S6,S6,S7,S10,S10
+47,look!,regarde !,lexique,M2 · Colours & Numbers,S5,4,S5,S6,S6,S8,S10,S10
+48,again!,encore !,lexique,M2 · Colours & Numbers,S5,1,S5,S5,S6,S7,S10,S10
+49,rainbow,arc-en-ciel,lexique,M2 · Colours & Numbers,S5,2,S5,S5,S6,S7,S10,S10
+50,can (boîte),(mot de lecture),décodable,M2 · Colours & Numbers,S5,3,S5,S6,S6,S7,S10,S10
+51,cap,(mot de lecture),décodable,M2 · Colours & Numbers,S5,4,S5,S6,S6,S8,S10,S10
+52,kit,(mot de lecture),décodable,M2 · Colours & Numbers,S5,1,S5,S5,S6,S7,S10,S10
+53,black,noir,lexique,M2 · Colours & Numbers,S6,1,S6,S6,S7,S8,S11,S11
+54,white,blanc,lexique,M2 · Colours & Numbers,S6,2,S6,S6,S7,S8,S11,S11
+55,orange,orange (couleur),lexique,M2 · Colours & Numbers,S6,3,S6,S7,S7,S8,S11,S11
+56,pink,rose,lexique,M2 · Colours & Numbers,S6,4,S6,S7,S7,S9,S11,S11
+57,purple,violet,lexique,M2 · Colours & Numbers,S6,1,S6,S6,S7,S8,S11,S11
+58,brown,marron,lexique,M2 · Colours & Numbers,S6,2,S6,S6,S7,S8,S11,S11
+59,grey,gris,lexique,M2 · Colours & Numbers,S6,3,S6,S7,S7,S8,S11,S11
+60,What colour is it?,de quelle couleur est-ce ?,structure,M2 · Colours & Numbers,S6,4,S6,S7,S7,S9,S11,S11
+61,beautiful,beau / belle,lexique,M2 · Colours & Numbers,S6,1,S6,S6,S7,S8,S11,S11
+62,net,(mot de lecture),décodable,M2 · Colours & Numbers,S6,2,S6,S6,S7,S8,S11,S11
+63,hat,(mot de lecture),décodable,M2 · Colours & Numbers,S6,3,S6,S7,S7,S8,S11,S11
+64,six,six,lexique,M2 · Colours & Numbers,S7,1,S7,S7,S8,S9,S12,S12
+65,seven,sept,lexique,M2 · Colours & Numbers,S7,2,S7,S7,S8,S9,S12,S12
+66,eight,huit,lexique,M2 · Colours & Numbers,S7,3,S7,S8,S8,S9,S12,S12
+67,nine,neuf,lexique,M2 · Colours & Numbers,S7,4,S7,S8,S8,S10,S12,S12
+68,ten,dix,lexique,M2 · Colours & Numbers,S7,1,S7,S7,S8,S9,S12,S12
+69,many,beaucoup,fonction,M2 · Colours & Numbers,S7,2,S7,S7,S8,S9,S12,S12
+70,How many?,combien ?,structure,M2 · Colours & Numbers,S7,3,S7,S8,S8,S9,S12,S12
+71,count,compter,lexique,M2 · Colours & Numbers,S7,4,S7,S8,S8,S10,S12,S12
+72,number,nombre,lexique,M2 · Colours & Numbers,S7,1,S7,S7,S8,S9,S12,S12
+73,eleven,onze,lexique,M2 · Colours & Numbers,S7,2,S7,S7,S8,S9,S12,S12
+74,twelve,douze,lexique,M2 · Colours & Numbers,S7,3,S7,S8,S8,S9,S12,S12
+75,rat,(mot de lecture),décodable,M2 · Colours & Numbers,S7,4,S7,S8,S8,S10,S12,S12
+76,map,(mot de lecture),décodable,M2 · Colours & Numbers,S7,1,S7,S7,S8,S9,S12,S12
+77,man,(mot de lecture),décodable,M2 · Colours & Numbers,S7,2,S7,S7,S8,S9,S12,S12
+78,mum,maman,lexique,M3 · My Family,S9,1,S9,S9,S10,S11,VH1,VH1
+79,dad,papa,lexique,M3 · My Family,S9,2,S9,S9,S10,S11,VH1,VH1
+80,brother,frère,lexique,M3 · My Family,S9,3,S9,S10,S10,S11,VH1,VH1
+81,sister,sœur,lexique,M3 · My Family,S9,4,S9,S10,S10,S12,VH1,VH1
+82,this,ceci / voici,fonction,M3 · My Family,S9,1,S9,S9,S10,S11,VH1,VH1
+83,This is my mum,voici ma maman,structure,M3 · My Family,S9,2,S9,S9,S10,S11,VH1,VH1
+84,and,et,fonction,M3 · My Family,S9,3,S9,S10,S10,S11,VH1,VH1
+85,help,aide / au secours,lexique,M3 · My Family,S9,4,S9,S10,S10,S12,VH1,VH1
+86,let's go!,allons-y !,lexique,M3 · My Family,S9,1,S9,S9,S10,S11,VH1,VH1
+87,love,aimer (fort),lexique,M3 · My Family,S9,2,S9,S9,S10,S11,VH1,VH1
+88,I love you,je t'aime,structure,M3 · My Family,S9,3,S9,S10,S10,S11,VH1,VH1
+89,got,(mot de lecture),décodable,M3 · My Family,S9,4,S9,S10,S10,S12,VH1,VH1
+90,on (phonics),(mot de lecture),décodable,M3 · My Family,S9,1,S9,S9,S10,S11,VH1,VH1
+91,gap,(mot de lecture),décodable,M3 · My Family,S9,2,S9,S9,S10,S11,VH1,VH1
+92,grandma,grand-mère,lexique,M3 · My Family,S10,1,S10,S10,S11,S12,VH2,VH2
+93,grandpa,grand-père,lexique,M3 · My Family,S10,2,S10,S10,S11,S12,VH2,VH2
+94,baby,bébé,lexique,M3 · My Family,S10,3,S10,S11,S11,S12,VH2,VH2
+95,family,famille,lexique,M3 · My Family,S10,4,S10,S11,S11,S13,VH2,VH2
+96,who,qui,fonction,M3 · My Family,S10,1,S10,S10,S11,S12,VH2,VH2
+97,Who's this?,qui est-ce ?,structure,M3 · My Family,S10,2,S10,S10,S11,S12,VH2,VH2
+98,boy,garçon,lexique,M3 · My Family,S10,3,S10,S11,S11,S12,VH2,VH2
+99,girl,fille,lexique,M3 · My Family,S10,4,S10,S11,S11,S13,VH2,VH2
+100,uncle,oncle,lexique,M3 · My Family,S10,1,S10,S10,S11,S12,VH2,VH2
+101,aunt,tante,lexique,M3 · My Family,S10,2,S10,S10,S11,S12,VH2,VH2
+102,up,(mot de lecture),décodable,M3 · My Family,S10,3,S10,S11,S11,S12,VH2,VH2
+103,lip,(mot de lecture),décodable,M3 · My Family,S10,4,S10,S11,S11,S13,VH2,VH2
+104,log,(mot de lecture),décodable,M3 · My Family,S10,1,S10,S10,S11,S12,VH2,VH2
+105,big,grand,lexique,M3 · My Family,S11,1,S11,S11,S12,S13,S14,S14
+106,small,petit,lexique,M3 · My Family,S11,2,S11,S11,S12,S13,S14,S14
+107,old,vieux / âgé,lexique,M3 · My Family,S11,3,S11,S12,S12,S13,S14,S14
+108,young,jeune,lexique,M3 · My Family,S11,4,S11,S12,S12,VH1,S14,S14
+109,he,il (personne),fonction,M3 · My Family,S11,1,S11,S11,S12,S13,S14,S14
+110,she,elle,fonction,M3 · My Family,S11,2,S11,S11,S12,S13,S14,S14
+111,He's big,il est grand,structure,M3 · My Family,S11,3,S11,S12,S12,S13,S14,S14
+112,She's small,elle est petite,structure,M3 · My Family,S11,4,S11,S12,S12,VH1,S14,S14
+113,tall,grand (taille),lexique,M3 · My Family,S11,1,S11,S11,S12,S13,S14,S14
+114,short,petit / court,lexique,M3 · My Family,S11,2,S11,S11,S12,S13,S14,S14
+115,fun,(mot de lecture),décodable,M3 · My Family,S11,3,S11,S12,S12,S13,S14,S14
+116,bat,(mot de lecture),décodable,M3 · My Family,S11,4,S11,S12,S12,VH1,S14,S14
+117,fog,(mot de lecture),décodable,M3 · My Family,S11,1,S11,S11,S12,S13,S14,S14
+118,bus,(mot de lecture),décodable,M3 · My Family,S11,2,S11,S11,S12,S13,S14,S14
+119,head,tête,lexique,M4 · My Body,S13,1,S13,S13,VH1,VH2,S16,S16
+120,eyes,yeux,lexique,M4 · My Body,S13,2,S13,S13,VH1,VH2,S16,S16
+121,nose,nez,lexique,M4 · My Body,S13,3,S13,VH1,VH1,VH2,S16,S16
+122,mouth,bouche,lexique,M4 · My Body,S13,4,S13,VH1,VH1,S14,S16,S16
+123,ears,oreilles,lexique,M4 · My Body,S13,1,S13,S13,VH1,VH2,S16,S16
+124,face,visage,lexique,M4 · My Body,S13,2,S13,S13,VH1,VH2,S16,S16
+125,hair,cheveux,lexique,M4 · My Body,S13,3,S13,VH1,VH1,VH2,S16,S16
+126,I have two eyes,j'ai deux yeux,structure,M4 · My Body,S13,4,S13,VH1,VH1,S14,S16,S16
+127,teeth,dents,lexique,M4 · My Body,S13,1,S13,S13,VH1,VH2,S16,S16
+128,tongue,langue,lexique,M4 · My Body,S13,2,S13,S13,VH1,VH2,S16,S16
+129,duck,(mot de lecture),décodable,M4 · My Body,S13,3,S13,VH1,VH1,VH2,S16,S16
+130,sock,(mot de lecture),décodable,M4 · My Body,S13,4,S13,VH1,VH1,S14,S16,S16
+131,kick,(mot de lecture),décodable,M4 · My Body,S13,1,S13,S13,VH1,VH2,S16,S16
+132,back,(mot de lecture),décodable,M4 · My Body,S13,2,S13,S13,VH1,VH2,S16,S16
+133,hands,mains,lexique,M4 · My Body,S14,1,S14,S14,S15,S16,S19,S19
+134,feet,pieds,lexique,M4 · My Body,S14,2,S14,S14,S15,S16,S19,S19
+135,arms,bras,lexique,M4 · My Body,S14,3,S14,S15,S15,S16,S19,S19
+136,legs,jambes,lexique,M4 · My Body,S14,4,S14,S15,S15,S17,S19,S19
+137,fingers,doigts,lexique,M4 · My Body,S14,1,S14,S14,S15,S16,S19,S19
+138,body,corps,lexique,M4 · My Body,S14,2,S14,S14,S15,S16,S19,S19
+139,touch,toucher,lexique,M4 · My Body,S14,3,S14,S15,S15,S16,S19,S19
+140,Touch your nose!,touche ton nez !,structure,M4 · My Body,S14,4,S14,S15,S15,S17,S19,S19
+141,clap,taper des mains,lexique,M4 · My Body,S14,1,S14,S14,S15,S16,S19,S19
+142,shoulders,épaules,lexique,M4 · My Body,S14,2,S14,S14,S15,S16,S19,S19
+143,knees,genoux,lexique,M4 · My Body,S14,3,S14,S15,S15,S16,S19,S19
+144,toes,orteils,lexique,M4 · My Body,S14,4,S14,S15,S15,S17,S19,S19
+145,bell,(mot de lecture),décodable,M4 · My Body,S14,1,S14,S14,S15,S16,S19,S19
+146,doll,(mot de lecture),décodable,M4 · My Body,S14,2,S14,S14,S15,S16,S19,S19
+147,hill,(mot de lecture),décodable,M4 · My Body,S14,3,S14,S15,S15,S16,S19,S19
+148,miss,(mot de lecture),décodable,M4 · My Body,S14,4,S14,S15,S15,S17,S19,S19
+149,off,(mot de lecture),décodable,M4 · My Body,S14,1,S14,S14,S15,S16,S19,S19
+150,happy,content,lexique,M4 · My Body,S15,1,S15,S15,S16,S17,S20,S20
+151,sad,triste,lexique,M4 · My Body,S15,2,S15,S15,S16,S17,S20,S20
+152,angry,fâché,lexique,M4 · My Body,S15,3,S15,S16,S16,S17,S20,S20
+153,tired,fatigué,lexique,M4 · My Body,S15,4,S15,S16,S16,S18,S20,S20
+154,hungry,affamé,lexique,M4 · My Body,S15,1,S15,S15,S16,S17,S20,S20
+155,thirsty,assoiffé,lexique,M4 · My Body,S15,2,S15,S15,S16,S17,S20,S20
+156,scared,effrayé,lexique,M4 · My Body,S15,3,S15,S16,S16,S17,S20,S20
+157,smile,sourire,lexique,M4 · My Body,S15,4,S15,S16,S16,S18,S20,S20
+158,I'm happy,je suis content,structure,M4 · My Body,S15,1,S15,S15,S16,S17,S20,S20
+159,sick,malade,lexique,M4 · My Body,S15,2,S15,S15,S16,S17,S20,S20
+160,cry,pleurer,lexique,M4 · My Body,S15,3,S15,S16,S16,S17,S20,S20
+161,laugh,rire,lexique,M4 · My Body,S15,4,S15,S16,S16,S18,S20,S20
+162,cat,chat,lexique,M5 · Animals,S17,1,S17,S17,S18,S19,S22,S22
+163,dog,chien,lexique,M5 · Animals,S17,2,S17,S17,S18,S19,S22,S22
+164,bird,oiseau,lexique,M5 · Animals,S17,3,S17,S18,S18,S19,S22,S22
+165,fish,poisson,lexique,M5 · Animals,S17,4,S17,S18,S18,S20,S22,S22
+166,rabbit,lapin,lexique,M5 · Animals,S17,1,S17,S17,S18,S19,S22,S22
+167,a,un / une (article),fonction,M5 · Animals,S17,2,S17,S17,S18,S19,S22,S22
+168,It's a cat,c'est un chat,structure,M5 · Animals,S17,3,S17,S18,S18,S19,S22,S22
+169,pet,animal de compagnie,lexique,M5 · Animals,S17,4,S17,S18,S18,S20,S22,S22
+170,mouse,souris,lexique,M5 · Animals,S17,1,S17,S17,S18,S19,S22,S22
+171,turtle,tortue,lexique,M5 · Animals,S17,2,S17,S17,S18,S19,S22,S22
+172,rain,(mot de lecture),décodable,M5 · Animals,S17,3,S17,S18,S18,S19,S22,S22
+173,tail,(mot de lecture),décodable,M5 · Animals,S17,4,S17,S18,S18,S20,S22,S22
+174,wait,(mot de lecture),décodable,M5 · Animals,S17,1,S17,S17,S18,S19,S22,S22
+175,snail,(mot de lecture),décodable,M5 · Animals,S17,2,S17,S17,S18,S19,S22,S22
+176,sheep,mouton,lexique,M5 · Animals,S18,1,S18,S18,S19,S20,S23,S23
+177,cow,vache,lexique,M5 · Animals,S18,2,S18,S18,S19,S20,S23,S23
+178,camel,chameau,lexique,M5 · Animals,S18,3,S18,S19,S19,S20,S23,S23
+179,donkey,âne,lexique,M5 · Animals,S18,4,S18,S19,S19,S21,S23,S23
+180,goat,chèvre,lexique,M5 · Animals,S18,1,S18,S18,S19,S20,S23,S23
+181,hen,poule,lexique,M5 · Animals,S18,2,S18,S18,S19,S20,S23,S23
+182,horse,cheval,lexique,M5 · Animals,S18,3,S18,S19,S19,S20,S23,S23
+183,farm,ferme,lexique,M5 · Animals,S18,4,S18,S19,S19,S21,S23,S23
+184,wolf,loup,lexique,M5 · Animals,S18,1,S18,S18,S19,S20,S23,S23
+185,frog,grenouille,lexique,M5 · Animals,S18,2,S18,S18,S19,S20,S23,S23
+186,see,(mot de lecture),décodable,M5 · Animals,S18,3,S18,S19,S19,S20,S23,S23
+187,bee,(mot de lecture),décodable,M5 · Animals,S18,4,S18,S19,S19,S21,S23,S23
+188,lion,lion,lexique,M5 · Animals,S19,1,S19,S19,S20,S21,S24,S24
+189,elephant,éléphant,lexique,M5 · Animals,S19,2,S19,S19,S20,S21,S24,S24
+190,monkey,singe,lexique,M5 · Animals,S19,3,S19,S20,S20,S21,S24,S24
+191,snake,serpent,lexique,M5 · Animals,S19,4,S19,S20,S20,S22,S24,S24
+192,fennec,fennec,lexique,M5 · Animals,S19,1,S19,S19,S20,S21,S24,S24
+193,run,courir,lexique,M5 · Animals,S19,2,S19,S19,S20,S21,S24,S24
+194,jump,sauter,lexique,M5 · Animals,S19,3,S19,S20,S20,S21,S24,S24
+195,fly,voler,lexique,M5 · Animals,S19,4,S19,S20,S20,S22,S24,S24
+196,swim,nager,lexique,M5 · Animals,S19,1,S19,S19,S20,S21,S24,S24
+197,can,pouvoir / savoir faire,fonction,M5 · Animals,S19,2,S19,S19,S20,S21,S24,S24
+198,It can run,il sait courir,structure,M5 · Animals,S19,3,S19,S20,S20,S21,S24,S24
+199,I can jump,je sais sauter,structure,M5 · Animals,S19,4,S19,S20,S20,S22,S24,S24
+200,walk,marcher,lexique,M5 · Animals,S19,1,S19,S19,S20,S21,S24,S24
+201,climb,grimper,lexique,M5 · Animals,S19,2,S19,S19,S20,S21,S24,S24
+202,fast,rapide,lexique,M5 · Animals,S19,3,S19,S20,S20,S21,S24,S24
+203,slow,lent,lexique,M5 · Animals,S19,4,S19,S20,S20,S22,S24,S24
+204,boat,(mot de lecture),décodable,M5 · Animals,S19,1,S19,S19,S20,S21,S24,S24
+205,road,(mot de lecture),décodable,M5 · Animals,S19,2,S19,S19,S20,S21,S24,S24
+206,coat,(mot de lecture),décodable,M5 · Animals,S19,3,S19,S20,S20,S21,S24,S24
+207,bread,pain,lexique,M6 · Food,S21,1,S21,S21,S22,S23,VP2,VP2
+208,milk,lait,lexique,M6 · Food,S21,2,S21,S21,S22,S23,VP2,VP2
+209,water,eau,lexique,M6 · Food,S21,3,S21,S22,S22,S23,VP2,VP2
+210,eggs,œufs,lexique,M6 · Food,S21,4,S21,S22,S22,S24,VP2,VP2
+211,cheese,fromage,lexique,M6 · Food,S21,1,S21,S21,S22,S23,VP2,VP2
+212,eat,manger,lexique,M6 · Food,S21,2,S21,S21,S22,S23,VP2,VP2
+213,like,aimer,lexique,M6 · Food,S21,3,S21,S22,S22,S23,VP2,VP2
+214,I like milk,j'aime le lait,structure,M6 · Food,S21,4,S21,S22,S22,S24,VP2,VP2
+215,butter,beurre,lexique,M6 · Food,S21,1,S21,S21,S22,S23,VP2,VP2
+216,couscous,couscous,lexique,M6 · Food,S21,2,S21,S21,S22,S23,VP2,VP2
+217,yummy!,miam !,lexique,M6 · Food,S21,3,S21,S22,S22,S23,VP2,VP2
+218,ship,(mot de lecture),décodable,M6 · Food,S21,4,S21,S22,S22,S24,VP2,VP2
+219,shut,(mot de lecture),décodable,M6 · Food,S21,1,S21,S21,S22,S23,VP2,VP2
+220,apple,pomme,lexique,M6 · Food,S22,1,S22,S22,S23,S24,S25,S25
+221,banana,banane,lexique,M6 · Food,S22,2,S22,S22,S23,S24,S25,S25
+222,an orange,une orange (fruit),lexique,M6 · Food,S22,3,S22,S23,S23,S24,S25,S25
+223,dates,dattes,lexique,M6 · Food,S22,4,S22,S23,S23,VP1,S25,S25
+224,grapes,raisin,lexique,M6 · Food,S22,1,S22,S22,S23,S24,S25,S25
+225,fruit,fruit,lexique,M6 · Food,S22,2,S22,S22,S23,S24,S25,S25
+226,don't,ne … pas,fonction,M6 · Food,S22,3,S22,S23,S23,S24,S25,S25
+227,I don't like …,je n'aime pas …,structure,M6 · Food,S22,4,S22,S23,S23,VP1,S25,S25
+228,watermelon,pastèque,lexique,M6 · Food,S22,1,S22,S22,S23,S24,S25,S25
+229,lemon,citron,lexique,M6 · Food,S22,2,S22,S22,S23,S24,S25,S25
+230,chick,(mot de lecture),décodable,M6 · Food,S22,3,S22,S23,S23,S24,S25,S25
+231,chat,(mot de lecture),décodable,M6 · Food,S22,4,S22,S23,S23,VP1,S25,S25
+232,rich,(mot de lecture),décodable,M6 · Food,S22,1,S22,S22,S23,S24,S25,S25
+233,lunch,(mot de lecture),décodable,M6 · Food,S22,2,S22,S22,S23,S24,S25,S25
+234,rice,riz,lexique,M6 · Food,S23,1,S23,S23,S24,VP1,S26,S26
+235,cake,gâteau,lexique,M6 · Food,S23,2,S23,S23,S24,VP1,S26,S26
+236,juice,jus,lexique,M6 · Food,S23,3,S23,S24,S24,VP1,S26,S26
+237,tea,thé,lexique,M6 · Food,S23,4,S23,S24,S24,VP2,S26,S26
+238,chicken,poulet,lexique,M6 · Food,S23,1,S23,S23,S24,VP1,S26,S26
+239,drink,boire,lexique,M6 · Food,S23,2,S23,S23,S24,VP1,S26,S26
+240,do,est-ce que (auxiliaire),fonction,M6 · Food,S23,3,S23,S24,S24,VP1,S26,S26
+241,Do you like …?,est-ce que tu aimes … ?,structure,M6 · Food,S23,4,S23,S24,S24,VP2,S26,S26
+242,"Yes, I do",oui (j'aime),structure,M6 · Food,S23,1,S23,S23,S24,VP1,S26,S26
+243,"No, I don't",non (je n'aime pas),structure,M6 · Food,S23,2,S23,S23,S24,VP1,S26,S26
+244,soup,soupe / chorba,lexique,M6 · Food,S23,3,S23,S24,S24,VP1,S26,S26
+245,meat,viande,lexique,M6 · Food,S23,4,S23,S24,S24,VP2,S26,S26
+246,sugar,sucre,lexique,M6 · Food,S23,1,S23,S23,S24,VP1,S26,S26
+247,that,(mot de lecture),décodable,M6 · Food,S23,2,S23,S23,S24,VP1,S26,S26
+248,with,(mot de lecture),décodable,M6 · Food,S23,3,S23,S24,S24,VP1,S26,S26
+249,bath,(mot de lecture),décodable,M6 · Food,S23,4,S23,S24,S24,VP2,S26,S26
+250,school,école,lexique,M7 · My School & My Day,S25,1,S25,S25,S26,S27,S30,S30
+251,book,livre,lexique,M7 · My School & My Day,S25,2,S25,S25,S26,S27,S30,S30
+252,pen,stylo,lexique,M7 · My School & My Day,S25,3,S25,S26,S26,S27,S30,S30
+253,pencil,crayon,lexique,M7 · My School & My Day,S25,4,S25,S26,S26,S28,S30,S30
+254,bag,cartable,lexique,M7 · My School & My Day,S25,1,S25,S25,S26,S27,S30,S30
+255,teacher,maître / maîtresse,lexique,M7 · My School & My Day,S25,2,S25,S25,S26,S27,S30,S30
+256,ruler,règle,lexique,M7 · My School & My Day,S25,3,S25,S26,S26,S27,S30,S30
+257,What's this?,qu'est-ce que c'est ?,structure,M7 · My School & My Day,S25,4,S25,S26,S26,S28,S30,S30
+258,It's a pen,c'est un stylo,structure,M7 · My School & My Day,S25,1,S25,S25,S26,S27,S30,S30
+259,eraser,gomme,lexique,M7 · My School & My Day,S25,2,S25,S25,S26,S27,S30,S30
+260,desk,table / bureau,lexique,M7 · My School & My Day,S25,3,S25,S26,S26,S27,S30,S30
+261,classroom,salle de classe,lexique,M7 · My School & My Day,S25,4,S25,S26,S26,S28,S30,S30
+262,moon,(mot de lecture),décodable,M7 · My School & My Day,S25,1,S25,S25,S26,S27,S30,S30
+263,food,(mot de lecture),décodable,M7 · My School & My Day,S25,2,S25,S25,S26,S27,S30,S30
+264,Sunday,dimanche,lexique,M7 · My School & My Day,S26,1,S26,S26,S27,S28,S31,S31
+265,Monday,lundi,lexique,M7 · My School & My Day,S26,2,S26,S26,S27,S28,S31,S31
+266,Tuesday,mardi,lexique,M7 · My School & My Day,S26,3,S26,S27,S27,S28,S31,S31
+267,Wednesday,mercredi,lexique,M7 · My School & My Day,S26,4,S26,S27,S27,S29,S31,S31
+268,Thursday,jeudi,lexique,M7 · My School & My Day,S26,1,S26,S26,S27,S28,S31,S31
+269,Friday,vendredi,lexique,M7 · My School & My Day,S26,2,S26,S26,S27,S28,S31,S31
+270,Saturday,samedi,lexique,M7 · My School & My Day,S26,3,S26,S27,S27,S28,S31,S31
+271,today,aujourd'hui,lexique,M7 · My School & My Day,S26,4,S26,S27,S27,S29,S31,S31
+272,day,jour,lexique,M7 · My School & My Day,S26,1,S26,S26,S27,S28,S31,S31
+273,Sit down!,assieds-toi !,structure,M7 · My School & My Day,S26,2,S26,S26,S27,S28,S31,S31
+274,Stand up!,lève-toi !,structure,M7 · My School & My Day,S26,3,S26,S27,S27,S28,S31,S31
+275,Open!,ouvre !,structure,M7 · My School & My Day,S26,4,S26,S27,S27,S29,S31,S31
+276,Close!,ferme !,structure,M7 · My School & My Day,S26,1,S26,S26,S27,S28,S31,S31
+277,Listen!,écoute !,structure,M7 · My School & My Day,S26,2,S26,S26,S27,S28,S31,S31
+278,week,semaine,lexique,M7 · My School & My Day,S26,3,S26,S27,S27,S28,S31,S31
+279,What day is it?,quel jour sommes-nous ?,structure,M7 · My School & My Day,S26,4,S26,S27,S27,S29,S31,S31
+280,look,(mot de lecture),décodable,M7 · My School & My Day,S26,1,S26,S26,S27,S28,S31,S31
+281,good,(mot de lecture),décodable,M7 · My School & My Day,S26,2,S26,S26,S27,S28,S31,S31
+282,foot,(mot de lecture),décodable,M7 · My School & My Day,S26,3,S26,S27,S27,S28,S31,S31
+283,get up,se lever,lexique,M7 · My School & My Day,S27,1,S27,S27,S28,S29,S32,S32
+284,go,aller,lexique,M7 · My School & My Day,S27,2,S27,S27,S28,S29,S32,S32
+285,play,jouer,lexique,M7 · My School & My Day,S27,3,S27,S28,S28,S29,S32,S32
+286,sleep,dormir,lexique,M7 · My School & My Day,S27,4,S27,S28,S28,S30,S32,S32
+287,home,maison (chez soi),lexique,M7 · My School & My Day,S27,1,S27,S27,S28,S29,S32,S32
+288,morning,matin,lexique,M7 · My School & My Day,S27,2,S27,S27,S28,S29,S32,S32
+289,afternoon,après-midi,lexique,M7 · My School & My Day,S27,3,S27,S28,S28,S29,S32,S32
+290,night,nuit,lexique,M7 · My School & My Day,S27,4,S27,S28,S28,S30,S32,S32
+291,wash,se laver,lexique,M7 · My School & My Day,S27,1,S27,S27,S28,S29,S32,S32
+292,I go to school,je vais à l'école,structure,M7 · My School & My Day,S27,2,S27,S27,S28,S29,S32,S32
+293,breakfast,petit-déjeuner,lexique,M7 · My School & My Day,S27,3,S27,S28,S28,S29,S32,S32
+294,dinner,dîner,lexique,M7 · My School & My Day,S27,4,S27,S28,S28,S30,S32,S32
+295,brush my teeth,me brosser les dents,structure,M7 · My School & My Day,S27,1,S27,S27,S28,S29,S32,S32
+296,queen,(mot de lecture),décodable,M7 · My School & My Day,S27,2,S27,S27,S28,S29,S32,S32
+297,quick,(mot de lecture),décodable,M7 · My School & My Day,S27,3,S27,S28,S28,S29,S32,S32
+298,yet,(mot de lecture),décodable,M7 · My School & My Day,S27,4,S27,S28,S28,S30,S32,S32
+299,house,maison,lexique,M8 · My World,S29,1,S29,S29,S30,S31,Été,Été
+300,street,rue,lexique,M8 · My World,S29,2,S29,S29,S30,S31,Été,Été
+301,shop,magasin,lexique,M8 · My World,S29,3,S29,S30,S30,S31,Été,Été
+302,park,parc,lexique,M8 · My World,S29,4,S29,S30,S30,S32,Été,Été
+303,beach,plage,lexique,M8 · My World,S29,1,S29,S29,S30,S31,Été,Été
+304,where,où,fonction,M8 · My World,S29,2,S29,S29,S30,S31,Été,Été
+305,in,dans,fonction,M8 · My World,S29,3,S29,S30,S30,S31,Été,Été
+306,on,sur,fonction,M8 · My World,S29,4,S29,S30,S30,S32,Été,Été
+307,under,sous,fonction,M8 · My World,S29,1,S29,S29,S30,S31,Été,Été
+308,Where is …?,où est … ?,structure,M8 · My World,S29,2,S29,S29,S30,S31,Été,Été
+309,garden,jardin,lexique,M8 · My World,S29,3,S29,S30,S30,S31,Été,Été
+310,door,porte,lexique,M8 · My World,S29,4,S29,S30,S30,S32,Été,Été
+311,window,fenêtre,lexique,M8 · My World,S29,1,S29,S29,S30,S31,Été,Été
+312,city,ville,lexique,M8 · My World,S29,2,S29,S29,S30,S31,Été,Été
+313,car,(mot de lecture),décodable,M8 · My World,S29,3,S29,S30,S30,S31,Été,Été
+314,star,(mot de lecture),décodable,M8 · My World,S29,4,S29,S30,S30,S32,Été,Été
+315,far,(mot de lecture),décodable,M8 · My World,S29,1,S29,S29,S30,S31,Été,Été
+316,sunny,ensoleillé,lexique,M8 · My World,S30,1,S30,S30,S31,S32,Été,Été
+317,rainy,pluvieux,lexique,M8 · My World,S30,2,S30,S30,S31,S32,Été,Été
+318,hot,chaud,lexique,M8 · My World,S30,3,S30,S31,S31,S32,Été,Été
+319,cold,froid,lexique,M8 · My World,S30,4,S30,S31,S31,Été,Été,Été
+320,windy,venteux,lexique,M8 · My World,S30,1,S30,S30,S31,S32,Été,Été
+321,weather,météo,lexique,M8 · My World,S30,2,S30,S30,S31,S32,Été,Été
+322,What's the weather like?,quel temps fait-il ?,structure,M8 · My World,S30,3,S30,S31,S31,S32,Été,Été
+323,desert,désert,lexique,M8 · My World,S30,4,S30,S31,S31,Été,Été,Été
+324,sea,mer,lexique,M8 · My World,S30,1,S30,S30,S31,S32,Été,Été
+325,mountain,montagne,lexique,M8 · My World,S30,2,S30,S30,S31,S32,Été,Été
+326,sun,soleil,lexique,M8 · My World,S30,3,S30,S31,S31,S32,Été,Été
+327,cloud,nuage,lexique,M8 · My World,S30,4,S30,S31,S31,Été,Été,Été
+328,snow,neige,lexique,M8 · My World,S30,1,S30,S30,S31,S32,Été,Été
+329,sky,ciel,lexique,M8 · My World,S30,2,S30,S30,S31,S32,Été,Été
+330,tree,arbre,lexique,M8 · My World,S30,3,S30,S31,S31,S32,Été,Été
+331,flower,fleur,lexique,M8 · My World,S30,4,S30,S31,S31,Été,Été,Été
+332,fork,(mot de lecture),décodable,M8 · My World,S30,1,S30,S30,S31,S32,Été,Été
+333,corn,(mot de lecture),décodable,M8 · My World,S30,2,S30,S30,S31,S32,Été,Été
+334,her,(mot de lecture),décodable,M8 · My World,S30,3,S30,S31,S31,S32,Été,Été
+335,river,(mot de lecture),décodable,M8 · My World,S30,4,S30,S31,S31,Été,Été,Été

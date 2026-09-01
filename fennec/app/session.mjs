@@ -16,7 +16,7 @@
 
 import { introduce, review, isMastered } from '../src/srs.mjs';
 import { buildDailyQueue, buildScreenPlan, insertRetest } from '../src/queue.mjs';
-import { stage, pfill, phaseEl, speak, fennecTag, renderScreen } from './screens.mjs';
+import { stage, setProgress, setHelp, speak, avatarTag, renderScreen } from './screens.mjs';
 
 /**
  * Démarre et pilote une session quotidienne complète pour un élève donné.
@@ -28,9 +28,10 @@ import { stage, pfill, phaseEl, speak, fennecTag, renderScreen } from './screens
  * @param {string} deps.studentId
  * @param {() => Date} deps.now - horloge (réelle ou virtuelle, voir main.mjs)
  * @param {{week:number, day:number}} deps.pointer - position actuelle dans le curriculum (day: 1-4)
+ * @param {number} deps.streakDays - jours consécutifs joués cette semaine (badge flamme)
  * @param {(pointer:{week:number,day:number}) => void} deps.onSessionEnd
  */
-async function runSession({ store, studentId, now, pointer, onSessionEnd }) {
+async function runSession({ store, studentId, now, pointer, streakDays, onSessionEnd }) {
   const catalog = await store.getCatalog();
   if (catalog.length === 0) {
     stage.innerHTML = `<div class="win"><p class="say">Catalogue vide.<br>Vérifie ensureCatalog() dans main.mjs.</p></div>`;
@@ -55,13 +56,23 @@ async function runSession({ store, studentId, now, pointer, onSessionEnd }) {
     return renderNothingDueToday();
   }
 
-  await next();
+  await showSessionIntro();
+
+  async function showSessionIntro() {
+    setProgress(0, plan.length);
+    setHelp('اضغط على الصورة المطابقة للكلمة التي تسمعها 🎧');
+    const world = catalog.find((w) => w.introWeek === pointer.week)?.worldId;
+    stage.innerHTML = avatarTag() +
+      `<p class="say ar center">مستعد لـ 15 دقيقة إنجليزي؟</p>` +
+      `<p class="sub ar center">الحصة ${pointer.day} · S${pointer.week}${world ? ` · M${world}` : ''}</p>` +
+      `<button class="cta accent">ابدأ</button>`;
+    stage.querySelector('.cta').addEventListener('click', () => next(), { once: true });
+  }
 
   async function next() {
     idx++;
     if (idx >= plan.length) return finish();
-    pfill.style.width = Math.round((idx / plan.length) * 100) + '%';
-    phaseEl.textContent = plan[idx].phase === 'reveil' ? 'Réveil' : 'Nouveau';
+    setProgress(idx, plan.length);
     renderScreen(plan[idx], {
       onContinue: () => onDiscovered(plan[idx]),
       onAnswer: (ok) => onAnswer(plan[idx], ok),
@@ -113,8 +124,7 @@ async function runSession({ store, studentId, now, pointer, onSessionEnd }) {
   }
 
   async function finish() {
-    pfill.style.width = '100%';
-    phaseEl.textContent = 'Victoire';
+    setProgress(plan.length, plan.length);
     const allStates = await store.getAllWordStates(studentId);
     const masteredCount = allStates.filter((r) => isMastered(deserialize(r))).length;
     const pct = total ? Math.round((correct / total) * 100) : 100;
@@ -126,21 +136,28 @@ async function runSession({ store, studentId, now, pointer, onSessionEnd }) {
     });
 
     stage.innerHTML = `<div class="win">
-      <div class="burst">🎉 ⭐ 🎉</div>${fennecTag('happy')}
-      <p class="say">Well done!</p>
-      <div class="n">${masteredCount}</div>
-      <p class="sub">mots maîtrisés · réussite de la session : ${pct}%</p>
+      ${avatarTag()}
+      <p class="say ar center">أحسنت، انتهت الحصة!</p>
+      <div class="stats-row">
+        <div class="stat"><b>${masteredCount}</b><span class="ar">كلمات</span></div>
+        <div class="stat"><b class="accent">${pct}%</b><span class="ar">الدقة</span></div>
+      </div>
+      ${streakDays > 0 ? `<div class="streak-badge ar">🔥 سلسلة ${streakDays} أيام</div>` : ''}
+      <button class="cta primary">متابعة</button>
     </div>`;
     speak('Well done!');
     // jour 1→2→3→4, puis jour 5 = Boss (voir main.mjs) avant de repasser à
-    // la semaine suivante (géré par bossSession.mjs selon le verdict).
+    // la semaine suivante (géré par bossSession.mjs selon le verdict). Le
+    // bouton "متابعة" ne fait qu'acquitter l'écran (une seule session par
+    // jour) : il ne relance rien, contrairement au Boss.
     onSessionEnd({ week: pointer.week, day: pointer.day + 1 });
   }
 
   function renderNothingDueToday() {
-    stage.innerHTML = `<div class="win">${fennecTag()}
-      <p class="say">Rien à réviser aujourd'hui !</p>
-      <p class="sub">Aucun mot dû, aucun nouveau mot programmé pour S${pointer.week} jour ${pointer.day}.<br>Avance le curriculum ou avance le jour virtuel (barre de dev).</p>
+    setProgress(1, 1);
+    stage.innerHTML = `<div class="win">${avatarTag()}
+      <p class="say ar center">لا يوجد شيء للمراجعة اليوم!</p>
+      <p class="sub ar center">لا كلمات مستحقة، ولا كلمات جديدة مبرمجة لـ S${pointer.week} اليوم ${pointer.day}.</p>
     </div>`;
     onSessionEnd({ week: pointer.week, day: pointer.day + 1 });
   }

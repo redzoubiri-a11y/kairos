@@ -32,10 +32,34 @@ fennec/
     queue.test.js             # tests de la construction du plan d'écrans
     sync.test.js              # tests de la synchronisation (client Supabase simulé)
   app/                        # PWA réelle, branchée sur src/*.mjs (pas une maquette)
-    index.html, styles.css, main.mjs, session.mjs, sw.js, manifest.webmanifest
+    index.html, styles.css, screens.mjs, session.mjs, bossSession.mjs, main.mjs, sw.js, manifest.webmanifest
     catalog.json               # copie embarquée du référentiel (bootstrap 100% offline)
     build_catalog.py           # régénère catalog.json depuis data/foundations-banque-mots.json
+  design/
+    design-system-handoff.md              # spec du design système définitif (tokens, gabarits, copie)
+    fennec-design-system-complete.dc.html  # source haute-fidélité (palette marine/rouge/blanc)
 ```
+
+## Design système
+
+`fennec/app/` applique le design système définitif décrit dans `fennec/design/`
+(palette marine `#0A3161` / rouge `#B22234` / crème `#F5F3EE`, Baloo 2 +
+IBM Plex Mono, pastilles de progression, bandeau Boss plein marine + panier
+rouge à 12 cases). Deux règles de comportement non négociables du handoff,
+implémentées dans `screens.mjs` :
+- **Jamais rouge sur une erreur** : une mauvaise réponse révèle la bonne en
+  "erreur-douce" (gris-bleu neutre), jamais en rouge, jamais de croix.
+- **Jamais de son d'échec** : `chimeSuccess()` ne joue qu'à la réussite.
+
+**Interface enfant en arabe.** Les instructions, boutons et titres d'écran
+sont en arabe (classe CSS `.ar` pour le RTL) ; le mot anglais enseigné reste
+affiché en anglais (LTR) — c'est le contenu pédagogique, pas l'interface.
+
+**Écart connu, assumé** : les cartes-options (écoute→touche, lecture→touche)
+montrent le mot anglais en texte, en attendant une illustration par mot —
+aucune banque d'images/emoji n'existe pour les 335 mots de `data/foundations-banque-mots.json`.
+Construire cette banque (illustrations réelles ou dictionnaire d'emoji) est
+un chantier de contenu séparé, pas fait ici.
 
 ## Pourquoi cette architecture
 

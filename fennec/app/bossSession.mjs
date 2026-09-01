@@ -1,13 +1,14 @@
 /**
  * Fennec — moteur du Boss du jeudi (jour 5), réel.
  *
- * Reprend le déroulé de wireframes/fennec-maquette-boss-s21.html (panier de
- * 12 défis, seuil de 80%, message au parent en cas de réussite, "market is
- * closed" + variante en cas d'échec) mais sur du contenu VRAI : les défis
- * viennent de fennec/src/queue.mjs `buildBossPlan()`, construits à partir
- * des mots réellement introduits cette semaine dans le catalogue, et le
- * rendu par type d'écran est partagé avec la session quotidienne via
- * screens.mjs. Aucun texte, aucun mot n'est écrit en dur ici.
+ * Reprend le gabarit Boss du design système définitif (bandeau plein
+ * marine + étoile + compteur "x/12", panier rouge à 12 cases, CTA rouge —
+ * "même famille visuelle [que la session normale], mode clairement
+ * différencié") mais sur du contenu VRAI : les défis viennent de
+ * fennec/src/queue.mjs `buildBossPlan()`, construits à partir des mots
+ * réellement introduits cette semaine dans le catalogue, et le rendu par
+ * type d'écran est partagé avec la session quotidienne via screens.mjs.
+ * Aucun texte, aucun mot n'est écrit en dur ici.
  *
  * Contrairement à session.mjs, le Boss ne touche jamais l'état SRS
  * (srs.review/introduce) : c'est un test de maîtrise, pas un événement de
@@ -18,9 +19,7 @@
 
 import { buildBossPlan } from '../src/queue.mjs';
 import { bossVerdict } from '../src/srs.mjs';
-import { stage, pfill, phaseEl, speak, fennecTag, renderScreen } from './screens.mjs';
-
-const PASS_THRESHOLD = 0.8; // documenté ici pour l'affichage ; bossVerdict() applique la même règle
+import { stage, setBossProgress, setHelp, speak, avatarTag, renderScreen } from './screens.mjs';
 
 /**
  * @param {Object} deps
@@ -36,9 +35,10 @@ async function runBossSession({ store, studentId, now, pointer, attempt, onBossE
   const plan = buildBossPlan({ catalog, week: pointer.week, count: 12 });
 
   if (plan.length === 0) {
-    stage.innerHTML = `<div class="win">${fennecTag()}
-      <p class="say">Pas de Boss cette semaine.</p>
-      <p class="sub">Aucun mot n'a été introduit pour S${pointer.week} — on passe directement à la semaine suivante.</p>
+    setBossProgress(0, 12);
+    stage.innerHTML = `<div class="win">${avatarTag()}
+      <p class="say ar center">لا يوجد تحدي زعيم هذا الأسبوع</p>
+      <p class="sub ar center">لم تتم برمجة أي كلمة لـ S${pointer.week} — ننتقل مباشرة إلى الأسبوع التالي.</p>
     </div>`;
     return onBossEnd({ pointer: { week: pointer.week + 1, day: 1 }, attempt: 1 });
   }
@@ -51,22 +51,22 @@ async function runBossSession({ store, studentId, now, pointer, attempt, onBossE
   await showIntro();
 
   async function showIntro() {
-    phaseEl.textContent = 'Boss';
-    pfill.style.width = '0%';
+    setBossProgress(0, plan.length);
+    setHelp('كل جولة صحيحة تملأ خانة في السلة — 80% كافية للفوز 🧺');
     stage.innerHTML = `<div class="win">
-      <div class="burst">⭐ 🧺 ⭐</div>${fennecTag()}
-      <p class="say">BOSS ${attempt > 1 ? '— nouvel essai' : ''}</p>
-      <p class="sub">${plan.length} défis · remplis le panier · 80% pour gagner.</p>
-      <button class="next">GO ! ➜</button>
+      <div class="win emoji-lg">⭐</div>
+      ${avatarTag()}
+      <p class="say ar center">تحدي الزعيم${attempt > 1 ? ` — محاولة ${attempt}` : ''}</p>
+      <p class="sub ar center">${plan.length} تحديات · املأ السلة · 80% للفوز</p>
+      <button class="cta accent">ابدأ</button>
     </div>`;
-    stage.querySelector('.next').addEventListener('click', () => { speak('Let\'s go!'); next(); }, { once: true });
+    stage.querySelector('.cta').addEventListener('click', () => { speak('Let\'s go!'); next(); }, { once: true });
   }
 
   async function next() {
     idx++;
     if (idx >= plan.length) return finish();
-    pfill.style.width = Math.round((idx / plan.length) * 100) + '%';
-    phaseEl.textContent = `Boss · défi ${idx + 1}/${plan.length}`;
+    setBossProgress(idx, plan.length);
     renderScreen(plan[idx], { onAnswer: (ok) => onAnswer(ok) });
   }
 
@@ -81,9 +81,8 @@ async function runBossSession({ store, studentId, now, pointer, attempt, onBossE
   }
 
   async function finish() {
-    pfill.style.width = '100%';
-    phaseEl.textContent = 'Boss · résultat';
     const verdict = bossVerdict(results);
+    setBossProgress(verdict.correct, plan.length);
 
     await store.logSessionSummary(studentId, {
       sessionId, week: pointer.week, day: 5, kind: 'boss',
@@ -95,25 +94,30 @@ async function runBossSession({ store, studentId, now, pointer, attempt, onBossE
 
     if (verdict.passed) {
       stage.innerHTML = `<div class="win">
-        <div class="burst">🎉 🏆 🎉</div>${fennecTag('happy')}
-        <p class="say">You did it! ${verdict.correct} / ${verdict.total}</p>
-        <p class="sub">Le monde suivant est débloqué !</p>
-        <div class="parentcard">🔊 Un résumé de la session part vers le parent (à brancher : sync.mjs → tableau de bord).</div>
-        <button class="next">Continuer ➜</button>
+        <div class="win emoji-lg">🏆</div>
+        <p class="say ar center">فاز الزعيم! السوق مفتوح</p>
+        <div class="parentcard">
+          <span class="tag ar">رسالة لولي الأمر</span>
+          <p class="ar">أتم طفلك تحدي الزعيم بنجاح هذا الأسبوع! ${verdict.correct} من ${verdict.total} — استمر في تشجيعه 👏</p>
+        </div>
+        <button class="cta accent">مشاركة مع الوالدين</button>
       </div>`;
       speak('You did it! Well done!');
-      stage.querySelector('.next').addEventListener('click', () => onBossEnd({ pointer: { week: pointer.week + 1, day: 1 }, attempt: 1 }), { once: true });
+      // "مشاركة مع الوالدين" fait avancer vers la semaine suivante ; le
+      // partage réel (export/envoi du message ci-dessus) reste à brancher
+      // sur un canal concret (SMS/WhatsApp/notification) — hors scope ici.
+      stage.querySelector('.cta').addEventListener('click', () => onBossEnd({ pointer: { week: pointer.week + 1, day: 1 }, attempt: 1 }), { once: true });
     } else {
       stage.innerHTML = `<div class="win">
-        <div class="burst">🌙</div>${fennecTag()}
-        <p class="say">Come back tomorrow!</p>
-        <p class="sub">${verdict.correct} / ${verdict.total} — pas d'échec affiché à l'enfant : demain, un nouvel essai avec un ordre et des questions différents sur les mêmes mots.</p>
-        <button class="next warm">Nouvel essai ↻</button>
+        <div class="win emoji-lg" style="opacity:.7">🏪</div>
+        <p class="say ar center">السوق مغلق اليوم</p>
+        <p class="sub ar center">تدرب أكثر ثم عد لتحدي الزعيم غدًا</p>
+        <button class="cta primary">تدرّب الآن</button>
       </div>`;
       speak('Come back tomorrow!');
-      stage.querySelector('.next').addEventListener('click', () => onBossEnd({ pointer, attempt: attempt + 1 }), { once: true });
+      stage.querySelector('.cta').addEventListener('click', () => onBossEnd({ pointer, attempt: attempt + 1 }), { once: true });
     }
   }
 }
 
-export { runBossSession, PASS_THRESHOLD };
+export { runBossSession };

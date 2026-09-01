@@ -1,124 +1,203 @@
-/* Fennec — feuille de style de l'app réelle.
-   Identité reprise des maquettes wireframes/fennec-maquette-*.html : sable
-   chaud, encre brune, vert de réussite, safran d'accent, corail d'action.
-   Formalisation complète en cours dans Claude Design (voir conversation) —
-   ces tokens seront remplacés par le design système final le moment venu. */
+/* Fennec — design système définitif (haute fidélité).
+   Source : handoff "Fennec Design System - Complete.dc.html" (palette
+   recolorée marine/rouge/blanc, variante "1d", demandée explicitement).
+   Tokens et gabarits reproduits ici à l'identique — voir le commentaire de
+   chaque bloc pour la correspondance avec le handoff. Interface enfant en
+   arabe (RTL sur les blocs de texte arabe via .ar) ; le contenu pédagogique
+   (le mot anglais enseigné) reste en anglais, LTR. */
 
 :root{
-  --desk:#EFE3CB; --sand:#FBF0DC; --card:#FFFFFF; --ink:#33291C; --ink-soft:#7A6A52;
-  --green:#177245; --green-soft:#DDEFE4; --saffron:#E09E3C; --saffron-soft:#FBEFD8;
-  --coral:#D96A4E; --line:#E5D8BE;
+  --bg-base:#F5F3EE;      /* fond d'écran (jour uniquement, pas de dark mode) */
+  --surface:#FFFFFF;      /* cartes, options, clavier */
+  --ink:#0A3161;          /* texte principal */
+  --primary:#0A3161;      /* réussite / progression / bouton "صح" */
+  --primary-soft:#E8EEF6;
+  --accent:#B22234;       /* haut-parleur / CTA principal / badges / bouton "خطأ" */
+  --accent-soft:#FBE4E4;
+  --micro:#8C1D2C;        /* bouton micro */
+  --micro-shadow:#5E1420;
+  --err-bg:#EDEFF3;       /* erreur-douce : jamais rouge, neutre bleuté non punitif */
+  --err-border:#C7D0DE;
+  --border:#E3DFD6;
+  --ink-soft:#6b6b6b;
   --mono:'IBM Plex Mono',ui-monospace,monospace;
+  --sp-xs:4px; --sp-sm:8px; --sp-md:16px; --sp-lg:24px; --sp-xl:32px;
 }
 
 *{box-sizing:border-box}
+html,body{height:100%}
 body{
-  background:var(--desk); color:var(--ink); font-family:'Baloo 2',system-ui,sans-serif;
-  margin:0; min-height:100vh; display:flex; flex-direction:column; align-items:center;
+  background:var(--bg-base); color:var(--ink); font-family:'Baloo 2',system-ui,sans-serif;
+  margin:0; min-height:100dvh; display:flex; flex-direction:column; align-items:center;
 }
 
+/* Bloc de texte en arabe : direction et alignement corrects (RTL),
+   appliqué localement comme dans le handoff — le shell de l'app (ordre des
+   pastilles, position des boutons) reste en LTR, seul le texte est en RTL. */
+.ar{direction:rtl; text-align:right; unicode-bidi:isolate}
+.ar.center{text-align:center}
+
 .devbar{
-  width:100%; background:var(--ink); color:var(--sand); font-family:var(--mono);
+  width:100%; background:var(--ink); color:var(--bg-base); font-family:var(--mono);
   font-size:.72rem; padding:.4rem 1rem; display:flex; gap:1rem; align-items:center;
   flex-wrap:wrap; justify-content:center;
 }
 .devbar button{
-  font-family:var(--mono); font-size:.7rem; background:var(--saffron); color:var(--ink);
+  font-family:var(--mono); font-size:.7rem; background:var(--accent); color:#fff;
   border:none; border-radius:6px; padding:.25rem .6rem; cursor:pointer;
 }
-.devbar button:focus-visible{outline:2px solid var(--sand)}
+.devbar button:focus-visible{outline:2px solid var(--bg-base)}
 
-.phone{
-  width:min(400px,96vw); height:min(760px,84vh); background:var(--sand);
-  border-radius:34px; border:6px solid #2B2118; box-shadow:0 18px 50px rgba(43,33,24,.35);
-  display:flex; flex-direction:column; overflow:hidden; position:relative; margin-top:1rem;
+/* App shell : plein écran mobile-first, pas de bézel décoratif (ceci est la
+   vraie PWA, pas un aperçu de maquette) — centré avec une largeur max sur
+   desktop pour rester lisible en test. */
+.app{
+  width:100%; max-width:480px; flex:1; background:var(--bg-base);
+  display:flex; flex-direction:column; min-height:0;
 }
-.topbar{display:flex; align-items:center; gap:.6rem; padding:.8rem 1rem .5rem}
-.pbar{flex:1; height:12px; background:#EADFC6; border-radius:999px; overflow:hidden}
-.pfill{height:100%; width:0%; background:var(--green); border-radius:999px; transition:width .4s ease}
-.phase{
-  font-family:var(--mono); font-size:.6rem; letter-spacing:.1em; text-transform:uppercase;
-  border-radius:999px; padding:.2rem .6rem; white-space:nowrap; background:var(--green-soft); color:var(--green);
-}
-.hintbtn{
-  width:34px; height:34px; border-radius:50%; border:2px solid var(--line); background:var(--card);
-  font-family:'Baloo 2'; font-weight:800; font-size:1.05rem; color:var(--ink-soft); cursor:pointer; flex:none;
-}
-.hintbtn:focus-visible{outline:3px solid var(--saffron)}
 
-#stage{flex:1; display:flex; flex-direction:column; padding:.7rem 1rem 1rem; overflow-y:auto; min-height:0}
-.say{font-size:1.25rem; font-weight:700; text-align:center; margin:.2rem 0 .6rem; text-wrap:balance; line-height:1.25}
-.say .en{color:var(--green)}
-.sub{font-size:.9rem; color:var(--ink-soft); text-align:center; font-weight:600; margin:-.3rem 0 .6rem}
+.topbar{display:flex; align-items:center; gap:var(--sp-sm); padding:14px 18px 0}
+.pips{display:flex; gap:5px; flex:1}
+.pip{height:8px; width:22px; border-radius:4px; background:var(--border); transition:background .3s}
+.pip.on{background:var(--primary)}
+@media (prefers-reduced-motion: reduce){.pip{transition:none}}
 
-.fennec{font-size:3rem; text-align:center; line-height:1; margin:.2rem 0; transition:transform .25s; user-select:none}
-.fennec.happy{transform:scale(1.25) rotate(-8deg)}
-@media (prefers-reduced-motion: reduce){.fennec,.pfill{transition:none}}
+.help-btn{
+  width:30px; height:30px; border-radius:50%; background:var(--surface); border:2px solid var(--accent);
+  display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--ink);
+  font-size:14px; flex-shrink:0; cursor:pointer;
+}
+.help-btn:focus-visible{outline:3px solid var(--accent)}
+.help-card{
+  display:none; margin:10px 18px 0; background:var(--accent-soft); border:2px solid var(--accent);
+  border-radius:14px; padding:12px 16px; font-size:14px; color:var(--ink);
+}
+.help-card.on{display:block}
+
+/* Bandeau Boss : plein marine, distinct du gabarit de session normale. */
+.boss-band{
+  background:var(--primary); color:#fff; padding:14px 18px; display:flex; align-items:center;
+  gap:10px; border-radius:0 0 18px 18px;
+}
+.boss-band .star{font-size:20px}
+.boss-band .count{font-family:var(--mono); font-weight:600; font-size:.85rem; margin-left:auto}
+.basket{display:flex; gap:3px; padding:12px 18px 0}
+.basket .cell{flex:1; height:16px; border-radius:5px; background:var(--surface); border:1.5px solid var(--border)}
+.basket .cell.on{background:var(--accent); border-color:var(--accent)}
+
+#stage{flex:1; display:flex; flex-direction:column; padding:16px 24px 20px; overflow-y:auto; min-height:0}
+
+.avatar{
+  width:120px; height:120px; border-radius:50%; background:var(--accent-soft); margin:0 auto var(--sp-md);
+  display:flex; align-items:center; justify-content:center; font-size:56px; flex-shrink:0;
+}
+.avatar.sm{width:64px; height:64px; font-size:30px}
+
+.say{font-size:22px; font-weight:700; color:var(--ink); text-align:center; margin:0 0 6px; text-wrap:balance; line-height:1.3}
+.say.en{color:var(--ink); font-weight:800}
+.sub{font-size:14px; color:var(--ink-soft); text-align:center; margin:0 0 10px}
 
 .speaker{
-  display:block; margin:.2rem auto .8rem; width:74px; height:74px; border-radius:50%;
-  border:none; background:var(--saffron); color:#fff; font-size:2rem; cursor:pointer; box-shadow:0 4px 0 #B87E2C;
+  display:block; margin:14px auto 4px; width:56px; height:56px; border-radius:50%;
+  border:none; background:var(--accent); color:#fff; font-size:22px; cursor:pointer;
+  box-shadow:0 5px 0 #7F1526;
 }
-.speaker:active{transform:translateY(3px); box-shadow:0 1px 0 #B87E2C}
-.speaker:focus-visible{outline:3px solid var(--green)}
+.speaker:active{transform:translateY(4px); box-shadow:0 1px 0 #7F1526}
+.speaker:focus-visible{outline:3px solid var(--primary)}
 
-.grid{display:grid; grid-template-columns:1fr 1fr; gap:.8rem; margin-top:auto; margin-bottom:auto}
-.grid.three{grid-template-columns:1fr 1fr 1fr}
+.grid{display:grid; grid-template-columns:1fr 1fr; gap:var(--sp-md); margin:var(--sp-md) 0; flex:1; align-content:center}
 .opt{
-  background:var(--card); border:3px solid var(--line); border-radius:20px; padding:1rem .5rem;
-  font-size:1.1rem; font-weight:700; text-align:center; cursor:pointer; transition:transform .12s; line-height:1.2;
+  background:var(--surface); border:2px solid var(--border); border-radius:22px; height:120px;
+  font-size:44px; text-align:center; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  padding:0 8px; transition:transform .12s;
 }
-.opt:active{transform:scale(.95)}
-.opt:focus-visible{outline:3px solid var(--saffron)}
-.opt.good{border-color:var(--green); background:var(--green-soft)}
-.opt.show{border-color:var(--saffron); background:var(--saffron-soft)}
-.opt.dis{pointer-events:none; opacity:.85}
+.opt .lbl{font-size:15px; font-weight:700; color:var(--ink); font-family:'Baloo 2'}
+.opt:active{transform:scale(.96)}
+.opt:focus-visible{outline:3px solid var(--accent)}
+.opt.good{border-color:var(--primary); background:var(--primary-soft)}
+/* erreur-douce : jamais rouge, jamais croix — révèle juste la bonne réponse */
+.opt.err{border-color:var(--err-border); background:var(--err-bg)}
+.opt[disabled]{cursor:default}
 
 .card-word{
-  font-size:2rem; font-weight:800; text-align:center; background:var(--card);
-  border:3px solid var(--line); border-radius:18px; padding:.5rem; margin:0 0 .9rem; letter-spacing:.02em;
+  font-size:20px; font-weight:700; text-align:center; background:var(--surface);
+  border:3px solid var(--border); border-radius:18px; padding:20px 22px; margin:14px 0 4px;
 }
 
-.tfrow{display:flex; gap:1rem; margin-top:auto; margin-bottom:auto}
-.tf{flex:1; border:none; border-radius:20px; font-size:2.2rem; padding:1rem; cursor:pointer; color:#fff}
-.tf.yes{background:var(--green); box-shadow:0 4px 0 #0E4A2C}
-.tf.no{background:var(--coral); box-shadow:0 4px 0 #A34A34}
-.tf:active{transform:translateY(3px); box-shadow:none}
+.tfrow{display:flex; gap:12px; margin:var(--sp-md) 0}
+.tf{flex:1; height:56px; border:none; border-radius:18px; font-size:16px; font-weight:700; color:#fff; cursor:pointer}
+.tf.yes{background:var(--primary)}
+.tf.no{background:var(--accent)}
+.tf:active{opacity:.85}
 .tf:focus-visible{outline:3px solid var(--ink)}
+.tf[disabled]{opacity:.5; cursor:default}
 
+.mic-wrap{display:flex; flex-direction:column; align-items:center; gap:var(--sp-md); margin:auto 0}
 .mic{
-  display:block; margin:auto; width:110px; height:110px; border-radius:50%; border:none;
-  background:var(--coral); color:#fff; font-size:2.6rem; cursor:pointer; box-shadow:0 5px 0 #A34A34;
+  width:88px; height:88px; border-radius:50%; border:none; background:var(--micro); color:#fff;
+  font-size:34px; cursor:pointer; box-shadow:0 6px 0 var(--micro-shadow); transition:box-shadow .15s;
 }
-.mic:focus-visible{outline:3px solid var(--ink)}
-.meter{height:16px; background:#EADFC6; border-radius:999px; margin:1rem 2rem 0; overflow:hidden}
-.meter div{height:100%; width:0%; background:var(--saffron); transition:width .1s linear}
+.mic.active{box-shadow:0 0 0 10px var(--accent-soft), 0 6px 0 var(--micro-shadow)}
+.mic:focus-visible{outline:3px solid var(--primary)}
+.voice-bars{display:flex; gap:4px; align-items:flex-end; height:28px}
+.voice-bars span{width:6px; border-radius:3px; background:var(--accent); transition:height .09s}
+.mic-caption{font-family:var(--mono); font-size:11px; color:var(--ink-soft); text-align:center; min-height:1.2em}
 .alt{
-  display:block; margin:.9rem auto 0; background:none; border:none; color:var(--ink-soft);
-  font-family:'Baloo 2'; font-weight:600; font-size:.9rem; text-decoration:underline; cursor:pointer;
+  background:none; border:none; color:var(--ink-soft); font-family:'Baloo 2'; font-weight:600;
+  font-size:14px; text-decoration:underline; cursor:pointer;
 }
 
-.chips{display:flex; gap:.6rem; justify-content:center; flex-wrap:wrap; margin:.8rem 0}
-.chip{background:var(--card); border:3px solid var(--line); border-radius:14px; padding:.45rem 1rem; font-size:1.1rem; font-weight:700; cursor:pointer}
-.chip:focus-visible{outline:3px solid var(--saffron)}
+.slots{display:flex; gap:8px; margin:0 0 14px}
+.slot{
+  flex:1; height:48px; border-radius:14px; display:flex; align-items:center; justify-content:center;
+  font-weight:700; color:var(--ink); border:2px dashed var(--err-border); background:var(--err-bg);
+}
+.slot.filled{border:2px solid var(--primary); background:var(--primary-soft)}
+.chips{display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin:auto 0}
+.chip{
+  height:44px; padding:0 18px; border-radius:22px; background:var(--surface); border:2px solid var(--border);
+  font-weight:700; color:var(--ink); cursor:pointer; font-family:'Baloo 2'; font-size:15px;
+}
+.chip:focus-visible{outline:3px solid var(--accent)}
 .chip.used{opacity:.25; pointer-events:none}
-.slots{display:flex; gap:.5rem; justify-content:center; margin:.6rem 0; flex-wrap:wrap}
-.slot{min-width:64px; height:52px; border-bottom:4px solid var(--saffron); font-size:1.1rem; font-weight:700; display:flex; align-items:center; justify-content:center}
 
-.next{
-  display:block; margin:1rem auto 0; background:var(--green); color:#fff; border:none; border-radius:16px;
-  font-family:'Baloo 2'; font-weight:800; font-size:1.15rem; padding:.7rem 2rem; cursor:pointer; box-shadow:0 4px 0 #0E4A2C;
+/* Phonics : lettre en fond clair + tracé pointillé (indicatif — la
+   validation du tracé n'est pas encore implémentée, cf. limites connues). */
+.phonics-box{
+  width:220px; height:220px; margin:auto; border-radius:24px; background:var(--surface);
+  border:2px solid var(--border); display:flex; align-items:center; justify-content:center; position:relative;
 }
-.next:active{transform:translateY(3px); box-shadow:none}
-.next:focus-visible{outline:3px solid var(--ink)}
-.next.warm{background:var(--saffron); box-shadow:0 4px 0 #B87E2C}
+.phonics-box .letter{font-size:150px; font-weight:800; color:var(--err-bg); font-family:'Baloo 2'}
+.phonics-caption{font-family:var(--mono); font-size:11px; color:var(--ink-soft); text-align:center; margin-top:14px}
 
-.win{margin:auto; text-align:center}
-.win .n{font-size:3.2rem; font-weight:800; color:var(--green); line-height:1}
-.burst{font-size:2rem; letter-spacing:.3rem}
+.cta{
+  display:block; width:100%; height:58px; border-radius:20px; border:none; color:#fff;
+  font-family:'Baloo 2'; font-weight:700; font-size:18px; cursor:pointer; margin-top:var(--sp-md);
+}
+.cta.primary{background:var(--primary); box-shadow:0 6px 0 #06213F}
+.cta.accent{background:var(--accent); box-shadow:0 6px 0 #7F1526}
+.cta:active{transform:translateY(4px); box-shadow:none}
+.cta:focus-visible{outline:3px solid var(--ink)}
+.cta[disabled]{opacity:.4; cursor:default; box-shadow:none}
+
+.stats-row{display:flex; gap:var(--sp-lg); justify-content:center; margin:var(--sp-sm) 0}
+.stat{text-align:center}
+.stat b{display:block; font-size:26px; font-weight:800; color:var(--primary)}
+.stat b.accent{color:var(--accent)}
+.stat span{font-size:12px; color:var(--ink-soft)}
+.streak-badge{
+  background:var(--accent-soft); border-radius:10px; padding:8px 14px; font-size:13px;
+  color:var(--ink); font-weight:700; margin:var(--sp-sm) auto; width:fit-content;
+}
+
 .parentcard{
-  background:var(--card); border:3px solid var(--green); border-radius:18px; padding:.8rem 1rem;
-  margin:1rem auto 0; max-width:290px; font-size:.88rem; text-align:center; color:var(--ink-soft);
+  background:var(--surface); border:2px solid var(--accent); border-radius:16px; padding:14px 16px;
+  width:100%; margin-top:var(--sp-md);
 }
+.parentcard .tag{font-family:var(--mono); font-size:10px; color:var(--accent); margin-bottom:6px; display:block}
+.parentcard p{font-size:14px; color:var(--ink); line-height:1.6; margin:0}
+
+.win{margin:auto; text-align:center; width:100%}
+.win .emoji-lg{font-size:44px; margin-bottom:var(--sp-sm)}
 
 .credit{font-family:var(--mono); font-size:.65rem; color:var(--ink-soft); margin:.8rem 0 1.2rem; text-align:center; padding:0 1rem}

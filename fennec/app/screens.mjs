@@ -2,18 +2,60 @@
  * Fennec — briques de rendu d'écran partagées entre la session quotidienne
  * (session.mjs) et le Boss du jeudi (bossSession.mjs).
  *
- * Un même type d'écran (écoute→touche, vrai/faux, dis-le, construis la
- * phrase) est rencontré aussi bien en Réveil/Nouveau qu'en Boss (cf.
- * docs/script-semaine-type-s21.md) — factoriser ici évite que les deux
- * modes dérivent visuellement l'un de l'autre. Ce module ne connaît que le
- * DOM et le type générique d'écran ; il ignore tout du SRS, du score ou du
- * plan de session — c'est aux appelants (session.mjs, bossSession.mjs) de
- * décider quoi faire d'une réponse via le callback `onAnswer(ok)`.
+ * Applique le design système définitif (handoff "Fennec Design System —
+ * Complete.dc.html", variante couleurs "1d" marine/rouge/blanc) : tokens
+ * dans styles.css, gabarits et copie ici. Interface enfant en **arabe**
+ * (classe .ar => direction/alignement RTL) ; le mot anglais enseigné reste
+ * affiché en anglais (LTR), c'est le contenu pédagogique.
+ *
+ * Écart connu par rapport au handoff : les cartes-options montrent le mot
+ * anglais en texte (pas encore d'illustration/emoji par mot — aucune
+ * banque d'images n'existe pour les 335 mots). C'est un placeholder
+ * temporaire à remplacer par les vraies illustrations, pas une French text
+ * comme avant (le handoff ne prévoit aucun français dans l'UI).
  */
 
 const stage = document.getElementById('stage');
-const pfill = document.getElementById('pfill');
-const phaseEl = document.getElementById('phase');
+const pipsEl = document.getElementById('pips');
+const helpBtn = document.getElementById('helpbtn');
+const helpCard = document.getElementById('helpcard');
+const normalTop = document.getElementById('normalTop');
+const bossTop = document.getElementById('bossTop');
+const bossCountEl = document.getElementById('bossCount');
+const basketEl = document.getElementById('basket');
+
+helpBtn.addEventListener('click', () => helpCard.classList.toggle('on'));
+
+/** Affiche la barre de progression en pastilles (gabarit "session normale"). */
+function setProgress(index, total) {
+  normalTop.hidden = false;
+  bossTop.hidden = true;
+  pipsEl.innerHTML = '';
+  for (let i = 0; i < total; i++) {
+    const p = document.createElement('div');
+    p.className = 'pip' + (i < index ? ' on' : '');
+    pipsEl.appendChild(p);
+  }
+}
+
+/** Affiche le bandeau Boss (plein marine, étoile + compteur) et le panier rouge à 12 cases. */
+function setBossProgress(done, total) {
+  normalTop.hidden = true;
+  bossTop.hidden = false;
+  bossCountEl.textContent = `${done}/${total}`;
+  basketEl.innerHTML = '';
+  for (let i = 0; i < total; i++) {
+    const c = document.createElement('div');
+    c.className = 'cell' + (i < done ? ' on' : '');
+    basketEl.appendChild(c);
+  }
+}
+
+/** Renseigne l'encart d'aide en arabe (darja), masqué jusqu'au tap sur "؟". */
+function setHelp(arabicText) {
+  helpCard.innerHTML = `<span class="ar">${arabicText}</span>`;
+  helpCard.classList.remove('on');
+}
 
 function speak(text, slow) {
   try {
@@ -26,20 +68,20 @@ function speak(text, slow) {
   } catch (e) { /* synthèse indisponible : l'app reste utilisable au texte */ }
 }
 
-function chime(ok) {
+/** Un seul son, pour la réussite — le design système exclut tout son d'échec. */
+function chimeSuccess() {
   try {
-    const ctx = chime.ctx || (chime.ctx = new (window.AudioContext || window.webkitAudioContext)());
+    const ctx = chimeSuccess.ctx || (chimeSuccess.ctx = new (window.AudioContext || window.webkitAudioContext)());
     const o = ctx.createOscillator(), g = ctx.createGain();
     o.connect(g); g.connect(ctx.destination);
-    o.frequency.value = ok ? 660 : 220; o.type = 'sine';
+    o.frequency.value = 660; o.type = 'sine';
     g.gain.setValueAtTime(0.18, ctx.currentTime);
     g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
     o.start(); o.stop(ctx.currentTime + 0.35);
   } catch (e) { /* audio indisponible, sans conséquence pédagogique */ }
 }
 
-const fennecTag = (cls) => `<div class="fennec ${cls || ''}" aria-hidden="true">🦊</div>`;
-const happy = () => { const f = stage.querySelector('.fennec'); if (f) f.classList.add('happy'); };
+const avatarTag = (size) => `<div class="avatar${size === 'sm' ? ' sm' : ''}" aria-hidden="true">🦊</div>`;
 
 function escapeHtml(s) {
   const d = document.createElement('div');
@@ -49,69 +91,75 @@ function escapeHtml(s) {
 
 /** Écran "découverte" d'un mot nouveau — pas de réponse, juste `onContinue`. */
 function renderDiscover(screen, { onContinue }) {
-  stage.innerHTML = fennecTag() +
-    `<p class="say">New word!</p>` +
+  stage.innerHTML = avatarTag() +
+    `<p class="say ar center">كلمة جديدة</p>` +
     `<div class="card-word">${escapeHtml(screen.word.english)}</div>` +
-    `<p class="sub">${escapeHtml(screen.word.french)}</p>` +
     `<button class="speaker" aria-label="Écouter">🔊</button>` +
-    `<button class="next">Continue ➜</button>`;
+    `<button class="cta primary">متابعة</button>`;
   stage.querySelector('.speaker').onclick = () => speak(screen.word.english);
-  // { once: true } : évite qu'un double-tap pendant le délai avant l'écran
-  // suivant ne déclenche onContinue() deux fois (ce qui sauterait un écran).
-  stage.querySelector('.next').addEventListener('click', () => onContinue(), { once: true });
+  stage.querySelector('.cta').addEventListener('click', () => onContinue(), { once: true });
   setTimeout(() => speak(screen.word.english), 300);
 }
 
 /** listen_touch / read_touch : choix parmi `screen.options` (le mot + distracteurs). */
 function renderChoice(screen, { onAnswer }) {
-  const label = screen.kind === 'read_touch' ? 'Read and touch!' : 'Listen and touch!';
-  stage.innerHTML = fennecTag() +
-    `<p class="say">${label}</p>` +
+  const label = screen.kind === 'read_touch'
+    ? 'المس الصورة المطابقة للكلمة المكتوبة'
+    : 'المس صورة الكلمة التي تسمعها';
+  stage.innerHTML =
     (screen.kind === 'read_touch'
       ? `<div class="card-word">${escapeHtml(screen.word.english)}</div>`
       : `<button class="speaker" aria-label="Écouter">🔊</button>`) +
-    `<div class="grid ${screen.options.length === 3 ? 'three' : ''}"></div>`;
+    `<div class="grid"></div>` +
+    `<p class="sub ar center">${label}</p>`;
   if (screen.kind === 'listen_touch') {
     stage.querySelector('.speaker').onclick = () => speak(screen.word.english);
     setTimeout(() => speak(screen.word.english), 300);
   }
   const grid = stage.querySelector('.grid');
   const shuffled = [...screen.options].sort(() => Math.random() - 0.5);
+  const buttonByWordId = new Map();
   shuffled.forEach((opt) => {
     const b = document.createElement('button');
     b.className = 'opt';
-    b.textContent = opt.french;
+    // Placeholder en attendant les illustrations réelles (cf. commentaire d'en-tête) :
+    b.innerHTML = `<span class="lbl">${escapeHtml(opt.english)}</span>`;
     b.onclick = () => {
-      grid.querySelectorAll('.opt').forEach((x) => (x.disabled = true, x.classList.add('dis')));
+      grid.querySelectorAll('.opt').forEach((x) => (x.disabled = true));
       const ok = opt.wordId === screen.word.wordId;
-      if (ok) { b.classList.add('good'); happy(); chime(true); speak(screen.word.english); }
+      if (ok) { b.classList.add('good'); chimeSuccess(); speak(screen.word.english); }
       else {
-        chime(false); speak(screen.word.english, true);
-        grid.querySelectorAll('.opt').forEach((x) => { if (x.textContent === screen.word.french) x.classList.add('show'); });
+        speak(screen.word.english, true);
+        // Révèle la bonne réponse (erreur-douce, jamais rouge, jamais de croix) :
+        buttonByWordId.get(screen.word.wordId)?.classList.add('err');
       }
       onAnswer(ok);
     };
+    buttonByWordId.set(opt.wordId, b);
     grid.appendChild(b);
   });
 }
 
-/** true_false : montre soit le vrai mot, soit un distracteur, l'enfant tranche. */
+/** true_false : la carte montre soit le vrai mot, soit un distracteur ; boutons صح/خطأ fixes. */
 function renderTrueFalse(screen, { onAnswer }) {
   const showTruth = Math.random() < 0.5;
   const shownWord = showTruth ? screen.word : screen.options[1];
-  stage.innerHTML = fennecTag() +
-    `<p class="say">True or false?</p>` +
-    `<div class="card-word">${escapeHtml(shownWord.french)}</div>` +
+  stage.innerHTML = avatarTag('sm') +
+    `<div class="card-word">${escapeHtml(shownWord.english)}</div>` +
     `<button class="speaker" aria-label="Écouter">🔊</button>` +
-    `<div class="tfrow"><button class="tf yes" aria-label="Vrai">👍</button><button class="tf no" aria-label="Faux">👎</button></div>`;
+    `<p class="sub ar center">صح أو خطأ؟</p>` +
+    `<div class="tfrow">
+      <button class="tf yes">صح</button>
+      <button class="tf no">خطأ</button>
+    </div>`;
   stage.querySelector('.speaker').onclick = () => speak(screen.word.english);
-  let answered = false; // évite un double-tap yes+no pendant le délai avant l'écran suivant
+  let answered = false; // évite un double-tap صح+خطأ pendant le délai avant l'écran suivant
   const answerTf = (saidYes) => {
     if (answered) return;
     answered = true;
     stage.querySelectorAll('.tf').forEach((b) => (b.disabled = true));
     const ok = saidYes === showTruth;
-    if (ok) { chime(true); happy(); } else { chime(false); speak(screen.word.english, true); }
+    if (ok) chimeSuccess(); else speak(screen.word.english, true);
     onAnswer(ok);
   };
   stage.querySelector('.yes').onclick = () => answerTf(true);
@@ -119,61 +167,91 @@ function renderTrueFalse(screen, { onAnswer }) {
   setTimeout(() => speak(screen.word.english), 300);
 }
 
-/** say_it : micro simulé (maintenir) + solution de repli "je l'ai dit" (téléphone partagé, lieu bruyant). */
+/** say_it : micro avec halo actif + jauge vocale (barres), solution de repli "قلتها". */
 function renderSayIt(screen, { onAnswer }) {
-  stage.innerHTML = fennecTag() +
-    `<p class="say">Say it: <span class="en">${escapeHtml(screen.word.english)}</span></p>` +
-    `<button class="speaker" aria-label="Écouter">🔊</button>` +
-    `<button class="mic" aria-label="Maintiens et parle">🎤</button>` +
-    `<div class="meter"><div id="m"></div></div>` +
-    `<button class="alt">Je l'ai dit ✓</button>`;
-  stage.querySelector('.speaker').onclick = () => speak(screen.word.english);
-  const m = document.getElementById('m');
-  let t = null, v = 0, answered = false; // le flag empêche mic + "Je l'ai dit" de répondre deux fois
+  stage.innerHTML = `
+    <p class="say en center" style="text-align:center">${escapeHtml(screen.word.english)}</p>
+    <p class="sub ar center">قل الكلمة بصوت عال</p>
+    <div class="mic-wrap">
+      <button class="mic" aria-label="Maintiens et parle">🎙️</button>
+      <div class="voice-bars" aria-hidden="true">${Array.from({ length: 6 }, () => '<span style="height:6px"></span>').join('')}</div>
+      <p class="mic-caption" id="micCaption"></p>
+      <button class="alt">قلتها ✓</button>
+    </div>`;
   const mic = stage.querySelector('.mic');
+  const bars = [...stage.querySelectorAll('.voice-bars span')];
+  const caption = document.getElementById('micCaption');
   const alt = stage.querySelector('.alt');
+  let t = null, answered = false;
+
   const finishOk = () => {
     if (answered) return;
     answered = true;
     mic.disabled = true; alt.disabled = true;
-    happy(); chime(true); onAnswer(true);
+    mic.classList.remove('active');
+    caption.textContent = '';
+    chimeSuccess();
+    onAnswer(true);
   };
-  mic.onpointerdown = (e) => { e.preventDefault();
-    t = setInterval(() => { v = Math.min(100, v + 9); m.style.width = v + '%'; if (v >= 100) { clearInterval(t); finishOk(); } }, 90); };
-  mic.onpointerup = mic.onpointerleave = () => { if (t) clearInterval(t); };
-  alt.onclick = () => { m.style.width = '100%'; finishOk(); };
+  const startListening = (e) => {
+    e.preventDefault();
+    if (answered) return;
+    mic.classList.add('active');
+    caption.innerHTML = '<span class="ar">جاري الاستماع…</span>';
+    let elapsed = 0;
+    t = setInterval(() => {
+      bars.forEach((b) => (b.style.height = Math.round(6 + Math.random() * 22) + 'px'));
+      elapsed += 90;
+      if (elapsed >= 900) { clearInterval(t); finishOk(); }
+    }, 90);
+  };
+  const stopListening = () => {
+    if (t) clearInterval(t);
+    if (!answered) { mic.classList.remove('active'); caption.textContent = ''; bars.forEach((b) => (b.style.height = '6px')); }
+  };
+  mic.onpointerdown = startListening;
+  mic.onpointerup = stopListening;
+  mic.onpointerleave = stopListening;
+  alt.onclick = () => finishOk();
   setTimeout(() => speak(screen.word.english), 300);
 }
 
-/** construct : remettre les tokens de `screen.tokens` (une structure) dans l'ordre. */
+/** construct : place les jetons dans les emplacements, "تحقق" ne s'active qu'une fois tout rempli. */
 function renderConstruct(screen, { onAnswer }) {
   const shuffled = [...screen.tokens].sort(() => Math.random() - 0.5);
   let placed = [];
-  stage.innerHTML = fennecTag() +
-    `<p class="say">Put it in order!</p>` +
-    `<button class="speaker" aria-label="Écouter">🔊</button>` +
+  stage.innerHTML =
+    `<p class="sub ar center">رتب الكلمات لتكوين الجملة</p>` +
     `<div class="slots">${screen.tokens.map(() => '<div class="slot"></div>').join('')}</div>` +
-    `<div class="chips"></div>`;
-  stage.querySelector('.speaker').onclick = () => speak(screen.word.english);
+    `<div class="chips"></div>` +
+    `<button class="cta primary" disabled>تحقق</button>`;
   const chips = stage.querySelector('.chips');
   const slots = stage.querySelectorAll('.slot');
+  const checkBtn = stage.querySelector('.cta');
   shuffled.forEach((w) => {
     const c = document.createElement('button');
     c.className = 'chip'; c.textContent = w;
     c.onclick = () => {
+      if (placed.length >= screen.tokens.length) return;
       c.classList.add('used');
       slots[placed.length].textContent = w;
+      slots[placed.length].classList.add('filled');
       placed.push(w);
-      if (placed.length === screen.tokens.length) {
-        const ok = placed.join(' ') === screen.tokens.join(' ');
-        if (ok) { happy(); chime(true); speak(screen.word.english); }
-        else { chime(false); slots.forEach((s, i) => (s.textContent = screen.tokens[i])); speak(screen.word.english, true); }
-        onAnswer(ok);
-      }
+      if (placed.length === screen.tokens.length) checkBtn.disabled = false;
     };
     chips.appendChild(c);
   });
-  setTimeout(() => speak(screen.word.english), 300);
+  checkBtn.addEventListener('click', () => {
+    const ok = placed.join(' ') === screen.tokens.join(' ');
+    checkBtn.disabled = true;
+    if (ok) { chimeSuccess(); speak(screen.word.english); }
+    else {
+      // Révèle l'ordre correct (erreur-douce, jamais rouge) :
+      slots.forEach((s, i) => { s.textContent = screen.tokens[i]; s.classList.remove('filled'); });
+      speak(screen.word.english, true);
+    }
+    onAnswer(ok);
+  }, { once: true });
 }
 
 /**
@@ -193,4 +271,4 @@ function renderScreen(screen, handlers) {
   }
 }
 
-export { stage, pfill, phaseEl, speak, chime, fennecTag, happy, escapeHtml, renderScreen };
+export { stage, setProgress, setBossProgress, setHelp, speak, chimeSuccess, avatarTag, escapeHtml, renderScreen };

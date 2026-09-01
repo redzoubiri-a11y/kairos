@@ -162,6 +162,7 @@ async function boot() {
     studentId,
     now,
     pointer,
+    streakDays: pointer.day, // rythme hebdomadaire : jour 1-4 = sessions de la semaine en cours
     onSessionEnd: (nextPointer) => {
       savePointer(nextPointer);
       // La session quotidienne se termine sur un écran de fin (pas de bouton

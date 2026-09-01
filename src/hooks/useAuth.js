@@ -60,12 +60,17 @@ export default function useAuth({ onAuth, userType, onSwitchType }) {
   const sendReset = useCallback(async () => {
     if (!email.trim()) { setError("Entrez votre email d'abord."); shake(); return; }
     setResetLoading(true);
+    setError('');
     try {
       // Page web dédiée (l'app n'a pas d'écran pour finaliser un reset) —
       // cf. web-resa/app/reset-password, doit être dans le allow-list Supabase.
-      await supabase.auth.resetPasswordForEmail(email.trim(), {
+      const { error: err } = await supabase.auth.resetPasswordForEmail(email.trim(), {
         redirectTo: 'https://web-resa.vercel.app/reset-password',
       });
+      // L'erreur était avalée : un refus de Supabase (quota d'emails atteint,
+      // adresse malformée, service SMTP en panne) s'affichait quand même en
+      // « Email envoyé », et plus rien ne disait pourquoi la boîte restait vide.
+      if (err) { setError(err.message); shake(); return; }
       setResetSent(true);
     } finally {
       setResetLoading(false);

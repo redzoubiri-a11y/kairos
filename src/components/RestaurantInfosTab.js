@@ -29,9 +29,16 @@ export default function RestaurantInfosTab({
   // coupure midi/soir. L'amplitude d'`opening_hours` ne sert plus que de repli
   // pour les fiches sans ligne dans `restaurant_schedules`.
   const daySchedule = scheduleMap?.[dayOfWeek];
-  const slots = daySchedule
-    ? slotsFromSchedule(daySchedule)
-    : mvpSlots(restaurant.opening_hours, dayOfWeek);
+  const isToday = selectedDateIdx === 0;
+  const slotsFor = today => daySchedule
+    ? slotsFromSchedule(daySchedule, today)
+    : mvpSlots(restaurant.opening_hours, dayOfWeek, today);
+  const slots = slotsFor(isToday);
+  // Sur aujourd'hui, les créneaux déjà écoulés sont retirés (la fiche proposait
+  // encore 13:30 à 21 h). Une journée vide n'est alors plus forcément une
+  // fermeture : on relit la liste non filtrée pour ne pas annoncer « fermé » un
+  // jour où le service est simplement terminé.
+  const ferme = slots.length === 0 && (!isToday || slotsFor(false).length === 0);
 
   const infoRows = [
     { icon: '💰', label: 'Prix moyen', val: restaurant.avg_ticket > 0 ? `${restaurant.avg_ticket.toLocaleString('fr-FR')} DA / pers.` : null },
@@ -70,7 +77,9 @@ export default function RestaurantInfosTab({
           ))}
         </View>
       ) : (
-        <Text style={s.slotsEmpty}>Fermé ce jour-là</Text>
+        <Text style={s.slotsEmpty}>
+          {ferme ? 'Fermé ce jour-là' : 'Plus de créneau aujourd’hui'}
+        </Text>
       )}
 
       {infoRows.length > 0 && (

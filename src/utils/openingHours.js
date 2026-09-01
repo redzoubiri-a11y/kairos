@@ -83,11 +83,15 @@ export function isOpenNow(oh) {
   return nowMin >= toMin(today.open) && nowMin <= toMin(today.close);
 }
 
+// Minutes écoulées depuis minuit, maintenant — pour écarter les créneaux déjà
+// passés quand la date visée est aujourd'hui.
+const nowMinutes = () => { const n = new Date(); return n.getHours() * 60 + n.getMinutes(); };
+
 // Créneaux d'affichage MVP (15/08/2026) — PAS une vraie disponibilité : aucune
 // vérification de capacité (check_capacity), seulement 3 horaires plausibles dérivés du
 // créneau d'ouverture du jour demandé (aujourd'hui par défaut). Repris pour le widget
 // "Réservation en ligne" de la fiche restaurant (refonte visuelle du 16/08/2026).
-export function mvpSlots(oh, day = new Date().getDay()) {
+export function mvpSlots(oh, day = new Date().getDay(), isToday = false) {
   if (!oh || typeof oh === 'string' || !Array.isArray(oh) || oh.length === 0) return [];
   const today = oh.find(d => d.day === day);
   if (!today) return [];
@@ -97,7 +101,11 @@ export function mvpSlots(oh, day = new Date().getDay()) {
   const close = toMin(today.close);
   if (close <= open) return [];
   const span = close - open;
-  return [0.3, 0.5, 0.7].map(f => toHM(Math.round((open + span * f) / 30) * 30));
+  const floor = isToday ? nowMinutes() : -1;
+  return [0.3, 0.5, 0.7]
+    .map(f => Math.round((open + span * f) / 30) * 30)
+    .filter(min => min > floor)
+    .map(toHM);
 }
 
 // Créneaux d'affichage tirés des VRAIS services du restaurateur
@@ -107,7 +115,7 @@ export function mvpSlots(oh, day = new Date().getDay()) {
 // qu'il y a une coupure midi/soir (La Fontaine d'Or, 12:00–16:00 / 19:00–23:00,
 // annonçait 15:30 et 17:30 — corrigé le 30/08/2026).
 // Toujours pas une vraie disponibilité : aucune vérification de capacité.
-export function slotsFromSchedule(daySchedule) {
+export function slotsFromSchedule(daySchedule, isToday = false) {
   if (!daySchedule || daySchedule.is_open === false) return [];
   const toMin = s => { const [h, m] = (s || '0:0').split(':').map(Number); return h * 60 + (m || 0); };
   const toHM  = min => { const h = Math.floor(min / 60) % 24; const m = min % 60; return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`; };
@@ -136,7 +144,11 @@ export function slotsFromSchedule(daySchedule) {
       if (!out.includes(min)) out.push(min);
     }
   });
-  return out.sort((a, b) => a - b).map(toHM);
+  // Filtrage des créneaux passés AVANT le retour aux heures affichées : `out`
+  // est encore en minutes non bornées à 24 h, donc le 00:30 d'un service
+  // 19:00 → 01:00 vaut 1470 et survit bien à un filtre posé à 21 h (1260).
+  const floor = isToday ? nowMinutes() : -1;
+  return out.filter(min => min > floor).sort((a, b) => a - b).map(toHM);
 }
 
 const DOW_SHORT = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];

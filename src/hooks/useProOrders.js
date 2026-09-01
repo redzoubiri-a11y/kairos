@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Alert } from 'react-native';
+import { Alert, AppState } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { supabase } from '../../supabase';
 import { colors } from '../theme';
@@ -14,6 +14,11 @@ export const ORDER_STATUS = {
   collected: { label: 'RÉCUPÉRÉE',       color: colors.textMuted,           bg: colors.tagNeutralBg,      border: 'transparent' },
   cancelled: { label: 'ANNULÉE',         color: colors.statusCancelledText, bg: colors.statusCancelledBg, border: 'transparent' },
 };
+
+// Une commande à emporter arrive pendant que le restaurateur a déjà l'écran sous
+// les yeux : sans rechargement périodique il ne la voit jamais apparaître, seul le
+// push l'avertit (constaté en test réel le 01/09/2026 chez Terraza).
+const REFRESH_MS = 30000;
 
 const NEXT_STATUS = { pending: 'confirmed', confirmed: 'ready', ready: 'collected' };
 const NEXT_LABEL  = { pending: 'Confirmer', confirmed: 'Marquer prête', ready: 'Marquer récupérée' };
@@ -31,8 +36,11 @@ export default function useProOrders() {
   const [refreshing, setRefreshing] = useState(false);
   const [acting,     setActing]     = useState(new Set());
 
-  const load = useCallback(async (isRefresh = false) => {
-    if (isRefresh) setRefreshing(true); else setLoading(true);
+  // mode : 'initial' (écran de chargement) | 'refresh' (pull-to-refresh) |
+  // 'silent' (rechargement de fond, aucun indicateur visible).
+  const load = useCallback(async (mode = 'initial') => {
+    if (mode === 'refresh') setRefreshing(true);
+    else if (mode === 'initial') setLoading(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
@@ -43,11 +51,14 @@ export default function useProOrders() {
       if (!rid) return;
       setRestaurantId(rid);
 
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('orders')
         .select('id, status, notes, total_amount, created_at, user_id, order_items(id, dish_name, price, quantity), users(first_name, last_name, phone)')
         .eq('restaurant_id', rid)
         .order('created_at', { ascending: false });
+      // Un hoquet réseau ne doit pas vider la liste déjà affichée — d'autant que
+      // ce chargement tourne maintenant en boucle en tâche de fond.
+      if (error) return;
       setOrders(data ?? []);
     } finally {
       setLoading(false);
@@ -55,8 +66,15 @@ export default function useProOrders() {
     }
   }, []);
 
-  useFocusEffect(useCallback(() => { load(); }, [load]));
-  const onRefresh = useCallback(() => load(true), [load]);
+  useFocusEffect(useCallback(() => {
+    load();
+    // Tant que l'écran est ouvert : relecture régulière, plus une relecture
+    // immédiate au retour au premier plan (téléphone reverrouillé/déverrouillé).
+    const timer = setInterval(() => load('silent'), REFRESH_MS);
+    const sub   = AppState.addEventListener('change', st => { if (st === 'active') load('silent'); });
+    return () => { clearInterval(timer); sub.remove(); };
+  }, [load]));
+  const onRefresh = useCallback(() => load('refresh'), [load]);
 
   const advance = useCallback((order) => {
     const next = NEXT_STATUS[order.status];

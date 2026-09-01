@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
-import { Alert } from 'react-native';
+import { Alert, AppState } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { supabase } from '../../supabase';
 import { colors } from '../theme';
@@ -43,6 +43,10 @@ async function sendNotification(users, type, title, body) {
   await supabase.from('notifications').insert({ recipient_id: users.id, recipient_type: 'user', type, title, body });
 }
 
+// Même raison que dans useProOrders : le Dashboard reste ouvert pendant le
+// service, il doit voir arriver réservations et commandes sans intervention.
+const REFRESH_MS = 30000;
+
 export default function useDashboard() {
   const [restaurant,   setRestaurant]   = useState(null);
   const [reservations, setReservations] = useState([]);
@@ -55,8 +59,11 @@ export default function useDashboard() {
   const addActing    = useCallback(id => setActing(p => new Set(p).add(id)), []);
   const removeActing = useCallback(id => setActing(p => { const s = new Set(p); s.delete(id); return s; }), []);
 
-  const load = useCallback(async (isRefresh = false) => {
-    if (isRefresh) setRefreshing(true); else setLoading(true);
+  // mode : 'initial' (écran de chargement) | 'refresh' (pull-to-refresh) |
+  // 'silent' (rechargement de fond, aucun indicateur visible).
+  const load = useCallback(async (mode = 'initial') => {
+    if (mode === 'refresh') setRefreshing(true);
+    else if (mode === 'initial') setLoading(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
@@ -88,13 +95,16 @@ export default function useDashboard() {
           .then(() => {});
       }
 
-      const { data: res } = await supabase
+      const { data: res, error: resErr } = await supabase
         .from('reservations')
         .select('id, date, time_slot, nb_adults, nb_children, notes, status, created_at, user_id')
         .eq('restaurant_id', restaurantId)
         .order('date', { ascending: true })
         .order('time_slot', { ascending: true });
 
+      // Un hoquet réseau ne doit pas vider la liste déjà affichée — d'autant que
+      // ce chargement tourne maintenant en boucle en tâche de fond.
+      if (resErr) return;
       const rows = res ?? [];
       const userIds = [...new Set(rows.map(r => r.user_id).filter(Boolean))];
       let usersMap = {};
@@ -113,7 +123,15 @@ export default function useDashboard() {
     }
   }, []);
 
-  useFocusEffect(useCallback(() => { load(); }, [load]));
+  useFocusEffect(useCallback(() => {
+    load();
+    // Tant que le Dashboard est ouvert : relecture régulière, plus une relecture
+    // immédiate au retour au premier plan. Sans ça une réservation qui tombe
+    // pendant le service n'apparaît qu'à la prochaine ouverture de l'écran.
+    const timer = setInterval(() => load('silent'), REFRESH_MS);
+    const sub   = AppState.addEventListener('change', st => { if (st === 'active') load('silent'); });
+    return () => { clearInterval(timer); sub.remove(); };
+  }, [load]));
 
   const confirm = useCallback((resa) => {
     Alert.alert(
@@ -266,7 +284,7 @@ export default function useDashboard() {
   );
 
   const greetingTxt = useMemo(() => greeting(), []);
-  const onRefresh   = useCallback(() => load(true), [load]);
+  const onRefresh   = useCallback(() => load('refresh'), [load]);
 
   return {
     restaurant, reservations, loading, refreshing,

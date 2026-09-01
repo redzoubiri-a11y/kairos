@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, TouchableOpacity, Linking, Platform } from 'react-native';
 import { colors, typography, spacing, radius, shadows } from '../theme';
 export { todaysHours, isOpenNow } from '../utils/openingHours';
-import { fmtHours, mvpSlots, slotsFromSchedule, nextDays } from '../utils/openingHours';
+import { fmtHours, hoursFromSchedule, mvpSlots, slotsFromSchedule, nextDays } from '../utils/openingHours';
 let MapView, Marker;
 if (Platform.OS !== 'web') {
   const maps = require('react-native-maps');
@@ -44,7 +44,9 @@ export default function RestaurantInfosTab({
     { icon: '💰', label: 'Prix moyen', val: restaurant.avg_ticket > 0 ? `${restaurant.avg_ticket.toLocaleString('fr-FR')} DA / pers.` : null },
     { icon: '📍', label: 'Adresse', val: restaurant.address || restaurant.quartier || null, onPress: () => openInMaps(restaurant) },
     { icon: '📞', label: 'Téléphone', val: restaurant.phone || null },
-    { icon: '🕐', label: 'Horaires', val: fmtHours(restaurant.opening_hours) || null },
+    // Les services déclarés priment ici aussi : opening_hours ne sait pas dire
+    // « 12h – 16h · 19h – 23h » et affichait l'amplitude, coupure comprise.
+    { icon: '🕐', label: 'Horaires', val: hoursFromSchedule(scheduleMap) || fmtHours(restaurant.opening_hours) || null },
   ].filter(r => r.val);
 
   return (

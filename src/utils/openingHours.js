@@ -58,6 +58,36 @@ export function fmtHours(oh) {
   return oh.map(d => `${d.day}  ${hm(d.open)} – ${hm(d.close)}`).join('  ·  ');
 }
 
+// Libellé d'horaires bâti sur les VRAIS services du restaurateur
+// (`restaurant_schedules`), seul modèle capable d'exprimer une coupure
+// midi/soir. `fmtHours`, limité au créneau unique d'`opening_hours`, annonçait
+// « 12h00 – 23h00 » pour un restaurant qui ferme de 16h à 19h — le client se
+// présentait devant une porte close. Même regroupement par jours identiques que
+// fmtHours, mais un groupe par ligne : deux services ne tiennent pas sur une.
+export function hoursFromSchedule(scheduleMap) {
+  if (!scheduleMap) return null;
+  const hm = t => (t || '').slice(0, 5).replace(':', 'h'); // "19:00:00" → "19h00"
+  const groupes = new Map();
+  for (const day of WEEK_ORDER) {
+    const d = scheduleMap[day];
+    if (!d || d.is_open === false) continue;
+    const services = [
+      [d.lunch_start,  d.lunch_end],
+      [d.dinner_start, d.dinner_end],
+    ]
+      .filter(([a, b]) => a && b)
+      .map(([a, b]) => `${hm(a)} – ${hm(b)}`);
+    if (services.length === 0) continue;
+    const cle = services.join('  ·  ');
+    if (!groupes.has(cle)) groupes.set(cle, []);
+    groupes.get(cle).push(day);
+  }
+  if (groupes.size === 0) return null;
+  return [...groupes.entries()]
+    .map(([cle, days]) => `${joursLabel(days)}  ${cle}`)
+    .join('\n');
+}
+
 // Horaires du jour (pas de fmtHours, qui résume toute la semaine) — pour le
 // bandeau "Ouvert aujourd'hui" de la Fiche Restaurant. Le modèle de données
 // actuel ne stocke qu'un seul créneau par jour (pas de split midi/soir) : on

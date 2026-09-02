@@ -1,0 +1,58 @@
+name: Mida
+
+# Le depot heberge plusieurs projets : ce workflow ne se declenche que sur
+# Mida (racine du depot), jamais sur allotruck/, tasalle/, sites/, docs/ ou
+# data/, qui ont leurs propres verifications (ou n'en ont pas besoin -
+# data/ n'est que des fixtures JSON consommees par des scripts manuels).
+on:
+  # Sur push uniquement : le resultat remonte deja comme statut de commit sur
+  # les pull requests, alors qu'ajouter le declencheur pull_request ferait
+  # tourner chaque commit deux fois - cf. allotruck.yml.
+  push:
+    branches: ['**']
+    paths-ignore:
+      - 'allotruck/**'
+      - 'tasalle/**'
+      - 'sites/**'
+      - 'docs/**'
+      - 'data/**'
+      - '.github/workflows/allotruck.yml'
+      - '.github/workflows/tasalle.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: mida-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  mobile:
+    name: App — verification statique et bundle Expo
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - run: npm ci
+
+      # Syntaxe, identifiants non resolus, jetons de theme inexistants -
+      # voir scripts/check-app.js pour ce que ca attrape et ce que ca ne
+      # remplace pas.
+      - name: Verification statique
+        run: npm run check
+
+      # Resout et transpile l'integralite du graphe de modules, y compris
+      # les ecrans natifs qu'aucun serveur de developpement web ne charge
+      # jamais (MapScreen.js, ExplorerScreen.js) : toute import cassee ou
+      # erreur de syntaxe fait echouer ce job la ou check-app.js, plus
+      # rapide mais plus etroit, pourrait laisser passer.
+      - name: Bundler l'application (Android)
+        run: npx expo export --platform android --dev --output-dir /tmp/mida-bundle
+        env:
+          EXPO_NO_TELEMETRY: '1'
+          EXPO_NO_DEPENDENCY_VALIDATION: '1'

@@ -48,6 +48,14 @@ body{
 }
 .devbar button:focus-visible{outline:2px solid var(--bg-base)}
 
+/* Retour vers le portail Madrassatidz (marque ombrelle) — discret,
+   au-dessus de l'app enfant, jamais dans le flux des écrans de session. */
+.portal-link{
+  display:block; text-align:center; font-family:var(--mono); font-size:.7rem;
+  color:var(--ink-soft); text-decoration:none; padding:.4rem 0; background:var(--bg-base);
+}
+.portal-link:hover, .portal-link:focus-visible{color:var(--ink); text-decoration:underline}
+
 /* App shell : plein écran mobile-first, pas de bézel décoratif (ceci est la
    vraie PWA, pas un aperçu de maquette) — centré avec une largeur max sur
    desktop pour rester lisible en test. */

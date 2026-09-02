@@ -366,7 +366,7 @@ test('missions', async (t) => {
     assert.ok(after.body.freeWeightKg >= 0);
   });
 
-  await t.test('une mission sans trajet n est pas soumise au decompte', async () => {
+  await t.test('une mission sans trajet ne touche pas le trajet, mais decompte le camion', async () => {
     const { transporter, client, truck, trip } = await scenario();
 
     const mission = await h.createMission(client.token, {
@@ -382,8 +382,124 @@ test('missions', async (t) => {
     });
     assert.equal(accepted.status, 200);
 
-    const after = await h.api('GET', `/trips/${trip.id}`, { token: client.token });
-    assert.equal(after.body.freeVolumeM3, 18);
+    const afterTrip = await h.api('GET', `/trips/${trip.id}`, { token: client.token });
+    assert.equal(afterTrip.body.freeVolumeM3, 18);
+
+    const afterTruck = await h.api('GET', `/trucks/${truck.id}`, { token: client.token });
+    assert.equal(afterTruck.body.freeVolumeM3, 5);
+    assert.equal(afterTruck.body.freeWeightKg, 1000);
+  });
+
+  // Le defaut symetrique de celui deja corrige pour les trajets : le volume
+  // d'une mission sans trajet n'etait verifie qu'a la creation, contre la
+  // capacite totale du camion, jamais decompte a l'acceptation. Deux demandes
+  // de 15 m3 sur un camion de 20 m3 passaient toutes les deux la creation,
+  // puis les deux acceptations — le camion se retrouvait engage sur 30 m3
+  // pour 20 m3 reels.
+  await t.test('refuse une acceptation qui depasserait la capacite libre du camion', async () => {
+    const { transporter, client, truck } = await scenario();
+    const commun = { transporterId: transporter.profileId, truckId: truck.id };
+
+    const premiere = await h.createMission(client.token, { ...commun, volumeM3: 15, weightKg: 2000 });
+    const seconde = await h.createMission(client.token, { ...commun, volumeM3: 15, weightKg: 2000 });
+
+    const acceptee = await h.api('PATCH', '/missions/update-status', {
+      token: transporter.token,
+      body: { missionId: premiere.id, status: 'ACCEPTED' },
+    });
+    assert.equal(acceptee.status, 200);
+
+    const refusee = await h.api('PATCH', '/missions/update-status', {
+      token: transporter.token,
+      body: { missionId: seconde.id, status: 'ACCEPTED' },
+    });
+    assert.equal(refusee.status, 400);
+    assert.match(refusee.body.error.message, /capacite insuffisante sur ce camion/i);
+
+    const after = await h.api('GET', `/trucks/${truck.id}`, { token: client.token });
+    assert.equal(after.body.freeVolumeM3, 5);
+    assert.equal(after.body.freeWeightKg, 1500);
+  });
+
+  await t.test('deux acceptations simultanees sur le meme camion ne peuvent pas passer ensemble', async () => {
+    const { transporter, client, truck } = await scenario();
+    const commun = { transporterId: transporter.profileId, truckId: truck.id };
+
+    const premiere = await h.createMission(client.token, { ...commun, volumeM3: 15, weightKg: 2000 });
+    const seconde = await h.createMission(client.token, { ...commun, volumeM3: 15, weightKg: 2000 });
+
+    const [a, b] = await Promise.all([
+      h.api('PATCH', '/missions/update-status', {
+        token: transporter.token,
+        body: { missionId: premiere.id, status: 'ACCEPTED' },
+      }),
+      h.api('PATCH', '/missions/update-status', {
+        token: transporter.token,
+        body: { missionId: seconde.id, status: 'ACCEPTED' },
+      }),
+    ]);
+
+    const reussites = [a, b].filter((r) => r.status === 200);
+    assert.equal(reussites.length, 1, 'une seule acceptation aboutit');
+
+    const after = await h.api('GET', `/trucks/${truck.id}`, { token: client.token });
+    assert.equal(after.body.freeVolumeM3, 5);
+    assert.ok(after.body.freeWeightKg >= 0);
+  });
+
+  await t.test('annuler une mission sans trajet restitue la capacite du camion', async () => {
+    const { transporter, client, truck } = await scenario();
+    const mission = await h.createMission(client.token, {
+      transporterId: transporter.profileId,
+      truckId: truck.id,
+      volumeM3: 15,
+      weightKg: 2000,
+    });
+
+    await h.api('PATCH', '/missions/update-status', {
+      token: transporter.token,
+      body: { missionId: mission.id, status: 'ACCEPTED' },
+    });
+    await h.api('PATCH', '/missions/update-status', {
+      token: client.token,
+      body: { missionId: mission.id, status: 'CANCELLED', reason: 'Report' },
+    });
+
+    const after = await h.api('GET', `/trucks/${truck.id}`, { token: client.token });
+    assert.equal(after.body.freeVolumeM3, 20);
+    assert.equal(after.body.freeWeightKg, 3500);
+  });
+
+  await t.test('refuse une creation de mission sans trajet depassant la capacite libre du camion', async () => {
+    const { transporter, client, truck } = await scenario();
+    const commun = { transporterId: transporter.profileId, truckId: truck.id };
+
+    const premiere = await h.createMission(client.token, { ...commun, volumeM3: 15, weightKg: 2000 });
+    await h.api('PATCH', '/missions/update-status', {
+      token: transporter.token,
+      body: { missionId: premiere.id, status: 'ACCEPTED' },
+    });
+
+    // Le camion n'a plus que 5 m3 libres ; une nouvelle demande de 10 m3 tient
+    // dans sa capacite totale (20) mais pas dans ce qu'il lui reste.
+    const { status } = await h.api('POST', '/missions/create', {
+      token: client.token,
+      body: {
+        transporterId: transporter.profileId,
+        truckId: truck.id,
+        goodsType: 'Palettes',
+        volumeM3: 10,
+        weightKg: 500,
+        pickupCity: 'Alger',
+        pickupLat: 36.7538,
+        pickupLng: 3.0588,
+        pickupAt: h.tomorrowAt(),
+        dropoffCity: 'Oran',
+        dropoffLat: 35.6971,
+        dropoffLng: -0.6308,
+      },
+    });
+    assert.equal(status, 400);
   });
 
   await t.test('annuler avant acceptation ne modifie pas la capacite', async () => {

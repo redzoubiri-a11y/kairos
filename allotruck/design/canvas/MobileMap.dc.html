@@ -1,0 +1,114 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper:#F4F5F3; --surface:#FFFFFF; --surface-muted:#EEF0ED;
+      --ink:#16202A; --ink-muted:#57646D; --line:#C9CDC6; --line-strong:#9AA096;
+      --authority:#0F3D5C; --authority-strong:#0B2E45; --authority-soft:#E2ECF2;
+      --stamp:#2E7D5B;
+      --display:'Archivo',Arial,sans-serif;
+      --body:'IBM Plex Sans',-apple-system,sans-serif;
+      --mono:'IBM Plex Mono',ui-monospace,monospace;
+    }
+    body { margin:0; font-family:var(--body); }
+    a { color:var(--authority); } a:hover { color:var(--authority-strong); }
+    * { box-sizing:border-box; }
+    .num { font-family:var(--mono); font-variant-numeric:tabular-nums; }
+    .cap { font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:0.07em; text-transform:uppercase; color:var(--ink-muted); }
+  </style>
+</helmet>
+
+<div style="width:390px; height:844px; background:#E7E9E3; position:relative; overflow:hidden; font-family:var(--body);">
+
+  <!-- Map surface (abstract) -->
+  <svg width="390" height="620" style="position:absolute; top:0; left:0;">
+    <rect width="390" height="620" fill="#E7E9E3"></rect>
+    <path d="M0,180 L150,150 L230,220 L390,190" stroke="#C9CDC6" stroke-width="10" fill="none"></path>
+    <path d="M60,0 L90,180 L70,400 L110,620" stroke="#C9CDC6" stroke-width="8" fill="none"></path>
+    <path d="M230,220 L260,380 L200,620" stroke="#C9CDC6" stroke-width="7" fill="none"></path>
+    <path d="M0,400 L390,420" stroke="#C9CDC6" stroke-width="6" fill="none"></path>
+  </svg>
+
+  <!-- Truck pin: unselected -->
+  <div style="position:absolute; top:130px; left:250px;">
+    <div style="width:34px; height:30px; background:#0F3D5C; border-radius:3px 3px 3px 3px; display:flex; align-items:center; justify-content:center;">
+      <svg width="18" height="18" viewBox="0 0 24 24" stroke="#F4F5F3" stroke-width="2" fill="none" stroke-linecap="square" stroke-linejoin="miter"><rect x="2" y="7" width="11" height="8"/><path d="M13,10 h5 l3,3 v2 h-8 z"/><circle cx="7" cy="17" r="2" fill="#F4F5F3"/><circle cx="18" cy="17" r="2" fill="#F4F5F3"/></svg>
+    </div>
+    <div style="width:0; height:0; border-left:5px solid transparent; border-right:5px solid transparent; border-top:8px solid #0F3D5C; margin:0 auto;"></div>
+  </div>
+
+  <!-- Truck pin: another -->
+  <div style="position:absolute; top:330px; left:75px;">
+    <div style="width:34px; height:30px; background:#0F3D5C; border-radius:3px; display:flex; align-items:center; justify-content:center;">
+      <svg width="18" height="18" viewBox="0 0 24 24" stroke="#F4F5F3" stroke-width="2" fill="none" stroke-linecap="square" stroke-linejoin="miter"><rect x="2" y="7" width="11" height="8"/><path d="M13,10 h5 l3,3 v2 h-8 z"/><circle cx="7" cy="17" r="2" fill="#F4F5F3"/><circle cx="18" cy="17" r="2" fill="#F4F5F3"/></svg>
+    </div>
+    <div style="width:0; height:0; border-left:5px solid transparent; border-right:5px solid transparent; border-top:8px solid #0F3D5C; margin:0 auto;"></div>
+  </div>
+
+  <!-- Truck pin: selected -->
+  <div style="position:absolute; top:245px; left:158px;">
+    <div style="width:42px; height:38px; background:#0F3D5C; border:2px solid #F4F5F3; outline:2px solid #0F3D5C; border-radius:3px; display:flex; align-items:center; justify-content:center;">
+      <svg width="22" height="22" viewBox="0 0 24 24" stroke="#F4F5F3" stroke-width="2" fill="none" stroke-linecap="square" stroke-linejoin="miter"><rect x="2" y="7" width="11" height="8"/><path d="M13,10 h5 l3,3 v2 h-8 z"/><circle cx="7" cy="17" r="2" fill="#F4F5F3"/><circle cx="18" cy="17" r="2" fill="#F4F5F3"/></svg>
+    </div>
+    <div style="width:0; height:0; border-left:6px solid transparent; border-right:6px solid transparent; border-top:10px solid #0F3D5C; margin:0 auto;"></div>
+  </div>
+
+  <!-- Top search bar -->
+  <div style="position:absolute; top:16px; left:16px; right:16px;">
+    <div style="height:46px; background:#FFFFFF; border:1px solid #C9CDC6; border-radius:3px; display:flex; align-items:center; padding:0 14px; gap:9px; box-shadow:0 -4px 14px rgba(22,32,42,0.14);">
+      <svg width="17" height="17" viewBox="0 0 24 24" stroke="#57646D" stroke-width="2" fill="none" stroke-linecap="square"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5,15.5 L21,21"/></svg>
+      <span style="font-size:14px; color:#57646D; flex:1;">Rechercher un camion, une ville…</span>
+    </div>
+  </div>
+
+  <!-- Bottom sheet -->
+  <div style="position:absolute; bottom:0; left:0; right:0; height:480px; background:#FFFFFF; border-radius:4px 4px 0 0; border:1px solid #C9CDC6; box-shadow:0 -4px 14px rgba(22,32,42,0.14); padding:14px 20px 24px;">
+    <div style="width:36px; height:4px; background:#9AA096; border-radius:2px; margin:0 auto 16px;"></div>
+
+    <div style="display:flex; align-items:center; gap:12px;">
+      <div style="width:44px; height:44px; border-radius:50%; background:#E2ECF2; display:flex; align-items:center; justify-content:center; flex:0 0 auto;">
+        <svg width="22" height="22" viewBox="0 0 24 24" stroke="#0F3D5C" stroke-width="1.75" fill="none" stroke-linecap="square"><rect x="2" y="7" width="11" height="8"/><path d="M13,10 h5 l3,3 v2 h-8 z"/><circle cx="7" cy="17" r="2"/><circle cx="18" cy="17" r="2"/></svg>
+      </div>
+      <div style="flex:1;">
+        <div style="font-weight:700; font-size:16px;">Fret Atlas SARL</div>
+        <div style="font-size:12.5px; color:#57646D;">Semi-remorque · 16-12345-24</div>
+      </div>
+      <div style="font-size:12px; color:#57646D; font-family:var(--mono);">2,4 km</div>
+    </div>
+
+    <div style="margin-top:10px;">
+      <span style="font-family:var(--mono); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:4px 11px; border:1.5px solid #2E7D5B; border-radius:2px; color:#2E7D5B; transform:rotate(-2deg); display:inline-block;">✓ Vérifié</span>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; border:1px solid #C9CDC6; margin-top:16px;">
+      <div style="padding:10px 12px; border-right:1px solid #C9CDC6;"><div class="cap">Volume</div><div class="num" style="font-size:14px; font-weight:600;">90 m³</div></div>
+      <div style="padding:10px 12px; border-right:1px solid #C9CDC6;"><div class="cap">Charge</div><div class="num" style="font-size:14px; font-weight:600;">24 000 kg</div></div>
+      <div style="padding:10px 12px;"><div class="cap">Base</div><div style="font-size:14px; font-weight:600;">Alger</div></div>
+    </div>
+
+    <div class="cap" style="margin-top:22px; margin-bottom:10px;">Trajet déclaré</div>
+    <div style="border:1px solid #C9CDC6; border-radius:3px; padding:12px 14px;">
+      <div style="font-weight:700; font-size:14px;">Alger → Oran</div>
+      <div style="font-size:12.5px; color:#57646D; margin-top:2px;">Demain, 06:00</div>
+      <div style="font-size:12.5px; color:#0F3D5C; margin-top:6px;">reste <span class="num">18 m³</span> et <span class="num">3 000 kg</span></div>
+    </div>
+
+    <button style="width:100%; height:48px; margin-top:20px; background:#0F3D5C; color:#fff; border:none; border-radius:2px; font-family:var(--body); font-weight:700; font-size:14.5px; display:flex; align-items:center; justify-content:center; gap:8px;">
+      Envoyer une mission
+    </button>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

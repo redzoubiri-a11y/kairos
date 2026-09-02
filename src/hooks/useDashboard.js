@@ -2,6 +2,7 @@ import { useState, useCallback, useMemo } from 'react';
 import { Alert, AppState } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { supabase } from '../../supabase';
+import { typeErreur } from '../utils/typeErreur';
 import { colors } from '../theme';
 import { clientName } from './useComptoir';
 
@@ -55,6 +56,10 @@ export default function useDashboard() {
   const [filter,       setFilter]       = useState('Tout');
   const [dateFilter,   setDateFilter]   = useState('Tout');
   const [acting,       setActing]       = useState(new Set());
+  // Seul le tout premier chargement affiche une erreur : les rechargements
+  // en tâche de fond (30s) et manuels gardent la liste déjà affichée plutôt
+  // que de la vider sur un hoquet réseau — cf. commentaire plus bas.
+  const [erreur,        setErreur]        = useState(null);
 
   const addActing    = useCallback(id => setActing(p => new Set(p).add(id)), []);
   const removeActing = useCallback(id => setActing(p => { const s = new Set(p); s.delete(id); return s; }), []);
@@ -64,25 +69,32 @@ export default function useDashboard() {
   const load = useCallback(async (mode = 'initial') => {
     if (mode === 'refresh') setRefreshing(true);
     else if (mode === 'initial') setLoading(true);
+    if (mode === 'initial') setErreur(null);
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
 
-      const { data: ownerRows } = await supabase
+      const { data: ownerRows, error: ownerErr } = await supabase
         .from('restaurant_owners')
         .select('restaurant_id')
         .eq('auth_id', session.user.id)
         .limit(1);
+      // Même logique que la lecture des réservations plus bas : sur un
+      // rechargement de fond on garde l'écran tel quel, mais le tout premier
+      // chargement n'a rien à préserver — mieux vaut le dire que montrer un
+      // dashboard vide comme s'il n'y avait aucune réservation.
+      if (ownerErr) { if (mode === 'initial') setErreur(typeErreur(ownerErr)); return; }
       const ownerRow = ownerRows?.[0] ?? null;
 
       if (!ownerRow?.restaurant_id) return;
       const restaurantId = ownerRow.restaurant_id;
 
-      const { data: resto } = await supabase
+      const { data: resto, error: restoErr } = await supabase
         .from('restaurants')
         .select('id, name, city, quartier, cuisine_type, photos, avg_rating, avg_ticket, capacity, dashboard_first_opened_at')
         .eq('id', restaurantId)
         .maybeSingle();
+      if (restoErr) { if (mode === 'initial') setErreur(typeErreur(restoErr)); return; }
       if (resto) setRestaurant(resto);
 
       // Premier accès dashboard -- alimente city_activation_status.qualified_count
@@ -103,8 +115,9 @@ export default function useDashboard() {
         .order('time_slot', { ascending: true });
 
       // Un hoquet réseau ne doit pas vider la liste déjà affichée — d'autant que
-      // ce chargement tourne maintenant en boucle en tâche de fond.
-      if (resErr) return;
+      // ce chargement tourne maintenant en boucle en tâche de fond. Seul le
+      // premier chargement, qui n'a encore rien à afficher, le signale.
+      if (resErr) { if (mode === 'initial') setErreur(typeErreur(resErr)); return; }
       const rows = res ?? [];
       const userIds = [...new Set(rows.map(r => r.user_id).filter(Boolean))];
       let usersMap = {};
@@ -287,7 +300,7 @@ export default function useDashboard() {
   const onRefresh   = useCallback(() => load('refresh'), [load]);
 
   return {
-    restaurant, reservations, loading, refreshing,
+    restaurant, reservations, loading, refreshing, erreur, reessayer: load,
     filter, setFilter, dateFilter, setDateFilter,
     acting,
     confirm, cancel, markArrived, signOut, onRefresh,

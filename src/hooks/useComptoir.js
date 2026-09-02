@@ -3,6 +3,7 @@ import { Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { supabase } from '../../supabase';
 import { colors } from '../theme';
+import { typeErreur } from '../utils/typeErreur';
 
 // Couleurs pending/confirmed/cancelled alignées sur colors.statusXxx (valeurs
 // littérales de la section 06 du design system, déjà utilisées correctement
@@ -39,6 +40,7 @@ export default function useComptoir() {
   const [acting,         setActing]         = useState(new Set());
   const [selectedResaId, setSelectedResaId] = useState(null);
   const [selectedDate,   setSelectedDate]   = useState(todayStr());
+  const [erreur,         setErreur]         = useState(null);
   const autoRefreshRef = useRef(null);
   const isToday = selectedDate === todayStr();
 
@@ -49,37 +51,48 @@ export default function useComptoir() {
 
   const load = useCallback(async (isRefresh = false) => {
     if (isRefresh) setRefreshing(true); else setLoading(true);
+    setErreur(null);
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
 
-      const { data: ownerRows } = await supabase
+      // Sous coupure réseau, c'est cette requête qui échoue en premier :
+      // sans lecture de son erreur, la fonction sortait ici sans jamais
+      // atteindre le traitement plus bas — la seule chose visible était un
+      // comptoir vide, indiscernable d'un restaurant sans réservations.
+      const { data: ownerRows, error: ownerErr } = await supabase
         .from('restaurant_owners')
         .select('restaurant_id')
         .eq('auth_id', session.user.id)
         .limit(1);
+      if (ownerErr) { setErreur(typeErreur(ownerErr)); setReservations([]); return; }
       const ownerRow = ownerRows?.[0] ?? null;
 
       if (!ownerRow?.restaurant_id) return;
 
-      const { data: resto } = await supabase
+      const { data: resto, error: restoErr } = await supabase
         .from('restaurants')
         .select('id, name, city')
         .eq('id', ownerRow.restaurant_id)
         .maybeSingle();
+      if (restoErr) { setErreur(typeErreur(restoErr)); setReservations([]); return; }
       if (resto) setRestaurant(resto);
 
-      const { data: res } = await supabase
+      const { data: res, error: resErr } = await supabase
         .from('reservations')
         .select('id, date, time_slot, nb_adults, nb_children, notes, status, user_id')
         .eq('restaurant_id', ownerRow.restaurant_id)
         .eq('date', selectedDate)
         .order('time_slot', { ascending: true });
+      if (resErr) { setErreur(typeErreur(resErr)); setReservations([]); return; }
 
       const rows = res ?? [];
       const userIds = [...new Set(rows.map(r => r.user_id).filter(Boolean))];
       let usersMap = {};
       if (userIds.length > 0) {
+        // Enrichissement secondaire : un échec ici laisse les noms de
+        // clients absents (clientName() retombe sur « Client »), sans
+        // vider la liste des réservations qui, elle, a bien été chargée.
         const { data: usersData } = await supabase
           .from('users')
           .select('id, first_name, last_name, email, phone, no_show_count')
@@ -87,6 +100,9 @@ export default function useComptoir() {
         (usersData || []).forEach(u => { usersMap[u.id] = u; });
       }
       setReservations(rows.map(r => ({ ...r, users: usersMap[r.user_id] || null })));
+    } catch (e) {
+      setErreur(typeErreur(e));
+      setReservations([]);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -251,7 +267,7 @@ export default function useComptoir() {
     restaurant,
     reservations,
     visibleReservations,
-    loading, refreshing,
+    loading, refreshing, erreur,
     acting,
     selectedResa, selectedResaId,
     stats,

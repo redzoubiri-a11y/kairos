@@ -3,6 +3,7 @@ import { Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { supabase } from '../../supabase';
 import { colors } from '../theme';
+import { typeErreur } from '../utils/typeErreur';
 
 export const SC = {
   confirmed: { label:'Confirmé',   color: colors.green,    bg: colors.greenSoft,  border:'rgba(76,175,130,0.3)'   },
@@ -42,20 +43,25 @@ export default function useReservations() {
   const [reservations, setReservations] = useState([]);
   const [reviewedIds,      setReviewedIds]      = useState(new Set());
   const [pendingReviewIds, setPendingReviewIds] = useState(new Set());
+  const [erreur,           setErreur]           = useState(null);
 
   const load = useCallback(async (refresh = false) => {
     if (refresh) setRefreshing(true); else setLoading(true);
+    setErreur(null);
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
       const { data: pu } = await supabase.from('users').select('id').eq('auth_id', session.user.id).maybeSingle();
       if (!pu) return;
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('reservations')
         .select('*, restaurants(id, name, photos, cuisine_type, avg_rating, quartier, city)')
         .eq('user_id', pu.id)
         .order('date', { ascending: true })
         .order('time_slot', { ascending: true });
+      // L'erreur était écartée : une coupure réseau affichait « Aucun
+      // historique » au lieu de « Pas de connexion ».
+      if (error) { setErreur(typeErreur(error)); setReservations([]); return; }
       const rows = data || [];
       setReservations(rows);
 
@@ -67,6 +73,9 @@ export default function useReservations() {
         setReviewedIds(new Set((reviewRows || []).filter(r => r.moderation_status === 'approved').map(r => r.reservation_id)));
         setPendingReviewIds(new Set((reviewRows || []).filter(r => r.moderation_status === 'pending').map(r => r.reservation_id)));
       }
+    } catch (e) {
+      setErreur(typeErreur(e));
+      setReservations([]);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -85,9 +94,13 @@ export default function useReservations() {
           onPress: async () => {
             const { data: { session } } = await supabase.auth.getSession();
             if (!session) return;
-            await supabase.from('reservations')
+            const { error: cancelErr } = await supabase.from('reservations')
               .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
               .eq('id', r.id);
+            if (cancelErr) {
+              Alert.alert('Erreur', "L'annulation n'a pas pu être enregistrée. Vérifiez votre connexion et réessayez.");
+              return;
+            }
 
             // Notification de confirmation au client
             try {
@@ -179,7 +192,7 @@ export default function useReservations() {
   }, []);
 
   return {
-    tab, setTab, loading, refreshing,
+    tab, setTab, loading, refreshing, erreur, reessayer: load,
     today, aVenir, historique, next, later, pending, histByMonth,
     reviewedIds, pendingReviewIds,
     cancelResa, submitReview, onRefresh,

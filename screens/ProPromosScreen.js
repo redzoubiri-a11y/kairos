@@ -10,6 +10,7 @@ import useProPromos from '../src/hooks/useProPromos';
 import PromoListView from '../src/components/PromoListView';
 import PromoCreateView from '../src/components/PromoCreateView';
 import PromoActiveView from '../src/components/PromoActiveView';
+import EmptyState from '../src/components/EmptyState';
 
 function Skeleton() {
   return (
@@ -25,7 +26,7 @@ function Skeleton() {
 
 export default function ProPromosScreen({ navigation }) {
   const {
-    view, restaurant, activePromo, otherPromos, loading, saving,
+    view, restaurant, activePromo, otherPromos, loading, saving, erreur, reessayer,
     goList, goCreate, goActive, createPromo, togglePause, incrementUse,
   } = useProPromos();
   useEffect(() => {
@@ -63,7 +64,17 @@ export default function ProPromosScreen({ navigation }) {
         )}
       </View>
 
-      {loading ? <Skeleton /> : (
+      {loading ? <Skeleton /> : erreur ? (
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xxl }}>
+          <EmptyState
+            icon={<Text style={{ fontSize: 20 }}>{erreur === 'network' ? '📡' : '⚠️'}</Text>}
+            title={erreur === 'network' ? 'Pas de connexion' : 'Erreur serveur'}
+            subtitle={erreur === 'network' ? 'Vérifie ta connexion internet.' : "Une erreur inattendue s'est produite."}
+            actionLabel="Réessayer"
+            onAction={reessayer}
+          />
+        </View>
+      ) : (
         view === 'list'   ? <PromoListView
                                activePromo={activePromo}
                                otherPromos={otherPromos}

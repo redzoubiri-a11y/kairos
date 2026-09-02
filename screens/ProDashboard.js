@@ -50,7 +50,7 @@ export default function ProDashboard({ navigation }) {
   }, []));
 
   const {
-    restaurant, reservations, loading, refreshing,
+    restaurant, reservations, loading, refreshing, erreur, reessayer,
     filter, setFilter, dateFilter, setDateFilter,
     acting,
     confirm, cancel, markArrived, signOut, onRefresh,
@@ -85,6 +85,27 @@ export default function ProDashboard({ navigation }) {
     return (
       <SafeAreaView style={s.root}>
         <SkeletonDashboard />
+      </SafeAreaView>
+    );
+  }
+
+  // Plein écran assumé : sans les réservations, aucune tuile du tableau de
+  // bord n'a de sens — les chiffres afficheraient zéro partout, ce qui
+  // équivaudrait à mentir sur l'activité du restaurant. Ne se déclenche que
+  // sur le tout premier chargement (cf. useDashboard) : les rechargements de
+  // fond gardent l'écran affiché tel quel plutôt que de le remplacer.
+  if (erreur) {
+    return (
+      <SafeAreaView style={s.root}>
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xxl }}>
+          <EmptyState
+            icon={<Text style={{ fontSize: 20 }}>{erreur === 'network' ? '📡' : '⚠️'}</Text>}
+            title={erreur === 'network' ? 'Pas de connexion' : 'Erreur serveur'}
+            subtitle={erreur === 'network' ? 'Vérifie ta connexion internet.' : "Une erreur inattendue s'est produite."}
+            actionLabel="Réessayer"
+            onAction={reessayer}
+          />
+        </View>
       </SafeAreaView>
     );
   }

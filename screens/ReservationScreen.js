@@ -60,6 +60,7 @@ export default function ReservationScreen({ navigation }) {
     historique, histByMonth,
     reviewedIds, pendingReviewIds,
     submitReview,
+    erreur: histErreur, reessayer: retryHistory,
     onRefresh: refreshHistory,
   } = useReservations();
 
@@ -186,7 +187,18 @@ export default function ReservationScreen({ navigation }) {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
       >
         {tab === 'avenir' && (
-          !next ? (
+          myResas.erreur ? (
+            <View style={s.empty}>
+              <Text style={s.emptyEmoji}>{myResas.erreur === 'network' ? '📡' : '⚠️'}</Text>
+              <Text style={s.emptyTitle}>{myResas.erreur === 'network' ? 'Pas de connexion' : 'Erreur serveur'}</Text>
+              <Text style={s.emptySub}>
+                {myResas.erreur === 'network' ? 'Vérifie ta connexion internet.' : "Une erreur inattendue s'est produite."}
+              </Text>
+              <TouchableOpacity onPress={() => myResas.load()} style={s.retryBtn}>
+                <Text style={s.retryBtnTxt}>Réessayer</Text>
+              </TouchableOpacity>
+            </View>
+          ) : !next ? (
             <View style={s.empty}>
               <Text style={s.emptyEmoji}>📅</Text>
               <Text style={s.emptyTitle}>Aucune réservation à venir</Text>
@@ -239,7 +251,18 @@ export default function ReservationScreen({ navigation }) {
         )}
 
         {tab === 'historique' && (
-          historique.length === 0 ? (
+          histErreur ? (
+            <View style={s.empty}>
+              <Text style={s.emptyEmoji}>{histErreur === 'network' ? '📡' : '⚠️'}</Text>
+              <Text style={s.emptyTitle}>{histErreur === 'network' ? 'Pas de connexion' : 'Erreur serveur'}</Text>
+              <Text style={s.emptySub}>
+                {histErreur === 'network' ? 'Vérifie ta connexion internet.' : "Une erreur inattendue s'est produite."}
+              </Text>
+              <TouchableOpacity onPress={retryHistory} style={s.retryBtn}>
+                <Text style={s.retryBtnTxt}>Réessayer</Text>
+              </TouchableOpacity>
+            </View>
+          ) : historique.length === 0 ? (
             <View style={s.empty}>
               <Text style={s.emptyEmoji}>🕰️</Text>
               <Text style={s.emptyTitle}>Aucun historique</Text>
@@ -315,5 +338,7 @@ const s = StyleSheet.create({
   emptyTitle: { color: colors.text, fontFamily: typography.display, fontSize: typography.size.heading2 },
   emptySub:   { color: colors.textMuted, fontFamily: typography.body, fontSize: typography.size.bodyLg, textAlign:'center', lineHeight:20, paddingHorizontal: spacing.section },
   emptyBtn:   { backgroundColor: colors.primary, borderRadius: radius.lg, paddingHorizontal: spacing.xxl, paddingVertical: spacing.md, marginTop: spacing.xs },
+  retryBtn:   { borderWidth: 1, borderColor: colors.cardBorder, borderRadius: radius.lg, paddingHorizontal: spacing.xxl, paddingVertical: spacing.md, marginTop: spacing.xs },
+  retryBtnTxt:{ color: colors.text, fontFamily: typography.bodyMedium, fontSize: typography.size.bodyLg },
   emptyBtnTxt:{ color: '#FFFFFF', fontFamily: typography.bodySemibold, fontSize: typography.size.bodyLg },
 });

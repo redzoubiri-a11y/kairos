@@ -27,7 +27,7 @@ function SkeletonList() {
 
 export default function NotificationsScreen({ navigation }) {
   const {
-    loading, refreshing, tab, setTab,
+    loading, refreshing, tab, setTab, erreur, reessayer,
     filtered, unread, unreadResa, unreadRappel, unreadCommande, groups,
     markRead, markAllRead, deleteNotif, onRefresh,
   } = useNotifications();
@@ -78,6 +78,17 @@ export default function NotificationsScreen({ navigation }) {
 
       {loading ? (
         <SkeletonList />
+      ) : erreur ? (
+        <View style={s.center}>
+          <Text style={s.emptyEmoji}>{erreur === 'network' ? '📡' : '⚠️'}</Text>
+          <Text style={s.emptyTitle}>{erreur === 'network' ? 'Pas de connexion' : 'Erreur serveur'}</Text>
+          <Text style={s.emptySub}>
+            {erreur === 'network' ? 'Vérifie ta connexion internet.' : "Une erreur inattendue s'est produite."}
+          </Text>
+          <TouchableOpacity onPress={reessayer} style={s.retryBtn}>
+            <Text style={s.retryBtnTxt}>Réessayer</Text>
+          </TouchableOpacity>
+        </View>
       ) : filtered.length === 0 ? (
         <View style={s.center}>
           <Text style={s.emptyEmoji}>
@@ -185,4 +196,6 @@ const s = StyleSheet.create({
   emptyEmoji:   { fontSize: 52 },
   emptyTitle:   { fontFamily: typography.display, color: colors.text, fontSize: typography.size.heading1, textAlign: 'center', lineHeight: 26 },
   emptySub:     { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.bodyLg, textAlign: 'center', lineHeight: 20 },
+  retryBtn:     { marginTop: spacing.xl, paddingVertical: spacing.md, paddingHorizontal: spacing.xxl, borderRadius: radius.md, borderWidth: 1, borderColor: colors.cardBorder },
+  retryBtnTxt:  { fontFamily: typography.bodyMedium, color: colors.primary, fontSize: typography.size.body },
 });

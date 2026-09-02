@@ -40,7 +40,7 @@ const sk = StyleSheet.create({
 
 export default function ProComptoir({ navigation }) {
   const {
-    restaurant, reservations, visibleReservations, loading, refreshing,
+    restaurant, reservations, visibleReservations, loading, refreshing, erreur,
     acting, selectedResa, selectedResaId, stats, emptyDateStr,
     selectedDate, isToday, goPrevDay, goNextDay, goToday,
     load, confirm, arrive, cancel, noShow, selectResa,
@@ -193,6 +193,16 @@ export default function ProComptoir({ navigation }) {
               <View style={{ padding: spacing.xl, gap: spacing.lg }}>
                 {[1,2,3,4].map(i => <MLoader key={i} width="100%" height={64} borderRadius={radius.lg} />)}
               </View>
+            ) : erreur ? (
+              <View style={s.center}>
+                <EmptyState
+                  icon={<Text style={{ fontSize: 20 }}>{erreur === 'network' ? '📡' : '⚠️'}</Text>}
+                  title={erreur === 'network' ? 'Pas de connexion' : 'Erreur serveur'}
+                  subtitle={erreur === 'network' ? 'Vérifie ta connexion internet.' : "Une erreur inattendue s'est produite."}
+                  actionLabel="Réessayer"
+                  onAction={load}
+                />
+              </View>
             ) : visibleReservations.length === 0 ? (
               <View style={s.center}>
                 <EmptyState icon={<Text style={{ fontSize: 20 }}>📅</Text>} title="Aucune réservation" subtitle={emptyDateStr} />
@@ -241,7 +251,17 @@ export default function ProComptoir({ navigation }) {
           </View>
         }
         ListEmptyComponent={
-          loading ? <SkeletonComptoir /> : (
+          loading ? <SkeletonComptoir /> : erreur ? (
+            <View style={s.center}>
+              <EmptyState
+                icon={<Text style={{ fontSize: 20 }}>{erreur === 'network' ? '📡' : '⚠️'}</Text>}
+                title={erreur === 'network' ? 'Pas de connexion' : 'Erreur serveur'}
+                subtitle={erreur === 'network' ? 'Vérifie ta connexion internet.' : "Une erreur inattendue s'est produite."}
+                actionLabel="Réessayer"
+                onAction={load}
+              />
+            </View>
+          ) : (
             <View style={s.center}>
               <EmptyState icon={<Text style={{ fontSize: 20 }}>📅</Text>} title="Aucune réservation aujourd'hui" subtitle={emptyDateStr} />
             </View>

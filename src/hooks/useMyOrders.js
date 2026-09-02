@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { supabase } from '../../supabase';
+import { typeErreur } from '../utils/typeErreur';
 
 export default function useMyOrders() {
   const [userId,     setUserId]     = useState(null);
@@ -9,9 +10,11 @@ export default function useMyOrders() {
   const [refreshing, setRefreshing] = useState(false);
   const [cancelling, setCancelling] = useState(new Set());
   const channelRef = useRef(null);
+  const [erreur,     setErreur]     = useState(null);
 
   const load = useCallback(async (isRefresh = false) => {
     if (isRefresh) setRefreshing(true); else setLoading(true);
+    setErreur(null);
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
@@ -19,12 +22,16 @@ export default function useMyOrders() {
       if (!userRow) return;
       setUserId(userRow.id);
 
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('orders')
         .select('id, status, notes, total_amount, created_at, restaurant_id, order_items(id, dish_name, price, quantity), restaurants(id, name, photos, quartier, phone, address, latitude, longitude)')
         .eq('user_id', userRow.id)
         .order('created_at', { ascending: false });
+      if (error) { setErreur(typeErreur(error)); setOrders([]); return; }
       setOrders(data ?? []);
+    } catch (e) {
+      setErreur(typeErreur(e));
+      setOrders([]);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -60,5 +67,5 @@ export default function useMyOrders() {
   const active  = orders.filter(o => ['pending', 'confirmed', 'ready'].includes(o.status));
   const history = orders.filter(o => ['collected', 'cancelled'].includes(o.status));
 
-  return { loading, refreshing, active, history, cancelling, onRefresh, cancel };
+  return { loading, refreshing, active, history, cancelling, erreur, reessayer: load, onRefresh, cancel };
 }

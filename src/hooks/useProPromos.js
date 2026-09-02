@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
+import { Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { supabase } from '../../supabase';
 import { computePromoStatus } from '../utils/promoStatus';
@@ -78,7 +79,10 @@ export default function useProPromos() {
 
   const togglePause = useCallback(async (promo) => {
     const nextPaused = !promo.is_paused;
-    await supabase.from('promotions').update({ is_paused: nextPaused }).eq('id', promo.id);
+    // L'écran affichait « en pause » même quand l'écriture échouait : le
+    // restaurateur croyait avoir coupé une promo qui restait active en base.
+    const { error } = await supabase.from('promotions').update({ is_paused: nextPaused }).eq('id', promo.id);
+    if (error) { Alert.alert('Erreur', "L'état de la promotion n'a pas pu être mis à jour. Vérifiez votre connexion et réessayez."); return; }
     setPromos(prev => prev.map(p => p.id === promo.id
       ? { ...p, is_paused: nextPaused, status: computePromoStatus({ ...p, is_paused: nextPaused }) }
       : p));
@@ -86,7 +90,8 @@ export default function useProPromos() {
 
   const incrementUse = useCallback(async (promo) => {
     const next = (promo.use_count || 0) + 1;
-    await supabase.from('promotions').update({ use_count: next }).eq('id', promo.id);
+    const { error } = await supabase.from('promotions').update({ use_count: next }).eq('id', promo.id);
+    if (error) { Alert.alert('Erreur', "Le compteur n'a pas pu être mis à jour. Vérifiez votre connexion et réessayez."); return; }
     setPromos(prev => prev.map(p => p.id === promo.id ? { ...p, use_count: next } : p));
   }, []);
 

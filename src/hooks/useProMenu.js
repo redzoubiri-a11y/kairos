@@ -75,7 +75,8 @@ export default function useProMenu() {
   const toggleAvailability = useCallback(async (dish) => {
     setActing(p => new Set(p).add(dish.id));
     try {
-      await supabase.from('dishes').update({ is_available: !dish.is_available }).eq('id', dish.id);
+      const { error } = await supabase.from('dishes').update({ is_available: !dish.is_available }).eq('id', dish.id);
+      if (error) { Alert.alert('Erreur', "La disponibilité n'a pas pu être mise à jour. Vérifiez votre connexion et réessayez."); return; }
       setDishes(prev => prev.map(d => d.id === dish.id ? { ...d, is_available: !d.is_available } : d));
     } finally {
       setActing(p => { const next = new Set(p); next.delete(dish.id); return next; });
@@ -114,7 +115,8 @@ export default function useProMenu() {
 
   const deleteDish = useCallback(async () => {
     if (!editingDish) return;
-    await supabase.from('dishes').delete().eq('id', editingDish.id);
+    const { error } = await supabase.from('dishes').delete().eq('id', editingDish.id);
+    if (error) { Alert.alert('Erreur', "Le plat n'a pas pu être supprimé. Vérifiez votre connexion et réessayez."); return; }
     setDishes(prev => prev.filter(d => d.id !== editingDish.id));
     setView('list');
     setEditingDish(null);

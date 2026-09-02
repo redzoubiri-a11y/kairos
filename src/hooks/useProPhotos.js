@@ -123,7 +123,10 @@ export default function useProPhotos(restaurantId) {
         .getPublicUrl(path);
 
       const newPhotos = [...photos, publicUrl];
-      await supabase.from('restaurants').update({ photos: newPhotos }).eq('id', restaurantId);
+      const { error: dbErr } = await supabase.from('restaurants').update({ photos: newPhotos }).eq('id', restaurantId);
+      // La photo reste alors envoyée dans le stockage sans être référencée :
+      // orpheline, mais sans perte pour l'utilisateur, qui voit l'échec.
+      if (dbErr) { setError(dbErr.message); return; }
       setPhotos(newPhotos);
     } catch (e) {
       setError('Erreur lors de l\'upload');
@@ -135,9 +138,13 @@ export default function useProPhotos(restaurantId) {
   const removePhoto = useCallback(async (url) => {
     const path = url.split('/restaurant-photos/')[1];
     if (!path) return;
+    // La photo disparaissait de l'écran même quand la mise à jour de la
+    // liste échouait : au rechargement suivant elle réapparaissait, alors
+    // que le fichier avait déjà été supprimé du stockage.
     await supabase.storage.from('restaurant-photos').remove([path]);
     const newPhotos = photos.filter(p => p !== url);
-    await supabase.from('restaurants').update({ photos: newPhotos }).eq('id', restaurantId);
+    const { error } = await supabase.from('restaurants').update({ photos: newPhotos }).eq('id', restaurantId);
+    if (error) { setError(error.message); return; }
     setPhotos(newPhotos);
   }, [restaurantId, photos]);
 

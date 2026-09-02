@@ -7,6 +7,7 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
+    "check": "node scripts/check-app.js",
     "postinstall": "node scripts/patch-supabase.js"
   },
   "dependencies": {
@@ -43,6 +44,8 @@
   },
   "private": true,
   "devDependencies": {
+    "@babel/parser": "^7.29.7",
+    "@babel/traverse": "^7.29.7",
     "@types/react": "~19.1.10",
     "typescript": "~5.9.2"
   }

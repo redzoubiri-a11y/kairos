@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>لوحة الوالدين</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Design système Fennec (fennec/design/design-system-handoff.md) : marine/
+   rouge/crème, Baloo 2 + IBM Plex Mono. Rampe séquentielle marine et
+   couleurs de statut (bon/à revoir) ajoutées ici et validées avec
+   scripts/validate_palette.js — voir commentaires en ligne. Page mono-thème
+   assumée (le tableau de bord parent n'a pas de mode sombre prévu dans le
+   handoff), fond et couleurs posés explicitement. */
+:root{
+  --bg-base:#F5F3EE; --surface:#FFFFFF; --ink:#0A3161; --ink-soft:#6b6b6b;
+  --accent:#B22234; --accent-soft:#FBE4E4; --border:#E3DFD6;
+  --err-bg:#EDEFF3; --err-border:#C7D0DE;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+  /* Rampe séquentielle marine (5 pas, validée --ordinal sur fond #F5F3EE) */
+  --seq-100:#97a5b6; --seq-200:#71869f; --seq-300:#4c6788; --seq-400:#2b4c75; --seq-500:#0a3161;
+  /* Statuts — délibérément distincts de --accent (rouge de marque), jamais
+     réutilisés pour autre chose que "réussi"/"à revoir" */
+  --status-good:#0ca30c; --status-good-soft:#E3F5E3;
+  --status-warn:#B8790E; --status-warn-soft:#FCEFD9;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg-base); color:var(--ink); font-family:'Baloo 2',system-ui,sans-serif;
+  min-height:100vh;
+}
+.wrap{max-width:64rem; margin:0 auto; padding:1.75rem 1.25rem 4rem}
+
+.topline{display:flex; align-items:center; gap:.75rem; margin-bottom:1.5rem}
+.topline .mark{width:2.5rem; height:2.5rem; border-radius:50%; background:var(--accent-soft); display:flex; align-items:center; justify-content:center; font-size:1.3rem; flex:none}
+.topline h1{font-size:1.15rem; font-weight:800; margin:0}
+.topline .kids{margin-inline-start:auto; display:flex; gap:.4rem}
+.kidtab{
+  font-family:'Baloo 2'; font-weight:700; font-size:.85rem; border:2px solid var(--border);
+  background:var(--surface); color:var(--ink-soft); border-radius:999px; padding:.35rem .9rem; cursor:pointer;
+}
+.kidtab.active{border-color:var(--ink); color:var(--ink); background:var(--accent-soft)}
+
+.identity{
+  background:var(--ink); color:#fff; border-radius:20px; padding:1.4rem 1.6rem;
+  display:flex; align-items:center; gap:1.1rem; margin-bottom:1.25rem;
+}
+.identity .avatar{width:4rem; height:4rem; border-radius:50%; background:rgba(255,255,255,.14); display:flex; align-items:center; justify-content:center; font-size:2rem; flex:none}
+.identity .who{flex:1; min-width:0}
+.identity .who .name{font-size:1.25rem; font-weight:800; margin:0 0 .15rem}
+.identity .who .meta{font-family:var(--mono); font-size:.75rem; opacity:.8; letter-spacing:.02em}
+.identity .pos{text-align:start; font-family:var(--mono); font-size:.72rem; opacity:.85; line-height:1.6}
+.identity .pos b{display:block; font-family:'Baloo 2'; font-size:1.05rem; font-weight:800; opacity:1}
+
+.tiles{display:grid; grid-template-columns:repeat(3,1fr); gap:.9rem; margin-bottom:1.25rem}
+.tile{background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:1rem 1.15rem}
+.tile .n{font-family:'Baloo 2'; font-weight:800; font-size:1.9rem; line-height:1; font-variant-numeric:tabular-nums}
+.tile .n.good{color:var(--status-good)}
+.tile .lbl{font-size:.82rem; color:var(--ink-soft); margin-top:.35rem}
+.tile .flame{font-size:1.5rem; vertical-align:-.1em}
+
+.grid2{display:grid; grid-template-columns:1.6fr 1fr; gap:1rem; margin-bottom:1rem}
+@media (max-width:720px){.grid2{grid-template-columns:1fr}}
+
+.card{background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:1.2rem 1.3rem}
+.card h2{font-size:.95rem; font-weight:800; margin:0 0 .2rem}
+.card .sub{font-size:.78rem; color:var(--ink-soft); margin:0 0 1rem}
+
+/* ---- graphique d'activité hebdomadaire (SVG, rampe séquentielle marine) ---- */
+.chartwrap{overflow-x:auto}
+svg.chart{display:block; min-width:480px}
+.bar{fill:var(--seq-300); transition:fill .12s}
+.bar:hover{fill:var(--seq-500)}
+.bar.current{fill:var(--seq-500)}
+.bar-label{font-family:var(--mono); font-size:10px; fill:var(--ink-soft); text-anchor:middle}
+.bar-label.current{fill:var(--ink); font-weight:600}
+.axis-label{font-family:var(--mono); font-size:10px; fill:var(--ink-soft); text-anchor:middle}
+.gridline{stroke:var(--border); stroke-width:1}
+
+.legend-row{display:flex; align-items:center; gap:.5rem; margin-top:.7rem; font-family:var(--mono); font-size:.72rem; color:var(--ink-soft)}
+.legend-row .sw{width:.7rem; height:.7rem; border-radius:3px; background:var(--seq-300); display:inline-block}
+.legend-row .sw.current{background:var(--seq-500)}
+
+/* ---- historique Boss ---- */
+.bosslist{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:.55rem}
+.bossitem{display:flex; align-items:center; gap:.6rem; font-size:.85rem}
+.bossitem .week{font-family:var(--mono); font-weight:600; color:var(--ink-soft); width:2.6rem; flex:none}
+.pill{
+  display:inline-flex; align-items:center; gap:.3rem; font-family:'Baloo 2'; font-weight:700;
+  font-size:.76rem; padding:.2rem .6rem; border-radius:999px; flex:none;
+}
+.pill.good{background:var(--status-good-soft); color:var(--status-good)}
+.pill.warn{background:var(--status-warn-soft); color:var(--status-warn)}
+.bossitem .score{font-family:var(--mono); font-size:.78rem; color:var(--ink-soft); margin-inline-start:auto; font-variant-numeric:tabular-nums}
+
+/* ---- bilans (placement tests) ---- */
+.milestones{display:flex; flex-direction:column; gap:.7rem; margin-top:.9rem}
+.milestone{display:flex; align-items:center; gap:.7rem; padding:.6rem .7rem; border:1px solid var(--border); border-radius:12px}
+.milestone .badge{font-family:var(--mono); font-size:.68rem; font-weight:600; color:#fff; background:var(--ink); border-radius:8px; padding:.15rem .45rem; flex:none}
+.milestone .m-lbl{flex:1; font-size:.82rem}
+.milestone .m-val{font-family:var(--mono); font-weight:700; font-size:.85rem; font-variant-numeric:tabular-nums}
+.delta{font-family:var(--mono); font-size:.72rem; color:var(--status-good); font-weight:600; margin-top:.5rem}
+
+/* ---- preuves audio ---- */
+.proofs{display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:.8rem}
+.proof{border:1px solid var(--border); border-radius:14px; padding:.9rem 1rem; display:flex; align-items:center; gap:.7rem}
+.proof .play{
+  width:2.4rem; height:2.4rem; border-radius:50%; background:var(--accent); color:#fff; border:none;
+  font-size:1rem; flex:none; cursor:pointer; display:flex; align-items:center; justify-content:center;
+}
+.proof .info{min-width:0}
+.proof .info .t{font-size:.85rem; font-weight:700; margin:0 0 .1rem}
+.proof .info .d{font-family:var(--mono); font-size:.68rem; color:var(--ink-soft)}
+
+.foot{text-align:center; font-family:var(--mono); font-size:.68rem; color:var(--ink-soft); margin-top:1.75rem; line-height:1.7}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topline">
+    <span class="mark">🦊</span>
+    <h1>لوحة الوالدين — Fennec</h1>
+    <div class="kids">
+      <button class="kidtab active">ياسين</button>
+      <button class="kidtab">ليلى</button>
+    </div>
+  </div>
+
+  <div class="identity">
+    <span class="avatar">🦊</span>
+    <div class="who">
+      <p class="name">ياسين</p>
+      <p class="meta">المسار : Foundations · منذ الأسبوع 1</p>
+    </div>
+    <div class="pos">الموضع الحالي<b>S17 · اليوم 2</b></div>
+  </div>
+
+  <div class="tiles">
+    <div class="tile"><div class="n">94</div><div class="lbl">كلمة متقنة</div></div>
+    <div class="tile"><div class="n good">88%</div><div class="lbl">متوسط الدقة</div></div>
+    <div class="tile"><div class="n">🔥 4</div><div class="lbl">أيام متتالية هذا الأسبوع</div></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h2>النشاط الأسبوعي</h2>
+      <p class="sub">دقائق اللعب لكل أسبوع — 15 دقيقة يوميًا هو الهدف</p>
+      <div class="chartwrap">
+        <svg class="chart" viewBox="0 0 460 170" role="img" aria-label="دقائق النشاط لكل أسبوع من S8 إلى S17">
+          <!-- lignes de repère à 0/30/60/90 min -->
+          <line class="gridline" x1="20" y1="120" x2="450" y2="120"></line>
+          <line class="gridline" x1="20" y1="80" x2="450" y2="80" stroke-dasharray="2 3"></line>
+          <line class="gridline" x1="20" y1="40" x2="450" y2="40" stroke-dasharray="2 3"></line>
+          <text class="axis-label" x="10" y="123" text-anchor="end">0</text>
+          <text class="axis-label" x="10" y="83" text-anchor="end">45</text>
+          <text class="axis-label" x="10" y="43" text-anchor="end">90</text>
+        </svg>
+      </div>
+      <div class="legend-row"><span class="sw"></span> أسابيع سابقة <span class="sw current" style="margin-inline-start:.8rem"></span> الأسبوع الحالي</div>
+    </div>
+
+    <div class="card">
+      <h2>نتائج تحدي الزعيم</h2>
+      <p class="sub">آخر 4 أسابيع بها تحدٍ</p>
+      <ul class="bosslist">
+        <li class="bossitem"><span class="week">S4</span><span class="pill good">✓ ناجح</span><span class="score">12/12</span></li>
+        <li class="bossitem"><span class="week">S8</span><span class="pill warn">↻ محاولة 2</span><span class="score">10/12</span></li>
+        <li class="bossitem"><span class="week">S12</span><span class="pill good">✓ ناجح</span><span class="score">11/12</span></li>
+        <li class="bossitem"><span class="week">S16</span><span class="pill good">✓ ناجح</span><span class="score">12/12</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h2>تسجيلات صوتية</h2>
+      <p class="sub">لحظات يقول فيها ياسين ما تعلّمه بصوته</p>
+      <div class="proofs">
+        <div class="proof"><button class="play" aria-label="تشغيل">▶</button><div class="info"><p class="t">تعريف العائلة</p><p class="d">S12 · 24 ثانية</p></div></div>
+        <div class="proof"><button class="play" aria-label="تشغيل">▶</button><div class="info"><p class="t">بلاغ منتصف السنة</p><p class="d">S16 · 41 ثانية</p></div></div>
+        <div class="proof"><button class="play" aria-label="تشغيل">▶</button><div class="info"><p class="t">تحدي الزعيم — S16</p><p class="d">S16 · 18 ثانية</p></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>التقييمات الفصلية</h2>
+      <p class="sub">نفس الاختبار، معاد في 3 محطات</p>
+      <div class="milestones">
+        <div class="milestone"><span class="badge">S1</span><span class="m-lbl">البداية</span><span class="m-val">8 / 40</span></div>
+        <div class="milestone"><span class="badge">S16</span><span class="m-lbl">منتصف السنة</span><span class="m-val">31 / 40</span></div>
+      </div>
+      <p class="delta">▲ +23 نقطة منذ البداية</p>
+    </div>
+  </div>
+
+  <p class="foot">لوحة الوالدين — نسخة تجريبية (بيانات وهمية لغرض العرض، غير متصلة بـ Supabase بعد)<br>
+  Fennec · fennec/README.md</p>
+</div>
+
+<script>
+'use strict';
+// Rampe séquentielle marine validée (scripts/validate_palette.js --ordinal,
+// surface #F5F3EE) : #97a5b6 → #0a3161. La dernière barre (semaine en cours)
+// prend systématiquement le pas le plus sombre, quelle que soit sa valeur.
+const WEEKS = [
+  { week: 'S8',  minutes: 62, sessions: 4 },
+  { week: 'S9',  minutes: 58, sessions: 4 },
+  { week: 'S10', minutes: 64, sessions: 4 },
+  { week: 'S11', minutes: 31, sessions: 2 },
+  { week: 'S12', minutes: 78, sessions: 5 },
+  { week: 'S13', minutes: 60, sessions: 4 },
+  { week: 'S14', minutes: 63, sessions: 4 },
+  { week: 'S15', minutes: 59, sessions: 4 },
+  { week: 'S16', minutes: 76, sessions: 5 },
+  { week: 'S17', minutes: 28, sessions: 2 },
+];
+
+const svg = document.querySelector('svg.chart');
+const x0 = 24, x1 = 450, topY = 20, base = 120;
+const bw = (x1 - x0) / WEEKS.length;
+const barW = bw * 0.6;
+const maxMin = 90; // échelle : 0..90 min (repères à 0/45/90)
+const scaleY = (base - topY) / maxMin;
+
+WEEKS.forEach((w, i) => {
+  const isCurrent = i === WEEKS.length - 1;
+  const cx = x0 + bw * i + bw / 2;
+  const h = Math.max(4, w.minutes * scaleY);
+  const y = base - h;
+
+  const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  rect.setAttribute('x', cx - barW / 2);
+  rect.setAttribute('y', y);
+  rect.setAttribute('width', barW);
+  rect.setAttribute('height', h);
+  rect.setAttribute('rx', 4);
+  rect.setAttribute('class', 'bar' + (isCurrent ? ' current' : ''));
+  const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+  title.textContent = `${w.week} — ${w.minutes} دقيقة · ${w.sessions} حصص`;
+  rect.appendChild(title);
+  svg.appendChild(rect);
+
+  const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  label.setAttribute('x', cx);
+  label.setAttribute('y', y - 6);
+  label.setAttribute('class', 'bar-label' + (isCurrent ? ' current' : ''));
+  label.textContent = w.minutes;
+  svg.appendChild(label);
+
+  const axis = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  axis.setAttribute('x', cx);
+  axis.setAttribute('y', base + 16);
+  axis.setAttribute('class', 'axis-label');
+  axis.textContent = w.week;
+  svg.appendChild(axis);
+});
+</script>
+</body>
+</html>

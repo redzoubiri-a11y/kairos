@@ -7,6 +7,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { supabase } from '../supabase';
 import { colors, typography, spacing, radius } from '../src/theme';
 import Logo from '../src/components/Logo';
+import EmptyState from '../src/components/EmptyState';
+import { typeErreur } from '../src/utils/typeErreur';
 
 const GRID_PADDING = 14;
 const GRID_GAP = 12;
@@ -86,28 +88,37 @@ export default function ExplorerScreen({ navigation }) {
   const [city,        setCity]        = useState('alger');
   const [restaurants, setRestaurants] = useState([]);
   const [loading,     setLoading]     = useState(false);
+  const [erreur,      setErreur]      = useState(null);
   const { width } = useWindowDimensions();
 
   const available = width - GRID_PADDING * 2;
   const numColumns = Math.max(2, Math.floor((available + GRID_GAP) / (MIN_CARD_W + GRID_GAP)));
   const cardWidth  = Math.min(MAX_CARD_W, (available - GRID_GAP * (numColumns - 1)) / numColumns);
 
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
-      try {
-        const { data } = await supabase
-          .from('restaurants')
-          .select('id, name, cuisine_type, address, quartier, city, photos, avg_rating, avg_ticket, review_count, capacity, opening_hours')
-          .eq('city', city)
-          .eq('status', 'active')
-          .order('avg_rating', { ascending: false });
-        setRestaurants(data ?? []);
-      } finally {
-        setLoading(false);
-      }
-    })();
+  const load = useCallback(async () => {
+    setLoading(true);
+    setErreur(null);
+    try {
+      // L'erreur était écartée : une coupure réseau affichait « Aucun
+      // restaurant pour cette ville » au lieu de « Pas de connexion »,
+      // exactement comme si la ville n'avait effectivement aucun restaurant.
+      const { data, error } = await supabase
+        .from('restaurants')
+        .select('id, name, cuisine_type, address, quartier, city, photos, avg_rating, avg_ticket, review_count, capacity, opening_hours')
+        .eq('city', city)
+        .eq('status', 'active')
+        .order('avg_rating', { ascending: false });
+      if (error) { setErreur(typeErreur(error)); setRestaurants([]); return; }
+      setRestaurants(data ?? []);
+    } catch (e) {
+      setErreur(typeErreur(e));
+      setRestaurants([]);
+    } finally {
+      setLoading(false);
+    }
   }, [city]);
+
+  useEffect(() => { load(); }, [load]);
 
   const renderItem = useCallback(({ item: r }) => (
     <RestoCard
@@ -147,6 +158,16 @@ export default function ExplorerScreen({ navigation }) {
       {/* Liste */}
       {loading ? (
         <View style={s.center}><ActivityIndicator color={colors.primary} size="large" /></View>
+      ) : erreur ? (
+        <View style={s.center}>
+          <EmptyState
+            icon={<Text style={{ fontSize: 20 }}>{erreur === 'network' ? '📡' : '⚠️'}</Text>}
+            title={erreur === 'network' ? 'Pas de connexion' : 'Erreur serveur'}
+            subtitle={erreur === 'network' ? 'Vérifie ta connexion internet.' : "Une erreur inattendue s'est produite."}
+            actionLabel="Réessayer"
+            onAction={load}
+          />
+        </View>
       ) : restaurants.length === 0 ? (
         <View style={s.center}>
           <Text style={{ fontSize:36 }}>🍽️</Text>

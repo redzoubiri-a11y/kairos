@@ -25,7 +25,7 @@ export default function ProfilScreen({ navigation }) {
     displayName, initial,
     pickAvatar, saveName, signOut, deleteAccount, toggleEditing,
   } = useProfil();
-  const { balance: pointsBalance, history: pointsHistory, loading: pointsLoading } = usePoints();
+  const { balance: pointsBalance, history: pointsHistory, loading: pointsLoading, erreur: pointsErreur, refresh: refreshPoints } = usePoints();
   const [showPointsHistory, setShowPointsHistory] = useState(false);
   const [showPrivacy, setShowPrivacy] = useState(false);
 
@@ -213,6 +213,8 @@ export default function ProfilScreen({ navigation }) {
         balance={pointsBalance}
         history={pointsHistory}
         loading={pointsLoading}
+        erreur={pointsErreur}
+        onRetry={refreshPoints}
       />
       <PrivacyPolicyModal visible={showPrivacy} onClose={() => setShowPrivacy(false)} />
     </SafeAreaView>

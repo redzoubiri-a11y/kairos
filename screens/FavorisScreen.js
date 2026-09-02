@@ -10,7 +10,7 @@ import { useGuestContext } from '../src/context/GuestContext';
 
 export default function FavorisScreen({ navigation }) {
   const { isGuest } = useGuestContext();
-  const { favorites, loading, refreshing, onRefresh, removeFavorite } = useFavoris();
+  const { favorites, loading, refreshing, erreur, reessayer, onRefresh, removeFavorite } = useFavoris();
 
   const goExplorer = useCallback(() => navigation.navigate('Explorer'), [navigation]);
   const goRestaurant = useCallback(
@@ -28,6 +28,15 @@ export default function FavorisScreen({ navigation }) {
 
       {loading ? (
         <View style={s.loading}><ActivityIndicator color={colors.text} size="large" /></View>
+      ) : erreur ? (
+        <EmptyState
+          icon={<Text style={{ fontSize: 20 }}>{erreur === 'network' ? '📡' : '⚠️'}</Text>}
+          title={erreur === 'network' ? 'Pas de connexion' : 'Erreur serveur'}
+          subtitle={erreur === 'network' ? 'Vérifie ta connexion internet.' : "Une erreur inattendue s'est produite."}
+          actionLabel="Réessayer"
+          onAction={reessayer}
+          style={s.emptyState}
+        />
       ) : favorites.length === 0 ? (
         <EmptyState
           icon={<Text style={{ fontSize: 20 }}>🤍</Text>}

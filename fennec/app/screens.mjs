@@ -8,12 +8,19 @@
  * (classe .ar => direction/alignement RTL) ; le mot anglais enseigné reste
  * affiché en anglais (LTR), c'est le contenu pédagogique.
  *
- * Écart connu par rapport au handoff : les cartes-options montrent le mot
- * anglais en texte (pas encore d'illustration/emoji par mot — aucune
- * banque d'images n'existe pour les 335 mots). C'est un placeholder
- * temporaire à remplacer par les vraies illustrations, pas une French text
- * comme avant (le handoff ne prévoit aucun français dans l'UI).
+ * Illustrations : fennec/app/word-emoji.json fournit un emoji pour les mots
+ * "lexique" qui en ont un univoque (193/213) — placeholder honnête en
+ * attendant les vraies illustrations, jamais du français (le handoff n'en
+ * prévoit aucun dans l'UI). Les mots sans entrée (jours de la semaine,
+ * adjectifs relationnels comme big/small...) retombent sur le texte anglais.
  */
+
+// Dictionnaire emoji (fennec/app/build_word_emoji.py) : illustration
+// temporaire pour les mots "lexique" qui en ont une univoque — voir le
+// commentaire d'en-tête. Les mots absents de ce dictionnaire (mots
+// grammaticaux, jours de la semaine, adjectifs relationnels...) retombent
+// sur le texte anglais, jamais sur un emoji forcé/trompeur.
+const wordEmoji = await fetch('./word-emoji.json').then((r) => r.json()).catch(() => ({}));
 
 const stage = document.getElementById('stage');
 const pipsEl = document.getElementById('pips');
@@ -122,8 +129,15 @@ function renderChoice(screen, { onAnswer }) {
   shuffled.forEach((opt) => {
     const b = document.createElement('button');
     b.className = 'opt';
-    // Placeholder en attendant les illustrations réelles (cf. commentaire d'en-tête) :
-    b.innerHTML = `<span class="lbl">${escapeHtml(opt.english)}</span>`;
+    const emoji = wordEmoji[String(opt.wordId)];
+    if (emoji) {
+      b.innerHTML = `<span aria-hidden="true">${emoji}</span>`;
+      b.setAttribute('aria-label', opt.english);
+    } else {
+      // Pas d'illustration pour ce mot : texte anglais en repli (jamais de
+      // français, jamais d'emoji forcé — cf. commentaire d'en-tête).
+      b.innerHTML = `<span class="lbl">${escapeHtml(opt.english)}</span>`;
+    }
     b.onclick = () => {
       grid.querySelectorAll('.opt').forEach((x) => (x.disabled = true));
       const ok = opt.wordId === screen.word.wordId;

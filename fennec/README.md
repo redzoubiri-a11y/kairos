@@ -35,6 +35,9 @@ fennec/
     index.html, styles.css, screens.mjs, session.mjs, bossSession.mjs, main.mjs, sw.js, manifest.webmanifest
     catalog.json               # copie embarquée du référentiel (bootstrap 100% offline)
     build_catalog.py           # régénère catalog.json depuis data/foundations-banque-mots.json
+    phonics.json               # progression phonics (22 sons, S2→S30), écran "phonics"
+    word-emoji.json            # illustrations emoji pour 193/213 mots lexique (placeholder)
+    build_word_emoji.py        # régénère word-emoji.json (garde-fou : jamais 2 mots = même emoji)
   design/
     design-system-handoff.md              # spec du design système définitif (tokens, gabarits, copie)
     fennec-design-system-complete.dc.html  # source haute-fidélité (palette marine/rouge/blanc)
@@ -55,11 +58,14 @@ implémentées dans `screens.mjs` :
 sont en arabe (classe CSS `.ar` pour le RTL) ; le mot anglais enseigné reste
 affiché en anglais (LTR) — c'est le contenu pédagogique, pas l'interface.
 
-**Écart connu, assumé** : les cartes-options (écoute→touche, lecture→touche)
-montrent le mot anglais en texte, en attendant une illustration par mot —
-aucune banque d'images/emoji n'existe pour les 335 mots de `data/foundations-banque-mots.json`.
-Construire cette banque (illustrations réelles ou dictionnaire d'emoji) est
-un chantier de contenu séparé, pas fait ici.
+**Illustrations** : `fennec/app/word-emoji.json` (généré par `build_word_emoji.py`,
+validé contre le catalogue par `fennec/test/word-emoji-data.test.js`) fournit
+un emoji univoque pour 193 des 213 mots "lexique" — les cartes-options
+(écoute→touche, lecture→touche) l'utilisent quand il existe. Les 20 mots
+restants (jours de la semaine, adjectifs relationnels comme big/small/tall...)
+n'ont pas d'emoji fidèle et unique : ils retombent sur le texte anglais,
+jamais sur un emoji forcé ou trompeur. Reste un placeholder temporaire —
+à remplacer par de vraies illustrations quand elles existeront.
 
 ## Pourquoi cette architecture
 

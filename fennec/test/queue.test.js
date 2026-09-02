@@ -146,3 +146,39 @@ test('buildBossPlan retourne un plan vide si aucun mot n\'est programmé pour ce
   const plan = buildBossPlan({ catalog: CATALOG, week: 999 });
   assert.deepEqual(plan, []);
 });
+
+const PHONICS = [
+  { week: 21, grapheme: 'sh', example: 'ship', exampleWordId: 5 },
+];
+
+test('getPhonicsForDay : un son n\'est introduit que le jour 1 de sa semaine', async () => {
+  const { getPhonicsForDay } = await queuePromise;
+  assert.equal(getPhonicsForDay(PHONICS, 21, 1)?.grapheme, 'sh');
+  assert.equal(getPhonicsForDay(PHONICS, 21, 2), null, 'pas de phonics hors du jour 1');
+  assert.equal(getPhonicsForDay(PHONICS, 1, 1), null, 'pas de son programmé pour cette semaine');
+});
+
+test('buildScreenPlan insère l\'écran phonics avant les nouveaux mots quand un son est programmé (jour 1)', async () => {
+  const { buildScreenPlan } = await queuePromise;
+  const plan = buildScreenPlan({
+    dueEntries: [], newWordIds: [2], catalog: CATALOG,
+    pointer: { week: 21, day: 1 }, phonicsTable: PHONICS,
+  });
+  assert.equal(plan[0].kind, 'phonics');
+  assert.equal(plan[0].grapheme, 'sh');
+  assert.equal(plan[0].example, 'ship');
+  assert.equal(plan[0].exampleWord.wordId, 5);
+  assert.equal(plan[1].kind, 'discover', 'le phonics précède les mots nouveaux, ne les remplace pas');
+});
+
+test('buildScreenPlan n\'insère aucun écran phonics hors jour 1 ou sans son programmé', async () => {
+  const { buildScreenPlan } = await queuePromise;
+  const planDay2 = buildScreenPlan({
+    dueEntries: [], newWordIds: [5], catalog: CATALOG,
+    pointer: { week: 21, day: 2 }, phonicsTable: PHONICS,
+  });
+  assert.ok(planDay2.every((s) => s.kind !== 'phonics'));
+
+  const planNoTable = buildScreenPlan({ dueEntries: [], newWordIds: [2], catalog: CATALOG });
+  assert.ok(planNoTable.every((s) => s.kind !== 'phonics'), 'sans phonicsTable, jamais d\'écran phonics');
+});

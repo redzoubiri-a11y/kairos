@@ -1,0 +1,134 @@
+[
+ {
+  "week": 2,
+  "grapheme": "s a t",
+  "example": "sat",
+  "exampleWordId": 33
+ },
+ {
+  "week": 3,
+  "grapheme": "i p n",
+  "example": "pin",
+  "exampleWordId": 34
+ },
+ {
+  "week": 5,
+  "grapheme": "c k",
+  "example": "cat",
+  "exampleWordId": 162
+ },
+ {
+  "week": 6,
+  "grapheme": "e h",
+  "example": "hen",
+  "exampleWordId": 181
+ },
+ {
+  "week": 7,
+  "grapheme": "r m d",
+  "example": "map",
+  "exampleWordId": 76
+ },
+ {
+  "week": 9,
+  "grapheme": "g o",
+  "example": "dog",
+  "exampleWordId": 163
+ },
+ {
+  "week": 10,
+  "grapheme": "u l",
+  "example": "sun",
+  "exampleWordId": 330
+ },
+ {
+  "week": 11,
+  "grapheme": "f b",
+  "example": "fun",
+  "exampleWordId": 115
+ },
+ {
+  "week": 13,
+  "grapheme": "ck",
+  "example": "duck",
+  "exampleWordId": 129
+ },
+ {
+  "week": 14,
+  "grapheme": "ll ss ff",
+  "example": "bell",
+  "exampleWordId": 145
+ },
+ {
+  "week": 17,
+  "grapheme": "ai",
+  "example": "rain",
+  "exampleWordId": 172
+ },
+ {
+  "week": 18,
+  "grapheme": "ee",
+  "example": "sheep",
+  "exampleWordId": 176
+ },
+ {
+  "week": 19,
+  "grapheme": "oa",
+  "example": "goat",
+  "exampleWordId": 180
+ },
+ {
+  "week": 21,
+  "grapheme": "sh",
+  "example": "ship",
+  "exampleWordId": 218
+ },
+ {
+  "week": 22,
+  "grapheme": "ch",
+  "example": "chick",
+  "exampleWordId": 230
+ },
+ {
+  "week": 23,
+  "grapheme": "th",
+  "example": "this",
+  "exampleWordId": 82
+ },
+ {
+  "week": 24,
+  "grapheme": "ng",
+  "example": "king",
+  "exampleWordId": 250
+ },
+ {
+  "week": 25,
+  "grapheme": "oo (long)",
+  "example": "moon",
+  "exampleWordId": 266
+ },
+ {
+  "week": 26,
+  "grapheme": "oo (court)",
+  "example": "book",
+  "exampleWordId": 255
+ },
+ {
+  "week": 27,
+  "grapheme": "qu y",
+  "example": "queen",
+  "exampleWordId": 300
+ },
+ {
+  "week": 29,
+  "grapheme": "ar",
+  "example": "car",
+  "exampleWordId": 317
+ },
+ {
+  "week": 30,
+  "grapheme": "or er",
+  "example": "fork",
+  "exampleWordId": 336
+ }
+]

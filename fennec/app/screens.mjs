@@ -255,6 +255,55 @@ function renderConstruct(screen, { onAnswer }) {
 }
 
 /**
+ * phonics : trace au doigt le son de la semaine (guide en tracé pointillé,
+ * cf. handoff écran 6), puis écoute un exemple du catalogue qui le contient.
+ * Jamais noté/bloquant — comme le script le prévoit pour les écrans phonics,
+ * `onAnswer(true)` systématique une fois un tracé minimal détecté.
+ */
+function renderPhonics(screen, { onAnswer }) {
+  const primaryGrapheme = screen.grapheme.replace(/\s*\([^)]*\)/g, '').split(/\s+/)[0];
+  stage.innerHTML =
+    `<p class="sub ar center">تتبع الحرف بإصبعك</p>` +
+    `<div class="phonics-box"><canvas width="220" height="220"></canvas></div>` +
+    `<p class="phonics-caption">${escapeHtml(screen.grapheme)} · ${escapeHtml(screen.example)}</p>` +
+    `<button class="cta primary" disabled>متابعة</button>`;
+  const canvas = stage.querySelector('canvas');
+  const ctx = canvas.getContext('2d');
+  const cta = stage.querySelector('.cta');
+
+  ctx.font = `${primaryGrapheme.length > 2 ? 90 : 140}px "Baloo 2"`;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  const guideColor = getComputedStyle(document.documentElement).getPropertyValue('--err-bg').trim() || '#EDEFF3';
+  ctx.fillStyle = guideColor;
+  ctx.fillText(primaryGrapheme, 110, 115);
+  ctx.setLineDash([8, 6]);
+  ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#B22234';
+  ctx.lineWidth = 2;
+  ctx.strokeText(primaryGrapheme, 110, 115);
+
+  ctx.setLineDash([]);
+  ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#0A3161';
+  ctx.lineWidth = 9; ctx.lineCap = 'round';
+  let drawing = false, tracedPoints = 0;
+  const posFromEvent = (e) => {
+    const r = canvas.getBoundingClientRect();
+    return [(e.clientX - r.left) * canvas.width / r.width, (e.clientY - r.top) * canvas.height / r.height];
+  };
+  canvas.onpointerdown = (e) => { drawing = true; const [x, y] = posFromEvent(e); ctx.beginPath(); ctx.moveTo(x, y); };
+  canvas.onpointermove = (e) => {
+    if (!drawing) return;
+    const [x, y] = posFromEvent(e);
+    ctx.lineTo(x, y); ctx.stroke();
+    tracedPoints++;
+    if (tracedPoints > 12 && cta.disabled) cta.disabled = false;
+  };
+  canvas.onpointerup = () => { drawing = false; };
+
+  cta.addEventListener('click', () => { chimeSuccess(); onAnswer(true); }, { once: true });
+  setTimeout(() => speak(screen.example), 300);
+}
+
+/**
  * Dispatche un écran vers le bon renderer selon son `kind`. `handlers`
  * porte `onContinue` (pour 'discover') et/ou `onAnswer(ok)` (pour tous les
  * autres) — chaque appelant ne fournit que ce dont il a besoin.
@@ -267,6 +316,7 @@ function renderScreen(screen, handlers) {
     case 'true_false': return renderTrueFalse(screen, handlers);
     case 'say_it': return renderSayIt(screen, handlers);
     case 'construct': return renderConstruct(screen, handlers);
+    case 'phonics': return renderPhonics(screen, handlers);
     default: return renderChoice(screen, handlers);
   }
 }

@@ -248,89 +248,93 @@ id,anglais,francais,categorie,monde,semaine_intro,jour_intro,r1,r2,r3,r4,r5,mait
 247,that,(mot de lecture),décodable,M6 · Food,S23,2,S23,S23,S24,VP1,S26,S26
 248,with,(mot de lecture),décodable,M6 · Food,S23,3,S23,S24,S24,VP1,S26,S26
 249,bath,(mot de lecture),décodable,M6 · Food,S23,4,S23,S24,S24,VP2,S26,S26
-250,school,école,lexique,M7 · My School & My Day,S25,1,S25,S25,S26,S27,S30,S30
-251,book,livre,lexique,M7 · My School & My Day,S25,2,S25,S25,S26,S27,S30,S30
-252,pen,stylo,lexique,M7 · My School & My Day,S25,3,S25,S26,S26,S27,S30,S30
-253,pencil,crayon,lexique,M7 · My School & My Day,S25,4,S25,S26,S26,S28,S30,S30
-254,bag,cartable,lexique,M7 · My School & My Day,S25,1,S25,S25,S26,S27,S30,S30
-255,teacher,maître / maîtresse,lexique,M7 · My School & My Day,S25,2,S25,S25,S26,S27,S30,S30
-256,ruler,règle,lexique,M7 · My School & My Day,S25,3,S25,S26,S26,S27,S30,S30
-257,What's this?,qu'est-ce que c'est ?,structure,M7 · My School & My Day,S25,4,S25,S26,S26,S28,S30,S30
-258,It's a pen,c'est un stylo,structure,M7 · My School & My Day,S25,1,S25,S25,S26,S27,S30,S30
-259,eraser,gomme,lexique,M7 · My School & My Day,S25,2,S25,S25,S26,S27,S30,S30
-260,desk,table / bureau,lexique,M7 · My School & My Day,S25,3,S25,S26,S26,S27,S30,S30
-261,classroom,salle de classe,lexique,M7 · My School & My Day,S25,4,S25,S26,S26,S28,S30,S30
-262,moon,(mot de lecture),décodable,M7 · My School & My Day,S25,1,S25,S25,S26,S27,S30,S30
-263,food,(mot de lecture),décodable,M7 · My School & My Day,S25,2,S25,S25,S26,S27,S30,S30
-264,Sunday,dimanche,lexique,M7 · My School & My Day,S26,1,S26,S26,S27,S28,S31,S31
-265,Monday,lundi,lexique,M7 · My School & My Day,S26,2,S26,S26,S27,S28,S31,S31
-266,Tuesday,mardi,lexique,M7 · My School & My Day,S26,3,S26,S27,S27,S28,S31,S31
-267,Wednesday,mercredi,lexique,M7 · My School & My Day,S26,4,S26,S27,S27,S29,S31,S31
-268,Thursday,jeudi,lexique,M7 · My School & My Day,S26,1,S26,S26,S27,S28,S31,S31
-269,Friday,vendredi,lexique,M7 · My School & My Day,S26,2,S26,S26,S27,S28,S31,S31
-270,Saturday,samedi,lexique,M7 · My School & My Day,S26,3,S26,S27,S27,S28,S31,S31
-271,today,aujourd'hui,lexique,M7 · My School & My Day,S26,4,S26,S27,S27,S29,S31,S31
-272,day,jour,lexique,M7 · My School & My Day,S26,1,S26,S26,S27,S28,S31,S31
-273,Sit down!,assieds-toi !,structure,M7 · My School & My Day,S26,2,S26,S26,S27,S28,S31,S31
-274,Stand up!,lève-toi !,structure,M7 · My School & My Day,S26,3,S26,S27,S27,S28,S31,S31
-275,Open!,ouvre !,structure,M7 · My School & My Day,S26,4,S26,S27,S27,S29,S31,S31
-276,Close!,ferme !,structure,M7 · My School & My Day,S26,1,S26,S26,S27,S28,S31,S31
-277,Listen!,écoute !,structure,M7 · My School & My Day,S26,2,S26,S26,S27,S28,S31,S31
-278,week,semaine,lexique,M7 · My School & My Day,S26,3,S26,S27,S27,S28,S31,S31
-279,What day is it?,quel jour sommes-nous ?,structure,M7 · My School & My Day,S26,4,S26,S27,S27,S29,S31,S31
-280,look,(mot de lecture),décodable,M7 · My School & My Day,S26,1,S26,S26,S27,S28,S31,S31
-281,good,(mot de lecture),décodable,M7 · My School & My Day,S26,2,S26,S26,S27,S28,S31,S31
-282,foot,(mot de lecture),décodable,M7 · My School & My Day,S26,3,S26,S27,S27,S28,S31,S31
-283,get up,se lever,lexique,M7 · My School & My Day,S27,1,S27,S27,S28,S29,S32,S32
-284,go,aller,lexique,M7 · My School & My Day,S27,2,S27,S27,S28,S29,S32,S32
-285,play,jouer,lexique,M7 · My School & My Day,S27,3,S27,S28,S28,S29,S32,S32
-286,sleep,dormir,lexique,M7 · My School & My Day,S27,4,S27,S28,S28,S30,S32,S32
-287,home,maison (chez soi),lexique,M7 · My School & My Day,S27,1,S27,S27,S28,S29,S32,S32
-288,morning,matin,lexique,M7 · My School & My Day,S27,2,S27,S27,S28,S29,S32,S32
-289,afternoon,après-midi,lexique,M7 · My School & My Day,S27,3,S27,S28,S28,S29,S32,S32
-290,night,nuit,lexique,M7 · My School & My Day,S27,4,S27,S28,S28,S30,S32,S32
-291,wash,se laver,lexique,M7 · My School & My Day,S27,1,S27,S27,S28,S29,S32,S32
-292,I go to school,je vais à l'école,structure,M7 · My School & My Day,S27,2,S27,S27,S28,S29,S32,S32
-293,breakfast,petit-déjeuner,lexique,M7 · My School & My Day,S27,3,S27,S28,S28,S29,S32,S32
-294,dinner,dîner,lexique,M7 · My School & My Day,S27,4,S27,S28,S28,S30,S32,S32
-295,brush my teeth,me brosser les dents,structure,M7 · My School & My Day,S27,1,S27,S27,S28,S29,S32,S32
-296,queen,(mot de lecture),décodable,M7 · My School & My Day,S27,2,S27,S27,S28,S29,S32,S32
-297,quick,(mot de lecture),décodable,M7 · My School & My Day,S27,3,S27,S28,S28,S29,S32,S32
-298,yet,(mot de lecture),décodable,M7 · My School & My Day,S27,4,S27,S28,S28,S30,S32,S32
-299,house,maison,lexique,M8 · My World,S29,1,S29,S29,S30,S31,Été,Été
-300,street,rue,lexique,M8 · My World,S29,2,S29,S29,S30,S31,Été,Été
-301,shop,magasin,lexique,M8 · My World,S29,3,S29,S30,S30,S31,Été,Été
-302,park,parc,lexique,M8 · My World,S29,4,S29,S30,S30,S32,Été,Été
-303,beach,plage,lexique,M8 · My World,S29,1,S29,S29,S30,S31,Été,Été
-304,where,où,fonction,M8 · My World,S29,2,S29,S29,S30,S31,Été,Été
-305,in,dans,fonction,M8 · My World,S29,3,S29,S30,S30,S31,Été,Été
-306,on,sur,fonction,M8 · My World,S29,4,S29,S30,S30,S32,Été,Été
-307,under,sous,fonction,M8 · My World,S29,1,S29,S29,S30,S31,Été,Été
-308,Where is …?,où est … ?,structure,M8 · My World,S29,2,S29,S29,S30,S31,Été,Été
-309,garden,jardin,lexique,M8 · My World,S29,3,S29,S30,S30,S31,Été,Été
-310,door,porte,lexique,M8 · My World,S29,4,S29,S30,S30,S32,Été,Été
-311,window,fenêtre,lexique,M8 · My World,S29,1,S29,S29,S30,S31,Été,Été
-312,city,ville,lexique,M8 · My World,S29,2,S29,S29,S30,S31,Été,Été
-313,car,(mot de lecture),décodable,M8 · My World,S29,3,S29,S30,S30,S31,Été,Été
-314,star,(mot de lecture),décodable,M8 · My World,S29,4,S29,S30,S30,S32,Été,Été
-315,far,(mot de lecture),décodable,M8 · My World,S29,1,S29,S29,S30,S31,Été,Été
-316,sunny,ensoleillé,lexique,M8 · My World,S30,1,S30,S30,S31,S32,Été,Été
-317,rainy,pluvieux,lexique,M8 · My World,S30,2,S30,S30,S31,S32,Été,Été
-318,hot,chaud,lexique,M8 · My World,S30,3,S30,S31,S31,S32,Été,Été
-319,cold,froid,lexique,M8 · My World,S30,4,S30,S31,S31,Été,Été,Été
-320,windy,venteux,lexique,M8 · My World,S30,1,S30,S30,S31,S32,Été,Été
-321,weather,météo,lexique,M8 · My World,S30,2,S30,S30,S31,S32,Été,Été
-322,What's the weather like?,quel temps fait-il ?,structure,M8 · My World,S30,3,S30,S31,S31,S32,Été,Été
-323,desert,désert,lexique,M8 · My World,S30,4,S30,S31,S31,Été,Été,Été
-324,sea,mer,lexique,M8 · My World,S30,1,S30,S30,S31,S32,Été,Été
-325,mountain,montagne,lexique,M8 · My World,S30,2,S30,S30,S31,S32,Été,Été
-326,sun,soleil,lexique,M8 · My World,S30,3,S30,S31,S31,S32,Été,Été
-327,cloud,nuage,lexique,M8 · My World,S30,4,S30,S31,S31,Été,Été,Été
-328,snow,neige,lexique,M8 · My World,S30,1,S30,S30,S31,S32,Été,Été
-329,sky,ciel,lexique,M8 · My World,S30,2,S30,S30,S31,S32,Été,Été
-330,tree,arbre,lexique,M8 · My World,S30,3,S30,S31,S31,S32,Été,Été
-331,flower,fleur,lexique,M8 · My World,S30,4,S30,S31,S31,Été,Été,Été
-332,fork,(mot de lecture),décodable,M8 · My World,S30,1,S30,S30,S31,S32,Été,Été
-333,corn,(mot de lecture),décodable,M8 · My World,S30,2,S30,S30,S31,S32,Été,Été
-334,her,(mot de lecture),décodable,M8 · My World,S30,3,S30,S31,S31,S32,Été,Été
-335,river,(mot de lecture),décodable,M8 · My World,S30,4,S30,S31,S31,Été,Été,Été
+250,king,(mot de lecture),décodable,M6 · Food,S24,1,S24,S24,VP1,VP2,S27,S27
+251,song,(mot de lecture),décodable,M6 · Food,S24,2,S24,S24,VP1,VP2,S27,S27
+252,ring,(mot de lecture),décodable,M6 · Food,S24,3,S24,VP1,VP1,VP2,S27,S27
+253,long,(mot de lecture),décodable,M6 · Food,S24,4,S24,VP1,VP1,S25,S27,S27
+254,school,école,lexique,M7 · My School & My Day,S25,1,S25,S25,S26,S27,S30,S30
+255,book,livre,lexique,M7 · My School & My Day,S25,2,S25,S25,S26,S27,S30,S30
+256,pen,stylo,lexique,M7 · My School & My Day,S25,3,S25,S26,S26,S27,S30,S30
+257,pencil,crayon,lexique,M7 · My School & My Day,S25,4,S25,S26,S26,S28,S30,S30
+258,bag,cartable,lexique,M7 · My School & My Day,S25,1,S25,S25,S26,S27,S30,S30
+259,teacher,maître / maîtresse,lexique,M7 · My School & My Day,S25,2,S25,S25,S26,S27,S30,S30
+260,ruler,règle,lexique,M7 · My School & My Day,S25,3,S25,S26,S26,S27,S30,S30
+261,What's this?,qu'est-ce que c'est ?,structure,M7 · My School & My Day,S25,4,S25,S26,S26,S28,S30,S30
+262,It's a pen,c'est un stylo,structure,M7 · My School & My Day,S25,1,S25,S25,S26,S27,S30,S30
+263,eraser,gomme,lexique,M7 · My School & My Day,S25,2,S25,S25,S26,S27,S30,S30
+264,desk,table / bureau,lexique,M7 · My School & My Day,S25,3,S25,S26,S26,S27,S30,S30
+265,classroom,salle de classe,lexique,M7 · My School & My Day,S25,4,S25,S26,S26,S28,S30,S30
+266,moon,(mot de lecture),décodable,M7 · My School & My Day,S25,1,S25,S25,S26,S27,S30,S30
+267,food,(mot de lecture),décodable,M7 · My School & My Day,S25,2,S25,S25,S26,S27,S30,S30
+268,Sunday,dimanche,lexique,M7 · My School & My Day,S26,1,S26,S26,S27,S28,S31,S31
+269,Monday,lundi,lexique,M7 · My School & My Day,S26,2,S26,S26,S27,S28,S31,S31
+270,Tuesday,mardi,lexique,M7 · My School & My Day,S26,3,S26,S27,S27,S28,S31,S31
+271,Wednesday,mercredi,lexique,M7 · My School & My Day,S26,4,S26,S27,S27,S29,S31,S31
+272,Thursday,jeudi,lexique,M7 · My School & My Day,S26,1,S26,S26,S27,S28,S31,S31
+273,Friday,vendredi,lexique,M7 · My School & My Day,S26,2,S26,S26,S27,S28,S31,S31
+274,Saturday,samedi,lexique,M7 · My School & My Day,S26,3,S26,S27,S27,S28,S31,S31
+275,today,aujourd'hui,lexique,M7 · My School & My Day,S26,4,S26,S27,S27,S29,S31,S31
+276,day,jour,lexique,M7 · My School & My Day,S26,1,S26,S26,S27,S28,S31,S31
+277,Sit down!,assieds-toi !,structure,M7 · My School & My Day,S26,2,S26,S26,S27,S28,S31,S31
+278,Stand up!,lève-toi !,structure,M7 · My School & My Day,S26,3,S26,S27,S27,S28,S31,S31
+279,Open!,ouvre !,structure,M7 · My School & My Day,S26,4,S26,S27,S27,S29,S31,S31
+280,Close!,ferme !,structure,M7 · My School & My Day,S26,1,S26,S26,S27,S28,S31,S31
+281,Listen!,écoute !,structure,M7 · My School & My Day,S26,2,S26,S26,S27,S28,S31,S31
+282,week,semaine,lexique,M7 · My School & My Day,S26,3,S26,S27,S27,S28,S31,S31
+283,What day is it?,quel jour sommes-nous ?,structure,M7 · My School & My Day,S26,4,S26,S27,S27,S29,S31,S31
+284,look,(mot de lecture),décodable,M7 · My School & My Day,S26,1,S26,S26,S27,S28,S31,S31
+285,good,(mot de lecture),décodable,M7 · My School & My Day,S26,2,S26,S26,S27,S28,S31,S31
+286,foot,(mot de lecture),décodable,M7 · My School & My Day,S26,3,S26,S27,S27,S28,S31,S31
+287,get up,se lever,lexique,M7 · My School & My Day,S27,1,S27,S27,S28,S29,S32,S32
+288,go,aller,lexique,M7 · My School & My Day,S27,2,S27,S27,S28,S29,S32,S32
+289,play,jouer,lexique,M7 · My School & My Day,S27,3,S27,S28,S28,S29,S32,S32
+290,sleep,dormir,lexique,M7 · My School & My Day,S27,4,S27,S28,S28,S30,S32,S32
+291,home,maison (chez soi),lexique,M7 · My School & My Day,S27,1,S27,S27,S28,S29,S32,S32
+292,morning,matin,lexique,M7 · My School & My Day,S27,2,S27,S27,S28,S29,S32,S32
+293,afternoon,après-midi,lexique,M7 · My School & My Day,S27,3,S27,S28,S28,S29,S32,S32
+294,night,nuit,lexique,M7 · My School & My Day,S27,4,S27,S28,S28,S30,S32,S32
+295,wash,se laver,lexique,M7 · My School & My Day,S27,1,S27,S27,S28,S29,S32,S32
+296,I go to school,je vais à l'école,structure,M7 · My School & My Day,S27,2,S27,S27,S28,S29,S32,S32
+297,breakfast,petit-déjeuner,lexique,M7 · My School & My Day,S27,3,S27,S28,S28,S29,S32,S32
+298,dinner,dîner,lexique,M7 · My School & My Day,S27,4,S27,S28,S28,S30,S32,S32
+299,brush my teeth,me brosser les dents,structure,M7 · My School & My Day,S27,1,S27,S27,S28,S29,S32,S32
+300,queen,(mot de lecture),décodable,M7 · My School & My Day,S27,2,S27,S27,S28,S29,S32,S32
+301,quick,(mot de lecture),décodable,M7 · My School & My Day,S27,3,S27,S28,S28,S29,S32,S32
+302,yet,(mot de lecture),décodable,M7 · My School & My Day,S27,4,S27,S28,S28,S30,S32,S32
+303,house,maison,lexique,M8 · My World,S29,1,S29,S29,S30,S31,Été,Été
+304,street,rue,lexique,M8 · My World,S29,2,S29,S29,S30,S31,Été,Été
+305,shop,magasin,lexique,M8 · My World,S29,3,S29,S30,S30,S31,Été,Été
+306,park,parc,lexique,M8 · My World,S29,4,S29,S30,S30,S32,Été,Été
+307,beach,plage,lexique,M8 · My World,S29,1,S29,S29,S30,S31,Été,Été
+308,where,où,fonction,M8 · My World,S29,2,S29,S29,S30,S31,Été,Été
+309,in,dans,fonction,M8 · My World,S29,3,S29,S30,S30,S31,Été,Été
+310,on,sur,fonction,M8 · My World,S29,4,S29,S30,S30,S32,Été,Été
+311,under,sous,fonction,M8 · My World,S29,1,S29,S29,S30,S31,Été,Été
+312,Where is …?,où est … ?,structure,M8 · My World,S29,2,S29,S29,S30,S31,Été,Été
+313,garden,jardin,lexique,M8 · My World,S29,3,S29,S30,S30,S31,Été,Été
+314,door,porte,lexique,M8 · My World,S29,4,S29,S30,S30,S32,Été,Été
+315,window,fenêtre,lexique,M8 · My World,S29,1,S29,S29,S30,S31,Été,Été
+316,city,ville,lexique,M8 · My World,S29,2,S29,S29,S30,S31,Été,Été
+317,car,(mot de lecture),décodable,M8 · My World,S29,3,S29,S30,S30,S31,Été,Été
+318,star,(mot de lecture),décodable,M8 · My World,S29,4,S29,S30,S30,S32,Été,Été
+319,far,(mot de lecture),décodable,M8 · My World,S29,1,S29,S29,S30,S31,Été,Été
+320,sunny,ensoleillé,lexique,M8 · My World,S30,1,S30,S30,S31,S32,Été,Été
+321,rainy,pluvieux,lexique,M8 · My World,S30,2,S30,S30,S31,S32,Été,Été
+322,hot,chaud,lexique,M8 · My World,S30,3,S30,S31,S31,S32,Été,Été
+323,cold,froid,lexique,M8 · My World,S30,4,S30,S31,S31,Été,Été,Été
+324,windy,venteux,lexique,M8 · My World,S30,1,S30,S30,S31,S32,Été,Été
+325,weather,météo,lexique,M8 · My World,S30,2,S30,S30,S31,S32,Été,Été
+326,What's the weather like?,quel temps fait-il ?,structure,M8 · My World,S30,3,S30,S31,S31,S32,Été,Été
+327,desert,désert,lexique,M8 · My World,S30,4,S30,S31,S31,Été,Été,Été
+328,sea,mer,lexique,M8 · My World,S30,1,S30,S30,S31,S32,Été,Été
+329,mountain,montagne,lexique,M8 · My World,S30,2,S30,S30,S31,S32,Été,Été
+330,sun,soleil,lexique,M8 · My World,S30,3,S30,S31,S31,S32,Été,Été
+331,cloud,nuage,lexique,M8 · My World,S30,4,S30,S31,S31,Été,Été,Été
+332,snow,neige,lexique,M8 · My World,S30,1,S30,S30,S31,S32,Été,Été
+333,sky,ciel,lexique,M8 · My World,S30,2,S30,S30,S31,S32,Été,Été
+334,tree,arbre,lexique,M8 · My World,S30,3,S30,S31,S31,S32,Été,Été
+335,flower,fleur,lexique,M8 · My World,S30,4,S30,S31,S31,Été,Été,Été
+336,fork,(mot de lecture),décodable,M8 · My World,S30,1,S30,S30,S31,S32,Été,Été
+337,corn,(mot de lecture),décodable,M8 · My World,S30,2,S30,S30,S31,S32,Été,Été
+338,her,(mot de lecture),décodable,M8 · My World,S30,3,S30,S31,S31,S32,Été,Été
+339,river,(mot de lecture),décodable,M8 · My World,S30,4,S30,S31,S31,Été,Été,Été

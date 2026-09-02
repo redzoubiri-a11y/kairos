@@ -44,7 +44,8 @@ async function runSession({ store, studentId, now, pointer, streakDays, onSessio
   const { dueEntries, newWordIds } = buildDailyQueue({
     catalog, states, currentWeek: pointer.week, currentDay: pointer.day, now: now(),
   });
-  let plan = buildScreenPlan({ dueEntries, newWordIds, catalog });
+  const phonicsTable = await fetch('./phonics.json').then((r) => r.json()).catch(() => []);
+  let plan = buildScreenPlan({ dueEntries, newWordIds, catalog, pointer, phonicsTable });
 
   const sessionId = crypto.randomUUID();
   const startedAt = now().toISOString();
@@ -96,10 +97,12 @@ async function runSession({ store, studentId, now, pointer, streakDays, onSessio
     }
     // Les écrans "nouveau" de pratique ne rappellent pas review() : le mot
     // vient d'être introduit par l'écran discover juste avant (une seule
-    // exposition SRS par jour), conformément au script.
+    // exposition SRS par jour), conformément au script. L'écran phonics n'a
+    // pas de mot propre (il illustre un son avec un exemple du catalogue) :
+    // wordId reste null, cohérent avec session_events.word_id nullable.
 
     await store.logSessionEvent(studentId, {
-      sessionId, screenIndex: idx, wordId: screen.word.wordId,
+      sessionId, screenIndex: idx, wordId: screen.word?.wordId ?? null,
       screenType: screen.kind, correct: ok, isRetest: !!screen.isRetest,
     });
 

@@ -84,19 +84,41 @@ function screenKindFor(word) {
 }
 
 /**
+ * Cherche si un nouveau son (grapheme) est introduit cette semaine — donnée
+ * conçue à la conception (fennec/app/phonics.json, généré depuis la
+ * progression documentée dans docs/curriculum-foundations-semaine-par-semaine.md),
+ * pas déduite du catalogue. Convention : le son est introduit le jour 1 de
+ * sa semaine (cohérent avec le script S21, où /sh/ apparaît dès le jour 1) —
+ * une simplification documentée en l'absence d'un jour d'introduction propre
+ * au phonics dans les données sources.
+ *
+ * @param {Array<{week:number, grapheme:string, example:string, exampleWordId:number}>} phonicsTable
+ * @param {number} week
+ * @param {number} day
+ * @returns {object|null}
+ */
+function getPhonicsForDay(phonicsTable, week, day) {
+  if (day !== 1) return null;
+  return phonicsTable.find((p) => p.week === week) ?? null;
+}
+
+/**
  * Construit le plan d'écrans complet : Réveil (révisions dues) puis
- * Nouveau (une découverte + une pratique par mot nouveau). Chaque écran
- * porte tout ce qu'il faut pour se rendre sans re-consulter le catalogue :
- * le mot, son type, et ses distracteurs le cas échéant.
+ * Nouveau (un écran phonics si un son est introduit cette semaine, puis une
+ * découverte + une pratique par mot nouveau). Chaque écran porte tout ce
+ * qu'il faut pour se rendre sans re-consulter le catalogue : le mot, son
+ * type, et ses distracteurs le cas échéant.
  *
  * @param {Object} args
  * @param {Array<{wordId:number, state:object}>} args.dueEntries
  * @param {Array<number>} args.newWordIds
  * @param {Array<object>} args.catalog
+ * @param {{week:number, day:number}} [args.pointer] - pour le phonics ; omis = pas d'écran phonics
+ * @param {Array<object>} [args.phonicsTable] - fennec/app/phonics.json
  * @param {() => number} [args.rng]
- * @returns {Array<object>} liste ordonnée d'écrans {phase, kind, word, options?, isRetest}
+ * @returns {Array<object>} liste ordonnée d'écrans {phase, kind, word|grapheme, options?, isRetest}
  */
-function buildScreenPlan({ dueEntries, newWordIds, catalog, rng = Math.random }) {
+function buildScreenPlan({ dueEntries, newWordIds, catalog, pointer, phonicsTable, rng = Math.random }) {
   const byId = new Map(catalog.map((w) => [w.wordId, w]));
   const screens = [];
 
@@ -104,6 +126,17 @@ function buildScreenPlan({ dueEntries, newWordIds, catalog, rng = Math.random })
     const word = byId.get(wordId);
     if (!word) continue; // mot retiré du catalogue depuis son introduction
     screens.push(makeScreen('reveil', word, catalog, rng));
+  }
+
+  if (pointer && phonicsTable) {
+    const phonics = getPhonicsForDay(phonicsTable, pointer.week, pointer.day);
+    if (phonics) {
+      const exampleWord = byId.get(phonics.exampleWordId) ?? null;
+      screens.push({
+        phase: 'nouveau', kind: 'phonics', isRetest: false,
+        grapheme: phonics.grapheme, example: phonics.example, exampleWord,
+      });
+    }
   }
 
   for (const wordId of newWordIds) {
@@ -188,4 +221,4 @@ function insertRetest(remainingScreens, failedScreen) {
   return next;
 }
 
-export { buildDailyQueue, buildScreenPlan, buildBossPlan, pickDistractors, screenKindFor, insertRetest, freshState };
+export { buildDailyQueue, buildScreenPlan, buildBossPlan, pickDistractors, screenKindFor, getPhonicsForDay, insertRetest, freshState };

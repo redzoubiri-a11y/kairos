@@ -3736,6 +3736,66 @@
  },
  {
   "id": 250,
+  "anglais": "king",
+  "francais": "(mot de lecture)",
+  "categorie": "décodable",
+  "monde": "M6 · Food",
+  "semaine_intro": "S24",
+  "jour_intro": 1,
+  "r1": "S24",
+  "r2": "S24",
+  "r3": "VP1",
+  "r4": "VP2",
+  "r5": "S27",
+  "maitrise": "S27"
+ },
+ {
+  "id": 251,
+  "anglais": "song",
+  "francais": "(mot de lecture)",
+  "categorie": "décodable",
+  "monde": "M6 · Food",
+  "semaine_intro": "S24",
+  "jour_intro": 2,
+  "r1": "S24",
+  "r2": "S24",
+  "r3": "VP1",
+  "r4": "VP2",
+  "r5": "S27",
+  "maitrise": "S27"
+ },
+ {
+  "id": 252,
+  "anglais": "ring",
+  "francais": "(mot de lecture)",
+  "categorie": "décodable",
+  "monde": "M6 · Food",
+  "semaine_intro": "S24",
+  "jour_intro": 3,
+  "r1": "S24",
+  "r2": "VP1",
+  "r3": "VP1",
+  "r4": "VP2",
+  "r5": "S27",
+  "maitrise": "S27"
+ },
+ {
+  "id": 253,
+  "anglais": "long",
+  "francais": "(mot de lecture)",
+  "categorie": "décodable",
+  "monde": "M6 · Food",
+  "semaine_intro": "S24",
+  "jour_intro": 4,
+  "r1": "S24",
+  "r2": "VP1",
+  "r3": "VP1",
+  "r4": "S25",
+  "r5": "S27",
+  "maitrise": "S27"
+ },
+ {
+  "id": 254,
   "anglais": "school",
   "francais": "école",
   "categorie": "lexique",
@@ -3750,7 +3810,7 @@
   "maitrise": "S30"
  },
  {
-  "id": 251,
+  "id": 255,
   "anglais": "book",
   "francais": "livre",
   "categorie": "lexique",
@@ -3765,7 +3825,7 @@
   "maitrise": "S30"
  },
  {
-  "id": 252,
+  "id": 256,
   "anglais": "pen",
   "francais": "stylo",
   "categorie": "lexique",
@@ -3780,7 +3840,7 @@
   "maitrise": "S30"
  },
  {
-  "id": 253,
+  "id": 257,
   "anglais": "pencil",
   "francais": "crayon",
   "categorie": "lexique",
@@ -3795,7 +3855,7 @@
   "maitrise": "S30"
  },
  {
-  "id": 254,
+  "id": 258,
   "anglais": "bag",
   "francais": "cartable",
   "categorie": "lexique",
@@ -3810,7 +3870,7 @@
   "maitrise": "S30"
  },
  {
-  "id": 255,
+  "id": 259,
   "anglais": "teacher",
   "francais": "maître / maîtresse",
   "categorie": "lexique",
@@ -3825,7 +3885,7 @@
   "maitrise": "S30"
  },
  {
-  "id": 256,
+  "id": 260,
   "anglais": "ruler",
   "francais": "règle",
   "categorie": "lexique",
@@ -3840,7 +3900,7 @@
   "maitrise": "S30"
  },
  {
-  "id": 257,
+  "id": 261,
   "anglais": "What's this?",
   "francais": "qu'est-ce que c'est ?",
   "categorie": "structure",
@@ -3855,7 +3915,7 @@
   "maitrise": "S30"
  },
  {
-  "id": 258,
+  "id": 262,
   "anglais": "It's a pen",
   "francais": "c'est un stylo",
   "categorie": "structure",
@@ -3870,7 +3930,7 @@
   "maitrise": "S30"
  },
  {
-  "id": 259,
+  "id": 263,
   "anglais": "eraser",
   "francais": "gomme",
   "categorie": "lexique",
@@ -3885,7 +3945,7 @@
   "maitrise": "S30"
  },
  {
-  "id": 260,
+  "id": 264,
   "anglais": "desk",
   "francais": "table / bureau",
   "categorie": "lexique",
@@ -3900,7 +3960,7 @@
   "maitrise": "S30"
  },
  {
-  "id": 261,
+  "id": 265,
   "anglais": "classroom",
   "francais": "salle de classe",
   "categorie": "lexique",
@@ -3915,7 +3975,7 @@
   "maitrise": "S30"
  },
  {
-  "id": 262,
+  "id": 266,
   "anglais": "moon",
   "francais": "(mot de lecture)",
   "categorie": "décodable",
@@ -3930,7 +3990,7 @@
   "maitrise": "S30"
  },
  {
-  "id": 263,
+  "id": 267,
   "anglais": "food",
   "francais": "(mot de lecture)",
   "categorie": "décodable",
@@ -3945,7 +4005,7 @@
   "maitrise": "S30"
  },
  {
-  "id": 264,
+  "id": 268,
   "anglais": "Sunday",
   "francais": "dimanche",
   "categorie": "lexique",
@@ -3960,7 +4020,7 @@
   "maitrise": "S31"
  },
  {
-  "id": 265,
+  "id": 269,
   "anglais": "Monday",
   "francais": "lundi",
   "categorie": "lexique",
@@ -3975,7 +4035,7 @@
   "maitrise": "S31"
  },
  {
-  "id": 266,
+  "id": 270,
   "anglais": "Tuesday",
   "francais": "mardi",
   "categorie": "lexique",
@@ -3990,7 +4050,7 @@
   "maitrise": "S31"
  },
  {
-  "id": 267,
+  "id": 271,
   "anglais": "Wednesday",
   "francais": "mercredi",
   "categorie": "lexique",
@@ -4005,7 +4065,7 @@
   "maitrise": "S31"
  },
  {
-  "id": 268,
+  "id": 272,
   "anglais": "Thursday",
   "francais": "jeudi",
   "categorie": "lexique",
@@ -4020,7 +4080,7 @@
   "maitrise": "S31"
  },
  {
-  "id": 269,
+  "id": 273,
   "anglais": "Friday",
   "francais": "vendredi",
   "categorie": "lexique",
@@ -4035,7 +4095,7 @@
   "maitrise": "S31"
  },
  {
-  "id": 270,
+  "id": 274,
   "anglais": "Saturday",
   "francais": "samedi",
   "categorie": "lexique",
@@ -4050,7 +4110,7 @@
   "maitrise": "S31"
  },
  {
-  "id": 271,
+  "id": 275,
   "anglais": "today",
   "francais": "aujourd'hui",
   "categorie": "lexique",
@@ -4065,7 +4125,7 @@
   "maitrise": "S31"
  },
  {
-  "id": 272,
+  "id": 276,
   "anglais": "day",
   "francais": "jour",
   "categorie": "lexique",
@@ -4080,7 +4140,7 @@
   "maitrise": "S31"
  },
  {
-  "id": 273,
+  "id": 277,
   "anglais": "Sit down!",
   "francais": "assieds-toi !",
   "categorie": "structure",
@@ -4095,7 +4155,7 @@
   "maitrise": "S31"
  },
  {
-  "id": 274,
+  "id": 278,
   "anglais": "Stand up!",
   "francais": "lève-toi !",
   "categorie": "structure",
@@ -4110,7 +4170,7 @@
   "maitrise": "S31"
  },
  {
-  "id": 275,
+  "id": 279,
   "anglais": "Open!",
   "francais": "ouvre !",
   "categorie": "structure",
@@ -4125,7 +4185,7 @@
   "maitrise": "S31"
  },
  {
-  "id": 276,
+  "id": 280,
   "anglais": "Close!",
   "francais": "ferme !",
   "categorie": "structure",
@@ -4140,7 +4200,7 @@
   "maitrise": "S31"
  },
  {
-  "id": 277,
+  "id": 281,
   "anglais": "Listen!",
   "francais": "écoute !",
   "categorie": "structure",
@@ -4155,7 +4215,7 @@
   "maitrise": "S31"
  },
  {
-  "id": 278,
+  "id": 282,
   "anglais": "week",
   "francais": "semaine",
   "categorie": "lexique",
@@ -4170,7 +4230,7 @@
   "maitrise": "S31"
  },
  {
-  "id": 279,
+  "id": 283,
   "anglais": "What day is it?",
   "francais": "quel jour sommes-nous ?",
   "categorie": "structure",
@@ -4185,7 +4245,7 @@
   "maitrise": "S31"
  },
  {
-  "id": 280,
+  "id": 284,
   "anglais": "look",
   "francais": "(mot de lecture)",
   "categorie": "décodable",
@@ -4200,7 +4260,7 @@
   "maitrise": "S31"
  },
  {
-  "id": 281,
+  "id": 285,
   "anglais": "good",
   "francais": "(mot de lecture)",
   "categorie": "décodable",
@@ -4215,7 +4275,7 @@
   "maitrise": "S31"
  },
  {
-  "id": 282,
+  "id": 286,
   "anglais": "foot",
   "francais": "(mot de lecture)",
   "categorie": "décodable",
@@ -4230,7 +4290,7 @@
   "maitrise": "S31"
  },
  {
-  "id": 283,
+  "id": 287,
   "anglais": "get up",
   "francais": "se lever",
   "categorie": "lexique",
@@ -4245,7 +4305,7 @@
   "maitrise": "S32"
  },
  {
-  "id": 284,
+  "id": 288,
   "anglais": "go",
   "francais": "aller",
   "categorie": "lexique",
@@ -4260,7 +4320,7 @@
   "maitrise": "S32"
  },
  {
-  "id": 285,
+  "id": 289,
   "anglais": "play",
   "francais": "jouer",
   "categorie": "lexique",
@@ -4275,7 +4335,7 @@
   "maitrise": "S32"
  },
  {
-  "id": 286,
+  "id": 290,
   "anglais": "sleep",
   "francais": "dormir",
   "categorie": "lexique",
@@ -4290,7 +4350,7 @@
   "maitrise": "S32"
  },
  {
-  "id": 287,
+  "id": 291,
   "anglais": "home",
   "francais": "maison (chez soi)",
   "categorie": "lexique",
@@ -4305,7 +4365,7 @@
   "maitrise": "S32"
  },
  {
-  "id": 288,
+  "id": 292,
   "anglais": "morning",
   "francais": "matin",
   "categorie": "lexique",
@@ -4320,7 +4380,7 @@
   "maitrise": "S32"
  },
  {
-  "id": 289,
+  "id": 293,
   "anglais": "afternoon",
   "francais": "après-midi",
   "categorie": "lexique",
@@ -4335,7 +4395,7 @@
   "maitrise": "S32"
  },
  {
-  "id": 290,
+  "id": 294,
   "anglais": "night",
   "francais": "nuit",
   "categorie": "lexique",
@@ -4350,7 +4410,7 @@
   "maitrise": "S32"
  },
  {
-  "id": 291,
+  "id": 295,
   "anglais": "wash",
   "francais": "se laver",
   "categorie": "lexique",
@@ -4365,7 +4425,7 @@
   "maitrise": "S32"
  },
  {
-  "id": 292,
+  "id": 296,
   "anglais": "I go to school",
   "francais": "je vais à l'école",
   "categorie": "structure",
@@ -4380,7 +4440,7 @@
   "maitrise": "S32"
  },
  {
-  "id": 293,
+  "id": 297,
   "anglais": "breakfast",
   "francais": "petit-déjeuner",
   "categorie": "lexique",
@@ -4395,7 +4455,7 @@
   "maitrise": "S32"
  },
  {
-  "id": 294,
+  "id": 298,
   "anglais": "dinner",
   "francais": "dîner",
   "categorie": "lexique",
@@ -4410,7 +4470,7 @@
   "maitrise": "S32"
  },
  {
-  "id": 295,
+  "id": 299,
   "anglais": "brush my teeth",
   "francais": "me brosser les dents",
   "categorie": "structure",
@@ -4425,7 +4485,7 @@
   "maitrise": "S32"
  },
  {
-  "id": 296,
+  "id": 300,
   "anglais": "queen",
   "francais": "(mot de lecture)",
   "categorie": "décodable",
@@ -4440,7 +4500,7 @@
   "maitrise": "S32"
  },
  {
-  "id": 297,
+  "id": 301,
   "anglais": "quick",
   "francais": "(mot de lecture)",
   "categorie": "décodable",
@@ -4455,7 +4515,7 @@
   "maitrise": "S32"
  },
  {
-  "id": 298,
+  "id": 302,
   "anglais": "yet",
   "francais": "(mot de lecture)",
   "categorie": "décodable",
@@ -4470,7 +4530,7 @@
   "maitrise": "S32"
  },
  {
-  "id": 299,
+  "id": 303,
   "anglais": "house",
   "francais": "maison",
   "categorie": "lexique",
@@ -4485,7 +4545,7 @@
   "maitrise": "Été"
  },
  {
-  "id": 300,
+  "id": 304,
   "anglais": "street",
   "francais": "rue",
   "categorie": "lexique",
@@ -4500,7 +4560,7 @@
   "maitrise": "Été"
  },
  {
-  "id": 301,
+  "id": 305,
   "anglais": "shop",
   "francais": "magasin",
   "categorie": "lexique",
@@ -4515,7 +4575,7 @@
   "maitrise": "Été"
  },
  {
-  "id": 302,
+  "id": 306,
   "anglais": "park",
   "francais": "parc",
   "categorie": "lexique",
@@ -4530,7 +4590,7 @@
   "maitrise": "Été"
  },
  {
-  "id": 303,
+  "id": 307,
   "anglais": "beach",
   "francais": "plage",
   "categorie": "lexique",
@@ -4545,7 +4605,7 @@
   "maitrise": "Été"
  },
  {
-  "id": 304,
+  "id": 308,
   "anglais": "where",
   "francais": "où",
   "categorie": "fonction",
@@ -4560,7 +4620,7 @@
   "maitrise": "Été"
  },
  {
-  "id": 305,
+  "id": 309,
   "anglais": "in",
   "francais": "dans",
   "categorie": "fonction",
@@ -4575,7 +4635,7 @@
   "maitrise": "Été"
  },
  {
-  "id": 306,
+  "id": 310,
   "anglais": "on",
   "francais": "sur",
   "categorie": "fonction",
@@ -4590,7 +4650,7 @@
   "maitrise": "Été"
  },
  {
-  "id": 307,
+  "id": 311,
   "anglais": "under",
   "francais": "sous",
   "categorie": "fonction",
@@ -4605,7 +4665,7 @@
   "maitrise": "Été"
  },
  {
-  "id": 308,
+  "id": 312,
   "anglais": "Where is …?",
   "francais": "où est … ?",
   "categorie": "structure",
@@ -4620,7 +4680,7 @@
   "maitrise": "Été"
  },
  {
-  "id": 309,
+  "id": 313,
   "anglais": "garden",
   "francais": "jardin",
   "categorie": "lexique",
@@ -4635,7 +4695,7 @@
   "maitrise": "Été"
  },
  {
-  "id": 310,
+  "id": 314,
   "anglais": "door",
   "francais": "porte",
   "categorie": "lexique",
@@ -4650,7 +4710,7 @@
   "maitrise": "Été"
  },
  {
-  "id": 311,
+  "id": 315,
   "anglais": "window",
   "francais": "fenêtre",
   "categorie": "lexique",
@@ -4665,7 +4725,7 @@
   "maitrise": "Été"
  },
  {
-  "id": 312,
+  "id": 316,
   "anglais": "city",
   "francais": "ville",
   "categorie": "lexique",
@@ -4680,7 +4740,7 @@
   "maitrise": "Été"
  },
  {
-  "id": 313,
+  "id": 317,
   "anglais": "car",
   "francais": "(mot de lecture)",
   "categorie": "décodable",
@@ -4695,7 +4755,7 @@
   "maitrise": "Été"
  },
  {
-  "id": 314,
+  "id": 318,
   "anglais": "star",
   "francais": "(mot de lecture)",
   "categorie": "décodable",
@@ -4710,7 +4770,7 @@
   "maitrise": "Été"
  },
  {
-  "id": 315,
+  "id": 319,
   "anglais": "far",
   "francais": "(mot de lecture)",
   "categorie": "décodable",
@@ -4725,7 +4785,7 @@
   "maitrise": "Été"
  },
  {
-  "id": 316,
+  "id": 320,
   "anglais": "sunny",
   "francais": "ensoleillé",
   "categorie": "lexique",
@@ -4740,7 +4800,7 @@
   "maitrise": "Été"
  },
  {
-  "id": 317,
+  "id": 321,
   "anglais": "rainy",
   "francais": "pluvieux",
   "categorie": "lexique",
@@ -4755,7 +4815,7 @@
   "maitrise": "Été"
  },
  {
-  "id": 318,
+  "id": 322,
   "anglais": "hot",
   "francais": "chaud",
   "categorie": "lexique",
@@ -4770,7 +4830,7 @@
   "maitrise": "Été"
  },
  {
-  "id": 319,
+  "id": 323,
   "anglais": "cold",
   "francais": "froid",
   "categorie": "lexique",
@@ -4785,7 +4845,7 @@
   "maitrise": "Été"
  },
  {
-  "id": 320,
+  "id": 324,
   "anglais": "windy",
   "francais": "venteux",
   "categorie": "lexique",
@@ -4800,7 +4860,7 @@
   "maitrise": "Été"
  },
  {
-  "id": 321,
+  "id": 325,
   "anglais": "weather",
   "francais": "météo",
   "categorie": "lexique",
@@ -4815,7 +4875,7 @@
   "maitrise": "Été"
  },
  {
-  "id": 322,
+  "id": 326,
   "anglais": "What's the weather like?",
   "francais": "quel temps fait-il ?",
   "categorie": "structure",
@@ -4830,7 +4890,7 @@
   "maitrise": "Été"
  },
  {
-  "id": 323,
+  "id": 327,
   "anglais": "desert",
   "francais": "désert",
   "categorie": "lexique",
@@ -4845,7 +4905,7 @@
   "maitrise": "Été"
  },
  {
-  "id": 324,
+  "id": 328,
   "anglais": "sea",
   "francais": "mer",
   "categorie": "lexique",
@@ -4860,7 +4920,7 @@
   "maitrise": "Été"
  },
  {
-  "id": 325,
+  "id": 329,
   "anglais": "mountain",
   "francais": "montagne",
   "categorie": "lexique",
@@ -4875,7 +4935,7 @@
   "maitrise": "Été"
  },
  {
-  "id": 326,
+  "id": 330,
   "anglais": "sun",
   "francais": "soleil",
   "categorie": "lexique",
@@ -4890,7 +4950,7 @@
   "maitrise": "Été"
  },
  {
-  "id": 327,
+  "id": 331,
   "anglais": "cloud",
   "francais": "nuage",
   "categorie": "lexique",
@@ -4905,7 +4965,7 @@
   "maitrise": "Été"
  },
  {
-  "id": 328,
+  "id": 332,
   "anglais": "snow",
   "francais": "neige",
   "categorie": "lexique",
@@ -4920,7 +4980,7 @@
   "maitrise": "Été"
  },
  {
-  "id": 329,
+  "id": 333,
   "anglais": "sky",
   "francais": "ciel",
   "categorie": "lexique",
@@ -4935,7 +4995,7 @@
   "maitrise": "Été"
  },
  {
-  "id": 330,
+  "id": 334,
   "anglais": "tree",
   "francais": "arbre",
   "categorie": "lexique",
@@ -4950,7 +5010,7 @@
   "maitrise": "Été"
  },
  {
-  "id": 331,
+  "id": 335,
   "anglais": "flower",
   "francais": "fleur",
   "categorie": "lexique",
@@ -4965,7 +5025,7 @@
   "maitrise": "Été"
  },
  {
-  "id": 332,
+  "id": 336,
   "anglais": "fork",
   "francais": "(mot de lecture)",
   "categorie": "décodable",
@@ -4980,7 +5040,7 @@
   "maitrise": "Été"
  },
  {
-  "id": 333,
+  "id": 337,
   "anglais": "corn",
   "francais": "(mot de lecture)",
   "categorie": "décodable",
@@ -4995,7 +5055,7 @@
   "maitrise": "Été"
  },
  {
-  "id": 334,
+  "id": 338,
   "anglais": "her",
   "francais": "(mot de lecture)",
   "categorie": "décodable",
@@ -5010,7 +5070,7 @@
   "maitrise": "Été"
  },
  {
-  "id": 335,
+  "id": 339,
   "anglais": "river",
   "francais": "(mot de lecture)",
   "categorie": "décodable",

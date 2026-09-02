@@ -193,8 +193,8 @@ def abs_of(week_label, day):  # day: 1..4
 OFFSETS = [1, 3, 7, 16, 35]
 
 rows, seen = [], set()
-for week in sorted(W):
-    items = [(en, fr, cat) for (en, fr, cat) in W[week]]
+for week in sorted(set(W) | set(DECODABLE)):
+    items = [(en, fr, cat) for (en, fr, cat) in W.get(week, [])]
     for en in DECODABLE.get(week, []):
         items.append((en, "(mot de lecture)", "décodable"))
     for i, (en, fr, cat) in enumerate(items):

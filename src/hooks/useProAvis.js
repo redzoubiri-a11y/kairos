@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
+import { Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { supabase } from '../../supabase';
 import { colors } from '../theme';
@@ -83,12 +84,17 @@ export default function useProAvis() {
   }), [reviews, filter]);
 
   const handleApprove = useCallback(async (id) => {
-    await supabase.from('reviews').update({ moderation_status: 'approved' }).eq('id', id);
+    // L'écran retirait l'avis de la file de modération même quand
+    // l'écriture échouait — il pouvait rester en attente indéfiniment
+    // sans que personne ne s'en aperçoive.
+    const { error } = await supabase.from('reviews').update({ moderation_status: 'approved' }).eq('id', id);
+    if (error) { Alert.alert('Erreur', "L'avis n'a pas pu être approuvé. Vérifiez votre connexion et réessayez."); return; }
     setReviews(prev => prev.map(r => r.id === id ? { ...r, moderation_status: 'approved' } : r));
   }, []);
 
   const handleReject = useCallback(async (id) => {
-    await supabase.from('reviews').update({ moderation_status: 'rejected' }).eq('id', id);
+    const { error } = await supabase.from('reviews').update({ moderation_status: 'rejected' }).eq('id', id);
+    if (error) { Alert.alert('Erreur', "L'avis n'a pas pu être rejeté. Vérifiez votre connexion et réessayez."); return; }
     setReviews(prev => prev.filter(r => r.id !== id));
   }, []);
 

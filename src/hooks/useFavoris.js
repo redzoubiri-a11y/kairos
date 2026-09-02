@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { supabase } from '../../supabase';
 
@@ -33,9 +34,17 @@ export default function useFavoris() {
   const onRefresh = useCallback(() => load(true), [load]);
 
   const removeFavorite = useCallback(async (favId) => {
+    // L'écran retirait le favori avant même de savoir si la suppression
+    // avait réussi : en cas d'échec il réapparaissait au rechargement
+    // suivant, sans explication.
+    const avant = favorites;
     setFavorites(prev => prev.filter(f => f.id !== favId));
-    await supabase.from('favorites').delete().eq('id', favId);
-  }, []);
+    const { error } = await supabase.from('favorites').delete().eq('id', favId);
+    if (error) {
+      setFavorites(avant);
+      Alert.alert('Erreur', "Le favori n'a pas pu être retiré. Vérifiez votre connexion et réessayez.");
+    }
+  }, [favorites]);
 
   return { favorites, loading, refreshing, onRefresh, removeFavorite };
 }

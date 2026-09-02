@@ -116,7 +116,11 @@ export default function useComptoir() {
     Alert.alert('Confirmer', `Confirmer la réservation de ${clientName(resa)} à ${resa.time_slot?.slice(0, 5)} ?`, [
       { text: 'Non', style: 'cancel' },
       { text: 'Confirmer', onPress: () => act(resa.id, async () => {
-        await supabase.from('reservations').update({ status: 'confirmed' }).eq('id', resa.id);
+        // L'écriture n'était pas vérifiée : l'écran passait en « confirmée »
+        // et une notification partait au client même quand la base refusait
+        // l'écriture (réseau coupé, ligne déjà modifiée par un autre appareil).
+        const { error } = await supabase.from('reservations').update({ status: 'confirmed' }).eq('id', resa.id);
+        if (error) { Alert.alert('Erreur', "La réservation n'a pas pu être confirmée. Vérifiez votre connexion et réessayez."); return; }
         setReservations(prev => prev.map(r => r.id === resa.id ? { ...r, status: 'confirmed' } : r));
         if (resa.user_id) {
           const date = new Date(resa.date + 'T12:00:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
@@ -143,7 +147,8 @@ export default function useComptoir() {
     Alert.alert('Marquer arrivé', `${clientName(resa)} est arrivé ?`, [
       { text: 'Non', style: 'cancel' },
       { text: 'Oui, arrivé', onPress: () => act(resa.id, async () => {
-        await supabase.from('reservations').update({ status: 'arrived' }).eq('id', resa.id);
+        const { error } = await supabase.from('reservations').update({ status: 'arrived' }).eq('id', resa.id);
+        if (error) { Alert.alert('Erreur', "Le statut n'a pas pu être mis à jour. Vérifiez votre connexion et réessayez."); return; }
         setReservations(prev => prev.map(r => r.id === resa.id ? { ...r, status: 'arrived' } : r));
         if (resa.user_id) {
           const notifTitle = 'Comment était votre expérience ? ⭐';
@@ -174,7 +179,8 @@ export default function useComptoir() {
     Alert.alert('No Show', `Confirmer que ${clientName(resa)} n'est pas venu ?`, [
       { text: 'Annuler', style: 'cancel' },
       { text: 'Confirmer No Show', style: 'destructive', onPress: () => act(resa.id, async () => {
-        await supabase.from('reservations').update({ status: 'no_show' }).eq('id', resa.id);
+        const { error } = await supabase.from('reservations').update({ status: 'no_show' }).eq('id', resa.id);
+        if (error) { Alert.alert('Erreur', "Le statut n'a pas pu être mis à jour. Vérifiez votre connexion et réessayez."); return; }
         setReservations(prev => prev.map(r => r.id === resa.id ? { ...r, status: 'no_show' } : r));
       })},
     ]);
@@ -184,9 +190,10 @@ export default function useComptoir() {
     Alert.alert('Annuler', `Annuler la réservation de ${clientName(resa)} à ${resa.time_slot?.slice(0, 5)} ?`, [
       { text: 'Non', style: 'cancel' },
       { text: 'Annuler la réservation', style: 'destructive', onPress: () => act(resa.id, async () => {
-        await supabase.from('reservations')
+        const { error } = await supabase.from('reservations')
           .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
           .eq('id', resa.id);
+        if (error) { Alert.alert('Erreur', "L'annulation n'a pas pu être enregistrée. Vérifiez votre connexion et réessayez."); return; }
         setReservations(prev => prev.map(r => r.id === resa.id ? { ...r, status: 'cancelled' } : r));
         if (resa.user_id) {
           const date = new Date(resa.date + 'T12:00:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });

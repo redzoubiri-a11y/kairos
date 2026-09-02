@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert } from 'react-native';
 import { supabase } from '../../supabase';
 import { colors, typography, spacing, radius } from '../theme';
 import { formatDate, initials, avatarColor } from '../hooks/useProAvis';
@@ -33,7 +33,10 @@ export default function ReviewCard({ review, onSaveResponse, onApprove, onReject
     if (!text.trim()) return;
     setSaving(true);
     try {
-      await supabase.from('reviews').update({ pro_response: text.trim() }).eq('id', review.id);
+      // La réponse s'affichait comme publiée même quand l'écriture échouait :
+      // le restaurateur croyait avoir répondu, le client ne voyait rien.
+      const { error } = await supabase.from('reviews').update({ pro_response: text.trim() }).eq('id', review.id);
+      if (error) { Alert.alert('Erreur', "La réponse n'a pas pu être enregistrée. Vérifiez votre connexion et réessayez."); return; }
       setSaved(true);
       setReplying(false);
       onSaveResponse?.(review.id, text.trim());

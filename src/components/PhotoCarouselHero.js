@@ -23,9 +23,17 @@ export default function PhotoCarouselHero({
     scrollRef.current?.scrollTo({ x: i * width, animated: true });
   }, [index, width]);
 
+  // Lien web et non `mida://` : celui qui recoit le message n'a pas forcement
+  // l'app, et un schema d'application ne s'ouvre dans aucun navigateur -- dans
+  // la plupart des messageries il n'est meme pas cliquable. Le partage servait
+  // donc uniquement a ceux qui avaient deja Mida, soit l'inverse du but.
+  // Le slug quand il existe, l'id sinon : les ecrans qui ne selectionnent pas
+  // la colonne `slug` (cartes de l'Accueil, resultats de recherche) passent un
+  // restaurant sans slug, et le lien doit rester valide.
   const handleShare = useCallback(() => {
+    const lien = `https://app.mida-food.com/restaurant/${restaurant.slug || restaurant.id}`;
     Share.share({
-      message: `🍽️ ${restaurant.name} sur MIDA\n${restaurant.address || restaurant.quartier || ''}\n\nRéserve ta table : mida://restaurant/${restaurant.id}`,
+      message: `🍽️ ${restaurant.name} sur MIDA\n${restaurant.address || restaurant.quartier || ''}\n\nRéserve ta table : ${lien}`,
       title: restaurant.name,
     });
   }, [restaurant]);

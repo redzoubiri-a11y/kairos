@@ -12,6 +12,14 @@ export const CUISINE_EMOJI = {
 // derrière tant que la fiche n'est pas revendiquée via /revendiquer/[slug].
 export const UNCLAIMED_OWNER_ID = '00000000-0000-0000-0000-000000000099';
 
+// Un lien de fiche peut porter le slug plutot que l'UUID
+// (app.mida-food.com/restaurant/akasia) : un slug se dicte au telephone et se
+// lit dans un message, pas un UUID. Il faut donc distinguer les deux avant
+// d'interroger la base -- une requete `.eq('id', 'akasia')` echoue en 22P02.
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+export const estUuid = (valeur) => UUID_RE.test(String(valeur ?? ''));
+
 export default function useRestaurant(restaurantProp) {
   const [tab,            setTab]            = useState('Infos');
   const [reviews,        setReviews]        = useState([]);
@@ -27,6 +35,25 @@ export default function useRestaurant(restaurantProp) {
   const [extraFields, setExtraFields] = useState({});
   const restaurant = useMemo(() => ({ ...restaurantProp, ...extraFields }), [restaurantProp, extraFields]);
   const tabAnim = useRef(new Animated.Value(1)).current;
+
+  // Tant que l'id n'est pas un UUID, la fiche a ete ouverte par son slug et on
+  // ne connait pas encore le vrai identifiant : toutes les requetes en dependent.
+  const idResolu = estUuid(restaurant.id);
+
+  // Resolution du slug. Le `select('*')` remplit extraFields au passage, donc le
+  // nom, les photos et les horaires arrivent sans requete supplementaire -- et
+  // `restaurant.id` devient l'UUID, ce qui declenche l'effet principal ci-dessous.
+  useEffect(() => {
+    const param = restaurantProp?.id;
+    if (!param || estUuid(param)) return;
+    (async () => {
+      const { data } = await supabase.from('restaurants')
+        .select('*')
+        .eq('slug', param)
+        .maybeSingle();
+      if (data) setExtraFields(data);
+    })();
+  }, [restaurantProp?.id]);
 
   const photos = useMemo(
     () => restaurant.photos?.length > 0 ? restaurant.photos
@@ -64,7 +91,11 @@ export default function useRestaurant(restaurantProp) {
   const isUnclaimed  = restaurant.owner_id === UNCLAIMED_OWNER_ID;
 
   useEffect(() => {
-    if (restaurant.id) {
+    // `idResolu` et non `restaurant.id` : ouverte par slug, la fiche porte encore
+    // « akasia » comme id au premier rendu. Sans ce garde, les quatre requetes
+    // ci-dessous partiraient avec, echoueraient en 22P02, et le compteur de vues
+    // serait appele dans le vide.
+    if (idResolu) {
       // Compteur de vues de fiche (Lot 1) — RPC SECURITY DEFINER : un simple update
       // échouerait sous RLS, seul le propriétaire/admin peut UPDATE restaurants directement.
       supabase.rpc('increment_restaurant_views', { p_restaurant_id: restaurant.id }).then(() => {});
@@ -133,7 +164,7 @@ export default function useRestaurant(restaurantProp) {
         }
       })();
     }
-  }, [restaurant.id]);
+  }, [restaurant.id, idResolu]);
 
   const switchTab = useCallback((t) => {
     Animated.timing(tabAnim, { toValue: 0, duration: 80, useNativeDriver: true }).start(() => {

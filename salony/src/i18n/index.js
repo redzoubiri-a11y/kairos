@@ -36,6 +36,23 @@ function interpoler(texte, params) {
   );
 }
 
+// Glyphes directionnels.
+//
+// RTL inverse une liste fermée de propriétés de style — position, padding,
+// margin, bordures gauche/droite, rayons de coin. Il n'inverse **ni les
+// caractères, ni `transform`** : une flèche « ← » écrite en dur continue de
+// pointer à gauche en arabe, à contresens de la mise en page.
+//
+// La source est `I18nManager.isRTL`, jamais la langue sélectionnée.
+// `forceRTL` ne prend effet qu'au redémarrage de l'app : entre le choix de
+// l'arabe et ce redémarrage, se fier à la langue retournerait la flèche
+// alors que la mise en page, elle, n'a pas encore basculé.
+//
+// Lues une fois au chargement du module, comme `isRTL` lui-même.
+export const FLECHE_RETOUR = I18nManager.isRTL ? '→' : '←';
+export const FLECHE_AVANT  = I18nManager.isRTL ? '←' : '→';
+export const CHEVRON       = I18nManager.isRTL ? '‹' : '›';
+
 const I18nContext = createContext({
   langue: 'fr',
   t: (cle) => cle,

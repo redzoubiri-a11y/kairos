@@ -5,7 +5,7 @@ import * as Location from 'expo-location';
 import { supabase } from '../supabase';
 import { colors, spacing, radius, typography } from '../src/theme';
 import RatingStars from '../src/components/RatingStars';
-import { useT } from '../src/i18n';
+import { useT, FLECHE_RETOUR } from '../src/i18n';
 
 const REGION_ALGER = {
   latitude: 36.7538,
@@ -81,7 +81,7 @@ export default function MapScreen({ navigation, route }) {
       </MapView>
 
       <Pressable style={styles.retour} onPress={() => navigation.goBack()}>
-        <Text style={styles.retourTexte}>← {t('commun.retour')}</Text>
+        <Text style={styles.retourTexte}>{FLECHE_RETOUR} {t('commun.retour')}</Text>
       </Pressable>
     </View>
   );

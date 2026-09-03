@@ -55,11 +55,26 @@ Chaque semaine s'entraîne sur **plusieurs textes courts différents** (pas un s
 
 ---
 
+## BS2 — Lexis (détaillé)
+
+*Objectif : trouver ou déduire le sens d'un mot uniquement à partir du texte, sans dictionnaire — c'est la compétence, pas la mémorisation d'une liste de vocabulaire.*
+
+| Jour | Activité | Détail |
+|---|---|---|
+| **Jour 1** | Synonymes dans le texte | "Find a word in the text that means the same as…" — l'élève cherche dans le texte, pas dans sa mémoire ; s'entraîne à balayer le texte avec un mot-cible en tête |
+| **Jour 2** | Antonymes dans le texte | Même exercice en sens inverse ("Find a word that means the opposite of…") — les deux activités s'entraînent ensemble car l'erreur la plus fréquente est de confondre synonyme et antonyme sous pression du temps |
+| **Jour 3** | Association mot ↔ définition | "Match the words with their definitions" — reformulation en anglais simple, pas de traduction ; entraîne à reconnaître une définition paraphrasée plutôt qu'un mot-à-mot |
+| **Jour 4** | Déduction par le contexte | Un mot volontairement peu fréquent, entouré d'indices (exemple donné entre virgules, reformulation juste après, contraste avec "but/however") — l'élève apprend à lire *autour* du mot inconnu au lieu de bloquer dessus |
+| **Jour 5 (Boss)** | Mini-épreuve chronométrée (7 min) sur un texte inédit : 1 synonyme + 1 antonyme + 2 associations mot/définition | Correction avec le barème réel (chaque sous-question notée séparément, comme au BEM) |
+
+**Sortie de BS2** : l'élève trouve un synonyme/antonyme directement dans un texte sans dictionnaire, reconnaît une définition reformulée, et ne bloque plus sur un mot inconnu isolé — il utilise le contexte pour avancer.
+
+---
+
 ## Feuille de route (semaines suivantes — pas encore détaillées)
 
 | Semaine | Compétence | Angle d'entraînement pressenti |
 |---|---|---|
-| BS2 | Lexis | Synonymes/antonymes en contexte (pas de dictionnaire — déduire du texte), champs lexicaux |
 | BS3 | Mechanics & Morphology | Ponctuation/majuscules, dérivation de mots (préfixes *un-, dis-*, suffixes *-less, -ful, -tion, -er*) |
 | BS4 | Syntax | Concordance des temps, prépositions, articles, tags questions, connecteurs logiques |
 | BS5 | Pronunciation | Accentuation syllabique, classement de sons (ex. groupes *-ed* /t//d//ɪd/, lettres muettes) |

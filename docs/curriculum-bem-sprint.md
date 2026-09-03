@@ -87,11 +87,26 @@ Chaque semaine s'entraîne sur **plusieurs textes courts différents** (pas un s
 
 ---
 
+## BS4 — Syntax (détaillé)
+
+*Objectif : la sous-partie la mieux notée de "Mastery of Language" (3 des 7 points) — quatre points de grammaire fréquemment testés, toujours en contexte (dans une phrase ou un court passage), jamais en règle isolée.*
+
+| Jour | Activité | Détail |
+|---|---|---|
+| **Jour 1** | Concordance des temps | Compléter un passage avec le bon temps (présent / passé / present perfect), en s'appuyant sur les marqueurs temporels du texte (*yesterday, since, for, next week*) — la stratégie enseignée : chercher le marqueur avant de choisir le temps |
+| **Jour 2** | Prépositions et articles | Compléter avec la préposition correcte (*in/on/at*, *since/for*) et l'article correct (*a/an/the*/article zéro) dans un texte — les paires les plus piégeuses du programme, entraînées ensemble |
+| **Jour 3** | Question tags | Former la tag question correcte (*He is tall, isn't he?* / *They don't like it, do they?*) — règle : auxiliaire inversé, jamais de nouveau verbe |
+| **Jour 4** | Connecteurs logiques | Choisir le bon connecteur (*because, so, although, but, if*) pour compléter une phrase à deux propositions — activité BEM classique ("choose the right linker") ; réordonner une phrase coupée par un connecteur |
+| **Jour 5 (Boss)** | Mini-épreuve chronométrée (10 min, la plus longue du sprint — poids réel de 3/20) : 2 items de temps + 2 prépositions/articles + 1 tag question + 1 connecteur, sur un texte inédit | Correction avec le barème réel |
+
+**Sortie de BS4** : l'élève choisit le bon temps en s'appuyant sur les marqueurs du texte, place correctement prépositions et articles, forme une tag question sans erreur d'auxiliaire, et relie deux idées avec le bon connecteur logique.
+
+---
+
 ## Feuille de route (semaines suivantes — pas encore détaillées)
 
 | Semaine | Compétence | Angle d'entraînement pressenti |
 |---|---|---|
-| BS4 | Syntax | Concordance des temps, prépositions, articles, tags questions, connecteurs logiques |
 | BS5 | Pronunciation | Accentuation syllabique, classement de sons (ex. groupes *-ed* /t//d//ɪd/, lettres muettes) |
 | BS6 | Written Expression | Rédaction guidée à partir de notes, cohésion (mots de liaison), respect de la longueur (~10 lignes) |
 | BS7 | Examen blanc n°1 | Simulation complète chronométrée (les 3 parties), correction avec barème réel |

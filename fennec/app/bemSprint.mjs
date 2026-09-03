@@ -10,11 +10,15 @@
  * ouverte ; ce fichier ne la referme pas, il livre un premier exercice
  * réel et jouable pendant qu'elle se pose.
  *
- * BS1 seulement (7 items, les 4 formats d'activité du monde : idée
- * générale, vrai/faux justifié, questions WH, référents) — BS2-BS8 ne
- * sont pas encore intégrés, cf. fennec/README.md.
+ * BS1 (Reading Comprehension) et BS2 (Lexis) seulement, sélectionnables
+ * via ?week=1/2 ou les onglets en haut — BS3-BS8 ne sont pas encore
+ * intégrés, cf. fennec/README.md.
  */
 
+const WEEK_TITLES = { 1: 'BS1 · Reading Comprehension', 2: 'BS2 · Lexis' };
+
+const brandLabel = document.getElementById('brandLabel');
+const weekNav = document.getElementById('weekNav');
 const textTitle = document.getElementById('textTitle');
 const textBody = document.getElementById('textBody');
 const progress = document.getElementById('progress');
@@ -35,9 +39,20 @@ let data = null;
 let index = 0;
 let correctCount = 0;
 let answered = false;
+let week = 1;
+
+function currentWeek() {
+  const requested = Number(new URLSearchParams(location.search).get('week'));
+  return WEEK_TITLES[requested] ? requested : 1;
+}
 
 async function boot() {
-  data = await fetch('bemSprintBS1.json').then((r) => r.json());
+  week = currentWeek();
+  brandLabel.textContent = `🎓 Fennec — BEM Sprint · ${WEEK_TITLES[week]}`;
+  [...weekNav.children].forEach((a) => {
+    a.classList.toggle('active', Number(a.dataset.week) === week);
+  });
+  data = await fetch(`bemSprintBS${week}.json`).then((r) => r.json());
   textTitle.textContent = data.text.title;
   textBody.textContent = data.text.body.join(' ');
   index = 0;
@@ -134,7 +149,7 @@ function showEnd() {
   const total = data.items.length;
   scoreLine.textContent = `${correctCount} / ${total}`;
   const pct = Math.round((correctCount / total) * 100);
-  scoreDetail.textContent = `النتيجة : ${pct}% — BS1 · Reading Comprehension`;
+  scoreDetail.textContent = `النتيجة : ${pct}% — ${WEEK_TITLES[week]}`;
 }
 
 restartBtn.addEventListener('click', () => {

@@ -35,8 +35,8 @@ fennec/
   app/                        # PWA réelle, branchée sur src/*.mjs (pas une maquette)
     index.html, styles.css, screens.mjs, session.mjs, bossSession.mjs, main.mjs, sw.js, manifest.webmanifest
     classroomQuiz.html/.mjs    # quiz projetable (mode classe), vrai écran — voir plus bas
-    bemSprint.html/.mjs        # BEM Sprint — BS1 seulement, vrai écran — voir plus bas
-    bemSprintBS1.json          # texte support + 7 items BS1, écrit à la main (pas généré)
+    bemSprint.html/.mjs        # BEM Sprint — BS1/BS2 (?week=1/2 ou onglets), vrai écran — voir plus bas
+    bemSprintBS1.json/BS2.json # texte support + 7 items par semaine, écrits à la main (pas générés)
     catalog.json               # copie embarquée du référentiel (bootstrap 100% offline)
     build_catalog.py           # régénère catalog.json depuis les deux banques de mots
     phonics.json               # progression phonics (22 sons, S2→S30), écran "phonics"
@@ -137,22 +137,29 @@ après rechargement ; jour Boss de fin de monde B1 (S36) démarre
 normalement ; semaine sans contenu nouveau (S64, fin du curriculum Builder)
 affiche le message de repli existant au lieu de planter.
 
-**BEM Sprint — premier segment réel (BS1 seulement).** `fennec/app/bemSprint.html`
+**BEM Sprint — deux semaines réelles (BS1, BS2).** `fennec/app/bemSprint.html`
 est un vrai écran, pas une maquette — accessible directement (pas encore lié
-depuis `index.html` ni un tableau de bord). Il joue les 7 items de
-`docs/curriculum-bem-sprint.md` BS1 (Reading Comprehension) sur un texte
-support original écrit pour ce chantier (`bemSprintBS1.json`, pas une copie
-d'une épreuve BEM réelle — voir la note du curriculum à ce sujet) : idée
-générale (QCM), vrai/faux justifié par citation exacte du texte, questions
-WH, référents. **Choix d'architecture assumé, pas neutre** : le document
-laissait deux options ouvertes (détourner le SRS existant vers des motifs
-d'erreur, ou construire un moteur séparé) ; ce premier segment ne tranche
+depuis `index.html` ni un tableau de bord), ou via `?week=1`/`?week=2`, ou
+les onglets BS1/BS2 en haut de l'écran (rechargent la page avec le
+paramètre — pas de SPA routing ici, volontairement simple). Chaque semaine
+a son texte support original écrit pour ce chantier (`bemSprintBS1.json`,
+`bemSprintBS2.json` — jamais une copie d'une épreuve BEM réelle, voir la
+note du curriculum à ce sujet) et ses 7 items : BS1 (Reading Comprehension)
+— idée générale, vrai/faux justifié par citation exacte, questions WH,
+référents ; BS2 (Lexis) — synonymes/antonymes trouvés dans le texte,
+association mot/définition, déduction par le contexte. Lien retour vers
+Madrassatidz en haut de l'écran et sur l'écran de fin (comme le reste de
+l'app), plus un lien de retour vers Fennec sur l'écran de fin.
+**Choix d'architecture assumé, pas neutre** : le document laissait deux
+options ouvertes (détourner le SRS existant vers des motifs d'erreur, ou
+construire un moteur séparé) ; ces deux premières semaines ne tranchent
 ni l'une ni l'autre — c'est un mode "practice" autonome sans état persisté
 (comme `classroomQuiz.mjs`), qui prouve que le format d'activités fonctionne
-avant d'investir dans l'une des deux architectures. BS2-BS8 ne sont pas
-intégrés. Validé en navigateur réel : score exact (7/7 sur un passage
-100% correct, testé aussi avec des réponses fausses), correction "jamais
-rouge" (bonne réponse en surbrillance verte/navy, jamais de rouge), rejouable.
+avant d'investir dans l'une des deux architectures. BS3-BS8 ne sont pas
+intégrés. Validé en navigateur réel : score exact (7/7 sur BS1 et sur BS2
+en répondant juste, testé aussi avec des réponses fausses), sélecteur de
+semaine fonctionnel, liens de fin fonctionnels, correction "jamais rouge"
+(bonne réponse en surbrillance verte/navy, jamais de rouge), rejouable.
 
 ## Pourquoi cette architecture
 

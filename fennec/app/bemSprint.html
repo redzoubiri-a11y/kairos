@@ -13,9 +13,25 @@
    et classes .opt/.cta de styles.css pour rester dans le même système. */
 body{display:block; background:var(--ink)}
 .wrap{max-width:40rem; margin:0 auto; min-height:100dvh; background:var(--bg-base); display:flex; flex-direction:column}
+.portal-link{
+  display:block; text-align:center; font-family:var(--mono); font-size:.7rem;
+  color:rgba(255,255,255,.7); text-decoration:none; padding:.5rem 0;
+}
+.portal-link:hover, .portal-link:focus-visible{color:#fff; text-decoration:underline}
+
 .top{display:flex; align-items:center; gap:.6rem; padding:.9rem 1.2rem; color:#fff}
 .top .brand{font-family:var(--mono); font-size:.8rem; opacity:.85}
-.top a.exit{margin-inline-start:auto; color:#fff; opacity:.7; text-decoration:none; font-family:var(--mono); font-size:.75rem}
+.top .weeks{margin-inline-start:auto; display:flex; gap:.4rem}
+.top .weeks a{
+  font-family:var(--mono); font-size:.72rem; color:rgba(255,255,255,.7); text-decoration:none;
+  border:1px solid rgba(255,255,255,.3); border-radius:999px; padding:.2rem .6rem;
+}
+.top .weeks a.active{color:#fff; border-color:#fff; background:rgba(255,255,255,.12)}
+.top a.exit{color:#fff; opacity:.7; text-decoration:none; font-family:var(--mono); font-size:.75rem}
+
+.endscreen .links{display:flex; flex-direction:column; gap:.5rem; margin-top:.6rem}
+.endscreen .links a{font-family:var(--mono); font-size:.78rem; color:var(--ink-soft); text-decoration:none}
+.endscreen .links a:hover{color:var(--ink); text-decoration:underline}
 
 .passage{background:#fff; border:1px solid var(--border); border-radius:16px; margin:0 1.2rem 1rem; padding:1rem 1.2rem; direction:ltr; text-align:left}
 .passage h2{font-family:'Baloo 2'; font-size:1rem; margin:0 0 .5rem; color:var(--ink)}
@@ -56,8 +72,14 @@ body{display:block; background:var(--ink)}
 </head>
 <body>
 <div class="wrap">
+  <a class="portal-link" href="../../wireframes/madrassatidz-portal.html">← Madrassatidz</a>
+
   <div class="top">
-    <span class="brand">🎓 Fennec — BEM Sprint · BS1</span>
+    <span class="brand" id="brandLabel">🎓 Fennec — BEM Sprint</span>
+    <div class="weeks" id="weekNav">
+      <a data-week="1" href="?week=1">BS1</a>
+      <a data-week="2" href="?week=2">BS2</a>
+    </div>
     <a class="exit" href="index.html">✕ إغلاق</a>
   </div>
 
@@ -86,6 +108,10 @@ body{display:block; background:var(--ink)}
     <p class="score" id="scoreLine"></p>
     <p class="ar" id="scoreDetail"></p>
     <button id="restartBtn" class="cta accent ar" style="margin-top:1rem">↻ إعادة المحاولة</button>
+    <div class="links">
+      <a href="index.html" class="ar">→ العودة إلى Fennec</a>
+      <a href="../../wireframes/madrassatidz-portal.html" class="ar">← Madrassatidz</a>
+    </div>
   </div>
 </div>
 

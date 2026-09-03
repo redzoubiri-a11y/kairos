@@ -1,0 +1,100 @@
+{
+  "text": {
+    "id": "bs2-t1",
+    "title": "Yacine's New Habit",
+    "body": [
+      "Yacine used to spend most of his free time playing video games at home.",
+      "He rarely went outside, and he often felt tired and weak.",
+      "Last year, his older brother bought him a bicycle for his birthday.",
+      "Yacine's brother is an avid cyclist who never misses a training session, rain or shine.",
+      "At first, Yacine found cycling difficult, and he could only ride for ten minutes.",
+      "His brother told him to practise every day and never give up.",
+      "Slowly, Yacine became stronger, and cycling became easy for him.",
+      "Now, he rides his bicycle every morning before school, and he feels full of energy all day.",
+      "His classmates say he looks healthier than before.",
+      "Yacine has also made new friends at the local cycling club.",
+      "He plans to enter a small race in his town next spring.",
+      "His brother is very proud of the change in Yacine's life."
+    ]
+  },
+  "items": [
+    {
+      "id": "bs2-1",
+      "kind": "mcq",
+      "skill": "synonym",
+      "prompt": "ابحث في النص عن كلمة تعني نفس معنى 'hard' (صعب)",
+      "promptEn": "Find a word in the text that means the same as 'hard'.",
+      "options": ["weak", "difficult", "healthier", "proud"],
+      "correctIndex": 1
+    },
+    {
+      "id": "bs2-2",
+      "kind": "mcq",
+      "skill": "synonym",
+      "prompt": "ابحث في النص عن كلمة تعني نفس معنى 'fit and well' (بصحة جيدة)",
+      "promptEn": "Find a word in the text that means the same as 'fit and well'.",
+      "options": ["weak", "difficult", "healthier", "tired"],
+      "correctIndex": 2
+    },
+    {
+      "id": "bs2-3",
+      "kind": "mcq",
+      "skill": "antonym",
+      "prompt": "ابحث في النص عن كلمة تعني عكس 'strong' (قوي)",
+      "promptEn": "Find a word in the text that means the opposite of 'strong'.",
+      "options": ["weak", "easy", "proud", "energy"],
+      "correctIndex": 0
+    },
+    {
+      "id": "bs2-4",
+      "kind": "mcq",
+      "skill": "antonym",
+      "prompt": "ابحث في النص عن كلمة تعني عكس 'easy' (سهل)",
+      "promptEn": "Find a word in the text that means the opposite of 'easy'.",
+      "options": ["difficult", "healthier", "proud", "race"],
+      "correctIndex": 0
+    },
+    {
+      "id": "bs2-5",
+      "kind": "mcq",
+      "skill": "definition",
+      "prompt": "ماذا تعني كلمة 'proud' هنا؟",
+      "promptEn": "What does 'proud' mean here?",
+      "options": [
+        "Feeling pleased about someone's achievement",
+        "Feeling sad about a loss",
+        "Feeling angry with someone",
+        "Feeling afraid of something"
+      ],
+      "correctIndex": 0
+    },
+    {
+      "id": "bs2-6",
+      "kind": "mcq",
+      "skill": "definition",
+      "prompt": "ماذا تعني كلمة 'race' في هذا النص؟",
+      "promptEn": "What does 'race' mean in this text?",
+      "options": [
+        "A type of bicycle",
+        "A competition to see who is fastest",
+        "A school subject",
+        "A health problem"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "bs2-7",
+      "kind": "mcq",
+      "skill": "context_deduction",
+      "prompt": "بالاعتماد على السياق، ماذا تعني على الأرجح كلمة 'avid'؟",
+      "promptEn": "What does 'avid' most likely mean, based on the context (\"never misses a training session, rain or shine\")?",
+      "options": [
+        "Very enthusiastic",
+        "Very tired",
+        "Very slow",
+        "Very expensive"
+      ],
+      "correctIndex": 0
+    }
+  ]
+}

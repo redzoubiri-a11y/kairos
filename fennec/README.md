@@ -466,18 +466,41 @@ déjà atteint la limite de 2 projets gratuits). État :
 - **Vérifié réellement, pas supposé** : le bac à sable de cette session ne
   peut pas atteindre `esm.sh` ni `*.supabase.co` (proxy réseau restreint à
   quelques domaines) — le chemin auth/RLS a donc été vérifié en déployant
-  une Edge Function temporaire (`verify-sync-flow`, à supprimer) qui
-  reproduit exactement `ensureAnonSession → ensureGuardian → ensureStudent`
-  côté serveur (réseau Supabase, pas le bac à sable), invoquée depuis
-  Postgres via `pg_net`. Premier run : la connexion anonyme était
-  **désactivée par défaut** sur le projet neuf (`"Anonymous sign-ins are
-  disabled"`) — à activer manuellement dans
-  **Dashboard → Authentication → Sign In / Providers → Anonymous
-  Sign-Ins** (aucun outil ne permet de le faire à distance). Une fois
-  activée, le même test doit confirmer : connexion anonyme, création
-  guardian/student, écriture `student_word_state`/`sessions`, ET qu'un
-  guardian ne peut pas créer un élève rattaché à un autre guardian (RLS
-  refusée comme attendu).
+  une Edge Function temporaire (`verify-sync-flow`, désactivée depuis — un
+  simple stub HTTP 410, aucun outil ne permet de supprimer une Edge
+  Function via l'API) qui reproduit exactement
+  `ensureAnonSession → ensureGuardian → ensureStudent` côté serveur (réseau
+  Supabase, pas le bac à sable), invoquée depuis Postgres via `pg_net`
+  (installé puis retiré une fois la vérification faite). Deux vrais bugs
+  trouvés et corrigés grâce à ce test, jamais visibles avant puisque
+  Supabase était mis de côté depuis le début du chantier :
+  1. **Connexion anonyme désactivée par défaut** sur un projet neuf
+     (`"Anonymous sign-ins are disabled"`) — activée manuellement dans
+     **Dashboard → Authentication → Sign In / Providers → Anonymous
+     Sign-Ins** (aucun outil ne permet de le faire à distance).
+  2. **Récursion infinie entre les policies `students` et
+     `classroom_students`** (`infinite recursion detected in policy for
+     relation "students"`) : la policy select de `students` interrogeait
+     `classroom_students` pour la branche "élève inscrit dans une classe",
+     dont la policy select interroge à son tour `students` pour sa propre
+     branche "élève de ce tuteur" — un cycle A→B→A. Cassait l'écriture de
+     `student_word_state`/`sessions` (la sync réelle de l'app). Corrigé en
+     passant cette branche par un helper `SECURITY DEFINER`
+     (`internal.fennec_teacher_sees_student`, même principe que
+     `fennec_visible_student` déjà en place pour les autres tables — une
+     fonction `SECURITY DEFINER` contourne RLS sur ses propres requêtes
+     internes, donc pas de ré-entrée dans la policy qu'elle interroge).
+  Après ces deux corrections, un run complet confirme : connexion anonyme,
+  création guardian/student, écriture `student_word_state`/`sessions`, ET
+  qu'un guardian ne peut pas créer un élève rattaché à un autre guardian
+  (RLS refusée comme attendu, `blockedAsExpected: true`). Toutes les
+  données de test ont été nettoyées après coup (0 users/guardians/students
+  restants). Zéro alerte de sécurité restante après ce second correctif
+  (`get_advisors`) ; les nouvelles alertes "accès anonyme" (WARN) qui
+  apparaissent en activant la connexion anonyme sont attendues et
+  acceptées ici — un compte anonyme EST le tuteur légitime du foyer dans ce
+  modèle, pas un accès à distinguer d'un compte "permanent" qui n'existe
+  pas encore.
 - **Pas encore fait** : brancher les tableaux de bord parent/enseignant
   (toujours des maquettes à données figées,
   `wireframes/fennec-maquette-dashboard-*.html`) et le portail Madrassatidz

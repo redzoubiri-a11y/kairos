@@ -45,16 +45,60 @@ create policy "words: lecture publique" on words
 create policy "guardians: gère son propre profil" on guardians
   for all using (user_id = (select auth.uid())) with check (user_id = (select auth.uid()));
 
+-- ------------------------------------------------ fonctions utilitaires (RLS)
+-- Un élève est "visible" par l'utilisateur courant s'il en est le tuteur, ou
+-- s'il est enseignant d'une classe qui le contient. Centralisée pour éviter
+-- de dupliquer la sous-requête dans chaque policy plus bas. Vit dans
+-- `internal` (pas `public`) : jamais exposée comme endpoint PostgREST, voir
+-- le commentaire d'en-tête.
+create or replace function internal.fennec_visible_student(p_student_id uuid)
+returns boolean
+language sql stable security definer set search_path = public as $$
+  select exists (
+    select 1 from students s
+    join guardians g on g.id = s.guardian_id
+    where s.id = p_student_id and g.user_id = auth.uid()
+  ) or exists (
+    select 1 from classroom_students cs
+    join classrooms c on c.id = cs.classroom_id
+    join guardians g on g.id = c.teacher_id
+    where cs.student_id = p_student_id and g.user_id = auth.uid()
+  );
+$$;
+grant usage on schema internal to authenticated;
+grant execute on function internal.fennec_visible_student(uuid) to authenticated;
+revoke all on function internal.fennec_visible_student(uuid) from public, anon;
+
+-- Utilisée uniquement par la policy select de `students` ci-dessous (la
+-- branche "élève inscrit dans une classe") plutôt que d'interroger
+-- classroom_students directement dans cette policy : sinon, la policy
+-- select de classroom_students interroge à son tour students (branche
+-- "élève de ce tuteur"), et Postgres refuse ce cycle A→B→A avec "infinite
+-- recursion detected in policy for relation students" — trouvé en vérifiant
+-- réellement le chemin ensureStudent → insert student_word_state/sessions
+-- sur le premier projet Supabase de ce chantier (voir fennec/README.md).
+-- Une fonction SECURITY DEFINER s'exécute avec les droits de son
+-- propriétaire (qui possède aussi les tables), ce qui contourne RLS par
+-- défaut sur les requêtes qu'elle fait elle-même — pas de ré-entrée dans la
+-- policy de classroom_students, donc plus de cycle.
+create or replace function internal.fennec_teacher_sees_student(p_student_id uuid)
+returns boolean
+language sql stable security definer set search_path = public as $$
+  select exists (
+    select 1 from classroom_students cs
+    join classrooms c on c.id = cs.classroom_id
+    join guardians g on g.id = c.teacher_id
+    where cs.student_id = p_student_id and g.user_id = auth.uid()
+  );
+$$;
+grant execute on function internal.fennec_teacher_sees_student(uuid) to authenticated;
+revoke all on function internal.fennec_teacher_sees_student(uuid) from public, anon;
+
 -- ---------------------------------------------------------------- students
 create policy "students: le tuteur voit ses élèves" on students
   for select using (
     guardian_id in (select id from guardians where user_id = (select auth.uid()))
-    or id in (
-      select cs.student_id from classroom_students cs
-      join classrooms c on c.id = cs.classroom_id
-      join guardians g on g.id = c.teacher_id
-      where g.user_id = (select auth.uid())
-    )
+    or internal.fennec_teacher_sees_student(id)
   );
 create policy "students: le tuteur crée ses élèves" on students
   for insert with check (guardian_id in (select id from guardians where user_id = (select auth.uid())));
@@ -93,30 +137,6 @@ create policy "classroom_students: retrait par l'enseignant" on classroom_studen
       select c.id from classrooms c join guardians g on g.id = c.teacher_id where g.user_id = (select auth.uid())
     )
   );
-
--- ------------------------------------------------ fonction utilitaire commune
--- Un élève est "visible" par l'utilisateur courant s'il en est le tuteur, ou
--- s'il est enseignant d'une classe qui le contient. Centralisée pour éviter
--- de dupliquer la sous-requête dans chaque policy ci-dessous. Vit dans
--- `internal` (pas `public`) : jamais exposée comme endpoint PostgREST, voir
--- le commentaire d'en-tête.
-create or replace function internal.fennec_visible_student(p_student_id uuid)
-returns boolean
-language sql stable security definer set search_path = public as $$
-  select exists (
-    select 1 from students s
-    join guardians g on g.id = s.guardian_id
-    where s.id = p_student_id and g.user_id = auth.uid()
-  ) or exists (
-    select 1 from classroom_students cs
-    join classrooms c on c.id = cs.classroom_id
-    join guardians g on g.id = c.teacher_id
-    where cs.student_id = p_student_id and g.user_id = auth.uid()
-  );
-$$;
-grant usage on schema internal to authenticated;
-grant execute on function internal.fennec_visible_student(uuid) to authenticated;
-revoke all on function internal.fennec_visible_student(uuid) from public, anon;
 
 -- ---------------------------------------------------------- student_word_state
 create policy "sws: lecture par tuteur/enseignant" on student_word_state

@@ -67,6 +67,16 @@ n'ont pas d'emoji fidèle et unique : ils retombent sur le texte anglais,
 jamais sur un emoji forcé ou trompeur. Reste un placeholder temporaire —
 à remplacer par de vraies illustrations quand elles existeront.
 
+**Plusieurs enfants sur un même téléphone.** `fennec/app/main.mjs` gère
+plusieurs profils locaux (fratrie) — écran "qui joue aujourd'hui ?" au
+premier lancement, bouton "🔁 changer d'enfant" dans la barre de dev pour
+en changer à tout moment. Chaque profil a son propre `studentId` (déjà la
+clé du moteur SRS dans IndexedDB) et son propre pointeur de curriculum/essai
+Boss, namespacés en localStorage par profil — aucun changement côté moteur
+n'était nécessaire, seule l'orchestration en manquait. Validé en navigateur
+réel : deux profils gardent des positions de curriculum indépendantes après
+qu'un seul des deux ait joué une session complète.
+
 ## Pourquoi cette architecture
 
 Le principe directeur (cf. l'analyse) : **offline-first**, parce que la data mobile en Algérie

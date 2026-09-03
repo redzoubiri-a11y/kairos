@@ -2,28 +2,36 @@
  * Fennec — bootstrap de l'app réelle.
  *
  * Câble ensemble : FennecStore (db.mjs, IndexedDB), le catalogue embarqué
- * (catalog.json, généré par build_catalog.py), l'identité locale de l'élève
- * (un profil de démo tant qu'il n'y a pas d'authentification Supabase), et
- * le moteur de session (session.mjs → queue.mjs → srs.mjs).
+ * (catalog.json, généré par build_catalog.py), les profils élèves locaux
+ * (plusieurs enfants sur un même téléphone partagé — pilier explicite de
+ * l'analyse stratégique : "la fratrie... profils multiples sur un
+ * appareil"), et le moteur de session (session.mjs → queue.mjs → srs.mjs).
+ *
+ * Multi-profils : chaque enfant a son propre studentId (déjà la clé
+ * primaire du moteur SRS dans IndexedDB, voir db.mjs) et son propre
+ * pointeur de curriculum/essai Boss, namespacés en localStorage par
+ * profileId. Rien à changer côté moteur — seule l'orchestration ici en
+ * manquait.
  *
  * Horloge virtuelle : le calendrier SRS réel s'étale sur des jours/semaines
  * (J+1, J+3, J+7…) — impossible à observer en session de test sans attendre
  * plusieurs jours. La barre de développement en haut de l'app permet
- * d'avancer une horloge virtuelle stockée en localStorage ; `now()` partout
- * dans l'app (session.mjs compris) passe par cette horloge, jamais par
- * `new Date()` en dur — c'est ce qui permet de vérifier que le moteur SRS
- * réel programme bien les révisions aux bons intervalles.
+ * d'avancer une horloge virtuelle stockée en localStorage (partagée entre
+ * profils : c'est l'horloge du foyer, pas une préférence par enfant) ;
+ * `now()` partout dans l'app (session.mjs compris) passe par cette horloge,
+ * jamais par `new Date()` en dur.
  */
 
 import { FennecStore } from '../src/db.mjs';
 import { pullCatalog, pushPending } from '../src/sync.mjs';
 import { runSession } from './session.mjs';
 import { runBossSession } from './bossSession.mjs';
+import { stage } from './screens.mjs';
 
 const CLOCK_KEY = 'fennec_clock_offset_ms';
-const STUDENT_KEY = 'fennec_student_id';
-const POINTER_KEY = 'fennec_pointer';
-const BOSS_ATTEMPT_KEY = 'fennec_boss_attempt';
+const PROFILES_KEY = 'fennec_profiles';
+const ACTIVE_PROFILE_KEY = 'fennec_active_profile';
+const AVATARS = ['🦊', '🐱', '🐶', '🐰', '🐨', '🦁', '🐼', '🐸'];
 
 function now() {
   const offset = Number(localStorage.getItem(CLOCK_KEY) || '0');
@@ -35,30 +43,99 @@ function advanceClockByDays(days) {
   localStorage.setItem(CLOCK_KEY, String(offset + days * 24 * 60 * 60 * 1000));
 }
 
-function getOrCreateStudentId() {
-  let id = localStorage.getItem(STUDENT_KEY);
-  if (!id) {
-    id = crypto.randomUUID();
-    localStorage.setItem(STUDENT_KEY, id);
-  }
-  return id;
+/* ------------------------------------------------------- profils élèves */
+
+function getProfiles() {
+  try { return JSON.parse(localStorage.getItem(PROFILES_KEY) || '[]'); }
+  catch { return []; }
 }
 
-function getPointer() {
-  const raw = localStorage.getItem(POINTER_KEY);
+function saveProfiles(list) {
+  localStorage.setItem(PROFILES_KEY, JSON.stringify(list));
+}
+
+function createProfile(name) {
+  const list = getProfiles();
+  const profile = { id: crypto.randomUUID(), name, avatar: AVATARS[list.length % AVATARS.length] };
+  saveProfiles([...list, profile]);
+  return profile;
+}
+
+function getActiveProfileId() {
+  return localStorage.getItem(ACTIVE_PROFILE_KEY);
+}
+
+function setActiveProfile(id) {
+  localStorage.setItem(ACTIVE_PROFILE_KEY, id);
+}
+
+function clearActiveProfile() {
+  localStorage.removeItem(ACTIVE_PROFILE_KEY);
+}
+
+function getPointer(profileId) {
+  const raw = localStorage.getItem(`fennec_pointer_${profileId}`);
   return raw ? JSON.parse(raw) : { week: 1, day: 1 };
 }
 
-function savePointer(pointer) {
-  localStorage.setItem(POINTER_KEY, JSON.stringify(pointer));
+function savePointer(profileId, pointer) {
+  localStorage.setItem(`fennec_pointer_${profileId}`, JSON.stringify(pointer));
 }
 
-function getBossAttempt() {
-  return Number(localStorage.getItem(BOSS_ATTEMPT_KEY) || '1');
+function getBossAttempt(profileId) {
+  return Number(localStorage.getItem(`fennec_boss_attempt_${profileId}`) || '1');
 }
 
-function saveBossAttempt(n) {
-  localStorage.setItem(BOSS_ATTEMPT_KEY, String(n));
+function saveBossAttempt(profileId, n) {
+  localStorage.setItem(`fennec_boss_attempt_${profileId}`, String(n));
+}
+
+/**
+ * Écran "qui joue aujourd'hui ?" — affiché tant qu'aucun profil n'est
+ * actif (premier lancement, ou après un tap sur "تبديل الطفل"). Chaque
+ * tuile choisit le profil actif puis relance boot() ; l'ajout se fait sur
+ * place, sans quitter l'écran.
+ */
+function renderProfilePicker() {
+  const profiles = getProfiles();
+  stage.innerHTML =
+    `<div class="win">` +
+      `<p class="say ar center">من يلعب اليوم؟</p>` +
+      `<div class="profile-grid" id="profileGrid"></div>` +
+      `<div id="addProfileForm" hidden>
+        <input type="text" id="newProfileName" class="profile-input" placeholder="اسم الطفل" maxlength="20">
+        <button class="cta primary" id="confirmAddProfile">إضافة</button>
+      </div>` +
+    `</div>`;
+
+  const grid = document.getElementById('profileGrid');
+  profiles.forEach((p) => {
+    const tile = document.createElement('button');
+    tile.className = 'profile-tile';
+    tile.innerHTML = `<span class="pt-avatar">${p.avatar}</span><span class="pt-name">${escapeHtml(p.name)}</span>`;
+    tile.onclick = () => { setActiveProfile(p.id); boot(); };
+    grid.appendChild(tile);
+  });
+  const addTile = document.createElement('button');
+  addTile.className = 'profile-tile add';
+  addTile.innerHTML = `<span class="pt-avatar">➕</span><span class="pt-name ar">إضافة طفل</span>`;
+  addTile.onclick = () => { document.getElementById('addProfileForm').hidden = false; document.getElementById('newProfileName').focus(); };
+  grid.appendChild(addTile);
+
+  document.getElementById('confirmAddProfile').addEventListener('click', () => {
+    const input = document.getElementById('newProfileName');
+    const name = input.value.trim();
+    if (!name) { input.focus(); return; }
+    const profile = createProfile(name);
+    setActiveProfile(profile.id);
+    boot();
+  }, { once: true });
+}
+
+function escapeHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
 }
 
 /**
@@ -112,45 +189,56 @@ async function registerServiceWorker() {
   }
 }
 
-function renderDevBar(pointer, attempt) {
+function renderDevBar(profile, pointer, attempt) {
   const bar = document.getElementById('devbar');
   const dayLabel = pointer.day === 5 ? `jour 5 · Boss${attempt > 1 ? ` (essai ${attempt})` : ''}` : `jour ${pointer.day}`;
   bar.innerHTML = `
-    <span>Élève : ${getOrCreateStudentId().slice(0, 8)}</span>
+    <span>${profile.avatar} ${escapeHtml(profile.name)}</span>
     <span>Position : S${pointer.week} · ${dayLabel}</span>
     <span>Horloge : ${now().toLocaleDateString('fr-FR')}</span>
+    <button id="switch-profile">🔁 changer d'enfant</button>
     <button id="advance-day">⏭ +1 jour</button>
     <button id="advance-week">⏭⏭ +7 jours</button>
-    <button id="reset">↻ réinitialiser</button>
+    <button id="reset">↻ tout réinitialiser</button>
   `;
+  document.getElementById('switch-profile').onclick = () => { clearActiveProfile(); boot(); };
   document.getElementById('advance-day').onclick = () => { advanceClockByDays(1); boot(); };
   document.getElementById('advance-week').onclick = () => { advanceClockByDays(7); boot(); };
   document.getElementById('reset').onclick = async () => {
+    // Réinitialisation totale (tous les profils, toute la base locale) —
+    // volontairement plus radicale que "changer d'enfant" : outil de test.
     localStorage.removeItem(CLOCK_KEY);
-    localStorage.removeItem(STUDENT_KEY);
-    localStorage.removeItem(POINTER_KEY);
-    localStorage.removeItem(BOSS_ATTEMPT_KEY);
+    localStorage.removeItem(PROFILES_KEY);
+    localStorage.removeItem(ACTIVE_PROFILE_KEY);
+    getProfiles().forEach((p) => {
+      localStorage.removeItem(`fennec_pointer_${p.id}`);
+      localStorage.removeItem(`fennec_boss_attempt_${p.id}`);
+    });
     indexedDB.deleteDatabase('fennec');
     location.reload();
   };
 }
 
 async function boot() {
+  const activeId = getActiveProfileId();
+  const profiles = getProfiles();
+  const profile = profiles.find((p) => p.id === activeId);
+  if (!profile) return renderProfilePicker();
+
   const store = await FennecStore.open();
   await ensureCatalog(store);
   await maybeConfigureSync(store);
 
-  const studentId = getOrCreateStudentId();
-  const pointer = getPointer();
-  const attempt = getBossAttempt();
-  renderDevBar(pointer, attempt);
+  const pointer = getPointer(profile.id);
+  const attempt = getBossAttempt(profile.id);
+  renderDevBar(profile, pointer, attempt);
 
   if (pointer.day === 5) {
     await runBossSession({
-      store, studentId, now, pointer, attempt,
+      store, studentId: profile.id, now, pointer, attempt,
       onBossEnd: ({ pointer: nextPointer, attempt: nextAttempt }) => {
-        savePointer(nextPointer);
-        saveBossAttempt(nextAttempt);
+        savePointer(profile.id, nextPointer);
+        saveBossAttempt(profile.id, nextAttempt);
         boot(); // le bouton "Continuer"/"Nouvel essai" enchaîne réellement, sans reload manuel
       },
     });
@@ -159,12 +247,12 @@ async function boot() {
 
   await runSession({
     store,
-    studentId,
+    studentId: profile.id,
     now,
     pointer,
     streakDays: pointer.day, // rythme hebdomadaire : jour 1-4 = sessions de la semaine en cours
     onSessionEnd: (nextPointer) => {
-      savePointer(nextPointer);
+      savePointer(profile.id, nextPointer);
       // La session quotidienne se termine sur un écran de fin (pas de bouton
       // "continuer" : une seule session par jour). Le pointeur est prêt pour
       // la prochaine visite ou le prochain clic "+1 jour" de la barre de dev.

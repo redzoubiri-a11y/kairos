@@ -209,3 +209,24 @@ body{
 .win .emoji-lg{font-size:44px; margin-bottom:var(--sp-sm)}
 
 .credit{font-family:var(--mono); font-size:.65rem; color:var(--ink-soft); margin:.8rem 0 1.2rem; text-align:center; padding:0 1rem}
+
+/* Sélecteur de profil ("qui joue aujourd'hui ?") — téléphone partagé entre
+   frères et sœurs, cf. fennec/app/main.mjs. */
+.profile-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:18px 0}
+.profile-tile{
+  background:var(--surface); border:2px solid var(--border); border-radius:20px;
+  padding:16px 8px; display:flex; flex-direction:column; align-items:center; gap:8px;
+  cursor:pointer; font-family:'Baloo 2';
+}
+.profile-tile:active{transform:scale(.96)}
+.profile-tile:focus-visible{outline:3px solid var(--accent)}
+.profile-tile .pt-avatar{font-size:2.4rem}
+.profile-tile .pt-name{font-size:.85rem; font-weight:700; color:var(--ink)}
+.profile-tile.add{border-style:dashed; color:var(--ink-soft)}
+.profile-tile.add .pt-avatar{opacity:.6}
+#addProfileForm{display:flex; gap:8px; margin-top:6px}
+.profile-input{
+  flex:1; border:2px solid var(--border); border-radius:12px; padding:10px 12px;
+  font-family:'Baloo 2'; font-size:.95rem; background:var(--surface); color:var(--ink); text-align:center;
+}
+.profile-input:focus-visible{outline:3px solid var(--accent)}

@@ -2,7 +2,7 @@
 
 > Suite de Foundations (`docs/curriculum-foundations-semaine-par-semaine.md`), pour l'enfant qui a terminé les 32 semaines et maîtrise ~320–350 mots actifs, l'alphabet latin et les sons de base. Public visé : 5AP–6AP (10–12 ans), niveau A1 solide → A2. Numérotation continue (S33, S34…) pour que le moteur SRS et le curriculum restent une seule ligne du temps sans redémarrage de compteur.
 >
-> **État de ce document : démarré, pas terminé.** Seuls les MONDES B1 (S33–S36) et B2 (S37–S40) sont détaillés au niveau de Foundations. Les mondes suivants ne sont qu'une esquisse de titres/thèmes (section "Feuille de route", en bas) — à détailler monde par monde, pas tous d'un coup.
+> **État de ce document : démarré, pas terminé.** Seuls les MONDES B1 (S33–S36), B2 (S37–S40) et B3 (S41–S44) sont détaillés au niveau de Foundations. Les mondes suivants ne sont qu'une esquisse de titres/thèmes (section "Feuille de route", en bas) — à détailler monde par monde, pas tous d'un coup.
 
 ---
 
@@ -56,11 +56,25 @@ Mêmes catégories que Foundations (`lexique`, `structure`, `fonction`) plus une
 
 ---
 
+## MONDE B3 — « Around Town » (S41–S44) · Se repérer
+
+*Fennec fait visiter sa ville : où sont les choses, comment y aller.*
+
+| Sem. | Oral (mots & structures) | Lecture & orthographe | Boss / événement |
+|---|---|---|---|
+| **S41** | street, shop, bank, hospital + **there is / there isn't** + **There is a bank on Main Street** | Contraction *there's* — lecture des deux formes (pleine et contractée) | Décrire ce qui se trouve sur une image de rue avec *there is/there isn't* |
+| **S42** | shops (pluriel révisé) + **there are / there aren't** + **There are three shops near my house** | Révision des règles de pluriel (*-s / -es*) réinvesties dans des phrases plus longues | Mini-boss : compter et décrire des objets au pluriel dans une scène |
+| **S43** | next to, between, opposite, in front of, behind + **The bank is next to the school** (approfondit *in/on/under* de Foundations S29) | Lecture d'un jeu de phrases de position sur un plan simple | Guider Fennec dans la ville à partir de phrases de position |
+| **S44** | go straight, turn left, turn right, cross the street, map + Révision : *there is/are* + prépositions | Paragraphe connecté avec un petit plan de ville ; questions de compréhension | **BOSS : « Le plan de la ville de Fennec »** — l'enfant donne un itinéraire simple d'un point à un autre (*go straight, turn left…*), enregistré. 23 mots/structures actifs de plus (voir `data/builder-banque-mots.json`) |
+
+**Sortie du monde B3** : l'enfant utilise correctement *there is/there are* (affirmatif et négatif), au moins 5 prépositions de lieu, et peut donner ou suivre un itinéraire simple à 2-3 étapes.
+
+---
+
 ## Feuille de route (mondes suivants — titres et thème seulement, pas encore détaillés)
 
 | Monde | Semaines | Thème pressenti | Saut grammatical/lexical visé |
 |---|---|---|---|
-| B3 | S41–S44 | *Around Town* | *there is/are*, prépositions de lieu approfondies, indications simples |
 | B4 | S45–S48 | *Plans & Future* | *going to*, expression de projets/intentions — bilan de mi-année (même logique que S16 en Foundations) |
 | B5 | S49–S52 | *Story Time* | Lecture de récits plus longs (6–8 phrases), connecteurs (*then, after, because*) |
 | B6 | S53–S56 | *Feelings & Opinions* | Expression d'opinion (*I think…, in my opinion*), adjectifs nuancés |

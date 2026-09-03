@@ -59,3 +59,26 @@ id,anglais,francais,categorie,monde,semaine_intro,jour_intro,r1,r2,r3,r4,r5,mait
 58,camel,chameau (révision),lexique,B2 · Comparing Things,S40,3,S40,S41,S41,S42,S45,S45
 59,"a big, brown, fast dog",un grand chien marron et rapide,structure,B2 · Comparing Things,S40,4,S40,S41,S41,S43,S45,S45
 60,The eagle is the fastest of all,l'aigle est le plus rapide de tous,structure,B2 · Comparing Things,S40,1,S40,S40,S41,S42,S45,S45
+61,street,rue,lexique,B3 · Around Town,S41,1,S41,S41,S42,S43,S46,S46
+62,shop,magasin,lexique,B3 · Around Town,S41,2,S41,S41,S42,S43,S46,S46
+63,bank,banque,lexique,B3 · Around Town,S41,3,S41,S42,S42,S43,S46,S46
+64,hospital,hôpital,lexique,B3 · Around Town,S41,4,S41,S42,S42,S44,S46,S46
+65,there is,il y a (singulier),grammaire,B3 · Around Town,S41,1,S41,S41,S42,S43,S46,S46
+66,there isn't,il n'y a pas (singulier),grammaire,B3 · Around Town,S41,2,S41,S41,S42,S43,S46,S46
+67,There is a bank on Main Street,il y a une banque rue principale,structure,B3 · Around Town,S41,3,S41,S42,S42,S43,S46,S46
+68,there are,il y a (pluriel),grammaire,B3 · Around Town,S42,1,S42,S42,S43,S44,S47,S47
+69,there aren't,il n'y a pas (pluriel),grammaire,B3 · Around Town,S42,2,S42,S42,S43,S44,S47,S47
+70,shops,magasins,lexique,B3 · Around Town,S42,3,S42,S43,S43,S44,S47,S47
+71,There are three shops near my house,il y a trois magasins près de chez moi,structure,B3 · Around Town,S42,4,S42,S43,S43,S45,S47,S47
+72,next to,à côté de,fonction,B3 · Around Town,S43,1,S43,S43,S44,S45,S48,S48
+73,between,entre,fonction,B3 · Around Town,S43,2,S43,S43,S44,S45,S48,S48
+74,opposite,en face de,fonction,B3 · Around Town,S43,3,S43,S44,S44,S45,S48,S48
+75,in front of,devant,fonction,B3 · Around Town,S43,4,S43,S44,S44,S46,S48,S48
+76,behind,derrière,fonction,B3 · Around Town,S43,1,S43,S43,S44,S45,S48,S48
+77,The bank is next to the school,la banque est à côté de l'école,structure,B3 · Around Town,S43,2,S43,S43,S44,S45,S48,S48
+78,go straight,va tout droit,lexique,B3 · Around Town,S44,1,S44,S44,S45,S46,S49,S49
+79,turn left,tourne à gauche,lexique,B3 · Around Town,S44,2,S44,S44,S45,S46,S49,S49
+80,turn right,tourne à droite,lexique,B3 · Around Town,S44,3,S44,S45,S45,S46,S49,S49
+81,cross the street,traverse la rue,lexique,B3 · Around Town,S44,4,S44,S45,S45,S47,S49,S49
+82,map,carte / plan,lexique,B3 · Around Town,S44,1,S44,S44,S45,S46,S49,S49
+83,Turn left at the bank,tourne à gauche à la banque,structure,B3 · Around Town,S44,2,S44,S44,S45,S46,S49,S49

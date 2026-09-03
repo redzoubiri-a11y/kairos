@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Génère la banque de mots Builder — MONDES B1 et B2 (S33-S40).
+"""Génère la banque de mots Builder — MONDES B1, B2 et B3 (S33-S44).
 
 Suite de generate-foundations-word-bank.py : même modèle SRS (intervalles
 J+1, J+3, J+7, J+16, J+35), même calendrier école dimanche->jeudi (5
@@ -7,9 +7,9 @@ sessions/semaine réelles, jeudi = jour Boss donc pas de nouvel item).
 Numérotation de semaine continue depuis Foundations (S33, S34...) — voir
 docs/curriculum-builder-semaine-par-semaine.md.
 
-Seuls les mondes B1 et B2 sont peuplés ici (cf. "Feuille de route" du
-curriculum) ; les mondes B3-B8 ne sont pas encore écrits, ce script ne
-génère donc pas de contenu pour S41+ tant qu'ils ne sont pas détaillés.
+Seuls les mondes B1, B2 et B3 sont peuplés ici (cf. "Feuille de route" du
+curriculum) ; les mondes B4-B8 ne sont pas encore écrits, ce script ne
+génère donc pas de contenu pour S45+ tant qu'ils ne sont pas détaillés.
 
 Sorties :
   data/builder-banque-mots.csv
@@ -61,19 +61,33 @@ W = {
 40: [("desert","désert","lexique"),("eagle","aigle","lexique"),("camel","chameau (révision)","lexique"),
      ("a big, brown, fast dog","un grand chien marron et rapide","structure"),
      ("The eagle is the fastest of all","l'aigle est le plus rapide de tous","structure")],
+41: [("street","rue","lexique"),("shop","magasin","lexique"),("bank","banque","lexique"),
+     ("hospital","hôpital","lexique"),
+     ("there is","il y a (singulier)","grammaire"),("there isn't","il n'y a pas (singulier)","grammaire"),
+     ("There is a bank on Main Street","il y a une banque rue principale","structure")],
+42: [("there are","il y a (pluriel)","grammaire"),("there aren't","il n'y a pas (pluriel)","grammaire"),
+     ("shops","magasins","lexique"),
+     ("There are three shops near my house","il y a trois magasins près de chez moi","structure")],
+43: [("next to","à côté de","fonction"),("between","entre","fonction"),("opposite","en face de","fonction"),
+     ("in front of","devant","fonction"),("behind","derrière","fonction"),
+     ("The bank is next to the school","la banque est à côté de l'école","structure")],
+44: [("go straight","va tout droit","lexique"),("turn left","tourne à gauche","lexique"),
+     ("turn right","tourne à droite","lexique"),("cross the street","traverse la rue","lexique"),
+     ("map","carte / plan","lexique"),
+     ("Turn left at the bank","tourne à gauche à la banque","structure")],
 }
 
-MONDES = {1: "B1 · Yesterday & Today", 2: "B2 · Comparing Things"}
+MONDES = {1: "B1 · Yesterday & Today", 2: "B2 · Comparing Things", 3: "B3 · Around Town"}
 def monde_of(week): return MONDES[(week - 33) // 4 + 1]
 
-# ------------------------------------------------- calendrier (S33 -> S40,
+# ------------------------------------------------- calendrier (S33 -> S44,
 # pas de vacances à l'intérieur de ces mondes ; labels génériques au-delà de
-# S40 réservés aux échéances de révision qui débordent sur B3, non encore
+# S44 réservés aux échéances de révision qui débordent sur B4, non encore
 # écrit — purement des repères de planning, pas du contenu).
-labels = [f"S{i}" for i in range(33, 41)] + [f"S{i}" for i in range(41, 49)]
+labels = [f"S{i}" for i in range(33, 45)] + [f"S{i}" for i in range(45, 53)]
 def label_at(abs_day):
     idx = abs_day // 7
-    return labels[idx] if idx < len(labels) else "B3+"
+    return labels[idx] if idx < len(labels) else "B4+"
 def next_school_day(abs_day):
     while abs_day % 7 > 4:  # jours 5,6 = vendredi, samedi
         abs_day += 1

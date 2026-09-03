@@ -32,15 +32,21 @@ body{
 }
 .wrap{max-width:64rem; margin:0 auto; padding:1.75rem 1.25rem 4rem}
 
-.topline{display:flex; align-items:center; gap:.75rem; margin-bottom:1.5rem}
+.topline{display:flex; align-items:center; gap:.75rem; margin-bottom:1.25rem}
 .topline .mark{width:2.5rem; height:2.5rem; border-radius:50%; background:var(--accent-soft); display:flex; align-items:center; justify-content:center; font-size:1.3rem; flex:none}
 .topline h1{font-size:1.15rem; font-weight:800; margin:0}
-.topline .kids{margin-inline-start:auto; display:flex; gap:.4rem}
-.kidtab{
-  font-family:'Baloo 2'; font-weight:700; font-size:.85rem; border:2px solid var(--border);
-  background:var(--surface); color:var(--ink-soft); border-radius:999px; padding:.35rem .9rem; cursor:pointer;
+
+/* ---- carte élève : une par enfant du foyer, sert aussi de sélecteur ---- */
+.childrow{display:flex; gap:.7rem; margin-bottom:1.25rem; flex-wrap:wrap}
+.childcard{
+  display:flex; align-items:center; gap:.6rem; background:var(--surface); border:2px solid var(--border);
+  border-radius:14px; padding:.6rem .9rem; cursor:pointer; font-family:'Baloo 2'; text-align:start; flex:1; min-width:13rem;
 }
-.kidtab.active{border-color:var(--ink); color:var(--ink); background:var(--accent-soft)}
+.childcard.active{border-color:var(--ink); background:var(--accent-soft)}
+.childcard .av{width:2.3rem; height:2.3rem; border-radius:50%; background:var(--bg-base); display:flex; align-items:center; justify-content:center; font-size:1.15rem; flex:none}
+.childcard .nm{font-weight:700; font-size:.88rem; margin:0}
+.childcard .ps{font-family:var(--mono); font-size:.68rem; color:var(--ink-soft); margin:.1rem 0 0}
+.childcard .streak{margin-inline-start:auto; font-family:var(--mono); font-size:.8rem; flex:none}
 
 .identity{
   background:var(--ink); color:#fff; border-radius:20px; padding:1.4rem 1.6rem;
@@ -130,10 +136,19 @@ svg.chart{display:block; min-width:480px}
   <div class="topline">
     <span class="mark">🦊</span>
     <h1>لوحة الوالدين — Fennec</h1>
-    <div class="kids">
-      <button class="kidtab active">ياسين</button>
-      <button class="kidtab">ليلى</button>
-    </div>
+  </div>
+
+  <div class="childrow">
+    <button class="childcard active">
+      <span class="av">🦊</span>
+      <div><p class="nm">ياسين</p><p class="ps">S17 · اليوم 2</p></div>
+      <span class="streak">🔥 4</span>
+    </button>
+    <button class="childcard">
+      <span class="av">🐱</span>
+      <div><p class="nm">ليلى</p><p class="ps">S9 · اليوم 1</p></div>
+      <span class="streak">🔥 2</span>
+    </button>
   </div>
 
   <div class="identity">
@@ -224,6 +239,16 @@ const WEEKS = [
   { week: 'S16', minutes: 76, sessions: 5 },
   { week: 'S17', minutes: 28, sessions: 2 },
 ];
+
+// Sélecteur d'enfant (démo statique : bascule l'état visuel actif, ne
+// recharge pas les données des cartes en dessous — comme le reste de la
+// maquette, ce n'est pas branché à un état réel).
+document.querySelectorAll('.childcard').forEach((card) => {
+  card.addEventListener('click', () => {
+    document.querySelectorAll('.childcard').forEach((c) => c.classList.remove('active'));
+    card.classList.add('active');
+  });
+});
 
 const svg = document.querySelector('svg.chart');
 const x0 = 24, x1 = 450, topY = 20, base = 120;

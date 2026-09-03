@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Génère la banque de mots Builder — MONDES B1, B2 et B3 (S33-S44).
+"""Génère la banque de mots Builder — MONDES B1 à B4 (S33-S48).
 
 Suite de generate-foundations-word-bank.py : même modèle SRS (intervalles
 J+1, J+3, J+7, J+16, J+35), même calendrier école dimanche->jeudi (5
@@ -7,9 +7,9 @@ sessions/semaine réelles, jeudi = jour Boss donc pas de nouvel item).
 Numérotation de semaine continue depuis Foundations (S33, S34...) — voir
 docs/curriculum-builder-semaine-par-semaine.md.
 
-Seuls les mondes B1, B2 et B3 sont peuplés ici (cf. "Feuille de route" du
-curriculum) ; les mondes B4-B8 ne sont pas encore écrits, ce script ne
-génère donc pas de contenu pour S45+ tant qu'ils ne sont pas détaillés.
+Seuls les mondes B1 à B4 sont peuplés ici (cf. "Feuille de route" du
+curriculum) ; les mondes B5-B8 ne sont pas encore écrits, ce script ne
+génère donc pas de contenu pour S49+ tant qu'ils ne sont pas détaillés.
 
 Sorties :
   data/builder-banque-mots.csv
@@ -75,19 +75,32 @@ W = {
      ("turn right","tourne à droite","lexique"),("cross the street","traverse la rue","lexique"),
      ("map","carte / plan","lexique"),
      ("Turn left at the bank","tourne à gauche à la banque","structure")],
+45: [("weekend","week-end","lexique"),("holiday","vacances","lexique"),("plan","projet","lexique"),
+     ("going to","va (futur proche)","grammaire"),
+     ("I'm going to visit my grandma","je vais rendre visite à ma grand-mère","structure")],
+46: [("tomorrow","demain","lexique"),("next week","la semaine prochaine","lexique"),
+     ("Are you going to…?","est-ce que tu vas… ?","structure"),
+     ("I'm not going to…","je ne vais pas…","structure"),
+     ("What are you going to do tomorrow?","qu'est-ce que tu vas faire demain ?","structure")],
+47: [("this evening","ce soir","lexique"),("next year","l'année prochaine","lexique"),
+     ("travel","voyager","lexique"),("summer","été","lexique"),
+     ("We are going to travel in the summer","nous allons voyager en été","structure")],
+48: [("next month","le mois prochain","lexique"),
+     ("My plan for next year is…","mon projet pour l'année prochaine est…","structure")],
 }
 
-MONDES = {1: "B1 · Yesterday & Today", 2: "B2 · Comparing Things", 3: "B3 · Around Town"}
+MONDES = {1: "B1 · Yesterday & Today", 2: "B2 · Comparing Things", 3: "B3 · Around Town",
+          4: "B4 · Plans & Future"}
 def monde_of(week): return MONDES[(week - 33) // 4 + 1]
 
-# ------------------------------------------------- calendrier (S33 -> S44,
+# ------------------------------------------------- calendrier (S33 -> S48,
 # pas de vacances à l'intérieur de ces mondes ; labels génériques au-delà de
-# S44 réservés aux échéances de révision qui débordent sur B4, non encore
+# S48 réservés aux échéances de révision qui débordent sur B5, non encore
 # écrit — purement des repères de planning, pas du contenu).
-labels = [f"S{i}" for i in range(33, 45)] + [f"S{i}" for i in range(45, 53)]
+labels = [f"S{i}" for i in range(33, 49)] + [f"S{i}" for i in range(49, 57)]
 def label_at(abs_day):
     idx = abs_day // 7
-    return labels[idx] if idx < len(labels) else "B4+"
+    return labels[idx] if idx < len(labels) else "B5+"
 def next_school_day(abs_day):
     while abs_day % 7 > 4:  # jours 5,6 = vendredi, samedi
         abs_day += 1

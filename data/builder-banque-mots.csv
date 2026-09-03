@@ -82,3 +82,20 @@ id,anglais,francais,categorie,monde,semaine_intro,jour_intro,r1,r2,r3,r4,r5,mait
 81,cross the street,traverse la rue,lexique,B3 · Around Town,S44,4,S44,S45,S45,S47,S49,S49
 82,map,carte / plan,lexique,B3 · Around Town,S44,1,S44,S44,S45,S46,S49,S49
 83,Turn left at the bank,tourne à gauche à la banque,structure,B3 · Around Town,S44,2,S44,S44,S45,S46,S49,S49
+84,weekend,week-end,lexique,B4 · Plans & Future,S45,1,S45,S45,S46,S47,S50,S50
+85,holiday,vacances,lexique,B4 · Plans & Future,S45,2,S45,S45,S46,S47,S50,S50
+86,plan,projet,lexique,B4 · Plans & Future,S45,3,S45,S46,S46,S47,S50,S50
+87,going to,va (futur proche),grammaire,B4 · Plans & Future,S45,4,S45,S46,S46,S48,S50,S50
+88,I'm going to visit my grandma,je vais rendre visite à ma grand-mère,structure,B4 · Plans & Future,S45,1,S45,S45,S46,S47,S50,S50
+89,tomorrow,demain,lexique,B4 · Plans & Future,S46,1,S46,S46,S47,S48,S51,S51
+90,next week,la semaine prochaine,lexique,B4 · Plans & Future,S46,2,S46,S46,S47,S48,S51,S51
+91,Are you going to…?,est-ce que tu vas… ?,structure,B4 · Plans & Future,S46,3,S46,S47,S47,S48,S51,S51
+92,I'm not going to…,je ne vais pas…,structure,B4 · Plans & Future,S46,4,S46,S47,S47,S49,S51,S51
+93,What are you going to do tomorrow?,qu'est-ce que tu vas faire demain ?,structure,B4 · Plans & Future,S46,1,S46,S46,S47,S48,S51,S51
+94,this evening,ce soir,lexique,B4 · Plans & Future,S47,1,S47,S47,S48,S49,S52,S52
+95,next year,l'année prochaine,lexique,B4 · Plans & Future,S47,2,S47,S47,S48,S49,S52,S52
+96,travel,voyager,lexique,B4 · Plans & Future,S47,3,S47,S48,S48,S49,S52,S52
+97,summer,été,lexique,B4 · Plans & Future,S47,4,S47,S48,S48,S50,S52,S52
+98,We are going to travel in the summer,nous allons voyager en été,structure,B4 · Plans & Future,S47,1,S47,S47,S48,S49,S52,S52
+99,next month,le mois prochain,lexique,B4 · Plans & Future,S48,1,S48,S48,S49,S50,S53,S53
+100,My plan for next year is…,mon projet pour l'année prochaine est…,structure,B4 · Plans & Future,S48,2,S48,S48,S49,S50,S53,S53

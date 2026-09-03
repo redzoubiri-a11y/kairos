@@ -2,7 +2,7 @@
 
 > Suite de Foundations (`docs/curriculum-foundations-semaine-par-semaine.md`), pour l'enfant qui a terminé les 32 semaines et maîtrise ~320–350 mots actifs, l'alphabet latin et les sons de base. Public visé : 5AP–6AP (10–12 ans), niveau A1 solide → A2. Numérotation continue (S33, S34…) pour que le moteur SRS et le curriculum restent une seule ligne du temps sans redémarrage de compteur.
 >
-> **État de ce document : démarré, pas terminé.** Seuls les MONDES B1 (S33–S36), B2 (S37–S40) et B3 (S41–S44) sont détaillés au niveau de Foundations. Les mondes suivants ne sont qu'une esquisse de titres/thèmes (section "Feuille de route", en bas) — à détailler monde par monde, pas tous d'un coup.
+> **État de ce document : démarré, pas terminé.** Seuls les MONDES B1 (S33–S36), B2 (S37–S40), B3 (S41–S44) et B4 (S45–S48) sont détaillés au niveau de Foundations. Les mondes suivants ne sont qu'une esquisse de titres/thèmes (section "Feuille de route", en bas) — à détailler monde par monde, pas tous d'un coup.
 
 ---
 
@@ -71,11 +71,25 @@ Mêmes catégories que Foundations (`lexique`, `structure`, `fonction`) plus une
 
 ---
 
+## MONDE B4 — « Plans & Future » (S45–S48) · Parler de demain
+
+*Fennec prépare son été — première fois que l'enfant parle de ce qui n'est pas encore arrivé.*
+
+| Sem. | Oral (mots & structures) | Lecture & orthographe | Boss / événement |
+|---|---|---|---|
+| **S45** | weekend, holiday, plan + **going to** (affirmatif) + **I'm going to visit my grandma** | Orthographe du *-ing* : *e* muet disparaît (*make→making*), consonne doublée (*swim→swimming*) | Fennec annonce son projet du week-end, l'enfant valide vrai/faux |
+| **S46** | tomorrow, next week + **going to** (question et négation) : **Are you going to…?**, **I'm not going to…** + **What are you going to do tomorrow?** | Lecture d'un dialogue question/réponse au futur proche | Mini-boss : jeu de rôle, interviewer un camarade sur ses projets |
+| **S47** | this evening, next year, travel, summer + **We are going to travel in the summer** | Paragraphe connecté sur un projet de vacances ; questions de compréhension | Jeu d'association : relier chaque personnage de la classe Fennec à son projet |
+| **S48** | next month + Révision totale B1→B4 | Relecture des 4 mondes : reconnaître passé, comparatifs, *there is/are*, futur proche dans un même texte court | **BILAN DE MI-PARCOURS BUILDER** : même test qu'en S33 → delta montré aux parents. **BOSS : « Les projets de Fennec »** — l'enfant raconte 2-3 projets futurs avec *going to*, enregistré. 17 mots/structures actifs de plus (voir `data/builder-banque-mots.json`) |
+
+**Sortie du monde B4** : l'enfant forme le futur proche (*going to*) à l'affirmatif, au négatif et à l'interrogatif, et peut reconnaître/mélanger passé (B1), comparatifs (B2), *there is/are* (B3) et futur proche (B4) dans un texte court — c'est la première vraie consolidation transversale de Builder, sur le même principe que le bilan de mi-année de Foundations (S16).
+
+---
+
 ## Feuille de route (mondes suivants — titres et thème seulement, pas encore détaillés)
 
 | Monde | Semaines | Thème pressenti | Saut grammatical/lexical visé |
 |---|---|---|---|
-| B4 | S45–S48 | *Plans & Future* | *going to*, expression de projets/intentions — bilan de mi-année (même logique que S16 en Foundations) |
 | B5 | S49–S52 | *Story Time* | Lecture de récits plus longs (6–8 phrases), connecteurs (*then, after, because*) |
 | B6 | S53–S56 | *Feelings & Opinions* | Expression d'opinion (*I think…, in my opinion*), adjectifs nuancés |
 | B7 | S57–S60 | *My Country, My World* | Vocabulaire civique/géographique simple, comparaison Algérie/monde |

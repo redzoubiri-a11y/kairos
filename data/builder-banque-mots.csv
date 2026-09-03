@@ -1,0 +1,35 @@
+id,anglais,francais,categorie,monde,semaine_intro,jour_intro,r1,r2,r3,r4,r5,maitrise
+1,yesterday,hier,lexique,B1 · Yesterday & Today,S33,1,S33,S33,S34,S35,S38,S38
+2,today,aujourd'hui,lexique,B1 · Yesterday & Today,S33,2,S33,S33,S34,S35,S38,S38
+3,was,était (I/he/she/it),grammaire,B1 · Yesterday & Today,S33,3,S33,S34,S34,S35,S38,S38
+4,were,étiez/étaient (you/we/they),grammaire,B1 · Yesterday & Today,S33,4,S33,S34,S34,S36,S38,S38
+5,I was happy yesterday,j'étais content hier,structure,B1 · Yesterday & Today,S33,1,S33,S33,S34,S35,S38,S38
+6,It was sunny,il faisait beau (soleil),structure,B1 · Yesterday & Today,S33,2,S33,S33,S34,S35,S38,S38
+7,play,jouer,lexique,B1 · Yesterday & Today,S34,1,S34,S34,S35,S36,S39,S39
+8,walk,marcher,lexique,B1 · Yesterday & Today,S34,2,S34,S34,S35,S36,S39,S39
+9,watch,regarder,lexique,B1 · Yesterday & Today,S34,3,S34,S35,S35,S36,S39,S39
+10,jump,sauter,lexique,B1 · Yesterday & Today,S34,4,S34,S35,S35,S37,S39,S39
+11,listen,écouter,lexique,B1 · Yesterday & Today,S34,1,S34,S34,S35,S36,S39,S39
+12,played,a joué,grammaire,B1 · Yesterday & Today,S34,2,S34,S34,S35,S36,S39,S39
+13,watched,a regardé,grammaire,B1 · Yesterday & Today,S34,3,S34,S35,S35,S36,S39,S39
+14,I played football,j'ai joué au football,structure,B1 · Yesterday & Today,S34,4,S34,S35,S35,S37,S39,S39
+15,I watched TV,j'ai regardé la télé,structure,B1 · Yesterday & Today,S34,1,S34,S34,S35,S36,S39,S39
+16,go,aller,lexique,B1 · Yesterday & Today,S35,1,S35,S35,S36,S37,S40,S40
+17,went,est allé,grammaire,B1 · Yesterday & Today,S35,2,S35,S35,S36,S37,S40,S40
+18,eat,manger,lexique,B1 · Yesterday & Today,S35,3,S35,S36,S36,S37,S40,S40
+19,ate,a mangé,grammaire,B1 · Yesterday & Today,S35,4,S35,S36,S36,S38,S40,S40
+20,see,voir,lexique,B1 · Yesterday & Today,S35,1,S35,S35,S36,S37,S40,S40
+21,saw,a vu,grammaire,B1 · Yesterday & Today,S35,2,S35,S35,S36,S37,S40,S40
+22,have,avoir,lexique,B1 · Yesterday & Today,S35,3,S35,S36,S36,S37,S40,S40
+23,had,avait / a eu,grammaire,B1 · Yesterday & Today,S35,4,S35,S36,S36,S38,S40,S40
+24,do,faire,lexique,B1 · Yesterday & Today,S35,1,S35,S35,S36,S37,S40,S40
+25,did,a fait,grammaire,B1 · Yesterday & Today,S35,2,S35,S35,S36,S37,S40,S40
+26,I went to the market,je suis allé au marché,structure,B1 · Yesterday & Today,S35,3,S35,S36,S36,S37,S40,S40
+27,I ate couscous,j'ai mangé du couscous,structure,B1 · Yesterday & Today,S35,4,S35,S36,S36,S38,S40,S40
+28,What did you do yesterday?,qu'as-tu fait hier ?,structure,B1 · Yesterday & Today,S35,1,S35,S35,S36,S37,S40,S40
+29,last week,la semaine dernière,lexique,B1 · Yesterday & Today,S36,1,S36,S36,S37,S38,S41,S41
+30,then,ensuite,fonction,B1 · Yesterday & Today,S36,2,S36,S36,S37,S38,S41,S41
+31,said,a dit,grammaire,B1 · Yesterday & Today,S36,3,S36,S37,S37,S38,S41,S41
+32,bought,a acheté,grammaire,B1 · Yesterday & Today,S36,4,S36,S37,S37,S39,S41,S41
+33,"Yesterday, Fennec went to the market","hier, Fennec est allé au marché",structure,B1 · Yesterday & Today,S36,1,S36,S36,S37,S38,S41,S41
+34,He was very happy,il était très content,structure,B1 · Yesterday & Today,S36,2,S36,S36,S37,S38,S41,S41

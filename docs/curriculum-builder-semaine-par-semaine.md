@@ -1,0 +1,56 @@
+# Curriculum Builder — semaine par semaine (à partir de S33)
+
+> Suite de Foundations (`docs/curriculum-foundations-semaine-par-semaine.md`), pour l'enfant qui a terminé les 32 semaines et maîtrise ~320–350 mots actifs, l'alphabet latin et les sons de base. Public visé : 5AP–6AP (10–12 ans), niveau A1 solide → A2. Numérotation continue (S33, S34…) pour que le moteur SRS et le curriculum restent une seule ligne du temps sans redémarrage de compteur.
+>
+> **État de ce document : démarré, pas terminé.** Seul le MONDE 1 (S33–S36) est détaillé au niveau de Foundations. Les mondes suivants ne sont qu'une esquisse de titres/thèmes (section "Feuille de route", en bas) — à détailler monde par monde, pas tous d'un coup.
+
+---
+
+## Ce qui change par rapport à Foundations
+
+Foundations construit le socle (sons, ~330 mots, présent simple, phrases courtes). Builder ne recommence pas à zéro : il **suppose la décodabilité acquise** et lève le niveau sur trois fronts à la fois, pas un seul :
+
+1. **Grammaire au-delà du présent.** Le saut principal de Builder est le **passé** (`was/were`, passé régulier en *-ed*, verbes irréguliers fréquents), puis les comparatifs (*bigger, more beautiful*), puis *there is/are*. C'est la différence qualitative avec Foundations, qui reste tout entier au présent simple.
+2. **Lecture connectée, pas juste des mots.** Foundations lit des mots et des phrases isolées ; Builder lit et écoute de **courts paragraphes** (3–5 phrases liées), avec une vraie compréhension globale testée (pas juste décoder).
+3. **Production plus longue.** Le Boss de Foundations fait dire une phrase ou un dialogue court ; le Boss de Builder fait **raconter un petit passage** (ce que Fennec a fait hier, une description à plusieurs traits) — c'est un saut de production orale/écrite, pas seulement de vocabulaire.
+
+Ce qui ne change pas : le rythme (4 jours + Boss le jeudi), le SRS en continu, la règle "on ne lit jamais un mot dont on n'a pas encore le son ou le motif orthographique", zéro punition sur un Boss raté (variante rejouée), l'ancrage algérien de chaque monde.
+
+### La colonne "Phonics" devient "Lecture & orthographe"
+
+Les sons de base sont acquis en sortie de Foundations ; Builder n'enseigne plus de sons isolés mais des **motifs orthographiques** qui bloquent souvent la lecture fluide à ce niveau : le *e* muet (*make, like, time*), les groupes de prononciation du *-ed* (`/t/ /d/ /ɪd/`), les orthographes irrégulières fréquentes (*said, was, went*), les groupes *r*-contrôlés déjà vus en fin de Foundations (*ar, or, er*) réinvestis dans du texte plus long.
+
+### Catégories de la banque de mots
+
+Mêmes catégories que Foundations (`lexique`, `structure`, `fonction`) plus une nouvelle catégorie **`grammaire`** pour les items qui sont un point de grammaire entraîné comme un pattern SRS à part entière (ex. "played" comme représentant du passé régulier), distincte de `structure` qui reste réservée aux phrases-modèles complètes.
+
+---
+
+## MONDE B1 — « Yesterday & Today » (S33–S36) · Le grand saut : le passé
+
+*Fennec raconte ce qu'il a fait hier — première fois que l'enfant parle d'un moment qui n'est pas maintenant.*
+
+| Sem. | Oral (mots & structures) | Lecture & orthographe | Boss / événement |
+|---|---|---|---|
+| **S33** | yesterday, today, was, were, happy/sad/tired (révisés) + **I was happy yesterday**, **It was sunny** | *e* muet : *make, like, time, home, name* (mots déjà connus au présent, relus avec le motif) | Fennec raconte sa journée d'hier en 3 phrases avec *was* — l'enfant valide vrai/faux |
+| **S34** | play, walk, watch, jump, listen + **-ed** régulier : **I played football**, **I watched TV** | Groupes de prononciation du *-ed* : */t/* (*watched*), */d/* (*played*), */ɪd/* (*wanted*) — jeu d'écoute et de tri | Mini-boss : trier 8 actions d'hier par son de *-ed* |
+| **S35** | go→went, eat→ate, see→saw, have→had, do→did + **I went to the market**, **I ate couscous** | Orthographes irrégulières fréquentes : *was, went, said, saw* — flashcards dédiées (elles ne suivent aucune règle, donc mémorisation directe) | Fennec interviewé : "What did you do yesterday?" — l'enfant choisit/dit 3 réponses avec des verbes irréguliers |
+| **S36** | Révision : mélange passé régulier + irrégulier, **last week** | Premier paragraphe connecté (4–5 phrases) : *"Yesterday, Fennec went to the market. He bought bread and dates. Then he played with his friends. He was very happy."* — lu et écouté, questions de compréhension | **BOSS : « Le journal de Fennec »** — l'enfant raconte (à voix haute, enregistré) 3–4 phrases sur ce qu'il a fait hier ou la semaine dernière, mélangeant passé régulier et irrégulier. 34 mots/structures actifs de plus (voir `data/builder-banque-mots.json`, généré par `scripts/generate-builder-word-bank.py`) |
+
+**Sortie du monde B1** : l'enfant distingue et utilise correctement *was/were*, au moins 6 verbes irréguliers fréquents, le passé régulier en *-ed* (à l'oral, sans exiger la prononciation fine des 3 groupes), et peut suivre un paragraphe de 4–5 phrases liées par leur sens (pas juste mot à mot).
+
+---
+
+## Feuille de route (mondes suivants — titres et thème seulement, pas encore détaillés)
+
+| Monde | Semaines | Thème pressenti | Saut grammatical/lexical visé |
+|---|---|---|---|
+| B2 | S37–S40 | *Comparing Things* | Comparatifs/superlatifs (*bigger, the biggest*), description à plusieurs traits |
+| B3 | S41–S44 | *Around Town* | *there is/are*, prépositions de lieu approfondies, indications simples |
+| B4 | S45–S48 | *Plans & Future* | *going to*, expression de projets/intentions — bilan de mi-année (même logique que S16 en Foundations) |
+| B5 | S49–S52 | *Story Time* | Lecture de récits plus longs (6–8 phrases), connecteurs (*then, after, because*) |
+| B6 | S53–S56 | *Feelings & Opinions* | Expression d'opinion (*I think…, in my opinion*), adjectifs nuancés |
+| B7 | S57–S60 | *My Country, My World* | Vocabulaire civique/géographique simple, comparaison Algérie/monde |
+| B8 | S61–S64 | *Builder Show* | Grande révision + bilan final (delta depuis S33) — clôture Builder, passerelle vers un futur contenu intermédiaire/BEM |
+
+Chaque monde suivant sera écrit avec le même niveau de détail que B1 (table semaine par semaine + script de génération de banque de mots) au fur et à mesure, pas anticipé en bloc — pour rester fidèle au vrai déroulé pédagogique et pouvoir ajuster B2 en fonction de ce que B1 donne réellement en usage.

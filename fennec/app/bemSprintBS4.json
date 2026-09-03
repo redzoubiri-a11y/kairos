@@ -1,0 +1,82 @@
+{
+  "text": {
+    "id": "bs4-t1",
+    "title": "Selma's Summer Trip",
+    "body": [
+      "Selma's family goes to visit their grandparents in Constantine every summer.",
+      "Last year, they travelled by train for the first time.",
+      "The journey lasted about six hours, and Selma looked out of the window the whole time.",
+      "When they arrived, her grandmother was waiting for them at the station with a big smile.",
+      "Every evening, Selma's grandfather tells stories about his childhood.",
+      "Selma always listens carefully and asks a lot of questions.",
+      "Next summer, the family plans to travel by car instead of by train.",
+      "Selma is looking forward to seeing the countryside more closely because she loves nature.",
+      "She has already started counting the days until the trip."
+    ]
+  },
+  "items": [
+    {
+      "id": "bs4-1",
+      "kind": "mcq",
+      "skill": "tense",
+      "prompt": "أكمل الجملة بالزمن الصحيح",
+      "promptEn": "\"Last year, they _____ (travel) by train for the first time.\"",
+      "options": ["travel", "travelled", "travels", "will travel"],
+      "correctIndex": 1
+    },
+    {
+      "id": "bs4-2",
+      "kind": "mcq",
+      "skill": "tense",
+      "prompt": "أكمل الجملة بالزمن الصحيح",
+      "promptEn": "\"Every evening, Selma's grandfather _____ (tell) stories about his childhood.\"",
+      "options": ["tell", "told", "tells", "telling"],
+      "correctIndex": 2
+    },
+    {
+      "id": "bs4-3",
+      "kind": "mcq",
+      "skill": "tense",
+      "prompt": "أكمل الجملة بالزمن الصحيح",
+      "promptEn": "\"Next summer, the family _____ (plan) to travel by car.\"",
+      "options": ["plan", "planned", "plans", "will plans"],
+      "correctIndex": 2
+    },
+    {
+      "id": "bs4-4",
+      "kind": "mcq",
+      "skill": "preposition",
+      "prompt": "اختر حرف الجر الصحيح",
+      "promptEn": "\"Selma's family goes to visit their grandparents ___ Constantine every summer.\"",
+      "options": ["in", "on", "at", "to"],
+      "correctIndex": 0
+    },
+    {
+      "id": "bs4-5",
+      "kind": "mcq",
+      "skill": "article",
+      "prompt": "اختر أداة التعريف الصحيحة",
+      "promptEn": "\"Selma looked out of ___ window the whole time.\"",
+      "options": ["a", "an", "the", "(no article)"],
+      "correctIndex": 2
+    },
+    {
+      "id": "bs4-6",
+      "kind": "mcq",
+      "skill": "tag_question",
+      "prompt": "اختر سؤال الذيل (tag question) الصحيح",
+      "promptEn": "\"Selma always listens carefully, _____?\"",
+      "options": ["doesn't she", "does she", "isn't she", "is she"],
+      "correctIndex": 0
+    },
+    {
+      "id": "bs4-7",
+      "kind": "mcq",
+      "skill": "connector",
+      "prompt": "اختر أداة الربط المنطقية الصحيحة",
+      "promptEn": "\"Selma is looking forward to seeing the countryside more closely _____ she loves nature.\"",
+      "options": ["because", "so", "although", "but"],
+      "correctIndex": 0
+    }
+  ]
+}

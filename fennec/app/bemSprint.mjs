@@ -10,9 +10,10 @@
  * ouverte ; ce fichier ne la referme pas, il livre un premier exercice
  * réel et jouable pendant qu'elle se pose.
  *
- * BS1 (Reading Comprehension), BS2 (Lexis), BS3 (Mechanics & Morphology)
- * et BS4 (Syntax) seulement, sélectionnables via ?week=1/2/3/4 ou les
- * onglets en haut — BS5-BS8 ne sont pas encore intégrés, cf. fennec/README.md.
+ * BS1 (Reading Comprehension), BS2 (Lexis), BS3 (Mechanics & Morphology),
+ * BS4 (Syntax) et BS5 (Pronunciation) seulement, sélectionnables via
+ * ?week=1..5 ou les onglets en haut — BS6-BS8 ne sont pas encore
+ * intégrés, cf. fennec/README.md.
  */
 
 const WEEK_TITLES = {
@@ -20,6 +21,7 @@ const WEEK_TITLES = {
   2: 'BS2 · Lexis',
   3: 'BS3 · Mechanics & Morphology',
   4: 'BS4 · Syntax',
+  5: 'BS5 · Pronunciation',
 };
 
 const brandLabel = document.getElementById('brandLabel');

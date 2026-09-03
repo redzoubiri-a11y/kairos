@@ -1,0 +1,80 @@
+{
+  "text": {
+    "id": "bs5-t1",
+    "title": "Nadia's School Day",
+    "body": [
+      "Nadia usually wakes up early and walks to school with her two friends.",
+      "Yesterday, she watched the sunrise from her window before leaving home.",
+      "She packed her books and opened the door quietly.",
+      "At school, the teacher collected the notebooks and checked the exercises.",
+      "Nadia's classmates were very excited about the upcoming photography competition.",
+      "Many students wanted to take beautiful pictures of the old buildings in the city centre.",
+      "Nadia decided to join the competition with her best friend."
+    ]
+  },
+  "items": [
+    {
+      "id": "bs5-1",
+      "kind": "mcq",
+      "skill": "stress",
+      "prompt": "في أي كلمة يقع النبر (الضغط الصوتي) على المقطع الأول؟",
+      "promptEn": "In which word does the stress fall on the FIRST syllable?",
+      "options": ["photography", "competition", "exercise", "important"],
+      "correctIndex": 2
+    },
+    {
+      "id": "bs5-2",
+      "kind": "mcq",
+      "skill": "stress",
+      "prompt": "في أي كلمة يقع النبر على المقطع الثاني؟",
+      "promptEn": "In which word does the stress fall on the SECOND syllable?",
+      "options": ["photography", "picture", "morning", "teacher"],
+      "correctIndex": 0
+    },
+    {
+      "id": "bs5-3",
+      "kind": "mcq",
+      "skill": "stress",
+      "prompt": "في أي كلمة يقع النبر على المقطع الثالث؟",
+      "promptEn": "In which word does the stress fall on the THIRD syllable?",
+      "options": ["photography", "competition", "important", "teacher"],
+      "correctIndex": 1
+    },
+    {
+      "id": "bs5-4",
+      "kind": "mcq",
+      "skill": "ed_sound",
+      "prompt": "أي فعل ينتهي بنفس صوت 'watched' (/t/)؟",
+      "promptEn": "Which verb has the same final sound as 'watched' (/t/)?",
+      "options": ["packed", "played", "wanted", "opened"],
+      "correctIndex": 0
+    },
+    {
+      "id": "bs5-5",
+      "kind": "mcq",
+      "skill": "s_sound",
+      "prompt": "أي كلمة تنتهي بنفس صوت 'books' (/s/)؟",
+      "promptEn": "Which word has the same final sound as 'books' (/s/)?",
+      "options": ["wants", "friends", "boxes", "buildings"],
+      "correctIndex": 0
+    },
+    {
+      "id": "bs5-6",
+      "kind": "mcq",
+      "skill": "odd_one_out",
+      "prompt": "ما الكلمة الشاذة (الحرف الصامت مختلف)؟",
+      "promptEn": "Which word is the odd one out (different silent-letter pattern)?",
+      "options": ["know", "write", "listen", "school"],
+      "correctIndex": 3
+    },
+    {
+      "id": "bs5-7",
+      "kind": "mcq",
+      "skill": "odd_one_out",
+      "prompt": "ما الكلمة التي تختلف في صوت حرف العلة؟",
+      "promptEn": "Which word has a different vowel sound from the others?",
+      "options": ["food", "moon", "good", "room"],
+      "correctIndex": 2
+    }
+  ]
+}

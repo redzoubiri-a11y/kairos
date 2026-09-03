@@ -72,6 +72,36 @@ n'ont pas d'emoji fidèle et unique : ils retombent sur le texte anglais,
 jamais sur un emoji forcé ou trompeur. Reste un placeholder temporaire —
 à remplacer par de vraies illustrations quand elles existeront.
 
+**Correctif de densité visuelle, suite à un retour direct sur l'app réelle
+("le contenu est pauvre", écrans qui paraissent vides).** Plusieurs écrans
+courants (intro de session, découverte d'un mot nouveau) n'étaient jamais
+enveloppés dans `.win` — la classe qui centre et donne du poids visuel au
+contenu — et flottaient donc en haut de l'écran avec un grand vide en
+dessous. Corrigé dans `session.mjs`/`screens.mjs` (ajout du conteneur
+`.win`) et dans `styles.css` :
+- `.win` devient une vraie carte visible (fond, bordure, ombre portée),
+  pas du texte flottant sur le fond.
+- Fond de page légèrement texturé (pastilles très diluées, marine/rouge)
+  plutôt qu'un aplat uni.
+- Avatar-fox agrandi (120→140px) avec un halo doux.
+- Barre de développement resserrée sur une seule ligne compacte (elle
+  dominait visuellement l'écran alors que ce n'est qu'un outil de test,
+  jamais montré à un vrai enfant).
+
+Corrigé dans la foulée un bug de balisage préexistant que ce changement a
+rendu visible : plusieurs écrans (`bossSession.mjs`, l'écran de fin de
+programme dans `main.mjs`) plaçaient un emoji dans `<div class="win emoji-lg">`
+— la classe `win` en trop créait une carte imbriquée dans la carte
+parente (invisible tant que `.win` n'avait pas de bordure/ombre propres).
+Retiré partout, ne reste que `emoji-lg`. Vérifié en navigateur réel sur
+les 5 écrans concernés (sélecteur de profil, intro de session, découverte
+d'un mot, intro Boss, écran de fin de programme).
+
+Volontairement pas traité dans cette passe (périmètre validé avec
+l'utilisateur avant de commencer) : remplacer les emoji par de vraies
+illustrations générées — un chantier à part, plus lourd, à cadrer
+séparément.
+
 **Plusieurs enfants sur un même téléphone.** `fennec/app/main.mjs` gère
 plusieurs profils locaux (fratrie) — écran "qui joue aujourd'hui ?" au
 premier lancement, bouton "🔁 changer d'enfant" dans la barre de dev pour

@@ -80,10 +80,11 @@ async function runSession({ store, studentId, now, pointer, streakDays, onSessio
     setProgress(0, plan.length);
     setHelp('اضغط على الصورة المطابقة للكلمة التي تسمعها 🎧');
     const world = catalog.find((w) => w.introWeek === pointer.week)?.worldId;
-    stage.innerHTML = avatarTag() +
-      `<p class="say ar center">مستعد لـ 15 دقيقة إنجليزي؟</p>` +
-      `<p class="sub ar center">الحصة ${pointer.day} · S${pointer.week}${world ? ` · M${world}` : ''}</p>` +
-      `<button class="cta accent">ابدأ</button>`;
+    stage.innerHTML = `<div class="win">${avatarTag()}
+      <p class="say ar center">مستعد لـ 15 دقيقة إنجليزي؟</p>
+      <p class="sub ar center">الحصة ${pointer.day} · S${pointer.week}${world ? ` · M${world}` : ''}</p>
+      <button class="cta accent">ابدأ</button>
+    </div>`;
     stage.querySelector('.cta').addEventListener('click', () => next(), { once: true });
   }
 

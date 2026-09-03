@@ -98,11 +98,12 @@ function escapeHtml(s) {
 
 /** Écran "découverte" d'un mot nouveau — pas de réponse, juste `onContinue`. */
 function renderDiscover(screen, { onContinue }) {
-  stage.innerHTML = avatarTag() +
-    `<p class="say ar center">كلمة جديدة</p>` +
-    `<div class="card-word">${escapeHtml(screen.word.english)}</div>` +
-    `<button class="speaker" aria-label="Écouter">🔊</button>` +
-    `<button class="cta primary">متابعة</button>`;
+  stage.innerHTML = `<div class="win">${avatarTag()}
+    <p class="say ar center">كلمة جديدة</p>
+    <div class="card-word">${escapeHtml(screen.word.english)}</div>
+    <button class="speaker" aria-label="Écouter">🔊</button>
+    <button class="cta primary">متابعة</button>
+  </div>`;
   stage.querySelector('.speaker').onclick = () => speak(screen.word.english);
   stage.querySelector('.cta').addEventListener('click', () => onContinue(), { once: true });
   setTimeout(() => speak(screen.word.english), 300);

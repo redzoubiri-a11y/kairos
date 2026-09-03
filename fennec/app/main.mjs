@@ -317,7 +317,7 @@ function renderDevBar(profile, pointer, attempt) {
  */
 function renderCurriculumComplete(profile) {
   stage.innerHTML = `<div class="win">
-    <div class="win emoji-lg">🏁</div>
+    <div class="emoji-lg">🏁</div>
     ${avatarTag()}
     <p class="say ar center">أنهى ${escapeHtml(profile.name)} البرنامج كاملاً!</p>
     <p class="sub ar center">من Foundations إلى Builder — كل الأسابيع الـ64 تمت. الخطوة التالية : BEM Sprint، 8 أسابيع للتحضير لامتحان BEM.</p>

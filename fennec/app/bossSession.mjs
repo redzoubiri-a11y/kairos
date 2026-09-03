@@ -66,7 +66,7 @@ async function runBossSession({ store, studentId, now, pointer, attempt, onBossE
     setBossProgress(0, plan.length);
     setHelp('كل جولة صحيحة تملأ خانة في السلة — 80% كافية للفوز 🧺');
     stage.innerHTML = `<div class="win">
-      <div class="win emoji-lg">⭐</div>
+      <div class="emoji-lg">⭐</div>
       ${avatarTag()}
       <p class="say ar center">تحدي الزعيم${attempt > 1 ? ` — محاولة ${attempt}` : ''}</p>
       <p class="sub ar center">${plan.length} تحديات · املأ السلة · 80% للفوز</p>
@@ -107,7 +107,7 @@ async function runBossSession({ store, studentId, now, pointer, attempt, onBossE
     if (verdict.passed) {
       const recordingPrompt = recordingPromptFor(pointer.week);
       stage.innerHTML = `<div class="win">
-        <div class="win emoji-lg">🏆</div>
+        <div class="emoji-lg">🏆</div>
         <p class="say ar center">فاز الزعيم! السوق مفتوح</p>
         <div class="parentcard">
           <span class="tag ar">رسالة لولي الأمر</span>
@@ -126,7 +126,7 @@ async function runBossSession({ store, studentId, now, pointer, attempt, onBossE
       }, { once: true });
     } else {
       stage.innerHTML = `<div class="win">
-        <div class="win emoji-lg" style="opacity:.7">🏪</div>
+        <div class="emoji-lg" style="opacity:.7">🏪</div>
         <p class="say ar center">السوق مغلق اليوم</p>
         <p class="sub ar center">تدرب أكثر ثم عد لتحدي الزعيم غدًا</p>
         <button class="cta primary">تدرّب الآن</button>
@@ -153,7 +153,7 @@ async function runBossSession({ store, studentId, now, pointer, attempt, onBossE
  */
 async function showRecording(prompt, week, store, studentId, onDone) {
   stage.innerHTML = `<div class="win">
-    <div class="win emoji-lg">🎙</div>
+    <div class="emoji-lg">🎙</div>
     <p class="say ar center">لحظة تسجيل!</p>
     <p class="sub ar center">${prompt}</p>
     <div id="recControls"></div>

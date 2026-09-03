@@ -27,7 +27,17 @@
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
-  background:var(--bg-base); color:var(--ink); font-family:'Baloo 2',system-ui,sans-serif;
+  /* Fond légèrement texturé (pastilles marine/rouge très diluées) plutôt
+     qu'un aplat uni — remplit visuellement l'espace autour des cartes de
+     contenu sans détourner l'attention ni nécessiter de vraie illustration
+     (cf. fennec/README.md, retour direct sur le "contenu pauvre"). */
+  background-color:var(--bg-base);
+  background-image:
+    radial-gradient(circle at 15% 12%, rgba(10,49,97,.05) 0, transparent 40%),
+    radial-gradient(circle at 85% 78%, rgba(178,34,52,.05) 0, transparent 42%),
+    radial-gradient(rgba(10,49,97,.06) 1.5px, transparent 1.5px);
+  background-size:auto, auto, 26px 26px;
+  color:var(--ink); font-family:'Baloo 2',system-ui,sans-serif;
   margin:0; min-height:100dvh; display:flex; flex-direction:column; align-items:center;
 }
 
@@ -37,15 +47,20 @@ body{
 .ar{direction:rtl; text-align:right; unicode-bidi:isolate}
 .ar.center{text-align:center}
 
+/* Barre de développement (horloge virtuelle, réinitialisation) : outil de
+   test, jamais montré à un vrai enfant en production — volontairement
+   discrète (une seule ligne compacte) pour ne pas dominer l'écran comme un
+   vrai bandeau de navigation, qui n'existe pas dans l'app réelle. */
 .devbar{
   width:100%; background:var(--ink); color:var(--bg-base); font-family:var(--mono);
-  font-size:.72rem; padding:.4rem 1rem; display:flex; gap:1rem; align-items:center;
-  flex-wrap:wrap; justify-content:center;
+  font-size:.66rem; padding:.3rem .7rem; display:flex; gap:.5rem; align-items:center;
+  flex-wrap:wrap; justify-content:center; opacity:.88;
 }
 .devbar button{
-  font-family:var(--mono); font-size:.7rem; background:var(--accent); color:#fff;
-  border:none; border-radius:6px; padding:.25rem .6rem; cursor:pointer;
+  font-family:var(--mono); font-size:.62rem; background:rgba(255,255,255,.12); color:var(--bg-base);
+  border:1px solid rgba(255,255,255,.25); border-radius:5px; padding:.2rem .5rem; cursor:pointer;
 }
+.devbar button:hover{background:rgba(255,255,255,.2)}
 .devbar button:focus-visible{outline:2px solid var(--bg-base)}
 
 /* Retour vers le portail Madrassatidz (marque ombrelle) — discret,
@@ -96,10 +111,11 @@ body{
 #stage{flex:1; display:flex; flex-direction:column; padding:16px 24px 20px; overflow-y:auto; min-height:0}
 
 .avatar{
-  width:120px; height:120px; border-radius:50%; background:var(--accent-soft); margin:0 auto var(--sp-md);
-  display:flex; align-items:center; justify-content:center; font-size:56px; flex-shrink:0;
+  width:140px; height:140px; border-radius:50%; background:var(--accent-soft); margin:0 auto var(--sp-md);
+  display:flex; align-items:center; justify-content:center; font-size:66px; flex-shrink:0;
+  box-shadow:0 0 0 8px rgba(178,34,52,.06);
 }
-.avatar.sm{width:64px; height:64px; font-size:30px}
+.avatar.sm{width:64px; height:64px; font-size:30px; box-shadow:none}
 
 .say{font-size:22px; font-weight:700; color:var(--ink); text-align:center; margin:0 0 6px; text-wrap:balance; line-height:1.3}
 .say.en{color:var(--ink); font-weight:800}
@@ -206,8 +222,17 @@ body{
 .parentcard .tag{font-family:var(--mono); font-size:10px; color:var(--accent); margin-bottom:6px; display:block}
 .parentcard p{font-size:14px; color:var(--ink); line-height:1.6; margin:0}
 
-.win{margin:auto; text-align:center; width:100%}
-.win .emoji-lg{font-size:44px; margin-bottom:var(--sp-sm)}
+/* Écran "carte" (intro de session, découverte d'un mot, fin, Boss) : un
+   vrai contenant visible plutôt que du texte flottant sur le fond — sinon
+   l'espace libre autour d'une simple ligne de texte + bouton se lisait
+   comme un écran vide (retour direct sur le "contenu pauvre", voir
+   fennec/README.md). */
+.win{
+  margin:auto; text-align:center; width:100%; background:var(--surface);
+  border:1px solid var(--border); border-radius:28px; padding:32px 24px 28px;
+  box-shadow:0 10px 0 rgba(10,49,97,.06);
+}
+.win .emoji-lg{font-size:52px; margin-bottom:var(--sp-sm)}
 
 .credit{font-family:var(--mono); font-size:.65rem; color:var(--ink-soft); margin:.8rem 0 1.2rem; text-align:center; padding:0 1rem}
 

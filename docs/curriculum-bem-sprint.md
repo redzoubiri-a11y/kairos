@@ -71,11 +71,26 @@ Chaque semaine s'entraîne sur **plusieurs textes courts différents** (pas un s
 
 ---
 
+## BS3 — Mechanics & Morphology (détaillé)
+
+*Objectif : deux compétences très différentes réunies dans la même sous-partie de l'épreuve — écrire correctement (ponctuation, majuscules) et transformer un mot (dérivation) — parce que le BEM les note ensemble sous 2 points, pas parce qu'elles se ressemblent.*
+
+| Jour | Activité | Détail |
+|---|---|---|
+| **Jour 1** | Ponctuation et majuscules | Un court passage sans ponctuation ni majuscules à réécrire correctement (point, majuscule de début de phrase, virgules de base) — l'erreur la plus fréquente au BEM : oublier la majuscule après un point |
+| **Jour 2** | Préfixes | *un-, dis-, im-/in-, re-* appliqués à des mots déjà rencontrés dans les textes des semaines précédentes (négation : *happy→unhappy* ; répétition : *write→rewrite*) |
+| **Jour 3** | Suffixes | Formation de noms (*-tion, -ment, -ness*), d'adjectifs (*-ful, -less, -able*), de noms d'agent (*-er/-or* : *teach→teacher*) |
+| **Jour 4** | Tableau de dérivation | À partir d'un mot de base, produire les formes nom/verbe/adjectif manquantes (*"Complete the table"*, format d'activité classique au BEM) — combine préfixes et suffixes vus en jours 2-3 |
+| **Jour 5 (Boss)** | Mini-épreuve chronométrée (6 min) : 1 phrase à corriger (ponctuation/majuscules) + 2 dérivations de mots tirés d'un texte inédit | Correction avec le barème réel |
+
+**Sortie de BS3** : l'élève ponctue et capitalise correctement une phrase simple, et transforme un mot connu vers la forme grammaticale demandée (nom↔verbe↔adjectif) en utilisant les préfixes/suffixes les plus fréquents du programme.
+
+---
+
 ## Feuille de route (semaines suivantes — pas encore détaillées)
 
 | Semaine | Compétence | Angle d'entraînement pressenti |
 |---|---|---|
-| BS3 | Mechanics & Morphology | Ponctuation/majuscules, dérivation de mots (préfixes *un-, dis-*, suffixes *-less, -ful, -tion, -er*) |
 | BS4 | Syntax | Concordance des temps, prépositions, articles, tags questions, connecteurs logiques |
 | BS5 | Pronunciation | Accentuation syllabique, classement de sons (ex. groupes *-ed* /t//d//ɪd/, lettres muettes) |
 | BS6 | Written Expression | Rédaction guidée à partir de notes, cohésion (mots de liaison), respect de la longueur (~10 lignes) |

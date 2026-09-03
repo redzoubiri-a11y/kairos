@@ -142,7 +142,17 @@ async function boot() {
   [...weekNav.children].forEach((a) => {
     a.classList.toggle('active', Number(a.dataset.week) === week);
   });
-  data = await fetch(`bemSprintBS${week}.json`).then((r) => r.json());
+  try {
+    data = await fetch(`bemSprintBS${week}.json`).then((r) => r.json());
+  } catch (e) {
+    // Même leçon que main.mjs `maybeConfigureSync` (voir fennec/README.md) :
+    // un fetch non protégé qui plante fait planter toute la page, même si
+    // ce fichier est servi par le même domaine (donc en théorie déjà en
+    // cache service worker, cf. sw.js SHELL_FILES) — mieux vaut un message
+    // clair qu'un écran figé sans explication si le cache est absent/corrompu.
+    qwrap.innerHTML = `<p class="sub ar center">تعذّر تحميل محتوى ${WEEK_TITLES[week]} — تحقّق من الاتصال ثم أعد المحاولة.</p>`;
+    return;
+  }
   passageBlock.hidden = !data.text;
   if (data.text) {
     textTitle.textContent = data.text.title;

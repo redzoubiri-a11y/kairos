@@ -610,4 +610,5 @@ correctif d'une récursion RLS infinie entre `students`/`classroom_students`,
 branchement réel du tableau de bord parent à ce projet, correctif d'une
 panne complète de l'app quand le CDN de supabase-js est inatteignable, et
 correctif de l'ordre de sync qui pouvait bloquer la file pour de bon dès la
-première session.
+première session, et garde-fou similaire sur le fetch du contenu BEM
+Sprint (message d'erreur clair plutôt qu'un plantage de page).

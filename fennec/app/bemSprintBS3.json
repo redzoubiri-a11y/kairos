@@ -1,0 +1,99 @@
+{
+  "text": {
+    "id": "bs3-t1",
+    "title": "Karim's Big Day",
+    "body": [
+      "Last Friday, our school organised a small ceremony for the best students of the term.",
+      "My friend Karim was very nervous before his name was called.",
+      "When the headmaster said \"Karim Belaïd,\" the whole class cheered loudly.",
+      "Karim walked to the front carefully and shook the headmaster's hand.",
+      "He looked proud and slightly embarrassed at the same time.",
+      "Afterwards, our teacher gave a short speech about hard work and kindness.",
+      "She said that success is not only about grades, but also about helpfulness towards others.",
+      "Karim later told me that he wanted to become a doctor one day.",
+      "I think his happiness that day will stay in his memory for a long time.",
+      "The whole event lasted about forty-five minutes.",
+      "Everyone left the hall smiling."
+    ]
+  },
+  "items": [
+    {
+      "id": "bs3-1",
+      "kind": "mcq",
+      "skill": "punctuation",
+      "prompt": "أي جملة تستعمل علامات الترقيم والأحرف الكبيرة بشكل صحيح؟",
+      "promptEn": "Which sentence is correctly punctuated and capitalised?",
+      "options": [
+        "last friday, our school organised a small ceremony.",
+        "Last Friday, our school organised a small ceremony.",
+        "Last Friday our school organised a small ceremony",
+        "Last friday, Our school organised a small ceremony."
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "bs3-2",
+      "kind": "mcq",
+      "skill": "punctuation",
+      "prompt": "أي جملة تستعمل علامات التنصيص بشكل صحيح؟",
+      "promptEn": "Which sentence uses quotation marks correctly?",
+      "options": [
+        "When the headmaster said Karim Belaïd, the whole class cheered.",
+        "When the headmaster said \"Karim Belaïd,\" the whole class cheered.",
+        "When the headmaster said 'Karim Belaïd. the whole class cheered'",
+        "When the headmaster said, karim belaïd the whole class cheered."
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "bs3-3",
+      "kind": "mcq",
+      "skill": "punctuation",
+      "prompt": "أي جملة تستعمل الفاصلة العليا (apostrophe) بشكل صحيح؟",
+      "promptEn": "Which sentence uses the apostrophe correctly?",
+      "options": [
+        "Karim shook the headmasters hand.",
+        "Karim shook the headmaster's hand.",
+        "Karim shook the headmasters' hand.",
+        "Karim shook the headmasters's hand."
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "bs3-4",
+      "kind": "mcq",
+      "skill": "morphology",
+      "prompt": "ما هو الاسم المشتق من الصفة 'kind' (لطيف)؟",
+      "promptEn": "What is the noun form of 'kind'?",
+      "options": ["kindness", "kindful", "kindly", "unkind"],
+      "correctIndex": 0
+    },
+    {
+      "id": "bs3-5",
+      "kind": "mcq",
+      "skill": "morphology",
+      "prompt": "ما هو الاسم المشتق من الصفة 'nervous' (متوتر)؟",
+      "promptEn": "What is the noun form of 'nervous'?",
+      "options": ["nervously", "nervous-full", "nervousness", "unnervous"],
+      "correctIndex": 2
+    },
+    {
+      "id": "bs3-6",
+      "kind": "mcq",
+      "skill": "morphology",
+      "prompt": "أي كلمة تعني 'مليء بالمساعدة' (مشتقة من help)؟",
+      "promptEn": "Which word means \"full of help\" (derived from 'help')?",
+      "options": ["helpless", "helpful", "helping", "unhelp"],
+      "correctIndex": 1
+    },
+    {
+      "id": "bs3-7",
+      "kind": "mcq",
+      "skill": "morphology",
+      "prompt": "أي كلمة تعني عكس 'helpful'؟",
+      "promptEn": "Which word means the opposite of 'helpful'?",
+      "options": ["unhelpful", "helpless", "helpfulness", "helping"],
+      "correctIndex": 0
+    }
+  ]
+}

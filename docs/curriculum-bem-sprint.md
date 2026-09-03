@@ -119,11 +119,26 @@ Chaque semaine s'entraîne sur **plusieurs textes courts différents** (pas un s
 
 ---
 
+## BS6 — Written Expression (détaillé)
+
+*Objectif : la sous-partie la plus lourde de toute l'épreuve (6 des 20 points, presque autant que toute la "Mastery of Language" réunie) — rédiger un paragraphe guidé ("situation d'intégration") à partir de notes, sur un thème lié au texte de la partie 1. Toutes les semaines précédentes (temps, connecteurs, dérivation) préparaient déjà à celle-ci, ce n'est pas un hasard : c'est exactement le principe du guide officiel ("toutes les activités de mastery of language préparent à la situation d'intégration").*
+
+| Jour | Activité | Détail |
+|---|---|---|
+| **Jour 1** | Décoder la consigne | Une situation d'intégration donne des notes télégraphiques (mots-clés, pas des phrases) — l'élève établit d'abord une checklist de ce qui doit obligatoirement apparaître, avant d'écrire un seul mot |
+| **Jour 2** | Notes → phrases complètes | Transformer chaque note en phrase correcte, puis relier les phrases avec des connecteurs (réinvestit BS4 : *then, because, so, although*) — l'erreur la plus pénalisée : une liste de phrases juxtaposées sans lien |
+| **Jour 3** | Temps et personne | Vérifier la cohérence du temps (souvent imposé par le contexte de la note) et de la personne (*I/he/she*) sur tout le paragraphe — relecture ciblée uniquement sur ce point |
+| **Jour 4** | Grille de notation | L'élève note lui-même une copie d'exemple avec la grille analytique du BEM (contenu/pertinence des notes utilisées, correction de la langue, mécanique — ponctuation/orthographe) avant d'écrire la sienne : intérioriser les critères avant de les appliquer à soi-même |
+| **Jour 5 (Boss)** | Rédaction chronométrée (20 min — proche du temps réel accordé à cette partie le jour de l'épreuve) : paragraphe d'environ 10 lignes à partir de notes sur un thème inédit | Auto-correction avec la grille de BS4-jour4, puis correction avec le barème réel |
+
+**Sortie de BS6** : l'élève transforme des notes en paragraphe cohérent (~10 lignes) en temps limité, sans oublier de note, avec un temps et une personne stables, et sait s'auto-évaluer avec la grille du BEM avant de rendre sa copie.
+
+---
+
 ## Feuille de route (semaines suivantes — pas encore détaillées)
 
 | Semaine | Compétence | Angle d'entraînement pressenti |
 |---|---|---|
-| BS6 | Written Expression | Rédaction guidée à partir de notes, cohésion (mots de liaison), respect de la longueur (~10 lignes) |
 | BS7 | Examen blanc n°1 | Simulation complète chronométrée (les 3 parties), correction avec barème réel |
 | BS8 | Examen blanc n°2 + stratégie | Deuxième simulation + gestion du temps le jour J (répartition suggérée : ~35 min lecture, ~35 min langue, ~20 min rédaction) |
 

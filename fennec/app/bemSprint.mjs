@@ -35,12 +35,14 @@
  *
  * BS8 (deuxième examen blanc) réutilise exactement le même moteur que
  * BS7. Ce qui change : le score de chaque semaine "examen" (isMock) est
- * persisté en localStorage (`bemSprint_mock_score_<week>`) — le seul état
- * persisté de tout BEM Sprint, ajouté précisément pour permettre le delta
- * objectif que le curriculum demande (BS8·jour2, même logique que les
- * bilans S1→S16→S32 de Foundations). L'écran de fin de BS8 ajoute aussi la
- * fiche de révision personnelle (BS8·jour5, texte libre sauvegardé en
- * localStorage) et un rappel statique de stratégie jour J (BS8·jour3-4) —
+ * persisté en localStorage (`bemSprint_mock_score_<week>`, namespacé par
+ * profil actif comme le reste de l'app quand un profil est sélectionné —
+ * voir activeProfileSuffix()) — le seul état persisté de tout BEM Sprint,
+ * ajouté précisément pour permettre le delta objectif que le curriculum
+ * demande (BS8·jour2, même logique que les bilans S1→S16→S32 de
+ * Foundations). L'écran de fin de BS8 ajoute aussi la fiche de révision
+ * personnelle (BS8·jour5, texte libre sauvegardé en localStorage, même
+ * namespacage) et un rappel statique de stratégie jour J (BS8·jour3-4) —
  * du contenu affiché, pas une simulation interactive inventée pour
  * l'occasion.
  */
@@ -94,9 +96,21 @@ const revSheet = document.getElementById('revSheet');
 const revNotes = document.getElementById('revNotes');
 const revSaved = document.getElementById('revSaved');
 
-const REV_NOTES_KEY = 'bemSprint_revision_notes';
+// Namespacé par profil actif comme le reste de l'app (fennec_pointer_<id>,
+// fennec_boss_attempt_<id> dans main.mjs) : deux enfants du même foyer sur
+// le même téléphone ne doivent pas partager un score/une fiche de révision.
+// BEM Sprint peut aussi être utilisé sans être passé par le sélecteur de
+// profil (élève de 4AM entrant directement sur cette piste, cf. le
+// curriculum) — dans ce cas on retombe sur une clé partagée générique.
+function activeProfileSuffix() {
+  const id = localStorage.getItem('fennec_active_profile');
+  return id ? `_${id}` : '';
+}
+function revNotesKey() {
+  return `bemSprint_revision_notes${activeProfileSuffix()}`;
+}
 function mockScoreKey(w) {
-  return `bemSprint_mock_score_${w}`;
+  return `bemSprint_mock_score${activeProfileSuffix()}_${w}`;
 }
 
 let data = null;
@@ -372,10 +386,10 @@ function showEnd() {
       }
       strategyBlock.hidden = false;
       revSheet.hidden = false;
-      try { revNotes.value = localStorage.getItem(REV_NOTES_KEY) || ''; } catch { revNotes.value = ''; }
+      try { revNotes.value = localStorage.getItem(revNotesKey()) || ''; } catch { revNotes.value = ''; }
       revNotes.oninput = () => {
         try {
-          localStorage.setItem(REV_NOTES_KEY, revNotes.value);
+          localStorage.setItem(revNotesKey(), revNotes.value);
           revSaved.textContent = '✓ محفوظ';
           clearTimeout(revNotes._t);
           revNotes._t = setTimeout(() => { revSaved.textContent = ''; }, 1500);

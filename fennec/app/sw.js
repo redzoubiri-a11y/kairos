@@ -9,7 +9,7 @@
  * chaque déploiement pour invalider l'ancien cache.
  */
 
-const CACHE_VERSION = 'fennec-v14';
+const CACHE_VERSION = 'fennec-v15';
 const SHELL_FILES = [
   './',
   './index.html',

@@ -179,7 +179,12 @@ un rappel statique de stratégie jour J (ordre des questions, ne pas
 bloquer, ne jamais laisser une réponse vide), et une **fiche de révision
 personnelle** — texte libre sauvegardé en localStorage, où l'élève note
 ses propres erreurs récurrentes plutôt qu'un résumé générique du
-programme (exactement BS8·jour5).
+programme (exactement BS8·jour5). Ces deux clés (score d'examen, fiche de
+révision) sont namespacées par profil actif comme le reste de l'app
+(`fennec_active_profile`, même convention que `fennec_pointer_<id>` dans
+`main.mjs`) — sans quoi deux enfants du même foyer sur le même téléphone
+auraient partagé leur score et leur fiche, une incohérence trouvée et
+corrigée après coup.
 Lien retour vers
 Madrassatidz en haut de l'écran et sur l'écran de fin (comme le reste de
 l'app), plus un lien de retour vers Fennec sur l'écran de fin.

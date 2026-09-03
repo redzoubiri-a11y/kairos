@@ -1,0 +1,113 @@
+{
+  "isMock": true,
+  "durationMinutes": 120,
+  "text": {
+    "id": "bs7-t1",
+    "title": "A Class Project on Recycling",
+    "body": [
+      "Every Thursday afternoon, Mr Amrani's class works on a special project about recycling.",
+      "Last week, the students visited a recycling centre near their school.",
+      "They watched how workers separated plastic, paper and glass into different containers.",
+      "One worker explained that recycling one tonne of paper saves several trees.",
+      "The students were surprised to learn this fact.",
+      "After the visit, they decided to put three coloured bins in their classroom.",
+      "Now, every student throws rubbish into the correct bin.",
+      "Nawal, the class leader, checks the bins every day and writes a short report.",
+      "She says the project has changed the way her classmates think about waste.",
+      "Next month, the school will organise a bigger cleaning day for the whole neighbourhood.",
+      "Nawal hopes that other classes will join them too."
+    ]
+  },
+  "items": [
+    {
+      "id": "bs7-1",
+      "kind": "true_false_justify",
+      "part": "comprehension",
+      "points": 2.5,
+      "statement": "Last week, the students visited a recycling centre.",
+      "answer": true,
+      "proofOptions": [
+        "Every Thursday afternoon, Mr Amrani's class works on a special project about recycling.",
+        "Last week, the students visited a recycling centre near their school.",
+        "Now, every student throws rubbish into the correct bin."
+      ],
+      "correctProofIndex": 1
+    },
+    {
+      "id": "bs7-2",
+      "kind": "mcq",
+      "part": "comprehension",
+      "points": 2.5,
+      "prompt": "من الذي يتحقق من صناديق النفايات كل يوم؟",
+      "promptEn": "Who checks the bins every day?",
+      "options": ["Mr Amrani", "Nawal", "A worker", "The headmaster"],
+      "correctIndex": 1
+    },
+    {
+      "id": "bs7-3",
+      "kind": "mcq",
+      "part": "comprehension",
+      "points": 2,
+      "prompt": "ابحث في النص عن كلمة تعني نفس معنى 'garbage/trash' (نفايات)",
+      "promptEn": "Find a word in the text that means the same as 'garbage/trash'.",
+      "options": ["rubbish", "project", "bins", "report"],
+      "correctIndex": 0
+    },
+    {
+      "id": "bs7-4",
+      "kind": "mcq",
+      "part": "language",
+      "points": 2,
+      "prompt": "أي جملة تستعمل الأحرف الكبيرة بشكل صحيح؟",
+      "promptEn": "Which sentence is correctly capitalised?",
+      "options": [
+        "nawal checks the bins every day.",
+        "Nawal checks the bins every day.",
+        "Nawal Checks the bins every day",
+        "nawal Checks the Bins every day."
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "bs7-5",
+      "kind": "mcq",
+      "part": "language",
+      "points": 3,
+      "prompt": "أكمل الجملة بالزمن الصحيح",
+      "promptEn": "\"Next month, the school _____ (organise) a bigger cleaning day.\"",
+      "options": ["organise", "organised", "will organise", "organises"],
+      "correctIndex": 2
+    },
+    {
+      "id": "bs7-6",
+      "kind": "mcq",
+      "part": "language",
+      "points": 2,
+      "prompt": "في أي كلمة يقع النبر على المقطع الثاني؟",
+      "promptEn": "In which word does the stress fall on the SECOND syllable?",
+      "options": ["visited", "recycling", "afternoon", "class"],
+      "correctIndex": 1
+    },
+    {
+      "id": "bs7-7",
+      "kind": "writing",
+      "part": "writing",
+      "points": 6,
+      "titleAr": "وضعية إدماجية — تقليل النفايات في مدرستنا",
+      "titleEn": "Situation of Integration — Reducing Waste at School",
+      "instructionAr": "اكتب فقرة من حوالي 10 أسطر عمّا يمكن أن يفعله صفّك لتقليل النفايات في المدرسة، مستعملاً كل الملاحظات التالية:",
+      "notes": [
+        { "en": "our school / a lot of paper waste", "keywords": ["paper", "waste"] },
+        { "en": "put recycling bins in classrooms", "keywords": ["bin", "recycl"] },
+        { "en": "reduce plastic bottles / bring water from home", "keywords": ["plastic", "bottle"] },
+        { "en": "organise a cleaning day once a month", "keywords": ["clean"] },
+        { "en": "feel proud of helping the environment", "keywords": ["proud", "environment"] }
+      ],
+      "rubric": [
+        { "id": "content", "labelAr": "المحتوى — هل استعملت كل الملاحظات؟" },
+        { "id": "language", "labelAr": "اللغة — الأزمنة والربط بين الجمل" },
+        { "id": "mechanics", "labelAr": "الشكل — الترقيم والأحرف الكبيرة" }
+      ]
+    }
+  ]
+}

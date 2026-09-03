@@ -11,9 +11,9 @@
  * réel et jouable pendant qu'elle se pose.
  *
  * BS1 (Reading Comprehension), BS2 (Lexis), BS3 (Mechanics & Morphology),
- * BS4 (Syntax), BS5 (Pronunciation) et BS6 (Written Expression) seulement,
- * sélectionnables via ?week=1..6 ou les onglets en haut — BS7-BS8 ne sont
- * pas encore intégrés, cf. fennec/README.md.
+ * BS4 (Syntax), BS5 (Pronunciation), BS6 (Written Expression) et BS7
+ * (premier examen blanc) seulement, sélectionnables via ?week=1..7 ou les
+ * onglets en haut — BS8 n'est pas encore intégré, cf. fennec/README.md.
  *
  * BS6 est structurellement différent des semaines précédentes : ce n'est
  * pas objectivement notable par QCM (c'est de la rédaction libre). Plutôt
@@ -25,6 +25,15 @@
  * prétention de corriger la langue), et (2) l'auto-évaluation à la grille
  * analytique du BEM, qui est exactement l'activité prévue par le
  * curriculum (BS6·jour4) plutôt qu'un artifice inventé pour l'occasion.
+ *
+ * BS7 (examen blanc) combine les 6 semaines précédentes sur un texte
+ * inédit, avec le vrai barème du BEM (points par item, pas un score
+ * uniforme) et un vrai chrono d'examen (data.durationMinutes, ou
+ * ?duration=<minutes> pour la démo/le test — sans quoi il faudrait
+ * attendre 2h réelles pour valider l'expiration du temps). L'item
+ * d'expression écrite reçoit des points proportionnels aux notes
+ * retrouvées (mêmes mots-clés que BS6) — un barème de contenu réel, pas
+ * une prétention de noter la qualité de la langue.
  */
 
 const WEEK_TITLES = {
@@ -34,6 +43,13 @@ const WEEK_TITLES = {
   4: 'BS4 · Syntax',
   5: 'BS5 · Pronunciation',
   6: 'BS6 · Written Expression',
+  7: 'BS7 · Examen blanc n°1',
+};
+
+const PART_LABELS = {
+  comprehension: 'Reading Comprehension',
+  language: 'Mastery of Language',
+  writing: 'Written Expression',
 };
 
 const brandLabel = document.getElementById('brandLabel');
@@ -60,6 +76,8 @@ const notesList = document.getElementById('notesList');
 const writingArea = document.getElementById('writingArea');
 const checkBtn = document.getElementById('checkBtn');
 const rubricBlock = document.getElementById('rubricBlock');
+const mockTimer = document.getElementById('mockTimer');
+const partScore = document.getElementById('partScore');
 
 let data = null;
 let index = 0;
@@ -67,10 +85,21 @@ let correctCount = 0;
 let answered = false;
 let week = 1;
 let writingCompleted = false;
+let earnedByPart = {};
+let timerHandle = null;
 
 function currentWeek() {
   const requested = Number(new URLSearchParams(location.search).get('week'));
   return WEEK_TITLES[requested] ? requested : 1;
+}
+
+function itemPoints(item) {
+  return typeof item.points === 'number' ? item.points : 1;
+}
+
+function awardPoints(item, points) {
+  const part = item.part || 'default';
+  earnedByPart[part] = (earnedByPart[part] || 0) + points;
 }
 
 async function boot() {
@@ -88,7 +117,33 @@ async function boot() {
   index = 0;
   correctCount = 0;
   writingCompleted = false;
+  earnedByPart = {};
+  clearInterval(timerHandle);
+  mockTimer.hidden = !data.isMock;
+  if (data.isMock) startMockTimer();
   renderItem();
+}
+
+function startMockTimer() {
+  const override = Number(new URLSearchParams(location.search).get('duration'));
+  const totalMinutes = override > 0 ? override : data.durationMinutes || 120;
+  const deadline = Date.now() + totalMinutes * 60 * 1000;
+  const tick = () => {
+    const remainingMs = deadline - Date.now();
+    if (remainingMs <= 0) {
+      clearInterval(timerHandle);
+      mockTimer.textContent = '00:00';
+      showEnd();
+      return;
+    }
+    const totalSec = Math.ceil(remainingMs / 1000);
+    const mm = String(Math.floor(totalSec / 60)).padStart(2, '0');
+    const ss = String(totalSec % 60).padStart(2, '0');
+    mockTimer.textContent = `⏱ ${mm}:${ss}`;
+    mockTimer.classList.toggle('low', totalSec <= 300);
+  };
+  tick();
+  timerHandle = setInterval(tick, 1000);
 }
 
 function hideAllInputs() {
@@ -153,6 +208,12 @@ function renderWriting(item) {
     });
     checkBtn.hidden = true;
     writingArea.disabled = true;
+    if (data.isMock) {
+      // Barème de contenu réel (points proportionnels aux notes retrouvées) —
+      // pas une prétention de noter la qualité de la langue, cf. l'en-tête.
+      const proportion = foundCount / item.notes.length;
+      awardPoints(item, Math.round(itemPoints(item) * proportion * 2) / 2);
+    }
     renderRubric(item, foundCount);
   }, { once: true });
 }
@@ -195,7 +256,10 @@ function revealMcq(chosenIndex) {
   answered = true;
   const item = data.items[index];
   const isCorrect = chosenIndex === item.correctIndex;
-  if (isCorrect) correctCount++;
+  if (isCorrect) {
+    correctCount++;
+    awardPoints(item, itemPoints(item));
+  }
   [...optList.children].forEach((btn, i) => {
     btn.disabled = true;
     if (i === item.correctIndex) btn.classList.add('correct');
@@ -223,7 +287,10 @@ function revealTrueFalse(chosen) {
     btn.textContent = proof;
     btn.addEventListener('click', () => {
       const proofCorrect = i === item.correctProofIndex;
-      if (statementCorrect && proofCorrect) correctCount++;
+      if (statementCorrect && proofCorrect) {
+        correctCount++;
+        awardPoints(item, itemPoints(item));
+      }
       [...optList.children].forEach((b, j) => {
         b.disabled = true;
         if (j === item.correctProofIndex) b.classList.add('correct');
@@ -245,10 +312,26 @@ nextBtn.addEventListener('click', () => {
 });
 
 function showEnd() {
+  clearInterval(timerHandle);
   qwrap.hidden = true;
   endScreen.hidden = false;
+  partScore.innerHTML = '';
   const isWritingWeek = data.items.every((it) => it.kind === 'writing');
-  if (isWritingWeek) {
+
+  if (data.isMock) {
+    const maxPoints = data.items.reduce((sum, it) => sum + itemPoints(it), 0);
+    const earned = Object.values(earnedByPart).reduce((sum, v) => sum + v, 0);
+    scoreLine.textContent = `${earned} / ${maxPoints}`;
+    scoreDetail.textContent = `النتيجة الإجمالية — ${WEEK_TITLES[week]}`;
+    const maxByPart = {};
+    data.items.forEach((it) => {
+      const part = it.part || 'default';
+      maxByPart[part] = (maxByPart[part] || 0) + itemPoints(it);
+    });
+    partScore.innerHTML = Object.keys(maxByPart)
+      .map((part) => `${PART_LABELS[part] || part} : ${earnedByPart[part] || 0} / ${maxByPart[part]}`)
+      .join('<br>');
+  } else if (isWritingWeek) {
     // Pas de score chiffré ici : une rédaction libre n'est pas notable par
     // QCM, cf. la note en tête de fichier. On montre l'accomplissement de
     // la tâche, pas une fausse précision.

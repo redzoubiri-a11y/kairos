@@ -13,7 +13,7 @@
  * pas des données inventées pour la démo.
  */
 
-import { pickDistractors } from '../src/queue.mjs';
+import { pickDistractors, shuffle } from '../src/queue.mjs';
 
 const TIMER_SECONDS = 12;
 
@@ -42,12 +42,15 @@ let timerHandle = null;
 let revealed = false;
 
 async function boot() {
-  const [catRes, emojiRes] = await Promise.all([
-    fetch('catalog.json').then((r) => r.json()),
-    fetch('word-emoji.json').then((r) => r.json()).catch(() => ({})),
-  ]);
-  catalog = catRes;
-  wordEmoji = emojiRes;
+  try {
+    catalog = await fetch('catalog.json').then((r) => r.json());
+  } catch {
+    weekSelect.innerHTML = '<option>—</option>';
+    startBtn.disabled = true;
+    startBtn.textContent = 'تعذّر تحميل الكلمات — تحقق من الاتصال';
+    return;
+  }
+  wordEmoji = await fetch('word-emoji.json').then((r) => r.json()).catch(() => ({}));
 
   const weeks = [...new Set(catalog.map((w) => w.introWeek))].sort((a, b) => a - b);
   weekSelect.innerHTML = weeks.map((w) => `<option value="${w}">S${w}</option>`).join('');
@@ -63,15 +66,6 @@ function buildQuestions(untilWeek, count) {
     const options = shuffle([word, ...distractors]);
     return { word, options };
   });
-}
-
-function shuffle(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
 }
 
 startBtn.addEventListener('click', () => {

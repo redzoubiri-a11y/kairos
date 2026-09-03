@@ -57,7 +57,7 @@ function pickDistractors(catalog, word, count, rng = Math.random) {
   return shuffle(pool, rng).slice(0, count);
 }
 
-function shuffle(arr, rng) {
+function shuffle(arr, rng = Math.random) {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(rng() * (i + 1));
@@ -221,4 +221,4 @@ function insertRetest(remainingScreens, failedScreen) {
   return next;
 }
 
-export { buildDailyQueue, buildScreenPlan, buildBossPlan, pickDistractors, screenKindFor, getPhonicsForDay, insertRetest, freshState };
+export { buildDailyQueue, buildScreenPlan, buildBossPlan, pickDistractors, shuffle, screenKindFor, getPhonicsForDay, insertRetest, freshState };

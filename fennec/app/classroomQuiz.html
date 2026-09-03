@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="ar" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fennec — اختبار جماعي</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="styles.css">
+<style>
+/* Mode projecteur : plein écran, gros caractères lisibles depuis le fond
+   d'une salle de classe — pas le gabarit "téléphone" du reste de l'app.
+   Réutilise les tokens de styles.css (mêmes couleurs, mêmes règles
+   "jamais rouge sur une erreur"). */
+body{display:block; background:var(--ink)}
+.quizwrap{max-width:56rem; margin:0 auto; min-height:100dvh; background:var(--bg-base); display:flex; flex-direction:column}
+
+.qz-top{display:flex; align-items:center; gap:.6rem; padding:.9rem 1.2rem; color:#fff}
+.qz-top .brand{font-family:var(--mono); font-size:.8rem; opacity:.85}
+.qz-top a.exit{margin-inline-start:auto; color:#fff; opacity:.7; text-decoration:none; font-family:var(--mono); font-size:.75rem}
+.qz-top a.exit:hover{opacity:1}
+
+.setup{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1.4rem; padding:2rem; text-align:center}
+.setup h1{font-size:1.6rem; font-weight:800; margin:0}
+.setup p{color:var(--ink-soft); margin:0; max-width:28rem}
+.setup .row{display:flex; gap:1.2rem; flex-wrap:wrap; justify-content:center; align-items:flex-end}
+.field{display:flex; flex-direction:column; gap:.4rem; align-items:flex-start}
+.field label{font-family:var(--mono); font-size:.7rem; color:var(--ink-soft)}
+.field select{
+  font-family:'Baloo 2'; font-weight:700; font-size:1rem; padding:.6rem .9rem; border-radius:12px;
+  border:2px solid var(--border); background:#fff; color:var(--ink); min-width:9rem;
+}
+.startbtn{
+  font-family:'Baloo 2'; font-weight:800; font-size:1.05rem; background:var(--accent); color:#fff;
+  border:none; border-radius:16px; padding:.9rem 2.2rem; cursor:pointer; box-shadow:0 5px 0 #7F1526;
+}
+.startbtn:active{transform:translateY(4px); box-shadow:none}
+.startbtn:disabled{opacity:.5; cursor:default}
+
+.quizscreen{flex:1; display:flex; flex-direction:column; padding:1.6rem 2rem 2rem}
+.qz-progress{font-family:var(--mono); font-size:.85rem; color:var(--ink-soft); text-align:center; margin-bottom:.4rem}
+.timerbar-track{height:.5rem; background:var(--border); border-radius:999px; overflow:hidden; margin-bottom:1.6rem}
+.timerbar-fill{height:100%; background:var(--seq-500, var(--ink)); width:100%; transform-origin:right}
+
+.prompt{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.6rem; text-align:center}
+.prompt .cue{font-family:var(--mono); font-size:.85rem; color:var(--ink-soft)}
+.prompt .word{font-size:3.4rem; font-weight:800; color:var(--ink); line-height:1.1}
+.prompt .emoji{font-size:4.2rem; line-height:1}
+
+.optgrid{display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1.6rem}
+@media (max-width:640px){.optgrid{grid-template-columns:1fr}}
+.qopt{
+  font-family:'Baloo 2'; font-weight:700; font-size:1.3rem; background:#fff; color:var(--ink);
+  border:3px solid var(--border); border-radius:18px; padding:1.2rem 1rem; cursor:pointer; direction:rtl;
+}
+.qopt:hover{border-color:var(--ink)}
+.qopt.correct{background:var(--status-good-soft, #E3F5E3); border-color:var(--status-good, #0ca30c); color:var(--status-good, #0ca30c)}
+.qopt.correct::before{content:"✓ "}
+.qopt.faded{opacity:.45}
+.qopt:disabled{cursor:default}
+
+.qz-actions{display:flex; justify-content:center; gap:1rem; margin-top:1.8rem}
+.qz-btn{
+  font-family:'Baloo 2'; font-weight:800; font-size:.95rem; border:none; border-radius:14px;
+  padding:.75rem 1.8rem; cursor:pointer;
+}
+.qz-btn.primary{background:var(--accent); color:#fff; box-shadow:0 4px 0 #7F1526}
+.qz-btn.primary:active{transform:translateY(3px); box-shadow:none}
+.qz-btn.ghost{background:transparent; color:var(--ink-soft); border:2px solid var(--border)}
+
+.endscreen{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1rem; text-align:center; padding:2rem}
+.endscreen .big{font-size:2.2rem; font-weight:800}
+.endscreen p{color:var(--ink-soft); margin:0}
+.wordrecap{display:flex; flex-wrap:wrap; gap:.5rem; justify-content:center; max-width:36rem; margin-top:.5rem}
+.wordrecap span{font-family:var(--mono); font-size:.72rem; background:#fff; border:1px solid var(--border); border-radius:999px; padding:.25rem .7rem; direction:ltr}
+
+[hidden]{display:none !important}
+</style>
+</head>
+<body>
+<div class="quizwrap">
+  <div class="qz-top">
+    <span class="brand">🦊 Fennec — اختبار جماعي</span>
+    <a class="exit" href="index.html">✕ إغلاق</a>
+  </div>
+
+  <div id="setupScreen" class="setup">
+    <h1 class="ar">اختبار جماعي — تحدي الزعيم</h1>
+    <p class="ar">اعرض هذه الشاشة على السبورة. كل تلميذ يجيب بصوته أو بيده، والمعلم يضغط على الإجابة التي اختارها أغلب الصف.</p>
+    <div class="row">
+      <div class="field">
+        <label class="ar">حتى الأسبوع</label>
+        <select id="weekSelect"></select>
+      </div>
+      <div class="field">
+        <label class="ar">عدد الأسئلة</label>
+        <select id="countSelect">
+          <option value="5">5</option>
+          <option value="10" selected>10</option>
+          <option value="15">15</option>
+        </select>
+      </div>
+    </div>
+    <button id="startBtn" class="startbtn ar" disabled>▶ بدء الاختبار</button>
+  </div>
+
+  <div id="quizScreen" class="quizscreen" hidden>
+    <p class="qz-progress" id="qzProgress"></p>
+    <div class="timerbar-track"><div class="timerbar-fill" id="timerFill"></div></div>
+    <div class="prompt">
+      <p class="cue ar">ما ترجمة هذه الكلمة؟</p>
+      <span class="emoji" id="promptEmoji" hidden></span>
+      <p class="word" id="promptWord"></p>
+    </div>
+    <div class="optgrid" id="optGrid"></div>
+    <div class="qz-actions">
+      <button id="revealBtn" class="qz-btn primary ar">إظهار الإجابة</button>
+      <button id="nextBtn" class="qz-btn ghost ar" hidden>التالي ←</button>
+    </div>
+  </div>
+
+  <div id="endScreen" class="endscreen" hidden>
+    <span style="font-size:3rem">🎉</span>
+    <p class="big ar">انتهى الاختبار!</p>
+    <p class="ar" id="endSummary"></p>
+    <div class="wordrecap" id="wordRecap"></div>
+    <button id="restartBtn" class="qz-btn primary ar" style="margin-top:1rem">↻ اختبار جديد</button>
+  </div>
+</div>
+
+<script type="module" src="classroomQuiz.mjs"></script>
+</body>
+</html>

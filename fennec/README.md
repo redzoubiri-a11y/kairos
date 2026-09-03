@@ -33,6 +33,7 @@ fennec/
     sync.test.js              # tests de la synchronisation (client Supabase simulé)
   app/                        # PWA réelle, branchée sur src/*.mjs (pas une maquette)
     index.html, styles.css, screens.mjs, session.mjs, bossSession.mjs, main.mjs, sw.js, manifest.webmanifest
+    classroomQuiz.html/.mjs    # quiz projetable (mode classe), vrai écran — voir plus bas
     catalog.json               # copie embarquée du référentiel (bootstrap 100% offline)
     build_catalog.py           # régénère catalog.json depuis data/foundations-banque-mots.json
     phonics.json               # progression phonics (22 sons, S2→S30), écran "phonics"
@@ -90,6 +91,21 @@ et repère visuel distinct (fond rosé) pour les élèves inactifs depuis
 plusieurs jours. Comme le tableau de bord parent, données 100% factices —
 prochaine étape : lire directement `student_word_state`/`sessions` par
 classe une fois Supabase branché.
+
+**Quiz projetable (mode classe).** `fennec/app/classroomQuiz.html` est un
+vrai écran, pas une maquette — accessible depuis le tableau de bord
+enseignant (`wireframes/fennec-maquette-dashboard-teacher.html`, bouton
+"▶ بدء الاختبار الجماعي"). L'enseignant choisit une semaine limite et un
+nombre de questions ; l'app tire de vrais mots de `catalog.json` (via
+`pickDistractors` du moteur réel, `src/queue.mjs`) et les présente en plein
+écran, un à la fois, avec une barre de temps. Ce n'est **pas** un
+Kahoot multi-appareils synchronisé (ça demanderait Supabase, mis de côté ce
+chantier) : un seul appareil pilote (celui branché au vidéoprojecteur), la
+classe répond à voix haute ou à main levée, l'enseignant clique la réponse
+choisie par le consensus. Règle "jamais rouge" respectée : la bonne réponse
+s'illumine en vert, les autres s'estompent, aucune ne devient rouge. Ajouté
+au cache du service worker (`sw.js`, `fennec-v5`) pour rester utilisable
+même avec une connexion de classe capricieuse.
 
 ## Pourquoi cette architecture
 
@@ -182,13 +198,17 @@ après un premier chargement (service worker + cache de l'app shell).
 
 ## Prochaines briques (hors scope de ce chantier)
 
-- Habillage visuel définitif une fois le design système Fennec formalisé
-  (actuellement : palette/typo reprises telles quelles des maquettes
-  `wireframes/fennec-maquette-*.html`).
 - Vrais assets audio/image (actuellement : texte + synthèse vocale du
-  navigateur, `word.audioUrl`/`word.imageUrl` déjà prévus dans le schéma).
-- Tableau de bord parent/enseignant côté web, lisant directement les tables
-  Supabase.
-- Écran Boss dédié dans l'app réelle (le moteur `queue.mjs`/`srs.bossVerdict`
-  le permet déjà ; seul le rendu spécifique — panier, variante — reste à
-  écrire, sur le modèle de `wireframes/fennec-maquette-boss-s21.html`).
+  navigateur, emoji-placeholder pour 196/213 mots lexique ; `word.audioUrl`/
+  `word.imageUrl` déjà prévus dans le schéma).
+- Brancher les tableaux de bord parent/enseignant (actuellement des
+  maquettes à données figées, `wireframes/fennec-maquette-dashboard-*.html`)
+  et le portail Madrassatidz à un vrai projet Supabase — mis de côté ce
+  chantier (quota de projets gratuits bloqué sur le compte, cf. historique).
+- Contenu au-delà de Foundations (les pistes `builder`/`bem_sprint` existent
+  dans le schéma `students.track` mais n'ont pas de curriculum écrit).
+
+Déjà fait dans ce chantier (à ne pas reproposer sans raison nouvelle) :
+habillage visuel définitif (palette marine/rouge/crème, RTL, règles
+erreur-douce), écran Boss réel avec chemins victoire et défaite testés,
+profils multiples (fratrie), quiz projetable en mode classe.

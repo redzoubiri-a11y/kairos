@@ -206,6 +206,40 @@ relue correctement depuis localStorage, sélecteur de semaine fonctionnel,
 liens de fin fonctionnels, correction "jamais rouge" (bonne réponse en
 surbrillance verte/navy, jamais de rouge), rejouable.
 
+**Correctif important : les Boss de semaines de pure révision ne se
+déclenchaient jamais.** Chaque semaine de Boss du curriculum (Foundations
+S4/S8/S12/S16/S20/S24/S28/S32, Builder S64) est une semaine qui n'introduit
+**aucun** mot par conception — c'est écrit noir sur blanc comme "Révision"
+dans les deux documents de curriculum. `buildBossPlan()` (`src/queue.mjs`)
+filtrait sur `introWeek === week` : sur 7 des 8 mondes de Foundations et
+le Boss final de Builder, le plan de défis était donc vide, et l'app
+sautait silencieusement à la semaine suivante sans jamais faire jouer le
+Boss — trouvé en testant le mécanisme d'enregistrement audio (ci-dessous)
+sur S12. Corrigé pour piocher dans les 4 semaines du monde en cours
+(`introWeek <= week && introWeek > week - 4`), pas la seule semaine du
+Boss ; nouveau test de non-régression dans `test/queue.test.js`. Validé en
+navigateur réel : S12 déclenche désormais un vrai "تحدي الزعيم" au lieu de
+sauter à S13.
+
+**Enregistrement audio des Boss (jusqu'ici jamais implémenté).** L'analyse
+stratégique (§4.4) et les deux curriculums décrivent un enregistrement de
+l'enfant à chaque Boss majeur (Foundations S12/S16/S32, chaque Boss de
+Builder) comme *le* levier de rétention parent — mais aucun code
+n'existait pour ça avant ce chantier : chaque Boss ne faisait que du
+texte/QCM. `fennec/app/recordedBossWeeks.mjs` liste ces semaines avec la
+consigne exacte du document source ; `bossSession.mjs` insère un écran
+d'enregistrement (MediaRecorder natif, sans dépendance) entre la victoire
+du Boss et le partage aux parents pour ces semaines, avec lecture
+immédiate et sauvegarde du Blob dans un nouvel object store IndexedDB
+`recordings` (`src/db.mjs`, DB_VERSION 2). Dégradation propre si le micro
+est indisponible/refusé (bouton "تخطي ومتابعة") — ne bloque jamais la
+progression de l'enfant. Validé en navigateur réel (Chromium avec faux
+micro) : capture audio réelle, lecture via blob URL, sauvegarde en
+IndexedDB avec le bon studentId/semaine, et repli fonctionnel sans micro.
+Ce que ça ne fait pas encore : le tableau de bord parent (maquette) ne lit
+toujours pas ces enregistrements réels — ses cartes "تسجيلات صوتية"
+restent des données factices, cf. plus haut.
+
 ## Pourquoi cette architecture
 
 Le principe directeur (cf. l'analyse) : **offline-first**, parce que la data mobile en Algérie

@@ -2,13 +2,20 @@
  * Fennec — couche offline (IndexedDB).
  *
  * Rôle : rendre la session de l'enfant totalement indépendante du réseau.
- * Trois object stores :
+ * Quatre object stores :
  *   - `words`        : copie locale du référentiel (mots + calendrier nominal),
  *                      téléchargée une fois en Wi-Fi puis réutilisée hors-ligne.
  *   - `word_state`    : état SRS par mot pour l'élève actif sur cet appareil
  *                      (voir fennec/src/srs.mjs pour le format WordState).
  *   - `pending_sync`  : file d'événements en attente d'envoi vers Supabase
  *                      (réponses aux écrans, sessions terminées, boss).
+ *   - `recordings`    : enregistrements audio des Boss "à voix haute"
+ *                      prévus par le curriculum (Foundations S12/S16/S32,
+ *                      chaque Boss de Builder) — voir bossSession.mjs et
+ *                      recordedBossWeeks.mjs. IndexedDB stocke le Blob audio
+ *                      directement (pas de conversion base64), c'est la
+ *                      "preuve" que le tableau de bord parent doit un jour
+ *                      lire réellement.
  *
  * Rien ici ne dépend de Supabase : ce module ne connaît que IndexedDB. La
  * synchronisation elle-même est dans fennec/src/sync.mjs, qui lit/vide cette
@@ -20,11 +27,12 @@
  */
 
 const DB_NAME = 'fennec';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 const STORE_WORDS = 'words';
 const STORE_WORD_STATE = 'word_state';
 const STORE_PENDING_SYNC = 'pending_sync';
+const STORE_RECORDINGS = 'recordings';
 
 /** @returns {Promise<IDBDatabase>} */
 function openDb() {
@@ -52,6 +60,11 @@ function openDb() {
         const store = db.createObjectStore(STORE_PENDING_SYNC, { keyPath: 'id', autoIncrement: true });
         store.createIndex('by_student', 'studentId');
         store.createIndex('by_kind', 'kind');
+      }
+
+      if (!db.objectStoreNames.contains(STORE_RECORDINGS)) {
+        const store = db.createObjectStore(STORE_RECORDINGS, { keyPath: 'id', autoIncrement: true });
+        store.createIndex('by_student', 'studentId');
       }
     };
 
@@ -184,6 +197,31 @@ class FennecStore {
         createdAt: new Date().toISOString(),
       });
     });
+  }
+
+  // ------------------------------------------------------------ enregistrements
+
+  /**
+   * Persiste un enregistrement audio de Boss ("preuve" pour le parent —
+   * cf. l'analyse stratégique §4.4 : "le parent qui entend son enfant
+   * parler anglais devient le meilleur canal d'acquisition"). Le Blob est
+   * stocké tel quel : IndexedDB le gère nativement, pas besoin de le
+   * sérialiser en base64.
+   * @param {string} studentId
+   * @param {number} week
+   * @param {Blob} blob
+   */
+  async saveRecording(studentId, week, blob) {
+    return tx(this.db, STORE_RECORDINGS, 'readwrite', (store) => {
+      store.add({ studentId, week, blob, createdAt: new Date().toISOString() });
+    });
+  }
+
+  /** @returns {Promise<Array<{id:number, studentId:string, week:number, blob:Blob, createdAt:string}>>} */
+  async getRecordings(studentId) {
+    return tx(this.db, STORE_RECORDINGS, 'readonly', (store) =>
+      reqToPromise(store.index('by_student').getAll(IDBKeyRange.only(studentId)))
+    );
   }
 
   // ------------------------------------------------------------------ sync

@@ -20,6 +20,7 @@
 import { buildBossPlan } from '../src/queue.mjs';
 import { bossVerdict } from '../src/srs.mjs';
 import { stage, setBossProgress, setHelp, speak, avatarTag, renderScreen } from './screens.mjs';
+import { recordingPromptFor } from './recordedBossWeeks.mjs';
 
 /**
  * @param {Object} deps
@@ -93,6 +94,7 @@ async function runBossSession({ store, studentId, now, pointer, attempt, onBossE
     });
 
     if (verdict.passed) {
+      const recordingPrompt = recordingPromptFor(pointer.week);
       stage.innerHTML = `<div class="win">
         <div class="win emoji-lg">🏆</div>
         <p class="say ar center">فاز الزعيم! السوق مفتوح</p>
@@ -100,13 +102,17 @@ async function runBossSession({ store, studentId, now, pointer, attempt, onBossE
           <span class="tag ar">رسالة لولي الأمر</span>
           <p class="ar">أتم طفلك تحدي الزعيم بنجاح هذا الأسبوع! ${verdict.correct} من ${verdict.total} — استمر في تشجيعه 👏</p>
         </div>
-        <button class="cta accent">مشاركة مع الوالدين</button>
+        <button class="cta accent">${recordingPrompt ? 'التالي' : 'مشاركة مع الوالدين'}</button>
       </div>`;
       speak('You did it! Well done!');
+      const advance = () => onBossEnd({ pointer: { week: pointer.week + 1, day: 1 }, attempt: 1 });
       // "مشاركة مع الوالدين" fait avancer vers la semaine suivante ; le
       // partage réel (export/envoi du message ci-dessus) reste à brancher
       // sur un canal concret (SMS/WhatsApp/notification) — hors scope ici.
-      stage.querySelector('.cta').addEventListener('click', () => onBossEnd({ pointer: { week: pointer.week + 1, day: 1 }, attempt: 1 }), { once: true });
+      stage.querySelector('.cta').addEventListener('click', () => {
+        if (recordingPrompt) showRecording(recordingPrompt, pointer.week, store, studentId, advance);
+        else advance();
+      }, { once: true });
     } else {
       stage.innerHTML = `<div class="win">
         <div class="win emoji-lg" style="opacity:.7">🏪</div>
@@ -120,4 +126,95 @@ async function runBossSession({ store, studentId, now, pointer, attempt, onBossE
   }
 }
 
-export { runBossSession };
+/**
+ * Écran d'enregistrement audio, inséré entre la victoire du Boss et le
+ * partage aux parents pour les semaines qui le demandent (voir
+ * recordedBossWeeks.mjs). Utilise MediaRecorder directement — pas de
+ * dépendance — et se dégrade proprement (bouton "تخطي") si le micro est
+ * indisponible ou refusé, pour ne jamais bloquer la progression de
+ * l'enfant sur une permission navigateur.
+ *
+ * @param {string} prompt - consigne arabe, tirée du curriculum
+ * @param {number} week - semaine du Boss (clé de l'enregistrement en base)
+ * @param {import('../src/db.mjs').FennecStore} store
+ * @param {string} studentId
+ * @param {() => void} onDone - avancer à la semaine suivante
+ */
+async function showRecording(prompt, week, store, studentId, onDone) {
+  stage.innerHTML = `<div class="win">
+    <div class="win emoji-lg">🎙</div>
+    <p class="say ar center">لحظة تسجيل!</p>
+    <p class="sub ar center">${prompt}</p>
+    <div id="recControls"></div>
+  </div>`;
+  const controls = stage.querySelector('#recControls');
+
+  function renderStart() {
+    controls.innerHTML = `<button class="cta accent">🎙 ابدأ التسجيل</button>`;
+    controls.querySelector('.cta').addEventListener('click', startRecording, { once: true });
+  }
+
+  function renderUnavailable() {
+    controls.innerHTML = `
+      <p class="sub ar center">تعذّر الوصول إلى الميكروفون على هذا الجهاز.</p>
+      <button class="cta primary">تخطي ومتابعة</button>`;
+    controls.querySelector('.cta').addEventListener('click', onDone, { once: true });
+  }
+
+  async function startRecording() {
+    let stream;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch {
+      renderUnavailable();
+      return;
+    }
+    const recorder = new MediaRecorder(stream);
+    const chunks = [];
+    recorder.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data); };
+    let seconds = 0;
+    controls.innerHTML = `<p class="sub ar center" id="recTimer">⏺ 0:00</p><button class="cta accent">⏹ إيقاف</button>`;
+    const timerEl = controls.querySelector('#recTimer');
+    const timerHandle = setInterval(() => {
+      seconds++;
+      const mm = String(Math.floor(seconds / 60)).padStart(1, '0');
+      const ss = String(seconds % 60).padStart(2, '0');
+      timerEl.textContent = `⏺ ${mm}:${ss}`;
+    }, 1000);
+
+    recorder.onstop = () => {
+      clearInterval(timerHandle);
+      stream.getTracks().forEach((t) => t.stop());
+      const blob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' });
+      renderPlayback(blob);
+    };
+    recorder.start();
+    controls.querySelector('.cta').addEventListener('click', () => recorder.stop(), { once: true });
+  }
+
+  function renderPlayback(blob) {
+    const url = URL.createObjectURL(blob);
+    controls.innerHTML = `
+      <audio controls src="${url}" style="width:100%; margin:.6rem 0"></audio>
+      <div style="display:flex; gap:.6rem; justify-content:center">
+        <button class="cta primary" id="recRetry">🔁 أعد المحاولة</button>
+        <button class="cta accent" id="recSave">✓ حفظ ومتابعة</button>
+      </div>`;
+    controls.querySelector('#recRetry').addEventListener('click', () => {
+      URL.revokeObjectURL(url);
+      renderStart();
+    }, { once: true });
+    controls.querySelector('#recSave').addEventListener('click', async () => {
+      try { await store.saveRecording(studentId, week, blob); } catch { /* stockage indisponible, ne bloque pas la progression */ }
+      onDone();
+    }, { once: true });
+  }
+
+  if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === 'undefined') {
+    renderUnavailable();
+    return;
+  }
+  renderStart();
+}
+
+export { runBossSession, showRecording };

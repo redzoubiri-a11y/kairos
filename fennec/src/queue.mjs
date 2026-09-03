@@ -151,8 +151,18 @@ function buildScreenPlan({ dueEntries, newWordIds, catalog, pointer, phonicsTabl
 
 /**
  * Construit le plan du Boss du jeudi (jour 5) : `count` défis piochant dans
- * les mots introduits pendant `week` (cf. "Pas de nouveau contenu" du
- * script), en boucle si la semaine compte moins de mots que `count`.
+ * les mots introduits pendant tout le **monde** en cours (les 4 semaines qui
+ * précèdent et incluent `week`), pas seulement dans `week` elle-même — c'est
+ * un choix corrigé après coup, pas la conception d'origine : chaque semaine
+ * de Boss du curriculum (Foundations S4/S8/S12/S16/S20/S24/S28/S32, Builder
+ * S64) est une semaine de pure révision qui n'introduit **aucun** mot par
+ * conception (voir les tables "Révision" des documents de curriculum), donc
+ * filtrer sur `introWeek === week` seul renvoyait un plan vide et le Boss ne
+ * se déclenchait jamais — l'app sautait silencieusement à la semaine
+ * suivante sans jamais tester l'enfant, sur 7 des 8 mondes de Foundations et
+ * le Boss final de Builder. Les 8 mondes font systématiquement 4 semaines
+ * (principe posé dans les deux curriculums), d'où la fenêtre `week-3..week`.
+ *
  * Chaque appel (premier essai ou variante après un échec) redonne un ordre
  * et des distracteurs différents — c'est ce qui tient lieu de "Market 2"
  * du script sans dupliquer de contenu écrit à la main par semaine.
@@ -168,7 +178,7 @@ function buildScreenPlan({ dueEntries, newWordIds, catalog, pointer, phonicsTabl
  * @returns {Array<object>} liste de défis {phase:'boss', kind, word, options?, tokens?}
  */
 function buildBossPlan({ catalog, week, count = 12, rng = Math.random }) {
-  const weekWords = catalog.filter((w) => w.introWeek === week);
+  const weekWords = catalog.filter((w) => w.introWeek <= week && w.introWeek > week - 4);
   if (weekWords.length === 0) return [];
 
   const screens = [];

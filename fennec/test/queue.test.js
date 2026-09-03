@@ -141,10 +141,20 @@ test('buildBossPlan évite de répéter le même mot sur deux défis consécutif
   }
 });
 
-test('buildBossPlan retourne un plan vide si aucun mot n\'est programmé pour cette semaine', async () => {
+test('buildBossPlan retourne un plan vide si aucun mot n\'est programmé pour cette semaine ni les 3 précédentes', async () => {
   const { buildBossPlan } = await queuePromise;
   const plan = buildBossPlan({ catalog: CATALOG, week: 999 });
   assert.deepEqual(plan, []);
+});
+
+test('buildBossPlan pioche dans les 3 semaines précédentes quand la semaine du Boss n\'introduit aucun mot elle-même (semaine de pure révision, cf. Foundations S4/S8/S12...)', async () => {
+  const { buildBossPlan } = await queuePromise;
+  // S24 = semaine de Boss/révision qui n'introduit rien elle-même, mais S21
+  // (même monde, 4 semaines) a des mots dans CATALOG — le Boss doit les
+  // trouver, pas renvoyer un plan vide comme avant la correction.
+  const plan = buildBossPlan({ catalog: CATALOG, week: 24, count: 12, rng: () => 0.4 });
+  assert.equal(plan.length, 12);
+  assert.ok(plan.every((s) => CATALOG.some((w) => w.wordId === s.word.wordId && w.introWeek === 21)));
 });
 
 const PHONICS = [

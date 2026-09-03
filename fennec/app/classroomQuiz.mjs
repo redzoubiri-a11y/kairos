@@ -85,7 +85,7 @@ function renderQuestion() {
   const q = questions[qIndex];
   qzProgress.textContent = `${qIndex + 1} / ${questions.length}`;
   promptWord.textContent = q.word.english;
-  const emoji = wordEmoji[q.word.english];
+  const emoji = wordEmoji[String(q.word.wordId)];
   if (emoji) {
     promptEmoji.hidden = false;
     promptEmoji.textContent = emoji;

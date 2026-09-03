@@ -256,6 +256,18 @@ directement en IndexedDB apparaissent triés (S12 avant S16) avec lecteur
 audio fonctionnel, un profil sans enregistrement affiche le message vide,
 et le bouton "← رجوع" revient au sélecteur de profil.
 
+**Correctif : l'emoji ne s'affichait jamais dans le quiz projetable.**
+`word-emoji.json` est indexé par `wordId` (cf. `screens.mjs`, qui fait
+`wordEmoji[String(opt.wordId)]` correctement) mais `classroomQuiz.mjs`
+cherchait `wordEmoji[q.word.english]` — une clé qui n'existe jamais dans ce
+fichier. Résultat : sur les 193 mots qui ont pourtant un emoji, aucun ne
+s'affichait jamais en mode classe ; chaque question retombait
+silencieusement sur le texte seul. Corrigé pour indexer par `wordId`,
+comme `screens.mjs`. Validé en navigateur réel sur 8 questions
+consécutives : 4/8 affichent bien leur emoji (black→⚫, wash→🧼, look!→🔍,
+touch→☝️), les 4 autres portent sur des mots sans emoji couvert et restent
+sur texte seul — comportement attendu, pas un nouveau bug.
+
 **Correctif : aucun écran de fin de programme au-delà de S64.** Une fois le
 Boss du correctif ci-dessus réellement déclenché partout, un second trou est
 apparu : `main.mjs` ne savait pas dire "le programme est terminé". Passé la
@@ -386,4 +398,5 @@ BS1-BS8, y compris les deux examens blancs chronométrés avec delta
 objectif), portail Madrassatidz reliant les trois pistes et les deux
 tableaux de bord, correctif du Boss sur les semaines de pure révision,
 enregistrement audio réel des Boss majeurs et écran de réécoute dans
-l'app, écran de fin de programme renvoyant vers BEM Sprint.
+l'app, écran de fin de programme renvoyant vers BEM Sprint, correctif de
+l'emoji manquant dans le quiz projetable.

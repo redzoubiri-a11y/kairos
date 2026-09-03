@@ -301,10 +301,17 @@ worker + cache de l'app shell).
   maquettes à données figées, `wireframes/fennec-maquette-dashboard-*.html`)
   et le portail Madrassatidz à un vrai projet Supabase — mis de côté ce
   chantier (quota de projets gratuits bloqué sur le compte, cf. historique).
-- Contenu au-delà de Foundations (les pistes `builder`/`bem_sprint` existent
-  dans le schéma `students.track` mais n'ont pas de curriculum écrit).
+- BEM Sprint n'a toujours pas de moteur de répétition espacée propre (cf.
+  la note d'architecture non tranchée en tête de `bemSprint.mjs`) : c'est
+  un mode "practice" sans suivi de progression dans le temps, pas encore
+  un vrai troisième pilier au niveau de Foundations/Builder sur ce plan.
 
 Déjà fait dans ce chantier (à ne pas reproposer sans raison nouvelle) :
 habillage visuel définitif (palette marine/rouge/crème, RTL, règles
 erreur-douce), écran Boss réel avec chemins victoire et défaite testés,
-profils multiples (fratrie), quiz projetable en mode classe.
+profils multiples (fratrie), quiz projetable en mode classe, curriculum
+et intégration complets de Foundations (32 semaines) et Builder (8
+mondes), curriculum et intégration complets de BEM Sprint (8 semaines,
+BS1-BS8, y compris les deux examens blancs chronométrés avec delta
+objectif), portail Madrassatidz reliant les trois pistes et les deux
+tableaux de bord.

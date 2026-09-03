@@ -10,10 +10,8 @@
  * ouverte ; ce fichier ne la referme pas, il livre un premier exercice
  * réel et jouable pendant qu'elle se pose.
  *
- * BS1 (Reading Comprehension), BS2 (Lexis), BS3 (Mechanics & Morphology),
- * BS4 (Syntax), BS5 (Pronunciation), BS6 (Written Expression) et BS7
- * (premier examen blanc) seulement, sélectionnables via ?week=1..7 ou les
- * onglets en haut — BS8 n'est pas encore intégré, cf. fennec/README.md.
+ * Les 8 semaines (BS1 à BS8) sont intégrées, sélectionnables via
+ * ?week=1..8 ou les onglets en haut — voir fennec/README.md.
  *
  * BS6 est structurellement différent des semaines précédentes : ce n'est
  * pas objectivement notable par QCM (c'est de la rédaction libre). Plutôt
@@ -368,7 +366,7 @@ function showEnd() {
         deltaLine.textContent = 'لم يُسجَّل بعد محاولة BS7 على هذا الجهاز للمقارنة.';
       } else {
         const diff = earned - Number(previous);
-        deltaLine.className = `delta ar ${diff >= 0 ? 'up' : 'flat'}`;
+        deltaLine.className = `delta ar ${diff > 0 ? 'up' : 'flat'}`;
         const sign = diff > 0 ? '▲ +' : diff < 0 ? '▼ ' : '● ';
         deltaLine.textContent = `${sign}${diff} نقطة منذ BS7 (${previous} → ${earned})`;
       }

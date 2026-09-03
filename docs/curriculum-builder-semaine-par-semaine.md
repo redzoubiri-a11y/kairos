@@ -2,7 +2,7 @@
 
 > Suite de Foundations (`docs/curriculum-foundations-semaine-par-semaine.md`), pour l'enfant qui a terminé les 32 semaines et maîtrise ~320–350 mots actifs, l'alphabet latin et les sons de base. Public visé : 5AP–6AP (10–12 ans), niveau A1 solide → A2. Numérotation continue (S33, S34…) pour que le moteur SRS et le curriculum restent une seule ligne du temps sans redémarrage de compteur.
 >
-> **État de ce document : démarré, pas terminé.** Seul le MONDE 1 (S33–S36) est détaillé au niveau de Foundations. Les mondes suivants ne sont qu'une esquisse de titres/thèmes (section "Feuille de route", en bas) — à détailler monde par monde, pas tous d'un coup.
+> **État de ce document : démarré, pas terminé.** Seuls les MONDES B1 (S33–S36) et B2 (S37–S40) sont détaillés au niveau de Foundations. Les mondes suivants ne sont qu'une esquisse de titres/thèmes (section "Feuille de route", en bas) — à détailler monde par monde, pas tous d'un coup.
 
 ---
 
@@ -41,11 +41,25 @@ Mêmes catégories que Foundations (`lexique`, `structure`, `fonction`) plus une
 
 ---
 
+## MONDE B2 — « Comparing Things » (S37–S40) · Comparer
+
+*Fennec organise le concours du désert : qui est le plus rapide, le plus grand, le plus beau ?*
+
+| Sem. | Oral (mots & structures) | Lecture & orthographe | Boss / événement |
+|---|---|---|---|
+| **S37** | tall, short, fast, slow + comparatif court **-er** : **taller, shorter, faster, slower** + **Fennec is taller than the cat** | Règle d'orthographe du **-er** court : ajout simple (*tall→taller*) vs doublement de consonne (*big→bigger*) | Comparer deux animaux du zoo (S17-20 réactivés) avec *taller than / faster than* |
+| **S38** | beautiful, expensive, difficult, interesting + comparatif long **more…than** : **more beautiful than** | Règle : mots courts (1 syllabe) → *-er*, mots longs (2+ syllabes) → *more…* — tri d'adjectifs par longueur | Mini-boss du marché : comparer deux objets avec *more expensive than* |
+| **S39** | good→better→best, bad→worse→worst (comparatifs irréguliers) + superlatif **the fastest**, **the most beautiful** | Orthographes irrégulières à mémoriser directement (*better, best, worse, worst* ne suivent aucune règle) | Quiz "Who's the best?" — classer 3 animaux sur une qualité avec le superlatif |
+| **S40** | Révision : mélange *-er / more / irréguliers*, description à plusieurs traits (**a big, brown, fast dog**) | Paragraphe connecté : *"In the desert, the fennec is small but fast. The camel is bigger and slower. The eagle is the fastest of all."* — questions de compréhension | **BOSS : « Le concours du désert »** — l'enfant décrit et compare 2-3 animaux sur plusieurs traits (taille, vitesse, beauté), à voix haute, enregistré. 26 mots/structures actifs de plus (voir `data/builder-banque-mots.json`) |
+
+**Sortie du monde B2** : l'enfant forme correctement le comparatif court (*-er*) et long (*more…*), connaît au moins 4 comparatifs/superlatifs irréguliers, utilise le superlatif (*the…-est / the most…*), et peut décrire un objet ou un animal sur plusieurs traits à la fois dans une même phrase.
+
+---
+
 ## Feuille de route (mondes suivants — titres et thème seulement, pas encore détaillés)
 
 | Monde | Semaines | Thème pressenti | Saut grammatical/lexical visé |
 |---|---|---|---|
-| B2 | S37–S40 | *Comparing Things* | Comparatifs/superlatifs (*bigger, the biggest*), description à plusieurs traits |
 | B3 | S41–S44 | *Around Town* | *there is/are*, prépositions de lieu approfondies, indications simples |
 | B4 | S45–S48 | *Plans & Future* | *going to*, expression de projets/intentions — bilan de mi-année (même logique que S16 en Foundations) |
 | B5 | S49–S52 | *Story Time* | Lecture de récits plus longs (6–8 phrases), connecteurs (*then, after, because*) |

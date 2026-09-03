@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Génère la banque de mots Builder — MONDE B1 uniquement (S33-S36).
+"""Génère la banque de mots Builder — MONDES B1 et B2 (S33-S40).
 
 Suite de generate-foundations-word-bank.py : même modèle SRS (intervalles
 J+1, J+3, J+7, J+16, J+35), même calendrier école dimanche->jeudi (5
@@ -7,9 +7,9 @@ sessions/semaine réelles, jeudi = jour Boss donc pas de nouvel item).
 Numérotation de semaine continue depuis Foundations (S33, S34...) — voir
 docs/curriculum-builder-semaine-par-semaine.md.
 
-Seul le monde B1 est peuplé ici (cf. "Feuille de route" du curriculum) ;
-les mondes B2-B8 ne sont pas encore écrits, ce script ne génère donc pas de
-contenu pour S37+ tant que ce monde n'est pas détaillé.
+Seuls les mondes B1 et B2 sont peuplés ici (cf. "Feuille de route" du
+curriculum) ; les mondes B3-B8 ne sont pas encore écrits, ce script ne
+génère donc pas de contenu pour S41+ tant qu'ils ne sont pas détaillés.
 
 Sorties :
   data/builder-banque-mots.csv
@@ -45,19 +45,35 @@ W = {
      ("said","a dit","grammaire"),("bought","a acheté","grammaire"),
      ("Yesterday, Fennec went to the market","hier, Fennec est allé au marché","structure"),
      ("He was very happy","il était très content","structure")],
+37: [("tall","grand (taille)","lexique"),("short","petit (taille) / court","lexique"),
+     ("fast","rapide","lexique"),("slow","lent","lexique"),
+     ("taller","plus grand","grammaire"),("faster","plus rapide","grammaire"),
+     ("Fennec is taller than the cat","Fennec est plus grand que le chat","structure")],
+38: [("beautiful","beau/belle","lexique"),("expensive","cher","lexique"),
+     ("difficult","difficile","lexique"),("interesting","intéressant","lexique"),
+     ("more beautiful","plus beau","grammaire"),
+     ("more expensive than","plus cher que","structure")],
+39: [("good","bon","lexique"),("bad","mauvais","lexique"),
+     ("better","meilleur","grammaire"),("best","le meilleur","grammaire"),
+     ("worse","pire","grammaire"),("worst","le pire","grammaire"),
+     ("the fastest","le plus rapide","grammaire"),
+     ("the most beautiful","le plus beau","grammaire")],
+40: [("desert","désert","lexique"),("eagle","aigle","lexique"),("camel","chameau (révision)","lexique"),
+     ("a big, brown, fast dog","un grand chien marron et rapide","structure"),
+     ("The eagle is the fastest of all","l'aigle est le plus rapide de tous","structure")],
 }
 
-MONDES = {1: "B1 · Yesterday & Today"}
+MONDES = {1: "B1 · Yesterday & Today", 2: "B2 · Comparing Things"}
 def monde_of(week): return MONDES[(week - 33) // 4 + 1]
 
-# ------------------------------------------------- calendrier (S33 -> S36,
-# pas de vacances à l'intérieur de ce monde ; labels génériques au-delà de
-# S36 réservés aux échéances de révision qui débordent sur B2, non encore
+# ------------------------------------------------- calendrier (S33 -> S40,
+# pas de vacances à l'intérieur de ces mondes ; labels génériques au-delà de
+# S40 réservés aux échéances de révision qui débordent sur B3, non encore
 # écrit — purement des repères de planning, pas du contenu).
-labels = [f"S{i}" for i in range(33, 37)] + [f"S{i}" for i in range(37, 45)]
+labels = [f"S{i}" for i in range(33, 41)] + [f"S{i}" for i in range(41, 49)]
 def label_at(abs_day):
     idx = abs_day // 7
-    return labels[idx] if idx < len(labels) else "B2+"
+    return labels[idx] if idx < len(labels) else "B3+"
 def next_school_day(abs_day):
     while abs_day % 7 > 4:  # jours 5,6 = vendredi, samedi
         abs_day += 1

@@ -33,3 +33,29 @@ id,anglais,francais,categorie,monde,semaine_intro,jour_intro,r1,r2,r3,r4,r5,mait
 32,bought,a acheté,grammaire,B1 · Yesterday & Today,S36,4,S36,S37,S37,S39,S41,S41
 33,"Yesterday, Fennec went to the market","hier, Fennec est allé au marché",structure,B1 · Yesterday & Today,S36,1,S36,S36,S37,S38,S41,S41
 34,He was very happy,il était très content,structure,B1 · Yesterday & Today,S36,2,S36,S36,S37,S38,S41,S41
+35,tall,grand (taille),lexique,B2 · Comparing Things,S37,1,S37,S37,S38,S39,S42,S42
+36,short,petit (taille) / court,lexique,B2 · Comparing Things,S37,2,S37,S37,S38,S39,S42,S42
+37,fast,rapide,lexique,B2 · Comparing Things,S37,3,S37,S38,S38,S39,S42,S42
+38,slow,lent,lexique,B2 · Comparing Things,S37,4,S37,S38,S38,S40,S42,S42
+39,taller,plus grand,grammaire,B2 · Comparing Things,S37,1,S37,S37,S38,S39,S42,S42
+40,faster,plus rapide,grammaire,B2 · Comparing Things,S37,2,S37,S37,S38,S39,S42,S42
+41,Fennec is taller than the cat,Fennec est plus grand que le chat,structure,B2 · Comparing Things,S37,3,S37,S38,S38,S39,S42,S42
+42,beautiful,beau/belle,lexique,B2 · Comparing Things,S38,1,S38,S38,S39,S40,S43,S43
+43,expensive,cher,lexique,B2 · Comparing Things,S38,2,S38,S38,S39,S40,S43,S43
+44,difficult,difficile,lexique,B2 · Comparing Things,S38,3,S38,S39,S39,S40,S43,S43
+45,interesting,intéressant,lexique,B2 · Comparing Things,S38,4,S38,S39,S39,S41,S43,S43
+46,more beautiful,plus beau,grammaire,B2 · Comparing Things,S38,1,S38,S38,S39,S40,S43,S43
+47,more expensive than,plus cher que,structure,B2 · Comparing Things,S38,2,S38,S38,S39,S40,S43,S43
+48,good,bon,lexique,B2 · Comparing Things,S39,1,S39,S39,S40,S41,S44,S44
+49,bad,mauvais,lexique,B2 · Comparing Things,S39,2,S39,S39,S40,S41,S44,S44
+50,better,meilleur,grammaire,B2 · Comparing Things,S39,3,S39,S40,S40,S41,S44,S44
+51,best,le meilleur,grammaire,B2 · Comparing Things,S39,4,S39,S40,S40,S42,S44,S44
+52,worse,pire,grammaire,B2 · Comparing Things,S39,1,S39,S39,S40,S41,S44,S44
+53,worst,le pire,grammaire,B2 · Comparing Things,S39,2,S39,S39,S40,S41,S44,S44
+54,the fastest,le plus rapide,grammaire,B2 · Comparing Things,S39,3,S39,S40,S40,S41,S44,S44
+55,the most beautiful,le plus beau,grammaire,B2 · Comparing Things,S39,4,S39,S40,S40,S42,S44,S44
+56,desert,désert,lexique,B2 · Comparing Things,S40,1,S40,S40,S41,S42,S45,S45
+57,eagle,aigle,lexique,B2 · Comparing Things,S40,2,S40,S40,S41,S42,S45,S45
+58,camel,chameau (révision),lexique,B2 · Comparing Things,S40,3,S40,S41,S41,S42,S45,S45
+59,"a big, brown, fast dog",un grand chien marron et rapide,structure,B2 · Comparing Things,S40,4,S40,S41,S41,S43,S45,S45
+60,The eagle is the fastest of all,l'aigle est le plus rapide de tous,structure,B2 · Comparing Things,S40,1,S40,S40,S41,S42,S45,S45

@@ -501,21 +501,52 @@ déjà atteint la limite de 2 projets gratuits). État :
   acceptées ici — un compte anonyme EST le tuteur légitime du foyer dans ce
   modèle, pas un accès à distinguer d'un compte "permanent" qui n'existe
   pas encore.
-- **Pas encore fait** : brancher les tableaux de bord parent/enseignant
-  (toujours des maquettes à données figées,
-  `wireframes/fennec-maquette-dashboard-*.html`) et le portail Madrassatidz
-  à ce projet — le référentiel et la sync élève existent, mais rien ne lit
-  encore `sessions`/`parent_reports` côté tableau de bord.
+**Tableau de bord parent branché au projet réel.** `wireframes/fennec-maquette-dashboard-parent.html`
+lisait jusqu'ici des données figées en dur. Réécrit pour lire le vrai
+projet Supabase (même `FENNEC_SUPABASE_URL`/`KEY` que l'app, même session
+anonyme — partagée via `localStorage` si la page est servie depuis la même
+origine que `fennec/app/`, sans écran de login) :
+- Sélecteur d'enfants réel (`students` du guardian courant), identité et
+  position (`current_week`) réelles.
+- Tuiles réelles : mots maîtrisés (`student_word_state.mastered_at`),
+  précision moyenne (`screens_correct`/`screens_total` des sessions
+  quotidiennes), nombre de séances jouées cette semaine.
+- Graphique d'activité hebdomadaire calculé à partir des vraies minutes de
+  jeu (`finished_at - started_at` de chaque session, sommées par semaine) —
+  pas des minutes inventées.
+- Historique Boss réel (`sessions` où `kind='boss'`, `boss_passed`,
+  `boss_variant`, score réel).
+- Bilans trimestriels (`placement_tests`) et delta réel entre deux bilans —
+  légitimement vide pour l'instant, aucune fonctionnalité de l'app
+  n'écrit encore dans cette table.
+- État vide honnête (pas de session, pas de guardian, ou aucun enfant) au
+  lieu de données factices : *"لم يلعب أي طفل بعد على هذا الجهاز"*.
+- Les preuves audio restent explicitement non branchées : les
+  enregistrements vivent en IndexedDB local (voir plus haut), aucune
+  fonctionnalité ne les envoie vers `parent_reports.audio_url` — la carte
+  le dit maintenant explicitement plutôt que d'afficher des exemples
+  inventés.
+
+Ce que ça ne fait pas encore : le tableau de bord enseignant reste une
+maquette à données figées (aucune fonctionnalité de classe/code
+d'inscription n'existe dans l'app réelle pour l'instant, cf. plus bas) ; le
+portail Madrassatidz n'affiche toujours aucune donnée réelle (c'est un
+simple aiguillage vers les trois pistes, pas un tableau de bord). Comme
+pour le reste de la sync, non testable en bout en bout dans ce bac à sable
+(bloque `esm.sh`) — vérifié à la place que la page se dégrade proprement
+(message d'erreur clair, aucun crash JS) quand `esm.sh` est inatteignable.
 
 ## Prochaines briques (hors scope de ce chantier)
 
 - Vrais assets audio/image (actuellement : texte + synthèse vocale du
   navigateur, emoji-placeholder pour 211/286 mots lexique ; `word.audioUrl`/
   `word.imageUrl` déjà prévus dans le schéma).
-- Brancher les tableaux de bord parent/enseignant et le portail
-  Madrassatidz au projet Supabase réel (référentiel + sync élève existent
-  désormais, cf. section ci-dessus — reste à écrire les requêtes de lecture
-  côté tableau de bord).
+- Tableau de bord enseignant toujours en données figées (pas de
+  fonctionnalité classe/code d'inscription dans l'app réelle) ; portail
+  Madrassatidz reste un aiguillage statique.
+- Synchroniser les enregistrements audio (IndexedDB local) vers
+  `parent_reports.audio_url` pour que le tableau de bord parent les affiche
+  réellement.
 - BEM Sprint n'a toujours pas de moteur de répétition espacée propre (cf.
   la note d'architecture non tranchée en tête de `bemSprint.mjs`) : c'est
   un mode "practice" sans suivi de progression dans le temps, pas encore
@@ -536,5 +567,7 @@ l'emoji manquant dans le quiz projetable, correctif des leurres
 indiscernables sur les 17 mots repris entre Foundations et Builder,
 régénération de word-emoji.json pour couvrir aussi Builder, alignement de
 l'icône/manifest PWA sur la palette marine/rouge/crème actuelle (au lieu
-d'un vert/doré resté d'une itération antérieure), et création + branchement
-d'un vrai projet Supabase dédié (schéma, RLS, seed, connexion anonyme).
+d'un vert/doré resté d'une itération antérieure), création + branchement
+d'un vrai projet Supabase dédié (schéma, RLS, seed, connexion anonyme),
+correctif d'une récursion RLS infinie entre `students`/`classroom_students`,
+et branchement réel du tableau de bord parent à ce projet.

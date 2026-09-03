@@ -126,6 +126,10 @@ svg.chart{display:block; min-width:480px}
   color:var(--ink-soft); text-decoration:none; margin-bottom:1rem;
 }
 .portal-link:hover, .portal-link:focus-visible{color:var(--ink); text-decoration:underline}
+
+.empty-state{background:var(--surface); border:1px dashed var(--border); border-radius:16px; padding:1.6rem; text-align:center; color:var(--ink-soft); font-size:.9rem; line-height:1.8}
+.sub.muted{color:var(--ink-soft); font-style:italic}
+[hidden]{display:none!important}
 </style>
 </head>
 <body>
@@ -138,157 +142,293 @@ svg.chart{display:block; min-width:480px}
     <h1>لوحة الوالدين — Fennec</h1>
   </div>
 
-  <div class="childrow">
-    <button class="childcard active">
-      <span class="av">🦊</span>
-      <div><p class="nm">ياسين</p><p class="ps">S17 · اليوم 2</p></div>
-      <span class="streak">🔥 4</span>
-    </button>
-    <button class="childcard">
-      <span class="av">🐱</span>
-      <div><p class="nm">ليلى</p><p class="ps">S9 · اليوم 1</p></div>
-      <span class="streak">🔥 2</span>
-    </button>
+  <div id="loadingState" class="empty-state">جارٍ التحميل…</div>
+
+  <div id="emptyState" class="empty-state" hidden>
+    لم يلعب أي طفل بعد على هذا الجهاز، أو لم تتم مزامنة أي بيانات بعد.<br>
+    افتح <a href="../fennec/app/index.html">تطبيق Fennec</a> أولاً من نفس المتصفح، ثم عد إلى هنا.
   </div>
 
-  <div class="identity">
-    <span class="avatar">🦊</span>
-    <div class="who">
-      <p class="name">ياسين</p>
-      <p class="meta">المسار : Foundations · منذ الأسبوع 1</p>
-    </div>
-    <div class="pos">الموضع الحالي<b>S17 · اليوم 2</b></div>
-  </div>
+  <div id="dashboardBody" hidden>
+    <div class="childrow" id="childrow"></div>
 
-  <div class="tiles">
-    <div class="tile"><div class="n">94</div><div class="lbl">كلمة متقنة</div></div>
-    <div class="tile"><div class="n good">88%</div><div class="lbl">متوسط الدقة</div></div>
-    <div class="tile"><div class="n">🔥 4</div><div class="lbl">أيام متتالية هذا الأسبوع</div></div>
-  </div>
-
-  <div class="grid2">
-    <div class="card">
-      <h2>النشاط الأسبوعي</h2>
-      <p class="sub">دقائق اللعب لكل أسبوع — 15 دقيقة يوميًا هو الهدف</p>
-      <div class="chartwrap">
-        <svg class="chart" viewBox="0 0 460 170" role="img" aria-label="دقائق النشاط لكل أسبوع من S8 إلى S17">
-          <!-- lignes de repère à 0/30/60/90 min -->
-          <line class="gridline" x1="20" y1="120" x2="450" y2="120"></line>
-          <line class="gridline" x1="20" y1="80" x2="450" y2="80" stroke-dasharray="2 3"></line>
-          <line class="gridline" x1="20" y1="40" x2="450" y2="40" stroke-dasharray="2 3"></line>
-          <text class="axis-label" x="10" y="123" text-anchor="end">0</text>
-          <text class="axis-label" x="10" y="83" text-anchor="end">45</text>
-          <text class="axis-label" x="10" y="43" text-anchor="end">90</text>
-        </svg>
+    <div class="identity">
+      <span class="avatar" id="idAvatar">🦊</span>
+      <div class="who">
+        <p class="name" id="idName"></p>
+        <p class="meta" id="idMeta"></p>
       </div>
-      <div class="legend-row"><span class="sw"></span> أسابيع سابقة <span class="sw current" style="margin-inline-start:.8rem"></span> الأسبوع الحالي</div>
+      <div class="pos">الموضع الحالي<b id="idPos"></b></div>
     </div>
 
-    <div class="card">
-      <h2>نتائج تحدي الزعيم</h2>
-      <p class="sub">آخر 4 أسابيع بها تحدٍ</p>
-      <ul class="bosslist">
-        <li class="bossitem"><span class="week">S4</span><span class="pill good">✓ ناجح</span><span class="score">12/12</span></li>
-        <li class="bossitem"><span class="week">S8</span><span class="pill warn">↻ محاولة 2</span><span class="score">10/12</span></li>
-        <li class="bossitem"><span class="week">S12</span><span class="pill good">✓ ناجح</span><span class="score">11/12</span></li>
-        <li class="bossitem"><span class="week">S16</span><span class="pill good">✓ ناجح</span><span class="score">12/12</span></li>
-      </ul>
+    <div class="tiles">
+      <div class="tile"><div class="n" id="tileMastered">—</div><div class="lbl">كلمة متقنة</div></div>
+      <div class="tile"><div class="n good" id="tileAccuracy">—</div><div class="lbl">متوسط الدقة</div></div>
+      <div class="tile"><div class="n" id="tileStreak">—</div><div class="lbl">حصص هذا الأسبوع</div></div>
     </div>
-  </div>
 
-  <div class="grid2">
-    <div class="card">
-      <h2>تسجيلات صوتية</h2>
-      <p class="sub">لحظات يقول فيها ياسين ما تعلّمه بصوته</p>
-      <div class="proofs">
-        <div class="proof"><button class="play" aria-label="تشغيل">▶</button><div class="info"><p class="t">تعريف العائلة</p><p class="d">S12 · 24 ثانية</p></div></div>
-        <div class="proof"><button class="play" aria-label="تشغيل">▶</button><div class="info"><p class="t">بلاغ منتصف السنة</p><p class="d">S16 · 41 ثانية</p></div></div>
-        <div class="proof"><button class="play" aria-label="تشغيل">▶</button><div class="info"><p class="t">تحدي الزعيم — S16</p><p class="d">S16 · 18 ثانية</p></div></div>
+    <div class="grid2">
+      <div class="card">
+        <h2>النشاط الأسبوعي</h2>
+        <p class="sub">دقائق اللعب لكل أسبوع (محسوبة من وقت بداية/نهاية كل حصة فعلية)</p>
+        <div class="chartwrap">
+          <svg class="chart" id="activityChart" viewBox="0 0 460 170" role="img" aria-label="دقائق النشاط لكل أسبوع">
+            <line class="gridline" x1="20" y1="120" x2="450" y2="120"></line>
+            <line class="gridline" x1="20" y1="80" x2="450" y2="80" stroke-dasharray="2 3"></line>
+            <line class="gridline" x1="20" y1="40" x2="450" y2="40" stroke-dasharray="2 3"></line>
+            <text class="axis-label" x="10" y="123" text-anchor="end">0</text>
+            <text class="axis-label" x="10" y="83" text-anchor="end">45</text>
+            <text class="axis-label" x="10" y="43" text-anchor="end">90</text>
+          </svg>
+        </div>
+        <p class="sub muted" id="noActivityMsg" hidden>لا توجد حصص مسجّلة بعد.</p>
+        <div class="legend-row" id="chartLegend" hidden><span class="sw"></span> أسابيع سابقة <span class="sw current" style="margin-inline-start:.8rem"></span> الأسبوع الحالي</div>
+      </div>
+
+      <div class="card">
+        <h2>نتائج تحدي الزعيم</h2>
+        <p class="sub">كل أسبوع فيه محاولة تحدي</p>
+        <ul class="bosslist" id="bosslist"></ul>
+        <p class="sub muted" id="noBossMsg" hidden>لم يُخض أي تحدي زعيم بعد.</p>
       </div>
     </div>
 
-    <div class="card">
-      <h2>التقييمات الفصلية</h2>
-      <p class="sub">نفس الاختبار، معاد في 3 محطات</p>
-      <div class="milestones">
-        <div class="milestone"><span class="badge">S1</span><span class="m-lbl">البداية</span><span class="m-val">8 / 40</span></div>
-        <div class="milestone"><span class="badge">S16</span><span class="m-lbl">منتصف السنة</span><span class="m-val">31 / 40</span></div>
+    <div class="grid2">
+      <div class="card">
+        <h2>تسجيلات صوتية</h2>
+        <p class="sub">لحظات يسجّل فيها الطفل ما تعلّمه بصوته</p>
+        <p class="empty-state">التسجيلات محفوظة على جهاز الطفل (داخل تطبيق Fennec، زر "🎙 التسجيلات") لكنها غير مُرسلة إلى هذه اللوحة بعد — مزامنتها نحو Supabase reste à construire.</p>
       </div>
-      <p class="delta">▲ +23 نقطة منذ البداية</p>
+
+      <div class="card">
+        <h2>التقييمات الفصلية</h2>
+        <p class="sub">نفس الاختبار، معاد في عدة محطات (S1 / S16 / S32)</p>
+        <div class="milestones" id="milestones"></div>
+        <p class="sub muted" id="noMilestonesMsg" hidden>لا يوجد تقييم فصلي مسجّل بعد.</p>
+        <p class="delta" id="milestoneDelta" hidden></p>
+      </div>
     </div>
   </div>
 
-  <p class="foot">لوحة الوالدين — نسخة تجريبية (بيانات وهمية لغرض العرض، غير متصلة بـ Supabase بعد)<br>
+  <p class="foot" id="footNote">لوحة الوالدين — بيانات حقيقية من Supabase (fennec/README.md, section « Supabase — projet réel branché »)<br>
   Fennec · fennec/README.md</p>
 </div>
 
 <script>
+  // Même projet Supabase dédié que fennec/app/index.html (khmjrwemtjrqdrmvsdlg) —
+  // voir fennec/README.md. La session anonyme est stockée en localStorage,
+  // scopée à l'origine du navigateur : si cette page est servie depuis le
+  // même domaine que fennec/app/, elle réutilise la session déjà ouverte en
+  // jouant une session Fennec, sans écran de login ni nouvelle inscription.
+  window.FENNEC_SUPABASE_URL = 'https://khmjrwemtjrqdrmvsdlg.supabase.co';
+  window.FENNEC_SUPABASE_KEY = 'sb_publishable_as1KZL_wU0kV6Qrl961vOA_4LKX8vWl';
+</script>
+<script type="module">
 'use strict';
-// Rampe séquentielle marine validée (scripts/validate_palette.js --ordinal,
-// surface #F5F3EE) : #97a5b6 → #0a3161. La dernière barre (semaine en cours)
-// prend systématiquement le pas le plus sombre, quelle que soit sa valeur.
-const WEEKS = [
-  { week: 'S8',  minutes: 62, sessions: 4 },
-  { week: 'S9',  minutes: 58, sessions: 4 },
-  { week: 'S10', minutes: 64, sessions: 4 },
-  { week: 'S11', minutes: 31, sessions: 2 },
-  { week: 'S12', minutes: 78, sessions: 5 },
-  { week: 'S13', minutes: 60, sessions: 4 },
-  { week: 'S14', minutes: 63, sessions: 4 },
-  { week: 'S15', minutes: 59, sessions: 4 },
-  { week: 'S16', minutes: 76, sessions: 5 },
-  { week: 'S17', minutes: 28, sessions: 2 },
-];
 
-// Sélecteur d'enfant (démo statique : bascule l'état visuel actif, ne
-// recharge pas les données des cartes en dessous — comme le reste de la
-// maquette, ce n'est pas branché à un état réel).
-document.querySelectorAll('.childcard').forEach((card) => {
-  card.addEventListener('click', () => {
-    document.querySelectorAll('.childcard').forEach((c) => c.classList.remove('active'));
-    card.classList.add('active');
+/**
+ * Lit les vraies données du tuteur connecté sur cet appareil — jamais de
+ * connexion anonyme créée ICI (ce serait fabriquer un tuteur vide sans
+ * enfant) : uniquement une session déjà ouverte en jouant une session
+ * Fennec (fennec/app/main.mjs `ensureAnonSession`). Sans session/guardian/
+ * enfant, affiche un état vide honnête plutôt que des données inventées —
+ * contrairement à la version précédente de cette maquette (données figées
+ * en dur, cf. l'historique de fennec/README.md).
+ */
+const loadingState = document.getElementById('loadingState');
+const emptyState = document.getElementById('emptyState');
+const body = document.getElementById('dashboardBody');
+
+async function boot() {
+  let supabase;
+  try {
+    const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2');
+    supabase = createClient(window.FENNEC_SUPABASE_URL, window.FENNEC_SUPABASE_KEY);
+  } catch (e) {
+    loadingState.textContent = 'تعذّر تحميل Supabase — تحقّق من الاتصال بالإنترنت.';
+    return;
+  }
+
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) return showEmpty();
+
+  const { data: guardian } = await supabase.from('guardians')
+    .select('id').eq('user_id', session.user.id).eq('role', 'parent').maybeSingle();
+  if (!guardian) return showEmpty();
+
+  const { data: students } = await supabase.from('students')
+    .select('id, display_name, avatar, track, current_week').eq('guardian_id', guardian.id).order('created_at');
+  if (!students || students.length === 0) return showEmpty();
+
+  loadingState.hidden = true;
+  body.hidden = false;
+  renderChildRow(supabase, students);
+  await renderChild(supabase, students[0]);
+}
+
+function showEmpty() {
+  loadingState.hidden = true;
+  emptyState.hidden = false;
+}
+
+function renderChildRow(supabase, students) {
+  const row = document.getElementById('childrow');
+  row.innerHTML = '';
+  students.forEach((s, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'childcard' + (i === 0 ? ' active' : '');
+    btn.innerHTML = `<span class="av">${s.avatar || '🦊'}</span><div><p class="nm">${escapeHtml(s.display_name)}</p><p class="ps">S${s.current_week}</p></div>`;
+    btn.addEventListener('click', () => {
+      row.querySelectorAll('.childcard').forEach((c) => c.classList.remove('active'));
+      btn.classList.add('active');
+      renderChild(supabase, s);
+    });
+    row.appendChild(btn);
   });
-});
+}
 
-const svg = document.querySelector('svg.chart');
-const x0 = 24, x1 = 450, topY = 20, base = 120;
-const bw = (x1 - x0) / WEEKS.length;
-const barW = bw * 0.6;
-const maxMin = 90; // échelle : 0..90 min (repères à 0/45/90)
-const scaleY = (base - topY) / maxMin;
+async function renderChild(supabase, student) {
+  document.getElementById('idAvatar').textContent = student.avatar || '🦊';
+  document.getElementById('idName').textContent = student.display_name;
+  document.getElementById('idMeta').textContent = `المسار : ${student.track}`;
+  document.getElementById('idPos').textContent = `S${student.current_week}`;
 
-WEEKS.forEach((w, i) => {
-  const isCurrent = i === WEEKS.length - 1;
-  const cx = x0 + bw * i + bw / 2;
-  const h = Math.max(4, w.minutes * scaleY);
-  const y = base - h;
+  const { data: sessions } = await supabase.from('sessions')
+    .select('week, day, kind, boss_passed, boss_variant, screens_total, screens_correct, started_at, finished_at')
+    .eq('student_id', student.id).order('started_at');
 
-  const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-  rect.setAttribute('x', cx - barW / 2);
-  rect.setAttribute('y', y);
-  rect.setAttribute('width', barW);
-  rect.setAttribute('height', h);
-  rect.setAttribute('rx', 4);
-  rect.setAttribute('class', 'bar' + (isCurrent ? ' current' : ''));
-  const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
-  title.textContent = `${w.week} — ${w.minutes} دقيقة · ${w.sessions} حصص`;
-  rect.appendChild(title);
-  svg.appendChild(rect);
+  const { data: wordStates } = await supabase.from('student_word_state')
+    .select('mastered_at').eq('student_id', student.id);
 
-  const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-  label.setAttribute('x', cx);
-  label.setAttribute('y', y - 6);
-  label.setAttribute('class', 'bar-label' + (isCurrent ? ' current' : ''));
-  label.textContent = w.minutes;
-  svg.appendChild(label);
+  const { data: milestones } = await supabase.from('placement_tests')
+    .select('milestone, score, max_score, taken_at').eq('student_id', student.id).order('taken_at');
 
-  const axis = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-  axis.setAttribute('x', cx);
-  axis.setAttribute('y', base + 16);
-  axis.setAttribute('class', 'axis-label');
-  axis.textContent = w.week;
-  svg.appendChild(axis);
-});
+  renderTiles(sessions || [], wordStates || [], student.current_week);
+  renderChart(sessions || []);
+  renderBossList(sessions || []);
+  renderMilestones(milestones || []);
+}
+
+function renderTiles(sessions, wordStates, currentWeek) {
+  const mastered = wordStates.filter((w) => w.mastered_at).length;
+  document.getElementById('tileMastered').textContent = String(mastered);
+
+  const dailySessions = sessions.filter((s) => s.kind === 'daily' && s.screens_total > 0);
+  const totalCorrect = dailySessions.reduce((sum, s) => sum + s.screens_correct, 0);
+  const totalScreens = dailySessions.reduce((sum, s) => sum + s.screens_total, 0);
+  const accuracyEl = document.getElementById('tileAccuracy');
+  accuracyEl.textContent = totalScreens > 0 ? `${Math.round((totalCorrect / totalScreens) * 100)}%` : '—';
+
+  const thisWeekSessions = sessions.filter((s) => s.week === currentWeek && s.kind === 'daily');
+  document.getElementById('tileStreak').textContent = `🔥 ${thisWeekSessions.length}`;
+}
+
+/** Minutes réelles = (finished_at - started_at), sommées par semaine. */
+function renderChart(sessions) {
+  const svg = document.getElementById('activityChart');
+  [...svg.querySelectorAll('rect, .bar-label, .axis-label:not([x="10"])')].forEach((el) => el.remove());
+
+  const byWeek = new Map();
+  sessions.forEach((s) => {
+    if (!s.finished_at) return;
+    const minutes = (new Date(s.finished_at) - new Date(s.started_at)) / 60000;
+    byWeek.set(s.week, (byWeek.get(s.week) || 0) + minutes);
+  });
+  const weeks = [...byWeek.keys()].sort((a, b) => a - b).slice(-10);
+
+  document.getElementById('noActivityMsg').hidden = weeks.length > 0;
+  document.getElementById('chartLegend').hidden = weeks.length === 0;
+  if (weeks.length === 0) return;
+
+  const x0 = 24, x1 = 450, topY = 20, base = 120;
+  const bw = (x1 - x0) / weeks.length;
+  const barW = bw * 0.6;
+  const maxMin = Math.max(90, ...weeks.map((w) => byWeek.get(w)));
+  const scaleY = (base - topY) / maxMin;
+
+  weeks.forEach((week, i) => {
+    const minutes = byWeek.get(week);
+    const isCurrent = i === weeks.length - 1;
+    const cx = x0 + bw * i + bw / 2;
+    const h = Math.max(4, minutes * scaleY);
+    const y = base - h;
+
+    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    rect.setAttribute('x', cx - barW / 2);
+    rect.setAttribute('y', y);
+    rect.setAttribute('width', barW);
+    rect.setAttribute('height', h);
+    rect.setAttribute('rx', 4);
+    rect.setAttribute('class', 'bar' + (isCurrent ? ' current' : ''));
+    const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+    title.textContent = `S${week} — ${Math.round(minutes)} دقيقة`;
+    rect.appendChild(title);
+    svg.appendChild(rect);
+
+    const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    label.setAttribute('x', cx);
+    label.setAttribute('y', y - 6);
+    label.setAttribute('class', 'bar-label' + (isCurrent ? ' current' : ''));
+    label.textContent = Math.round(minutes);
+    svg.appendChild(label);
+
+    const axis = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    axis.setAttribute('x', cx);
+    axis.setAttribute('y', base + 16);
+    axis.setAttribute('class', 'axis-label');
+    axis.textContent = `S${week}`;
+    svg.appendChild(axis);
+  });
+}
+
+function renderBossList(sessions) {
+  const list = document.getElementById('bosslist');
+  list.innerHTML = '';
+  const bossSessions = sessions.filter((s) => s.kind === 'boss').sort((a, b) => a.week - b.week);
+  document.getElementById('noBossMsg').hidden = bossSessions.length > 0;
+  bossSessions.forEach((s) => {
+    const li = document.createElement('li');
+    li.className = 'bossitem';
+    const pillClass = s.boss_passed ? 'good' : 'warn';
+    const pillText = s.boss_passed
+      ? '✓ ناجح'
+      : (s.boss_variant ? `↻ ${s.boss_variant.replace('essai_', 'محاولة ')}` : '✗ لم ينجح بعد');
+    li.innerHTML = `<span class="week">S${s.week}</span><span class="pill ${pillClass}">${pillText}</span><span class="score">${s.screens_correct}/${s.screens_total}</span>`;
+    list.appendChild(li);
+  });
+}
+
+const MILESTONE_LABELS = { s1: 'البداية', s16: 'منتصف السنة', s32: 'نهاية السنة' };
+
+function renderMilestones(milestones) {
+  const wrap = document.getElementById('milestones');
+  wrap.innerHTML = '';
+  document.getElementById('noMilestonesMsg').hidden = milestones.length > 0;
+  const deltaEl = document.getElementById('milestoneDelta');
+  deltaEl.hidden = true;
+
+  milestones.forEach((m) => {
+    const div = document.createElement('div');
+    div.className = 'milestone';
+    div.innerHTML = `<span class="badge">${m.milestone.toUpperCase()}</span><span class="m-lbl">${MILESTONE_LABELS[m.milestone] || m.milestone}</span><span class="m-val">${m.score} / ${m.max_score}</span>`;
+    wrap.appendChild(div);
+  });
+
+  if (milestones.length >= 2) {
+    const first = milestones[0], last = milestones[milestones.length - 1];
+    const diff = last.score - first.score;
+    deltaEl.hidden = false;
+    deltaEl.textContent = `${diff >= 0 ? '▲ +' : '▼ '}${diff} نقطة منذ ${MILESTONE_LABELS[first.milestone] || first.milestone}`;
+  }
+}
+
+function escapeHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+boot();
 </script>
 </body>
 </html>

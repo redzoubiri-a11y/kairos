@@ -49,6 +49,17 @@ async function runBossSession({ store, studentId, now, pointer, attempt, onBossE
   const results = [];
   let idx = -1;
 
+  // Crée la ligne `sessions` distante dès le début (upsert), pas seulement
+  // à la fin dans finish() — même correctif que session.mjs, même raison :
+  // sans ça, les session_event mis en file pendant le Boss (onAnswer)
+  // référencent un `session_id` qui n'existe encore nulle part côté
+  // serveur si la sync tourne avant la fin, et la policy RLS d'écriture de
+  // session_events rejette systématiquement le tout premier événement.
+  await store.logSessionSummary(studentId, {
+    sessionId, week: pointer.week, day: 5, kind: 'boss',
+    startedAt, finishedAt: null, screensTotal: 0, screensCorrect: 0,
+  });
+
   await showIntro();
 
   async function showIntro() {

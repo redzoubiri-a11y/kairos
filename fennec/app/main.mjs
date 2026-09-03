@@ -232,23 +232,38 @@ async function maybeConfigureSync(store, profile) {
     console.info('[fennec] Sync Supabase désactivée (aucune configuration) — mode 100% local.');
     return;
   }
-  const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2');
-  const supabase = createClient(window.FENNEC_SUPABASE_URL, window.FENNEC_SUPABASE_KEY);
-  window.addEventListener('online', () => pushPending(supabase, store).catch(() => {}));
-  if (navigator.onLine) {
-    try {
-      await ensureAnonSession(supabase);
-      if (profile) {
-        const guardianId = await ensureGuardian(supabase);
-        await ensureStudent(supabase, guardianId, profile);
+  // Toute cette fonction est protégée par un seul try/catch englobant :
+  // `boot()` l'attend sans jamais la protéger elle-même (voir plus bas), et
+  // le premier maillon — l'import dynamique de supabase-js depuis un CDN
+  // externe — peut échouer pour de vraies raisons hors de notre contrôle
+  // (réseau scolaire filtré, bloqueur de pub, panne CDN passagère). Avant ce
+  // correctif, cet échec remontait tel quel jusqu'à `boot()` et empêchait
+  // l'app entière de démarrer (ni session, ni Boss, ni écran de fin) — un
+  // enfant hors ligne ou derrière un filtre réseau se serait retrouvé avec
+  // un écran vide, exactement ce que l'architecture "offline-first" du
+  // reste de l'app est censée empêcher. Trouvé en testant réellement dans
+  // un environnement où ce CDN est bloqué (voir fennec/README.md).
+  try {
+    const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2');
+    const supabase = createClient(window.FENNEC_SUPABASE_URL, window.FENNEC_SUPABASE_KEY);
+    window.addEventListener('online', () => pushPending(supabase, store).catch(() => {}));
+    if (navigator.onLine) {
+      try {
+        await ensureAnonSession(supabase);
+        if (profile) {
+          const guardianId = await ensureGuardian(supabase);
+          await ensureStudent(supabase, guardianId, profile);
+        }
+      } catch (e) {
+        // Pas d'auth/guardian/student distant cette fois-ci : la sync retentera
+        // au prochain démarrage ou retour réseau, jamais bloquant pour l'enfant.
+        console.warn('[fennec] Auth/guardian/student Supabase non assurés :', e);
       }
-    } catch (e) {
-      // Pas d'auth/guardian/student distant cette fois-ci : la sync retentera
-      // au prochain démarrage ou retour réseau, jamais bloquant pour l'enfant.
-      console.warn('[fennec] Auth/guardian/student Supabase non assurés :', e);
+      await pullCatalog(supabase, store).catch(() => {});
+      await pushPending(supabase, store).catch(() => {});
     }
-    await pullCatalog(supabase, store).catch(() => {});
-    await pushPending(supabase, store).catch(() => {});
+  } catch (e) {
+    console.warn('[fennec] Sync Supabase indisponible cette fois-ci (CDN/réseau) — mode 100% local :', e);
   }
 }
 

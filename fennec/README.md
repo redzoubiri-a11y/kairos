@@ -536,6 +536,43 @@ pour le reste de la sync, non testable en bout en bout dans ce bac à sable
 (bloque `esm.sh`) — vérifié à la place que la page se dégrade proprement
 (message d'erreur clair, aucun crash JS) quand `esm.sh` est inatteignable.
 
+**Correctif critique : le branchement Supabase pouvait empêcher l'app
+entière de démarrer.** `maybeConfigureSync()` (`fennec/app/main.mjs`)
+importait `supabase-js` depuis `esm.sh` sans jamais protéger cet import —
+et `boot()` l'attend sans le protéger non plus. Sur un réseau qui bloque ce
+CDN (filtre scolaire, bloqueur de pub, panne CDN passagère, ou tout
+simplement le bac à sable de ce chantier), l'échec de l'import remontait
+tel quel jusqu'à `boot()` et empêchait TOUTE la suite de s'exécuter — ni
+session quotidienne, ni Boss, ni écran de fin de programme, rien. Exactement
+la panne que l'architecture "offline-first" de tout le reste de l'app est
+censée rendre impossible. Trouvé en testant réellement une session dans cet
+environnement (qui bloque justement `esm.sh`). Corrigé en enveloppant toute
+la fonction dans un seul `try/catch` : un CDN indisponible désactive
+silencieusement la sync pour cette fois-ci (comme prévu), plus jamais
+l'app entière. Validé en navigateur réel : session complète jouée sans
+erreur JS dans cet environnement où `esm.sh` reste bloqué.
+
+**Deuxième correctif, trouvé dans la foulée : l'ordre de synchronisation
+des sessions pouvait bloquer la file pour de bon.** Les `session_event`
+(une réponse par écran) sont mis en file (`pending_sync`) tout au long
+d'une session, alors que le `session_summary` qui crée la ligne `sessions`
+distante n'était mis en file qu'à la toute fin (`finish()`). La policy RLS
+d'écriture de `session_events` exige que `session_id` corresponde à une
+ligne `sessions` déjà visible — donc si la sync tournait avant la fin
+d'une session (première session réelle d'un enfant, ou simplement un
+retour réseau en plein milieu), le tout premier `session_event` était
+systématiquement rejeté et bloquait la file pour toujours (les tentatives
+suivantes repartent du même point, avec la même erreur). Vérifié
+réellement contre le projet Supabase (le rejet apparaît comme une erreur
+RLS `42501`, pas une violation de clé étrangère — mais le résultat pratique
+est identique). Corrigé en mettant en file un `session_summary` "placeholder"
+(`finishedAt: null`) dès le DÉBUT de la session (`session.mjs`/
+`bossSession.mjs`), avant tout `session_event` — `sendOne()` fait déjà un
+`upsert`, donc le résumé final à la fin remplace proprement le placeholder.
+Revérifié de bout en bout contre le projet réel : placeholder → deux
+`session_event` → résumé final upserté par-dessus (`18/16`, `finished_at`
+renseigné) → tout accepté, dans cet ordre précis.
+
 ## Prochaines briques (hors scope de ce chantier)
 
 - Vrais assets audio/image (actuellement : texte + synthèse vocale du
@@ -570,4 +607,7 @@ l'icône/manifest PWA sur la palette marine/rouge/crème actuelle (au lieu
 d'un vert/doré resté d'une itération antérieure), création + branchement
 d'un vrai projet Supabase dédié (schéma, RLS, seed, connexion anonyme),
 correctif d'une récursion RLS infinie entre `students`/`classroom_students`,
-et branchement réel du tableau de bord parent à ce projet.
+branchement réel du tableau de bord parent à ce projet, correctif d'une
+panne complète de l'app quand le CDN de supabase-js est inatteignable, et
+correctif de l'ordre de sync qui pouvait bloquer la file pour de bon dès la
+première session.

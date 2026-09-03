@@ -57,6 +57,23 @@ async function runSession({ store, studentId, now, pointer, streakDays, onSessio
     return renderNothingDueToday();
   }
 
+  // Crée la ligne `sessions` distante dès le début (upsert, pas insert) —
+  // pas seulement à la fin dans finish(). Sans ça, les session_event mis en
+  // file pendant la session (onAnswer, ci-dessous) référencent un
+  // `session_id` qui n'existe encore nulle part côté serveur si la sync
+  // tourne avant la fin de la session (retour réseau en cours de session,
+  // ou simplement le tout premier jour réel d'un enfant) : la policy RLS
+  // "events: écriture par tuteur" (fennec/supabase/migrations/0002_rls.sql)
+  // exige que `session_id` corresponde à une ligne `sessions` déjà visible,
+  // donc le tout premier session_event de la toute première session est
+  // systématiquement rejeté et bloque la file de sync pour de bon — trouvé
+  // en vérifiant réellement le chemin contre le projet Supabase (voir
+  // fennec/README.md, section "Supabase — projet réel branché").
+  await store.logSessionSummary(studentId, {
+    sessionId, week: pointer.week, day: pointer.day, kind: 'daily',
+    startedAt, finishedAt: null, screensTotal: 0, screensCorrect: 0,
+  });
+
   await showSessionIntro();
 
   async function showSessionIntro() {

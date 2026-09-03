@@ -1,0 +1,118 @@
+{
+  "text": {
+    "id": "bs1-t1",
+    "title": "Saving Water in the Village",
+    "body": [
+      "Amina lives in a small village in the south of Algeria.",
+      "Every summer, the weather is very hot and dry, and water is hard to find.",
+      "Last year, the village built a new water tank near the school.",
+      "Now, families can collect clean water every morning.",
+      "Amina's mother says this has changed their lives.",
+      "Before, she had to walk two kilometres to fetch water from a well.",
+      "Today, she only walks two hundred metres.",
+      "Amina and her friends also learned to save water at school.",
+      "They turn off the tap when they brush their teeth, and they use old water to clean the classroom.",
+      "Their teacher, Mr Belkacem, says that small habits can make a big difference.",
+      "Next month, Amina's class will visit another village to teach children there about saving water.",
+      "Amina is very proud of this project."
+    ]
+  },
+  "items": [
+    {
+      "id": "bs1-1",
+      "kind": "mcq",
+      "skill": "gist",
+      "prompt": "ما الفكرة الرئيسية لهذا النص؟",
+      "promptEn": "What is this text mainly about?",
+      "options": [
+        "A school trip to the desert",
+        "A village project to save water",
+        "Amina's family history",
+        "A new school built in the south"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "bs1-2",
+      "kind": "true_false_justify",
+      "skill": "comprehension",
+      "statement": "Before, Amina's mother walked two kilometres to fetch water.",
+      "answer": true,
+      "proofOptions": [
+        "Every summer, the weather is very hot and dry.",
+        "Before, she had to walk two kilometres to fetch water from a well.",
+        "They turn off the tap when they brush their teeth."
+      ],
+      "correctProofIndex": 1
+    },
+    {
+      "id": "bs1-3",
+      "kind": "true_false_justify",
+      "skill": "comprehension",
+      "statement": "Amina's class will visit another village next month.",
+      "answer": true,
+      "proofOptions": [
+        "Amina is very proud of this project.",
+        "Now, families can collect clean water every morning.",
+        "Next month, Amina's class will visit another village to teach children there about saving water."
+      ],
+      "correctProofIndex": 2
+    },
+    {
+      "id": "bs1-4",
+      "kind": "mcq",
+      "skill": "wh_question",
+      "prompt": "من هو السيد بلقاسم؟",
+      "promptEn": "Who is Mr Belkacem?",
+      "options": [
+        "Amina's father",
+        "The village mayor",
+        "Amina's teacher",
+        "A water engineer"
+      ],
+      "correctIndex": 2
+    },
+    {
+      "id": "bs1-5",
+      "kind": "mcq",
+      "skill": "wh_question",
+      "prompt": "ماذا بنى القرويون العام الماضي؟",
+      "promptEn": "What did the village build last year?",
+      "options": [
+        "A new school",
+        "A water tank",
+        "A well",
+        "A road"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "bs1-6",
+      "kind": "mcq",
+      "skill": "referent",
+      "prompt": "\"Their teacher, Mr Belkacem, says…\" — بم يرتبط Their هنا؟",
+      "promptEn": "In \"Their teacher, Mr Belkacem, says that small habits can make a big difference,\" what does \"Their\" refer to?",
+      "options": [
+        "Amina's family",
+        "Amina and her friends",
+        "The villagers",
+        "The water tank"
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "bs1-7",
+      "kind": "mcq",
+      "skill": "referent",
+      "prompt": "\"Now, families can collect clean water every morning\" — بم يرتبط Now هنا؟",
+      "promptEn": "In \"Now, families can collect clean water every morning,\" what does \"Now\" refer to?",
+      "options": [
+        "Last year",
+        "After the water tank was built",
+        "Every summer",
+        "Next month"
+      ],
+      "correctIndex": 1
+    }
+  ]
+}

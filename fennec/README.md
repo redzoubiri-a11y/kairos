@@ -35,6 +35,8 @@ fennec/
   app/                        # PWA réelle, branchée sur src/*.mjs (pas une maquette)
     index.html, styles.css, screens.mjs, session.mjs, bossSession.mjs, main.mjs, sw.js, manifest.webmanifest
     classroomQuiz.html/.mjs    # quiz projetable (mode classe), vrai écran — voir plus bas
+    bemSprint.html/.mjs        # BEM Sprint — BS1 seulement, vrai écran — voir plus bas
+    bemSprintBS1.json          # texte support + 7 items BS1, écrit à la main (pas généré)
     catalog.json               # copie embarquée du référentiel (bootstrap 100% offline)
     build_catalog.py           # régénère catalog.json depuis les deux banques de mots
     phonics.json               # progression phonics (22 sons, S2→S30), écran "phonics"
@@ -134,6 +136,23 @@ mot "yesterday" introduit), pointeur avancé à S33·jour 2 et persistant
 après rechargement ; jour Boss de fin de monde B1 (S36) démarre
 normalement ; semaine sans contenu nouveau (S64, fin du curriculum Builder)
 affiche le message de repli existant au lieu de planter.
+
+**BEM Sprint — premier segment réel (BS1 seulement).** `fennec/app/bemSprint.html`
+est un vrai écran, pas une maquette — accessible directement (pas encore lié
+depuis `index.html` ni un tableau de bord). Il joue les 7 items de
+`docs/curriculum-bem-sprint.md` BS1 (Reading Comprehension) sur un texte
+support original écrit pour ce chantier (`bemSprintBS1.json`, pas une copie
+d'une épreuve BEM réelle — voir la note du curriculum à ce sujet) : idée
+générale (QCM), vrai/faux justifié par citation exacte du texte, questions
+WH, référents. **Choix d'architecture assumé, pas neutre** : le document
+laissait deux options ouvertes (détourner le SRS existant vers des motifs
+d'erreur, ou construire un moteur séparé) ; ce premier segment ne tranche
+ni l'une ni l'autre — c'est un mode "practice" autonome sans état persisté
+(comme `classroomQuiz.mjs`), qui prouve que le format d'activités fonctionne
+avant d'investir dans l'une des deux architectures. BS2-BS8 ne sont pas
+intégrés. Validé en navigateur réel : score exact (7/7 sur un passage
+100% correct, testé aussi avec des réponses fausses), correction "jamais
+rouge" (bonne réponse en surbrillance verte/navy, jamais de rouge), rejouable.
 
 ## Pourquoi cette architecture
 

@@ -9,7 +9,7 @@
  * chaque déploiement pour invalider l'ancien cache.
  */
 
-const CACHE_VERSION = 'fennec-v6';
+const CACHE_VERSION = 'fennec-v7';
 const SHELL_FILES = [
   './',
   './index.html',
@@ -20,6 +20,9 @@ const SHELL_FILES = [
   './screens.mjs',
   './classroomQuiz.html',
   './classroomQuiz.mjs',
+  './bemSprint.html',
+  './bemSprint.mjs',
+  './bemSprintBS1.json',
   './manifest.webmanifest',
   './catalog.json',
   './phonics.json',

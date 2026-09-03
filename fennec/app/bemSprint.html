@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ar" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fennec — BEM Sprint</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="styles.css">
+<style>
+/* BEM Sprint : entraînement au format d'examen (élève plus âgé, 4AM),
+   pas le gabarit "téléphone" du reste de l'app — texte support toujours
+   visible en haut, activités type BEM en dessous. Réutilise les tokens
+   et classes .opt/.cta de styles.css pour rester dans le même système. */
+body{display:block; background:var(--ink)}
+.wrap{max-width:40rem; margin:0 auto; min-height:100dvh; background:var(--bg-base); display:flex; flex-direction:column}
+.top{display:flex; align-items:center; gap:.6rem; padding:.9rem 1.2rem; color:#fff}
+.top .brand{font-family:var(--mono); font-size:.8rem; opacity:.85}
+.top a.exit{margin-inline-start:auto; color:#fff; opacity:.7; text-decoration:none; font-family:var(--mono); font-size:.75rem}
+
+.passage{background:#fff; border:1px solid var(--border); border-radius:16px; margin:0 1.2rem 1rem; padding:1rem 1.2rem; direction:ltr; text-align:left}
+.passage h2{font-family:'Baloo 2'; font-size:1rem; margin:0 0 .5rem; color:var(--ink)}
+.passage p{font-size:.92rem; line-height:1.7; color:var(--ink); margin:0}
+
+.qwrap{flex:1; padding:0 1.2rem 1.6rem; display:flex; flex-direction:column}
+.qz-progress{font-family:var(--mono); font-size:.8rem; color:var(--ink-soft); text-align:center; margin-bottom:.6rem}
+.prompt-ar{direction:rtl; text-align:right; font-size:1rem; font-weight:700; color:var(--ink); margin:0 0 .3rem}
+.prompt-en{direction:ltr; text-align:left; font-size:.85rem; color:var(--ink-soft); font-style:italic; margin:0 0 1rem}
+
+.optlist{display:flex; flex-direction:column; gap:.6rem}
+.opt2{
+  font-family:'Baloo 2'; font-weight:600; font-size:.95rem; background:#fff; color:var(--ink);
+  border:2px solid var(--border); border-radius:14px; padding:.85rem 1rem; cursor:pointer; text-align:left; direction:ltr;
+}
+.opt2:hover{border-color:var(--ink)}
+.opt2.correct{border-color:var(--primary); background:var(--primary-soft)}
+.opt2.faded{opacity:.45}
+.opt2[disabled]{cursor:default}
+
+.tfrow2{display:flex; gap:.8rem; margin-bottom:1rem}
+.tf2{
+  flex:1; font-family:'Baloo 2'; font-weight:800; font-size:1rem; border:none; border-radius:14px;
+  padding:.9rem; cursor:pointer; color:#fff;
+}
+.tf2.yes{background:var(--primary)}
+.tf2.no{background:var(--accent)}
+.tf2[disabled]{opacity:.5; cursor:default}
+
+.nextbtn{margin-top:1.2rem}
+
+.endscreen{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.8rem; text-align:center; padding:2rem}
+.endscreen .score{font-size:2.4rem; font-weight:800; color:var(--ink)}
+.endscreen p{color:var(--ink-soft); margin:0; direction:rtl}
+
+[hidden]{display:none !important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <span class="brand">🎓 Fennec — BEM Sprint · BS1</span>
+    <a class="exit" href="index.html">✕ إغلاق</a>
+  </div>
+
+  <div class="passage">
+    <h2 id="textTitle"></h2>
+    <p id="textBody"></p>
+  </div>
+
+  <div id="qwrap" class="qwrap">
+    <p class="qz-progress" id="progress"></p>
+    <p class="prompt-ar" id="promptAr"></p>
+    <p class="prompt-en" id="promptEn"></p>
+
+    <div id="tfBlock" class="tfrow2" hidden>
+      <button id="tfYes" class="tf2 yes ar">صح</button>
+      <button id="tfNo" class="tf2 no ar">خطأ</button>
+    </div>
+
+    <div id="optList" class="optlist"></div>
+
+    <button id="nextBtn" class="cta primary nextbtn ar" hidden>التالي ←</button>
+  </div>
+
+  <div id="endScreen" class="endscreen" hidden>
+    <span style="font-size:2.5rem">🎓</span>
+    <p class="score" id="scoreLine"></p>
+    <p class="ar" id="scoreDetail"></p>
+    <button id="restartBtn" class="cta accent ar" style="margin-top:1rem">↻ إعادة المحاولة</button>
+  </div>
+</div>
+
+<script type="module" src="bemSprint.mjs"></script>
+</body>
+</html>

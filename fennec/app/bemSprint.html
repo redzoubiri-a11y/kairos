@@ -95,6 +95,23 @@ textarea#writingArea:focus{border-color:var(--ink); outline:none}
 
 .partscore{display:flex; flex-direction:column; gap:.3rem; margin-top:.4rem; font-family:var(--mono); font-size:.78rem; color:var(--ink-soft); direction:ltr}
 
+.delta{font-family:var(--mono); font-size:.95rem; font-weight:700; margin-top:.5rem}
+.delta.up{color:var(--primary)}
+.delta.flat{color:var(--ink-soft)}
+
+.strategy{background:#fff; border:1px solid var(--border); border-radius:14px; padding:1rem 1.2rem; margin-top:1.2rem; text-align:right; max-width:32rem}
+.strategy h3{font-size:.9rem; margin:0 0 .5rem; color:var(--ink)}
+.strategy ul{margin:0; padding-inline-start:1.2rem; font-size:.82rem; color:var(--ink); line-height:1.7}
+
+.revsheet{width:100%; max-width:32rem; margin-top:1.2rem; text-align:right}
+.revsheet label{display:block; font-size:.85rem; color:var(--ink); margin-bottom:.4rem}
+.revsheet textarea{
+  width:100%; min-height:6rem; font-family:'Baloo 2'; font-size:.9rem; color:var(--ink);
+  border:2px solid var(--border); border-radius:14px; padding:.7rem .9rem; direction:rtl; text-align:right;
+  box-sizing:border-box; resize:vertical;
+}
+.revsheet .saved{font-family:var(--mono); font-size:.72rem; color:var(--primary); margin-top:.3rem; height:1rem}
+
 .endscreen{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.8rem; text-align:center; padding:2rem}
 .endscreen .score{font-size:2.4rem; font-weight:800; color:var(--ink)}
 .endscreen p{color:var(--ink-soft); margin:0; direction:rtl}
@@ -116,6 +133,7 @@ textarea#writingArea:focus{border-color:var(--ink); outline:none}
       <a data-week="5" href="?week=5">BS5</a>
       <a data-week="6" href="?week=6">BS6</a>
       <a data-week="7" href="?week=7">BS7</a>
+      <a data-week="8" href="?week=8">BS8</a>
     </div>
     <a class="exit" href="index.html">✕ إغلاق</a>
   </div>
@@ -156,6 +174,24 @@ textarea#writingArea:focus{border-color:var(--ink); outline:none}
     <p class="score" id="scoreLine"></p>
     <p class="ar" id="scoreDetail"></p>
     <div class="partscore" id="partScore"></div>
+    <p class="delta ar" id="deltaLine" hidden></p>
+
+    <div id="strategyBlock" class="strategy" hidden>
+      <h3 class="ar">استراتيجية يوم الامتحان</h3>
+      <ul class="ar">
+        <li>ابدأ بما تتقنه جيدًا لتؤمّن النقاط أولًا.</li>
+        <li>لا تتوقف أكثر من دقيقة أو دقيقتين عند سؤال صعب — انتقل وارجع إليه لاحقًا.</li>
+        <li>لا تترك أي سؤال بدون إجابة — سؤال فارغ = صفر، محاولة جزئية قد تُحتسب.</li>
+        <li>خصّص وقتًا للمراجعة النهائية: الترقيم، الأزمنة، الملاحظات المنسية في الفقرة.</li>
+      </ul>
+    </div>
+
+    <div id="revSheet" class="revsheet" hidden>
+      <label class="ar" for="revNotes">فيشتي الشخصية — الأخطاء التي تتكرر معي:</label>
+      <textarea id="revNotes" placeholder="اكتب هنا الأخطاء التي تلاحظها تتكرر في إجاباتك…"></textarea>
+      <p class="saved" id="revSaved"></p>
+    </div>
+
     <button id="restartBtn" class="cta accent ar" style="margin-top:1rem">↻ إعادة المحاولة</button>
     <div class="links">
       <a href="index.html" class="ar">→ العودة إلى Fennec</a>

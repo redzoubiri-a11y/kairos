@@ -35,8 +35,8 @@ fennec/
   app/                        # PWA réelle, branchée sur src/*.mjs (pas une maquette)
     index.html, styles.css, screens.mjs, session.mjs, bossSession.mjs, main.mjs, sw.js, manifest.webmanifest
     classroomQuiz.html/.mjs    # quiz projetable (mode classe), vrai écran — voir plus bas
-    bemSprint.html/.mjs        # BEM Sprint — BS1-BS7 (?week=1..7 ou onglets), vrai écran — voir plus bas
-    bemSprintBS1-7.json        # contenu par semaine, écrit à la main (pas généré)
+    bemSprint.html/.mjs        # BEM Sprint — BS1-BS8, complet (?week=1..8 ou onglets), vrai écran — voir plus bas
+    bemSprintBS1-8.json        # contenu par semaine, écrit à la main (pas généré)
     catalog.json               # copie embarquée du référentiel (bootstrap 100% offline)
     build_catalog.py           # régénère catalog.json depuis les deux banques de mots
     phonics.json               # progression phonics (22 sons, S2→S30), écran "phonics"
@@ -137,10 +137,10 @@ après rechargement ; jour Boss de fin de monde B1 (S36) démarre
 normalement ; semaine sans contenu nouveau (S64, fin du curriculum Builder)
 affiche le message de repli existant au lieu de planter.
 
-**BEM Sprint — sept semaines réelles (BS1 à BS7, dont le premier examen blanc).** `fennec/app/bemSprint.html`
+**BEM Sprint — les 8 semaines réelles, complet.** `fennec/app/bemSprint.html`
 est un vrai écran, pas une maquette — accessible directement (pas encore lié
 depuis `index.html` ni un tableau de bord), ou via `?week=1`/`?week=2`, ou
-les onglets BS1 à BS7 en haut de l'écran (rechargent la page avec le
+les onglets BS1 à BS8 en haut de l'écran (rechargent la page avec le
 paramètre — pas de SPA routing ici, volontairement simple). Chaque semaine
 a son texte support original écrit pour ce chantier (`bemSprintBS1.json`,
 `bemSprintBS2.json` — jamais une copie d'une épreuve BEM réelle, voir la
@@ -163,7 +163,23 @@ tel, pas une prétention de corriger la grammaire), puis auto-évaluation à
 la grille analytique du BEM — exactement l'activité prévue par le
 curriculum (BS6·jour4), pas un artifice inventé pour l'occasion. L'écran
 de fin affiche ✅ "tâche accomplie", pas un score chiffré qui serait
-trompeur pour de la rédaction libre.
+trompeur pour de la rédaction libre ; BS7 (premier examen blanc) —
+combine les 6 semaines précédentes sur un texte inédit avec le **vrai
+barème du BEM par item** (2,5+2,5+2 = 7 Reading Comprehension, 2+3+2 = 7
+Mastery of Language, 6 Written Expression = 20 au total) et un vrai
+chrono d'examen (`data.durationMinutes`, 120 par défaut, `?duration=`
+pour la démo/le test) qui déclenche automatiquement la fin de l'épreuve
+à expiration — même en plein milieu d'un item, exactement comme le jour
+de l'examen réel ; BS8 (deuxième examen blanc) réutilise exactement le
+même moteur que BS7, avec trois ajouts propres au curriculum : le score
+de chaque semaine "examen" est persisté en localStorage (le seul état
+persisté de tout BEM Sprint) pour calculer un **delta objectif réel**
+entre BS7 et BS8 (même logique que les bilans S1→S16→S32 de Foundations),
+un rappel statique de stratégie jour J (ordre des questions, ne pas
+bloquer, ne jamais laisser une réponse vide), et une **fiche de révision
+personnelle** — texte libre sauvegardé en localStorage, où l'élève note
+ses propres erreurs récurrentes plutôt qu'un résumé générique du
+programme (exactement BS8·jour5).
 Lien retour vers
 Madrassatidz en haut de l'écran et sur l'écran de fin (comme le reste de
 l'app), plus un lien de retour vers Fennec sur l'écran de fin.
@@ -172,16 +188,18 @@ options ouvertes (détourner le SRS existant vers des motifs d'erreur, ou
 construire un moteur séparé) ; ces deux premières semaines ne tranchent
 ni l'une ni l'autre — c'est un mode "practice" autonome sans état persisté
 (comme `classroomQuiz.mjs`), qui prouve que le format d'activités fonctionne
-avant d'investir dans l'une des deux architectures. BS8 n'est pas encore
-intégré. Validé en navigateur réel : score exact (7/7 sur BS1 à BS5 en
-répondant juste, testé aussi avec des réponses fausses), BS6 testé avec
-un texte incluant volontairement 3 des 5 notes (détection keyword
-correcte), BS7 testé en réussite totale (20/20, répartition exacte
-7/7/6 par partie) et en expiration du chrono (arrêt automatique à 0,
-score partiel exact sur ce qui a été répondu avant l'expiration),
-sélecteur de semaine fonctionnel, liens de fin fonctionnels, correction
-"jamais rouge" (bonne réponse en surbrillance verte/navy, jamais de
-rouge), rejouable.
+avant d'investir dans l'une des deux architectures. **Les 8 semaines de
+BEM Sprint sont maintenant intégrées.** Validé en navigateur réel : score
+exact (7/7 sur BS1 à BS5 en répondant juste, testé aussi avec des
+réponses fausses), BS6 testé avec un texte incluant volontairement 3 des
+5 notes (détection keyword correcte), BS7 testé en réussite totale
+(20/20, répartition exacte 7/7/6 par partie) et en expiration du chrono
+(arrêt automatique à 0, score partiel exact sur ce qui a été répondu),
+BS8 testé avec un score volontairement mélangé (13,5/20) affichant le
+bon delta face à un BS7 à 20/20 (▼ -6,5), fiche de révision persistée et
+relue correctement depuis localStorage, sélecteur de semaine fonctionnel,
+liens de fin fonctionnels, correction "jamais rouge" (bonne réponse en
+surbrillance verte/navy, jamais de rouge), rejouable.
 
 ## Pourquoi cette architecture
 

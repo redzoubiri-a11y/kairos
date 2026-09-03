@@ -34,6 +34,17 @@
  * d'expression écrite reçoit des points proportionnels aux notes
  * retrouvées (mêmes mots-clés que BS6) — un barème de contenu réel, pas
  * une prétention de noter la qualité de la langue.
+ *
+ * BS8 (deuxième examen blanc) réutilise exactement le même moteur que
+ * BS7. Ce qui change : le score de chaque semaine "examen" (isMock) est
+ * persisté en localStorage (`bemSprint_mock_score_<week>`) — le seul état
+ * persisté de tout BEM Sprint, ajouté précisément pour permettre le delta
+ * objectif que le curriculum demande (BS8·jour2, même logique que les
+ * bilans S1→S16→S32 de Foundations). L'écran de fin de BS8 ajoute aussi la
+ * fiche de révision personnelle (BS8·jour5, texte libre sauvegardé en
+ * localStorage) et un rappel statique de stratégie jour J (BS8·jour3-4) —
+ * du contenu affiché, pas une simulation interactive inventée pour
+ * l'occasion.
  */
 
 const WEEK_TITLES = {
@@ -44,6 +55,7 @@ const WEEK_TITLES = {
   5: 'BS5 · Pronunciation',
   6: 'BS6 · Written Expression',
   7: 'BS7 · Examen blanc n°1',
+  8: 'BS8 · Examen blanc n°2',
 };
 
 const PART_LABELS = {
@@ -78,6 +90,16 @@ const checkBtn = document.getElementById('checkBtn');
 const rubricBlock = document.getElementById('rubricBlock');
 const mockTimer = document.getElementById('mockTimer');
 const partScore = document.getElementById('partScore');
+const deltaLine = document.getElementById('deltaLine');
+const strategyBlock = document.getElementById('strategyBlock');
+const revSheet = document.getElementById('revSheet');
+const revNotes = document.getElementById('revNotes');
+const revSaved = document.getElementById('revSaved');
+
+const REV_NOTES_KEY = 'bemSprint_revision_notes';
+function mockScoreKey(w) {
+  return `bemSprint_mock_score_${w}`;
+}
 
 let data = null;
 let index = 0;
@@ -316,6 +338,9 @@ function showEnd() {
   qwrap.hidden = true;
   endScreen.hidden = false;
   partScore.innerHTML = '';
+  deltaLine.hidden = true;
+  strategyBlock.hidden = true;
+  revSheet.hidden = true;
   const isWritingWeek = data.items.every((it) => it.kind === 'writing');
 
   if (data.isMock) {
@@ -331,6 +356,34 @@ function showEnd() {
     partScore.innerHTML = Object.keys(maxByPart)
       .map((part) => `${PART_LABELS[part] || part} : ${earnedByPart[part] || 0} / ${maxByPart[part]}`)
       .join('<br>');
+
+    try { localStorage.setItem(mockScoreKey(week), String(earned)); } catch { /* stockage indisponible, pas bloquant */ }
+
+    if (week === 8) {
+      let previous = null;
+      try { previous = localStorage.getItem(mockScoreKey(7)); } catch { /* ignore */ }
+      deltaLine.hidden = false;
+      if (previous === null) {
+        deltaLine.className = 'delta ar flat';
+        deltaLine.textContent = 'لم يُسجَّل بعد محاولة BS7 على هذا الجهاز للمقارنة.';
+      } else {
+        const diff = earned - Number(previous);
+        deltaLine.className = `delta ar ${diff >= 0 ? 'up' : 'flat'}`;
+        const sign = diff > 0 ? '▲ +' : diff < 0 ? '▼ ' : '● ';
+        deltaLine.textContent = `${sign}${diff} نقطة منذ BS7 (${previous} → ${earned})`;
+      }
+      strategyBlock.hidden = false;
+      revSheet.hidden = false;
+      try { revNotes.value = localStorage.getItem(REV_NOTES_KEY) || ''; } catch { revNotes.value = ''; }
+      revNotes.oninput = () => {
+        try {
+          localStorage.setItem(REV_NOTES_KEY, revNotes.value);
+          revSaved.textContent = '✓ محفوظ';
+          clearTimeout(revNotes._t);
+          revNotes._t = setTimeout(() => { revSaved.textContent = ''; }, 1500);
+        } catch { /* stockage indisponible, pas bloquant */ }
+      };
+    }
   } else if (isWritingWeek) {
     // Pas de score chiffré ici : une rédaction libre n'est pas notable par
     // QCM, cf. la note en tête de fichier. On montre l'accomplissement de

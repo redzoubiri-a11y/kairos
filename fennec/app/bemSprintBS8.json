@@ -1,0 +1,112 @@
+{
+  "isMock": true,
+  "durationMinutes": 120,
+  "text": {
+    "id": "bs8-t1",
+    "title": "Yasmine and the Animal Shelter",
+    "body": [
+      "Yasmine spends every Saturday morning at a small animal shelter in her neighbourhood.",
+      "Last month, she started volunteering there with two classmates.",
+      "At first, she was a little afraid of the bigger dogs, but she quickly became more confident.",
+      "Every week, the volunteers clean the cages and give fresh water to the animals.",
+      "The shelter's manager, Mr Ziani, always thanks them for their hard work.",
+      "Yasmine especially enjoys playing with the kittens after finishing her chores.",
+      "Last Saturday, a family adopted one of the puppies that Yasmine had cared for.",
+      "She felt both happy and a little sad to see it go.",
+      "Next year, Yasmine hopes to start a small fundraising project to buy more food for the shelter.",
+      "She believes that even small actions can help many animals."
+    ]
+  },
+  "items": [
+    {
+      "id": "bs8-1",
+      "kind": "true_false_justify",
+      "part": "comprehension",
+      "points": 2.5,
+      "statement": "Yasmine has been volunteering at the shelter for several years.",
+      "answer": false,
+      "proofOptions": [
+        "Last month, she started volunteering there with two classmates.",
+        "She felt both happy and a little sad to see it go.",
+        "Next year, Yasmine hopes to start a small fundraising project."
+      ],
+      "correctProofIndex": 0
+    },
+    {
+      "id": "bs8-2",
+      "kind": "mcq",
+      "part": "comprehension",
+      "points": 2.5,
+      "prompt": "ماذا تحب ياسمين أن تفعل بشكل خاص؟",
+      "promptEn": "What does Yasmine especially enjoy doing?",
+      "options": ["Cleaning cages", "Playing with the kittens", "Feeding the dogs", "Talking to Mr Ziani"],
+      "correctIndex": 1
+    },
+    {
+      "id": "bs8-3",
+      "kind": "mcq",
+      "part": "comprehension",
+      "points": 2,
+      "prompt": "ابحث في النص عن كلمة تعني نفس معنى 'sure of yourself' (واثق من نفسه)",
+      "promptEn": "Find a word in the text that means the same as 'sure of yourself'.",
+      "options": ["afraid", "confident", "sad", "happy"],
+      "correctIndex": 1
+    },
+    {
+      "id": "bs8-4",
+      "kind": "mcq",
+      "part": "language",
+      "points": 2,
+      "prompt": "أي جملة تستعمل الفاصلة العليا والأحرف الكبيرة بشكل صحيح؟",
+      "promptEn": "Which sentence is correctly capitalised and punctuated?",
+      "options": [
+        "the shelters manager mr ziani always thanks them.",
+        "The shelter's manager, Mr Ziani, always thanks them.",
+        "The shelters manager, mr Ziani always thanks them",
+        "The Shelter's Manager mr ziani, always thanks them."
+      ],
+      "correctIndex": 1
+    },
+    {
+      "id": "bs8-5",
+      "kind": "mcq",
+      "part": "language",
+      "points": 3,
+      "prompt": "أكمل الجملة بالزمن الصحيح",
+      "promptEn": "\"Last Saturday, a family _____ (adopt) one of the puppies.\"",
+      "options": ["adopt", "adopted", "adopts", "will adopt"],
+      "correctIndex": 1
+    },
+    {
+      "id": "bs8-6",
+      "kind": "mcq",
+      "part": "language",
+      "points": 2,
+      "prompt": "في أي كلمة يقع النبر على المقطع الأول؟",
+      "promptEn": "In which word does the stress fall on the FIRST syllable?",
+      "options": ["volunteer", "confident", "adopted", "afraid"],
+      "correctIndex": 1
+    },
+    {
+      "id": "bs8-7",
+      "kind": "writing",
+      "part": "writing",
+      "points": 6,
+      "titleAr": "وضعية إدماجية — مساعدة الحيوانات في حيّنا",
+      "titleEn": "Situation of Integration — Helping Animals in My Neighbourhood",
+      "instructionAr": "اكتب فقرة من حوالي 10 أسطر عمّا يمكنك فعله لمساعدة الحيوانات في حيّك، مستعملاً كل الملاحظات التالية:",
+      "notes": [
+        { "en": "there are stray animals near my house", "keywords": ["stray", "animal"] },
+        { "en": "I could give them food and water", "keywords": ["food", "water"] },
+        { "en": "ask my family to adopt a pet", "keywords": ["adopt", "pet"] },
+        { "en": "tell my friends to be kind to animals", "keywords": ["kind", "friend"] },
+        { "en": "feel proud of protecting them", "keywords": ["proud", "protect"] }
+      ],
+      "rubric": [
+        { "id": "content", "labelAr": "المحتوى — هل استعملت كل الملاحظات؟" },
+        { "id": "language", "labelAr": "اللغة — الأزمنة والربط بين الجمل" },
+        { "id": "mechanics", "labelAr": "الشكل — الترقيم والأحرف الكبيرة" }
+      ]
+    }
+  ]
+}

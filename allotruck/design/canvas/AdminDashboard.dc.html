@@ -1,0 +1,112 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper:#F4F5F3; --surface:#FFFFFF; --surface-muted:#EEF0ED; --surface-hover:#EEF0ED;
+      --ink:#16202A; --ink-muted:#57646D; --line:#C9CDC6; --line-strong:#9AA096;
+      --authority:#0F3D5C;
+      --display:'Archivo',Arial,sans-serif; --body:'IBM Plex Sans',-apple-system,sans-serif; --mono:'IBM Plex Mono',ui-monospace,monospace;
+    }
+    body { margin:0; font-family:var(--body); background:var(--paper); }
+    a { color:var(--authority); } a:hover { color:#0B2E45; }
+    * { box-sizing:border-box; }
+    .cap { font-family:var(--mono); font-size:10.5px; font-weight:600; letter-spacing:0.07em; text-transform:uppercase; color:var(--ink-muted); }
+    .num { font-family:var(--mono); font-variant-numeric:tabular-nums; }
+  </style>
+</helmet>
+
+<div style="width:1440px; height:900px; background:var(--paper); display:flex; font-family:var(--body);">
+
+  <!-- Sidebar -->
+  <div style="width:244px; flex:0 0 auto; background:#fff; border-right:1px solid #C9CDC6; padding:20px 0;">
+    <div style="display:flex; align-items:center; gap:9px; padding:0 20px 20px; border-bottom:1px solid #EEF0ED; margin-bottom:16px;">
+      <svg width="26" height="26" viewBox="0 0 64 64"><circle cx="32" cy="32" r="29" fill="none" stroke="#0F3D5C" stroke-width="3"></circle><g transform="translate(15,22)" stroke="#0F3D5C" stroke-width="2.5" fill="none" stroke-linecap="square" stroke-linejoin="miter"><rect x="0" y="4" width="20" height="12"/><path d="M20,8 h7 l4,4 v4 h-11 z"/><circle cx="7" cy="19" r="3" fill="#fff"/><circle cx="24" cy="19" r="3" fill="#fff"/></g></svg>
+      <div style="font-family:var(--display); font-weight:800; font-size:15px; text-transform:uppercase;">AlloTruck</div>
+    </div>
+    <div style="padding:11px 20px; border-left:2px solid #0F3D5C; background:var(--surface-muted); font-size:13.5px; font-weight:700;">Tableau de bord</div>
+    <div style="padding:11px 20px; border-left:2px solid transparent; font-size:13.5px; color:var(--ink-muted);">Transporteurs</div>
+    <div style="padding:11px 20px; border-left:2px solid transparent; font-size:13.5px; color:var(--ink-muted);">Trajets</div>
+    <div style="padding:11px 20px; border-left:2px solid transparent; font-size:13.5px; color:var(--ink-muted);">Missions</div>
+    <div style="padding:11px 20px; border-left:2px solid transparent; font-size:13.5px; color:var(--ink-muted);">Utilisateurs</div>
+  </div>
+
+  <!-- Main -->
+  <div style="flex:1; display:flex; flex-direction:column;">
+    <div style="height:64px; flex:0 0 auto; background:#fff; border-bottom:1px solid #C9CDC6; display:flex; align-items:center; justify-content:space-between; padding:0 32px;">
+      <div style="font-family:var(--display); font-weight:800; font-size:17px;">Tableau de bord</div>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div style="width:32px; height:32px; border-radius:50%; background:#E2ECF2; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:#0F3D5C;">AD</div>
+        <span style="font-size:13px; color:var(--ink-muted);">Admin</span>
+      </div>
+    </div>
+
+    <div style="padding:28px 32px; flex:1;">
+
+      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:32px;">
+        <div style="background:#fff; border:1px solid #C9CDC6; border-radius:3px; padding:18px 20px;">
+          <div class="cap">Transporteurs vérifiés</div>
+          <div class="num" style="font-size:30px; font-weight:800; margin-top:8px;">142</div>
+        </div>
+        <div style="background:#fff; border:1px solid #C9CDC6; border-radius:3px; padding:18px 20px;">
+          <div class="cap" style="color:#9A6B14;">En attente de modération</div>
+          <div class="num" style="font-size:30px; font-weight:800; margin-top:8px; color:#9A6B14;">7</div>
+        </div>
+        <div style="background:#fff; border:1px solid #C9CDC6; border-radius:3px; padding:18px 20px;">
+          <div class="cap">Trajets actifs</div>
+          <div class="num" style="font-size:30px; font-weight:800; margin-top:8px;">63</div>
+        </div>
+        <div style="background:#fff; border:1px solid #C9CDC6; border-radius:3px; padding:18px 20px;">
+          <div class="cap">Missions du jour</div>
+          <div class="num" style="font-size:30px; font-weight:800; margin-top:8px;">28</div>
+        </div>
+      </div>
+
+      <div style="font-family:var(--display); font-weight:700; font-size:14.5px; text-transform:uppercase; margin-bottom:14px;">Dernières demandes de vérification</div>
+      <div style="border:1px solid #C9CDC6; border-radius:3px; overflow:hidden; background:#fff;">
+        <div style="display:grid; grid-template-columns:2fr 1.4fr 1fr 1fr 1fr; background:var(--surface-muted); border-bottom:1px solid #9AA096;">
+          <div class="cap" style="padding:11px 16px;">Entreprise</div>
+          <div class="cap" style="padding:11px 16px;">Ville</div>
+          <div class="cap" style="padding:11px 16px;">RC</div>
+          <div class="cap" style="padding:11px 16px;">Statut</div>
+          <div class="cap" style="padding:11px 16px;">Déposé le</div>
+        </div>
+        <div style="display:grid; grid-template-columns:2fr 1.4fr 1fr 1fr 1fr; border-bottom:1px solid #C9CDC6; background:var(--surface-hover);">
+          <div style="padding:12px 16px; font-size:13.5px; font-weight:600;">Transport Numidia</div>
+          <div style="padding:12px 16px; font-size:13.5px;">Oran</div>
+          <div class="num" style="padding:12px 16px; font-size:13px;">RC-482910</div>
+          <div style="padding:12px 16px;"><span style="font-family:var(--mono); font-size:11px; font-weight:600; padding:4px 10px; border:1px solid #C9CDC6; border-radius:2px; color:#9A6B14;">En attente</span></div>
+          <div style="padding:12px 16px; font-size:13px; color:var(--ink-muted);">17 août</div>
+        </div>
+        <div style="display:grid; grid-template-columns:2fr 1.4fr 1fr 1fr 1fr; border-bottom:1px solid #C9CDC6;">
+          <div style="padding:12px 16px; font-size:13.5px; font-weight:600;">Béjaïa Cargo</div>
+          <div style="padding:12px 16px; font-size:13.5px;">Béjaïa</div>
+          <div class="num" style="padding:12px 16px; font-size:13px;">RC-119042</div>
+          <div style="padding:12px 16px;"><span style="font-family:var(--mono); font-size:11px; font-weight:600; padding:4px 10px; border:1px solid #C9CDC6; border-radius:2px; color:#9A6B14;">En attente</span></div>
+          <div style="padding:12px 16px; font-size:13px; color:var(--ink-muted);">16 août</div>
+        </div>
+        <div style="display:grid; grid-template-columns:2fr 1.4fr 1fr 1fr 1fr;">
+          <div style="padding:12px 16px; font-size:13.5px; font-weight:600;">Fret Atlas SARL</div>
+          <div style="padding:12px 16px; font-size:13.5px;">Alger</div>
+          <div class="num" style="padding:12px 16px; font-size:13px;">RC-350217</div>
+          <div style="padding:12px 16px;"><span style="font-family:var(--mono); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:4px 10px; border:1.5px solid #2E7D5B; border-radius:2px; color:#2E7D5B; transform:rotate(-2deg); display:inline-block;">✓ Vérifié</span></div>
+          <div style="padding:12px 16px; font-size:13px; color:var(--ink-muted);">12 août</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

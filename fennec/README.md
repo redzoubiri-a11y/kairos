@@ -358,9 +358,16 @@ Concrètement :
 
 ## Démarrage
 
+Le projet Supabase dédié à Fennec existe déjà (`fennec`, ref
+`khmjrwemtjrqdrmvsdlg` — voir section "Supabase — projet réel branché"
+ci-dessus) : `fennec/app/index.html` y est déjà connecté, rien à faire pour
+le développement courant. Ce qui suit ne sert qu'à recréer un projet
+Supabase Fennec **from scratch** (ex. environnement séparé) :
+
 ```bash
-# 1. Créer un projet Supabase dédié à Fennec (PAS le projet Kairos/Mida existant)
-supabase link --project-ref <ref-du-projet-fennec>
+# 1. Créer un NOUVEAU projet Supabase dédié à Fennec (PAS le projet Kairos/Mida
+#    existant, PAS forcément le projet khmjrwemtjrqdrmvsdlg déjà en place)
+supabase link --project-ref <ref-du-nouveau-projet>
 
 # 2. Appliquer les migrations
 supabase db push
@@ -371,6 +378,9 @@ psql "$DATABASE_URL" -f fennec/supabase/migrations/0002_rls.sql
 # 3. Régénérer et charger le référentiel de mots (489 items, Foundations + Builder)
 python3 fennec/supabase/seed/generate_seed.py
 psql "$DATABASE_URL" -f fennec/supabase/seed/seed_words.sql
+
+# 4. Activer la connexion anonyme (désactivée par défaut sur un projet neuf) :
+#    Dashboard → Authentication → Sign In / Providers → Anonymous Sign-Ins
 
 # 4. Lancer les tests (aucune dépendance à installer — node:test natif)
 node --test fennec/test/
@@ -423,15 +433,66 @@ en révision après avance de l'horloge virtuelle — et **fonctionnement
 complet réseau totalement coupé** après un premier chargement (service
 worker + cache de l'app shell).
 
+## Supabase — projet réel branché
+
+Un projet Supabase **dédié à Fennec** existe désormais (`fennec`, ref
+`khmjrwemtjrqdrmvsdlg`, région eu-west-1 — séparé du projet Kairos/Mida
+existant, comme prévu plus haut). Plan Pro (nécessaire : le compte avait
+déjà atteint la limite de 2 projets gratuits). État :
+
+- **Schéma + RLS appliqués** (`0001_schema.sql`, `0002_rls.sql`), corrigés
+  au passage : le `CHECK` de `words.category` ne listait pas `'grammaire'`
+  (catégorie introduite par Builder après l'écriture du schéma initial —
+  jamais testé jusqu'ici puisque Supabase était mis de côté) ; la fonction
+  utilitaire `fennec_visible_student()` est passée du schéma `public` à
+  `internal` (une fonction `SECURITY DEFINER` dans `public` est appelable
+  directement par n'importe quel compte via `/rest/v1/rpc/...`, jamais
+  l'usage prévu) ; chaque `auth.uid()` direct dans une policy est enveloppé
+  dans `(select auth.uid())` (lint `auth_rls_initplan` — sans ça, Postgres
+  le réévalue à chaque ligne). Zéro alerte de sécurité restante
+  (`get_advisors`).
+- **Référentiel seedé** : 16 mondes, 489 mots (`fennec/supabase/seed/`).
+- **Connexion anonyme par appareil** (`ensureAnonSession`/`ensureGuardian`/
+  `ensureStudent`, `fennec/src/sync.mjs`) : pas d'écran de login, cohérent
+  avec le principe "aucune friction avant de jouer" déjà en place partout
+  ailleurs — un appareil = une session Auth anonyme = un guardian ; chaque
+  profil enfant local devient une ligne `students` (réutilise directement
+  `profile.id` comme id distant, aucune table de correspondance à
+  maintenir). Câblé dans `main.mjs` (`maybeConfigureSync`), testé
+  unitairement (`test/sync.test.js`).
+- **Config injectée** dans `fennec/app/index.html` (URL + clé publishable —
+  cette clé est conçue pour être exposée côté client, c'est la RLS qui
+  protège les données, pas le secret de la clé).
+- **Vérifié réellement, pas supposé** : le bac à sable de cette session ne
+  peut pas atteindre `esm.sh` ni `*.supabase.co` (proxy réseau restreint à
+  quelques domaines) — le chemin auth/RLS a donc été vérifié en déployant
+  une Edge Function temporaire (`verify-sync-flow`, à supprimer) qui
+  reproduit exactement `ensureAnonSession → ensureGuardian → ensureStudent`
+  côté serveur (réseau Supabase, pas le bac à sable), invoquée depuis
+  Postgres via `pg_net`. Premier run : la connexion anonyme était
+  **désactivée par défaut** sur le projet neuf (`"Anonymous sign-ins are
+  disabled"`) — à activer manuellement dans
+  **Dashboard → Authentication → Sign In / Providers → Anonymous
+  Sign-Ins** (aucun outil ne permet de le faire à distance). Une fois
+  activée, le même test doit confirmer : connexion anonyme, création
+  guardian/student, écriture `student_word_state`/`sessions`, ET qu'un
+  guardian ne peut pas créer un élève rattaché à un autre guardian (RLS
+  refusée comme attendu).
+- **Pas encore fait** : brancher les tableaux de bord parent/enseignant
+  (toujours des maquettes à données figées,
+  `wireframes/fennec-maquette-dashboard-*.html`) et le portail Madrassatidz
+  à ce projet — le référentiel et la sync élève existent, mais rien ne lit
+  encore `sessions`/`parent_reports` côté tableau de bord.
+
 ## Prochaines briques (hors scope de ce chantier)
 
 - Vrais assets audio/image (actuellement : texte + synthèse vocale du
   navigateur, emoji-placeholder pour 211/286 mots lexique ; `word.audioUrl`/
   `word.imageUrl` déjà prévus dans le schéma).
-- Brancher les tableaux de bord parent/enseignant (actuellement des
-  maquettes à données figées, `wireframes/fennec-maquette-dashboard-*.html`)
-  et le portail Madrassatidz à un vrai projet Supabase — mis de côté ce
-  chantier (quota de projets gratuits bloqué sur le compte, cf. historique).
+- Brancher les tableaux de bord parent/enseignant et le portail
+  Madrassatidz au projet Supabase réel (référentiel + sync élève existent
+  désormais, cf. section ci-dessus — reste à écrire les requêtes de lecture
+  côté tableau de bord).
 - BEM Sprint n'a toujours pas de moteur de répétition espacée propre (cf.
   la note d'architecture non tranchée en tête de `bemSprint.mjs`) : c'est
   un mode "practice" sans suivi de progression dans le temps, pas encore
@@ -450,6 +511,7 @@ enregistrement audio réel des Boss majeurs et écran de réécoute dans
 l'app, écran de fin de programme renvoyant vers BEM Sprint, correctif de
 l'emoji manquant dans le quiz projetable, correctif des leurres
 indiscernables sur les 17 mots repris entre Foundations et Builder,
-régénération de word-emoji.json pour couvrir aussi Builder, et
-alignement de l'icône/manifest PWA sur la palette marine/rouge/crème
-actuelle (au lieu d'un vert/doré resté d'une itération antérieure).
+régénération de word-emoji.json pour couvrir aussi Builder, alignement de
+l'icône/manifest PWA sur la palette marine/rouge/crème actuelle (au lieu
+d'un vert/doré resté d'une itération antérieure), et création + branchement
+d'un vrai projet Supabase dédié (schéma, RLS, seed, connexion anonyme).

@@ -26,7 +26,10 @@ create table if not exists words (
   external_id  integer not null unique,      -- id stable venant de la banque de mots (JSON)
   english      text not null,
   french       text not null,
-  category     text not null check (category in ('lexique','structure','fonction','décodable')),
+  -- 'grammaire' : formes grammaticales introduites par Builder (was/were/
+  -- played/went, comparatifs/superlatifs...), distinctes du vocabulaire
+  -- "lexique" — cf. data/builder-banque-mots.json.
+  category     text not null check (category in ('lexique','structure','fonction','décodable','grammaire')),
   world_id     smallint not null references worlds(id),
   intro_week   smallint not null,            -- ex. 21 (S21)
   intro_day    smallint not null check (intro_day between 1 and 4),

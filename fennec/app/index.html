@@ -33,6 +33,16 @@
   <p class="credit">Fennec — prototype technique branché sur le vrai moteur SRS (db.mjs / srs.mjs / queue.mjs / sync.mjs). Design système appliqué (handoff « Fennec Design System — Complete »).<br>
   Assets audio/image pas encore produits : texte + synthèse vocale du navigateur en attendant.</p>
 
+  <script>
+    // Projet Supabase dédié à Fennec (khmjrwemtjrqdrmvsdlg), séparé du
+    // projet Kairos/Mida existant — voir fennec/README.md. La clé ici est
+    // la clé publishable (sb_publishable_...), conçue pour être exposée
+    // côté client : c'est la Row Level Security côté serveur qui protège
+    // les données (fennec/supabase/migrations/0002_rls.sql), jamais le
+    // secret de cette clé.
+    window.FENNEC_SUPABASE_URL = 'https://khmjrwemtjrqdrmvsdlg.supabase.co';
+    window.FENNEC_SUPABASE_KEY = 'sb_publishable_as1KZL_wU0kV6Qrl961vOA_4LKX8vWl';
+  </script>
   <script type="module" src="./main.mjs"></script>
 </body>
 </html>

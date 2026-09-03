@@ -23,7 +23,7 @@
  */
 
 import { FennecStore } from '../src/db.mjs';
-import { pullCatalog, pushPending } from '../src/sync.mjs';
+import { pullCatalog, pushPending, ensureAnonSession, ensureGuardian, ensureStudent } from '../src/sync.mjs';
 import { curriculumComplete } from '../src/queue.mjs';
 import { runSession } from './session.mjs';
 import { runBossSession } from './bossSession.mjs';
@@ -208,13 +208,26 @@ async function ensureCatalog(store) {
 /**
  * Branche la synchronisation Supabase si des identifiants sont fournis
  * (via window.FENNEC_SUPABASE_URL / FENNEC_SUPABASE_KEY, injectés par le
- * déploiement — jamais commités). Sans configuration, l'app tourne
- * intégralement en local : c'est un choix délibéré pour que ce chantier
- * soit démontrable sans dépendre d'un projet Supabase réel.
+ * déploiement — jamais commités en clair pour un projet de prod, mais la
+ * clé publishable/anon est conçue pour être exposée côté client : c'est la
+ * RLS côté serveur qui protège les données, pas le secret de cette clé).
+ * Sans configuration, l'app tourne intégralement en local : c'était le
+ * choix par défaut le temps que ce chantier avance sans dépendre d'un
+ * projet Supabase réel — voir fennec/README.md pour l'état actuel.
+ *
+ * Connexion anonyme (ensureAnonSession) : un appareil = une session Auth
+ * anonyme = un guardian, sans écran de login ni compte à créer à la main —
+ * cohérent avec le principe "aucune friction avant de jouer" déjà en place
+ * partout ailleurs. Le guardian et la ligne `students` du profil actif
+ * sont assurés à chaque démarrage (idempotent, no-op si déjà créés) pour
+ * que la sync fonctionne même pour un profil créé avant que Supabase ne
+ * soit configuré.
  *
  * @param {FennecStore} store
+ * @param {{id:string, name:string, avatar:string}|null} profile - null au
+ *        premier écran (sélecteur de profil), avant qu'un enfant soit actif
  */
-async function maybeConfigureSync(store) {
+async function maybeConfigureSync(store, profile) {
   if (!window.FENNEC_SUPABASE_URL || !window.FENNEC_SUPABASE_KEY) {
     console.info('[fennec] Sync Supabase désactivée (aucune configuration) — mode 100% local.');
     return;
@@ -223,6 +236,17 @@ async function maybeConfigureSync(store) {
   const supabase = createClient(window.FENNEC_SUPABASE_URL, window.FENNEC_SUPABASE_KEY);
   window.addEventListener('online', () => pushPending(supabase, store).catch(() => {}));
   if (navigator.onLine) {
+    try {
+      await ensureAnonSession(supabase);
+      if (profile) {
+        const guardianId = await ensureGuardian(supabase);
+        await ensureStudent(supabase, guardianId, profile);
+      }
+    } catch (e) {
+      // Pas d'auth/guardian/student distant cette fois-ci : la sync retentera
+      // au prochain démarrage ou retour réseau, jamais bloquant pour l'enfant.
+      console.warn('[fennec] Auth/guardian/student Supabase non assurés :', e);
+    }
     await pullCatalog(supabase, store).catch(() => {});
     await pushPending(supabase, store).catch(() => {});
   }
@@ -295,7 +319,7 @@ async function boot() {
 
   const store = await FennecStore.open();
   await ensureCatalog(store);
-  await maybeConfigureSync(store);
+  await maybeConfigureSync(store, profile);
 
   const pointer = getPointer(profile.id);
   const attempt = getBossAttempt(profile.id);

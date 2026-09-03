@@ -169,4 +169,70 @@ function scheduleAutoSync(supabase, store, opts = {}) {
   };
 }
 
-export { pullCatalog, pushPending, scheduleAutoSync };
+/**
+ * Assure une session Supabase Auth pour cet appareil, via connexion
+ * anonyme — aucun écran de login, aucun compte à créer manuellement,
+ * cohérent avec le principe déjà en place partout ailleurs dans l'app
+ * ("premier lancement possible sans réseau", "profils multiples sur un
+ * téléphone partagé" sans friction). La session anonyme est persistée par
+ * supabase-js (localStorage) : un seul sign-in par appareil, jamais répété
+ * au lancement suivant tant que le storage n'est pas vidé.
+ *
+ * @param {import('@supabase/supabase-js').SupabaseClient} supabase
+ * @returns {Promise<object>} la session (existante ou nouvellement créée)
+ */
+async function ensureAnonSession(supabase) {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session) return session;
+  const { data, error } = await supabase.auth.signInAnonymously();
+  if (error) throw error;
+  return data.session;
+}
+
+/**
+ * Assure une ligne `guardians` (role='parent') pour l'utilisateur courant.
+ * Un compte anonyme par appareil correspond à un seul tuteur (le foyer),
+ * quel que soit le nombre de profils enfants locaux dessus.
+ *
+ * @param {import('@supabase/supabase-js').SupabaseClient} supabase
+ * @returns {Promise<string>} id du guardian (existant ou nouvellement créé)
+ */
+async function ensureGuardian(supabase) {
+  const { data: { user } } = await supabase.auth.getUser();
+  const existing = await supabase.from('guardians')
+    .select('id').eq('user_id', user.id).eq('role', 'parent').maybeSingle();
+  if (existing.error) throw existing.error;
+  if (existing.data) return existing.data.id;
+
+  const created = await supabase.from('guardians')
+    .insert({ user_id: user.id, role: 'parent' }).select('id').single();
+  if (created.error) throw created.error;
+  return created.data.id;
+}
+
+/**
+ * Assure une ligne `students` correspondant à un profil local. Réutilise
+ * directement `profile.id` (déjà un uuid généré côté app, voir main.mjs
+ * `createProfile`) comme id distant plutôt que de maintenir une table de
+ * correspondance locale/distante séparée : tout ce qui synchronise déjà
+ * via ce même studentId (word_state, sessions, session_events, voir
+ * db.mjs) pointe alors vers la bonne ligne sans rien changer ailleurs.
+ *
+ * @param {import('@supabase/supabase-js').SupabaseClient} supabase
+ * @param {string} guardianId
+ * @param {{id:string, name:string, avatar:string}} profile
+ * @returns {Promise<string>} id du student distant (= profile.id)
+ */
+async function ensureStudent(supabase, guardianId, profile) {
+  const existing = await supabase.from('students').select('id').eq('id', profile.id).maybeSingle();
+  if (existing.error) throw existing.error;
+  if (existing.data) return existing.data.id;
+
+  const created = await supabase.from('students').insert({
+    id: profile.id, guardian_id: guardianId, display_name: profile.name, avatar: profile.avatar,
+  });
+  if (created.error) throw created.error;
+  return profile.id;
+}
+
+export { pullCatalog, pushPending, scheduleAutoSync, ensureAnonSession, ensureGuardian, ensureStudent };

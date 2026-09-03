@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>لوحة المعلم</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Design système Fennec (fennec/design/design-system-handoff.md) : marine/
+   rouge/crème, Baloo 2 + IBM Plex Mono. Même palette que le tableau de bord
+   parent (fennec-maquette-dashboard-parent.html) : rampe séquentielle marine
+   + couleurs de statut bon/à revoir/attention, déjà validées avec
+   scripts/validate_palette.js pour cette page-sœur — réutilisées telles
+   quelles ici pour rester cohérent. Page mono-thème assumée. */
+:root{
+  --bg-base:#F5F3EE; --surface:#FFFFFF; --ink:#0A3161; --ink-soft:#6b6b6b;
+  --accent:#B22234; --accent-soft:#FBE4E4; --border:#E3DFD6;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+  --seq-100:#97a5b6; --seq-200:#71869f; --seq-300:#4c6788; --seq-400:#2b4c75; --seq-500:#0a3161;
+  --status-good:#0ca30c; --status-good-soft:#E3F5E3;
+  --status-warn:#B8790E; --status-warn-soft:#FCEFD9;
+  --status-crit:#B2242A; --status-crit-soft:#F8E2E3;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg-base); color:var(--ink); font-family:'Baloo 2',system-ui,sans-serif;
+  min-height:100vh;
+}
+.wrap{max-width:72rem; margin:0 auto; padding:1.75rem 1.25rem 4rem}
+
+.topline{display:flex; align-items:center; gap:.75rem; margin-bottom:1.25rem; flex-wrap:wrap}
+.topline .mark{width:2.5rem; height:2.5rem; border-radius:50%; background:var(--accent-soft); display:flex; align-items:center; justify-content:center; font-size:1.3rem; flex:none}
+.topline h1{font-size:1.15rem; font-weight:800; margin:0}
+.topline .teacher{margin-inline-start:auto; font-family:var(--mono); font-size:.75rem; color:var(--ink-soft)}
+.topline .teacher b{display:block; font-family:'Baloo 2'; font-size:.9rem; font-weight:700; color:var(--ink)}
+
+.classhead{
+  background:var(--ink); color:#fff; border-radius:20px; padding:1.4rem 1.6rem;
+  display:flex; align-items:center; gap:1.4rem; margin-bottom:1.25rem; flex-wrap:wrap;
+}
+.classhead .who{flex:1; min-width:180px}
+.classhead .who .name{font-size:1.25rem; font-weight:800; margin:0 0 .15rem}
+.classhead .who .meta{font-family:var(--mono); font-size:.75rem; opacity:.8; letter-spacing:.02em}
+.classhead .joincode{text-align:start; flex:none}
+.joincode .lbl{font-family:var(--mono); font-size:.66rem; opacity:.75; margin:0 0 .3rem}
+.joincode .code{
+  font-family:var(--mono); font-size:1.15rem; font-weight:600; letter-spacing:.08em;
+  background:rgba(255,255,255,.14); border-radius:8px; padding:.35rem .7rem; display:inline-block;
+}
+
+.tiles{display:grid; grid-template-columns:repeat(4,1fr); gap:.9rem; margin-bottom:1.25rem}
+@media (max-width:760px){.tiles{grid-template-columns:repeat(2,1fr)}}
+.tile{background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:1rem 1.15rem}
+.tile .n{font-family:'Baloo 2'; font-weight:800; font-size:1.9rem; line-height:1; font-variant-numeric:tabular-nums}
+.tile .n.good{color:var(--status-good)}
+.tile .n.warn{color:var(--status-warn)}
+.tile .lbl{font-size:.82rem; color:var(--ink-soft); margin-top:.35rem}
+
+.card{background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:1.2rem 1.3rem; margin-bottom:1rem}
+.card h2{font-size:.95rem; font-weight:800; margin:0 0 .2rem}
+.card .sub{font-size:.78rem; color:var(--ink-soft); margin:0 0 1rem}
+
+/* ---- feuille de route (SVG, rampe séquentielle marine) : progression de la
+   classe semaine par semaine, comme le graphique d'activité du parent mais
+   agrégé sur toute la classe (moyenne des positions) ---- */
+.chartwrap{overflow-x:auto}
+svg.chart{display:block; min-width:480px}
+.bar{fill:var(--seq-300); transition:fill .12s}
+.bar:hover{fill:var(--seq-500)}
+.bar.current{fill:var(--seq-500)}
+.bar-label{font-family:var(--mono); font-size:10px; fill:var(--ink-soft); text-anchor:middle}
+.bar-label.current{fill:var(--ink); font-weight:600}
+.axis-label{font-family:var(--mono); font-size:10px; fill:var(--ink-soft); text-anchor:middle}
+.gridline{stroke:var(--border); stroke-width:1}
+.legend-row{display:flex; align-items:center; gap:.5rem; margin-top:.7rem; font-family:var(--mono); font-size:.72rem; color:var(--ink-soft)}
+.legend-row .sw{width:.7rem; height:.7rem; border-radius:3px; background:var(--seq-300); display:inline-block}
+.legend-row .sw.current{background:var(--seq-500)}
+
+/* ---- roster ---- */
+.rosterhead{display:flex; align-items:center; gap:.6rem; margin-bottom:1rem; flex-wrap:wrap}
+.rosterhead .filters{margin-inline-start:auto; display:flex; gap:.4rem}
+.filterbtn{
+  font-family:'Baloo 2'; font-weight:700; font-size:.78rem; border:2px solid var(--border);
+  background:var(--surface); color:var(--ink-soft); border-radius:999px; padding:.3rem .8rem; cursor:pointer;
+}
+.filterbtn.active{border-color:var(--ink); color:var(--ink); background:var(--accent-soft)}
+
+.roster{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:.6rem}
+.student{
+  display:flex; align-items:center; gap:.8rem; padding:.7rem .9rem; border:1px solid var(--border);
+  border-radius:14px; background:var(--surface);
+}
+.student.crit{border-color:var(--status-crit); background:var(--status-crit-soft)}
+.student .av{width:2.4rem; height:2.4rem; border-radius:50%; background:var(--bg-base); display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex:none}
+.student .info{flex:1; min-width:0}
+.student .info .nm{font-weight:700; font-size:.92rem; margin:0}
+.student .info .ps{font-family:var(--mono); font-size:.7rem; color:var(--ink-soft); margin:.1rem 0 0}
+.student .stat{text-align:center; flex:none; width:4.4rem}
+.student .stat .v{font-family:var(--mono); font-weight:700; font-size:.85rem; font-variant-numeric:tabular-nums}
+.student .stat .k{font-size:.62rem; color:var(--ink-soft)}
+.student .streak{font-size:.85rem; flex:none; width:3.2rem; text-align:center; font-family:var(--mono)}
+.student .bosspill{flex:none}
+
+.pill{
+  display:inline-flex; align-items:center; gap:.3rem; font-family:'Baloo 2'; font-weight:700;
+  font-size:.74rem; padding:.2rem .6rem; border-radius:999px; white-space:nowrap;
+}
+.pill.good{background:var(--status-good-soft); color:var(--status-good)}
+.pill.warn{background:var(--status-warn-soft); color:var(--status-warn)}
+.pill.crit{background:var(--status-crit-soft); color:var(--status-crit)}
+.pill.idle{background:var(--bg-base); color:var(--ink-soft)}
+
+/* ---- quiz projetable ---- */
+.quizcard{display:flex; align-items:center; gap:1rem; flex-wrap:wrap}
+.quizcard .txt{flex:1; min-width:220px}
+.quizcard .btn{
+  font-family:'Baloo 2'; font-weight:800; font-size:.85rem; border:none; border-radius:12px;
+  padding:.65rem 1.2rem; cursor:pointer; background:var(--accent); color:#fff; flex:none;
+}
+.quizcard .code{font-family:var(--mono); font-size:.72rem; color:var(--ink-soft); margin-top:.3rem}
+
+.foot{text-align:center; font-family:var(--mono); font-size:.68rem; color:var(--ink-soft); margin-top:1.75rem; line-height:1.7}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topline">
+    <span class="mark">🦊</span>
+    <h1>لوحة المعلم — Fennec</h1>
+    <div class="teacher">المعلمة<b>الأستاذة نادية بلحاج</b></div>
+  </div>
+
+  <div class="classhead">
+    <div class="who">
+      <p class="name">🏫 صف 4 ابتدائي — أ</p>
+      <p class="meta">18 تلميذًا · مسار Foundations · منذ الأسبوع 1</p>
+    </div>
+    <div class="joincode">
+      <p class="lbl">رمز الانضمام للصف</p>
+      <span class="code">FEN-7K2Q</span>
+    </div>
+  </div>
+
+  <div class="tiles">
+    <div class="tile"><div class="n">18</div><div class="lbl">تلميذ في الصف</div></div>
+    <div class="tile"><div class="n good">14</div><div class="lbl">لعبوا هذا الأسبوع</div></div>
+    <div class="tile"><div class="n warn">3</div><div class="lbl">لم يلعبوا منذ 5+ أيام</div></div>
+    <div class="tile"><div class="n">S9</div><div class="lbl">الموضع المتوسط للصف</div></div>
+  </div>
+
+  <div class="card">
+    <h2>تقدّم الصف أسبوعًا بأسبوع</h2>
+    <p class="sub">متوسط عدد الكلمات المتقنة لكل تلميذ، مقارنةً بالأسبوع المتوقع</p>
+    <div class="chartwrap">
+      <svg class="chart" viewBox="0 0 460 170" role="img" aria-label="متوسط الكلمات المتقنة لكل أسبوع من S1 إلى S9">
+        <line class="gridline" x1="20" y1="120" x2="450" y2="120"></line>
+        <line class="gridline" x1="20" y1="80" x2="450" y2="80" stroke-dasharray="2 3"></line>
+        <line class="gridline" x1="20" y1="40" x2="450" y2="40" stroke-dasharray="2 3"></line>
+        <text class="axis-label" x="10" y="123" text-anchor="end">0</text>
+        <text class="axis-label" x="10" y="83" text-anchor="end">20</text>
+        <text class="axis-label" x="10" y="43" text-anchor="end">40</text>
+      </svg>
+    </div>
+    <div class="legend-row"><span class="sw"></span> أسابيع سابقة <span class="sw current" style="margin-inline-start:.8rem"></span> الأسبوع الحالي</div>
+  </div>
+
+  <div class="card quizcard">
+    <div class="txt">
+      <h2>🎯 اختبار جماعي — تحدي الزعيم S9</h2>
+      <p class="sub" style="margin:0">اعرض على السبورة، كل تلميذ يجيب من هاتفه</p>
+      <p class="code">رمز الجلسة : يُنشأ عند الضغط</p>
+    </div>
+    <button class="btn">▶ بدء الاختبار الجماعي</button>
+  </div>
+
+  <div class="card">
+    <div class="rosterhead">
+      <h2 style="margin:0">قائمة التلاميذ</h2>
+      <div class="filters">
+        <button class="filterbtn active">الكل (18)</button>
+        <button class="filterbtn">متأخرون (3)</button>
+        <button class="filterbtn">جاهزون للزعيم (5)</button>
+      </div>
+    </div>
+    <ul class="roster">
+      <li class="student">
+        <span class="av">🦊</span>
+        <div class="info"><p class="nm">ياسين ب.</p><p class="ps">S9 · اليوم 3</p></div>
+        <div class="stat"><div class="v">61</div><div class="k">كلمة</div></div>
+        <div class="stat"><div class="v">91%</div><div class="k">دقة</div></div>
+        <span class="streak">🔥 5</span>
+        <span class="bosspill"><span class="pill good">✓ S8 ناجح</span></span>
+      </li>
+      <li class="student">
+        <span class="av">🐱</span>
+        <div class="info"><p class="nm">ليلى ر.</p><p class="ps">S9 · اليوم 1</p></div>
+        <div class="stat"><div class="v">58</div><div class="k">كلمة</div></div>
+        <div class="stat"><div class="v">87%</div><div class="k">دقة</div></div>
+        <span class="streak">🔥 3</span>
+        <span class="bosspill"><span class="pill good">✓ S8 ناجح</span></span>
+      </li>
+      <li class="student crit">
+        <span class="av">🐶</span>
+        <div class="info"><p class="nm">عادل م.</p><p class="ps">S6 · اليوم 2 — منذ 6 أيام</p></div>
+        <div class="stat"><div class="v">39</div><div class="k">كلمة</div></div>
+        <div class="stat"><div class="v">72%</div><div class="k">دقة</div></div>
+        <span class="streak">—</span>
+        <span class="bosspill"><span class="pill warn">↻ S4 محاولة 2</span></span>
+      </li>
+      <li class="student">
+        <span class="av">🐰</span>
+        <div class="info"><p class="nm">إيمان ك.</p><p class="ps">S10 · اليوم 1</p></div>
+        <div class="stat"><div class="v">67</div><div class="k">كلمة</div></div>
+        <div class="stat"><div class="v">94%</div><div class="k">دقة</div></div>
+        <span class="streak">🔥 6</span>
+        <span class="bosspill"><span class="pill good">✓ S8 ناجح</span></span>
+      </li>
+      <li class="student">
+        <span class="av">🐨</span>
+        <div class="info"><p class="nm">رياض ح.</p><p class="ps">S8 · اليوم 4</p></div>
+        <div class="stat"><div class="v">52</div><div class="k">كلمة</div></div>
+        <div class="stat"><div class="v">83%</div><div class="k">دقة</div></div>
+        <span class="streak">🔥 2</span>
+        <span class="bosspill"><span class="pill idle">لم يخض بعد</span></span>
+      </li>
+      <li class="student crit">
+        <span class="av">🦁</span>
+        <div class="info"><p class="nm">مريم ص.</p><p class="ps">S5 · اليوم 1 — منذ 8 أيام</p></div>
+        <div class="stat"><div class="v">28</div><div class="k">كلمة</div></div>
+        <div class="stat"><div class="v">68%</div><div class="k">دقة</div></div>
+        <span class="streak">—</span>
+        <span class="bosspill"><span class="pill crit">✕ S4 لم ينجح</span></span>
+      </li>
+      <li class="student">
+        <span class="av">🐼</span>
+        <div class="info"><p class="nm">وليد ع.</p><p class="ps">S9 · اليوم 2</p></div>
+        <div class="stat"><div class="v">59</div><div class="k">كلمة</div></div>
+        <div class="stat"><div class="v">89%</div><div class="k">دقة</div></div>
+        <span class="streak">🔥 4</span>
+        <span class="bosspill"><span class="pill good">✓ S8 ناجح</span></span>
+      </li>
+      <li class="student crit">
+        <span class="av">🐸</span>
+        <div class="info"><p class="nm">سارة ط.</p><p class="ps">S6 · اليوم 1 — منذ 7 أيام</p></div>
+        <div class="stat"><div class="v">41</div><div class="k">كلمة</div></div>
+        <div class="stat"><div class="v">75%</div><div class="k">دقة</div></div>
+        <span class="streak">—</span>
+        <span class="bosspill"><span class="pill warn">↻ S4 محاولة 2</span></span>
+      </li>
+    </ul>
+  </div>
+
+  <p class="foot">لوحة المعلم — نسخة تجريبية (بيانات وهمية لغرض العرض، غير متصلة بـ Supabase بعد)<br>
+  Fennec · fennec/README.md</p>
+</div>
+
+<script>
+'use strict';
+// Même rampe séquentielle marine que le tableau de bord parent, validée
+// pour ce fond (#F5F3EE) — réutilisée à l'identique.
+const WEEKS = [
+  { week: 'S1', avg: 6 }, { week: 'S2', avg: 11 }, { week: 'S3', avg: 15 },
+  { week: 'S4', avg: 19 }, { week: 'S5', avg: 22 }, { week: 'S6', avg: 27 },
+  { week: 'S7', avg: 31 }, { week: 'S8', avg: 35 }, { week: 'S9', avg: 38 },
+];
+
+const svg = document.querySelector('svg.chart');
+const x0 = 24, x1 = 450, topY = 20, base = 120;
+const bw = (x1 - x0) / WEEKS.length;
+const barW = bw * 0.6;
+const maxVal = 40;
+const scaleY = (base - topY) / maxVal;
+
+WEEKS.forEach((w, i) => {
+  const isCurrent = i === WEEKS.length - 1;
+  const cx = x0 + bw * i + bw / 2;
+  const h = Math.max(4, w.avg * scaleY);
+  const y = base - h;
+
+  const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  rect.setAttribute('x', cx - barW / 2);
+  rect.setAttribute('y', y);
+  rect.setAttribute('width', barW);
+  rect.setAttribute('height', h);
+  rect.setAttribute('rx', 4);
+  rect.setAttribute('class', 'bar' + (isCurrent ? ' current' : ''));
+  const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+  title.textContent = `${w.week} — ${w.avg} كلمة في المتوسط`;
+  rect.appendChild(title);
+  svg.appendChild(rect);
+
+  const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  label.setAttribute('x', cx);
+  label.setAttribute('y', y - 6);
+  label.setAttribute('class', 'bar-label' + (isCurrent ? ' current' : ''));
+  label.textContent = w.avg;
+  svg.appendChild(label);
+
+  const axis = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  axis.setAttribute('x', cx);
+  axis.setAttribute('y', base + 16);
+  axis.setAttribute('class', 'axis-label');
+  axis.textContent = w.week;
+  svg.appendChild(axis);
+});
+
+// Filtres du roster (démo statique, non persistés)
+const filterBtns = document.querySelectorAll('.filterbtn');
+const students = document.querySelectorAll('.roster .student');
+filterBtns.forEach((btn) => {
+  btn.addEventListener('click', () => {
+    filterBtns.forEach((b) => b.classList.remove('active'));
+    btn.classList.add('active');
+    const label = btn.textContent;
+    students.forEach((s) => {
+      if (label.startsWith('الكل')) { s.style.display = ''; return; }
+      if (label.startsWith('متأخرون')) { s.style.display = s.classList.contains('crit') ? '' : 'none'; return; }
+      if (label.startsWith('جاهزون')) {
+        const idle = s.querySelector('.pill.idle');
+        s.style.display = idle ? '' : 'none';
+      }
+    });
+  });
+});
+</script>
+</body>
+</html>

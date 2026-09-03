@@ -77,6 +77,20 @@ n'était nécessaire, seule l'orchestration en manquait. Validé en navigateur
 réel : deux profils gardent des positions de curriculum indépendantes après
 qu'un seul des deux ait joué une session complète.
 
+**Tableaux de bord parent et enseignant (maquettes).** `wireframes/fennec-maquette-dashboard-parent.html`
+et `wireframes/fennec-maquette-dashboard-teacher.html` sont des maquettes statiques (pas
+branchées à Supabase) sur le même design système. La maquette enseignant reprend
+le schéma `classrooms`/`classroom_students` déjà présent en base : en-tête de
+classe avec code d'adhésion (ex. `FEN-7K2Q`), graphique de progression
+hebdomadaire agrégée sur toute la classe, un bloc "quiz projetable" (mode
+Kahoot-like mentionné dans l'analyse stratégique — bouton de démarrage, pas
+encore de vraie session temps réel), et une liste d'élèves filtrable
+(tous / en retard / prêts pour le Zeugma·Boss) avec pastille de statut Boss
+et repère visuel distinct (fond rosé) pour les élèves inactifs depuis
+plusieurs jours. Comme le tableau de bord parent, données 100% factices —
+prochaine étape : lire directement `student_word_state`/`sessions` par
+classe une fois Supabase branché.
+
 ## Pourquoi cette architecture
 
 Le principe directeur (cf. l'analyse) : **offline-first**, parce que la data mobile en Algérie

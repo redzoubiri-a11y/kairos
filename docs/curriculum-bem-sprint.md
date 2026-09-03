@@ -3,6 +3,8 @@
 > Piste `bem_sprint` (voir `students.track` dans `fennec/supabase/migrations/0001_schema.sql`), distincte de Foundations et Builder. Public visé : élève de **4AM** (dernière année du collège algérien), à quelques semaines/mois du **BEM** (Brevet d'Enseignement Moyen). Ce n'est **pas** une continuation de Builder — un élève peut arriver directement sur cette piste sans avoir suivi Foundations/Builder dans l'app, d'où une numérotation de semaine propre (**BS1, BS2…**), indépendante de S1–S64.
 >
 > **Différence fondamentale avec Foundations/Builder** : ces deux pistes construisent la langue mot par mot avec un SRS classique (immersion narrative, mondes thématiques, Fennec). BEM Sprint ne construit pas la langue : il **entraîne le format d'examen** sur une langue déjà largement acquise au collège. C'est un sprint court et dense (8 semaines), pas un parcours d'un an.
+>
+> **État de ce document : complet.** Les 8 semaines (BS1 à BS8) sont détaillées — les 6 premières couvrent les 6 compétences réelles de l'épreuve dans l'ordre du barème, les 2 dernières sont les examens blancs qui clôturent le sprint.
 
 ---
 
@@ -135,12 +137,46 @@ Chaque semaine s'entraîne sur **plusieurs textes courts différents** (pas un s
 
 ---
 
-## Feuille de route (semaines suivantes — pas encore détaillées)
+## BS7 — Examen blanc n°1 (détaillé)
 
-| Semaine | Compétence | Angle d'entraînement pressenti |
+*Objectif : la première fois que tout est réuni, en conditions réelles — pas un exercice de plus, une répétition générale.*
+
+| Jour | Activité | Détail |
 |---|---|---|
-| BS7 | Examen blanc n°1 | Simulation complète chronométrée (les 3 parties), correction avec barème réel |
-| BS8 | Examen blanc n°2 + stratégie | Deuxième simulation + gestion du temps le jour J (répartition suggérée : ~35 min lecture, ~35 min langue, ~20 min rédaction) |
+| **Jour 1** | Examen blanc complet, chronométré | Les 3 parties d'affilée (Reading Comprehension, Mastery of Language, Written Expression) sur un texte inédit, en une seule séance, sans aide — exactement le format et la durée du jour J |
+| **Jour 2-3** | Correction avec le barème réel | Note sur 20, point par sous-question comme au BEM (pas de correction globale "juste/faux") — l'élève voit précisément où il perd des points, pas juste sa note finale |
+| **Jour 4-5** | Remédiation ciblée | À partir des erreurs réelles de l'examen blanc (pas d'un plan générique) : retour sur la ou les 2 semaines BS correspondant aux points faibles précis identifiés, exercices supplémentaires uniquement là-dessus |
+
+**Sortie de BS7** : l'élève a vécu l'épreuve en conditions réelles une première fois, connaît sa note actuelle sur 20 avec le détail par sous-partie, et a corrigé ses 2-3 points faibles les plus coûteux en points — pas retravaillé au hasard.
+
+---
+
+## BS8 — Examen blanc n°2 et stratégie jour J (détaillé)
+
+*Objectif : mesurer un vrai progrès (delta objectif, même logique que les bilans de Foundations/Builder) et préparer la gestion du temps et du stress le jour de l'épreuve — la dernière chose qui peut encore faire perdre des points à un élève qui maîtrise le contenu.*
+
+| Jour | Activité | Détail |
+|---|---|---|
+| **Jour 1** | Examen blanc n°2, chronométré | Même format que BS7-jour 1, texte inédit — mesure la progression réelle depuis le premier blanc |
+| **Jour 2** | Correction + delta | Note sur 20 comparée à BS7 (même présentation objective que les bilans S1→S16→S32 de Foundations) — la preuve concrète de progrès, montrée à l'élève et au parent |
+| **Jour 3** | Gestion du temps | Répartition entraînée sur l'examen blanc n°2 relu a posteriori : ~35 min Reading Comprehension + Mastery of Language (Partie 1), ~20 min Written Expression (Partie 2), le reste en relecture ciblée (pas une relecture complète, une relecture des points qui rapportent le plus : ponctuation/majuscules, concordance des temps, notes oubliées en expression écrite) |
+| **Jour 4** | Stratégie jour J | Ordre de traitement conseillé (commencer par ce qu'on maîtrise le mieux pour sécuriser des points avant d'attaquer le reste), ne jamais bloquer plus de 1-2 minutes sur une question qui résiste, laisser une trace même incomplète (une question laissée blanche vaut toujours 0, une tentative partielle peut valoir des points) |
+| **Jour 5** | Fiche de révision personnelle | L'élève construit sa propre fiche synthétique à partir de ses erreurs récurrentes sur les deux examens blancs (pas une fiche générique du programme) — c'est ce qu'il relit juste avant l'épreuve réelle |
+
+**Sortie de BS8 = sortie du sprint** : l'élève a passé deux épreuves blanches complètes en conditions réelles avec une progression mesurée entre les deux, connaît sa propre répartition du temps, et possède une fiche de révision construite sur ses erreurs à lui, pas sur un résumé générique du programme.
+
+---
+
+## Ce que l'élève sait faire en fin de sprint (contrat de sortie)
+
+- **Reading Comprehension** : skimming/scanning, vrai/faux justifié par citation, questions WH en phrase complète, identification de référents.
+- **Lexis** : synonymes/antonymes trouvés dans le texte, association mot/définition, déduction du sens par le contexte.
+- **Mechanics & Morphology** : ponctuation/majuscules correctes, dérivation nom/verbe/adjectif (préfixes/suffixes fréquents).
+- **Syntax** : concordance des temps via marqueurs temporels, prépositions/articles, question tags, connecteurs logiques.
+- **Pronunciation** (à l'écrit) : accentuation syllabique, classement de sons (*-ed*, *-s/-es*), repérage d'intrus.
+- **Written Expression** : transformation de notes en paragraphe cohérent d'environ 10 lignes, en temps limité, avec auto-évaluation à la grille analytique du BEM.
+- **Méthode d'examen** : gestion du temps sur les 2 parties, stratégie de traitement des questions, fiche de révision personnelle construite sur ses propres erreurs.
+- **Preuves** : note sur 20 à l'examen blanc n°1 (BS7) et n°2 (BS8), delta objectif entre les deux, comme pour les bilans de Foundations/Builder.
 
 ## Ce qui reste à décider avant d'intégrer BEM Sprint au moteur (pas résolu ici)
 

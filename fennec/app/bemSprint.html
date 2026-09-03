@@ -63,6 +63,30 @@ body{display:block; background:var(--ink)}
 
 .nextbtn{margin-top:1.2rem}
 
+.notes{background:#fff; border:1px solid var(--border); border-radius:14px; padding:1rem 1.2rem; margin-bottom:1rem}
+.notes ul{margin:.4rem 0 0; padding-inline-start:1.2rem; direction:ltr; text-align:left}
+.notes li{font-family:var(--mono); font-size:.85rem; color:var(--ink); margin-bottom:.35rem}
+.notes li.found{color:var(--primary)}
+.notes li.found::before{content:"✓ "}
+.notes li.missing::before{content:"○ "; color:var(--ink-soft)}
+
+textarea#writingArea{
+  width:100%; min-height:9rem; font-family:'Baloo 2'; font-size:.95rem; color:var(--ink);
+  border:2px solid var(--border); border-radius:14px; padding:.8rem 1rem; direction:ltr; text-align:left;
+  resize:vertical; box-sizing:border-box;
+}
+textarea#writingArea:focus{border-color:var(--ink); outline:none}
+
+.rubric{display:flex; flex-direction:column; gap:.6rem; margin-top:1rem}
+.rubric-row{display:flex; align-items:center; gap:.6rem; flex-wrap:wrap}
+.rubric-row .lbl{flex:1; min-width:12rem; font-size:.85rem; color:var(--ink)}
+.rubric-row .choices{display:flex; gap:.35rem}
+.rubric-row button{
+  font-family:'Baloo 2'; font-weight:700; font-size:.78rem; border:2px solid var(--border); background:#fff;
+  color:var(--ink-soft); border-radius:999px; padding:.3rem .7rem; cursor:pointer;
+}
+.rubric-row button.selected{border-color:var(--ink); color:var(--ink); background:var(--primary-soft)}
+
 .endscreen{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.8rem; text-align:center; padding:2rem}
 .endscreen .score{font-size:2.4rem; font-weight:800; color:var(--ink)}
 .endscreen p{color:var(--ink-soft); margin:0; direction:rtl}
@@ -82,6 +106,7 @@ body{display:block; background:var(--ink)}
       <a data-week="3" href="?week=3">BS3</a>
       <a data-week="4" href="?week=4">BS4</a>
       <a data-week="5" href="?week=5">BS5</a>
+      <a data-week="6" href="?week=6">BS6</a>
     </div>
     <a class="exit" href="index.html">✕ إغلاق</a>
   </div>
@@ -100,6 +125,15 @@ body{display:block; background:var(--ink)}
       <button id="tfYes" class="tf2 yes ar">صح</button>
       <button id="tfNo" class="tf2 no ar">خطأ</button>
     </div>
+
+    <div id="notesBlock" class="notes" hidden>
+      <strong class="ar" id="notesTitleAr"></strong>
+      <ul id="notesList"></ul>
+    </div>
+    <textarea id="writingArea" placeholder="Write your paragraph here…" hidden></textarea>
+    <button id="checkBtn" class="cta primary nextbtn ar" hidden>✓ تحقق من العناصر</button>
+
+    <div id="rubricBlock" class="rubric" hidden></div>
 
     <div id="optList" class="optlist"></div>
 

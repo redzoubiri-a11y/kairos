@@ -1,0 +1,24 @@
+{
+  "text": null,
+  "items": [
+    {
+      "id": "bs6-1",
+      "kind": "writing",
+      "titleAr": "وضعية إدماجية — رحلة مدرسية",
+      "titleEn": "Situation of Integration — A School Trip",
+      "instructionAr": "اكتب فقرة من حوالي 10 أسطر عن رحلة مدرسية، مستعملاً كل الملاحظات التالية:",
+      "notes": [
+        { "en": "last month / school / trip / museum", "keywords": ["museum", "trip"] },
+        { "en": "travelled by bus / two hours", "keywords": ["bus"] },
+        { "en": "saw old objects and photos", "keywords": ["saw", "photo", "object"] },
+        { "en": "learned a lot about history", "keywords": ["history", "learn"] },
+        { "en": "felt happy / want to go again", "keywords": ["happy", "again"] }
+      ],
+      "rubric": [
+        { "id": "content", "labelAr": "المحتوى — هل استعملت كل الملاحظات؟" },
+        { "id": "language", "labelAr": "اللغة — الأزمنة والربط بين الجمل" },
+        { "id": "mechanics", "labelAr": "الشكل — الترقيم والأحرف الكبيرة" }
+      ]
+    }
+  ]
+}

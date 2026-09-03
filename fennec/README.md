@@ -35,8 +35,8 @@ fennec/
   app/                        # PWA réelle, branchée sur src/*.mjs (pas une maquette)
     index.html, styles.css, screens.mjs, session.mjs, bossSession.mjs, main.mjs, sw.js, manifest.webmanifest
     classroomQuiz.html/.mjs    # quiz projetable (mode classe), vrai écran — voir plus bas
-    bemSprint.html/.mjs        # BEM Sprint — BS1-BS5 (?week=1..5 ou onglets), vrai écran — voir plus bas
-    bemSprintBS1-5.json        # texte support + 7 items par semaine, écrits à la main (pas générés)
+    bemSprint.html/.mjs        # BEM Sprint — BS1-BS6 (?week=1..6 ou onglets), vrai écran — voir plus bas
+    bemSprintBS1-6.json        # contenu par semaine, écrit à la main (pas généré)
     catalog.json               # copie embarquée du référentiel (bootstrap 100% offline)
     build_catalog.py           # régénère catalog.json depuis les deux banques de mots
     phonics.json               # progression phonics (22 sons, S2→S30), écran "phonics"
@@ -137,10 +137,10 @@ après rechargement ; jour Boss de fin de monde B1 (S36) démarre
 normalement ; semaine sans contenu nouveau (S64, fin du curriculum Builder)
 affiche le message de repli existant au lieu de planter.
 
-**BEM Sprint — cinq semaines réelles (BS1 à BS5).** `fennec/app/bemSprint.html`
+**BEM Sprint — six semaines réelles (BS1 à BS6).** `fennec/app/bemSprint.html`
 est un vrai écran, pas une maquette — accessible directement (pas encore lié
 depuis `index.html` ni un tableau de bord), ou via `?week=1`/`?week=2`, ou
-les onglets BS1 à BS5 en haut de l'écran (rechargent la page avec le
+les onglets BS1 à BS6 en haut de l'écran (rechargent la page avec le
 paramètre — pas de SPA routing ici, volontairement simple). Chaque semaine
 a son texte support original écrit pour ce chantier (`bemSprintBS1.json`,
 `bemSprintBS2.json` — jamais une copie d'une épreuve BEM réelle, voir la
@@ -155,7 +155,15 @@ dérivation nom/adjectif (préfixe *un-*, suffixes *-ness/-ful*) ; BS4
 contexte, préposition, article, question tag, connecteur logique ; BS5
 (Pronunciation) — classement de sons à l'écrit (accentuation syllabique,
 groupes *-ed*/*-s-es*, intrus), jamais de production orale puisque
-l'épreuve réelle est écrite.
+l'épreuve réelle est écrite ; BS6 (Written Expression) — **structurellement
+différent**, pas de QCM : une vraie situation d'intégration (notes
+télégraphiques) avec une vraie zone de rédaction libre, vérification par
+mots-clés que chaque note a été utilisée (signal grossier et assumé comme
+tel, pas une prétention de corriger la grammaire), puis auto-évaluation à
+la grille analytique du BEM — exactement l'activité prévue par le
+curriculum (BS6·jour4), pas un artifice inventé pour l'occasion. L'écran
+de fin affiche ✅ "tâche accomplie", pas un score chiffré qui serait
+trompeur pour de la rédaction libre.
 Lien retour vers
 Madrassatidz en haut de l'écran et sur l'écran de fin (comme le reste de
 l'app), plus un lien de retour vers Fennec sur l'écran de fin.
@@ -164,10 +172,12 @@ options ouvertes (détourner le SRS existant vers des motifs d'erreur, ou
 construire un moteur séparé) ; ces deux premières semaines ne tranchent
 ni l'une ni l'autre — c'est un mode "practice" autonome sans état persisté
 (comme `classroomQuiz.mjs`), qui prouve que le format d'activités fonctionne
-avant d'investir dans l'une des deux architectures. BS6-BS8 ne sont pas
+avant d'investir dans l'une des deux architectures. BS7-BS8 ne sont pas
 intégrés. Validé en navigateur réel : score exact (7/7 sur BS1 à BS5
-en répondant juste, testé aussi avec des réponses fausses), sélecteur de
-semaine fonctionnel, liens de fin fonctionnels, correction "jamais rouge"
+en répondant juste, testé aussi avec des réponses fausses), BS6 testé
+avec un texte incluant volontairement 3 des 5 notes (détection
+keyword correcte : 3 trouvées/2 manquantes), sélecteur de semaine
+fonctionnel, liens de fin fonctionnels, correction "jamais rouge"
 (bonne réponse en surbrillance verte/navy, jamais de rouge), rejouable.
 
 ## Pourquoi cette architecture

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Génère la banque de mots Builder — MONDES B1 à B7 (S33-S60).
+"""Génère la banque de mots Builder — MONDES B1 à B8, complet (S33-S64).
 
 Suite de generate-foundations-word-bank.py : même modèle SRS (intervalles
 J+1, J+3, J+7, J+16, J+35), même calendrier école dimanche->jeudi (5
@@ -7,9 +7,10 @@ sessions/semaine réelles, jeudi = jour Boss donc pas de nouvel item).
 Numérotation de semaine continue depuis Foundations (S33, S34...) — voir
 docs/curriculum-builder-semaine-par-semaine.md.
 
-Seuls les mondes B1 à B7 sont peuplés ici (cf. "Feuille de route" du
-curriculum) ; le monde B8 (bilan final) n'est pas encore écrit, ce script
-ne génère donc pas de contenu pour S61+ tant qu'il n'est pas détaillé.
+Curriculum Builder complet : les 8 mondes sont peuplés. B8 (S61-S64) est
+volontairement quasi vide en nouveaux items — c'est le monde de
+consolidation finale, pas d'introduction (même logique que S29-S32 en
+Foundations).
 
 Note dédup : "then" (introduit S36) n'est pas réintroduit en S49 — la
 clé de dédoublonnage est globale au script, donc tout mot déjà présent
@@ -122,21 +123,26 @@ W = {
      ("Algeria is bigger than France","l'Algérie est plus grande que la France","structure"),
      ("People speak Arabic and French in Algeria","les gens parlent arabe et français en Algérie","structure")],
 60: [("world","monde","lexique"),("I am from Algeria","je viens d'Algérie","structure")],
+61: [("finally","enfin / finalement","fonction"),
+     ("Finally, he went home","enfin, il est rentré à la maison","structure")],
+62: [("Let me tell you about my day","laisse-moi te raconter ma journée","structure")],
+63: [("Thank you for listening","merci de m'avoir écouté","structure")],
+64: [],  # consolidation pure, aucun mot nouveau — cf. S32 en Foundations
 }
 
 MONDES = {1: "B1 · Yesterday & Today", 2: "B2 · Comparing Things", 3: "B3 · Around Town",
           4: "B4 · Plans & Future", 5: "B5 · Story Time", 6: "B6 · Feelings & Opinions",
-          7: "B7 · My Country, My World"}
+          7: "B7 · My Country, My World", 8: "B8 · Builder Show"}
 def monde_of(week): return MONDES[(week - 33) // 4 + 1]
 
-# ------------------------------------------------- calendrier (S33 -> S60,
-# pas de vacances à l'intérieur de ces mondes ; labels génériques au-delà de
-# S60 réservés aux échéances de révision qui débordent sur B8, non encore
-# écrit — purement des repères de planning, pas du contenu).
-labels = [f"S{i}" for i in range(33, 61)] + [f"S{i}" for i in range(61, 69)]
+# ------------------------------------------------- calendrier (S33 -> S64,
+# curriculum Builder complet ; labels génériques au-delà de S64 réservés
+# aux échéances de révision qui débordent sur un futur contenu (piste
+# bem_sprint ou intermédiaire), hors scope de ce document.
+labels = [f"S{i}" for i in range(33, 65)] + [f"S{i}" for i in range(65, 73)]
 def label_at(abs_day):
     idx = abs_day // 7
-    return labels[idx] if idx < len(labels) else "B8+"
+    return labels[idx] if idx < len(labels) else "post-Builder"
 def next_school_day(abs_day):
     while abs_day % 7 > 4:  # jours 5,6 = vendredi, samedi
         abs_day += 1

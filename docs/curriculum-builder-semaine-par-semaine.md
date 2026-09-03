@@ -2,7 +2,7 @@
 
 > Suite de Foundations (`docs/curriculum-foundations-semaine-par-semaine.md`), pour l'enfant qui a terminé les 32 semaines et maîtrise ~320–350 mots actifs, l'alphabet latin et les sons de base. Public visé : 5AP–6AP (10–12 ans), niveau A1 solide → A2. Numérotation continue (S33, S34…) pour que le moteur SRS et le curriculum restent une seule ligne du temps sans redémarrage de compteur.
 >
-> **État de ce document : démarré, pas terminé.** Seuls les MONDES B1 (S33–S36), B2 (S37–S40), B3 (S41–S44), B4 (S45–S48), B5 (S49–S52), B6 (S53–S56) et B7 (S57–S60) sont détaillés au niveau de Foundations. Le monde suivant (B8, bilan final) n'est qu'une esquisse de titre/thème (section "Feuille de route", en bas).
+> **État de ce document : complet.** Les 8 mondes (B1 à B8, S33–S64) sont détaillés au niveau de Foundations — voir `data/builder-banque-mots.json` (généré par `scripts/generate-builder-word-bank.py`) pour la banque de mots correspondante.
 
 ---
 
@@ -131,10 +131,35 @@ Mêmes catégories que Foundations (`lexique`, `structure`, `fonction`) plus une
 
 ---
 
-## Feuille de route (mondes suivants — titres et thème seulement, pas encore détaillés)
+## MONDE B8 — « Builder Show » (S61–S64) · Le grand spectacle
 
-| Monde | Semaines | Thème pressenti | Saut grammatical/lexical visé |
+*Fennec organise son spectacle de fin d'année — l'enfant n'apprend plus rien de nouveau, il montre tout ce qu'il sait déjà faire.*
+
+Comme la fin de Foundations (S29–S32), ce monde n'introduit presque aucun mot nouveau : c'est une consolidation totale, un tournoi SRS de tous les points de B1 à B7 (passé, comparatifs, *there is/are*, futur proche, connecteurs de récit, opinions, géographie), au service d'une seule production finale plus longue que tout ce qui a été demandé jusqu'ici.
+
+| Sem. | Oral (mots & structures) | Lecture & orthographe | Boss / événement |
 |---|---|---|---|
-| B8 | S61–S64 | *Builder Show* | Grande révision + bilan final (delta depuis S33) — clôture Builder, passerelle vers un futur contenu intermédiaire/BEM |
+| **S61** | **finally** (complète la série de connecteurs de B5 : *then, after that, because, but, so, finally*) + **Finally, he went home** | Tournoi de lecture : relire un extrait de chaque monde (B1 à B7) mélangé, sans aide | Tournoi SRS géant : révision de tous les points grammaticaux de Builder, déguisée en défi par équipes |
+| **S62** | **Let me tell you about my day** (structure d'ouverture pour un récit long) | Lecture d'un texte long (10-12 phrases) combinant passé, opinion, comparatif et futur proche — le plus long texte de tout Builder | Répétition guidée : construire à l'oral son propre récit en suivant un canevas (hier / mon avis / demain) |
+| **S63** | **Thank you for listening** (clôture rituelle d'une présentation) | Relecture et mémorisation du canevas personnel préparé en S62, corrections ciblées | Répétition générale du spectacle, en conditions réelles (enregistrement d'essai, réécoute, ajustement) |
+| **S64** | — (aucun mot nouveau, uniquement production) | — | **BILAN FINAL BUILDER** : même test qu'en S33 → delta annuel montré aux parents. **BOSS : « Le grand spectacle de Builder »** — l'enfant enregistre ~2 minutes en anglais : une histoire au passé, une comparaison, une opinion justifiée, un projet futur, une présentation de son pays. **Certificat Builder** délivré. 4 mots/structures actifs de plus (voir `data/builder-banque-mots.json`) |
+
+**Sortie du monde B8 = sortie de Builder** : l'enfant enchaîne spontanément passé, comparatifs, *there is/are*, futur proche, connecteurs de récit, opinions justifiées et vocabulaire géographique dans une production orale longue et cohérente (~2 minutes) — niveau A2 solide. Passerelle naturelle vers un futur contenu intermédiaire ou une piste `bem_sprint` dédiée à la préparation d'examen (hors scope de ce document).
+
+---
+
+## Ce que l'enfant sait faire en fin de Builder (contrat de sortie)
+
+- **Grammaire** : passé (`was/were`, régulier *-ed*, irréguliers fréquents), comparatif et superlatif (court et long, formes irrégulières), `there is/are` (affirmatif/négatif), futur proche `going to` (affirmatif/négatif/interrogatif), connecteurs de récit (*then, after that, because, but, so, finally*).
+- **Lecture** : suit un texte connecté de 10-12 phrases mêlant plusieurs temps et structures ; motifs orthographiques du niveau (*e* muet, groupes de prononciation du *-ed*, orthographes irrégulières fréquentes) acquis.
+- **Parler** : raconte un événement passé, compare deux choses ou personnes, exprime et justifie une opinion, décrit un projet futur, présente son pays — et enchaîne tout cela dans une production orale de ~2 minutes.
+- **Preuves** : bilan de mi-parcours (S48, delta depuis S33), bilan final (S64, delta annuel), enregistrement du grand spectacle (~2 min), ~140–150 mots/structures actifs au statut « maîtrisé » dans le SRS (en plus des ~330 de Foundations).
+
+## Garde-fous pédagogiques (identiques à Foundations, reconduits sans exception)
+
+- Un Boss raté se rejoue en variante, jamais à l'identique, jamais puni.
+- Le SRS garde toujours priorité sur la nouveauté.
+- Chaque monde part de l'Algérie et y revient (B7 en est l'exemple le plus direct, mais B1–B6 aussi : le marché, le désert, la ville de Fennec).
+- Aucun contenu nouveau introduit pendant les semaines de vacances scolaires.
 
 Chaque monde suivant sera écrit avec le même niveau de détail que B1 (table semaine par semaine + script de génération de banque de mots) au fur et à mesure, pas anticipé en bloc — pour rester fidèle au vrai déroulé pédagogique et pouvoir ajuster B2 en fonction de ce que B1 donne réellement en usage.

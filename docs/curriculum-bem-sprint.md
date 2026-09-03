@@ -103,11 +103,26 @@ Chaque semaine s'entraîne sur **plusieurs textes courts différents** (pas un s
 
 ---
 
+## BS5 — Pronunciation (détaillé)
+
+*Objectif : cette sous-partie ne teste pas la prononciation à voix haute mais la capacité à **classer** des sons à l'écrit (l'épreuve BEM est écrite) — reconnaître quel mot sonne différemment des autres, ou où tombe l'accent.*
+
+| Jour | Activité | Détail |
+|---|---|---|
+| **Jour 1** | Accentuation syllabique | Identifier la syllabe accentuée dans des mots de 2-3 syllabes du programme (*teacher, hospital, important*) — repérage à l'écrit, pas de production orale exigée |
+| **Jour 2** | Groupes **-ed** (/t/ /d/ /ɪd/) | Classer des verbes au passé par son final — réinvestit directement Builder B1·S34 (*played, watched, wanted*), même logique de tri déjà rencontrée |
+| **Jour 3** | Groupes **-s/-es** (/s/ /z/ /ɪz/) | Pluriels et 3e personne du singulier classés par son final (*books /s/, dogs /z/, watches /ɪz/*) |
+| **Jour 4** | Intrus ("odd one out") | Dans une série de 4 mots, repérer celui dont une lettre/un son diffère des trois autres (lettres muettes : *know, write, listen* ; voyelles : *food/good/moon* où *good* est l'intrus) |
+| **Jour 5 (Boss)** | Mini-épreuve chronométrée (6 min) : 1 item d'accentuation + 1 classement *-ed* ou *-s/-es* + 1 intrus, sur des mots inédits | Correction avec le barème réel |
+
+**Sortie de BS5** : l'élève classe des mots par accent tonique et par son final sans les prononcer à voix haute, et repère l'intrus dans une série — les deux formats d'activité les plus fréquents de cette sous-partie au BEM.
+
+---
+
 ## Feuille de route (semaines suivantes — pas encore détaillées)
 
 | Semaine | Compétence | Angle d'entraînement pressenti |
 |---|---|---|
-| BS5 | Pronunciation | Accentuation syllabique, classement de sons (ex. groupes *-ed* /t//d//ɪd/, lettres muettes) |
 | BS6 | Written Expression | Rédaction guidée à partir de notes, cohésion (mots de liaison), respect de la longueur (~10 lignes) |
 | BS7 | Examen blanc n°1 | Simulation complète chronométrée (les 3 parties), correction avec barème réel |
 | BS8 | Examen blanc n°2 + stratégie | Deuxième simulation + gestion du temps le jour J (répartition suggérée : ~35 min lecture, ~35 min langue, ~20 min rédaction) |

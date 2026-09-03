@@ -2,7 +2,7 @@
 
 > Suite de Foundations (`docs/curriculum-foundations-semaine-par-semaine.md`), pour l'enfant qui a terminé les 32 semaines et maîtrise ~320–350 mots actifs, l'alphabet latin et les sons de base. Public visé : 5AP–6AP (10–12 ans), niveau A1 solide → A2. Numérotation continue (S33, S34…) pour que le moteur SRS et le curriculum restent une seule ligne du temps sans redémarrage de compteur.
 >
-> **État de ce document : démarré, pas terminé.** Seuls les MONDES B1 (S33–S36), B2 (S37–S40), B3 (S41–S44) et B4 (S45–S48) sont détaillés au niveau de Foundations. Les mondes suivants ne sont qu'une esquisse de titres/thèmes (section "Feuille de route", en bas) — à détailler monde par monde, pas tous d'un coup.
+> **État de ce document : démarré, pas terminé.** Seuls les MONDES B1 (S33–S36), B2 (S37–S40), B3 (S41–S44), B4 (S45–S48) et B5 (S49–S52) sont détaillés au niveau de Foundations. Les mondes suivants ne sont qu'une esquisse de titres/thèmes (section "Feuille de route", en bas) — à détailler monde par monde, pas tous d'un coup.
 
 ---
 
@@ -86,11 +86,25 @@ Mêmes catégories que Foundations (`lexique`, `structure`, `fonction`) plus une
 
 ---
 
+## MONDE B5 — « Story Time » (S49–S52) · Raconter une histoire
+
+*Fennec devient conteur — les quatre grammaires apprises (passé, comparatifs, there is/are, futur proche) se mettent enfin au service d'un vrai récit.*
+
+| Sem. | Oral (mots & structures) | Lecture & orthographe | Boss / événement |
+|---|---|---|---|
+| **S49** | story, once upon a time, **after that** + **Once upon a time, there was a fennec** | Lecture d'un court récit (4-5 phrases) avec *then* (S36, révisé) et *after that* comme connecteurs de séquence | Remettre les phrases d'une petite histoire dans le bon ordre |
+| **S50** | **because** (raison) + **didn't** (négation du passé) + **He was hungry because he didn't eat** | Lecture de phrases cause→conséquence, question "pourquoi ?" posée sur chacune | Mini-boss : relier une cause à sa conséquence dans une série de phrases |
+| **S51** | **but** (contraste), **so** (conséquence) + **It was raining, so he stayed home**, **He was tired but happy** | Lecture d'un récit de 6-8 phrases mêlant les quatre connecteurs (*then, because, but, so*) | Reconter à l'oral une histoire courte en réutilisant au moins 2 connecteurs |
+| **S52** | **the end** + Révision : passé, comparatifs, *there is/are*, futur proche réunis dans un même récit | Première histoire longue lue seul (6-8 phrases, tous les acquis de B1-B4 réinvestis) : *"Once upon a time, there was a fennec. He was hungry, so he went to the market. He bought bread, then he went home. He was tired but happy."* | **BOSS : « Le conteur »** — l'enfant raconte une histoire courte (5-6 phrases) de son choix, avec au moins 2 connecteurs, enregistré. 12 mots/structures actifs de plus (voir `data/builder-banque-mots.json`) |
+
+**Sortie du monde B5** : l'enfant lit seul un texte connecté de 6-8 phrases, utilise au moins 4 connecteurs (*then, because, but, so*) à l'oral, et peut raconter une histoire courte en réinvestissant spontanément passé, comparatifs, *there is/are* et futur proche — la vraie preuve que les quatre mondes précédents tiennent ensemble.
+
+---
+
 ## Feuille de route (mondes suivants — titres et thème seulement, pas encore détaillés)
 
 | Monde | Semaines | Thème pressenti | Saut grammatical/lexical visé |
 |---|---|---|---|
-| B5 | S49–S52 | *Story Time* | Lecture de récits plus longs (6–8 phrases), connecteurs (*then, after, because*) |
 | B6 | S53–S56 | *Feelings & Opinions* | Expression d'opinion (*I think…, in my opinion*), adjectifs nuancés |
 | B7 | S57–S60 | *My Country, My World* | Vocabulaire civique/géographique simple, comparaison Algérie/monde |
 | B8 | S61–S64 | *Builder Show* | Grande révision + bilan final (delta depuis S33) — clôture Builder, passerelle vers un futur contenu intermédiaire/BEM |

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Génère la banque de mots Builder — MONDES B1 à B4 (S33-S48).
+"""Génère la banque de mots Builder — MONDES B1 à B5 (S33-S52).
 
 Suite de generate-foundations-word-bank.py : même modèle SRS (intervalles
 J+1, J+3, J+7, J+16, J+35), même calendrier école dimanche->jeudi (5
@@ -7,9 +7,15 @@ sessions/semaine réelles, jeudi = jour Boss donc pas de nouvel item).
 Numérotation de semaine continue depuis Foundations (S33, S34...) — voir
 docs/curriculum-builder-semaine-par-semaine.md.
 
-Seuls les mondes B1 à B4 sont peuplés ici (cf. "Feuille de route" du
-curriculum) ; les mondes B5-B8 ne sont pas encore écrits, ce script ne
-génère donc pas de contenu pour S49+ tant qu'ils ne sont pas détaillés.
+Seuls les mondes B1 à B5 sont peuplés ici (cf. "Feuille de route" du
+curriculum) ; les mondes B6-B8 ne sont pas encore écrits, ce script ne
+génère donc pas de contenu pour S53+ tant qu'ils ne sont pas détaillés.
+
+Note dédup : "then" (introduit S36) n'est pas réintroduit en S49 — la
+clé de dédoublonnage est globale au script, donc tout mot déjà présent
+dans un monde antérieur est silencieusement ignoré s'il réapparaît (voir
+la boucle de génération plus bas). C'est voulu : S49 réutilise "then" à
+l'oral (cf. curriculum) sans le re-déclarer comme nouvel item SRS.
 
 Sorties :
   data/builder-banque-mots.csv
@@ -87,20 +93,29 @@ W = {
      ("We are going to travel in the summer","nous allons voyager en été","structure")],
 48: [("next month","le mois prochain","lexique"),
      ("My plan for next year is…","mon projet pour l'année prochaine est…","structure")],
+49: [("story","histoire","lexique"),("once upon a time","il était une fois","lexique"),
+     ("after that","après ça","fonction"),
+     ("Once upon a time, there was a fennec","il était une fois un fennec","structure")],
+50: [("because","parce que","fonction"),("didn't","n'a pas (négation du passé)","grammaire"),
+     ("He was hungry because he didn't eat","il avait faim parce qu'il n'avait pas mangé","structure")],
+51: [("but","mais","fonction"),("so","donc / alors","fonction"),
+     ("It was raining, so he stayed home","il pleuvait, donc il est resté à la maison","structure"),
+     ("He was tired but happy","il était fatigué mais content","structure")],
+52: [("the end","la fin","lexique")],
 }
 
 MONDES = {1: "B1 · Yesterday & Today", 2: "B2 · Comparing Things", 3: "B3 · Around Town",
-          4: "B4 · Plans & Future"}
+          4: "B4 · Plans & Future", 5: "B5 · Story Time"}
 def monde_of(week): return MONDES[(week - 33) // 4 + 1]
 
-# ------------------------------------------------- calendrier (S33 -> S48,
+# ------------------------------------------------- calendrier (S33 -> S52,
 # pas de vacances à l'intérieur de ces mondes ; labels génériques au-delà de
-# S48 réservés aux échéances de révision qui débordent sur B5, non encore
+# S52 réservés aux échéances de révision qui débordent sur B6, non encore
 # écrit — purement des repères de planning, pas du contenu).
-labels = [f"S{i}" for i in range(33, 49)] + [f"S{i}" for i in range(49, 57)]
+labels = [f"S{i}" for i in range(33, 53)] + [f"S{i}" for i in range(53, 61)]
 def label_at(abs_day):
     idx = abs_day // 7
-    return labels[idx] if idx < len(labels) else "B5+"
+    return labels[idx] if idx < len(labels) else "B6+"
 def next_school_day(abs_day):
     while abs_day % 7 > 4:  # jours 5,6 = vendredi, samedi
         abs_day += 1

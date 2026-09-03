@@ -99,3 +99,15 @@ id,anglais,francais,categorie,monde,semaine_intro,jour_intro,r1,r2,r3,r4,r5,mait
 98,We are going to travel in the summer,nous allons voyager en été,structure,B4 · Plans & Future,S47,1,S47,S47,S48,S49,S52,S52
 99,next month,le mois prochain,lexique,B4 · Plans & Future,S48,1,S48,S48,S49,S50,S53,S53
 100,My plan for next year is…,mon projet pour l'année prochaine est…,structure,B4 · Plans & Future,S48,2,S48,S48,S49,S50,S53,S53
+101,story,histoire,lexique,B5 · Story Time,S49,1,S49,S49,S50,S51,S54,S54
+102,once upon a time,il était une fois,lexique,B5 · Story Time,S49,2,S49,S49,S50,S51,S54,S54
+103,after that,après ça,fonction,B5 · Story Time,S49,3,S49,S50,S50,S51,S54,S54
+104,"Once upon a time, there was a fennec",il était une fois un fennec,structure,B5 · Story Time,S49,4,S49,S50,S50,S52,S54,S54
+105,because,parce que,fonction,B5 · Story Time,S50,1,S50,S50,S51,S52,S55,S55
+106,didn't,n'a pas (négation du passé),grammaire,B5 · Story Time,S50,2,S50,S50,S51,S52,S55,S55
+107,He was hungry because he didn't eat,il avait faim parce qu'il n'avait pas mangé,structure,B5 · Story Time,S50,3,S50,S51,S51,S52,S55,S55
+108,but,mais,fonction,B5 · Story Time,S51,1,S51,S51,S52,S53,S56,S56
+109,so,donc / alors,fonction,B5 · Story Time,S51,2,S51,S51,S52,S53,S56,S56
+110,"It was raining, so he stayed home","il pleuvait, donc il est resté à la maison",structure,B5 · Story Time,S51,3,S51,S52,S52,S53,S56,S56
+111,He was tired but happy,il était fatigué mais content,structure,B5 · Story Time,S51,4,S51,S52,S52,S54,S56,S56
+112,the end,la fin,lexique,B5 · Story Time,S52,1,S52,S52,S53,S54,S57,S57

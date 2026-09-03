@@ -302,6 +302,21 @@ répétition légitime d'un même mot ; régénéré : 211/286 mots lexique
 illustrés désormais (was 196/213 sur Foundations seul, Builder passe de
 0/73 à 15/73 pour les mots qu'il partage avec Foundations).
 
+**Correctif : icône et splash screen PWA d'une ancienne palette.**
+`manifest.webmanifest` (`theme_color: #177245`, `background_color:
+#EFE3CB` — vert/doré) et `icons/icon.svg` (fond `#177245`) dataient d'une
+itération de design antérieure au système marine/rouge/crème actuellement
+en place partout ailleurs (`styles.css`, le `<meta name="theme-color"
+content="#0A3161">` déjà correct d'`index.html`) : jamais mis à jour au
+moment du handoff du design système définitif. Concrètement, "ajouter à
+l'écran d'accueil" installait une icône verte et un splash screen
+vert/doré, en contradiction immédiate avec l'app marine/rouge/crème qui
+s'affiche juste après. Aligné sur les tokens déjà en vigueur partout
+ailleurs (`#0A3161` marine, `#F5F3EE` crème) — pas une nouvelle décision
+de design, une correction de cohérence avec un système déjà arrêté et
+documenté. Validé en navigateur réel : manifest, meta `theme-color` et
+`icon.svg` renvoient désormais tous la même couleur marine.
+
 **Correctif : aucun écran de fin de programme au-delà de S64.** Une fois le
 Boss du correctif ci-dessus réellement déclenché partout, un second trou est
 apparu : `main.mjs` ne savait pas dire "le programme est terminé". Passé la
@@ -434,5 +449,7 @@ tableaux de bord, correctif du Boss sur les semaines de pure révision,
 enregistrement audio réel des Boss majeurs et écran de réécoute dans
 l'app, écran de fin de programme renvoyant vers BEM Sprint, correctif de
 l'emoji manquant dans le quiz projetable, correctif des leurres
-indiscernables sur les 17 mots repris entre Foundations et Builder, et
-régénération de word-emoji.json pour couvrir aussi Builder.
+indiscernables sur les 17 mots repris entre Foundations et Builder,
+régénération de word-emoji.json pour couvrir aussi Builder, et
+alignement de l'icône/manifest PWA sur la palette marine/rouge/crème
+actuelle (au lieu d'un vert/doré resté d'une itération antérieure).

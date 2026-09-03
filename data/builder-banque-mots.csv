@@ -128,3 +128,20 @@ id,anglais,francais,categorie,monde,semaine_intro,jour_intro,r1,r2,r3,r4,r5,mait
 127,"In my opinion, football is more exciting than tennis","à mon avis, le football est plus passionnant que le tennis",structure,B6 · Feelings & Opinions,S55,1,S55,S55,S56,S57,S60,S60
 128,debate,débat,lexique,B6 · Feelings & Opinions,S56,1,S56,S56,S57,S58,S61,S61
 129,What do you think?,qu'en penses-tu ?,structure,B6 · Feelings & Opinions,S56,2,S56,S56,S57,S58,S61,S61
+130,country,pays,lexique,"B7 · My Country, My World",S57,1,S57,S57,S58,S59,S62,S62
+131,capital,capitale,lexique,"B7 · My Country, My World",S57,2,S57,S57,S58,S59,S62,S62
+132,language,langue,lexique,"B7 · My Country, My World",S57,3,S57,S58,S58,S59,S62,S62
+133,flag,drapeau,lexique,"B7 · My Country, My World",S57,4,S57,S58,S58,S60,S62,S62
+134,Algeria is a country in Africa,l'Algérie est un pays en Afrique,structure,"B7 · My Country, My World",S57,1,S57,S57,S58,S59,S62,S62
+135,north,nord,lexique,"B7 · My Country, My World",S58,1,S58,S58,S59,S60,S63,S63
+136,south,sud,lexique,"B7 · My Country, My World",S58,2,S58,S58,S59,S60,S63,S63
+137,east,est,lexique,"B7 · My Country, My World",S58,3,S58,S59,S59,S60,S63,S63
+138,west,ouest,lexique,"B7 · My Country, My World",S58,4,S58,S59,S59,S61,S63,S63
+139,mountain,montagne,lexique,"B7 · My Country, My World",S58,1,S58,S58,S59,S60,S63,S63
+140,The Sahara is in the south of Algeria,le Sahara est dans le sud de l'Algérie,structure,"B7 · My Country, My World",S58,2,S58,S58,S59,S60,S63,S63
+141,continent,continent,lexique,"B7 · My Country, My World",S59,1,S59,S59,S60,S61,S64,S64
+142,population,population,lexique,"B7 · My Country, My World",S59,2,S59,S59,S60,S61,S64,S64
+143,Algeria is bigger than France,l'Algérie est plus grande que la France,structure,"B7 · My Country, My World",S59,3,S59,S60,S60,S61,S64,S64
+144,People speak Arabic and French in Algeria,les gens parlent arabe et français en Algérie,structure,"B7 · My Country, My World",S59,4,S59,S60,S60,S62,S64,S64
+145,world,monde,lexique,"B7 · My Country, My World",S60,1,S60,S60,S61,S62,S65,S65
+146,I am from Algeria,je viens d'Algérie,structure,"B7 · My Country, My World",S60,2,S60,S60,S61,S62,S65,S65

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Génère la banque de mots Builder — MONDES B1 à B6 (S33-S56).
+"""Génère la banque de mots Builder — MONDES B1 à B7 (S33-S60).
 
 Suite de generate-foundations-word-bank.py : même modèle SRS (intervalles
 J+1, J+3, J+7, J+16, J+35), même calendrier école dimanche->jeudi (5
@@ -7,9 +7,9 @@ sessions/semaine réelles, jeudi = jour Boss donc pas de nouvel item).
 Numérotation de semaine continue depuis Foundations (S33, S34...) — voir
 docs/curriculum-builder-semaine-par-semaine.md.
 
-Seuls les mondes B1 à B6 sont peuplés ici (cf. "Feuille de route" du
-curriculum) ; les mondes B7-B8 ne sont pas encore écrits, ce script ne
-génère donc pas de contenu pour S57+ tant qu'ils ne sont pas détaillés.
+Seuls les mondes B1 à B7 sont peuplés ici (cf. "Feuille de route" du
+curriculum) ; le monde B8 (bilan final) n'est pas encore écrit, ce script
+ne génère donc pas de contenu pour S61+ tant qu'il n'est pas détaillé.
 
 Note dédup : "then" (introduit S36) n'est pas réintroduit en S49 — la
 clé de dédoublonnage est globale au script, donc tout mot déjà présent
@@ -112,20 +112,31 @@ W = {
      ("proud","fier","lexique"),("surprised","surpris","lexique"),
      ("In my opinion, football is more exciting than tennis","à mon avis, le football est plus passionnant que le tennis","structure")],
 56: [("debate","débat","lexique"),("What do you think?","qu'en penses-tu ?","structure")],
+57: [("country","pays","lexique"),("capital","capitale","lexique"),
+     ("language","langue","lexique"),("flag","drapeau","lexique"),
+     ("Algeria is a country in Africa","l'Algérie est un pays en Afrique","structure")],
+58: [("north","nord","lexique"),("south","sud","lexique"),("east","est","lexique"),
+     ("west","ouest","lexique"),("mountain","montagne","lexique"),
+     ("The Sahara is in the south of Algeria","le Sahara est dans le sud de l'Algérie","structure")],
+59: [("continent","continent","lexique"),("population","population","lexique"),
+     ("Algeria is bigger than France","l'Algérie est plus grande que la France","structure"),
+     ("People speak Arabic and French in Algeria","les gens parlent arabe et français en Algérie","structure")],
+60: [("world","monde","lexique"),("I am from Algeria","je viens d'Algérie","structure")],
 }
 
 MONDES = {1: "B1 · Yesterday & Today", 2: "B2 · Comparing Things", 3: "B3 · Around Town",
-          4: "B4 · Plans & Future", 5: "B5 · Story Time", 6: "B6 · Feelings & Opinions"}
+          4: "B4 · Plans & Future", 5: "B5 · Story Time", 6: "B6 · Feelings & Opinions",
+          7: "B7 · My Country, My World"}
 def monde_of(week): return MONDES[(week - 33) // 4 + 1]
 
-# ------------------------------------------------- calendrier (S33 -> S56,
+# ------------------------------------------------- calendrier (S33 -> S60,
 # pas de vacances à l'intérieur de ces mondes ; labels génériques au-delà de
-# S56 réservés aux échéances de révision qui débordent sur B7, non encore
+# S60 réservés aux échéances de révision qui débordent sur B8, non encore
 # écrit — purement des repères de planning, pas du contenu).
-labels = [f"S{i}" for i in range(33, 57)] + [f"S{i}" for i in range(57, 65)]
+labels = [f"S{i}" for i in range(33, 61)] + [f"S{i}" for i in range(61, 69)]
 def label_at(abs_day):
     idx = abs_day // 7
-    return labels[idx] if idx < len(labels) else "B7+"
+    return labels[idx] if idx < len(labels) else "B8+"
 def next_school_day(abs_day):
     while abs_day % 7 > 4:  # jours 5,6 = vendredi, samedi
         abs_day += 1

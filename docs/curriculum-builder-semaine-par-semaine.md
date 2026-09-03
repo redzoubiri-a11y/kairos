@@ -2,7 +2,7 @@
 
 > Suite de Foundations (`docs/curriculum-foundations-semaine-par-semaine.md`), pour l'enfant qui a terminé les 32 semaines et maîtrise ~320–350 mots actifs, l'alphabet latin et les sons de base. Public visé : 5AP–6AP (10–12 ans), niveau A1 solide → A2. Numérotation continue (S33, S34…) pour que le moteur SRS et le curriculum restent une seule ligne du temps sans redémarrage de compteur.
 >
-> **État de ce document : démarré, pas terminé.** Seuls les MONDES B1 (S33–S36), B2 (S37–S40), B3 (S41–S44), B4 (S45–S48), B5 (S49–S52) et B6 (S53–S56) sont détaillés au niveau de Foundations. Les mondes suivants ne sont qu'une esquisse de titres/thèmes (section "Feuille de route", en bas) — à détailler monde par monde, pas tous d'un coup.
+> **État de ce document : démarré, pas terminé.** Seuls les MONDES B1 (S33–S36), B2 (S37–S40), B3 (S41–S44), B4 (S45–S48), B5 (S49–S52), B6 (S53–S56) et B7 (S57–S60) sont détaillés au niveau de Foundations. Le monde suivant (B8, bilan final) n'est qu'une esquisse de titre/thème (section "Feuille de route", en bas).
 
 ---
 
@@ -116,11 +116,25 @@ Mêmes catégories que Foundations (`lexique`, `structure`, `fonction`) plus une
 
 ---
 
+## MONDE B7 — « My Country, My World » (S57–S60) · Parler de son pays
+
+*Fennec fait le tour du monde et revient toujours à l'Algérie — le monde s'ouvre, l'ancrage reste local.*
+
+| Sem. | Oral (mots & structures) | Lecture & orthographe | Boss / événement |
+|---|---|---|---|
+| **S57** | country, capital, language, flag + **Algeria is a country in Africa** | Lecture de phrases factuelles courtes sur des pays | Associer pays, capitale et drapeau dans un mini-quiz |
+| **S58** | north, south, east, west, mountain + **The Sahara is in the south of Algeria** | Lecture d'un court paragraphe géographique sur l'Algérie | Repérer les points cardinaux sur la carte de Fennec (S1 : la maison de Fennec, réactivée) |
+| **S59** | continent, population + **Algeria is bigger than France** (réinvestit le comparatif de B2) + **People speak Arabic and French in Algeria** | Paragraphe comparant deux pays (taille, langue) | Mini-quiz : comparer l'Algérie à un autre pays sur un trait (taille, langue, population) |
+| **S60** | world, **I am from Algeria** + Révision : géographie + comparatifs + *there is/are* réunis | Relecture d'une courte présentation de pays, questions de compréhension | **BOSS : « Le tour du monde de Fennec »** — l'enfant présente son pays en 3-4 phrases (capitale, langue, position géographique), enregistré. 17 mots/structures actifs de plus (voir `data/builder-banque-mots.json`) |
+
+**Sortie du monde B7** : l'enfant nomme et situe son pays (capitale, langue, position géographique, points cardinaux), compare son pays à un autre sur un trait simple, et peut présenter son pays en quelques phrases — le monde s'élargit, mais chaque monde de Builder reste ancré dans le réel algérien, comme dans Foundations.
+
+---
+
 ## Feuille de route (mondes suivants — titres et thème seulement, pas encore détaillés)
 
 | Monde | Semaines | Thème pressenti | Saut grammatical/lexical visé |
 |---|---|---|---|
-| B7 | S57–S60 | *My Country, My World* | Vocabulaire civique/géographique simple, comparaison Algérie/monde |
 | B8 | S61–S64 | *Builder Show* | Grande révision + bilan final (delta depuis S33) — clôture Builder, passerelle vers un futur contenu intermédiaire/BEM |
 
 Chaque monde suivant sera écrit avec le même niveau de détail que B1 (table semaine par semaine + script de génération de banque de mots) au fur et à mesure, pas anticipé en bloc — pour rester fidèle au vrai déroulé pédagogique et pouvoir ajuster B2 en fonction de ce que B1 donne réellement en usage.

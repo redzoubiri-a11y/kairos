@@ -44,6 +44,34 @@ test('pickDistractors préfère la même catégorie et exclut le mot lui-même',
   assert.ok(distractors.every((d) => d.category === 'lexique'));
 });
 
+test('pickDistractors exclut aussi tout mot qui partage le même texte anglais que le mot cible, même à un autre wordId (mot réintroduit en Builder)', async () => {
+  const { pickDistractors } = await queuePromise;
+  const catalogWithDuplicateWord = [
+    { wordId: 1, category: 'lexique', english: 'play' },
+    { wordId: 2, category: 'lexique', english: 'run' },
+    { wordId: 3, category: 'lexique', english: 'jump' },
+    { wordId: 4, category: 'lexique', english: 'play' }, // même mot, wordId différent (repris plus tard)
+  ];
+  const target = catalogWithDuplicateWord[0]; // play, wordId 1
+  const distractors = pickDistractors(catalogWithDuplicateWord, target, 3, () => 0.5);
+  assert.equal(distractors.length, 2, 'seuls 2 leurres valides existent (run, jump) — le doublon "play" est exclu');
+  assert.ok(distractors.every((d) => d.english !== 'play'));
+});
+
+test('pickDistractors ne renvoie jamais deux leurres qui partagent le même texte anglais entre eux (paire dupliquée Foundations/Builder)', async () => {
+  const { pickDistractors } = await queuePromise;
+  const catalogWithTwoDuplicatePairs = [
+    { wordId: 1, category: 'lexique', english: 'week' }, // mot cible
+    { wordId: 2, category: 'lexique', english: 'fast' },
+    { wordId: 3, category: 'lexique', english: 'fast' }, // même mot repris en Builder
+    { wordId: 4, category: 'lexique', english: 'slow' },
+  ];
+  const target = catalogWithTwoDuplicatePairs[0];
+  const distractors = pickDistractors(catalogWithTwoDuplicatePairs, target, 2, () => 0.5);
+  const texts = distractors.map((d) => d.english);
+  assert.equal(new Set(texts).size, texts.length, `deux leurres identiques : ${JSON.stringify(texts)}`);
+});
+
 test('pickDistractors retombe sur une autre catégorie si pas assez de mots de la même catégorie', async () => {
   const { pickDistractors } = await queuePromise;
   const small = [

@@ -100,14 +100,20 @@ def main():
         if emoji:
             result[str(w["wordId"])] = emoji
 
-    # Garde-fou : jamais le même emoji sur deux mots différents.
+    # Garde-fou : jamais le même emoji sur deux mots ANGLAIS différents.
+    # Le même mot anglais peut légitimement apparaître à deux wordId (une
+    # introduction en Foundations, un rappel/renforcement en Builder à une
+    # semaine ultérieure, cf. data/builder-banque-mots.json) : ce n'est pas
+    # une ambiguïté pour l'enfant, qui voit le même mot illustré par la même
+    # image les deux fois — seul un emoji partagé entre deux mots anglais
+    # RÉELLEMENT différents serait trompeur.
+    by_id = {str(w["wordId"]): w["english"] for w in lexique}
     by_emoji = {}
     for wid, emoji in result.items():
-        by_emoji.setdefault(emoji, []).append(wid)
-    dups = {e: ids for e, ids in by_emoji.items() if len(ids) > 1}
+        by_emoji.setdefault(emoji, set()).add(by_id[wid])
+    dups = {e: words for e, words in by_emoji.items() if len(words) > 1}
     if dups:
-        by_id = {str(w["wordId"]): w["english"] for w in lexique}
-        lines = [f"  {e} -> {[by_id[i] for i in ids]}" for e, ids in dups.items()]
+        lines = [f"  {e} -> {sorted(words)}" for e, words in dups.items()]
         raise SystemExit("Emoji dupliqués détectés :\n" + "\n".join(lines))
 
     covered = len(result)

@@ -40,11 +40,38 @@ function buildDailyQueue({ catalog, states, currentWeek, currentDay, now }) {
 }
 
 /**
+ * Ne garde qu'une occurrence par texte anglais (la première rencontrée),
+ * pour un pool destiné à devenir des options affichées côte à côte : deux
+ * entrées avec le même texte/emoji seraient indiscernables pour l'enfant
+ * même si elles ont des wordId différents.
+ */
+function uniqueByEnglish(list) {
+  const seen = new Set();
+  const result = [];
+  for (const w of list) {
+    if (seen.has(w.english)) continue;
+    seen.add(w.english);
+    result.push(w);
+  }
+  return result;
+}
+
+/**
  * Choisit `count` mots-leurres (distracteurs) de la même catégorie que
  * `word` quand c'est possible (pour rester plausible : pas de leurre
  * "structure" pour un mot "lexique"), sinon retombe sur n'importe quel
- * autre mot du catalogue. Déterministe si `rng` est fourni (tests), sinon
- * Math.random.
+ * autre mot du catalogue. Exclut aussi tout mot qui partage le même texte
+ * anglais que `word` (pas seulement `wordId`) et déduplique le pool par
+ * texte anglais avant de piocher : 17 mots du catalogue fusionné
+ * apparaissent deux fois avec deux wordId différents — une fois introduits
+ * en Foundations, une fois repris/renforcés en Builder à une semaine
+ * ultérieure (ex. "play" wordId 289 et 10007). Sans ces deux garde-fous,
+ * un écran pouvait soit piocher l'autre occurrence du mot cible comme
+ * leurre, soit piocher DEUX leurres différents qui sont eux-mêmes la même
+ * paire dupliquée (ex. options ["week", "fast", "fast"], observé en test) —
+ * dans les deux cas, deux options affichaient le même texte/emoji,
+ * indiscernables pour l'enfant. Déterministe si `rng` est fourni (tests),
+ * sinon Math.random.
  *
  * @param {Array<object>} catalog
  * @param {object} word
@@ -52,8 +79,9 @@ function buildDailyQueue({ catalog, states, currentWeek, currentDay, now }) {
  * @param {() => number} [rng]
  */
 function pickDistractors(catalog, word, count, rng = Math.random) {
-  const sameCategory = catalog.filter((w) => w.wordId !== word.wordId && w.category === word.category);
-  const pool = sameCategory.length >= count ? sameCategory : catalog.filter((w) => w.wordId !== word.wordId);
+  const notSameWord = (w) => w.wordId !== word.wordId && w.english !== word.english;
+  const sameCategory = uniqueByEnglish(catalog.filter((w) => notSameWord(w) && w.category === word.category));
+  const pool = sameCategory.length >= count ? sameCategory : uniqueByEnglish(catalog.filter(notSameWord));
   return shuffle(pool, rng).slice(0, count);
 }
 

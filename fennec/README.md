@@ -40,7 +40,7 @@ fennec/
     catalog.json               # copie embarquée du référentiel (bootstrap 100% offline)
     build_catalog.py           # régénère catalog.json depuis les deux banques de mots
     phonics.json               # progression phonics (22 sons, S2→S30), écran "phonics"
-    word-emoji.json            # illustrations emoji pour 193/213 mots lexique (placeholder)
+    word-emoji.json            # illustrations emoji pour 211/286 mots lexique (placeholder)
     build_word_emoji.py        # régénère word-emoji.json (garde-fou : jamais 2 mots = même emoji)
   design/
     design-system-handoff.md              # spec du design système définitif (tokens, gabarits, copie)
@@ -64,9 +64,10 @@ affiché en anglais (LTR) — c'est le contenu pédagogique, pas l'interface.
 
 **Illustrations** : `fennec/app/word-emoji.json` (généré par `build_word_emoji.py`,
 validé contre le catalogue par `fennec/test/word-emoji-data.test.js`) fournit
-un emoji univoque pour 193 des 213 mots "lexique" — les cartes-options
-(écoute→touche, lecture→touche) l'utilisent quand il existe. Les 20 mots
-restants (jours de la semaine, adjectifs relationnels comme big/small/tall...)
+un emoji univoque pour 211 des 286 mots "lexique" (Foundations + Builder)
+— les cartes-options (écoute→touche, lecture→touche) l'utilisent quand il
+existe. Les mots restants (jours de la semaine, adjectifs relationnels
+comme big/small/tall...)
 n'ont pas d'emoji fidèle et unique : ils retombent sur le texte anglais,
 jamais sur un emoji forcé ou trompeur. Reste un placeholder temporaire —
 à remplacer par de vraies illustrations quand elles existeront.
@@ -268,6 +269,39 @@ consécutives : 4/8 affichent bien leur emoji (black→⚫, wash→🧼, look!�
 touch→☝️), les 4 autres portent sur des mots sans emoji couvert et restent
 sur texte seul — comportement attendu, pas un nouveau bug.
 
+**Correctif plus profond, trouvé en creusant l'emoji ci-dessus : des
+leurres pouvaient être indiscernables de la bonne réponse.** 17 mots
+apparaissent deux fois dans le catalogue fusionné (489 mots) avec deux
+`wordId` différents — une fois introduits en Foundations, une fois
+repris/renforcés en Builder à une semaine ultérieure (ex. "play" wordId
+289 et 10007 ; "fast", "week", "camel", "desert"... la liste complète est
+dans le commentaire de `pickDistractors`, `src/queue.mjs`). `pickDistractors()`
+n'excluait que le `wordId` du mot cible, pas ces doublons par texte : un
+écran pouvait donc (a) piocher l'autre occurrence du mot cible comme
+leurre — bonne réponse et leurre identiques — ou (b) piocher deux leurres
+qui sont eux-mêmes la même paire dupliquée entre eux (observé en test :
+options `["week", "fast", "fast"]`, deux "fast" différents). Dans les deux
+cas, deux options du même écran affichaient le même texte/emoji,
+indiscernables pour l'enfant. Corrigé en excluant aussi par texte anglais
+et en dédupliquant le pool avant tirage (deux nouveaux tests de
+non-régression dans `test/queue.test.js`). Vérifié par un balayage complet
+en navigateur réel : ~9700 écrans générés (toutes les semaines du
+catalogue, sessions quotidiennes et Boss, 10-20 tirages aléatoires par
+semaine) — zéro option dupliquée après correction, contre 1 détectée avant.
+
+Cette même confusion Foundations/Builder expliquait aussi pourquoi
+`word-emoji.json` affichait 0/73 mots Builder illustrés malgré plusieurs
+mots repris du dictionnaire déjà curaté pour Foundations : le fichier
+n'avait simplement jamais été régénéré depuis l'ajout de Builder au
+catalogue, et le garde-fou anti-doublon de `build_word_emoji.py`
+(légitimement strict à l'origine) rejetait la régénération dès qu'un même
+mot anglais apparaissait deux fois — exactement le cas Foundations/Builder
+ci-dessus. Garde-fou assoupli pour ne rejeter que deux mots anglais
+*différents* partageant un emoji (toujours interdit), pas la même
+répétition légitime d'un même mot ; régénéré : 211/286 mots lexique
+illustrés désormais (was 196/213 sur Foundations seul, Builder passe de
+0/73 à 15/73 pour les mots qu'il partage avec Foundations).
+
 **Correctif : aucun écran de fin de programme au-delà de S64.** Une fois le
 Boss du correctif ci-dessus réellement déclenché partout, un second trou est
 apparu : `main.mjs` ne savait pas dire "le programme est terminé". Passé la
@@ -377,7 +411,7 @@ worker + cache de l'app shell).
 ## Prochaines briques (hors scope de ce chantier)
 
 - Vrais assets audio/image (actuellement : texte + synthèse vocale du
-  navigateur, emoji-placeholder pour 196/213 mots lexique ; `word.audioUrl`/
+  navigateur, emoji-placeholder pour 211/286 mots lexique ; `word.audioUrl`/
   `word.imageUrl` déjà prévus dans le schéma).
 - Brancher les tableaux de bord parent/enseignant (actuellement des
   maquettes à données figées, `wireframes/fennec-maquette-dashboard-*.html`)
@@ -399,4 +433,6 @@ objectif), portail Madrassatidz reliant les trois pistes et les deux
 tableaux de bord, correctif du Boss sur les semaines de pure révision,
 enregistrement audio réel des Boss majeurs et écran de réécoute dans
 l'app, écran de fin de programme renvoyant vers BEM Sprint, correctif de
-l'emoji manquant dans le quiz projetable.
+l'emoji manquant dans le quiz projetable, correctif des leurres
+indiscernables sur les 17 mots repris entre Foundations et Builder, et
+régénération de word-emoji.json pour couvrir aussi Builder.

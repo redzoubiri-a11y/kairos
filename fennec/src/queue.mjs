@@ -200,6 +200,33 @@ function buildBossPlan({ catalog, week, count = 12, rng = Math.random }) {
   return screens;
 }
 
+/**
+ * Vrai/faux : la progression du curriculum est-elle terminée pour cet
+ * élève ? Sans ce garde-fou, `main.mjs` continuait d'avancer le pointeur
+ * indéfiniment au-delà de la dernière semaine programmée (S64, fin de
+ * Builder B8) : `buildDailyQueue`/`buildScreenPlan` renvoyaient un plan
+ * vide chaque jour ("لا يوجد شيء للمراجعة اليوم!") et `buildBossPlan`
+ * finissait lui aussi par ne plus rien trouver, sans jamais le dire à
+ * l'enfant — l'app tournait à vide pour toujours plutôt que de signaler la
+ * fin du programme et renvoyer vers la suite (BEM Sprint).
+ *
+ * Le dernier monde se termine à la première semaine multiple de 4 qui suit
+ * ou égale la dernière semaine d'introduction de mots du catalogue (les
+ * mondes font systématiquement 4 semaines, cf. buildBossPlan) : au-delà,
+ * plus aucun mot nouveau ne sera jamais programmé.
+ *
+ * @param {Object} args
+ * @param {Array<object>} args.catalog
+ * @param {number} args.week - pointer.week courant
+ * @returns {boolean}
+ */
+function curriculumComplete({ catalog, week }) {
+  if (catalog.length === 0) return false;
+  const maxIntroWeek = Math.max(...catalog.map((w) => w.introWeek));
+  const lastWeek = Math.ceil(maxIntroWeek / 4) * 4;
+  return week > lastWeek;
+}
+
 function makeScreen(phase, word, catalog, rng) {
   const kind = screenKindFor(word);
   const screen = { phase, kind, word, isRetest: false };
@@ -231,4 +258,4 @@ function insertRetest(remainingScreens, failedScreen) {
   return next;
 }
 
-export { buildDailyQueue, buildScreenPlan, buildBossPlan, pickDistractors, shuffle, screenKindFor, getPhonicsForDay, insertRetest, freshState };
+export { buildDailyQueue, buildScreenPlan, buildBossPlan, curriculumComplete, pickDistractors, shuffle, screenKindFor, getPhonicsForDay, insertRetest, freshState };

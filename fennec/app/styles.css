@@ -179,7 +179,8 @@ body{
 .phonics-caption{font-family:var(--mono); font-size:11px; color:var(--ink-soft); text-align:center; margin-top:14px}
 
 .cta{
-  display:block; width:100%; height:58px; border-radius:20px; border:none; color:#fff;
+  display:flex; align-items:center; justify-content:center; width:100%; height:58px;
+  border-radius:20px; border:none; color:#fff; text-decoration:none; box-sizing:border-box;
   font-family:'Baloo 2'; font-weight:700; font-size:18px; cursor:pointer; margin-top:var(--sp-md);
 }
 .cta.primary{background:var(--primary); box-shadow:0 6px 0 #06213F}

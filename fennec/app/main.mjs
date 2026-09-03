@@ -24,9 +24,10 @@
 
 import { FennecStore } from '../src/db.mjs';
 import { pullCatalog, pushPending } from '../src/sync.mjs';
+import { curriculumComplete } from '../src/queue.mjs';
 import { runSession } from './session.mjs';
 import { runBossSession } from './bossSession.mjs';
-import { stage } from './screens.mjs';
+import { stage, avatarTag } from './screens.mjs';
 
 const CLOCK_KEY = 'fennec_clock_offset_ms';
 const PROFILES_KEY = 'fennec_profiles';
@@ -219,6 +220,26 @@ function renderDevBar(profile, pointer, attempt) {
   };
 }
 
+/**
+ * Écran de fin de programme : affiché quand le pointeur a dépassé la
+ * dernière semaine de contenu (Foundations + Builder, S1 à S64 — voir
+ * curriculumComplete() dans queue.mjs). Avant ce garde-fou, l'app
+ * continuait à avancer le pointeur pour toujours au-delà de S64, sans plan
+ * de session ni Boss à proposer, sans jamais le dire à l'enfant. Renvoie
+ * vers BEM Sprint (la suite documentée dans docs/curriculum-bem-sprint.md)
+ * plutôt que de laisser l'enfant dans une session vide.
+ */
+function renderCurriculumComplete(profile) {
+  stage.innerHTML = `<div class="win">
+    <div class="win emoji-lg">🏁</div>
+    ${avatarTag()}
+    <p class="say ar center">أنهى ${escapeHtml(profile.name)} البرنامج كاملاً!</p>
+    <p class="sub ar center">من Foundations إلى Builder — كل الأسابيع الـ64 تمت. الخطوة التالية : BEM Sprint، 8 أسابيع للتحضير لامتحان BEM.</p>
+    <a class="cta accent" href="./bemSprint.html">ابدأ BEM Sprint ←</a>
+    <a class="portal-link" href="../../wireframes/madrassatidz-portal.html">← Madrassatidz</a>
+  </div>`;
+}
+
 async function boot() {
   const activeId = getActiveProfileId();
   const profiles = getProfiles();
@@ -232,6 +253,10 @@ async function boot() {
   const pointer = getPointer(profile.id);
   const attempt = getBossAttempt(profile.id);
   renderDevBar(profile, pointer, attempt);
+
+  if (curriculumComplete({ catalog: await store.getCatalog(), week: pointer.week })) {
+    return renderCurriculumComplete(profile);
+  }
 
   if (pointer.day === 5) {
     await runBossSession({

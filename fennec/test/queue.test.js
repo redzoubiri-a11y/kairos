@@ -157,6 +157,18 @@ test('buildBossPlan pioche dans les 3 semaines précédentes quand la semaine du
   assert.ok(plan.every((s) => CATALOG.some((w) => w.wordId === s.word.wordId && w.introWeek === 21)));
 });
 
+test('curriculumComplete est faux tant que le pointeur n\'a pas dépassé la fin du dernier monde (multiple de 4 semaines)', async () => {
+  const { curriculumComplete } = await queuePromise;
+  // CATALOG s'arrête à introWeek 21 => dernier monde = S21-S24, fin S24.
+  assert.equal(curriculumComplete({ catalog: CATALOG, week: 24 }), false);
+  assert.equal(curriculumComplete({ catalog: CATALOG, week: 25 }), true);
+});
+
+test('curriculumComplete est faux sur un catalogue vide (ne bloque jamais avant que le catalogue soit chargé)', async () => {
+  const { curriculumComplete } = await queuePromise;
+  assert.equal(curriculumComplete({ catalog: [], week: 999 }), false);
+});
+
 const PHONICS = [
   { week: 21, grapheme: 'sh', example: 'ship', exampleWordId: 5 },
 ];

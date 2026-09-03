@@ -240,6 +240,21 @@ Ce que ça ne fait pas encore : le tableau de bord parent (maquette) ne lit
 toujours pas ces enregistrements réels — ses cartes "تسجيلات صوتية"
 restent des données factices, cf. plus haut.
 
+**Correctif : aucun écran de fin de programme au-delà de S64.** Une fois le
+Boss du correctif ci-dessus réellement déclenché partout, un second trou est
+apparu : `main.mjs` ne savait pas dire "le programme est terminé". Passé la
+dernière semaine de contenu (S64, fin de Builder B8), `buildDailyQueue()`/
+`buildScreenPlan()` renvoyaient un plan vide tous les jours ("لا يوجد شيء
+للمراجعة اليوم!") et le pointeur continuait d'avancer indéfiniment sans que
+rien ne le signale à l'enfant — un cul-de-sac silencieux plutôt qu'une vraie
+fin. Ajouté `curriculumComplete()` (`src/queue.mjs`, testé) : dès que le
+pointeur dépasse la fin du dernier monde de 4 semaines, `boot()` affiche un
+écran "🏁 البرنامج كاملاً" avec un lien direct vers BEM Sprint (la suite
+documentée) et un retour à Madrassatidz, au lieu de continuer la boucle à
+vide. Validé en navigateur réel (pointeur forcé à S65) : écran de fin
+correct, clic sur "ابدأ BEM Sprint ←" navigue bien vers `bemSprint.html` ;
+une session normale (S1) n'est pas affectée.
+
 ## Pourquoi cette architecture
 
 Le principe directeur (cf. l'analyse) : **offline-first**, parce que la data mobile en Algérie
@@ -353,4 +368,6 @@ et intégration complets de Foundations (32 semaines) et Builder (8
 mondes), curriculum et intégration complets de BEM Sprint (8 semaines,
 BS1-BS8, y compris les deux examens blancs chronométrés avec delta
 objectif), portail Madrassatidz reliant les trois pistes et les deux
-tableaux de bord.
+tableaux de bord, correctif du Boss sur les semaines de pure révision,
+enregistrement audio réel des Boss majeurs, écran de fin de programme
+renvoyant vers BEM Sprint.

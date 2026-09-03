@@ -111,3 +111,20 @@ id,anglais,francais,categorie,monde,semaine_intro,jour_intro,r1,r2,r3,r4,r5,mait
 110,"It was raining, so he stayed home","il pleuvait, donc il est resté à la maison",structure,B5 · Story Time,S51,3,S51,S52,S52,S53,S56,S56
 111,He was tired but happy,il était fatigué mais content,structure,B5 · Story Time,S51,4,S51,S52,S52,S54,S56,S56
 112,the end,la fin,lexique,B5 · Story Time,S52,1,S52,S52,S53,S54,S57,S57
+113,boring,ennuyeux,lexique,B6 · Feelings & Opinions,S53,1,S53,S53,S54,S55,S58,S58
+114,funny,drôle,lexique,B6 · Feelings & Opinions,S53,2,S53,S53,S54,S55,S58,S58
+115,exciting,passionnant,lexique,B6 · Feelings & Opinions,S53,3,S53,S54,S54,S55,S58,S58
+116,scary,effrayant,lexique,B6 · Feelings & Opinions,S53,4,S53,S54,S54,S56,S58,S58
+117,I think it's funny,je pense que c'est drôle,structure,B6 · Feelings & Opinions,S53,1,S53,S53,S54,S55,S58,S58
+118,love,adorer,lexique,B6 · Feelings & Opinions,S54,1,S54,S54,S55,S56,S59,S59
+119,hate,détester,lexique,B6 · Feelings & Opinions,S54,2,S54,S54,S55,S56,S59,S59
+120,agree,être d'accord,lexique,B6 · Feelings & Opinions,S54,3,S54,S55,S55,S56,S59,S59
+121,disagree,ne pas être d'accord,lexique,B6 · Feelings & Opinions,S54,4,S54,S55,S55,S57,S59,S59
+122,"I love reading, but I hate maths","j'adore lire, mais je déteste les maths",structure,B6 · Feelings & Opinions,S54,1,S54,S54,S55,S56,S59,S59
+123,in my opinion,à mon avis,fonction,B6 · Feelings & Opinions,S55,1,S55,S55,S56,S57,S60,S60
+124,worried,inquiet,lexique,B6 · Feelings & Opinions,S55,2,S55,S55,S56,S57,S60,S60
+125,proud,fier,lexique,B6 · Feelings & Opinions,S55,3,S55,S56,S56,S57,S60,S60
+126,surprised,surpris,lexique,B6 · Feelings & Opinions,S55,4,S55,S56,S56,S58,S60,S60
+127,"In my opinion, football is more exciting than tennis","à mon avis, le football est plus passionnant que le tennis",structure,B6 · Feelings & Opinions,S55,1,S55,S55,S56,S57,S60,S60
+128,debate,débat,lexique,B6 · Feelings & Opinions,S56,1,S56,S56,S57,S58,S61,S61
+129,What do you think?,qu'en penses-tu ?,structure,B6 · Feelings & Opinions,S56,2,S56,S56,S57,S58,S61,S61

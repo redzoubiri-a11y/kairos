@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Génère la banque de mots Builder — MONDES B1 à B5 (S33-S52).
+"""Génère la banque de mots Builder — MONDES B1 à B6 (S33-S56).
 
 Suite de generate-foundations-word-bank.py : même modèle SRS (intervalles
 J+1, J+3, J+7, J+16, J+35), même calendrier école dimanche->jeudi (5
@@ -7,9 +7,9 @@ sessions/semaine réelles, jeudi = jour Boss donc pas de nouvel item).
 Numérotation de semaine continue depuis Foundations (S33, S34...) — voir
 docs/curriculum-builder-semaine-par-semaine.md.
 
-Seuls les mondes B1 à B5 sont peuplés ici (cf. "Feuille de route" du
-curriculum) ; les mondes B6-B8 ne sont pas encore écrits, ce script ne
-génère donc pas de contenu pour S53+ tant qu'ils ne sont pas détaillés.
+Seuls les mondes B1 à B6 sont peuplés ici (cf. "Feuille de route" du
+curriculum) ; les mondes B7-B8 ne sont pas encore écrits, ce script ne
+génère donc pas de contenu pour S57+ tant qu'ils ne sont pas détaillés.
 
 Note dédup : "then" (introduit S36) n'est pas réintroduit en S49 — la
 clé de dédoublonnage est globale au script, donc tout mot déjà présent
@@ -102,20 +102,30 @@ W = {
      ("It was raining, so he stayed home","il pleuvait, donc il est resté à la maison","structure"),
      ("He was tired but happy","il était fatigué mais content","structure")],
 52: [("the end","la fin","lexique")],
+53: [("boring","ennuyeux","lexique"),("funny","drôle","lexique"),
+     ("exciting","passionnant","lexique"),("scary","effrayant","lexique"),
+     ("I think it's funny","je pense que c'est drôle","structure")],
+54: [("love","adorer","lexique"),("hate","détester","lexique"),
+     ("agree","être d'accord","lexique"),("disagree","ne pas être d'accord","lexique"),
+     ("I love reading, but I hate maths","j'adore lire, mais je déteste les maths","structure")],
+55: [("in my opinion","à mon avis","fonction"),("worried","inquiet","lexique"),
+     ("proud","fier","lexique"),("surprised","surpris","lexique"),
+     ("In my opinion, football is more exciting than tennis","à mon avis, le football est plus passionnant que le tennis","structure")],
+56: [("debate","débat","lexique"),("What do you think?","qu'en penses-tu ?","structure")],
 }
 
 MONDES = {1: "B1 · Yesterday & Today", 2: "B2 · Comparing Things", 3: "B3 · Around Town",
-          4: "B4 · Plans & Future", 5: "B5 · Story Time"}
+          4: "B4 · Plans & Future", 5: "B5 · Story Time", 6: "B6 · Feelings & Opinions"}
 def monde_of(week): return MONDES[(week - 33) // 4 + 1]
 
-# ------------------------------------------------- calendrier (S33 -> S52,
+# ------------------------------------------------- calendrier (S33 -> S56,
 # pas de vacances à l'intérieur de ces mondes ; labels génériques au-delà de
-# S52 réservés aux échéances de révision qui débordent sur B6, non encore
+# S56 réservés aux échéances de révision qui débordent sur B7, non encore
 # écrit — purement des repères de planning, pas du contenu).
-labels = [f"S{i}" for i in range(33, 53)] + [f"S{i}" for i in range(53, 61)]
+labels = [f"S{i}" for i in range(33, 57)] + [f"S{i}" for i in range(57, 65)]
 def label_at(abs_day):
     idx = abs_day // 7
-    return labels[idx] if idx < len(labels) else "B6+"
+    return labels[idx] if idx < len(labels) else "B7+"
 def next_school_day(abs_day):
     while abs_day % 7 > 4:  # jours 5,6 = vendredi, samedi
         abs_day += 1

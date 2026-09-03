@@ -2,7 +2,7 @@
 
 > Suite de Foundations (`docs/curriculum-foundations-semaine-par-semaine.md`), pour l'enfant qui a terminé les 32 semaines et maîtrise ~320–350 mots actifs, l'alphabet latin et les sons de base. Public visé : 5AP–6AP (10–12 ans), niveau A1 solide → A2. Numérotation continue (S33, S34…) pour que le moteur SRS et le curriculum restent une seule ligne du temps sans redémarrage de compteur.
 >
-> **État de ce document : démarré, pas terminé.** Seuls les MONDES B1 (S33–S36), B2 (S37–S40), B3 (S41–S44), B4 (S45–S48) et B5 (S49–S52) sont détaillés au niveau de Foundations. Les mondes suivants ne sont qu'une esquisse de titres/thèmes (section "Feuille de route", en bas) — à détailler monde par monde, pas tous d'un coup.
+> **État de ce document : démarré, pas terminé.** Seuls les MONDES B1 (S33–S36), B2 (S37–S40), B3 (S41–S44), B4 (S45–S48), B5 (S49–S52) et B6 (S53–S56) sont détaillés au niveau de Foundations. Les mondes suivants ne sont qu'une esquisse de titres/thèmes (section "Feuille de route", en bas) — à détailler monde par monde, pas tous d'un coup.
 
 ---
 
@@ -101,11 +101,25 @@ Mêmes catégories que Foundations (`lexique`, `structure`, `fonction`) plus une
 
 ---
 
+## MONDE B6 — « Feelings & Opinions » (S53–S56) · Donner son avis
+
+*Fennec anime un petit débat — l'enfant ne décrit plus seulement le monde, il dit ce qu'il en pense.*
+
+| Sem. | Oral (mots & structures) | Lecture & orthographe | Boss / événement |
+|---|---|---|---|
+| **S53** | boring, funny, exciting, scary + **I think it's funny** | Orthographe des adjectifs en *-y* (*funny, scary*) — lecture et tri | Réagir à des images/situations avec une phrase d'opinion |
+| **S54** | love, hate, agree, disagree + **I love reading, but I hate maths** | Lecture d'un court dialogue d'opinions contrastées | Mini-boss "jeu du débat" : dire si on est d'accord ou pas avec des affirmations simples |
+| **S55** | **in my opinion**, worried, proud, surprised + **In my opinion, football is more exciting than tennis** (réinvestit le comparatif de B2) | Paragraphe connecté : une opinion suivie d'une raison (*because*, B5) | Donner une opinion sur un sujet simple, avec une raison |
+| **S56** | debate, **What do you think?** + Révision : opinions + raisons + comparatifs mélangés | Relecture d'un mini-débat entre deux personnages Fennec, questions de compréhension | **BOSS : « Le débat de Fennec »** — l'enfant donne 2 opinions sur un sujet simple (animal préféré, activité préférée) avec une raison à chaque fois, enregistré. 17 mots/structures actifs de plus (voir `data/builder-banque-mots.json`) |
+
+**Sortie du monde B6** : l'enfant exprime une opinion (*I think…, in my opinion…*), la nuance (*love/like/don't like/hate*), marque l'accord/désaccord, et justifie un avis avec *because* — première étape vers l'argumentation simple.
+
+---
+
 ## Feuille de route (mondes suivants — titres et thème seulement, pas encore détaillés)
 
 | Monde | Semaines | Thème pressenti | Saut grammatical/lexical visé |
 |---|---|---|---|
-| B6 | S53–S56 | *Feelings & Opinions* | Expression d'opinion (*I think…, in my opinion*), adjectifs nuancés |
 | B7 | S57–S60 | *My Country, My World* | Vocabulaire civique/géographique simple, comparaison Algérie/monde |
 | B8 | S61–S64 | *Builder Show* | Grande révision + bilan final (delta depuis S33) — clôture Builder, passerelle vers un futur contenu intermédiaire/BEM |
 

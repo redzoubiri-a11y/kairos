@@ -95,7 +95,13 @@ function saveBossAttempt(profileId, n) {
  * Écran "qui joue aujourd'hui ?" — affiché tant qu'aucun profil n'est
  * actif (premier lancement, ou après un tap sur "تبديل الطفل"). Chaque
  * tuile choisit le profil actif puis relance boot() ; l'ajout se fait sur
- * place, sans quitter l'écran.
+ * place, sans quitter l'écran. Chaque tuile porte aussi un petit lien
+ * "🎙 التسجيلات" (sans activer le profil) vers renderRecordings() —
+ * jusqu'ici les enregistrements de Boss (bossSession.mjs) étaient
+ * sauvegardés en IndexedDB mais jamais réécoutables nulle part dans l'app
+ * elle-même (seul le tableau de bord parent, maquette non branchée, était
+ * censé les lire un jour) : fonctionnalité écrite mais inutilisable en
+ * pratique tant que Supabase et ce tableau de bord restent hors scope.
  */
 function renderProfilePicker() {
   const profiles = getProfiles();
@@ -111,11 +117,18 @@ function renderProfilePicker() {
 
   const grid = document.getElementById('profileGrid');
   profiles.forEach((p) => {
+    const wrap = document.createElement('div');
     const tile = document.createElement('button');
     tile.className = 'profile-tile';
     tile.innerHTML = `<span class="pt-avatar">${p.avatar}</span><span class="pt-name">${escapeHtml(p.name)}</span>`;
     tile.onclick = () => { setActiveProfile(p.id); boot(); };
-    grid.appendChild(tile);
+    wrap.appendChild(tile);
+    const recBtn = document.createElement('button');
+    recBtn.className = 'pt-recordings ar';
+    recBtn.textContent = '🎙 التسجيلات';
+    recBtn.onclick = () => renderRecordings(p);
+    wrap.appendChild(recBtn);
+    grid.appendChild(wrap);
   });
   const addTile = document.createElement('button');
   addTile.className = 'profile-tile add';
@@ -131,6 +144,40 @@ function renderProfilePicker() {
     setActiveProfile(profile.id);
     boot();
   }, { once: true });
+}
+
+/**
+ * Liste les enregistrements de Boss d'un profil, triés par semaine, avec
+ * lecture directe (<audio controls>) depuis les Blobs IndexedDB — voir
+ * db.mjs `getRecordings()` et bossSession.mjs `showRecording()`. N'active
+ * pas le profil : bouton "← رجوع" ramène simplement au sélecteur.
+ *
+ * @param {{id:string, name:string, avatar:string}} profile
+ */
+async function renderRecordings(profile) {
+  const store = await FennecStore.open();
+  const recordings = (await store.getRecordings(profile.id)).sort((a, b) => a.week - b.week);
+
+  stage.innerHTML = `<div class="win">
+    <p class="say ar center">${profile.avatar} تسجيلات ${escapeHtml(profile.name)}</p>
+    ${recordings.length === 0
+      ? `<p class="sub ar center">لا توجد تسجيلات بعد — تُضاف تلقائيًا عند الفوز بتحديات الزعيم الكبرى.</p>`
+      : `<div class="recordings-list" id="recList"></div>`}
+    <button class="cta primary">← رجوع</button>
+  </div>`;
+
+  if (recordings.length > 0) {
+    const list = document.getElementById('recList');
+    recordings.forEach((r) => {
+      const url = URL.createObjectURL(r.blob);
+      const row = document.createElement('div');
+      row.className = 'recording-row';
+      row.innerHTML = `<span class="rr-week">S${r.week}</span><audio controls src="${url}"></audio>`;
+      list.appendChild(row);
+    });
+  }
+
+  stage.querySelector('.cta').addEventListener('click', () => renderProfilePicker(), { once: true });
 }
 
 function escapeHtml(s) {

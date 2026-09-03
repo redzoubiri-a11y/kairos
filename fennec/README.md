@@ -238,7 +238,23 @@ micro) : capture audio réelle, lecture via blob URL, sauvegarde en
 IndexedDB avec le bon studentId/semaine, et repli fonctionnel sans micro.
 Ce que ça ne fait pas encore : le tableau de bord parent (maquette) ne lit
 toujours pas ces enregistrements réels — ses cartes "تسجيلات صوتية"
-restent des données factices, cf. plus haut.
+restent des données factices, cf. plus haut. Cela dit, les enregistrements
+sont maintenant réécoutables **dans l'app elle-même** (ci-dessous) : ils
+n'étaient plus tout à fait "écrits mais inutilisables".
+
+**Complément : écran de réécoute des enregistrements.** Juste après le
+correctif ci-dessus, un enregistrement sauvegardé n'était lisible qu'une
+fois, juste après l'avoir fait — aucun moyen de le réécouter ensuite, seul
+le tableau de bord parent (maquette non branchée) était censé le faire un
+jour. Ajouté un lien "🎙 التسجيلات" sur chaque tuile de l'écran "من يلعب
+اليوم؟" (`renderRecordings()`, `main.mjs`) qui liste les enregistrements
+du profil (triés par semaine, lecteur `<audio controls>` natif par Blob
+IndexedDB), sans activer le profil ni dépendre du réseau — juste
+`store.getRecordings()`, déjà en place. État vide géré explicitement.
+Validé en navigateur réel : deux enregistrements factices sauvegardés
+directement en IndexedDB apparaissent triés (S12 avant S16) avec lecteur
+audio fonctionnel, un profil sans enregistrement affiche le message vide,
+et le bouton "← رجوع" revient au sélecteur de profil.
 
 **Correctif : aucun écran de fin de programme au-delà de S64.** Une fois le
 Boss du correctif ci-dessus réellement déclenché partout, un second trou est
@@ -369,5 +385,5 @@ mondes), curriculum et intégration complets de BEM Sprint (8 semaines,
 BS1-BS8, y compris les deux examens blancs chronométrés avec delta
 objectif), portail Madrassatidz reliant les trois pistes et les deux
 tableaux de bord, correctif du Boss sur les semaines de pure révision,
-enregistrement audio réel des Boss majeurs, écran de fin de programme
-renvoyant vers BEM Sprint.
+enregistrement audio réel des Boss majeurs et écran de réécoute dans
+l'app, écran de fin de programme renvoyant vers BEM Sprint.

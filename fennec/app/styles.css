@@ -214,6 +214,7 @@ body{
 /* Sélecteur de profil ("qui joue aujourd'hui ?") — téléphone partagé entre
    frères et sœurs, cf. fennec/app/main.mjs. */
 .profile-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:18px 0}
+.profile-grid > div{display:flex; flex-direction:column}
 .profile-tile{
   background:var(--surface); border:2px solid var(--border); border-radius:20px;
   padding:16px 8px; display:flex; flex-direction:column; align-items:center; gap:8px;
@@ -225,7 +226,23 @@ body{
 .profile-tile .pt-name{font-size:.85rem; font-weight:700; color:var(--ink)}
 .profile-tile.add{border-style:dashed; color:var(--ink-soft)}
 .profile-tile.add .pt-avatar{opacity:.6}
+.pt-recordings{
+  margin-top:4px; border:none; background:transparent; color:var(--ink-soft); text-align:center;
+  font-size:.72rem; font-family:var(--mono); cursor:pointer; padding:2px 6px;
+}
+.pt-recordings:hover, .pt-recordings:focus-visible{color:var(--ink); text-decoration:underline}
 #addProfileForm{display:flex; gap:8px; margin-top:6px}
+
+/* Liste des enregistrements audio d'un profil ("🎙 التسجيلات" sur l'écran
+   "من يلعب اليوم ؟") — lecture locale directe depuis IndexedDB, aucune
+   dépendance réseau/Supabase. */
+.recordings-list{display:flex; flex-direction:column; gap:10px; margin:16px 0; text-align:start}
+.recording-row{
+  display:flex; align-items:center; gap:10px; background:var(--surface); border:1px solid var(--border);
+  border-radius:14px; padding:10px 12px;
+}
+.recording-row .rr-week{font-family:var(--mono); font-weight:700; color:var(--ink); flex:none; min-width:2.6rem}
+.recording-row audio{flex:1; min-width:0; height:32px}
 .profile-input{
   flex:1; border:2px solid var(--border); border-radius:12px; padding:10px 12px;
   font-family:'Baloo 2'; font-size:.95rem; background:var(--surface); color:var(--ink); text-align:center;

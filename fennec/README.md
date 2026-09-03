@@ -2,7 +2,8 @@
 
 Ce dossier contient l'implémentation technique de la méthode Fennec (voir
 `docs/analyse-plateforme-anglais-algerie.md`, `docs/curriculum-foundations-semaine-par-semaine.md`,
-`docs/script-semaine-type-s21.md` et `data/foundations-banque-mots.*`).
+`docs/curriculum-builder-semaine-par-semaine.md`, `docs/script-semaine-type-s21.md`,
+`data/foundations-banque-mots.*` et `data/builder-banque-mots.*`).
 
 **Important — isolation du projet Supabase.** Le projet Supabase connecté à cette session
 (« Kairos », `rghjgyzpdadapmktislv`) est la **base de production de Mida** (réservation de
@@ -20,8 +21,8 @@ fennec/
       0002_rls.sql            # Row Level Security : un élève ne voit que ses données,
                                # un parent ne voit que ses enfants, un enseignant que sa classe
     seed/
-      seed_words.sql          # généré depuis data/foundations-banque-mots.json (335 items)
-      generate_seed.py        # script qui régénère seed_words.sql si la banque change
+      seed_words.sql          # généré depuis les deux banques de mots (489 items, 16 mondes)
+      generate_seed.py        # script qui régénère seed_words.sql si une banque change
   src/
     srs.mjs                    # moteur de répétition espacée — pur, sans dépendance, testable
     db.mjs                     # couche offline : IndexedDB (cache mots + état SRS + file de sync)
@@ -35,7 +36,7 @@ fennec/
     index.html, styles.css, screens.mjs, session.mjs, bossSession.mjs, main.mjs, sw.js, manifest.webmanifest
     classroomQuiz.html/.mjs    # quiz projetable (mode classe), vrai écran — voir plus bas
     catalog.json               # copie embarquée du référentiel (bootstrap 100% offline)
-    build_catalog.py           # régénère catalog.json depuis data/foundations-banque-mots.json
+    build_catalog.py           # régénère catalog.json depuis les deux banques de mots
     phonics.json               # progression phonics (22 sons, S2→S30), écran "phonics"
     word-emoji.json            # illustrations emoji pour 193/213 mots lexique (placeholder)
     build_word_emoji.py        # régénère word-emoji.json (garde-fou : jamais 2 mots = même emoji)
@@ -107,6 +108,33 @@ s'illumine en vert, les autres s'estompent, aucune ne devient rouge. Ajouté
 au cache du service worker (`sw.js`, `fennec-v5`) pour rester utilisable
 même avec une connexion de classe capricieuse.
 
+**Curriculum Builder intégré (S33-S64, en continuité de Foundations).**
+`catalog.json` embarque maintenant les deux banques de mots
+(`data/foundations-banque-mots.json` : 339 items, S1-S32 ; `data/builder-banque-mots.json` :
+150 items, S33-S64) fusionnées en un seul référentiel de 489 mots par
+`build_catalog.py`. L'app n'a **aucune notion de "piste" (track)** : un
+élève qui termine le Boss de S32 enchaîne directement sur S33 avec le même
+pointeur de curriculum, sans code spécifique — c'est la logique déjà en
+place (`main.mjs`/`session.mjs`/`bossSession.mjs` avancent simplement
+`pointer.week`/`pointer.day`, sans plafond codé en dur) qui a rendu cette
+intégration possible sans y toucher. Seuls deux fichiers ont changé :
+`build_catalog.py` (fusion des deux banques, wordId Builder décalés de
+`BUILDER_ID_OFFSET=10000` pour ne jamais entrer en collision avec
+Foundations, worldId Builder continuant la numérotation Foundations :
+B1→9 … B8→16) et `fennec/supabase/seed/generate_seed.py` (même logique,
+tenu à jour même si Supabase reste hors-service ce chantier). La nouvelle
+catégorie `grammaire` (introduite par Builder) retombe naturellement sur
+la rotation d'écrans déjà existante (`screenKindFor` dans `queue.mjs`),
+aucune modification du moteur n'a été nécessaire.
+
+Validé en navigateur réel (Playwright) : pointeur placé directement à
+S33·jour 1 (équivalent "l'enfant a fini Foundations"), session jouée
+jusqu'à la victoire avec du vrai contenu Builder (world M9 affiché,
+mot "yesterday" introduit), pointeur avancé à S33·jour 2 et persistant
+après rechargement ; jour Boss de fin de monde B1 (S36) démarre
+normalement ; semaine sans contenu nouveau (S64, fin du curriculum Builder)
+affiche le message de repli existant au lieu de planter.
+
 ## Pourquoi cette architecture
 
 Le principe directeur (cf. l'analyse) : **offline-first**, parce que la data mobile en Algérie
@@ -143,7 +171,7 @@ supabase db push
 psql "$DATABASE_URL" -f fennec/supabase/migrations/0001_schema.sql
 psql "$DATABASE_URL" -f fennec/supabase/migrations/0002_rls.sql
 
-# 3. Régénérer et charger le référentiel de mots (335 items de Foundations)
+# 3. Régénérer et charger le référentiel de mots (489 items, Foundations + Builder)
 python3 fennec/supabase/seed/generate_seed.py
 psql "$DATABASE_URL" -f fennec/supabase/seed/seed_words.sql
 
@@ -189,12 +217,14 @@ Sans ces deux variables, `maybeConfigureSync()` (`fennec/app/main.mjs`) laisse
 l'app en mode 100 % local — c'est un choix explicite, pas un mode dégradé.
 
 **Validé en conditions réelles (Playwright + Chromium)** : catalogue chargé en
-IndexedDB (335 mots), session jouée du premier écran à la victoire avec le
-vrai moteur (introduction, révision, plan d'écrans dynamique), état SRS
-persisté avec la bonne échéance calendaire, position dans le curriculum qui
-survit à un rechargement de page, mot redevenant "dû" en révision après avance
-de l'horloge virtuelle — et **fonctionnement complet réseau totalement coupé**
-après un premier chargement (service worker + cache de l'app shell).
+IndexedDB (335 mots à l'époque de cette validation initiale, 489 aujourd'hui
+avec Builder intégré — voir plus haut), session jouée du premier écran à la
+victoire avec le vrai moteur (introduction, révision, plan d'écrans
+dynamique), état SRS persisté avec la bonne échéance calendaire, position
+dans le curriculum qui survit à un rechargement de page, mot redevenant "dû"
+en révision après avance de l'horloge virtuelle — et **fonctionnement
+complet réseau totalement coupé** après un premier chargement (service
+worker + cache de l'app shell).
 
 ## Prochaines briques (hors scope de ce chantier)
 

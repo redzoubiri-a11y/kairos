@@ -65,7 +65,7 @@ const s = StyleSheet.create({
   ctrlRow:  { flexDirection: 'row', alignItems: 'center', gap: spacing.sm + 2 },
   input:    { width: 64, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, borderRadius: radius.control - 1, paddingVertical: spacing.md, color: colors.text, fontFamily: typography.bodyBold, fontSize: typography.size.body, textAlign: 'center' },
   printBtn: { flex: 1, backgroundColor: colors.primary, borderRadius: radius.md + 1, paddingVertical: spacing.md + 2, alignItems: 'center' },
-  printBtnTxt: { fontFamily: typography.bodyBold, color: '#FFFFFF', fontSize: typography.size.body - 0.5 },
+  printBtnTxt: { fontFamily: typography.bodyBold, color: colors.card, fontSize: typography.size.body - 0.5 },
   hint:     { fontFamily: typography.body, fontSize: typography.size.caption, color: colors.textMuted },
 
   grid: { flexDirection: 'row', flexWrap: 'wrap', padding: spacing.lg, gap: spacing.md },

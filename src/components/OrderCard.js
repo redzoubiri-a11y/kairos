@@ -128,6 +128,6 @@ const s = StyleSheet.create({
   cancelTxt:  { fontFamily: typography.bodySemibold, fontSize: typography.size.bodyLg - 0.5, color: colors.red },
   advanceBtn: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: spacing.lg - 2, borderRadius: radius.md + 1, backgroundColor: colors.primary },
   advanceBtnOutline: { backgroundColor: 'transparent', borderWidth: 1.5, borderColor: 'rgba(10,10,10,0.16)' },
-  advanceTxt: { fontFamily: typography.bodyBold, fontSize: typography.size.bodyLg - 0.5, color: '#FFFFFF' },
+  advanceTxt: { fontFamily: typography.bodyBold, fontSize: typography.size.bodyLg - 0.5, color: colors.card },
   advanceTxtOutline: { fontFamily: typography.bodySemibold, color: colors.text },
 });

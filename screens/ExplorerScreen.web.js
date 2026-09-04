@@ -73,7 +73,7 @@ const lc = StyleSheet.create({
   body:       { padding: spacing.md + 2, gap: 3 },
   name:       { fontFamily: typography.display, fontSize: typography.size.bodyLg, color: colors.text },
   rateRow:    { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  stars:      { color: colors.primary, fontSize: 10, letterSpacing: 1 },
+  stars:      { color: colors.primary, fontSize: typography.size.xs, letterSpacing: 1 },
   scoreNum:   { fontFamily: typography.display, fontSize: typography.size.xs + 1, color: colors.text },
   reviewCount:{ fontFamily: typography.body, fontSize: typography.size.xs, color: colors.textDim },
   quartier:   { fontFamily: typography.body, fontSize: typography.size.sm, color: colors.textMuted },
@@ -201,7 +201,7 @@ const s = StyleSheet.create({
   cityGrid:  { flexDirection:'row', flexWrap:'wrap', paddingHorizontal:14, paddingVertical:10, gap:8 },
   cityChip:  { flexDirection:'row', alignItems:'center', justifyContent:'center', gap:6, height:38, paddingHorizontal:14, borderRadius:radius.xl, backgroundColor:colors.card, borderWidth:1, borderColor:colors.cardBorder },
   cityChipOn:{ backgroundColor:colors.noir, borderColor:colors.noir },
-  cityEmoji: { fontSize:14, lineHeight:16 },
+  cityEmoji: { fontSize: typography.size.bodyLg, lineHeight:16 },
   cityTxt:   { color:colors.text, fontSize:typography.size.bodyLg, lineHeight:16 },
   cityTxtOn: { color:colors.bg, fontWeight:'600' },
 

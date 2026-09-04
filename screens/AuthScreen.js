@@ -236,7 +236,7 @@ const s = StyleSheet.create({
   successLinkTxt: { fontFamily: typography.bodyMedium, color: colors.blue, fontSize: typography.size.bodyLg },
 
   submitBtn: { backgroundColor: colors.primary, borderRadius: radius.xl, paddingVertical: spacing.xl - 2, alignItems: 'center', marginTop: spacing.xs, shadowColor: colors.primary, shadowOpacity: 0.4, shadowRadius: 14, shadowOffset: { width: 0, height: 0 }, elevation: 7 },
-  submitTxt: { fontFamily: typography.bodyBold, color: '#FFFFFF', fontSize: typography.size.bodyLg, letterSpacing: 0.5 },
+  submitTxt: { fontFamily: typography.bodyBold, color: colors.card, fontSize: typography.size.bodyLg, letterSpacing: 0.5 },
 
   roleBadge:    { alignSelf: 'center', flexDirection: 'row', alignItems: 'center', backgroundColor: colors.blueSoft, borderRadius: radius.pill, borderWidth: 1, borderColor: 'rgba(90,155,224,0.3)', paddingHorizontal: spacing.xl, paddingVertical: spacing.md, marginBottom: spacing.xl },
   roleBadgeTxt: { fontFamily: typography.bodyMedium, color: colors.blue, fontSize: typography.size.body, letterSpacing: 0.5 },

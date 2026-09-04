@@ -135,7 +135,7 @@ const s = StyleSheet.create({
 
   btnSubmit:    { backgroundColor: colors.primary, borderRadius: radius.lg, paddingVertical: 15, alignItems: 'center' },
   btnDim:       { opacity: 0.4 },
-  btnSubmitTxt: { fontFamily: typography.display, color: '#FFFFFF', fontSize: typography.size.subheading - 1 },
+  btnSubmitTxt: { fontFamily: typography.display, color: colors.card, fontSize: typography.size.subheading - 1 },
   btnCancel:    { alignItems: 'center', paddingVertical: spacing.md },
   btnCancelTxt: { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.bodyLg },
 });

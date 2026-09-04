@@ -305,7 +305,7 @@ const s = StyleSheet.create({
 
   header:      { flexDirection: 'row', alignItems: 'center', gap: spacing.xl - 2, paddingHorizontal: spacing.xxl, paddingTop: spacing.lg, paddingBottom: spacing.lg, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   backBtn:     { width: 34, height: 34, borderRadius: 17, backgroundColor: colors.tagNeutralBg, alignItems: 'center', justifyContent: 'center' },
-  headerTitle: { fontFamily: typography.display, fontSize: 16, color: colors.text, letterSpacing: -0.16 },
+  headerTitle: { fontFamily: typography.display, fontSize: typography.size.subheading, color: colors.text, letterSpacing: -0.16 },
   headerSub:   { fontFamily: typography.body, fontSize: typography.size.bodyLg - 1.5, lineHeight: 15, color: colors.textCaption, marginTop: 2 },
   ratingPill:  { backgroundColor: colors.primarySoft, borderRadius: radius.md, borderWidth: 1, borderColor: colors.primarySoft, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
   ratingTxt:   { fontFamily: typography.bodyMedium, color: colors.star, fontSize: typography.size.body },
@@ -330,7 +330,7 @@ const s = StyleSheet.create({
   dateDayName:     { fontFamily: typography.body, color: colors.textDim, fontSize: typography.size.xs, letterSpacing: 1.5 },
   dateDayNum:      { color: colors.text, fontFamily: typography.display, fontSize: 22 },
   dateMonth:       { fontFamily: typography.body, color: colors.textDim, fontSize: typography.size.xs },
-  dateTxtOn:       { color: '#FFFFFF', fontFamily: typography.bodySemibold },
+  dateTxtOn:       { color: colors.card, fontFamily: typography.bodySemibold },
   weekendDot:      { width: 4, height: 4, borderRadius: 2, backgroundColor: colors.primary, marginTop: 2 },
 
   slotSection:     { paddingHorizontal: spacing.xxl },
@@ -378,8 +378,8 @@ const s = StyleSheet.create({
 
   confirmBtn:     { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.lg, marginHorizontal: spacing.xxl, borderRadius: radius.xxl, paddingVertical: 17, overflow: 'hidden', backgroundColor: colors.resa },
   confirmBtnDim:  { opacity: 0.4 },
-  confirmBtnTxt:  { fontFamily: typography.bodyBold, color: '#FFFFFF', fontSize: typography.size.bodyLg, letterSpacing: 0.3 },
-  confirmBtnArrow:{ fontFamily: typography.body, color: '#FFFFFF', fontSize: 18 },
+  confirmBtnTxt:  { fontFamily: typography.bodyBold, color: colors.card, fontSize: typography.size.bodyLg, letterSpacing: 0.3 },
+  confirmBtnArrow:{ fontFamily: typography.body, color: colors.card, fontSize: typography.size.heading2 },
 
   legalTxt: { fontFamily: typography.body, marginHorizontal: spacing.xxl, marginTop: spacing.lg, color: colors.textDim, fontSize: typography.size.sm, lineHeight: 16, textAlign: 'center', fontStyle: 'italic' },
 });

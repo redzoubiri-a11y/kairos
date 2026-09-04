@@ -89,14 +89,14 @@ const s = StyleSheet.create({
 
   activeCard: { backgroundColor: colors.noir, borderRadius: radius.xl, padding: spacing.xl, overflow: 'hidden' },
   activeGlow: { position: 'absolute', top: -30, right: -30, width: 110, height: 110, borderRadius: 55, backgroundColor: colors.primarySoft },
-  activeTitle: { fontFamily: typography.display, fontSize: typography.size.title - 6, color: '#FFFFFF', letterSpacing: -0.2 },
+  activeTitle: { fontFamily: typography.display, fontSize: typography.size.title - 6, color: colors.card, letterSpacing: -0.2 },
   activeDesc: { fontFamily: typography.body, fontSize: typography.size.body, color: 'rgba(255,255,255,0.55)', marginTop: 5, lineHeight: 17 },
   statsRow: { flexDirection: 'row', alignItems: 'baseline', gap: 6, marginTop: spacing.lg },
-  statVal: { fontFamily: typography.display, fontSize: typography.size.heading2, color: '#FFFFFF' },
+  statVal: { fontFamily: typography.display, fontSize: typography.size.heading2, color: colors.card },
   statLbl: { fontFamily: typography.bodyMedium, fontSize: 9.5, color: 'rgba(255,255,255,0.5)' },
   actionRow: { flexDirection: 'row', gap: spacing.sm, marginTop: spacing.lg },
   useBtn: { flex: 1, backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: radius.md, paddingVertical: spacing.md, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.25)' },
-  useBtnTxt: { color: '#FFFFFF', fontSize: typography.size.caption, fontFamily: typography.bodyBold },
+  useBtnTxt: { color: colors.card, fontSize: typography.size.caption, fontFamily: typography.bodyBold },
   pauseBtn: { flex: 1, backgroundColor: colors.redSoft, borderRadius: radius.md, paddingVertical: spacing.md, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(224,90,90,0.2)' },
   pauseBtnTxt: { color: colors.red, fontSize: typography.size.caption, fontFamily: typography.bodyBold },
 

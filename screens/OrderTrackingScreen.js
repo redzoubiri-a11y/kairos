@@ -121,7 +121,7 @@ export default function OrderTrackingScreen({ route, navigation }) {
         {!isTable && (
         <TouchableOpacity style={s.addressCard} onPress={goDirections} activeOpacity={0.75}>
           <View style={s.addressIcon}>
-            <Text style={{ fontSize: 16 }}>📍</Text>
+            <Text style={{ fontSize: typography.size.subheading }}>📍</Text>
           </View>
           <View style={{ flex: 1 }}>
             <Text style={s.addressName} numberOfLines={1}>{restaurant.name || 'Restaurant'}</Text>
@@ -153,9 +153,9 @@ const s = StyleSheet.create({
   stepItem:    { alignItems: 'center', gap: spacing.sm, width: 60 },
   stepDot:     { width: 30, height: 30, borderRadius: 15, backgroundColor: colors.cardBorder, alignItems: 'center', justifyContent: 'center' },
   stepDotOn:   { backgroundColor: colors.primary },
-  stepDotTxt:  { fontFamily: typography.bodyBold, color: colors.textMuted, fontSize: 13 },
-  stepDotTxtOn:{ color: '#FFFFFF' },
-  stepLabel:   { fontFamily: typography.bodySemibold, fontSize: 10, color: colors.textMuted, textAlign: 'center' },
+  stepDotTxt:  { fontFamily: typography.bodyBold, color: colors.textMuted, fontSize: typography.size.body },
+  stepDotTxtOn:{ color: colors.card },
+  stepLabel:   { fontFamily: typography.bodySemibold, fontSize: typography.size.xs, color: colors.textMuted, textAlign: 'center' },
   stepLabelOn: { color: colors.text },
   stepLine:    { flex: 1, height: 2, backgroundColor: colors.cardBorder, marginTop: 14 },
   stepLineOn:  { backgroundColor: colors.primary },

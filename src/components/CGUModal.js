@@ -98,5 +98,5 @@ const s = StyleSheet.create({
     backgroundColor: colors.primary, borderRadius: radius.xl,
     paddingVertical: spacing.xl - 2, alignItems: 'center',
   },
-  acceptTxt: { color: '#FFFFFF', fontFamily: typography.bodyBold, fontSize: typography.size.bodyLg, fontWeight: typography.weight.bold },
+  acceptTxt: { color: colors.card, fontFamily: typography.bodyBold, fontSize: typography.size.bodyLg, fontWeight: typography.weight.bold },
 });

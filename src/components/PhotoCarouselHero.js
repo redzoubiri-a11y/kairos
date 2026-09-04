@@ -52,13 +52,13 @@ export default function PhotoCarouselHero({
 
       {!!onBack && (
         <TouchableOpacity style={st.iconBtn} onPress={onBack}>
-          <Ionicons name="chevron-back" size={20} color="#FFFFFF" />
+          <Ionicons name="chevron-back" size={20} color={colors.card} />
         </TouchableOpacity>
       )}
 
       <View style={st.topRight}>
         <TouchableOpacity style={st.iconBtnSm} onPress={handleShare}>
-          <Ionicons name="share-social-outline" size={16} color="#FFFFFF" />
+          <Ionicons name="share-social-outline" size={16} color={colors.card} />
         </TouchableOpacity>
         <TouchableOpacity style={st.iconBtnSm} onPress={toggleFav} disabled={favLoading}>
           <Text style={st.favTxt}>{favLoading ? '···' : isFav ? '❤️' : '🤍'}</Text>
@@ -68,7 +68,7 @@ export default function PhotoCarouselHero({
       <View style={st.bottomRow}>
         {showPrevArrow && index > 0 && (
           <TouchableOpacity style={st.iconBtnSm} onPress={goPrev}>
-            <Ionicons name="chevron-back" size={16} color="#FFFFFF" />
+            <Ionicons name="chevron-back" size={16} color={colors.card} />
           </TouchableOpacity>
         )}
         {photos.length > 0 && (
@@ -88,9 +88,9 @@ const st = StyleSheet.create({
   iconBtn:   { position: 'absolute', top: spacing.lg, left: spacing.lg, width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(10,10,10,0.55)', alignItems: 'center', justifyContent: 'center' },
   topRight:  { position: 'absolute', top: spacing.lg, right: spacing.lg, flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   iconBtnSm: { width: 32, height: 32, borderRadius: 16, backgroundColor: 'rgba(10,10,10,0.55)', alignItems: 'center', justifyContent: 'center' },
-  favTxt:    { fontSize: 14 },
+  favTxt:    { fontSize: typography.size.bodyLg },
 
   bottomRow: { position: 'absolute', bottom: spacing.md, left: spacing.md, right: spacing.md, flexDirection: 'row', alignItems: 'center' },
   countPill: { marginLeft: 'auto', backgroundColor: 'rgba(10,10,10,0.55)', borderRadius: radius.pill, paddingHorizontal: spacing.md, paddingVertical: spacing.xs + 1 },
-  countTxt:  { fontFamily: typography.bodySemibold, color: '#FFFFFF', fontSize: typography.size.caption },
+  countTxt:  { fontFamily: typography.bodySemibold, color: colors.card, fontSize: typography.size.caption },
 });

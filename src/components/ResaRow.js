@@ -60,7 +60,7 @@ const s = StyleSheet.create({
   cardStripe: { backgroundColor: colors.cardHover },
 
   infoRow:    { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },
-  time:       { fontFamily: typography.display, fontSize: 18, flexShrink: 0, marginRight: spacing.md, minWidth: 52 },
+  time:       { fontFamily: typography.display, fontSize: typography.size.heading2, flexShrink: 0, marginRight: spacing.md, minWidth: 52 },
   clientCol:  { flex: 1 },
   clientName: { fontFamily: typography.bodyMedium, color: colors.text, fontSize: typography.size.bodyLg, letterSpacing: 0.3 },
   notes:      { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.body, fontStyle: 'italic', marginTop: 3 },

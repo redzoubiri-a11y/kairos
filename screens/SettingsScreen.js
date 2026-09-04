@@ -62,7 +62,7 @@ export default function SettingsScreen({ navigation }) {
                           value={!!toggles[key]}
                           onValueChange={() => toggle(key)}
                           trackColor={{ false: colors.cardBorder, true: colors.primary }}
-                          thumbColor="#FFFFFF"
+                          thumbColor={colors.card}
                           ios_backgroundColor={colors.cardBorder}
                         />
                       </View>

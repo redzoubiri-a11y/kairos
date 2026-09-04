@@ -80,7 +80,7 @@ const s = StyleSheet.create({
   badge:         { borderRadius: radius.md, borderWidth: 1, paddingHorizontal: spacing.md, paddingVertical: spacing.xs },
   badgeTxt:      { fontFamily: typography.bodySemibold, fontSize: typography.size.xs, letterSpacing: 1 },
   noteWrap:      { flexDirection: 'row', gap: spacing.md, backgroundColor: colors.cardHover, borderRadius: radius.md, padding: spacing.lg },
-  noteIcon:      { fontSize: 13 },
+  noteIcon:      { fontSize: typography.size.body },
   noteTxt:       { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.body, lineHeight: 18, flex: 1 },
   actions:       { flexDirection: 'row', gap: spacing.md },
   btnConfirm:    { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 11, borderRadius: radius.lg, backgroundColor: 'rgba(76,175,130,0.15)', borderWidth: 1, borderColor: 'rgba(76,175,130,0.35)' },

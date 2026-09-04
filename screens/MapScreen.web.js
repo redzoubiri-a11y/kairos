@@ -11,5 +11,5 @@ export default function MapScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.bg },
-  text: { fontFamily: typography.body, fontSize: 18, textAlign: 'center', padding: 20, color: colors.text },
+  text: { fontFamily: typography.body, fontSize: typography.size.heading2, textAlign: 'center', padding: 20, color: colors.text },
 });

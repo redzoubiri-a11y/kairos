@@ -157,7 +157,7 @@ const s = StyleSheet.create({
   bottomBar: { paddingHorizontal: spacing.xl, paddingVertical: spacing.lg - 1, borderTopWidth: 1, borderTopColor: colors.cardBorder, backgroundColor: colors.card },
   cta:    { height: 50, borderRadius: radius.lg, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' },
   ctaDisabled: { backgroundColor: colors.textDim, opacity: 0.6 },
-  ctaTxt: { fontFamily: typography.bodyBold, color: '#FFFFFF', fontSize: typography.size.subheading },
+  ctaTxt: { fontFamily: typography.bodyBold, color: colors.card, fontSize: typography.size.subheading },
   ccBtn:  { marginTop: spacing.sm + 2, height: 50, borderRadius: radius.lg, backgroundColor: colors.tagNeutralBg, alignItems: 'center', justifyContent: 'center' },
   ccTxt:  { fontFamily: typography.bodyBold, color: colors.text, fontSize: typography.size.subheading },
 });

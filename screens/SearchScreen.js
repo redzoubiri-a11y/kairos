@@ -101,12 +101,12 @@ const s = StyleSheet.create({
   iconBtn:     { width: 36, height: 36, borderRadius: radius.control, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   iconBtnTxt:  { color: colors.text, fontSize: 15 },
   searchBar:   { flex: 1, flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: colors.card, borderWidth: 1.5, borderColor: colors.noir, borderRadius: radius.control + 1, paddingHorizontal: spacing.lg, paddingVertical: spacing.md + 1 },
-  searchIcon:  { fontSize: 13 },
+  searchIcon:  { fontSize: typography.size.body },
   searchInput: { flex: 1, fontFamily: typography.bodyBold, fontSize: typography.size.caption + 1.5, color: colors.text, padding: 0 },
-  clearTxt:    { color: colors.textDim, fontSize: 14 },
+  clearTxt:    { color: colors.textDim, fontSize: typography.size.bodyLg },
 
   quartierRow:   { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingHorizontal: spacing.xl + 46, paddingBottom: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
-  quartierIcon:  { fontSize: 12 },
+  quartierIcon:  { fontSize: typography.size.caption },
   quartierInput: { flex: 1, fontFamily: typography.body, fontSize: typography.size.caption + 0.5, color: colors.text, padding: 0 },
 
   scroll: { paddingHorizontal: spacing.xl, paddingBottom: 60 },
@@ -115,7 +115,7 @@ const s = StyleSheet.create({
   chip:     { paddingHorizontal: spacing.lg - 2, paddingVertical: spacing.sm + 1, borderRadius: radius.badgeSm, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder },
   chipOn:   { backgroundColor: colors.noir, borderColor: colors.noir },
   chipTxt:  { fontFamily: typography.bodyBold, fontSize: typography.size.caption + 0.5, color: colors.textMuted },
-  chipTxtOn:{ color: '#FFFFFF' },
+  chipTxtOn:{ color: colors.card },
 
   sectionTitle: { fontFamily: typography.bodyBold, fontSize: typography.size.body, color: colors.textDim, textTransform: 'uppercase', letterSpacing: 0.5, marginTop: spacing.xl, marginBottom: spacing.md },
 

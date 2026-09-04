@@ -119,7 +119,7 @@ const s = StyleSheet.create({
   card:   { flex: 1, aspectRatio: 4/3, borderRadius: radius.xl, overflow: 'hidden', marginBottom: spacing.md, backgroundColor: colors.card },
   img:    { width: '100%', height: '100%' },
   deleteBtn: { position: 'absolute', top: spacing.sm, right: spacing.sm, width: 28, height: 28, borderRadius: 14, backgroundColor: 'rgba(10,10,10,0.75)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)' },
-  deleteTxt: { color: '#FFFFFF', fontSize: 11, fontFamily: typography.bodyBold },
+  deleteTxt: { color: colors.card, fontSize: typography.size.sm, fontFamily: typography.bodyBold },
 
   empty:    { alignItems: 'center', paddingTop: 80, gap: spacing.md },
   emptyEmoji: { fontSize: 48 },
@@ -131,7 +131,7 @@ const s = StyleSheet.create({
   nextBtnTxt: { color: colors.bg, fontSize: typography.size.body, fontFamily: typography.bodySemibold },
   addBtn:     { backgroundColor: colors.primary, borderRadius: radius.xl, paddingVertical: spacing.lg, alignItems: 'center' },
   addBtnDisabled: { opacity: 0.6 },
-  addBtnTxt:  { color: '#FFFFFF', fontSize: typography.size.subheading, fontFamily: typography.bodySemibold },
+  addBtnTxt:  { color: colors.card, fontSize: typography.size.subheading, fontFamily: typography.bodySemibold },
   hint:       { color: colors.textDim, fontSize: typography.size.xs, textAlign: 'center', marginTop: spacing.sm, fontFamily: typography.body },
   terminerBtn: { alignItems: 'center', paddingVertical: spacing.md },
   terminerTxt: { color: colors.gold, fontSize: typography.size.body, fontFamily: typography.bodyMedium },

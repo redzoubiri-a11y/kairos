@@ -96,7 +96,7 @@ const r = StyleSheet.create({
   divider: { height: 1, backgroundColor: colors.cardBorder, marginVertical: spacing.lg },
 
   statRow:   { flexDirection: 'row', alignItems: 'center', paddingVertical: spacing.sm, gap: spacing.md },
-  statIcon:  { fontSize: 14, width: 20, textAlign: 'center' },
+  statIcon:  { fontSize: typography.size.bodyLg, width: 20, textAlign: 'center' },
   statLabel: { flex: 1, color: colors.textMuted, fontSize: typography.size.bodyLg },
   statValue: { fontFamily: typography.bodySemibold, fontSize: typography.size.heading2 },
 });

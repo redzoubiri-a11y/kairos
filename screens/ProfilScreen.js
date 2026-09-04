@@ -71,8 +71,8 @@ export default function ProfilScreen({ navigation }) {
             </View>
             <View style={s.avatarBadge}>
               {uploading
-                ? <Text style={{ color: colors.bg, fontSize: 10 }}>···</Text>
-                : <Text style={{ fontSize: 11 }}>📷</Text>
+                ? <Text style={{ color: colors.bg, fontSize: typography.size.xs }}>···</Text>
+                : <Text style={{ fontSize: typography.size.sm }}>📷</Text>
               }
             </View>
           </TouchableOpacity>
@@ -235,8 +235,8 @@ const s = StyleSheet.create({
   simpleBtn:      { backgroundColor: 'transparent', borderWidth: 1, borderColor: colors.noir, borderRadius: radius.sm },
   simpleBtnTxt:   { color: colors.noir },
   // Variante sur fond noir (proCard) : cadre/texte blancs pour rester visibles
-  proCardBtn:     { borderColor: '#FFFFFF' },
-  proCardBtnTxt:  { color: '#FFFFFF' },
+  proCardBtn:     { borderColor: colors.card },
+  proCardBtnTxt:  { color: colors.card },
 
   heroBlock:     { alignItems: 'center', paddingTop: spacing.md, paddingBottom: spacing.xxl, paddingHorizontal: spacing.xxl },
   avatarWrap:    { position: 'relative', marginBottom: spacing.lg },
@@ -246,10 +246,10 @@ const s = StyleSheet.create({
   // Doc : cercle bg vert(→cyan) + initiales crème Space Grotesk 700 (pas gris)
   avatarFallback:{ width: 96, height: 96, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' },
   avatarInitial: { fontFamily: typography.display, color: colors.cream, fontSize: 36 },
-  avatarBadge:   { position: 'absolute', bottom: 2, right: 2, width: 26, height: 26, borderRadius: 13, backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: colors.bg },
+  avatarBadge:   { position: 'absolute', bottom: 2, right: 2, width: 26, height: 26, borderRadius: 13, backgroundColor: colors.card, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: colors.bg },
   heroInfo:      { alignItems: 'center', gap: spacing.sm },
   // Doc : "font:700 18px Space Grotesk"
-  heroName:      { color: colors.text, fontFamily: typography.display, fontSize: 18, letterSpacing: -0.3 },
+  heroName:      { color: colors.text, fontFamily: typography.display, fontSize: typography.size.heading2, letterSpacing: -0.3 },
   // Doc : "font:400 12.5px DM Sans" color rgba(.5)
   heroMeta:      { fontFamily: typography.body, color: 'rgba(10,10,10,0.5)', fontSize: 12.5, marginTop: 1 },
   heroMember:    { fontFamily: typography.body, color: colors.textDim, fontSize: typography.size.sm, letterSpacing: 1, marginTop: 2 },
@@ -265,9 +265,9 @@ const s = StyleSheet.create({
 
   pointsCard:    { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginHorizontal: spacing.xxl, marginTop: spacing.xl - 4, backgroundColor: colors.noir, borderRadius: 14, padding: spacing.xl + 2 },
   pointsLbl:     { fontFamily: typography.bodyBold, color: 'rgba(255,255,255,0.6)', fontSize: 11.5, textTransform: 'uppercase', letterSpacing: 0.4 },
-  pointsVal:     { fontFamily: typography.display, color: '#FFFFFF', fontSize: 26, marginTop: 4 },
+  pointsVal:     { fontFamily: typography.display, color: colors.card, fontSize: typography.size.title, marginTop: 4 },
   pointsCta:     { backgroundColor: colors.primary, borderRadius: radius.md, paddingHorizontal: spacing.lg + 2, paddingVertical: spacing.md + 1 },
-  pointsCtaTxt:  { fontFamily: typography.bodyBold, color: '#FFFFFF', fontSize: typography.size.caption },
+  pointsCtaTxt:  { fontFamily: typography.bodyBold, color: colors.card, fontSize: typography.size.caption },
 
   sectionLbl: { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.xs, letterSpacing: 3, paddingHorizontal: spacing.xxl, marginTop: spacing.xxl, marginBottom: spacing.lg },
 

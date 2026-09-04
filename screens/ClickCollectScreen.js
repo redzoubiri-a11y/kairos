@@ -100,7 +100,7 @@ export default function ClickCollectScreen({ route, navigation }) {
                   {d.photo ? (
                     <Image source={{ uri: d.photo }} style={s.dishPhoto} resizeMode="cover" />
                   ) : (
-                    <View style={[s.dishPhoto, s.dishPhotoPlaceholder]}><Text style={{ fontSize: 18 }}>🍽️</Text></View>
+                    <View style={[s.dishPhoto, s.dishPhotoPlaceholder]}><Text style={{ fontSize: typography.size.heading2 }}>🍽️</Text></View>
                   )}
                   <View style={{ flex: 1 }}>
                     <Text style={s.dishName} numberOfLines={1}>{d.name}</Text>
@@ -247,21 +247,21 @@ const s = StyleSheet.create({
   dishPrice:   { fontFamily: typography.display, color: colors.text, fontSize: typography.size.caption + 1 },
   stepper:     { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   addBtn:      { width: 26, height: 26, borderRadius: radius.sm + 3, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' },
-  addBtnTxt:   { fontFamily: typography.bodyBold, color: '#FFFFFF', fontSize: 15, lineHeight: 18 },
+  addBtnTxt:   { fontFamily: typography.bodyBold, color: colors.card, fontSize: 15, lineHeight: 18 },
   stepPill:    { flexDirection: 'row', alignItems: 'center', gap: spacing.md, backgroundColor: colors.bg, borderRadius: radius.lg + 1, paddingHorizontal: spacing.md + 2, paddingVertical: spacing.xs },
-  stepBtnTxt:  { fontFamily: typography.bodyBold, color: colors.text, fontSize: 14 },
-  stepQty:     { fontFamily: typography.bodyBold, color: colors.text, fontSize: 14, minWidth: 14, textAlign: 'center' },
+  stepBtnTxt:  { fontFamily: typography.bodyBold, color: colors.text, fontSize: typography.size.bodyLg },
+  stepQty:     { fontFamily: typography.bodyBold, color: colors.text, fontSize: typography.size.bodyLg, minWidth: 14, textAlign: 'center' },
 
   cartBar:      { position: 'absolute', left: spacing.xl, right: spacing.xl, bottom: 0, backgroundColor: colors.noir, borderRadius: radius.floating, paddingVertical: spacing.lg + 2, paddingHorizontal: spacing.xl, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', shadowColor: '#000', shadowOpacity: 0.25, shadowRadius: 28, shadowOffset: { width: 0, height: 12 }, elevation: 8 },
-  cartBarCount: { fontFamily: typography.body, color: 'rgba(255,255,255,0.6)', fontSize: 11 },
-  cartBarTotal: { fontFamily: typography.bodyBold, color: '#FFFFFF', fontSize: 16, marginTop: 2 },
+  cartBarCount: { fontFamily: typography.body, color: 'rgba(255,255,255,0.6)', fontSize: typography.size.sm },
+  cartBarTotal: { fontFamily: typography.bodyBold, color: colors.card, fontSize: typography.size.subheading, marginTop: 2 },
   cartBtn:      { backgroundColor: colors.primary, paddingVertical: spacing.md + 2, paddingHorizontal: spacing.xl, borderRadius: radius.md + 1 },
-  cartBtnTxt:   { fontFamily: typography.bodyBold, color: '#FFFFFF', fontSize: 13 },
+  cartBtnTxt:   { fontFamily: typography.bodyBold, color: colors.card, fontSize: typography.size.body },
 
   cartPanel:       { position: 'absolute', left: 0, right: 0, bottom: 0, backgroundColor: colors.bg, borderTopLeftRadius: radius.xxl, borderTopRightRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.xl, gap: spacing.md, shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 20, shadowOffset: { width: 0, height: -4 } },
   cartPanelHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   cartPanelTitle:  { fontFamily: typography.bodySemibold, color: colors.text, fontSize: typography.size.subheading },
-  cartPanelClose:  { color: colors.textMuted, fontSize: 18 },
+  cartPanelClose:  { color: colors.textMuted, fontSize: typography.size.heading2 },
   cartItemRow:     { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingVertical: spacing.sm },
   cartItemQty:     { fontFamily: typography.bodyBold, color: colors.blue, width: 28 },
   cartItemName:    { flex: 1, fontFamily: typography.body, color: colors.text },
@@ -272,7 +272,7 @@ const s = StyleSheet.create({
   modeBtn:      { flex: 1, alignItems: 'center', paddingVertical: spacing.md - 2, borderRadius: radius.md, backgroundColor: colors.tagNeutralBg },
   modeBtnActive:{ backgroundColor: colors.primary },
   modeTxt:      { fontFamily: typography.bodySemibold, fontSize: typography.size.body, color: colors.text },
-  modeTxtActive:{ color: '#FFFFFF' },
+  modeTxtActive:{ color: colors.card },
 
   waitTxt: { fontFamily: typography.bodyMedium, fontSize: typography.size.caption + 0.5, color: colors.textMuted, marginBottom: spacing.xs },
   cartTotalRow:    { flexDirection: 'row', justifyContent: 'space-between', paddingTop: spacing.sm, borderTopWidth: 1, borderTopColor: colors.cardBorder },
@@ -282,7 +282,7 @@ const s = StyleSheet.create({
 
   confirmPanel:    { position: 'absolute', left: 0, right: 0, bottom: 0, backgroundColor: colors.card, borderTopLeftRadius: radius.xxl, borderTopRightRadius: radius.xxl, borderWidth: 1, borderColor: colors.cardBorder, padding: spacing.xxl, alignItems: 'center', gap: spacing.sm, shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 20, shadowOffset: { width: 0, height: -4 } },
   confirmCheck:    { width: 52, height: 52, borderRadius: 26, backgroundColor: colors.primarySoft, alignItems: 'center', justifyContent: 'center', marginBottom: spacing.xs },
-  confirmCheckTxt: { fontFamily: typography.bodyBold, color: colors.primary, fontSize: 26 },
+  confirmCheckTxt: { fontFamily: typography.bodyBold, color: colors.primary, fontSize: typography.size.title },
   confirmTitle:    { fontFamily: typography.display, color: colors.text, fontSize: typography.size.heading2 },
   confirmSub:      { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.body, textAlign: 'center', lineHeight: 18 },
 });

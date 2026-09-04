@@ -41,7 +41,7 @@ const s = StyleSheet.create({
   info:  { flex: 1, minWidth: 0, justifyContent: 'center' },
   name:  { fontFamily: typography.display, fontSize: typography.size.subheading - 0.5, color: colors.text },
   rateRow:   { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 4 },
-  stars:     { color: colors.star, fontSize: 10, letterSpacing: 1 },
+  stars:     { color: colors.star, fontSize: typography.size.xs, letterSpacing: 1 },
   scoreNum:  { fontFamily: typography.display, fontSize: typography.size.caption, color: colors.text },
   meta:      { fontFamily: typography.body, fontSize: typography.size.caption, color: colors.textMuted, marginTop: 3 },
 });

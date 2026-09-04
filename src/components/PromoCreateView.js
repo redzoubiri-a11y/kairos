@@ -200,5 +200,5 @@ const s = StyleSheet.create({
   previewTitle:  { color: colors.text, fontFamily: typography.bodyBold, fontSize: typography.size.subheading, fontWeight: typography.weight.extrabold },
   previewSub:    { color: colors.textMuted, fontFamily: typography.body, fontSize: typography.size.caption, marginTop: 3 },
   activateBtn:   { backgroundColor: colors.noir, borderRadius: radius.xl, padding: spacing.xl, alignItems: 'center', shadowColor: '#000', shadowOpacity: 0.4, shadowRadius: 14, shadowOffset: { width: 0, height: 0 }, elevation: 7 },
-  activateBtnTxt:{ color: '#FFFFFF', fontFamily: typography.bodyBold, fontSize: typography.size.subheading, fontWeight: typography.weight.extrabold },
+  activateBtnTxt:{ color: colors.card, fontFamily: typography.bodyBold, fontSize: typography.size.subheading, fontWeight: typography.weight.extrabold },
 });

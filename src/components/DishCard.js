@@ -66,6 +66,6 @@ const s = StyleSheet.create({
   // Switch compact de disponibilité — Menu Pro.dc.html : piste 38×22 radius 11, pastille 18×18 inset 2
   switchTrack:    { width: 38, height: 22, borderRadius: 11, backgroundColor: colors.cardBorder, justifyContent: 'center' },
   switchTrackOn:  { backgroundColor: colors.primary },
-  switchThumb:    { width: 18, height: 18, borderRadius: 9, backgroundColor: '#FFFFFF', marginLeft: 2 },
+  switchThumb:    { width: 18, height: 18, borderRadius: 9, backgroundColor: colors.card, marginLeft: 2 },
   switchThumbOn:  { marginLeft: 18 },
 });

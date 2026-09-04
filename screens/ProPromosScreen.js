@@ -106,5 +106,5 @@ const s = StyleSheet.create({
   title:        { fontFamily: typography.display, color: colors.text, fontSize: typography.size.heading2, letterSpacing: -0.2 },
   subtitle:     { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.caption, marginTop: 1 },
   createBtn:    { backgroundColor: colors.primary, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
-  createBtnTxt: { fontFamily: typography.bodyBold, color: '#FFFFFF', fontSize: typography.size.caption },
+  createBtnTxt: { fontFamily: typography.bodyBold, color: colors.card, fontSize: typography.size.caption },
 });

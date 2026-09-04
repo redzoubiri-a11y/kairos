@@ -157,7 +157,7 @@ export default function ProInfoScreen({ navigation, route }) {
               value={form.terrasse}
               onValueChange={set('terrasse')}
               trackColor={{ false: colors.cardBorder, true: colors.primary }}
-              thumbColor="#FFFFFF"
+              thumbColor={colors.card}
             />
           </View>
           <View style={s.toggleRow}>
@@ -166,7 +166,7 @@ export default function ProInfoScreen({ navigation, route }) {
               value={form.parking}
               onValueChange={set('parking')}
               trackColor={{ false: colors.cardBorder, true: colors.primary }}
-              thumbColor="#FFFFFF"
+              thumbColor={colors.card}
             />
           </View>
           <View style={s.toggleRow}>
@@ -175,7 +175,7 @@ export default function ProInfoScreen({ navigation, route }) {
               value={form.espace_famille}
               onValueChange={set('espace_famille')}
               trackColor={{ false: colors.cardBorder, true: colors.primary }}
-              thumbColor="#FFFFFF"
+              thumbColor={colors.card}
             />
           </View>
           <View style={[s.toggleRow, { borderBottomWidth: 0 }]}>
@@ -184,7 +184,7 @@ export default function ProInfoScreen({ navigation, route }) {
               value={form.salle_fete}
               onValueChange={set('salle_fete')}
               trackColor={{ false: colors.cardBorder, true: colors.primary }}
-              thumbColor="#FFFFFF"
+              thumbColor={colors.card}
             />
           </View>
 
@@ -256,7 +256,7 @@ export default function ProInfoScreen({ navigation, route }) {
               value={form.has_kids_menu}
               onValueChange={set('has_kids_menu')}
               trackColor={{ false: colors.cardBorder, true: colors.primary }}
-              thumbColor={form.has_kids_menu ? '#FFFFFF' : '#bbb'}
+              thumbColor={form.has_kids_menu ? colors.card : '#bbb'}
             />
           </View>
           <View style={[s.toggleRow, { borderBottomWidth: 0 }]}>
@@ -265,7 +265,7 @@ export default function ProInfoScreen({ navigation, route }) {
               value={form.has_kids_chairs}
               onValueChange={set('has_kids_chairs')}
               trackColor={{ false: colors.cardBorder, true: colors.primary }}
-              thumbColor={form.has_kids_chairs ? '#FFFFFF' : '#bbb'}
+              thumbColor={form.has_kids_chairs ? colors.card : '#bbb'}
             />
           </View>
 
@@ -280,7 +280,7 @@ export default function ProInfoScreen({ navigation, route }) {
               value={form.click_collect_enabled}
               onValueChange={set('click_collect_enabled')}
               trackColor={{ false: colors.cardBorder, true: colors.primary }}
-              thumbColor={form.click_collect_enabled ? '#FFFFFF' : '#bbb'}
+              thumbColor={form.click_collect_enabled ? colors.card : '#bbb'}
             />
           </View>
 
@@ -386,7 +386,7 @@ const s = StyleSheet.create({
   waitInput:   { flex: 1, paddingVertical: spacing.sm + 2 },
   waitInputMin:{ width: 60, paddingVertical: spacing.sm + 2 },
   waitSep:     { color: colors.textMuted },
-  waitRemove:  { color: colors.red, fontSize: 16, paddingHorizontal: spacing.xs },
+  waitRemove:  { color: colors.red, fontSize: typography.size.subheading, paddingHorizontal: spacing.xs },
   waitAddBtn:  { alignSelf: 'flex-start', marginTop: spacing.xs, marginBottom: spacing.lg },
   waitAddTxt:  { color: colors.primary, fontSize: typography.size.caption, fontFamily: typography.bodySemibold },
   qrLinkBtn:   { backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, borderRadius: radius.md, paddingVertical: spacing.md, alignItems: 'center', marginTop: spacing.sm },

@@ -325,7 +325,7 @@ const s = StyleSheet.create({
   tabTxt:     { color: colors.textMuted, fontFamily: typography.body, fontSize: typography.size.bodyLg },
   tabTxtOn:   { color: colors.text, fontFamily: typography.bodySemibold },
   tabBadge:   { backgroundColor: colors.resa, borderRadius: radius.md, minWidth:18, height:18, alignItems:'center', justifyContent:'center', paddingHorizontal: spacing.xs },
-  tabBadgeTxt:{ color: '#FFFFFF', fontFamily: typography.bodySemibold, fontSize: typography.size.sm },
+  tabBadgeTxt:{ color: colors.card, fontFamily: typography.bodySemibold, fontSize: typography.size.sm },
 
   sectionLbl: { color: colors.textMuted, fontFamily: typography.bodyBold, fontSize: typography.size.xs, letterSpacing:4, paddingHorizontal: spacing.xxl, marginBottom: spacing.lg },
   nextFeedback:        { flexDirection: 'row', alignItems: 'center', marginHorizontal: spacing.xl, marginBottom: spacing.lg, borderRadius: radius.lg, borderWidth: 1, paddingHorizontal: spacing.xl, paddingVertical: spacing.md, gap: spacing.sm },
@@ -340,5 +340,5 @@ const s = StyleSheet.create({
   emptyBtn:   { backgroundColor: colors.primary, borderRadius: radius.lg, paddingHorizontal: spacing.xxl, paddingVertical: spacing.md, marginTop: spacing.xs },
   retryBtn:   { borderWidth: 1, borderColor: colors.cardBorder, borderRadius: radius.lg, paddingHorizontal: spacing.xxl, paddingVertical: spacing.md, marginTop: spacing.xs },
   retryBtnTxt:{ color: colors.text, fontFamily: typography.bodyMedium, fontSize: typography.size.bodyLg },
-  emptyBtnTxt:{ color: '#FFFFFF', fontFamily: typography.bodySemibold, fontSize: typography.size.bodyLg },
+  emptyBtnTxt:{ color: colors.card, fontFamily: typography.bodySemibold, fontSize: typography.size.bodyLg },
 });

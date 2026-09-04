@@ -55,7 +55,7 @@ const s = StyleSheet.create({
     paddingVertical: spacing.xl - 2, paddingHorizontal: spacing.xxxl,
     alignItems: 'center', width: '100%',
   },
-  primaryTxt: { color: '#FFFFFF', fontSize: typography.size.bodyLg, fontWeight: typography.weight.bold, letterSpacing: 0.5 },
+  primaryTxt: { color: colors.card, fontSize: typography.size.bodyLg, fontWeight: typography.weight.bold, letterSpacing: 0.5 },
 
   secondaryBtn: { paddingVertical: spacing.md, paddingHorizontal: spacing.xxl },
   secondaryTxt: { color: colors.blue, fontSize: typography.size.bodyLg, fontWeight: typography.weight.medium },

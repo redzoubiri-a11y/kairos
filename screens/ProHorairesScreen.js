@@ -83,7 +83,7 @@ function DayCard({ day, onSetDay, onPickTime }) {
               dinner_end:   null,
             })}
             trackColor={{ false: colors.cardBorder, true: colors.primary }}
-            thumbColor={day.is_open ? '#FFFFFF' : '#bbb'}
+            thumbColor={day.is_open ? colors.card : '#bbb'}
           />
         </View>
       </View>
@@ -292,7 +292,7 @@ const s = StyleSheet.create({
   dayBody:        { borderTopWidth: 1, borderTopColor: colors.cardBorder, paddingHorizontal: spacing.xl, paddingBottom: spacing.lg },
 
   serviceRow:     { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingTop: spacing.md },
-  serviceIcon:    { fontSize: 14 },
+  serviceIcon:    { fontSize: typography.size.bodyLg },
   serviceLbl:     { color: colors.textMuted, fontSize: typography.size.caption, width: 56, fontFamily: typography.body },
   timePill:       { backgroundColor: colors.bg, borderRadius: radius.md, borderWidth: 1, borderColor: colors.cardBorder, paddingHorizontal: spacing.md, paddingVertical: spacing.xs },
   timePillEmpty:  { borderColor: colors.redSoft },
@@ -303,7 +303,7 @@ const s = StyleSheet.create({
   capLbl:         { color: colors.textMuted, fontSize: typography.size.caption, fontFamily: typography.body },
   capInput:       { backgroundColor: colors.bg, borderWidth: 1, borderColor: colors.cardBorder, borderRadius: radius.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.xs, color: colors.text, fontSize: typography.size.body, fontFamily: typography.bodySemibold, minWidth: 60, textAlign: 'center' },
 
-  backdrop:       { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center', padding: spacing.xl },
+  backdrop:       { flex: 1, backgroundColor: colors.overlay, justifyContent: 'center', alignItems: 'center', padding: spacing.xl },
   pickerBox:      { backgroundColor: colors.bg, borderRadius: radius.xl, padding: spacing.xl, width: '100%', maxHeight: '70%' },
   pickerTitle:    { color: colors.text, fontSize: typography.size.bodyLg, fontFamily: typography.bodySemibold, marginBottom: spacing.lg, textAlign: 'center' },
   pickerGrid:     { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, justifyContent: 'center' },

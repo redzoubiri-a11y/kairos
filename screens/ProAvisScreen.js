@@ -137,7 +137,7 @@ const s = StyleSheet.create({
   title:      { color: colors.text, fontFamily: typography.display, fontSize: typography.size.heading2 },
   subtitle:   { color: colors.textMuted, fontFamily: typography.body, fontSize: typography.size.caption, marginTop: 1 },
   badge:      { backgroundColor: colors.red, borderRadius: radius.full, minWidth: 22, height: 22, alignItems: 'center', justifyContent: 'center', paddingHorizontal: spacing.sm },
-  badgeTxt:   { color: '#FFFFFF', fontFamily: typography.bodyBold, fontSize: typography.size.xs },
+  badgeTxt:   { color: colors.card, fontFamily: typography.bodyBold, fontSize: typography.size.xs },
 
   filterRow:   { paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, gap: 6 },
 

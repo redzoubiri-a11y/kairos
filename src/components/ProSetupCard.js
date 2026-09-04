@@ -110,7 +110,7 @@ const s = StyleSheet.create({
   cardTitle:  { fontFamily: typography.bodySemibold, color: colors.text, fontSize: typography.size.body },
   cardSub:    { color: colors.textDim, fontSize: typography.size.xs, marginTop: 2 },
   dismissTxt: { color: colors.gold, fontSize: typography.size.caption },
-  resetTxt:   { color: colors.textDim, fontSize: 18 },
+  resetTxt:   { color: colors.textDim, fontSize: typography.size.heading2 },
 
   progressBar:  { height: 3, backgroundColor: colors.cardBorder, marginHorizontal: spacing.xl, borderRadius: 2, marginBottom: spacing.md },
   progressFill: { height: 3, backgroundColor: colors.gold, borderRadius: 2 },
@@ -118,7 +118,7 @@ const s = StyleSheet.create({
   // Étapes complétées
   doneRow:   { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingHorizontal: spacing.xl, paddingVertical: spacing.sm, opacity: 0.5 },
   doneIcon:  { width: 28, height: 28, borderRadius: 8, backgroundColor: colors.greenSoft, borderWidth: 1, borderColor: 'rgba(76,175,130,0.3)', alignItems: 'center', justifyContent: 'center' },
-  doneCheck: { fontFamily: typography.bodyBold, color: colors.green, fontSize: 13 },
+  doneCheck: { fontFamily: typography.bodyBold, color: colors.green, fontSize: typography.size.body },
   doneLabel: { color: colors.textMuted, fontSize: typography.size.caption, textDecorationLine: 'line-through' },
 
   // Étape active
@@ -137,12 +137,12 @@ const s = StyleSheet.create({
   activeLabel: { fontFamily: typography.bodySemibold, color: colors.text, fontSize: typography.size.body },
   activeDesc:  { color: colors.textMuted, fontSize: typography.size.xs, marginTop: 3 },
   activeBtn:   { backgroundColor: colors.primary, borderRadius: radius.md, paddingVertical: spacing.md, alignItems: 'center' },
-  activeBtnTxt:{ fontFamily: typography.bodyBold, color: '#FFFFFF', fontSize: typography.size.caption },
+  activeBtnTxt:{ fontFamily: typography.bodyBold, color: colors.card, fontSize: typography.size.caption },
 
   // Étapes à venir
   pendingRow:   { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingHorizontal: spacing.xl, paddingVertical: spacing.sm, opacity: 0.55, marginTop: spacing.xs },
   pendingIcon:  { width: 28, height: 28, borderRadius: 8, backgroundColor: colors.cardHover, borderWidth: 1, borderColor: colors.cardBorder, alignItems: 'center', justifyContent: 'center' },
-  pendingEmoji: { fontSize: 13 },
+  pendingEmoji: { fontSize: typography.size.body },
   pendingLabel: { flex: 1, color: colors.textMuted, fontSize: typography.size.caption },
-  pendingArrow: { color: colors.gold, fontSize: 14 },
+  pendingArrow: { color: colors.gold, fontSize: typography.size.bodyLg },
 });

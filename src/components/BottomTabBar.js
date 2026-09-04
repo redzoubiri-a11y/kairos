@@ -150,7 +150,7 @@ const s = StyleSheet.create({
   },
   label: {
     fontFamily: typography.body,
-    fontSize: 10,
+    fontSize: typography.size.xs,
     letterSpacing: 0.5,
     fontWeight: '400',
     color: C.dim,

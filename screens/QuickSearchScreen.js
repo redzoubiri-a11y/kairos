@@ -130,12 +130,12 @@ const s = StyleSheet.create({
   backBtnTxt: { color: colors.text, fontSize: 15 },
 
   heroText:   { position: 'absolute', left: spacing.xl, right: spacing.xl, top: 110 },
-  heroKicker: { fontFamily: typography.bodyBold, color: '#FFFFFF', fontSize: typography.size.caption + 0.5, letterSpacing: 1.5, textTransform: 'uppercase', opacity: 0.85 },
-  heroTitle:  { fontFamily: typography.display, color: '#FFFFFF', fontSize: 30, lineHeight: 35, marginTop: spacing.md },
+  heroKicker: { fontFamily: typography.bodyBold, color: colors.card, fontSize: typography.size.caption + 0.5, letterSpacing: 1.5, textTransform: 'uppercase', opacity: 0.85 },
+  heroTitle:  { fontFamily: typography.display, color: colors.card, fontSize: 30, lineHeight: 35, marginTop: spacing.md },
 
   floatCard: {
     position: 'absolute', left: spacing.xl, right: spacing.xl, top: 340,
-    backgroundColor: '#FFFFFF', borderRadius: radius.xxl - 4, padding: spacing.lg + 2,
+    backgroundColor: colors.card, borderRadius: radius.xxl - 4, padding: spacing.lg + 2,
     shadowColor: '#000', shadowOpacity: 0.22, shadowRadius: 30, shadowOffset: { width: 0, height: 14 }, elevation: 10,
   },
 
@@ -143,14 +143,14 @@ const s = StyleSheet.create({
   toggleSeg:   { flex: 1, alignItems: 'center', paddingVertical: spacing.md + 1, borderRadius: radius.md },
   toggleSegOn: { backgroundColor: colors.noir },
   toggleSegTxt:  { fontFamily: typography.bodyBold, fontSize: typography.size.caption + 1.5, color: colors.textDim },
-  toggleSegTxtOn:{ color: '#FFFFFF' },
+  toggleSegTxtOn:{ color: colors.card },
 
   fieldLbl:  { fontFamily: typography.bodyBold, color: colors.textDim, fontSize: 9.5, letterSpacing: 0.4, textTransform: 'uppercase' },
   dateLbl:   { marginTop: spacing.md + 2 },
 
   dateToggle:  { flexDirection: 'row', backgroundColor: colors.bg, borderRadius: radius.control, padding: 3, marginTop: spacing.sm - 1 },
   dateSeg:     { flex: 1, alignItems: 'center', paddingVertical: spacing.sm + 3, borderRadius: radius.sm + 2 },
-  dateSegOn:   { backgroundColor: '#FFFFFF', shadowColor: '#000', shadowOpacity: 0.08, shadowRadius: 4, shadowOffset: { width: 0, height: 1 }, elevation: 1 },
+  dateSegOn:   { backgroundColor: colors.card, shadowColor: '#000', shadowOpacity: 0.08, shadowRadius: 4, shadowOffset: { width: 0, height: 1 }, elevation: 1 },
   dateSegTxt:  { fontFamily: typography.bodyBold, fontSize: typography.size.caption + 0.5, color: colors.textDim },
   dateSegTxtOn:{ color: colors.text },
 
@@ -158,9 +158,9 @@ const s = StyleSheet.create({
   stepperField: { flex: 1 },
   stepper:      { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: spacing.sm - 1, borderWidth: 1, borderColor: colors.cardBorder, borderRadius: radius.control, paddingHorizontal: spacing.sm, height: 42 },
   stepperBtn:   { width: 28, height: 28, alignItems: 'center', justifyContent: 'center' },
-  stepperArrow: { fontFamily: typography.bodyBold, fontSize: 18, color: colors.primary },
+  stepperArrow: { fontFamily: typography.bodyBold, fontSize: typography.size.heading2, color: colors.primary },
   stepperVal:   { fontFamily: typography.bodyBold, fontSize: typography.size.caption + 1.5, color: colors.text },
 
   cta:    { marginTop: spacing.md + 2, height: 50, borderRadius: radius.control + 1, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' },
-  ctaTxt: { fontFamily: typography.bodyBold, color: '#FFFFFF', fontSize: typography.size.subheading - 1 },
+  ctaTxt: { fontFamily: typography.bodyBold, color: colors.card, fontSize: typography.size.subheading - 1 },
 });

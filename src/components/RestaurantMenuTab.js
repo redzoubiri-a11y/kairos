@@ -57,7 +57,7 @@ const s = StyleSheet.create({
   catTab:    { paddingHorizontal: spacing.lg + 2, paddingVertical: spacing.sm + 1, borderRadius: radius.pill, backgroundColor: colors.bg, borderWidth: 1, borderColor: colors.cardBorder },
   catTabOn:  { backgroundColor: colors.noir, borderColor: colors.noir },
   catTabTxt: { fontFamily: typography.bodyBold, fontSize: typography.size.caption + 0.5, color: colors.textMuted },
-  catTabTxtOn: { color: '#FFFFFF' },
+  catTabTxtOn: { color: colors.card },
 
   dishRow:      { flexDirection: 'row', gap: spacing.lg, paddingVertical: spacing.lg + 2 },
   dishRowBorder:{ borderBottomWidth: 1, borderBottomColor: colors.cardBorder },

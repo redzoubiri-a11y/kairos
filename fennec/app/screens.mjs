@@ -114,12 +114,13 @@ function renderChoice(screen, { onAnswer }) {
   const label = screen.kind === 'read_touch'
     ? 'المس الصورة المطابقة للكلمة المكتوبة'
     : 'المس صورة الكلمة التي تسمعها';
-  stage.innerHTML =
+  stage.innerHTML = `<div class="win">` +
     (screen.kind === 'read_touch'
       ? `<div class="card-word">${escapeHtml(screen.word.english)}</div>`
       : `<button class="speaker" aria-label="Écouter">🔊</button>`) +
     `<div class="grid"></div>` +
-    `<p class="sub ar center">${label}</p>`;
+    `<p class="sub ar center">${label}</p>` +
+    `</div>`;
   if (screen.kind === 'listen_touch') {
     stage.querySelector('.speaker').onclick = () => speak(screen.word.english);
     setTimeout(() => speak(screen.word.english), 300);
@@ -159,14 +160,14 @@ function renderChoice(screen, { onAnswer }) {
 function renderTrueFalse(screen, { onAnswer }) {
   const showTruth = Math.random() < 0.5;
   const shownWord = showTruth ? screen.word : screen.options[1];
-  stage.innerHTML = avatarTag('sm') +
+  stage.innerHTML = `<div class="win">` + avatarTag('sm') +
     `<div class="card-word">${escapeHtml(shownWord.english)}</div>` +
     `<button class="speaker" aria-label="Écouter">🔊</button>` +
     `<p class="sub ar center">صح أو خطأ؟</p>` +
     `<div class="tfrow">
       <button class="tf yes">صح</button>
       <button class="tf no">خطأ</button>
-    </div>`;
+    </div></div>`;
   stage.querySelector('.speaker').onclick = () => speak(screen.word.english);
   let answered = false; // évite un double-tap صح+خطأ pendant le délai avant l'écran suivant
   const answerTf = (saidYes) => {
@@ -184,7 +185,7 @@ function renderTrueFalse(screen, { onAnswer }) {
 
 /** say_it : micro avec halo actif + jauge vocale (barres), solution de repli "قلتها". */
 function renderSayIt(screen, { onAnswer }) {
-  stage.innerHTML = `
+  stage.innerHTML = `<div class="win">
     <p class="say en center" style="text-align:center">${escapeHtml(screen.word.english)}</p>
     <p class="sub ar center">قل الكلمة بصوت عال</p>
     <div class="mic-wrap">
@@ -192,7 +193,8 @@ function renderSayIt(screen, { onAnswer }) {
       <div class="voice-bars" aria-hidden="true">${Array.from({ length: 6 }, () => '<span style="height:6px"></span>').join('')}</div>
       <p class="mic-caption" id="micCaption"></p>
       <button class="alt">قلتها ✓</button>
-    </div>`;
+    </div>
+  </div>`;
   const mic = stage.querySelector('.mic');
   const bars = [...stage.querySelectorAll('.voice-bars span')];
   const caption = document.getElementById('micCaption');
@@ -235,11 +237,12 @@ function renderSayIt(screen, { onAnswer }) {
 function renderConstruct(screen, { onAnswer }) {
   const shuffled = [...screen.tokens].sort(() => Math.random() - 0.5);
   let placed = [];
-  stage.innerHTML =
-    `<p class="sub ar center">رتب الكلمات لتكوين الجملة</p>` +
-    `<div class="slots">${screen.tokens.map(() => '<div class="slot"></div>').join('')}</div>` +
-    `<div class="chips"></div>` +
-    `<button class="cta primary" disabled>تحقق</button>`;
+  stage.innerHTML = `<div class="win">
+    <p class="sub ar center">رتب الكلمات لتكوين الجملة</p>
+    <div class="slots">${screen.tokens.map(() => '<div class="slot"></div>').join('')}</div>
+    <div class="chips"></div>
+    <button class="cta primary" disabled>تحقق</button>
+  </div>`;
   const chips = stage.querySelector('.chips');
   const slots = stage.querySelectorAll('.slot');
   const checkBtn = stage.querySelector('.cta');
@@ -277,11 +280,12 @@ function renderConstruct(screen, { onAnswer }) {
  */
 function renderPhonics(screen, { onAnswer }) {
   const primaryGrapheme = screen.grapheme.replace(/\s*\([^)]*\)/g, '').split(/\s+/)[0];
-  stage.innerHTML =
-    `<p class="sub ar center">تتبع الحرف بإصبعك</p>` +
-    `<div class="phonics-box"><canvas width="220" height="220"></canvas></div>` +
-    `<p class="phonics-caption">${escapeHtml(screen.grapheme)} · ${escapeHtml(screen.example)}</p>` +
-    `<button class="cta primary" disabled>متابعة</button>`;
+  stage.innerHTML = `<div class="win">
+    <p class="sub ar center">تتبع الحرف بإصبعك</p>
+    <div class="phonics-box"><canvas width="220" height="220"></canvas></div>
+    <p class="phonics-caption">${escapeHtml(screen.grapheme)} · ${escapeHtml(screen.example)}</p>
+    <button class="cta primary" disabled>متابعة</button>
+  </div>`;
   const canvas = stage.querySelector('canvas');
   const ctx = canvas.getContext('2d');
   const cta = stage.querySelector('.cta');

@@ -231,6 +231,14 @@ body{
   margin:auto; text-align:center; width:100%; background:var(--surface);
   border:1px solid var(--border); border-radius:28px; padding:32px 24px 28px;
   box-shadow:0 10px 0 rgba(10,49,97,.06);
+  /* flex:1 (au lieu d'une hauteur au contenu) : la carte occupe la majorité
+     de l'écran plutôt qu'un petit bloc entouré de vide, et centre son
+     propre contenu — sauf si ce contenu porte lui-même un flex:1 (ex. la
+     grille de QCM, .grid ci-dessous), qui prend alors naturellement toute
+     la place restante à l'intérieur de la carte. Même correctif que pour
+     l'intro de session/la découverte de mot, généralisé aux écrans QCM/
+     vrai-faux/dire le mot qui flottaient de la même façon. */
+  flex:1; display:flex; flex-direction:column; justify-content:center; min-height:0;
 }
 .win .emoji-lg{font-size:52px; margin-bottom:var(--sp-sm)}
 

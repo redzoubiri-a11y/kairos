@@ -102,6 +102,20 @@ l'utilisateur avant de commencer) : remplacer les emoji par de vraies
 illustrations générées — un chantier à part, plus lourd, à cadrer
 séparément.
 
+**Généralisé à tous les écrans de jeu.** Le même vide se retrouvait sur les
+écrans QCM (`listen_touch`/`read_touch`), vrai/faux, "dis le mot à voix
+haute", construction de phrase et phonics — aucun n'était enveloppé dans
+`.win`. `.win` passe de `margin:auto` (bloc centré à la taille de son
+contenu) à `flex:1` avec `justify-content:center` : la carte occupe
+maintenant la majorité de l'écran et centre son contenu à l'intérieur —
+sauf s'il porte lui-même un `flex:1` (la grille de QCM), qui prend alors
+naturellement toute la place restante dans la carte plutôt que dans tout
+l'écran. Les 5 renderers concernés (`renderChoice`, `renderTrueFalse`,
+`renderSayIt`, `renderConstruct`, `renderPhonics` dans `screens.mjs`)
+enveloppent désormais leur contenu dans `.win`. Validé en navigateur réel
+sur les 5 types d'écran (semaine 5, jour 2) plus l'écran de fin de session
+— déjà enveloppé dans `.win`, continue de fonctionner à l'identique.
+
 **Plusieurs enfants sur un même téléphone.** `fennec/app/main.mjs` gère
 plusieurs profils locaux (fratrie) — écran "qui joue aujourd'hui ?" au
 premier lancement, bouton "🔁 changer d'enfant" dans la barre de dev pour

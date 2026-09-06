@@ -14,6 +14,7 @@
 export * from '../../../src/core/arrondi.js';
 export * from '../../../src/core/prix.js';
 export * from '../../../src/core/tva.js';
+export * from '../../../src/core/comparatif.js';
 
 export {
   PARAMETRES_DEFAUT,

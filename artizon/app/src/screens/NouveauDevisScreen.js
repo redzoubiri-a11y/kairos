@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -6,6 +7,7 @@ import { useProfilArtisan } from '../hooks/useProfilArtisan.js';
 import { useDevis } from '../hooks/useDevis.js';
 import { formaterEuros, formaterPourcent } from '../lib/format.js';
 import { Aide, ChampNombre, ChampTexte, ChoixChips, SectionTitre } from '../components/Champs.js';
+import ComparateurFournisseurs from '../components/ComparateurFournisseurs.js';
 
 const OPTIONS_CATEGORIE = [
   { value: 'apprenti', label: 'Apprenti' },
@@ -131,6 +133,7 @@ function FormulaireDevis({ profil, userId }) {
     mettreAJourTva,
     enregistrer,
   } = useDevis(profil, userId);
+  const [afficherComparateur, setAfficherComparateur] = useState(false);
 
   return (
     <SafeAreaView style={styles.conteneur} edges={['top']}>
@@ -169,6 +172,21 @@ function FormulaireDevis({ profil, userId }) {
           valeur={devis.fourniture.ferme}
           onChangeValeur={(v) => mettreAJourFourniture({ ferme: v })}
         />
+        <TouchableOpacity onPress={() => setAfficherComparateur((v) => !v)} style={styles.lienComparateur}>
+          <Text style={styles.lienComparateurTexte}>
+            {afficherComparateur ? 'Masquer le comparateur' : 'Comparer plusieurs fournisseurs'}
+          </Text>
+        </TouchableOpacity>
+        {afficherComparateur ? (
+          <ComparateurFournisseurs
+            libelleOuvrage={devis.ouvrage.libelle}
+            onChoisir={(choix) => {
+              mettreAJourFourniture({ prix: choix.prix, ferme: true });
+              setAfficherComparateur(false);
+            }}
+            onFermer={() => setAfficherComparateur(false)}
+          />
+        ) : null}
 
         <SectionTitre>Pose</SectionTitre>
         <ChampNombre
@@ -257,6 +275,8 @@ const styles = StyleSheet.create({
   contenu: { padding: spacing.lg, paddingBottom: spacing.xl },
   titre: { ...typography.title, marginBottom: spacing.xs },
   sousTitre: { ...typography.hint, marginBottom: spacing.lg },
+  lienComparateur: { marginTop: spacing.sm, alignSelf: 'flex-start' },
+  lienComparateurTexte: { color: colors.primary, fontWeight: '600', fontSize: 13 },
   carteSynthese: {
     backgroundColor: colors.surface,
     borderRadius: radius.md,

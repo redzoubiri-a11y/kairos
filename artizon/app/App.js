@@ -8,14 +8,12 @@ import { useAuth } from './src/hooks/useAuth.js';
 import AuthScreen from './src/screens/AuthScreen.js';
 import ProfilArtisanScreen from './src/screens/ProfilArtisanScreen.js';
 import NouveauDevisScreen from './src/screens/NouveauDevisScreen.js';
+import HistoriqueDevisScreen from './src/screens/HistoriqueDevisScreen.js';
 
-/**
- * Bascule minimale entre les deux écrans, sans librairie de navigation :
- * deux écrans ne la justifient pas encore. À revoir dès qu'un troisième
- * écran (liste des devis, historique fournisseurs...) s'ajoute.
- */
+/** Bascule minimale entre les écrans, sans librairie de navigation. */
 const ONGLETS = [
   { cle: 'devis', label: 'Nouveau devis', Ecran: NouveauDevisScreen },
+  { cle: 'historique', label: 'Historique', Ecran: HistoriqueDevisScreen },
   { cle: 'profil', label: 'Mon profil', Ecran: ProfilArtisanScreen },
 ];
 

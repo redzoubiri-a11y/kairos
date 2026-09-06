@@ -18,7 +18,11 @@ export const useAuthStore = create((set, get) => ({
   // fires. Guards every subsequent `set()` in bootstrap() so a slow (but not
   // actually stuck) bootstrap can't resolve later and clobber the forced
   // signedOut state, which would bounce a logged-in user back to the login
-  // screen and then snap them back into the app.
+  // screen and then snap them back into the app. Never reset back to false —
+  // bootstrap() only ever runs once per app launch, so this stays scoped to
+  // that one stale call for the rest of the session. Every place that reads
+  // it also checks the current `status` before touching global auth state,
+  // so a login/signup that happens afterwards is never clobbered by it.
   bootstrapTimedOut: false,
 
   // Reads the persisted session and revalidates it against the API.
@@ -50,17 +54,22 @@ export const useAuthStore = create((set, get) => ({
       try {
         const user = await authApi.me();
         if (get().bootstrapTimedOut) {
-          // The failsafe already forced signedOut and cleared the client
-          // while this request was in flight — undo the setAuthToken(token)
-          // above instead of opening a socket for a session the UI has
-          // already dismissed.
-          setAuthToken(null);
+          // Le compte a pu se reconnecter manuellement (login/signup) pendant
+          // que cet appel etait en vol, apres coup sur le delai de grace de
+          // RootNavigator. Dans ce cas ne rien nettoyer : ce serait ecraser le
+          // jeton de la session fraichement etablie, pas celui, perime, que
+          // cet appel portait — et plus personne ne s'en apercevrait, car
+          // l'intercepteur 401 du client ne se declenche que si un jeton est
+          // deja renseigne.
+          if (get().status !== 'signedIn') setAuthToken(null);
           return;
         }
         connectSocket(token);
         set({ token, user, status: 'signedIn', onboarded });
         registerForPushNotifications();
       } catch {
+        // Meme prudence que ci-dessus avant de nettoyer quoi que ce soit.
+        if (get().bootstrapTimedOut && get().status === 'signedIn') return;
         // removeItem is best-effort: even if it throws, the token must be
         // cleared from the in-memory API client, otherwise it keeps sending
         // a stale/rejected token on every request after this point.

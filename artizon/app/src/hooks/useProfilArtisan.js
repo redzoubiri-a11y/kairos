@@ -1,32 +1,48 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { supabase } from '../lib/supabase.js';
 import { PARAMETRES_DEFAUT, COUT_HORAIRE } from '../lib/moteur.js';
 
-const CLE_STOCKAGE = '@artizon/profil-artisan';
-
 /**
- * Profil par défaut : les valeurs de la bibliothèque servent de repère au
- * premier lancement, avant que l'artisan ne les remplace par ses propres
- * chiffres. Elles ne représentent jamais "le" bon prix, seulement un point
- * de départ raisonnable — voir SKILL chiffreur-artizon, règle sur les prix
- * sans source.
+ * Traduit la ligne Supabase (colonnes en snake_case, blocs composés en
+ * jsonb) vers la forme utilisée par les écrans. Les colonnes jsonb sont
+ * vides ('{}') à la création du compte (trigger `gerer_nouvel_artisan`) —
+ * on retombe alors sur les valeurs de repère de la bibliothèque, comme au
+ * tout premier lancement en local.
  */
-function profilParDefaut() {
+function depuisLigne(ligne) {
   return {
     entreprise: {
-      nom: '',
-      forme: '',
-      siret: '',
-      tvaIntracommunautaire: '',
+      nom: ligne.nom_entreprise ?? '',
+      forme: ligne.forme_juridique ?? '',
+      siret: ligne.siret ?? '',
+      tvaIntracommunautaire: ligne.tva_intracommunautaire ?? '',
       assuranceDecennale: {
         assureur: '',
         contrat: '',
         couvertureGeographique: 'France métropolitaine',
+        ...ligne.assurance_decennale,
       },
     },
-    coutHoraire: { ...COUT_HORAIRE },
-    parametresDefaut: { ...PARAMETRES_DEFAUT },
+    coutHoraire: Object.keys(ligne.cout_horaire ?? {}).length
+      ? ligne.cout_horaire
+      : { ...COUT_HORAIRE },
+    parametresDefaut: Object.keys(ligne.parametres_defaut ?? {}).length
+      ? ligne.parametres_defaut
+      : { ...PARAMETRES_DEFAUT },
+  };
+}
+
+function versLigne(profil) {
+  return {
+    nom_entreprise: profil.entreprise.nom,
+    forme_juridique: profil.entreprise.forme,
+    siret: profil.entreprise.siret,
+    tva_intracommunautaire: profil.entreprise.tvaIntracommunautaire,
+    assurance_decennale: profil.entreprise.assuranceDecennale,
+    cout_horaire: profil.coutHoraire,
+    parametres_defaut: profil.parametresDefaut,
+    updated_at: new Date().toISOString(),
   };
 }
 
@@ -38,24 +54,29 @@ export function calculerFraisGeneraux({ chiffreAffaires, chargesStructure }) {
   return charges / ca;
 }
 
-export function useProfilArtisan() {
+export function useProfilArtisan(userId) {
   const [profil, setProfil] = useState(null);
   const [enChargement, setEnChargement] = useState(true);
   const [enSauvegarde, setEnSauvegarde] = useState(false);
   const [erreur, setErreur] = useState(null);
 
   useEffect(() => {
+    if (!userId) return undefined;
     let annule = false;
+    setEnChargement(true);
 
-    AsyncStorage.getItem(CLE_STOCKAGE)
-      .then((brut) => {
+    supabase
+      .from('profils_artisans')
+      .select('*')
+      .eq('id', userId)
+      .single()
+      .then(({ data, error }) => {
         if (annule) return;
-        setProfil(brut ? JSON.parse(brut) : profilParDefaut());
-      })
-      .catch((e) => {
-        if (annule) return;
-        setErreur(e);
-        setProfil(profilParDefaut());
+        if (error) {
+          setErreur(error);
+        } else {
+          setProfil(depuisLigne(data));
+        }
       })
       .finally(() => {
         if (!annule) setEnChargement(false);
@@ -64,7 +85,7 @@ export function useProfilArtisan() {
     return () => {
       annule = true;
     };
-  }, []);
+  }, [userId]);
 
   const mettreAJourEntreprise = useCallback((champs) => {
     setProfil((p) => ({ ...p, entreprise: { ...p.entreprise, ...champs } }));
@@ -95,21 +116,14 @@ export function useProfilArtisan() {
   }, []);
 
   const sauvegarder = useCallback(async () => {
-    if (!profil) return;
+    if (!profil || !userId) return { error: 'Profil ou utilisateur manquant' };
     setEnSauvegarde(true);
     setErreur(null);
-    try {
-      await AsyncStorage.setItem(CLE_STOCKAGE, JSON.stringify(profil));
-    } catch (e) {
-      setErreur(e);
-    } finally {
-      setEnSauvegarde(false);
-    }
-  }, [profil]);
-
-  const reinitialiser = useCallback(() => {
-    setProfil(profilParDefaut());
-  }, []);
+    const { error } = await supabase.from('profils_artisans').update(versLigne(profil)).eq('id', userId);
+    if (error) setErreur(error);
+    setEnSauvegarde(false);
+    return { error };
+  }, [profil, userId]);
 
   const estComplet = useMemo(() => {
     if (!profil) return false;
@@ -127,6 +141,5 @@ export function useProfilArtisan() {
     mettreAJourCoutHoraire,
     mettreAJourParametre,
     sauvegarder,
-    reinitialiser,
   };
 }

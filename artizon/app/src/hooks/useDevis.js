@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 
+import { supabase } from '../lib/supabase.js';
 import { coutMainOeuvre, debourseSec, lireCoefficient, prixDeVente, tauxApplicable } from '../lib/moteur.js';
 
 function etatInitial(profil) {
@@ -19,19 +20,41 @@ function etatInitial(profil) {
  * déboursé -> prix de vente -> TVA -> total TTC. Un seul ouvrage à la fois —
  * le cas réel (l'escalier) qui a servi de test.
  */
-export function useDevis(profil) {
+export function useDevis(profil, userId) {
   const [devis, setDevis] = useState(() => etatInitial(profil));
+  const [enEnregistrement, setEnEnregistrement] = useState(false);
+  const [erreurEnregistrement, setErreurEnregistrement] = useState(null);
+  const [devisEnregistre, setDevisEnregistre] = useState(false);
 
-  const mettreAJourClient = (champs) => setDevis((d) => ({ ...d, client: { ...d.client, ...champs } }));
-  const mettreAJourOuvrage = (champs) => setDevis((d) => ({ ...d, ouvrage: { ...d.ouvrage, ...champs } }));
-  const mettreAJourFourniture = (champs) =>
+  const mettreAJourClient = (champs) => {
+    setDevisEnregistre(false);
+    setDevis((d) => ({ ...d, client: { ...d.client, ...champs } }));
+  };
+  const mettreAJourOuvrage = (champs) => {
+    setDevisEnregistre(false);
+    setDevis((d) => ({ ...d, ouvrage: { ...d.ouvrage, ...champs } }));
+  };
+  const mettreAJourFourniture = (champs) => {
+    setDevisEnregistre(false);
     setDevis((d) => ({ ...d, fourniture: { ...d.fourniture, ...champs } }));
-  const mettreAJourPose = (champs) => setDevis((d) => ({ ...d, pose: { ...d.pose, ...champs } }));
-  const mettreAJourParametre = (cle, valeur) =>
+  };
+  const mettreAJourPose = (champs) => {
+    setDevisEnregistre(false);
+    setDevis((d) => ({ ...d, pose: { ...d.pose, ...champs } }));
+  };
+  const mettreAJourParametre = (cle, valeur) => {
+    setDevisEnregistre(false);
     setDevis((d) => ({ ...d, parametres: { ...d.parametres, [cle]: valeur } }));
-  const mettreAJourTva = (champs) => setDevis((d) => ({ ...d, tva: { ...d.tva, ...champs } }));
+  };
+  const mettreAJourTva = (champs) => {
+    setDevisEnregistre(false);
+    setDevis((d) => ({ ...d, tva: { ...d.tva, ...champs } }));
+  };
 
-  const reinitialiser = () => setDevis(etatInitial(profil));
+  const reinitialiser = () => {
+    setDevis(etatInitial(profil));
+    setDevisEnregistre(false);
+  };
 
   const resultat = useMemo(() => {
     const coutHoraireRetenu = profil.coutHoraire[devis.pose.categorie] ?? 0;
@@ -70,9 +93,43 @@ export function useDevis(profil) {
     };
   }, [devis, profil.coutHoraire]);
 
+  /**
+   * Enregistre un instantané du devis tel qu'il est au moment de l'appel —
+   * pas une référence recalculée plus tard : le prix remis au client ne doit
+   * pas bouger si la bibliothèque ou le profil de l'artisan change ensuite.
+   */
+  const enregistrer = async () => {
+    if (!userId || resultat.erreurParametres) return { error: resultat.erreurParametres ?? 'Utilisateur inconnu' };
+
+    setEnEnregistrement(true);
+    setErreurEnregistrement(null);
+
+    const { error } = await supabase.from('devis').insert({
+      artisan_id: userId,
+      client_nom: devis.client.nom,
+      ouvrage_libelle: devis.ouvrage.libelle,
+      fourniture: devis.fourniture,
+      pose: devis.pose,
+      parametres: devis.parametres,
+      tva: devis.tva,
+      resultat,
+    });
+
+    setEnEnregistrement(false);
+    if (error) {
+      setErreurEnregistrement(error);
+      return { error };
+    }
+    setDevisEnregistre(true);
+    return { error: null };
+  };
+
   return {
     devis,
     resultat,
+    enEnregistrement,
+    erreurEnregistrement,
+    devisEnregistre,
     mettreAJourClient,
     mettreAJourOuvrage,
     mettreAJourFourniture,
@@ -80,5 +137,6 @@ export function useDevis(profil) {
     mettreAJourParametre,
     mettreAJourTva,
     reinitialiser,
+    enregistrer,
   };
 }

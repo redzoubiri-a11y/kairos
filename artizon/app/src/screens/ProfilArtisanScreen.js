@@ -88,7 +88,7 @@ function CalculateurFraisGeneraux({ onAppliquer }) {
   );
 }
 
-export default function ProfilArtisanScreen() {
+export default function ProfilArtisanScreen({ userId, deconnecter }) {
   const {
     profil,
     enChargement,
@@ -99,7 +99,7 @@ export default function ProfilArtisanScreen() {
     mettreAJourCoutHoraire,
     mettreAJourParametre,
     sauvegarder,
-  } = useProfilArtisan();
+  } = useProfilArtisan(userId);
 
   if (enChargement || !profil) {
     return (
@@ -110,8 +110,10 @@ export default function ProfilArtisanScreen() {
   }
 
   const enregistrer = async () => {
-    await sauvegarder();
-    if (!erreur) Alert.alert('Profil enregistré', 'Ces paramètres serviront de base à tes prochains devis.');
+    const { error } = await sauvegarder();
+    if (!error) {
+      Alert.alert('Profil enregistré', 'Ces paramètres serviront de base à tes prochains devis.');
+    }
   };
 
   return (
@@ -222,6 +224,10 @@ export default function ProfilArtisanScreen() {
         </TouchableOpacity>
 
         {erreur ? <Text style={styles.texteErreur}>Échec de l'enregistrement — réessaie.</Text> : null}
+
+        <TouchableOpacity style={styles.boutonDeconnexion} onPress={deconnecter}>
+          <Text style={styles.texteDeconnexion}>Se déconnecter</Text>
+        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
@@ -280,4 +286,6 @@ const styles = StyleSheet.create({
   },
   boutonPrincipalTexte: { color: colors.surface, fontWeight: '700', fontSize: 16 },
   texteErreur: { color: colors.danger, marginTop: spacing.sm, textAlign: 'center' },
+  boutonDeconnexion: { marginTop: spacing.xl, alignItems: 'center' },
+  texteDeconnexion: { color: colors.danger, fontWeight: '600' },
 });

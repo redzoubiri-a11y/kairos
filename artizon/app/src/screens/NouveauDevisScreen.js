@@ -1,4 +1,4 @@
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { colors, radius, spacing, typography } from '../theme.js';
@@ -102,8 +102,8 @@ function Synthese({ devis, resultat }) {
   );
 }
 
-export default function NouveauDevisScreen() {
-  const { profil, enChargement } = useProfilArtisan();
+export default function NouveauDevisScreen({ userId }) {
+  const { profil, enChargement } = useProfilArtisan(userId);
 
   if (enChargement || !profil) {
     return (
@@ -113,20 +113,24 @@ export default function NouveauDevisScreen() {
     );
   }
 
-  return <FormulaireDevis profil={profil} />;
+  return <FormulaireDevis profil={profil} userId={userId} />;
 }
 
-function FormulaireDevis({ profil }) {
+function FormulaireDevis({ profil, userId }) {
   const {
     devis,
     resultat,
+    enEnregistrement,
+    erreurEnregistrement,
+    devisEnregistre,
     mettreAJourClient,
     mettreAJourOuvrage,
     mettreAJourFourniture,
     mettreAJourPose,
     mettreAJourParametre,
     mettreAJourTva,
-  } = useDevis(profil);
+    enregistrer,
+  } = useDevis(profil, userId);
 
   return (
     <SafeAreaView style={styles.conteneur} edges={['top']}>
@@ -225,6 +229,23 @@ function FormulaireDevis({ profil }) {
 
         <SectionTitre>Synthèse</SectionTitre>
         <Synthese devis={devis} resultat={resultat} />
+
+        <TouchableOpacity
+          style={[styles.boutonPrincipal, (enEnregistrement || Boolean(resultat.erreurParametres)) && styles.boutonDesactive]}
+          onPress={enregistrer}
+          disabled={enEnregistrement || Boolean(resultat.erreurParametres)}
+        >
+          {enEnregistrement ? (
+            <ActivityIndicator color={colors.surface} />
+          ) : (
+            <Text style={styles.boutonPrincipalTexte}>
+              {devisEnregistre ? 'Devis enregistré ✓' : 'Enregistrer ce devis'}
+            </Text>
+          )}
+        </TouchableOpacity>
+        {erreurEnregistrement ? (
+          <Text style={styles.notePrixEstime}>Échec de l'enregistrement — réessaie.</Text>
+        ) : null}
       </ScrollView>
     </SafeAreaView>
   );
@@ -263,4 +284,13 @@ const styles = StyleSheet.create({
   },
   puceNiveauTexte: { fontSize: 13, fontWeight: '600' },
   notePrixEstime: { ...typography.hint, color: colors.warning, marginTop: spacing.sm },
+  boutonPrincipal: {
+    backgroundColor: colors.primary,
+    borderRadius: radius.md,
+    paddingVertical: spacing.md,
+    alignItems: 'center',
+    marginTop: spacing.lg,
+  },
+  boutonDesactive: { opacity: 0.6 },
+  boutonPrincipalTexte: { color: colors.surface, fontWeight: '700', fontSize: 16 },
 });

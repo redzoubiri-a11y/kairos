@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 import { colors, spacing, typography } from './src/theme.js';
+import { useAuth } from './src/hooks/useAuth.js';
+import AuthScreen from './src/screens/AuthScreen.js';
 import ProfilArtisanScreen from './src/screens/ProfilArtisanScreen.js';
 import NouveauDevisScreen from './src/screens/NouveauDevisScreen.js';
 
@@ -18,7 +20,28 @@ const ONGLETS = [
 ];
 
 export default function App() {
+  const { estConnecte, enChargement, userId, inscrire, connecter, deconnecter } = useAuth();
   const [ongletActif, setOngletActif] = useState('devis');
+
+  if (enChargement) {
+    return (
+      <SafeAreaProvider>
+        <SafeAreaView style={styles.conteneurChargement}>
+          <ActivityIndicator color={colors.primary} />
+        </SafeAreaView>
+      </SafeAreaProvider>
+    );
+  }
+
+  if (!estConnecte) {
+    return (
+      <SafeAreaProvider>
+        <StatusBar style="dark" />
+        <AuthScreen inscrire={inscrire} connecter={connecter} />
+      </SafeAreaProvider>
+    );
+  }
+
   const { Ecran } = ONGLETS.find((o) => o.cle === ongletActif);
 
   return (
@@ -39,12 +62,13 @@ export default function App() {
           ))}
         </View>
       </SafeAreaView>
-      <Ecran />
+      <Ecran userId={userId} deconnecter={deconnecter} />
     </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
+  conteneurChargement: { flex: 1, backgroundColor: colors.background, justifyContent: 'center' },
   barreOnglets: { backgroundColor: colors.surface, borderBottomWidth: 1, borderBottomColor: colors.border },
   barreOngletsContenu: { flexDirection: 'row', paddingHorizontal: spacing.md, paddingTop: spacing.sm },
   onglet: {

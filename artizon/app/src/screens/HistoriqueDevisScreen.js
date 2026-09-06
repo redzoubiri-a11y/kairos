@@ -12,7 +12,9 @@ function formaterDate(iso) {
   if (Number.isNaN(d.getTime())) return '';
   const jour = String(d.getDate()).padStart(2, '0');
   const mois = String(d.getMonth() + 1).padStart(2, '0');
-  return `${jour}/${mois}/${d.getFullYear()}`;
+  const heures = String(d.getHours()).padStart(2, '0');
+  const minutes = String(d.getMinutes()).padStart(2, '0');
+  return `${jour}/${mois}/${d.getFullYear()} ${heures}:${minutes}`;
 }
 
 function LigneDevis({ ligne, onModifier, onSupprimer }) {

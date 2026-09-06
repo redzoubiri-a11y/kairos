@@ -85,8 +85,11 @@ function FormulaireDevis({ profil, userId, devisExistant, onFinModification, ouv
   const [erreurPdf, setErreurPdf] = useState(false);
 
   const validerEnregistrement = async () => {
-    const { error } = await enregistrer();
-    if (!error) onFinModification?.();
+    // Ne quitte pas le mode modification après l'enregistrement : on reste
+    // sur ce devis (pour l'envoyer en PDF juste après, par ex.), comme un
+    // nouveau devis reste affiché après "Enregistrer". Seul "Annuler" (ou
+    // changer d'onglet) quitte explicitement le mode modification.
+    await enregistrer();
   };
 
   const envoyerPdf = async () => {

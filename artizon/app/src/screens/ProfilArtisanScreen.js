@@ -1,18 +1,17 @@
 import { useState } from 'react';
-import {
-  ActivityIndicator,
-  Alert,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { colors, radius, spacing, typography } from '../theme.js';
 import { calculerFraisGeneraux, useProfilArtisan } from '../hooks/useProfilArtisan.js';
+import {
+  Aide,
+  ChampNombre,
+  ChampTexte,
+  SectionTitre,
+  depuisSaisieNombre,
+  versAffichagePourcent,
+} from '../components/Champs.js';
 
 const LIBELLES_COUT_HORAIRE = {
   apprenti: 'Apprenti',
@@ -36,95 +35,6 @@ const LIBELLES_PARAMETRES = {
     aide: 'Marché privé standard : 7 à 12 %. Ajustable affaire par affaire.',
   },
 };
-
-function versAffichagePourcent(valeurDecimale) {
-  if (valeurDecimale === undefined || valeurDecimale === null || Number.isNaN(valeurDecimale)) {
-    return '';
-  }
-  const points = valeurDecimale * 100;
-  return Number.isInteger(points) ? String(points) : points.toFixed(1).replace('.', ',');
-}
-
-function depuisSaisiePourcent(saisie) {
-  const normalisee = saisie.replace(',', '.').trim();
-  if (normalisee === '') return 0;
-  const valeur = Number(normalisee);
-  return Number.isFinite(valeur) ? valeur / 100 : null;
-}
-
-function versAffichageNombre(valeur) {
-  if (valeur === undefined || valeur === null || Number.isNaN(valeur)) return '';
-  return String(valeur).replace('.', ',');
-}
-
-function depuisSaisieNombre(saisie) {
-  const normalisee = saisie.replace(',', '.').trim();
-  if (normalisee === '') return 0;
-  const valeur = Number(normalisee);
-  return Number.isFinite(valeur) ? valeur : null;
-}
-
-function SectionTitre({ children }) {
-  return <Text style={styles.sectionTitre}>{children}</Text>;
-}
-
-function Aide({ children }) {
-  return <Text style={styles.aide}>{children}</Text>;
-}
-
-/** Champ texte simple, sans conversion — pour le texte libre (nom, SIRET...). */
-function ChampTexte({ label, valeur, onChangeText, placeholder, clavier }) {
-  return (
-    <View style={styles.champ}>
-      <Text style={styles.label}>{label}</Text>
-      <TextInput
-        style={styles.saisie}
-        value={valeur}
-        onChangeText={onChangeText}
-        placeholder={placeholder}
-        placeholderTextColor={colors.textMuted}
-        keyboardType={clavier}
-        autoCapitalize="none"
-      />
-    </View>
-  );
-}
-
-/**
- * Champ numérique : garde une chaîne locale pendant la saisie (pour ne pas
- * reformater sous les doigts de l'utilisateur), et ne remonte la valeur
- * numérique au parent qu'une fois la saisie valide.
- */
-function ChampNombre({ label, valeur, onChangeValeur, suffixe, aide, versAffichage, depuisSaisie }) {
-  const [texte, setTexte] = useState(() => versAffichage(valeur));
-  const [aEteModifie, setAEteModifie] = useState(false);
-
-  const affiche = aEteModifie ? texte : versAffichage(valeur);
-
-  return (
-    <View style={styles.champ}>
-      <Text style={styles.label}>{label}</Text>
-      <View style={styles.ligneSaisieSuffixe}>
-        <TextInput
-          style={[styles.saisie, styles.saisieAvecSuffixe]}
-          value={affiche}
-          onChangeText={(t) => {
-            setTexte(t);
-            setAEteModifie(true);
-            const parsed = depuisSaisie(t);
-            if (parsed !== null) onChangeValeur(parsed);
-          }}
-          onBlur={() => setAEteModifie(false)}
-          keyboardType="numeric"
-          placeholder="0"
-          placeholderTextColor={colors.textMuted}
-        />
-        {suffixe ? <Text style={styles.suffixe}>{suffixe}</Text> : null}
-      </View>
-      {aide ? <Aide>{aide}</Aide> : null}
-    </View>
-  );
-}
 
 function CalculateurFraisGeneraux({ onAppliquer }) {
   const [ca, setCa] = useState('');
@@ -273,8 +183,6 @@ export default function ProfilArtisanScreen() {
             valeur={profil.coutHoraire[cle]}
             onChangeValeur={(v) => mettreAJourCoutHoraire(cle, v)}
             suffixe="€/h"
-            versAffichage={versAffichageNombre}
-            depuisSaisie={depuisSaisieNombre}
           />
         ))}
 
@@ -286,7 +194,7 @@ export default function ProfilArtisanScreen() {
           suffixe="%"
           aide="Se constate sur le compte de résultat, ne se devine pas. Repère : 8-14 % en artisanal, 12-20 % avec bureau d'études."
           versAffichage={versAffichagePourcent}
-          depuisSaisie={depuisSaisiePourcent}
+          depuisSaisie={depuisSaisieNombre}
         />
         <CalculateurFraisGeneraux
           onAppliquer={(valeur) => mettreAJourParametre('fraisGeneraux', valeur)}
@@ -302,16 +210,10 @@ export default function ProfilArtisanScreen() {
             onChangeValeur={(v) => mettreAJourParametre(cle, v)}
             suffixe="%"
             aide={aide}
-            versAffichage={versAffichagePourcent}
-            depuisSaisie={depuisSaisiePourcent}
           />
         ))}
 
-        <TouchableOpacity
-          style={styles.boutonPrincipal}
-          onPress={enregistrer}
-          disabled={enSauvegarde}
-        >
+        <TouchableOpacity style={styles.boutonPrincipal} onPress={enregistrer} disabled={enSauvegarde}>
           {enSauvegarde ? (
             <ActivityIndicator color={colors.surface} />
           ) : (
@@ -331,9 +233,7 @@ const styles = StyleSheet.create({
   contenu: { padding: spacing.lg, paddingBottom: spacing.xl },
   titre: { ...typography.title, marginBottom: spacing.xs },
   sousTitre: { ...typography.hint, marginBottom: spacing.lg },
-  sectionTitre: { ...typography.sectionTitle, marginTop: spacing.lg, marginBottom: spacing.sm },
   aide: { ...typography.hint, marginBottom: spacing.sm },
-  champ: { marginBottom: spacing.md },
   label: { ...typography.label, marginBottom: spacing.xs },
   saisie: {
     backgroundColor: colors.surface,
@@ -344,9 +244,6 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
     ...typography.body,
   },
-  ligneSaisieSuffixe: { flexDirection: 'row', alignItems: 'center' },
-  saisieAvecSuffixe: { flex: 1 },
-  suffixe: { ...typography.label, marginLeft: spacing.sm },
   calculateur: {
     backgroundColor: colors.surface,
     borderRadius: radius.md,

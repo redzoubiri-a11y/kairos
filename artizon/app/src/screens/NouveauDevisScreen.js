@@ -39,7 +39,7 @@ const OPTIONS_NATURE_TRAVAUX = [
   { value: 'neuf', label: 'Neuf' },
 ];
 
-export default function NouveauDevisScreen({ userId, devisExistant, onFinModification }) {
+export default function NouveauDevisScreen({ userId, devisExistant, onFinModification, ouvrirComparateurInitial }) {
   const { profil, enChargement } = useProfilArtisan(userId);
 
   if (enChargement || !profil) {
@@ -56,11 +56,12 @@ export default function NouveauDevisScreen({ userId, devisExistant, onFinModific
       userId={userId}
       devisExistant={devisExistant}
       onFinModification={onFinModification}
+      ouvrirComparateurInitial={ouvrirComparateurInitial}
     />
   );
 }
 
-function FormulaireDevis({ profil, userId, devisExistant, onFinModification }) {
+function FormulaireDevis({ profil, userId, devisExistant, onFinModification, ouvrirComparateurInitial }) {
   const {
     devis,
     resultat,
@@ -79,7 +80,7 @@ function FormulaireDevis({ profil, userId, devisExistant, onFinModification }) {
     enregistrer,
   } = useDevis(profil, userId, devisExistant);
   const { clients, ajouter: ajouterClient } = useClients(userId);
-  const [afficherComparateur, setAfficherComparateur] = useState(false);
+  const [afficherComparateur, setAfficherComparateur] = useState(Boolean(ouvrirComparateurInitial));
   const [enGenerationPdf, setEnGenerationPdf] = useState(false);
   const [erreurPdf, setErreurPdf] = useState(false);
 

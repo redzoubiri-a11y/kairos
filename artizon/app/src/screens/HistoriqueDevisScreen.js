@@ -17,7 +17,7 @@ function formaterDate(iso) {
   return `${jour}/${mois}/${d.getFullYear()} ${heures}:${minutes}`;
 }
 
-function LigneDevis({ ligne, onModifier, onSupprimer }) {
+function LigneDevis({ ligne, onModifier, onComparer, onSupprimer }) {
   const [ouvert, setOuvert] = useState(false);
   const [confirmationDemandee, setConfirmationDemandee] = useState(false);
   const [enSuppression, setEnSuppression] = useState(false);
@@ -63,6 +63,9 @@ function LigneDevis({ ligne, onModifier, onSupprimer }) {
               <TouchableOpacity onPress={() => onModifier(ligne)}>
                 <Text style={styles.lienModifier}>Modifier ce devis</Text>
               </TouchableOpacity>
+              <TouchableOpacity onPress={() => onComparer(ligne)}>
+                <Text style={styles.lienModifier}>Comparer des fournisseurs</Text>
+              </TouchableOpacity>
               <TouchableOpacity onPress={() => setConfirmationDemandee(true)}>
                 <Text style={styles.lienSupprimer}>Supprimer</Text>
               </TouchableOpacity>
@@ -74,7 +77,7 @@ function LigneDevis({ ligne, onModifier, onSupprimer }) {
   );
 }
 
-export default function HistoriqueDevisScreen({ userId, onModifier }) {
+export default function HistoriqueDevisScreen({ userId, onModifier, onComparer }) {
   const { devisListe, enChargement, erreur, supprimer } = useHistoriqueDevis(userId);
 
   return (
@@ -90,7 +93,13 @@ export default function HistoriqueDevisScreen({ userId, onModifier }) {
           <Text style={styles.vide}>Aucun devis enregistré pour l'instant.</Text>
         ) : (
           devisListe.map((ligne) => (
-            <LigneDevis key={ligne.id} ligne={ligne} onModifier={onModifier} onSupprimer={supprimer} />
+            <LigneDevis
+              key={ligne.id}
+              ligne={ligne}
+              onModifier={onModifier}
+              onComparer={onComparer}
+              onSupprimer={supprimer}
+            />
           ))
         )}
       </ScrollView>
@@ -123,7 +132,9 @@ const styles = StyleSheet.create({
   detail: { marginTop: spacing.md },
   ligneActions: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     justifyContent: 'space-between',
+    gap: spacing.sm,
     marginTop: spacing.md,
   },
   lienModifier: { color: colors.primary, fontWeight: '600', fontSize: 13 },

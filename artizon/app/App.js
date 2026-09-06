@@ -23,6 +23,7 @@ export default function App() {
   // Devis choisi depuis l'historique pour modification — vécu comme une
   // navigation avec paramètre, sans librairie dédiée pour trois écrans.
   const [devisAModifier, setDevisAModifier] = useState(null);
+  const [ouvrirComparateur, setOuvrirComparateur] = useState(false);
 
   if (enChargement) {
     return (
@@ -44,12 +45,22 @@ export default function App() {
   }
 
   const choisirOnglet = (cle) => {
-    if (cle === 'devis') setDevisAModifier(null);
+    if (cle === 'devis') {
+      setDevisAModifier(null);
+      setOuvrirComparateur(false);
+    }
     setOngletActif(cle);
   };
 
   const modifierDepuisHistorique = (ligne) => {
     setDevisAModifier(ligne);
+    setOuvrirComparateur(false);
+    setOngletActif('devis');
+  };
+
+  const comparerDepuisHistorique = (ligne) => {
+    setDevisAModifier(ligne);
+    setOuvrirComparateur(true);
     setOngletActif('devis');
   };
 
@@ -76,10 +87,18 @@ export default function App() {
           key={devisAModifier?.id ?? 'nouveau'}
           userId={userId}
           devisExistant={devisAModifier}
-          onFinModification={() => setDevisAModifier(null)}
+          onFinModification={() => {
+            setDevisAModifier(null);
+            setOuvrirComparateur(false);
+          }}
+          ouvrirComparateurInitial={ouvrirComparateur}
         />
       ) : ongletActif === 'historique' ? (
-        <HistoriqueDevisScreen userId={userId} onModifier={modifierDepuisHistorique} />
+        <HistoriqueDevisScreen
+          userId={userId}
+          onModifier={modifierDepuisHistorique}
+          onComparer={comparerDepuisHistorique}
+        />
       ) : (
         <ProfilArtisanScreen userId={userId} deconnecter={deconnecter} />
       )}

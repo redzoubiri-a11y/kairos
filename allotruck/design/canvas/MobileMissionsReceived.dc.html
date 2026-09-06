@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper:#F4F5F3; --surface:#FFFFFF; --ink:#16202A; --ink-muted:#57646D; --line:#C9CDC6;
+      --authority:#0F3D5C; --stamp:#2E7D5B; --refusal:#A6342E;
+      --display:'Archivo',Arial,sans-serif; --body:'IBM Plex Sans',-apple-system,sans-serif; --mono:'IBM Plex Mono',ui-monospace,monospace;
+    }
+    body { margin:0; font-family:var(--body); }
+    a { color:var(--authority); } a:hover { color:#0B2E45; }
+    * { box-sizing:border-box; }
+    .cap { font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:0.07em; text-transform:uppercase; color:var(--ink-muted); }
+    .num { font-family:var(--mono); font-variant-numeric:tabular-nums; }
+  </style>
+</helmet>
+
+<div style="width:390px; height:980px; background:#EEF0ED; font-family:var(--body);">
+
+  <div style="background:#fff; padding:18px 20px 14px; border-bottom:1px solid #EEF0ED;">
+    <div style="font-family:var(--display); font-weight:800; font-size:19px;">Missions reçues</div>
+    <div style="font-size:12px; color:var(--ink-muted); margin-top:2px;">4 demande(s)</div>
+  </div>
+
+  <div style="display:flex; background:#fff; padding:10px 20px 14px; gap:8px; border-bottom:1px solid #EEF0ED; overflow:hidden;">
+    <div style="padding:7px 13px; background:#0F3D5C; color:#fff; border-radius:2px; font-size:12px; font-weight:600;">À traiter</div>
+    <div style="padding:7px 13px; border:1px solid #C9CDC6; color:var(--ink-muted); border-radius:2px; font-size:12px;">Toutes</div>
+    <div style="padding:7px 13px; border:1px solid #C9CDC6; color:var(--ink-muted); border-radius:2px; font-size:12px;">Acceptées</div>
+  </div>
+
+  <div style="padding:16px 20px; display:flex; flex-direction:column; gap:14px;">
+
+    <!-- PENDING mission with quick actions -->
+    <div style="background:#fff; border:1px solid #C9CDC6; border-radius:3px; padding:14px 16px;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+        <div>
+          <div style="font-weight:700; font-size:14.5px;">Sétif → Alger</div>
+          <div style="font-size:12px; color:var(--ink-muted); margin-top:2px;">Karim B. · Électroménager</div>
+        </div>
+        <span style="font-family:var(--mono); font-size:10.5px; font-weight:600; padding:4px 10px; border:1px solid #C9CDC6; border-radius:2px; color:#9A6B14;">En attente</span>
+      </div>
+      <div style="display:flex; gap:16px; margin-top:10px;">
+        <span class="num" style="font-size:12.5px; color:var(--ink-muted);">6 m³</span>
+        <span class="num" style="font-size:12.5px; color:var(--ink-muted);">900 kg</span>
+        <span class="num" style="font-size:12.5px; color:var(--ink-muted);">25 000 DA</span>
+      </div>
+      <div style="display:flex; gap:10px; margin-top:14px;">
+        <button style="flex:1; height:40px; background:#2E7D5B; color:#fff; border:none; border-radius:2px; font-family:var(--body); font-weight:700; font-size:13px;">Accepter</button>
+        <span style="flex:1; height:40px; display:flex; align-items:center; justify-content:center; color:#A6342E; font-weight:600; font-size:13px; border:1px solid #C9CDC6; border-radius:2px;">Refuser</span>
+      </div>
+    </div>
+
+    <!-- ACCEPTED — sealed -->
+    <div style="background:#fff; border:1px solid #C9CDC6; border-radius:3px; padding:14px 16px;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+        <div>
+          <div style="font-weight:700; font-size:14.5px;">Alger → Oran</div>
+          <div style="font-size:12px; color:var(--ink-muted); margin-top:2px;">Yasmine T. · Palettes</div>
+        </div>
+        <span style="font-family:var(--mono); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:5px 12px; border:1.5px solid #2E7D5B; border-radius:2px; color:#2E7D5B; transform:rotate(-2deg); display:inline-block;">✓ Acceptée</span>
+      </div>
+      <div style="display:flex; gap:16px; margin-top:10px;">
+        <span class="num" style="font-size:12.5px; color:var(--ink-muted);">5 m³</span>
+        <span class="num" style="font-size:12.5px; color:var(--ink-muted);">800 kg</span>
+      </div>
+    </div>
+
+    <!-- COMPLETED — sealed -->
+    <div style="background:#fff; border:1px solid #C9CDC6; border-radius:3px; padding:14px 16px;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+        <div>
+          <div style="font-weight:700; font-size:14.5px;">Blida → Constantine</div>
+          <div style="font-size:12px; color:var(--ink-muted); margin-top:2px;">Amine R. · Matériaux</div>
+        </div>
+        <span style="font-family:var(--mono); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:5px 12px; border:1.5px solid #2E7D5B; border-radius:2px; color:#2E7D5B; transform:rotate(-1.5deg); display:inline-block;">✓ Terminée</span>
+      </div>
+      <div style="display:flex; gap:16px; margin-top:10px;">
+        <span class="num" style="font-size:12.5px; color:var(--ink-muted);">14 m³</span>
+        <span class="num" style="font-size:12.5px; color:var(--ink-muted);">1 800 kg</span>
+      </div>
+    </div>
+
+    <!-- CANCELLED — flat -->
+    <div style="background:#fff; border:1px solid #C9CDC6; border-radius:3px; padding:14px 16px; opacity:0.75;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+        <div>
+          <div style="font-weight:700; font-size:14.5px;">Annaba → Alger</div>
+          <div style="font-size:12px; color:var(--ink-muted); margin-top:2px;">Sofiane H. · Textile</div>
+        </div>
+        <span style="font-family:var(--mono); font-size:10.5px; font-weight:600; padding:4px 10px; border:1px solid #C9CDC6; border-radius:2px; color:#57646D;">Annulée</span>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

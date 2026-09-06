@@ -56,8 +56,17 @@ async function create(clientUser, data) {
     if (!truck || truck.transporterId !== transporter.id) {
       throw ApiError.badRequest("Ce camion n'appartient pas au transporteur cible");
     }
-    if (data.volumeM3 > truck.volumeM3) throw ApiError.badRequest('Volume superieur a la capacite du camion');
-    if (data.weightKg > truck.capacityKg) throw ApiError.badRequest('Poids superieur a la charge utile du camion');
+    // Une mission rattachee a un trajet est contrainte par la capacite libre du
+    // trajet (verifiee plus bas) ; une mission sans trajet engage directement le
+    // camion, donc sa propre capacite libre — pas sa capacite totale, qui ignore
+    // ce que d'autres missions sans trajet ont deja pris.
+    if (data.tripId) {
+      if (data.volumeM3 > truck.volumeM3) throw ApiError.badRequest('Volume superieur a la capacite du camion');
+      if (data.weightKg > truck.capacityKg) throw ApiError.badRequest('Poids superieur a la charge utile du camion');
+    } else {
+      if (data.volumeM3 > truck.freeVolumeM3) throw ApiError.badRequest('Volume superieur au volume libre du camion');
+      if (data.weightKg > truck.freeWeightKg) throw ApiError.badRequest('Poids superieur a la charge libre du camion');
+    }
   }
 
   if (data.tripId) {
@@ -190,10 +199,46 @@ async function updateStatus(user, missionId, status, reason) {
       }
     }
 
+    // Meme defaut, meme correctif, pour une mission sans trajet : elle n'etait
+    // verifiee qu'a la creation contre la capacite totale du camion, jamais
+    // decomptee a l'acceptation. Deux demandes de 15 m3 sur un camion de 20
+    // passaient toutes les deux la creation, puis les deux acceptations.
+    if (status === 'ACCEPTED' && next.truckId && !next.tripId) {
+      const { count } = await tx.truck.updateMany({
+        where: {
+          id: next.truckId,
+          freeVolumeM3: { gte: next.volumeM3 },
+          freeWeightKg: { gte: next.weightKg },
+        },
+        data: {
+          freeVolumeM3: { decrement: next.volumeM3 },
+          freeWeightKg: { decrement: next.weightKg },
+        },
+      });
+
+      if (count === 0) {
+        const truck = await tx.truck.findUnique({ where: { id: next.truckId } });
+        throw ApiError.badRequest(
+          `Capacite insuffisante sur ce camion : il reste ${truck.freeVolumeM3} m3 et ` +
+            `${truck.freeWeightKg} kg, la mission en demande ${next.volumeM3} m3 et ` +
+            `${next.weightKg} kg. Annulez ou terminez une mission acceptee pour liberer de la place.`
+        );
+      }
+    }
+
     // Cancelling after acceptance gives that capacity back.
     if (status === 'CANCELLED' && mission.status !== 'PENDING' && next.tripId) {
       await tx.trip.update({
         where: { id: next.tripId },
+        data: {
+          freeVolumeM3: { increment: next.volumeM3 },
+          freeWeightKg: { increment: next.weightKg },
+        },
+      });
+    }
+    if (status === 'CANCELLED' && mission.status !== 'PENDING' && next.truckId && !next.tripId) {
+      await tx.truck.update({
+        where: { id: next.truckId },
         data: {
           freeVolumeM3: { increment: next.volumeM3 },
           freeWeightKg: { increment: next.weightKg },

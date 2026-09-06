@@ -167,6 +167,11 @@ model Truck {
   type           TruckType
   capacityKg     Int
   volumeM3       Float
+  // Capacite restante engageable par des missions sans trajet declare : decrementee
+  // a l'acceptation, restituee a l'annulation. Independante de la capacite libre
+  // d'un Trip, qui suit son propre decompte pour les missions rattachees a un trajet.
+  freeVolumeM3   Float     @default(0)
+  freeWeightKg   Int       @default(0)
   photoUrl       String?
   latitude       Float?
   longitude      Float?

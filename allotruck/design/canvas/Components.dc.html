@@ -1,0 +1,383 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper:#F4F5F3; --surface:#FFFFFF; --surface-muted:#EEF0ED; --surface-hover:#EEF0ED;
+      --ink:#16202A; --ink-muted:#57646D; --line:#C9CDC6; --line-strong:#9AA096;
+      --authority:#0F3D5C; --authority-strong:#0B2E45; --authority-soft:#E2ECF2;
+      --stamp:#2E7D5B; --stamp-soft:#E4EFE8;
+      --refusal:#A6342E; --refusal-soft:#F3E1DF;
+      --attention:#9A6B14; --attention-soft:#F3EAD4;
+      --info:#2C5C82; --info-soft:#E2ECF2;
+      --r-xs:2px; --r-sm:3px; --r-md:4px; --r-lg:6px;
+      --display:'Archivo',Arial,sans-serif;
+      --body:'IBM Plex Sans',-apple-system,sans-serif;
+      --mono:'IBM Plex Mono',ui-monospace,monospace;
+    }
+    body { margin:0; background:var(--paper); color:var(--ink); font-family:var(--body); }
+    a { color:var(--authority); }
+    a:hover { color:var(--authority-strong); }
+    * { box-sizing:border-box; }
+    .num { font-family:var(--mono); font-variant-numeric:tabular-nums; }
+    .cap { font-family:var(--mono); font-size:11px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-muted); }
+    .h { font-family:var(--display); font-weight:800; font-size:20px; text-transform:uppercase; letter-spacing:0.2px; border-bottom:1px solid var(--line-strong); padding-bottom:10px; margin-bottom:18px; }
+    .fieldbox { border:1px solid var(--line); padding:9px 12px; }
+    .fieldbox .lbl { font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:0.07em; text-transform:uppercase; color:var(--ink-muted); margin-bottom:3px; }
+    .fieldbox .val { font-size:14px; font-weight:600; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+  </style>
+</helmet>
+
+<div style="width:1300px; background:var(--paper); padding:56px 64px 90px; font-family:var(--body);">
+
+  <div style="padding-bottom:24px; border-bottom:3px solid var(--ink); margin-bottom:44px;">
+    <div style="font-family:var(--display); font-weight:900; font-size:34px; text-transform:uppercase;">Composants</div>
+    <div style="font-size:14px; color:var(--ink-muted); margin-top:6px;">Chaque composant, état par état — direction Bordereau.</div>
+  </div>
+
+  <!-- Boutons -->
+  <div style="margin-bottom:52px;">
+    <div class="h">Boutons</div>
+    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:18px;">
+
+      <div>
+        <div class="cap" style="margin-bottom:10px;">Primaire</div>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <button style="height:44px; background:#0F3D5C; color:#fff; border:none; border-radius:2px; font-family:var(--body); font-weight:600; font-size:14px;">Envoyer la mission</button>
+          <button style="height:44px; background:#0B2E45; color:#fff; border:none; border-radius:2px; font-family:var(--body); font-weight:600; font-size:14px;">Envoyer la mission</button>
+          <button style="height:44px; background:#0F3D5C; color:#fff; border:none; border-radius:2px; font-family:var(--body); font-weight:600; font-size:14px; opacity:0.4;">Envoyer la mission</button>
+          <button style="height:44px; background:#0F3D5C; color:#fff; border:none; border-radius:2px; display:flex; align-items:center; justify-content:center;"><span style="width:16px; height:16px; border:2px solid rgba(255,255,255,0.35); border-top-color:#fff; border-radius:50%; display:inline-block; animation:spin 0.8s linear infinite;"></span></button>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:10px; margin-top:6px;">
+          <div style="font-size:10.5px; color:var(--ink-muted);">Repos</div><div style="font-size:10.5px; color:var(--ink-muted);">Survol / pressé</div><div style="font-size:10.5px; color:var(--ink-muted);">Désactivé</div><div style="font-size:10.5px; color:var(--ink-muted);">Chargement</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="cap" style="margin-bottom:10px;">Contour</div>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <button style="height:44px; background:transparent; color:#0F3D5C; border:1px solid #0F3D5C; border-radius:2px; font-family:var(--body); font-weight:600; font-size:14px;">Retour à la carte</button>
+          <button style="height:44px; background:#E2ECF2; color:#0F3D5C; border:1px solid #0F3D5C; border-radius:2px; font-family:var(--body); font-weight:600; font-size:14px;">Retour à la carte</button>
+          <button style="height:44px; background:transparent; color:#57646D; border:1px solid #C9CDC6; border-radius:2px; font-family:var(--body); font-weight:600; font-size:14px;">Retour à la carte</button>
+          <button style="height:44px; background:transparent; border:1px solid #0F3D5C; border-radius:2px; display:flex; align-items:center; justify-content:center;"><span style="width:16px; height:16px; border:2px solid #cfe0ea; border-top-color:#0F3D5C; border-radius:50%; display:inline-block; animation:spin 0.8s linear infinite;"></span></button>
+        </div>
+      </div>
+
+      <div>
+        <div class="cap" style="margin-bottom:10px;">Texte (destructif)</div>
+        <div style="display:flex; flex-direction:column; gap:10px; padding-top:6px;">
+          <div style="height:20px; color:#A6342E; font-weight:600; font-size:14px;">Refuser</div>
+          <div style="height:20px; color:#A6342E; font-weight:600; font-size:14px; text-decoration:underline;">Refuser</div>
+          <div style="height:20px; color:#57646D; font-weight:600; font-size:14px;">Refuser</div>
+          <div style="height:20px; color:#C9CDC6; font-weight:600; font-size:13px; font-style:italic;">— jamais en chargement —</div>
+        </div>
+      </div>
+
+      <div style="border:1px solid var(--line); border-radius:var(--r-sm); padding:16px; background:var(--surface);">
+        <div class="cap" style="margin-bottom:8px;">Note</div>
+        <div style="font-size:12.5px; line-height:1.6; color:var(--ink);">Cible tactile minimum 44px de hauteur côté mobile, quelle que soit la variante. Le bouton texte destructif n'a pas d'état de chargement : jamais utilisé pour une action bloquante.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Champs de saisie -->
+  <div style="margin-bottom:52px;">
+    <div class="h">Champs de saisie</div>
+    <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:16px;">
+
+      <div>
+        <div class="cap" style="margin-bottom:6px;">Repos</div>
+        <div class="cap" style="color:var(--ink); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.07em; font-size:10.5px;">Ville de chargement</div>
+        <div style="height:44px; border:1px solid #C9CDC6; border-radius:2px; display:flex; align-items:center; padding:0 12px; font-size:14px; background:#fff;">Alger</div>
+      </div>
+      <div>
+        <div class="cap" style="margin-bottom:6px;">Focus</div>
+        <div class="cap" style="color:var(--ink); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.07em; font-size:10.5px;">Ville de livraison</div>
+        <div style="height:44px; border:1.5px solid #0F3D5C; border-radius:2px; display:flex; align-items:center; padding:0 11.5px; font-size:14px; background:#fff;">Oran<span style="display:inline-block; width:1.5px; height:16px; background:#0F3D5C; margin-left:2px;"></span></div>
+      </div>
+      <div>
+        <div class="cap" style="margin-bottom:6px;">Erreur</div>
+        <div class="cap" style="color:var(--ink); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.07em; font-size:10.5px;">Poids total</div>
+        <div style="height:44px; border:1px solid #A6342E; border-radius:2px; display:flex; align-items:center; padding:0 12px; font-size:14px; background:#fff;">32000</div>
+        <div style="font-size:12px; color:#A6342E; margin-top:5px;">Maximum 24 000 kg</div>
+      </div>
+      <div>
+        <div class="cap" style="margin-bottom:6px;">Désactivé</div>
+        <div class="cap" style="color:var(--ink); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.07em; font-size:10.5px;">Transporteur</div>
+        <div style="height:44px; border:1px solid #C9CDC6; border-radius:2px; display:flex; align-items:center; padding:0 12px; font-size:14px; background:#EEF0ED; color:#57646D;">Fret Atlas SARL</div>
+      </div>
+      <div>
+        <div class="cap" style="margin-bottom:6px;">Recherche</div>
+        <div style="height:44px; border:1px solid #C9CDC6; border-radius:2px; display:flex; align-items:center; padding:0 12px; gap:8px; background:#fff;">
+          <svg width="16" height="16" viewBox="0 0 24 24" stroke="#57646D" stroke-width="2" fill="none" stroke-linecap="square"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5,15.5 L21,21"/></svg>
+          <span style="font-size:14px; flex:1;">Sétif</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" stroke="#57646D" stroke-width="2" fill="none" stroke-linecap="square"><path d="M6,6 L18,18 M18,6 L6,18"/></svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Sélecteurs -->
+  <div style="margin-bottom:52px;">
+    <div class="h">Sélecteurs</div>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1.3fr; gap:24px;">
+
+      <div>
+        <div class="cap" style="margin-bottom:8px;">Ville (menu déroulant)</div>
+        <div style="height:44px; border:1px solid #C9CDC6; border-radius:2px; display:flex; align-items:center; justify-content:space-between; padding:0 12px; font-size:14px; background:#fff;">
+          <span>Constantine</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" stroke="#57646D" stroke-width="2" fill="none" stroke-linecap="square"><path d="M6,9 L12,15 L18,9"/></svg>
+        </div>
+      </div>
+
+      <div>
+        <div class="cap" style="margin-bottom:8px;">Type de camion</div>
+        <div style="display:flex; flex-wrap:wrap; gap:8px;">
+          <div style="padding:8px 13px; border:1.5px solid #0F3D5C; color:#0F3D5C; border-radius:2px; font-size:12.5px; font-weight:600;">Fourgon</div>
+          <div style="padding:8px 13px; border:1px solid #C9CDC6; color:#57646D; border-radius:2px; font-size:12.5px;">Plateau</div>
+          <div style="padding:8px 13px; border:1px solid #C9CDC6; color:#57646D; border-radius:2px; font-size:12.5px;">Frigo</div>
+          <div style="padding:8px 13px; border:1px solid #C9CDC6; color:#57646D; border-radius:2px; font-size:12.5px;">Semi-remorque</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="cap" style="margin-bottom:8px;">Curseur de volume</div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+          <span style="font-size:13px; color:var(--ink-muted);">Volume à charger</span>
+          <span class="num" style="font-size:13px; font-weight:600;">12 m³</span>
+        </div>
+        <div style="position:relative; height:4px; background:#C9CDC6; border-radius:2px; margin:14px 0;">
+          <div style="position:absolute; left:0; top:0; height:4px; width:60%; background:#0F3D5C; border-radius:2px;"></div>
+          <div style="position:absolute; left:60%; top:50%; width:16px; height:16px; background:#0F3D5C; border:2px solid #fff; border-radius:50%; transform:translate(-50%,-50%);"></div>
+        </div>
+        <div style="display:flex; justify-content:space-between;"><span class="num" style="font-size:10.5px; color:var(--ink-muted);">1 m³</span><span class="num" style="font-size:10.5px; color:var(--ink-muted);">20 m³</span></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Cartes / champs de document -->
+  <div style="margin-bottom:52px;">
+    <div class="h">Cartes / champs de document</div>
+    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:16px;">
+
+      <div style="border:1px solid var(--line); border-radius:var(--r-sm); overflow:hidden; background:var(--surface);">
+        <div style="padding:12px 14px; border-bottom:1px solid var(--line); font-weight:700; font-size:14px;">Camion 16-12345-24</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr;">
+          <div class="fieldbox"><div class="lbl">Type</div><div class="val">Semi-remorque</div></div>
+          <div class="fieldbox"><div class="lbl">Base</div><div class="val">Alger</div></div>
+          <div class="fieldbox"><div class="lbl">Volume</div><div class="val num">90 m³</div></div>
+          <div class="fieldbox"><div class="lbl">Charge utile</div><div class="val num">24 000 kg</div></div>
+        </div>
+      </div>
+
+      <div style="border:1px solid var(--line); border-radius:var(--r-sm); overflow:hidden; background:var(--surface);">
+        <div style="padding:12px 14px; border-bottom:1px solid var(--line); font-weight:700; font-size:14px;">Alger → Oran</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr;">
+          <div class="fieldbox"><div class="lbl">Départ</div><div class="val">Demain, 06:00</div></div>
+          <div class="fieldbox"><div class="lbl">Marchandises</div><div class="val">Palettes</div></div>
+          <div class="fieldbox"><div class="lbl">Volume libre</div><div class="val num">18 m³</div></div>
+          <div class="fieldbox"><div class="lbl">Charge libre</div><div class="val num">3 000 kg</div></div>
+        </div>
+      </div>
+
+      <div style="border:1px solid var(--line); border-radius:var(--r-sm); overflow:hidden; background:var(--surface);">
+        <div style="padding:12px 14px; border-bottom:1px solid var(--line); font-weight:700; font-size:14px;">Mission — Sétif</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr;">
+          <div class="fieldbox"><div class="lbl">Marchandise</div><div class="val">Électroménager</div></div>
+          <div class="fieldbox"><div class="lbl">Budget</div><div class="val num">25 000 DA</div></div>
+          <div class="fieldbox"><div class="lbl">Volume</div><div class="val num">6 m³</div></div>
+          <div class="fieldbox"><div class="lbl">Poids</div><div class="val num">900 kg</div></div>
+        </div>
+      </div>
+
+      <div style="border:1px solid var(--line); border-radius:var(--r-sm); overflow:hidden; background:var(--surface); display:flex; align-items:center; justify-content:center; min-height:118px; padding:20px;">
+        <div style="text-align:center; color:var(--ink-muted); font-size:12.5px; max-width:20ch;">Aucun trajet déclaré</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Badges -->
+  <div style="margin-bottom:52px;">
+    <div class="h">Badges de statut</div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:32px;">
+      <div>
+        <div class="cap" style="margin-bottom:10px;">Non scellé — étiquette plate</div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <div style="font-family:var(--mono); font-size:12px; font-weight:600; padding:6px 13px; border:1px solid var(--line); border-radius:var(--r-xs); color:#9A6B14;">En attente</div>
+          <div style="font-family:var(--mono); font-size:12px; font-weight:600; padding:6px 13px; border:1px solid var(--line); border-radius:var(--r-xs); color:#0F3D5C;">En cours</div>
+          <div style="font-family:var(--mono); font-size:12px; font-weight:600; padding:6px 13px; border:1px solid var(--line); border-radius:var(--r-xs); color:#0F3D5C;">Planifié</div>
+          <div style="font-family:var(--mono); font-size:12px; font-weight:600; padding:6px 13px; border:1px solid var(--line); border-radius:var(--r-xs); color:#57646D;">Annulée</div>
+        </div>
+      </div>
+      <div>
+        <div class="cap" style="margin-bottom:10px;">Scellé — traitement « tampon » (un seul par écran)</div>
+        <div style="display:flex; gap:14px; flex-wrap:wrap;">
+          <div style="font-family:var(--mono); font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:6px 14px; border:1.5px solid #2E7D5B; border-radius:var(--r-xs); color:#2E7D5B; transform:rotate(-2deg);">✓ Acceptée</div>
+          <div style="font-family:var(--mono); font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:6px 14px; border:1.5px solid #A6342E; border-radius:var(--r-xs); color:#A6342E; transform:rotate(-2deg);">✕ Refusée</div>
+          <div style="font-family:var(--mono); font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:6px 14px; border:1.5px solid #2E7D5B; border-radius:var(--r-xs); color:#2E7D5B; transform:rotate(-1.5deg);">✓ Vérifié</div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:14px; font-size:12.5px; color:var(--ink-muted); max-width:90ch;">Le fond d'un badge n'est jamais colorisé — la couleur porte le texte et la bordure, jamais un aplat. Dans une légende qui liste plusieurs statuts possibles, même un statut normalement scellé reste en traitement plat.</div>
+  </div>
+
+  <!-- Tableau -->
+  <div style="margin-bottom:52px;">
+    <div class="h">Tableau &amp; pagination (back-office)</div>
+    <div style="border:1px solid var(--line); border-radius:var(--r-sm); overflow:hidden;">
+      <div style="display:grid; grid-template-columns:2fr 1.2fr 1fr 1fr; background:var(--surface-muted); border-bottom:1px solid var(--line-strong);">
+        <div class="cap" style="padding:11px 14px;">Transporteur</div>
+        <div class="cap" style="padding:11px 14px;">Ville</div>
+        <div class="cap" style="padding:11px 14px;">Statut</div>
+        <div class="cap" style="padding:11px 14px; text-align:right;">Camions</div>
+      </div>
+      <div style="display:grid; grid-template-columns:2fr 1.2fr 1fr 1fr; border-bottom:1px solid var(--line); background:var(--surface-hover);">
+        <div style="padding:12px 14px; font-size:13.5px; font-weight:600;">Fret Atlas SARL</div>
+        <div style="padding:12px 14px; font-size:13.5px;">Alger</div>
+        <div style="padding:12px 14px;"><span style="font-family:var(--mono); font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:4px 10px; border:1.5px solid #2E7D5B; border-radius:var(--r-xs); color:#2E7D5B; transform:rotate(-2deg); display:inline-block;">✓ Vérifié</span></div>
+        <div class="num" style="padding:12px 14px; text-align:right; font-size:13.5px;">4</div>
+      </div>
+      <div style="display:grid; grid-template-columns:2fr 1.2fr 1fr 1fr; border-bottom:1px solid var(--line);">
+        <div style="padding:12px 14px; font-size:13.5px; font-weight:600;">Transport Numidia</div>
+        <div style="padding:12px 14px; font-size:13.5px;">Oran</div>
+        <div style="padding:12px 14px;"><span style="font-family:var(--mono); font-size:11.5px; font-weight:600; padding:4px 10px; border:1px solid var(--line); border-radius:var(--r-xs); color:#9A6B14; display:inline-block;">En attente</span></div>
+        <div class="num" style="padding:12px 14px; text-align:right; font-size:13.5px;">2</div>
+      </div>
+      <div style="display:grid; grid-template-columns:2fr 1.2fr 1fr 1fr;">
+        <div style="padding:12px 14px; font-size:13.5px; font-weight:600;">Béjaïa Cargo</div>
+        <div style="padding:12px 14px; font-size:13.5px;">Béjaïa</div>
+        <div style="padding:12px 14px;"><span style="font-family:var(--mono); font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:4px 10px; border:1.5px solid #A6342E; border-radius:var(--r-xs); color:#A6342E; transform:rotate(-2deg); display:inline-block;">✕ Refusé</span></div>
+        <div class="num" style="padding:12px 14px; text-align:right; font-size:13.5px;">1</div>
+      </div>
+    </div>
+    <div style="display:flex; justify-content:flex-end; gap:6px; margin-top:12px;">
+      <div style="width:32px; height:32px; border:1px solid var(--line); border-radius:var(--r-xs); display:flex; align-items:center; justify-content:center; font-size:12.5px; color:var(--ink-muted);">1</div>
+      <div style="width:32px; height:32px; background:#0F3D5C; color:#fff; border-radius:var(--r-xs); display:flex; align-items:center; justify-content:center; font-size:12.5px; font-weight:700;">2</div>
+      <div style="width:32px; height:32px; border:1px solid var(--line); border-radius:var(--r-xs); display:flex; align-items:center; justify-content:center; font-size:12.5px; color:var(--ink-muted);">3</div>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <div style="margin-bottom:52px;">
+    <div class="h">Navigation</div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:32px;">
+      <div>
+        <div class="cap" style="margin-bottom:10px;">Mobile — onglets bas</div>
+        <div style="display:flex; border:1px solid var(--line); border-radius:var(--r-sm); overflow:hidden; background:var(--surface);">
+          <div style="flex:1; padding:12px 0; text-align:center; color:#0F3D5C;">
+            <svg width="20" height="20" viewBox="0 0 24 24" stroke="#0F3D5C" stroke-width="1.75" fill="none" stroke-linecap="square"><path d="M4,7 L12,3 L20,7 V17 L12,21 L4,17 Z"/></svg>
+            <div style="font-size:10px; margin-top:3px; font-weight:600;">Carte</div>
+          </div>
+          <div style="flex:1; padding:12px 0; text-align:center; color:#57646D;">
+            <svg width="20" height="20" viewBox="0 0 24 24" stroke="#57646D" stroke-width="1.75" fill="none" stroke-linecap="square"><rect x="2" y="7" width="11" height="8"/><path d="M13,10 h5 l3,3 v2 h-8 z"/></svg>
+            <div style="font-size:10px; margin-top:3px;">Missions</div>
+          </div>
+          <div style="flex:1; padding:12px 0; text-align:center; color:#57646D;">
+            <svg width="20" height="20" viewBox="0 0 24 24" stroke="#57646D" stroke-width="1.75" fill="none" stroke-linecap="square"><circle cx="12" cy="8" r="4"/><path d="M4,21 c0,-4.5 3.6,-7 8,-7 s8,2.5 8,7"/></svg>
+            <div style="font-size:10px; margin-top:3px;">Profil</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="cap" style="margin-bottom:10px;">Back-office — barre latérale</div>
+        <div style="border:1px solid var(--line); border-radius:var(--r-sm); background:var(--surface); overflow:hidden; width:220px;">
+          <div style="padding:11px 16px; border-left:2px solid #0F3D5C; background:var(--surface-muted); font-size:13px; font-weight:700;">Tableau de bord</div>
+          <div style="padding:11px 16px; border-left:2px solid transparent; font-size:13px; color:var(--ink-muted);">Transporteurs</div>
+          <div style="padding:11px 16px; border-left:2px solid transparent; font-size:13px; color:var(--ink-muted);">Trajets</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modales / feuilles -->
+  <div style="margin-bottom:52px;">
+    <div class="h">Modales &amp; feuilles</div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:32px;">
+      <div>
+        <div class="cap" style="margin-bottom:10px;">Feuille remontante (mobile)</div>
+        <div style="width:100%; max-width:320px; background:var(--surface); border:1px solid var(--line); border-radius:var(--r-sm) var(--r-sm) 0 0; box-shadow:0 -4px 14px rgba(22,32,42,0.14); padding:14px 18px 18px;">
+          <div style="width:36px; height:4px; background:var(--line-strong); border-radius:2px; margin:0 auto 14px;"></div>
+          <div style="font-weight:700; font-size:15px;">Fret Atlas SARL</div>
+          <div style="font-size:12.5px; color:var(--ink-muted); margin-top:2px;">Semi-remorque · 16-12345-24</div>
+        </div>
+      </div>
+      <div>
+        <div class="cap" style="margin-bottom:10px;">Confirmation destructive (back-office)</div>
+        <div style="width:100%; max-width:340px; background:var(--surface); border:1px solid var(--line); border-radius:var(--r-sm); box-shadow:0 -4px 14px rgba(22,32,42,0.14); padding:18px;">
+          <div style="font-weight:700; font-size:15px; margin-bottom:8px;">Refuser ce dossier ?</div>
+          <div style="font-size:13px; color:var(--ink-muted); margin-bottom:16px;">Transport Numidia sera notifié du refus.</div>
+          <div style="display:flex; justify-content:flex-end; gap:18px; align-items:center;">
+            <span style="font-size:13.5px; color:var(--ink-muted);">Annuler</span>
+            <span style="font-size:13.5px; font-weight:600; color:#A6342E;">Refuser le dossier</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bannières -->
+  <div style="margin-bottom:52px;">
+    <div class="h">Bannières d'erreur / d'information</div>
+    <div style="display:flex; flex-direction:column; gap:12px; max-width:640px;">
+      <div style="display:flex; align-items:center; gap:10px; padding:13px 16px; background:#F3E1DF; border:1px solid #A6342E; border-radius:var(--r-sm);">
+        <svg width="18" height="18" viewBox="0 0 24 24" stroke="#A6342E" stroke-width="1.75" fill="none" stroke-linecap="square" style="flex:0 0 auto;"><circle cx="12" cy="12" r="9"/><path d="M9,9 L15,15 M15,9 L9,15"/></svg>
+        <span style="font-size:13.5px; color:#A6342E; flex:1;">Connexion au serveur impossible.</span>
+        <span style="font-size:12.5px; font-weight:600; color:#A6342E; border:1px solid #A6342E; border-radius:var(--r-xs); padding:5px 11px;">Réessayer</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px; padding:13px 16px; background:#F3E1DF; border:1px solid #A6342E; border-radius:var(--r-sm);">
+        <svg width="18" height="18" viewBox="0 0 24 24" stroke="#A6342E" stroke-width="1.75" fill="none" stroke-linecap="square" style="flex:0 0 auto;"><circle cx="12" cy="12" r="9"/><path d="M9,9 L15,15 M15,9 L9,15"/></svg>
+        <span style="font-size:13.5px; color:#A6342E;">Un autre client vient de réserver la place restante.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chargement -->
+  <div style="margin-bottom:52px;">
+    <div class="h">Indicateurs de chargement</div>
+    <div style="display:flex; gap:48px; align-items:flex-start;">
+      <div>
+        <div class="cap" style="margin-bottom:10px;">Spinner</div>
+        <span style="width:26px; height:26px; border:2.5px solid #d9dbd8; border-top-color:#0F3D5C; border-radius:50%; display:inline-block; animation:spin 0.8s linear infinite;"></span>
+      </div>
+      <div>
+        <div class="cap" style="margin-bottom:10px;">Squelette de liste</div>
+        <div style="display:flex; flex-direction:column; gap:8px; width:220px;">
+          <div style="height:44px; background:var(--surface-muted); border-radius:var(--r-xs);"></div>
+          <div style="height:44px; background:var(--surface-muted); border-radius:var(--r-xs);"></div>
+          <div style="height:44px; background:var(--surface-muted); border-radius:var(--r-xs);"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mode sombre -->
+  <div>
+    <div class="h">En mode sombre</div>
+    <div style="background:#14181A; border-radius:var(--r-sm); padding:28px; display:flex; gap:28px; align-items:center;">
+      <button style="height:44px; padding:0 18px; background:#74ACCE; color:#0B2334; border:none; border-radius:2px; font-family:var(--body); font-weight:700; font-size:13.5px;">Envoyer la mission</button>
+      <div style="font-family:var(--mono); font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; padding:6px 14px; border:1.5px solid #57BD8E; border-radius:var(--r-xs); color:#57BD8E; transform:rotate(-2deg);">✓ Acceptée</div>
+      <div style="border:1px solid #333B3D; border-radius:var(--r-sm); background:#1C2224; overflow:hidden; width:220px;">
+        <div style="padding:11px 14px; border-bottom:1px solid #333B3D; font-weight:700; font-size:13.5px; color:#ECEEEA;">Alger → Oran</div>
+        <div style="padding:11px 14px; font-size:12px; color:#9BA6A0;">Volume libre <span class="num" style="color:#ECEEEA;">18 m³</span></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

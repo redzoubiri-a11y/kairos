@@ -5,9 +5,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, radius, spacing, typography } from '../theme.js';
 import { useProfilArtisan } from '../hooks/useProfilArtisan.js';
 import { useDevis } from '../hooks/useDevis.js';
+import { useClients } from '../hooks/useClients.js';
 import { formaterEuros, formaterPourcent } from '../lib/format.js';
 import { Aide, ChampNombre, ChampTexte, ChoixChips, SectionTitre } from '../components/Champs.js';
 import ComparateurFournisseurs from '../components/ComparateurFournisseurs.js';
+import SelectionClient from '../components/SelectionClient.js';
 
 const OPTIONS_CATEGORIE = [
   { value: 'apprenti', label: 'Apprenti' },
@@ -135,6 +137,7 @@ function FormulaireDevis({ profil, userId }) {
     mettreAJourTva,
     enregistrer,
   } = useDevis(profil, userId);
+  const { clients, ajouter: ajouterClient } = useClients(userId);
   const [afficherComparateur, setAfficherComparateur] = useState(false);
 
   return (
@@ -152,6 +155,12 @@ function FormulaireDevis({ profil, userId }) {
           valeur={devis.client.nom}
           onChangeText={(v) => mettreAJourClient({ nom: v })}
           placeholder="Ex. M. Khelifi"
+        />
+        <SelectionClient
+          clients={clients}
+          nomActuel={devis.client.nom}
+          onChoisir={(c) => mettreAJourClient({ nom: c.nom })}
+          onCreer={ajouterClient}
         />
 
         <SectionTitre>Prestation</SectionTitre>

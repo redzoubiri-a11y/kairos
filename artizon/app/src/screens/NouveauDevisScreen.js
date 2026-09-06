@@ -128,7 +128,9 @@ function FormulaireDevis({ profil, userId }) {
     mettreAJourClient,
     mettreAJourOuvrage,
     mettreAJourFourniture,
-    mettreAJourPose,
+    mettreAJourLignePose,
+    ajouterLignePose,
+    retirerLignePose,
     mettreAJourParametre,
     mettreAJourTva,
     enregistrer,
@@ -189,19 +191,37 @@ function FormulaireDevis({ profil, userId }) {
         ) : null}
 
         <SectionTitre>Pose</SectionTitre>
-        <ChampNombre
-          label="Temps de pose"
-          valeur={devis.pose.heures}
-          onChangeValeur={(v) => mettreAJourPose({ heures: v })}
-          suffixe="h"
-        />
-        <ChoixChips
-          label="Qui pose ?"
-          options={OPTIONS_CATEGORIE}
-          valeur={devis.pose.categorie}
-          onChangeValeur={(v) => mettreAJourPose({ categorie: v })}
-          aide={`Coût horaire retenu : ${formaterEuros(resultat.coutHoraireRetenu)}/h — modifiable dans ton profil.`}
-        />
+        {devis.pose.lignes.map((ligne, index) => (
+          <View key={index}>
+            {index > 0 ? <View style={styles.separateurLigne} /> : null}
+            <ChampNombre
+              label={devis.pose.lignes.length > 1 ? `Temps de pose — ouvrier ${index + 1}` : 'Temps de pose'}
+              valeur={ligne.heures}
+              onChangeValeur={(v) => mettreAJourLignePose(index, { heures: v })}
+              suffixe="h"
+            />
+            <ChoixChips
+              label="Qui pose ?"
+              options={OPTIONS_CATEGORIE}
+              valeur={ligne.categorie}
+              onChangeValeur={(v) => mettreAJourLignePose(index, { categorie: v })}
+              aide={`Coût horaire retenu : ${formaterEuros(resultat.lignesMainOeuvre[index]?.coutHoraire ?? 0)}/h — modifiable dans ton profil.`}
+            />
+            {devis.pose.lignes.length > 1 ? (
+              <TouchableOpacity onPress={() => retirerLignePose(index)}>
+                <Text style={styles.retirerLigne}>Retirer cet ouvrier</Text>
+              </TouchableOpacity>
+            ) : null}
+          </View>
+        ))}
+        <TouchableOpacity onPress={ajouterLignePose} style={styles.lienAjouterOuvrier}>
+          <Text style={styles.lienAjouterOuvrierTexte}>+ Ajouter un ouvrier</Text>
+        </TouchableOpacity>
+        {devis.pose.lignes.length > 1 ? (
+          <Aide>
+            Total pose : {resultat.heuresTotal} h — {formaterEuros(resultat.mainOeuvre)} de main d'œuvre.
+          </Aide>
+        ) : null}
 
         <SectionTitre>Paramètres de l'affaire</SectionTitre>
         <Aide>Pré-remplis depuis ton profil — ajustables pour cette affaire précise.</Aide>
@@ -277,6 +297,10 @@ const styles = StyleSheet.create({
   sousTitre: { ...typography.hint, marginBottom: spacing.lg },
   lienComparateur: { marginTop: spacing.sm, alignSelf: 'flex-start' },
   lienComparateurTexte: { color: colors.primary, fontWeight: '600', fontSize: 13 },
+  separateurLigne: { height: 1, backgroundColor: colors.border, marginVertical: spacing.md },
+  retirerLigne: { color: colors.danger, fontSize: 13, marginTop: -spacing.xs, marginBottom: spacing.sm },
+  lienAjouterOuvrier: { marginTop: spacing.xs, marginBottom: spacing.sm, alignSelf: 'flex-start' },
+  lienAjouterOuvrierTexte: { color: colors.primary, fontWeight: '600', fontSize: 13 },
   carteSynthese: {
     backgroundColor: colors.surface,
     borderRadius: radius.md,

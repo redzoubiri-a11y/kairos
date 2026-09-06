@@ -1,14 +1,28 @@
 import { useMemo, useState } from 'react';
 
 import { supabase } from '../lib/supabase.js';
-import { coutMainOeuvre, debourseSec, lireCoefficient, prixDeVente, tauxApplicable } from '../lib/moteur.js';
+import {
+  arrondi,
+  coutMainOeuvre,
+  debourseSec,
+  euros,
+  lireCoefficient,
+  prixDeVente,
+  tauxApplicable,
+} from '../lib/moteur.js';
+
+function ligneVide() {
+  return { heures: 0, categorie: 'ouvrierQualifie' };
+}
 
 function etatInitial(profil) {
   return {
     client: { nom: '' },
     ouvrage: { libelle: '' },
     fourniture: { prix: 0, ferme: false },
-    pose: { heures: 0, categorie: 'ouvrierQualifie' },
+    // Une ligne par ouvrier posé sur le chantier — un solo n'en a qu'une,
+    // une équipe en ajoute une par profil différent (apprenti + qualifié...).
+    pose: { lignes: [ligneVide()] },
     parametres: { ...profil.parametresDefaut },
     tva: { typeLocal: 'habitation', ageLogementAnnees: '', natureTravaux: 'amelioration' },
   };
@@ -38,9 +52,21 @@ export function useDevis(profil, userId) {
     setDevisEnregistre(false);
     setDevis((d) => ({ ...d, fourniture: { ...d.fourniture, ...champs } }));
   };
-  const mettreAJourPose = (champs) => {
+  const mettreAJourLignePose = (index, champs) => {
     setDevisEnregistre(false);
-    setDevis((d) => ({ ...d, pose: { ...d.pose, ...champs } }));
+    setDevis((d) => ({
+      ...d,
+      pose: { lignes: d.pose.lignes.map((l, i) => (i === index ? { ...l, ...champs } : l)) },
+    }));
+  };
+  const ajouterLignePose = () => {
+    setDevisEnregistre(false);
+    setDevis((d) => ({ ...d, pose: { lignes: [...d.pose.lignes, ligneVide()] } }));
+  };
+  const retirerLignePose = (index) => {
+    if (devis.pose.lignes.length <= 1) return;
+    setDevisEnregistre(false);
+    setDevis((d) => ({ ...d, pose: { lignes: d.pose.lignes.filter((_, i) => i !== index) } }));
   };
   const mettreAJourParametre = (cle, valeur) => {
     setDevisEnregistre(false);
@@ -57,12 +83,20 @@ export function useDevis(profil, userId) {
   };
 
   const resultat = useMemo(() => {
-    const coutHoraireRetenu = profil.coutHoraire[devis.pose.categorie] ?? 0;
-    const mainOeuvre = coutMainOeuvre({
-      tempsUnitaire: devis.pose.heures || 0,
-      coutHoraire: coutHoraireRetenu,
-      coefficientContexte: 1,
+    // Une ligne de main d'oeuvre par ouvrier, chacun a son propre cout
+    // horaire selon sa categorie — le total est la somme de ces lignes,
+    // pas un taux moyen qui masquerait la composition reelle de l'equipe.
+    const lignesMainOeuvre = devis.pose.lignes.map((ligne) => {
+      const coutHoraire = profil.coutHoraire[ligne.categorie] ?? 0;
+      const montant = coutMainOeuvre({
+        tempsUnitaire: ligne.heures || 0,
+        coutHoraire,
+        coefficientContexte: 1,
+      });
+      return { ...ligne, coutHoraire, montant };
     });
+    const mainOeuvre = euros(lignesMainOeuvre.reduce((s, l) => s + l.montant, 0));
+    const heuresTotal = arrondi(devis.pose.lignes.reduce((s, l) => s + (Number(l.heures) || 0), 0), 2);
     const ds = debourseSec({ fournitures: devis.fourniture.prix || 0, mainOeuvre, materiel: 0 });
 
     let chaine = null;
@@ -82,7 +116,8 @@ export function useDevis(profil, userId) {
     const totalTTC = chaine ? chaine.prixVente * (1 + tva.taux) : null;
 
     return {
-      coutHoraireRetenu,
+      lignesMainOeuvre,
+      heuresTotal,
       mainOeuvre,
       debourseSec: ds,
       chaine,
@@ -133,7 +168,9 @@ export function useDevis(profil, userId) {
     mettreAJourClient,
     mettreAJourOuvrage,
     mettreAJourFourniture,
-    mettreAJourPose,
+    mettreAJourLignePose,
+    ajouterLignePose,
+    retirerLignePose,
     mettreAJourParametre,
     mettreAJourTva,
     reinitialiser,

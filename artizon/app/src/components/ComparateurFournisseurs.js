@@ -72,11 +72,11 @@ export default function ComparateurFournisseurs({ libelleOuvrage, onChoisir, onF
         ) : null}
       </View>
       <Aide>
-        Fournisseur et prix suffisent pour comparer — délai et décennale sont optionnels.
+        Fournisseur, prix et décennale suffisent pour comparer — le délai est optionnel.
       </Aide>
       <TouchableOpacity onPress={() => setAvanceVisible((v) => !v)} style={styles.lienAvance}>
         <Text style={styles.lienAvanceTexte}>
-          {avanceVisible ? 'Masquer délai et décennale' : '+ Délai et décennale (optionnel)'}
+          {avanceVisible ? 'Masquer le délai' : '+ Délai (optionnel)'}
         </Text>
       </TouchableOpacity>
 
@@ -114,16 +114,14 @@ export default function ComparateurFournisseurs({ libelleOuvrage, onChoisir, onF
               />
             </View>
           ) : null}
-          {avanceVisible ? (
-            <TouchableOpacity
-              onPress={() => mettreAJour(index, { assuranceDecennale: !offre.assuranceDecennale })}
-              style={styles.champAssurance}
-            >
-              <Text style={[styles.badgeAssurance, !offre.assuranceDecennale && styles.badgeAssuranceManquante]}>
-                {offre.assuranceDecennale ? 'Décennale ✓' : 'Décennale ?'}
-              </Text>
-            </TouchableOpacity>
-          ) : null}
+          <TouchableOpacity
+            onPress={() => mettreAJour(index, { assuranceDecennale: !offre.assuranceDecennale })}
+            style={styles.champAssurance}
+          >
+            <Text style={[styles.badgeAssurance, !offre.assuranceDecennale && styles.badgeAssuranceManquante]}>
+              {offre.assuranceDecennale ? 'Décennale ✓' : 'Décennale ?'}
+            </Text>
+          </TouchableOpacity>
           {offres.length > 2 ? (
             <TouchableOpacity onPress={() => retirer(index)}>
               <Text style={styles.retirer}>Retirer</Text>

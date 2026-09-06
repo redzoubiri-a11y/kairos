@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { colors, spacing, typography } from '../theme.js';
+import { colors, radius, spacing, typography } from '../theme.js';
 import { useHistoriqueDevis } from '../hooks/useHistoriqueDevis.js';
 import { formaterEuros } from '../lib/format.js';
 import SyntheseDevis from '../components/SyntheseDevis.js';
@@ -19,22 +19,17 @@ function formaterDate(iso) {
 
 function LigneDevis({ ligne, onModifier, onSupprimer }) {
   const [ouvert, setOuvert] = useState(false);
+  const [confirmationDemandee, setConfirmationDemandee] = useState(false);
   const [enSuppression, setEnSuppression] = useState(false);
   const totalTTC = ligne.resultat?.totalTTC;
 
-  const confirmerSuppression = () => {
-    Alert.alert('Supprimer ce devis ?', 'Cette action est irréversible.', [
-      { text: 'Annuler', style: 'cancel' },
-      {
-        text: 'Supprimer',
-        style: 'destructive',
-        onPress: async () => {
-          setEnSuppression(true);
-          const { error } = await onSupprimer(ligne.id);
-          if (error) setEnSuppression(false);
-        },
-      },
-    ]);
+  const supprimer = async () => {
+    setEnSuppression(true);
+    const { error } = await onSupprimer(ligne.id);
+    if (error) {
+      setEnSuppression(false);
+      setConfirmationDemandee(false);
+    }
   };
 
   return (
@@ -51,16 +46,28 @@ function LigneDevis({ ligne, onModifier, onSupprimer }) {
       {ouvert && ligne.resultat ? (
         <View style={styles.detail}>
           <SyntheseDevis devis={{ fourniture: ligne.fourniture }} resultat={ligne.resultat} />
-          <View style={styles.ligneActions}>
-            <TouchableOpacity onPress={() => onModifier(ligne)} disabled={enSuppression}>
-              <Text style={styles.lienModifier}>Modifier ce devis</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={confirmerSuppression} disabled={enSuppression}>
-              <Text style={styles.lienSupprimer}>
-                {enSuppression ? 'Suppression…' : 'Supprimer'}
-              </Text>
-            </TouchableOpacity>
-          </View>
+          {confirmationDemandee ? (
+            <View style={styles.confirmation}>
+              <Text style={styles.confirmationTexte}>Supprimer ce devis ? Action irréversible.</Text>
+              <View style={styles.ligneActions}>
+                <TouchableOpacity onPress={() => setConfirmationDemandee(false)} disabled={enSuppression}>
+                  <Text style={styles.lienModifier}>Annuler</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={supprimer} disabled={enSuppression}>
+                  <Text style={styles.lienSupprimer}>{enSuppression ? 'Suppression…' : 'Oui, supprimer'}</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          ) : (
+            <View style={styles.ligneActions}>
+              <TouchableOpacity onPress={() => onModifier(ligne)}>
+                <Text style={styles.lienModifier}>Modifier ce devis</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => setConfirmationDemandee(true)}>
+                <Text style={styles.lienSupprimer}>Supprimer</Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
       ) : null}
     </View>
@@ -121,4 +128,13 @@ const styles = StyleSheet.create({
   },
   lienModifier: { color: colors.primary, fontWeight: '600', fontSize: 13 },
   lienSupprimer: { color: colors.danger, fontWeight: '600', fontSize: 13 },
+  confirmation: {
+    marginTop: spacing.md,
+    backgroundColor: colors.background,
+    borderWidth: 1,
+    borderColor: colors.danger,
+    borderRadius: radius.sm,
+    padding: spacing.sm,
+  },
+  confirmationTexte: { ...typography.body, color: colors.danger, marginBottom: spacing.sm },
 });

@@ -25,6 +25,7 @@ function estValide(offre) {
  */
 export default function ComparateurFournisseurs({ libelleOuvrage, onChoisir, onFermer }) {
   const [offres, setOffres] = useState(() => [offreVide(), offreVide()]);
+  const [avanceVisible, setAvanceVisible] = useState(false);
 
   const mettreAJour = (index, champs) => {
     setOffres((liste) => liste.map((o, i) => (i === index ? { ...o, ...champs } : o)));
@@ -71,9 +72,13 @@ export default function ComparateurFournisseurs({ libelleOuvrage, onChoisir, onF
         ) : null}
       </View>
       <Aide>
-        Ramène chaque devis reçu sur la même base et repère l'offre incomplète ou anormalement
-        basse — celle qui manque une prestation se rattrape toujours en cours de chantier.
+        Fournisseur et prix suffisent pour comparer — délai et décennale sont optionnels.
       </Aide>
+      <TouchableOpacity onPress={() => setAvanceVisible((v) => !v)} style={styles.lienAvance}>
+        <Text style={styles.lienAvanceTexte}>
+          {avanceVisible ? 'Masquer délai et décennale' : '+ Délai et décennale (optionnel)'}
+        </Text>
+      </TouchableOpacity>
 
       {offres.map((offre, index) => (
         <View key={index} style={styles.ligneOffre}>
@@ -96,25 +101,29 @@ export default function ComparateurFournisseurs({ libelleOuvrage, onChoisir, onF
               placeholderTextColor={colors.textMuted}
             />
           </View>
-          <View style={styles.champDelai}>
-            <Text style={styles.label}>Délai (j)</Text>
-            <TextInput
-              style={styles.saisie}
-              value={offre.delaiJours}
-              onChangeText={(v) => mettreAJour(index, { delaiJours: v.replace(/[^0-9]/g, '') })}
-              keyboardType="numeric"
-              placeholder="—"
-              placeholderTextColor={colors.textMuted}
-            />
-          </View>
-          <TouchableOpacity
-            onPress={() => mettreAJour(index, { assuranceDecennale: !offre.assuranceDecennale })}
-            style={styles.champAssurance}
-          >
-            <Text style={[styles.badgeAssurance, !offre.assuranceDecennale && styles.badgeAssuranceManquante]}>
-              {offre.assuranceDecennale ? 'Décennale ✓' : 'Décennale ?'}
-            </Text>
-          </TouchableOpacity>
+          {avanceVisible ? (
+            <View style={styles.champDelai}>
+              <Text style={styles.label}>Délai (j)</Text>
+              <TextInput
+                style={styles.saisie}
+                value={offre.delaiJours}
+                onChangeText={(v) => mettreAJour(index, { delaiJours: v.replace(/[^0-9]/g, '') })}
+                keyboardType="numeric"
+                placeholder="—"
+                placeholderTextColor={colors.textMuted}
+              />
+            </View>
+          ) : null}
+          {avanceVisible ? (
+            <TouchableOpacity
+              onPress={() => mettreAJour(index, { assuranceDecennale: !offre.assuranceDecennale })}
+              style={styles.champAssurance}
+            >
+              <Text style={[styles.badgeAssurance, !offre.assuranceDecennale && styles.badgeAssuranceManquante]}>
+                {offre.assuranceDecennale ? 'Décennale ✓' : 'Décennale ?'}
+              </Text>
+            </TouchableOpacity>
+          ) : null}
           {offres.length > 2 ? (
             <TouchableOpacity onPress={() => retirer(index)}>
               <Text style={styles.retirer}>Retirer</Text>
@@ -184,6 +193,8 @@ const styles = StyleSheet.create({
   entete: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   titre: { ...typography.sectionTitle, fontSize: 15 },
   fermer: { color: colors.primary, fontWeight: '600' },
+  lienAvance: { marginTop: spacing.xs, marginBottom: spacing.xs },
+  lienAvanceTexte: { color: colors.primary, fontWeight: '600', fontSize: 12 },
   ligneOffre: {
     flexDirection: 'row',
     alignItems: 'flex-end',

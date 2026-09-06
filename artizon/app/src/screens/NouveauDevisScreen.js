@@ -7,6 +7,8 @@ import { useProfilArtisan } from '../hooks/useProfilArtisan.js';
 import { useDevis } from '../hooks/useDevis.js';
 import { useClients } from '../hooks/useClients.js';
 import { formaterEuros } from '../lib/format.js';
+import { genererDevisHtml } from '../lib/genererDevisHtml.js';
+import { genererEtPartagerPdfDevis } from '../lib/genererPdfDevis.js';
 import { Aide, ChampNombre, ChampTexte, ChoixChips, SectionTitre } from '../components/Champs.js';
 import ComparateurFournisseurs from '../components/ComparateurFournisseurs.js';
 import SelectionClient from '../components/SelectionClient.js';
@@ -78,10 +80,25 @@ function FormulaireDevis({ profil, userId, devisExistant, onFinModification }) {
   } = useDevis(profil, userId, devisExistant);
   const { clients, ajouter: ajouterClient } = useClients(userId);
   const [afficherComparateur, setAfficherComparateur] = useState(false);
+  const [enGenerationPdf, setEnGenerationPdf] = useState(false);
+  const [erreurPdf, setErreurPdf] = useState(false);
 
   const validerEnregistrement = async () => {
     const { error } = await enregistrer();
     if (!error) onFinModification?.();
+  };
+
+  const envoyerPdf = async () => {
+    setEnGenerationPdf(true);
+    setErreurPdf(false);
+    try {
+      const html = genererDevisHtml({ profil, devis, resultat });
+      await genererEtPartagerPdfDevis(html);
+    } catch {
+      setErreurPdf(true);
+    } finally {
+      setEnGenerationPdf(false);
+    }
   };
 
   return (
@@ -251,6 +268,27 @@ function FormulaireDevis({ profil, userId, devisExistant, onFinModification }) {
         {erreurEnregistrement ? (
           <Text style={styles.notePrixEstime}>Échec de l'enregistrement — réessaie.</Text>
         ) : null}
+
+        <TouchableOpacity
+          style={[
+            styles.boutonSecondaire,
+            (enGenerationPdf || Boolean(resultat.erreurParametres)) && styles.boutonDesactive,
+          ]}
+          onPress={envoyerPdf}
+          disabled={enGenerationPdf || Boolean(resultat.erreurParametres)}
+        >
+          {enGenerationPdf ? (
+            <ActivityIndicator color={colors.primary} />
+          ) : (
+            <Text style={styles.boutonSecondaireTexte}>Envoyer le devis (PDF)</Text>
+          )}
+        </TouchableOpacity>
+        {erreurPdf ? <Text style={styles.notePrixEstime}>Échec de la génération du PDF — réessaie.</Text> : null}
+        {!profil.entreprise.nom || !profil.entreprise.siret ? (
+          <Text style={styles.notePrixEstime}>
+            Complète le nom et le SIRET de ton entreprise dans "Mon profil" — mentions obligatoires sur un devis.
+          </Text>
+        ) : null}
       </ScrollView>
     </SafeAreaView>
   );
@@ -291,4 +329,14 @@ const styles = StyleSheet.create({
   },
   boutonDesactive: { opacity: 0.6 },
   boutonPrincipalTexte: { color: colors.surface, fontWeight: '700', fontSize: 16 },
+  boutonSecondaire: {
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.primary,
+    borderRadius: radius.md,
+    paddingVertical: spacing.md,
+    alignItems: 'center',
+    marginTop: spacing.sm,
+  },
+  boutonSecondaireTexte: { color: colors.primary, fontWeight: '700', fontSize: 16 },
 });

@@ -15,7 +15,25 @@ function ligneVide() {
   return { heures: 0, categorie: 'ouvrierQualifie' };
 }
 
-function etatInitial(profil) {
+function etatInitial(profil, devisExistant) {
+  if (devisExistant) {
+    return {
+      client: { nom: devisExistant.client_nom ?? '' },
+      ouvrage: { libelle: devisExistant.ouvrage_libelle ?? '' },
+      fourniture: {
+        prix: devisExistant.fourniture?.prix ?? 0,
+        ferme: devisExistant.fourniture?.ferme ?? false,
+      },
+      pose: { lignes: devisExistant.pose?.lignes?.length ? devisExistant.pose.lignes : [ligneVide()] },
+      parametres: { ...profil.parametresDefaut, ...devisExistant.parametres },
+      tva: {
+        typeLocal: 'habitation',
+        ageLogementAnnees: '',
+        natureTravaux: 'amelioration',
+        ...devisExistant.tva,
+      },
+    };
+  }
   return {
     client: { nom: '' },
     ouvrage: { libelle: '' },
@@ -33,9 +51,14 @@ function etatInitial(profil) {
  * artisan qui achète une fourniture chez un fabricant et assure la pose :
  * déboursé -> prix de vente -> TVA -> total TTC. Un seul ouvrage à la fois —
  * le cas réel (l'escalier) qui a servi de test.
+ *
+ * `devisExistant` (ligne Supabase brute, venant de l'historique) bascule le
+ * hook en mode modification : le formulaire part de ses valeurs et
+ * `enregistrer` met à jour cette même ligne au lieu d'en créer une nouvelle.
  */
-export function useDevis(profil, userId) {
-  const [devis, setDevis] = useState(() => etatInitial(profil));
+export function useDevis(profil, userId, devisExistant) {
+  const [devis, setDevis] = useState(() => etatInitial(profil, devisExistant));
+  const [devisId, setDevisId] = useState(devisExistant?.id ?? null);
   const [enEnregistrement, setEnEnregistrement] = useState(false);
   const [erreurEnregistrement, setErreurEnregistrement] = useState(null);
   const [devisEnregistre, setDevisEnregistre] = useState(false);
@@ -79,6 +102,7 @@ export function useDevis(profil, userId) {
 
   const reinitialiser = () => {
     setDevis(etatInitial(profil));
+    setDevisId(null);
     setDevisEnregistre(false);
   };
 
@@ -139,7 +163,7 @@ export function useDevis(profil, userId) {
     setEnEnregistrement(true);
     setErreurEnregistrement(null);
 
-    const { error } = await supabase.from('devis').insert({
+    const champs = {
       artisan_id: userId,
       client_nom: devis.client.nom,
       ouvrage_libelle: devis.ouvrage.libelle,
@@ -148,13 +172,21 @@ export function useDevis(profil, userId) {
       parametres: devis.parametres,
       tva: devis.tva,
       resultat,
-    });
+    };
+
+    // Modifie la ligne existante si on est arrivés depuis l'historique, sinon
+    // crée une nouvelle ligne — et retient son id pour qu'un second
+    // enregistrement sur le même écran mette à jour plutôt que dupliquer.
+    const { data, error } = devisId
+      ? await supabase.from('devis').update(champs).eq('id', devisId)
+      : await supabase.from('devis').insert(champs).select('id').single();
 
     setEnEnregistrement(false);
     if (error) {
       setErreurEnregistrement(error);
       return { error };
     }
+    if (!devisId && data) setDevisId(data.id);
     setDevisEnregistre(true);
     return { error: null };
   };
@@ -165,6 +197,7 @@ export function useDevis(profil, userId) {
     enEnregistrement,
     erreurEnregistrement,
     devisEnregistre,
+    estModification: Boolean(devisExistant),
     mettreAJourClient,
     mettreAJourOuvrage,
     mettreAJourFourniture,

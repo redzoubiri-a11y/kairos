@@ -37,7 +37,7 @@ const OPTIONS_NATURE_TRAVAUX = [
   { value: 'neuf', label: 'Neuf' },
 ];
 
-export default function NouveauDevisScreen({ userId }) {
+export default function NouveauDevisScreen({ userId, devisExistant, onFinModification }) {
   const { profil, enChargement } = useProfilArtisan(userId);
 
   if (enChargement || !profil) {
@@ -48,16 +48,24 @@ export default function NouveauDevisScreen({ userId }) {
     );
   }
 
-  return <FormulaireDevis profil={profil} userId={userId} />;
+  return (
+    <FormulaireDevis
+      profil={profil}
+      userId={userId}
+      devisExistant={devisExistant}
+      onFinModification={onFinModification}
+    />
+  );
 }
 
-function FormulaireDevis({ profil, userId }) {
+function FormulaireDevis({ profil, userId, devisExistant, onFinModification }) {
   const {
     devis,
     resultat,
     enEnregistrement,
     erreurEnregistrement,
     devisEnregistre,
+    estModification,
     mettreAJourClient,
     mettreAJourOuvrage,
     mettreAJourFourniture,
@@ -67,18 +75,31 @@ function FormulaireDevis({ profil, userId }) {
     mettreAJourParametre,
     mettreAJourTva,
     enregistrer,
-  } = useDevis(profil, userId);
+  } = useDevis(profil, userId, devisExistant);
   const { clients, ajouter: ajouterClient } = useClients(userId);
   const [afficherComparateur, setAfficherComparateur] = useState(false);
+
+  const validerEnregistrement = async () => {
+    const { error } = await enregistrer();
+    if (!error) onFinModification?.();
+  };
 
   return (
     <SafeAreaView style={styles.conteneur} edges={['top']}>
       <ScrollView contentContainerStyle={styles.contenu} keyboardShouldPersistTaps="handled">
-        <Text style={styles.titre}>Nouveau devis</Text>
+        <Text style={styles.titre}>{estModification ? 'Modifier le devis' : 'Nouveau devis'}</Text>
         <Text style={styles.sousTitre}>
           Une fourniture achetée chez un fabricant, ta pose, ta marge — le prix à remettre à ton
           client.
         </Text>
+        {estModification ? (
+          <View style={styles.bandeauModification}>
+            <Text style={styles.bandeauModificationTexte}>Modification d'un devis existant</Text>
+            <TouchableOpacity onPress={() => onFinModification?.()}>
+              <Text style={styles.lienAnnulerModification}>Annuler</Text>
+            </TouchableOpacity>
+          </View>
+        ) : null}
 
         <SectionTitre>Client</SectionTitre>
         <ChampTexte
@@ -210,14 +231,20 @@ function FormulaireDevis({ profil, userId }) {
 
         <TouchableOpacity
           style={[styles.boutonPrincipal, (enEnregistrement || Boolean(resultat.erreurParametres)) && styles.boutonDesactive]}
-          onPress={enregistrer}
+          onPress={validerEnregistrement}
           disabled={enEnregistrement || Boolean(resultat.erreurParametres)}
         >
           {enEnregistrement ? (
             <ActivityIndicator color={colors.surface} />
           ) : (
             <Text style={styles.boutonPrincipalTexte}>
-              {devisEnregistre ? 'Devis enregistré ✓' : 'Enregistrer ce devis'}
+              {devisEnregistre
+                ? estModification
+                  ? 'Devis mis à jour ✓'
+                  : 'Devis enregistré ✓'
+                : estModification
+                  ? 'Mettre à jour ce devis'
+                  : 'Enregistrer ce devis'}
             </Text>
           )}
         </TouchableOpacity>
@@ -235,6 +262,19 @@ const styles = StyleSheet.create({
   contenu: { padding: spacing.lg, paddingBottom: spacing.xl },
   titre: { ...typography.title, marginBottom: spacing.xs },
   sousTitre: { ...typography.hint, marginBottom: spacing.lg },
+  bandeauModification: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.sm,
+    padding: spacing.sm,
+    marginBottom: spacing.lg,
+  },
+  bandeauModificationTexte: { ...typography.label, color: colors.text },
+  lienAnnulerModification: { color: colors.danger, fontWeight: '600', fontSize: 13 },
   lienComparateur: { marginTop: spacing.sm, alignSelf: 'flex-start' },
   lienComparateurTexte: { color: colors.primary, fontWeight: '600', fontSize: 13 },
   separateurLigne: { height: 1, backgroundColor: colors.border, marginVertical: spacing.md },

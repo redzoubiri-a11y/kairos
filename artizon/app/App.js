@@ -12,14 +12,17 @@ import HistoriqueDevisScreen from './src/screens/HistoriqueDevisScreen.js';
 
 /** Bascule minimale entre les écrans, sans librairie de navigation. */
 const ONGLETS = [
-  { cle: 'devis', label: 'Nouveau devis', Ecran: NouveauDevisScreen },
-  { cle: 'historique', label: 'Historique', Ecran: HistoriqueDevisScreen },
-  { cle: 'profil', label: 'Mon profil', Ecran: ProfilArtisanScreen },
+  { cle: 'devis', label: 'Nouveau devis' },
+  { cle: 'historique', label: 'Historique' },
+  { cle: 'profil', label: 'Mon profil' },
 ];
 
 export default function App() {
   const { estConnecte, enChargement, userId, inscrire, connecter, deconnecter } = useAuth();
   const [ongletActif, setOngletActif] = useState('devis');
+  // Devis choisi depuis l'historique pour modification — vécu comme une
+  // navigation avec paramètre, sans librairie dédiée pour trois écrans.
+  const [devisAModifier, setDevisAModifier] = useState(null);
 
   if (enChargement) {
     return (
@@ -40,7 +43,15 @@ export default function App() {
     );
   }
 
-  const { Ecran } = ONGLETS.find((o) => o.cle === ongletActif);
+  const choisirOnglet = (cle) => {
+    if (cle === 'devis') setDevisAModifier(null);
+    setOngletActif(cle);
+  };
+
+  const modifierDepuisHistorique = (ligne) => {
+    setDevisAModifier(ligne);
+    setOngletActif('devis');
+  };
 
   return (
     <SafeAreaProvider>
@@ -51,7 +62,7 @@ export default function App() {
             <TouchableOpacity
               key={onglet.cle}
               style={[styles.onglet, ongletActif === onglet.cle && styles.ongletActif]}
-              onPress={() => setOngletActif(onglet.cle)}
+              onPress={() => choisirOnglet(onglet.cle)}
             >
               <Text style={[styles.ongletTexte, ongletActif === onglet.cle && styles.ongletTexteActif]}>
                 {onglet.label}
@@ -60,7 +71,18 @@ export default function App() {
           ))}
         </View>
       </SafeAreaView>
-      <Ecran userId={userId} deconnecter={deconnecter} />
+      {ongletActif === 'devis' ? (
+        <NouveauDevisScreen
+          key={devisAModifier?.id ?? 'nouveau'}
+          userId={userId}
+          devisExistant={devisAModifier}
+          onFinModification={() => setDevisAModifier(null)}
+        />
+      ) : ongletActif === 'historique' ? (
+        <HistoriqueDevisScreen userId={userId} onModifier={modifierDepuisHistorique} />
+      ) : (
+        <ProfilArtisanScreen userId={userId} deconnecter={deconnecter} />
+      )}
     </SafeAreaProvider>
   );
 }

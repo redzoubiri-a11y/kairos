@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { supabase } from '../lib/supabase.js';
 
@@ -20,7 +20,7 @@ export function useHistoriqueDevis(userId) {
 
     supabase
       .from('devis')
-      .select('id, client_nom, ouvrage_libelle, fourniture, resultat, created_at')
+      .select('id, client_nom, ouvrage_libelle, fourniture, pose, parametres, tva, resultat, created_at')
       .eq('artisan_id', userId)
       .order('created_at', { ascending: false })
       .then(({ data, error }) => {
@@ -37,5 +37,11 @@ export function useHistoriqueDevis(userId) {
     };
   }, [userId]);
 
-  return { devisListe, enChargement, erreur };
+  const supprimer = useCallback(async (id) => {
+    const { error } = await supabase.from('devis').delete().eq('id', id);
+    if (!error) setDevisListe((liste) => liste.filter((d) => d.id !== id));
+    return { error };
+  }, []);
+
+  return { devisListe, enChargement, erreur, supprimer };
 }

@@ -117,6 +117,65 @@ describe('demarrage', () => {
   });
 });
 
+describe('bootstrap perime par le delai de grace', () => {
+  // Le defaut corrige : bootstrap() ne se termine jamais (authApi.me() reste en
+  // vol), RootNavigator force signedOut au bout de 8s, l'utilisateur se
+  // reconnecte manuellement — puis l'appel perime finit par repondre. Sans
+  // garde-fou sur `status`, sa suite nettoyait le jeton de la session fraiche
+  // au lieu du sien, perimee : le client perdait son jeton sans repasser par
+  // signOut, et l'intercepteur 401 ne s'en apercoit meme pas (il ne se
+  // declenche que si un jeton est deja renseigne).
+  it('n ecrase pas une reconnexion survenue pendant que authApi.me() etait en vol', async () => {
+    storage.set(TOKEN_KEY, 'jeton-lent');
+    let resolveMe;
+    authApi.me.mockReturnValue(new Promise((resolve) => { resolveMe = resolve; }));
+
+    const bootstrapPromise = useAuthStore.getState().bootstrap();
+    await Promise.resolve();
+    await Promise.resolve();
+
+    await useAuthStore.getState().forceSignedOutAfterTimeout();
+
+    authApi.login.mockResolvedValue({ token: 'jeton-frais', user: CLIENT });
+    await useAuthStore.getState().login({ email: 'a@b.dz', password: 'x' });
+
+    resolveMe(CLIENT);
+    await bootstrapPromise;
+
+    const state = useAuthStore.getState();
+    expect(state.status).toBe('signedIn');
+    expect(state.token).toBe('jeton-frais');
+    // forceSignedOutAfterTimeout() efface bien le client au moment du delai de
+    // grace (legitime, rien n'est encore connecte) ; c'est le dernier mot qui
+    // compte : la reponse perimee ne doit pas reeffacer le jeton frais apres.
+    expect(setAuthToken).toHaveBeenLastCalledWith('jeton-frais');
+  });
+
+  it('n efface pas non plus le jeton frais quand l appel perime echoue', async () => {
+    storage.set(TOKEN_KEY, 'jeton-lent');
+    let rejectMe;
+    authApi.me.mockReturnValue(new Promise((_resolve, reject) => { rejectMe = reject; }));
+
+    const bootstrapPromise = useAuthStore.getState().bootstrap();
+    await Promise.resolve();
+    await Promise.resolve();
+
+    await useAuthStore.getState().forceSignedOutAfterTimeout();
+
+    authApi.login.mockResolvedValue({ token: 'jeton-frais', user: CLIENT });
+    await useAuthStore.getState().login({ email: 'a@b.dz', password: 'x' });
+
+    rejectMe(new Error('Session expiree'));
+    await bootstrapPromise;
+
+    const state = useAuthStore.getState();
+    expect(state.status).toBe('signedIn');
+    expect(state.token).toBe('jeton-frais');
+    expect(storage.get(TOKEN_KEY)).toBe('jeton-frais');
+    expect(setAuthToken).toHaveBeenLastCalledWith('jeton-frais');
+  });
+});
+
 describe('connexion', () => {
   it('persiste le jeton et ouvre la session', async () => {
     authApi.login.mockResolvedValue({ token: 'jeton-neuf', user: CLIENT });

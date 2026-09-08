@@ -18,6 +18,13 @@ export function usePushResponse(navigationRef, isReady) {
     Notifications.getLastNotificationResponseAsync()
       .then((response) => {
         if (!cancelled) openTarget(response);
+        // Expo garde cette reponse jusqu'a ce qu'on l'efface explicitement —
+        // elle n'est pas consommee au premier appel. `isReady` redevient vrai
+        // a chaque connexion (y compris un changement de compte sur le meme
+        // appareil), donc sans cet appel, une notification tapee une fois
+        // rouvrait la meme mission a chaque connexion suivante, meme pour un
+        // autre utilisateur qui n'y a pas acces.
+        return Notifications.clearLastNotificationResponseAsync();
       })
       .catch(() => {});
 

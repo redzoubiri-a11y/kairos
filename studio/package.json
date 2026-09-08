@@ -11,19 +11,29 @@
     "typecheck": "tsc --noEmit",
     "mcp": "tsx mcp/server.ts",
     "e2e": "tsx test/e2e-founders.ts",
-    "render:smoke": "tsx test/render-smoke.ts"
+    "render:smoke": "tsx test/render-smoke.ts",
+    "prepare:fonts": "node prepare-fonts.mjs",
+    "video:smoke": "tsx test/video-smoke.ts",
+    "remotion": "remotion studio remotion/index.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.124.0",
     "@expo-google-fonts/work-sans": "^0.4.2",
     "@modelcontextprotocol/sdk": "^1.21.0",
+    "@remotion/bundler": "^4.0.522",
+    "@remotion/renderer": "^4.0.522",
     "@supabase/supabase-js": "^2.58.0",
     "postgres": "^3.4.7",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "remotion": "^4.0.522",
     "sharp": "^0.34.4",
     "zod": "^4.1.11"
   },
   "devDependencies": {
     "@types/node": "^22.15.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
     "tsx": "^4.20.0",
     "typescript": "^5.9.2"
   }

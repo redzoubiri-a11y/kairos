@@ -1,10 +1,15 @@
 {
   "compilerOptions": {
     "target": "ES2023",
-    "lib": ["ES2023"],
+    "lib": [
+      "ES2023",
+      "DOM"
+    ],
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "types": ["node"],
+    "types": [
+      "node"
+    ],
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
@@ -13,7 +18,14 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "noEmit": true,
-    "allowImportingTsExtensions": true
+    "allowImportingTsExtensions": true,
+    "jsx": "react-jsx"
   },
-  "include": ["src/**/*.ts", "mcp/**/*.ts", "test/**/*.ts"]
+  "include": [
+    "src/**/*.ts",
+    "mcp/**/*.ts",
+    "test/**/*.ts",
+    "remotion/**/*.ts",
+    "remotion/**/*.tsx"
+  ]
 }

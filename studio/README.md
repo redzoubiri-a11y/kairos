@@ -168,11 +168,53 @@ de texte : les largeurs de glyphe sont approchées (`ADVANCE` dans
 `render/static.ts`), volontairement un peu larges. C'est pourquoi les longueurs
 sont contraintes dans le schéma de sortie plutôt que laissées libres.
 
-**Pas de Remotion ni de Next.js en Phase 1.** Aucun des sept livrables n'en a
-besoin — le livrable 5 est explicitement statique et il n'y a pas d'interface.
-Ils viennent en Phase 2 avec la vidéo et le studio web.
+**Next.js n'est toujours pas là.** Le studio web reste à faire ; c'est lui qui
+apportera les policies RLS que `0004` laisse délibérément vides.
+
+**Remotion est arrivé en Phase 2**, pour la vidéo — voir plus bas.
 
 ---
+
+## La vidéo — Phase 2
+
+Format **story/reel, 1080 × 1920, 6 s** : celui qui compte sur Instagram et
+TikTok. Le pied du gabarit est remonté à 240 px du bas, la bande où ces deux
+applications posent leur propre interface — un appel à l'action qui s'y cache
+ne sert à rien.
+
+```
+remotion/
+├── index.ts                    point d'entrée registerRoot
+├── Root.tsx                    déclaration des compositions
+├── fonts.ts                    Work Sans + interruption si elle manque
+└── compositions/MidaStory.tsx  le gabarit
+src/render/video.ts             bundle + renderMedia, jumeau de static.ts
+```
+
+Mêmes entrées que le gabarit statique (spec § 3.3) : ce qui tient dans un carré
+tient dans une story. Aucune image n'est fabriquée — la photo du restaurant est
+recadrée et lentement rapprochée, 4 % sur les 6 secondes, et tout le reste est
+du texte et des aplats.
+
+**Le même piège qu'en Phase 1, dans un autre moteur.** Chromium ne signale pas
+une police absente : il retombe sur son serif par défaut et la vidéo sort dans
+la mauvaise typographie sans que rien n'échoue. Constaté en construisant le
+gabarit — le premier essai est sorti en Times. D'où `delayRender()` : le rendu
+attend le chargement de Work Sans, et `cancelRender()` l'interrompt si elle
+n'arrive pas. Un rendu qui s'arrête vaut mieux qu'un rendu qui ment.
+
+Les `.ttf` viennent du paquet que charge déjà l'application, recopiés dans
+`remotion/public/fonts/` par `npm run prepare:fonts` — jamais versionnés.
+`bundle()` reçoit explicitement ce `publicDir` : sans lui, Remotion cherche un
+`public/` à la racine du projet et sert des 404.
+
+Chromium est cherché dans `PLAYWRIGHT_BROWSERS_PATH` s'il existe, sinon
+Remotion télécharge le sien. `STUDIO_CHROMIUM` force un chemin.
+
+```bash
+npm run video:smoke   # 2 vidéos dans out/, sans base ni clé API
+npm run remotion      # l'aperçu interactif
+```
 
 ## Cohabitation avec Mida
 

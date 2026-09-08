@@ -63,11 +63,20 @@ select count(*) from public.restaurants;        -- refuse
 create table t(i int);                          -- refuse
 ```
 
-### 3. Le consentement des cinq fondateurs
+### 3. Le consentement des fondateurs
 
-`db/kairos/0003_consent_founders.sql` attend **cinq vrais slugs**. Aucun drapeau
-« fondateur » n'existe dans le schéma de Mida : la liste n'est nulle part dans
-le dépôt, elle doit être renseignée à la main.
+`db/kairos/0003_consent_founders.sql` porte les **sept** fiches créées à la main
+avant l'import Google Places — liste confirmée par Redouane le 2026-09-08.
+Aucun drapeau « fondateur » n'existe dans le schéma de Mida, et rien dans le
+dépôt ne trace une signature : c'est ce fichier, et lui seul, qui fait foi.
+
+Il se vérifie lui-même et échoue si un slug est introuvable ou si un fondateur
+n'est pas en `status = 'active'` — dans ce second cas son accord serait
+enregistré mais `studio_read` ne le verrait pas, un silence plutôt qu'une
+erreur.
+
+⚠️ L'exécuter est un acte juridique, pas un réglage : il autorise le studio à
+nommer ces restaurants et à republier leurs photos. Renseigner `evidence`.
 
 ### 4. Variables
 
@@ -93,6 +102,11 @@ autres projets du dépôt. Deux jobs, aucun secret :
   regardant, pas en lisant le SVG.
 - **Migrations et verrou de consentement** — rejoue `db/migrations/` sur un
   PostgreSQL neuf, puis lance `db/tests/consent_lock.sql`.
+
+Les scripts de `db/kairos/` ne sont pas couverts : ils s'appuient sur le schéma
+de Mida, que la CI n'a pas. `0003` a été vérifié à la main contre une
+reproduction minimale de `public.restaurants` — les sept accords posés, et les
+deux garde-fous confirmés en échec (slug absent, fondateur non actif).
 
 Ce second job mérite un mot. Les migrations ne sont appliquées nulle part —
 le projet Supabase « studio » n'existe pas encore — donc la CI est le seul

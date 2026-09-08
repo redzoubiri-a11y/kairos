@@ -1,18 +1,18 @@
 /**
- * Test de bout en bout — la campagne des cinq restaurants fondateurs.
+ * Test de bout en bout — la campagne des restaurants fondateurs.
  *
  * Chemin complet : base Mida (lecture seule) → instantané dans le studio →
  * texte par Claude → visuel par Sharp → dépôt dans le Storage du studio →
  * relecture par URL signée. Rien n'est simulé : si ce script passe, la chaîne
  * fonctionne pour de vrai.
  *
- *   npm run e2e                      les cinq premiers restaurants consentants
+ *   npm run e2e                      tous les restaurants consentants
  *   npm run e2e -- <id> <id> ...     une liste explicite d'identifiants
  *
  * Prérequis, dans cet ordre :
  *   1. migrations db/migrations/ appliquées sur le projet studio ;
  *   2. db/kairos/0001 et 0002 appliqués sur Kairos, mot de passe du rôle posé ;
- *   3. db/kairos/0003 rempli avec les cinq vrais slugs, puis exécuté ;
+ *   3. db/kairos/0003 exécuté sur Kairos (il porte les sept fondateurs) ;
  *   4. .env.local complété.
  */
 
@@ -21,11 +21,20 @@ import { createCampaign, runCampaign, previewCampaign } from '../src/campaign.ts
 
 const APP = 'mida';
 const SLUG = 'fondateurs-lancement';
-const EXPECTED = 5;
 
+// Le nombre de fondateurs n'est PAS écrit ici. Le brief parlait de cinq ; le
+// vivier réel en compte sept (voir db/kairos/0003_consent_founders.sql), et
+// rien ne désigne lesquels écarter. Le test travaille donc sur tous ceux qui
+// ont un accord : marketing_permissions fait foi, pas une constante.
+const MINIMUM = 1;
+
+// Cet objectif part tel quel dans le prompt système : il ne doit affirmer ni un
+// nombre de partenaires, ni une ville, que les données de chaque fiche ne
+// confirmeraient pas. Le générateur a interdiction d'inventer un fait — autant
+// ne pas lui en glisser un ici.
 const OBJECTIVE =
-  'Faire connaître les cinq restaurants partenaires fondateurs de Mida à Alger, ' +
-  "et donner envie de réserver une table dès ce soir depuis l'application.";
+  'Faire connaître les restaurants partenaires fondateurs de Mida et donner ' +
+  "envie de réserver une table dès ce soir depuis l'application.";
 
 function fail(message: string): never {
   console.error(`\n✗ ${message}\n`);
@@ -59,21 +68,20 @@ try {
       kind: 'restaurant',
       consentedOnly: true,
       minPhotos: 1,
-      limit: EXPECTED,
+      limit: 50,
     });
 
-    if (consented.length < EXPECTED) {
+    if (consented.length < MINIMUM) {
       fail(
-        `${consented.length} restaurant(s) consentant(s) avec au moins une photo, ` +
-          `${EXPECTED} attendus.\n` +
-          '  La table marketing_permissions est la seule source : remplir\n' +
-          '  db/kairos/0003_consent_founders.sql avec les cinq vrais slugs et\n' +
-          "  l'exécuter, ou passer les identifiants en arguments.",
+        'Aucun restaurant consentant avec au moins une photo.\n' +
+          '  La table marketing_permissions est la seule source : exécuter\n' +
+          '  db/kairos/0003_consent_founders.sql sur le projet Kairos, ou\n' +
+          '  passer les identifiants en arguments.',
       );
     }
 
     externalIds = consented.map((e) => e.externalId);
-    console.log('Fondateurs retenus :');
+    console.log(`Fondateurs retenus (${consented.length}) :`);
     for (const entity of consented) {
       console.log(`  · ${entity.name} — ${entity.neighbourhood ?? entity.city ?? '—'} (${entity.photoCount} photo·s)`);
     }
@@ -112,13 +120,16 @@ try {
     console.log(`  ${item.status === 'ready' ? '·' : '!'} ${item.entityName} : ${item.copy?.headline ?? item.error ?? '—'}`);
   }
 
-  // Le test ne « passe » que si les cinq pièces sont là, des deux types.
-  const visuals = produced.length;
-  const texts = produced.length;
-  console.log(`\n${visuals} visuel(s) et ${texts} texte(s) déposés dans le Storage du studio.`);
+  // Le test ne « passe » que si CHAQUE fondateur retenu a ses deux pièces.
+  console.log(
+    `\n${produced.length} visuel(s) et ${produced.length} texte(s) déposés dans le Storage du studio.`,
+  );
 
-  if (failed.length > 0 || produced.length !== EXPECTED) {
-    fail(`${EXPECTED} visuels et ${EXPECTED} textes attendus, ${produced.length} produits.`);
+  if (failed.length > 0 || produced.length !== externalIds.length) {
+    fail(
+      `${externalIds.length} fondateur(s) retenu(s), ${produced.length} produit(s), ` +
+        `${failed.length} en échec.`,
+    );
   }
 
   console.log('\n✓ Bout en bout vérifié.');

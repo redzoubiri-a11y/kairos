@@ -21,6 +21,7 @@ export default function SettingsScreen({ navigation }) {
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileMessage, setProfileMessage] = useState(null);
   const [profileError, setProfileError] = useState(null);
+  const [profileFieldErrors, setProfileFieldErrors] = useState({});
 
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -29,13 +30,30 @@ export default function SettingsScreen({ navigation }) {
   const [passwordError, setPasswordError] = useState(null);
 
   const onSaveProfile = async () => {
+    // Le serveur traite ces deux champs comme optionnels a omettre, pas comme
+    // effacables : un envoi vide y est refuse (min(2) / regex du telephone).
+    // Sans ce garde-fou, vider un champ qui avait une valeur puis
+    // "Enregistrer" omettait silencieusement la cle du payload et affichait
+    // quand meme "Profil mis a jour" — l'ecran gardait la valeur vide jusqu'a
+    // sa reouverture, ou l'ancienne valeur "revenait" sans qu'aucune erreur
+    // n'ait jamais ete dite. Le telephone reste optionnel a l'inscription : ne
+    // bloquer que si le champ avait deja une valeur (l'utilisateur cherche a
+    // l'effacer), jamais celui qui n'en a simplement jamais renseigne.
+    const trimmedName = fullName.trim();
+    const trimmedPhone = phone.trim();
+    const fieldErrors = {};
+    if (!trimmedName) fieldErrors.fullName = 'Le nom ne peut pas etre vide';
+    if (!trimmedPhone && user?.phone) fieldErrors.phone = 'Le telephone ne peut pas etre vide';
+    setProfileFieldErrors(fieldErrors);
+    if (Object.keys(fieldErrors).length > 0) return;
+
     setSavingProfile(true);
     setProfileError(null);
     setProfileMessage(null);
     try {
       await updateProfile({
-        ...(fullName.trim() ? { fullName: fullName.trim() } : {}),
-        ...(phone.trim() ? { phone: phone.trim() } : {}),
+        fullName: trimmedName,
+        ...(trimmedPhone ? { phone: trimmedPhone } : {}),
       });
       setProfileMessage('Profil mis a jour.');
     } catch (err) {
@@ -79,13 +97,20 @@ export default function SettingsScreen({ navigation }) {
           <Text style={styles.cardTitle}>Informations personnelles</Text>
           <ErrorBanner message={profileError} />
           {profileMessage ? <Text style={styles.success}>{profileMessage}</Text> : null}
-          <Input label="Nom complet" value={fullName} onChangeText={setFullName} icon="person-outline" />
+          <Input
+            label="Nom complet"
+            value={fullName}
+            onChangeText={setFullName}
+            icon="person-outline"
+            error={profileFieldErrors.fullName}
+          />
           <Input
             label="Telephone"
             value={phone}
             onChangeText={setPhone}
             icon="call-outline"
             keyboardType="phone-pad"
+            error={profileFieldErrors.phone}
           />
           <Button title="Enregistrer" onPress={onSaveProfile} loading={savingProfile} />
         </Card>

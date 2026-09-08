@@ -142,7 +142,22 @@ Ils viennent en Phase 2 avec la vidéo et le studio web.
 `studio/` est un paquet npm autonome dans le monorepo, comme `tasalle/`. Il ne
 touche ni `App.js`, ni `supabase.js`, ni aucun fichier de Mida.
 
-⚠️ **Non vérifié** : `npx expo start` à la racine avec `studio/node_modules`
-présent. Metro surveille tout le dépôt ; si le démarrage ralentit, ajouter
-`studio/` à `config.resolver.blockList` dans `metro.config.js` — modification de
-Mida, donc à valider avant.
+**Vérifié le 2026-09-08** : `npx expo start` à la racine, puis un bundle Android
+complet demandé au serveur — 1436 modules, aucun avertissement, aucune collision
+de noms Haste, et rien de `studio/` dans le bundle produit.
+
+Mesuré à froid (`--clear`, cache vidé), avec et sans `studio/node_modules` :
+
+| | Bundle | Modules |
+|---|---|---|
+| avec | 16 628 ms | 1436 |
+| sans | 18 018 ms | 1436 |
+
+Le second est le plus lent des deux : l'écart est du bruit de mesure, pas un
+coût. **Aucun `blockList` n'est nécessaire dans `metro.config.js`**, et donc
+aucune modification de Mida.
+
+(À noter pour qui rejouerait la vérification depuis un environnement au réseau
+restreint : `expo start` échoue au démarrage s'il ne peut pas joindre
+`api.expo.dev` pour valider les versions — l'erreur est un `SyntaxError` sur du
+JSON, trompeuse. `EXPO_OFFLINE=1` la contourne.)

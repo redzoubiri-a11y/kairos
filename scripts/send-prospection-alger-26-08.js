@@ -30,13 +30,21 @@ if (!ULTRAMSG_TOKEN && !process.argv.includes('--dry-run')) {
 const DELAY_MS = 3 * 60 * 1000;
 const DRY_RUN = process.argv.includes('--dry-run');
 
+// Les six `claim_token` de cette liste ont ete committes en clair, dans un depot
+// public -- exactement ce que la regle enoncee plus haut interdit. Ils ont ete
+// tournes en base par scripts/rotate-claim-tokens.sql : les valeurs qui figuraient
+// ici sont mortes, et n'ont donc plus rien a faire dans le fichier.
+//
+// Rejouer cette vague suppose de relire les jetons courants en base -- jamais de
+// les recopier ici. Le motif correct est celui des scripts d'import :
+//   select slug, claim_token from restaurants where id = ...
 const TARGETS = [
-  { name: 'Le Bardo',                  id: 'ceb17018-2789-4692-b6fa-afe9440206cd', phone: '+213 770 50 24 98', slug: 'le-bardo',                        token: 'f214359c-467c-4ad6-a3be-92d536ff036c' },
-  { name: "Le Ciel d'Alger",           id: '9c9c116a-5df8-45ff-9c58-cbf08d792eb8', phone: '+213 561 66 75 63', slug: 'le-ciel-d-alger-by-az-hotels-kouba', token: 'c0827449-25f1-4794-9e60-a603933f5c4b' },
-  { name: 'Restaurant El Djenina',     id: 'e72657cb-b82f-4066-ae01-094c94358f83', phone: '+213 773 41 77 65', slug: 'restaurant-el-djenina',            token: '241bc44b-8162-464c-b035-eb3ef26b981f' },
-  { name: 'Restaurant Signature',      id: '5109b09a-c080-44cc-9f50-e4cf7191ccf3', phone: '+213 799 30 87 66', slug: 'restaurant-signature',             token: '41b06e35-a3f5-414e-b2e9-d087055b88a8' },
-  { name: 'Restaurant Yulmaz',         id: '9965b694-e414-4d46-ba20-b4a2436928e1', phone: '+213 561 52 02 61', slug: 'restaurant-yulmaz-bent-bladi',     token: '01e70ec3-3331-48f0-9d33-c4c5cfec2623' },
-  { name: 'Le Douar',                  id: '04ed2712-4c7b-4f89-886f-d2d74358165e', phone: '0558064097',        slug: 'le-douar',                         token: '2e42f339-0fdf-4551-b128-6d85b04d2645' },
+  { name: 'Le Bardo',                  id: 'ceb17018-2789-4692-b6fa-afe9440206cd', phone: '+213 770 50 24 98', slug: 'le-bardo',                        token: null },
+  { name: "Le Ciel d'Alger",           id: '9c9c116a-5df8-45ff-9c58-cbf08d792eb8', phone: '+213 561 66 75 63', slug: 'le-ciel-d-alger-by-az-hotels-kouba', token: null },
+  { name: 'Restaurant El Djenina',     id: 'e72657cb-b82f-4066-ae01-094c94358f83', phone: '+213 773 41 77 65', slug: 'restaurant-el-djenina',            token: null },
+  { name: 'Restaurant Signature',      id: '5109b09a-c080-44cc-9f50-e4cf7191ccf3', phone: '+213 799 30 87 66', slug: 'restaurant-signature',             token: null },
+  { name: 'Restaurant Yulmaz',         id: '9965b694-e414-4d46-ba20-b4a2436928e1', phone: '+213 561 52 02 61', slug: 'restaurant-yulmaz-bent-bladi',     token: null },
+  { name: 'Le Douar',                  id: '04ed2712-4c7b-4f89-886f-d2d74358165e', phone: '0558064097',        slug: 'le-douar',                         token: null },
 ];
 
 // -- meme normalisation que supabase/functions/send-reminders/index.ts --
@@ -72,6 +80,18 @@ async function sendWhatsApp(phone, message) {
   // Et meme "sent":"true" ne garantit pas la livraison -- le vrai statut arrive
   // plus tard via GET /messages (sent/queue/invalid/unsent + failed_reason).
   return { accepted: json.sent === 'true', id: json.id ?? null, raw: json };
+}
+
+// Un envoi avec token: null produirait six liens "?t=null" -- six restaurateurs
+// qui cliquent et tombent sur une page morte. Mieux vaut ne pas partir.
+const SANS_TOKEN = TARGETS.filter(t => !t.token).map(t => t.name);
+if (SANS_TOKEN.length > 0) {
+  console.error(
+    `Erreur : jeton de revendication manquant pour ${SANS_TOKEN.join(', ')}.\n` +
+    `Ils ont ete tournes (scripts/rotate-claim-tokens.sql). Relire les jetons\n` +
+    `courants en base avant de rejouer cette vague.`,
+  );
+  process.exit(1);
 }
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));

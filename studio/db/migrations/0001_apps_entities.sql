@@ -1,5 +1,7 @@
 -- Kairos Studio — 0001 : applications connectées et miroir de leurs entités.
 --
+-- Schéma de référence : KAIROS_STUDIO_SPEC.md § 6.
+--
 -- Le studio ne lit JAMAIS une base applicative au moment de produire : il en
 -- prend un instantané ici, daté, et travaille dessus. Trois raisons :
 --   1. une campagne doit être rejouable à l'identique, même si la fiche a bougé ;

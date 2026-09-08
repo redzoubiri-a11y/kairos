@@ -7,24 +7,27 @@ Première application branchée : **Mida**.
 
 ---
 
-## ⚠️ La spec n'a pas pu être lue
+## La spec est une reconstitution
 
-`KAIROS_STUDIO_SPEC.md` n'existe ni dans ce dépôt ni dans `fz-consulting`. Les
-sections citées par la commande — **3.1** (interface `AppConnector`), **3.3**
-(sortie JSON), **6** (schéma studio) — ont donc été **reconstituées** d'après le
-besoin réel et le schéma constaté de Mida.
+`KAIROS_STUDIO_SPEC.md` est **dans ce dossier**, mais ce n'est pas l'original :
+celui-ci est resté sur le poste de Redouane, et il est absent des deux dépôts,
+toutes branches, vérifié le 2026-09-08.
 
-Trois fichiers portent l'avertissement en tête, ce sont ceux à confronter à la
-spec avant de geler quoi que ce soit :
+Les trois sections citées par la commande ont donc été écrites **à partir du
+code livré et du schéma réel de Mida** :
 
-| Section | Fichier | Ce qui est inféré |
+| Section | Ce qu'elle fixe | Implémentation |
 |---|---|---|
-| 3.1 | `src/connectors/types.ts` | la forme de `AppConnector`, `FindQuery` |
-| 3.3 | `src/generators/text.ts` | les sept champs de `CampaignCopySchema` |
-| 6 | `db/migrations/` | les six tables du studio |
+| 3.1 | `AppConnector`, forme normalisée, 5 règles | `src/connectors/types.ts`, `src/types.ts` |
+| 3.3 | les 7 champs, leurs bornes, le prompt | `src/generators/text.ts` |
+| 6 | les 6 tables, les 2 seaux, le verrou de consentement | `db/migrations/` |
 
-Le reste — connecteur Mida, rôle `studio_reader`, gabarit, rendu, MCP — s'appuie
-sur des faits vérifiés en base, pas sur des hypothèses.
+**Si l'original refait surface, il gagne** — le préambule de la spec pose la
+règle. Les en-têtes des fichiers ci-dessus pointent dessus, donc l'écart se voit
+au moment de le combler.
+
+Le reste — connecteur Mida, rôle `studio_reader`, gabarit, rendu, MCP — ne
+dépend d'aucune hypothèse : il s'appuie sur des faits vérifiés en base.
 
 ---
 

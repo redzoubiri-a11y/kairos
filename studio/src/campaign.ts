@@ -22,6 +22,8 @@ export interface CreateCampaignInput {
   externalIds: string[];
   template?: string;
   locale?: 'fr' | 'ar';
+  /** Paramètres du gabarit, figés avec la campagne pour qu'elle reste rejouable. */
+  params?: Record<string, unknown>;
 }
 
 export interface CreateCampaignResult {
@@ -137,6 +139,7 @@ export async function createCampaign(
           objective: input.objective,
           locale: input.locale ?? 'fr',
           template: input.template ?? 'mida-square',
+          params: input.params ?? {},
           status: 'draft',
         },
         { onConflict: 'app_id,slug' },
@@ -189,10 +192,19 @@ export async function runCampaign(campaignId: string): Promise<{
 
   const { data: campaign, error: campaignError } = await db
     .from('campaigns')
-    .select('id, slug, objective, template')
+    .select('id, slug, objective, template, locale')
     .eq('id', campaignId)
     .single();
   if (campaignError) throw new Error(`Campagne introuvable : ${campaignError.message}`);
+
+  // Le schéma accepte 'ar' pour que l'architecture soit posée, mais le
+  // générateur est mono-langue (spec 3.3). Produire du français sous une
+  // étiquette arabe serait pire que de refuser.
+  if (campaign.locale !== 'fr') {
+    throw new Error(
+      `Campagne en « ${campaign.locale} » : la Phase 1 ne produit que du français.`,
+    );
+  }
 
   const { data: items, error: itemsError } = await db
     .from('campaign_items')

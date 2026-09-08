@@ -1,10 +1,9 @@
 /**
- * Formes partagées du studio.
+ * Formes partagées du studio — forme normalisée rendue par un connecteur.
  *
- * ⚠️ Ces types sont une LECTURE INFÉRÉE de la spec : KAIROS_STUDIO_SPEC.md n'a
- * pas pu être lu au moment de l'écriture (il n'est ni dans ce dépôt ni dans
- * fz-consulting). Les sections 3.1 et 3.3 sont donc reconstituées d'après le
- * besoin réel. À confronter à la spec avant de considérer le contrat gelé.
+ * Contrat : KAIROS_STUDIO_SPEC.md § 3.1. Cette spec est une *reconstitution*,
+ * écrite d'après le code faute d'accès à l'originale ; son préambule pose la
+ * règle de préséance si celle-ci refait surface.
  */
 
 export type EntityKind = 'restaurant';

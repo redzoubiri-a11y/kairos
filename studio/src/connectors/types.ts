@@ -1,7 +1,8 @@
 /**
  * Section 3.1 — l'interface qu'une application doit présenter au studio.
  *
- * ⚠️ Contrat INFÉRÉ : voir l'avertissement de src/types.ts.
+ * Contrat : KAIROS_STUDIO_SPEC.md § 3.1, qui porte aussi les cinq règles que
+ * tout connecteur doit tenir. Toute modification ici se répercute là-bas.
  *
  * Un connecteur ne fait que trois choses : dire ce qu'il sait faire, chercher,
  * et rendre une fiche. Il ne génère rien, ne stocke rien, n'écrit jamais chez

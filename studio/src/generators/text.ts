@@ -1,7 +1,8 @@
 /**
  * Section 3.3 — génération du texte d'une campagne.
  *
- * ⚠️ Le schéma de sortie est INFÉRÉ (voir l'avertissement de src/types.ts).
+ * Contrat : KAIROS_STUDIO_SPEC.md § 3.3, qui explique d'où viennent les bornes
+ * de longueur — les élargir sans revoir le gabarit fait déborder le visuel.
  * Les clés sont en anglais parce qu'elles forment un contrat entre modules ;
  * le contenu, lui, est exclusivement en français : c'est la langue de l'app,
  * de ses restaurateurs et de ses clients.

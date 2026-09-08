@@ -1,9 +1,13 @@
 name: Mida
 
 # Le depot heberge plusieurs projets : ce workflow ne se declenche que sur
-# Mida (racine du depot), jamais sur allotruck/, tasalle/, sites/, docs/ ou
-# data/, qui ont leurs propres verifications (ou n'en ont pas besoin -
-# data/ n'est que des fixtures JSON consommees par des scripts manuels).
+# Mida (racine du depot), jamais sur allotruck/, tasalle/, studio/, sites/,
+# docs/ ou data/, qui ont leurs propres verifications (ou n'en ont pas besoin
+# - data/ n'est que des fixtures JSON consommees par des scripts manuels).
+#
+# Fonctionner par paths-ignore veut dire que tout dossier NON liste declenche
+# ce workflow : un projet ajoute au depot doit etre inscrit ici, sinon chacun
+# de ses commits fait tourner npm ci et un bundle Android pour rien.
 on:
   # Sur push uniquement : le resultat remonte deja comme statut de commit sur
   # les pull requests, alors qu'ajouter le declencheur pull_request ferait
@@ -13,11 +17,13 @@ on:
     paths-ignore:
       - 'allotruck/**'
       - 'tasalle/**'
+      - 'studio/**'
       - 'sites/**'
       - 'docs/**'
       - 'data/**'
       - '.github/workflows/allotruck.yml'
       - '.github/workflows/tasalle.yml'
+      - '.github/workflows/studio.yml'
   workflow_dispatch:
 
 concurrency:

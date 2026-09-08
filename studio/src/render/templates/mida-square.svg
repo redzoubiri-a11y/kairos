@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Gabarit carré Mida — 1080 × 1080, la surface de publication par défaut.
+
+  Ce fichier est une couche : la photo du restaurant est composée EN DESSOUS par
+  render/static.ts. Tout ce qui est ici se pose par-dessus, d'où le fond
+  transparent et le dégradé qui rattrape la lisibilité du texte sur une photo
+  dont on ne sait rien à l'avance.
+
+  Couleurs et polices : src/theme.js de Mida, à l'identique.
+    #D8432B  primary        #191919  noir        #F5F5F3  fond clair
+    #F5EDD6  cream          #c8975a  gold
+    Work Sans ExtraBold / SemiBold / Regular
+
+  Jetons remplacés par render/static.ts — notés ici sans leurs accolades, pour
+  que ce commentaire ne soit pas lui-même substitué :
+    BADGE_TEXT, BADGE_WIDTH, BADGE_TEXT_X   étiquette en haut à gauche
+    HEADLINE_LINES                          1 ou 2 lignes, positionnées côté code
+    SUBLINE                                 nom + quartier
+    CTA                                     appel à l'action
+    RATING, RATING_X, RATING_TEXT_X         note, sans le « /5 »
+  Les régions #if:x … /if:x (en commentaires XML) sont retirées quand la donnée
+  manque.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
+
+  <defs>
+    <!-- Assez haut pour couvrir deux lignes de titre, assez doux pour ne pas
+         écraser la photo dans son tiers supérieur. -->
+    <linearGradient id="veil" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0.00" stop-color="#191919" stop-opacity="0"/>
+      <stop offset="0.42" stop-color="#191919" stop-opacity="0.55"/>
+      <stop offset="0.72" stop-color="#191919" stop-opacity="0.88"/>
+      <stop offset="1.00" stop-color="#191919" stop-opacity="0.96"/>
+    </linearGradient>
+    <!-- Le haut reçoit son propre voile : l'étiquette et la note doivent tenir
+         sur une photo claire comme sur une photo sombre. -->
+    <linearGradient id="veilTop" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#191919" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#191919" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="0" y="0"   width="1080" height="260" fill="url(#veilTop)"/>
+  <rect x="0" y="440" width="1080" height="640" fill="url(#veil)"/>
+
+  <!-- Étiquette : un fait, en capitales, sur l'accent unique de Mida. -->
+  <g>
+    <rect x="72" y="72" width="{{BADGE_WIDTH}}" height="56" rx="28" fill="#D8432B"/>
+    <text x="{{BADGE_TEXT_X}}" y="109"
+          font-family="Work Sans SemiBold" font-size="24" letter-spacing="1.2"
+          fill="#FFFFFF">{{BADGE_TEXT}}</text>
+  </g>
+
+  <!--#if:rating-->
+  <!-- Note moyenne, en crème plutôt qu'en blanc : elle ne doit pas concurrencer
+       le titre. L'étoile est un glyphe, pas une image — rien à charger. -->
+  <g>
+    <rect x="{{RATING_X}}" y="72" width="132" height="56" rx="28"
+          fill="#191919" fill-opacity="0.72"/>
+    <text x="{{RATING_TEXT_X}}" y="110"
+          font-family="Work Sans SemiBold" font-size="26" fill="#F5EDD6">★ {{RATING}}</text>
+  </g>
+  <!--/if:rating-->
+
+  <!-- Titre. Une ligne = un <text> avec son propre x/y : librsvg n'honore pas
+       les x/y absolus posés sur des <tspan>, il les empile sur la ligne de base
+       du <text> parent. Le style reste ici, la géométrie est calculée au rendu,
+       et le bloc est calé sur sa dernière ligne pour que le bas de la
+       composition ne bouge jamais. -->
+  <g font-family="Work Sans ExtraBold" font-size="76" fill="#FFFFFF"
+     >{{HEADLINE_LINES}}</g>
+
+  <text x="72" y="890" font-family="Work Sans Regular" font-size="34"
+        fill="#F5F5F3" fill-opacity="0.88">{{SUBLINE}}</text>
+
+  <line x1="72" y1="936" x2="1008" y2="936" stroke="#F5F5F3" stroke-opacity="0.22" stroke-width="2"/>
+
+  <!-- Pied : la marque à gauche, l'appel à l'action à droite, alignés sur la
+       même ligne de base pour que le regard finisse sur l'action. -->
+  <text x="72" y="1008" font-family="Work Sans ExtraBold" font-size="40"
+        fill="#D8432B">mida</text>
+  <text x="1008" y="1006" text-anchor="end" font-family="Work Sans SemiBold"
+        font-size="28" fill="#F5F5F3">{{CTA}}</text>
+
+</svg>

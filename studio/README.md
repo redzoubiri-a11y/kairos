@@ -83,6 +83,29 @@ npm run render:smoke     # 4 visuels dans out/, sans base ni clé API
 npm run e2e              # la chaîne complète, secrets requis
 ```
 
+## Intégration continue
+
+`.github/workflows/studio.yml`, filtré sur `studio/**` comme les workflows des
+autres projets du dépôt. Deux jobs, aucun secret :
+
+- **Types et rendu visuel** — `npm ci`, `typecheck`, `render:smoke`. Les quatre
+  visuels produits sont joints au job : une relecture de gabarit se fait en les
+  regardant, pas en lisant le SVG.
+- **Migrations et verrou de consentement** — rejoue `db/migrations/` sur un
+  PostgreSQL neuf, puis lance `db/tests/consent_lock.sql`.
+
+Ce second job mérite un mot. Les migrations ne sont appliquées nulle part —
+le projet Supabase « studio » n'existe pas encore — donc la CI est le seul
+endroit qui prouve qu'elles s'exécutent, et dans cet ordre. Et vérifier que le
+SQL se parse ne dit rien de son efficacité : les assertions vérifient que le
+verrou **refuse** une pièce sans consentement, et qu'un accord retiré bloque
+tout nouveau rattachement. Retirer le déclencheur fait échouer le job.
+
+`db/tests/00_supabase_stub.sql` fournit le `storage.buckets` que Supabase donne
+et qu'un PostgreSQL nu n'a pas. Il est volontairement minimal : une migration
+qui utiliserait d'autres colonnes échouerait ici, ce qui est voulu — mieux vaut
+un bouchon qui casse qu'un bouchon qui ment.
+
 ---
 
 ## Ce qui garantit la lecture seule

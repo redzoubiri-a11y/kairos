@@ -6,8 +6,12 @@
  * bloc « note » disparaît proprement quand la note manque.
  */
 
-import { writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync } from 'node:fs';
 import { renderStatic, wrapText } from '../src/render/static.ts';
+
+// `out/` est ignoré par git : sur une machine neuve — un runner de CI, par
+// exemple — il n'existe pas encore.
+mkdirSync('out', { recursive: true });
 
 const CASES = [
   {

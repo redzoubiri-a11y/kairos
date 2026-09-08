@@ -1,0 +1,110 @@
+name: Kairos Studio
+
+# Le dépôt héberge plusieurs projets ; ce workflow ne concerne que studio/ et ne
+# se déclenche que si quelque chose y a bougé.
+on:
+  # Sur push uniquement, comme allotruck.yml et pour la même raison : le
+  # résultat remonte déjà comme statut de commit sur les pull requests, alors
+  # qu'ajouter le déclencheur pull_request ferait tourner chaque commit deux
+  # fois.
+  push:
+    branches: ['**']
+    paths:
+      - 'studio/**'
+      - '.github/workflows/studio.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: studio-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: studio
+
+jobs:
+  verifications:
+    name: Types et rendu visuel
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: studio/package-lock.json
+
+      - run: npm ci
+
+      - name: Types
+        run: npm run typecheck
+
+      # Le rendu est la seule vérification qui exerce réellement la chaîne
+      # SVG → librsvg → Sharp. Elle attrape ce qu'aucun type ne voit : un
+      # débordement du carré, un échappement XML manquant, et surtout une
+      # police non résolue — sans configuration fontconfig, librsvg retombe
+      # SILENCIEUSEMENT sur la police du système et le visuel sort dans la
+      # mauvaise typographie. assertWorkSansAvailable() compare deux rendus
+      # pour le détecter et fait échouer ce job.
+      - name: Rendu visuel
+        run: npm run render:smoke
+
+      # Les visuels produits sont joints au job : une relecture de gabarit se
+      # fait en les regardant, pas en lisant le SVG.
+      - name: Joindre les visuels produits
+        uses: actions/upload-artifact@v4
+        with:
+          name: visuels-${{ github.sha }}
+          path: studio/out/*.jpg
+          retention-days: 14
+
+  schema:
+    name: Migrations et verrou de consentement
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: studio_ci
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGDATABASE: studio_ci
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Client PostgreSQL
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      # Les migrations n'ont jamais été appliquées ailleurs : le projet Supabase
+      # « studio » n'existe pas encore. Les rejouer ici sur une base neuve est
+      # la seule chose qui prouve qu'elles s'exécutent, et dans cet ordre.
+      #
+      # ON_ERROR_STOP=1 n'est pas décoratif : sans lui psql sort en 0 même après
+      # une erreur, et le job passerait au vert sur des migrations cassées.
+      - name: Appliquer les migrations
+        run: |
+          for f in db/tests/00_supabase_stub.sql db/migrations/*.sql; do
+            echo "── $f"
+            psql -v ON_ERROR_STOP=1 -q -f "$f"
+          done
+
+      # Vérifier que le SQL se parse ne dit rien de son efficacité. Ces
+      # assertions vérifient que le verrou REFUSE : une pièce de campagne sans
+      # consentement, et un accord retiré après coup.
+      - name: Assertions sur le verrou de consentement
+        run: psql -v ON_ERROR_STOP=1 -f db/tests/consent_lock.sql

@@ -1,0 +1,4 @@
+# fichiers locaux
+.env
+.env.local
+out/

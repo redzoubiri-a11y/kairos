@@ -117,6 +117,32 @@ async function updatePosition(userId, truckId, { latitude, longitude, isAvailabl
 
 async function remove(userId, truckId) {
   await assertOwned(userId, truckId);
+
+  // Trip.truck est en onDelete: Cascade : supprimer le camion supprimerait
+  // silencieusement ses trajets, y compris ceux en cours avec des missions
+  // acceptees par un client. trip.service.remove() annule au lieu de
+  // supprimer precisement pour eviter ca — cette meme regle manquait ici.
+  const activeTrip = await prisma.trip.findFirst({
+    where: { truckId, status: { in: ['SCHEDULED', 'IN_PROGRESS'] } },
+  });
+  if (activeTrip) {
+    throw ApiError.badRequest(
+      'Ce camion a un trajet planifie ou en cours : annulez-le avant de supprimer le camion.'
+    );
+  }
+
+  // Meme risque pour une mission sans trajet, rattachee directement au
+  // camion (Mission.truck est en onDelete: SetNull, donc la mission
+  // survivrait a la suppression mais perdrait silencieusement son camion).
+  const activeMission = await prisma.mission.findFirst({
+    where: { truckId, status: { in: ['PENDING', 'ACCEPTED', 'IN_PROGRESS'] } },
+  });
+  if (activeMission) {
+    throw ApiError.badRequest(
+      'Ce camion a une mission en attente ou en cours : traitez-la avant de supprimer le camion.'
+    );
+  }
+
   await prisma.truck.delete({ where: { id: truckId } });
   return { success: true };
 }

@@ -605,4 +605,40 @@ test('camions et trajets', async (t) => {
     });
     assert.equal(status, 400);
   });
+
+  await t.test('refuse de supprimer un camion avec un trajet planifie ou en cours', async () => {
+    const transporter = await h.createTransporter();
+    const truck = await h.createTruck(transporter.token);
+    await h.createTrip(transporter.token, truck.id);
+
+    const { status } = await h.api('DELETE', `/trucks/${truck.id}`, { token: transporter.token });
+    assert.equal(status, 400);
+
+    const still = await h.api('GET', `/trucks/${truck.id}`, { token: transporter.token });
+    assert.equal(still.status, 200);
+  });
+
+  await t.test('refuse de supprimer un camion avec une mission sans trajet en attente ou en cours', async () => {
+    const transporter = await h.createTransporter();
+    const client = await h.createClient();
+    const truck = await h.createTruck(transporter.token);
+    await h.createMission(client.token, { transporterId: transporter.profileId, truckId: truck.id });
+
+    const { status } = await h.api('DELETE', `/trucks/${truck.id}`, { token: transporter.token });
+    assert.equal(status, 400);
+
+    const still = await h.api('GET', `/trucks/${truck.id}`, { token: transporter.token });
+    assert.equal(still.status, 200);
+  });
+
+  await t.test('supprime un camion sans trajet ni mission active', async () => {
+    const transporter = await h.createTransporter();
+    const truck = await h.createTruck(transporter.token);
+
+    const { status } = await h.api('DELETE', `/trucks/${truck.id}`, { token: transporter.token });
+    assert.equal(status, 200);
+
+    const after = await h.api('GET', `/trucks/${truck.id}`, { token: transporter.token });
+    assert.equal(after.status, 404);
+  });
 });

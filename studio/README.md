@@ -100,8 +100,9 @@ autres projets du dépôt. Deux jobs, aucun secret :
 - **Types et rendu visuel** — `npm ci`, `typecheck`, `render:smoke`. Les quatre
   visuels produits sont joints au job : une relecture de gabarit se fait en les
   regardant, pas en lisant le SVG.
-- **Migrations et verrou de consentement** — rejoue `db/migrations/` sur un
-  PostgreSQL neuf, puis lance `db/tests/consent_lock.sql`.
+- **Migrations et assertions SQL** — rejoue `db/migrations/` sur un PostgreSQL
+  neuf, puis joue **tous** les fichiers de `db/tests/`. Une assertion oubliée
+  dans le répertoire est une assertion qui ne sert à rien.
 
 Les scripts de `db/kairos/` ne sont pas couverts : ils s'appuient sur le schéma
 de Mida, que la CI n'a pas. `0003` a été vérifié à la main contre une
@@ -112,8 +113,9 @@ Ce second job mérite un mot. Les migrations ne sont appliquées nulle part —
 le projet Supabase « studio » n'existe pas encore — donc la CI est le seul
 endroit qui prouve qu'elles s'exécutent, et dans cet ordre. Et vérifier que le
 SQL se parse ne dit rien de son efficacité : les assertions vérifient que le
-verrou **refuse** une pièce sans consentement, et qu'un accord retiré bloque
-tout nouveau rattachement. Retirer le déclencheur fait échouer le job.
+schéma **refuse** : une pièce sans consentement, un accord retiré après coup,
+une génération de texte sans modèle, un type de pièce inconnu. Retirer le
+déclencheur de consentement fait échouer le job.
 
 `db/tests/00_supabase_stub.sql` fournit le `storage.buckets` que Supabase donne
 et qu'un PostgreSQL nu n'a pas. Il est volontairement minimal : une migration
@@ -215,6 +217,22 @@ Remotion télécharge le sien. `STUDIO_CHROMIUM` force un chemin.
 npm run video:smoke   # 2 vidéos dans out/, sans base ni clé API
 npm run remotion      # l'aperçu interactif
 ```
+
+### La vidéo est facultative, et opt-in
+
+Une campagne déclare ses formats à la création — `formats: ['image', 'video']`,
+figés dans `campaigns.params`. Le défaut est **l'image seule**, et ce n'est pas
+de la prudence gratuite : la vidéo coûte une trentaine de secondes par entité
+là où l'image en coûte moins d'une. Sur sept fondateurs, c'est la différence
+entre dix secondes et quatre minutes.
+
+Les deux formats sortent **du même texte** : un visuel et une story qui ne
+diraient pas la même chose seraient deux campagnes, pas une.
+
+Un rendu n'appelle aucun modèle, donc sa ligne de `generations` a `model` et
+`prompt_version` nuls — relâchement introduit par `0007`, ciblé : une
+génération de *texte* sans modèle reste refusée, et `db/tests/video.sql` le
+vérifie.
 
 ## Cohabitation avec Mida
 

@@ -4,24 +4,82 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_KEY  = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const RESEND_KEY   = Deno.env.get("RESEND_API_KEY");
+const CRON_SECRET  = Deno.env.get("AUTO_APPROVE_CRON_SECRET");
 
 const admin = createClient(SUPABASE_URL, SERVICE_KEY, {
   auth: { autoRefreshToken: false, persistSession: false },
 });
 
-Deno.serve(async (_req) => {
+function json(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+
+// Comparaison a duree constante : on compare les empreintes, jamais les
+// chaines, pour qu'une reponse plus lente ne renseigne pas sur le prefixe.
+async function egalConstant(a: string, b: string): Promise<boolean> {
+  const enc = new TextEncoder();
+  const [ha, hb] = await Promise.all([
+    crypto.subtle.digest("SHA-256", enc.encode(a)),
+    crypto.subtle.digest("SHA-256", enc.encode(b)),
+  ]);
+  const va = new Uint8Array(ha);
+  const vb = new Uint8Array(hb);
+  let diff = 0;
+  for (let i = 0; i < va.length; i++) diff |= va[i] ^ vb[i];
+  return diff === 0;
+}
+
+Deno.serve(async (req) => {
+  // Cette fonction accorde le role manager sans intervention humaine, et elle
+  // a verify_jwt = false pour que pg_cron l'appelle sans jeton (cf.
+  // 20260803_fix_reminders.sql) : elle est donc joignable anonymement depuis
+  // n'importe ou. Le secret partage est la seule chose qui distingue le cron
+  // d'un appelant quelconque.
+  //
+  // Absent, on refuse au lieu d'ignorer la verification. C'est l'inverse du
+  // choix fait pour Turnstile ailleurs, et pour une raison : la, echouer
+  // ouvert perdait une demande de contact ; ici, il accorderait un role.
+  if (!CRON_SECRET) {
+    console.error("[auto-approve-pro] AUTO_APPROVE_CRON_SECRET absent - refus");
+    return json({ approved: 0, error: "non configure" }, 503);
+  }
+  const presente = req.headers.get("x-cron-secret") ?? "";
+  if (!(await egalConstant(presente, CRON_SECRET))) {
+    return json({ approved: 0, error: "non autorise" }, 401);
+  }
+
   const threshold = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
 
+  // verification_status = 'manual_review' : la demande a ete vue par
+  // verify-restaurant et rangee dans le seau qui attend un humain. Sans ce
+  // filtre, une demande que verify-restaurant n'a jamais traitee - webhook
+  // absent, appel en erreur - etait approuvee au bout de 48 h sans avoir ete
+  // verifiee une seule fois.
   const { data: requests } = await admin
     .from("pro_requests")
     .select("*")
     .eq("status", "pending")
+    .eq("verification_status", "manual_review")
     .lt("created_at", threshold);
 
+  // Ce qui reste en attente sans etre eligible. Un onboarding qui se bloque
+  // parce que le webhook de verify-restaurant est tombe doit se voir dans les
+  // logs, pas se deviner devant une file qui ne bouge plus.
+  const { count: enAttente } = await admin
+    .from("pro_requests")
+    .select("id", { count: "exact", head: true })
+    .eq("status", "pending")
+    .lt("created_at", threshold);
+  const ignorees = Math.max(0, (enAttente ?? 0) - (requests?.length ?? 0));
+  if (ignorees > 0) {
+    console.warn(`[auto-approve-pro] ${ignorees} demande(s) en attente hors manual_review - verify-restaurant les a-t-il vues ?`);
+  }
+
   if (!requests || requests.length === 0) {
-    return new Response(JSON.stringify({ approved: 0 }), {
-      headers: { "Content-Type": "application/json" },
-    });
+    return json({ approved: 0, ignorees });
   }
 
   let approved = 0;
@@ -92,8 +150,6 @@ Deno.serve(async (_req) => {
     }
   }
 
-  console.log(`[auto-approve-pro] approved=${approved} errors=${errors.length}`);
-  return new Response(JSON.stringify({ approved, errors }), {
-    headers: { "Content-Type": "application/json" },
-  });
+  console.log(`[auto-approve-pro] approved=${approved} errors=${errors.length} ignorees=${ignorees}`);
+  return json({ approved, errors, ignorees });
 });

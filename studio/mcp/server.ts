@@ -166,7 +166,8 @@ server.registerTool(
       'Crée la campagne et fige un instantané des entités retenues. ' +
       'Produit un visuel carré 1080², et une story 1080×1920 de 6 s si le ' +
       'format vidéo est demandé — tous deux à partir du même texte. ' +
-      "Les entités sans accord de communication sont écartées et nommées dans " +
+      'Français ou arabe, au choix — la mise en page se retourne pour ' +
+      "l'arabe. Les entités sans accord de communication sont écartées et nommées dans " +
       'la réponse. Avec run à true, les pièces sont produites dans la foulée : ' +
       'un texte et un visuel par entité, déposés dans le Storage du studio.',
     inputSchema: {
@@ -189,6 +190,15 @@ server.registerTool(
             "trentaine de secondes par entité contre moins d'une pour l'image — " +
             'sept fondateurs, c\'est dix secondes ou quatre minutes.',
         ),
+      locale: z
+        .enum(['fr', 'ar'])
+        .optional()
+        .describe(
+          'Langue de la campagne, décidée à sa création : elle traverse ' +
+            "l'invite, le texte, la police du visuel et le sens de lecture. " +
+            'Défaut : le français. Une campagne ne mélange pas les deux — deux ' +
+            'langues, deux campagnes.',
+        ),
       run: z.boolean().optional().default(false),
     },
   },
@@ -201,6 +211,7 @@ server.registerTool(
         objective: args.objective,
         externalIds: args.external_ids,
         formats: args.formats,
+        locale: args.locale,
       });
 
       if (!args.run) return asText(created);

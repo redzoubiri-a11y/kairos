@@ -19,10 +19,17 @@ import Anthropic from '@anthropic-ai/sdk';
 import { zodOutputFormat } from '@anthropic-ai/sdk/helpers/zod';
 import { z } from 'zod';
 import { anthropicApiKey, TEXT_MODEL } from '../config.ts';
-import type { AppEntity } from '../types.ts';
+import type { AppEntity, Locale } from '../types.ts';
 
-/** Version du prompt, écrite en base avec chaque génération. */
-export const PROMPT_VERSION = 'mida-fr-1';
+/**
+ * Version du prompt, écrite en base avec chaque génération. Une par langue :
+ * comparer dans le temps la qualité d'un texte arabe et d'un texte français
+ * sous la même étiquette n'aurait aucun sens.
+ */
+export const PROMPT_VERSIONS: Record<Locale, string> = {
+  fr: 'mida-fr-1',
+  ar: 'mida-ar-1',
+};
 
 /**
  * Les longueurs ne sont pas décoratives : `headline` et `subline` sont posées
@@ -69,10 +76,22 @@ export const CampaignCopySchema = z.object({
 
 export type CampaignCopy = z.infer<typeof CampaignCopySchema>;
 
-const SYSTEM_PROMPT = `Tu écris les textes marketing de Mida, l'application algérienne de réservation de restaurants.
+/**
+ * Seule la consigne de langue change d'une langue à l'autre. Le reste — ce qui
+ * peut être écrit, le ton, la structure — est la même règle éditoriale, et la
+ * dupliquer serait la laisser diverger.
+ */
+const CONSIGNE_LANGUE: Record<Locale, string> = {
+  fr: `Français uniquement. Pas un mot d'anglais, y compris dans les mots-dièse — « #ReserverAAlger », jamais « #FoodLover ». Le français d'Algérie : « réserver une table », pas « booker ».`,
+  ar: `Arabe uniquement, en arabe standard moderne lisible par un Algérien. Pas un mot de français ni d'anglais, y compris dans les mots-dièse — « #احجز_في_الجزائر », jamais « #FoodLover ». Écris les chiffres en chiffres occidentaux (4,6 et non ٤٫٦) : ce sont ceux qu'affiche l'application.
+
+Le nom du restaurant reste tel qu'il est écrit dans les données, en alphabet latin s'il l'est : on ne translittère pas une enseigne.`,
+};
+
+const SYSTEM_PROMPT_BASE = `Tu écris les textes marketing de Mida, l'application algérienne de réservation de restaurants.
 
 LANGUE
-Français uniquement. Pas un mot d'anglais, y compris dans les mots-dièse — « #ReserverAAlger », jamais « #FoodLover ». Le français d'Algérie : « réserver une table », pas « booker ».
+{{LANGUE}}
 
 CE QUE TU PEUX ÉCRIRE
 Uniquement ce que les données fournies contiennent. Tu n'as pas d'autre source, et tu n'as pas le droit d'en inventer une :
@@ -97,6 +116,10 @@ STRUCTURE
 - caption : deux ou trois phrases. Ce qu'on y mange, où c'est, pourquoi y aller ce soir.
 - call_to_action : la réservation sur Mida.
 - alt_text : décris la photo telle qu'elle est probablement — le restaurant, sa cuisine, son cadre — sans affirmer de détail visuel que tu ne peux pas connaître.`;
+
+function systemPrompt(locale: Locale): string {
+  return SYSTEM_PROMPT_BASE.replace('{{LANGUE}}', CONSIGNE_LANGUE[locale]);
+}
 
 function factsFor(entity: AppEntity): string {
   const lines: string[] = [];
@@ -155,6 +178,8 @@ export interface GenerateTextOptions {
   entity: AppEntity;
   /** L'intention de la campagne, en clair. Reprise telle quelle dans le prompt. */
   objective: string;
+  /** Langue du texte produit. Français par défaut. */
+  locale?: Locale;
   client?: Anthropic;
 }
 
@@ -173,6 +198,7 @@ export async function generateText(
   options: GenerateTextOptions,
 ): Promise<GeneratedText> {
   const { entity, objective } = options;
+  const locale: Locale = options.locale ?? 'fr';
 
   if (!entity.consent.granted) {
     throw new Error(
@@ -203,7 +229,7 @@ export async function generateText(
     const response = await client.messages.parse({
       model: TEXT_MODEL,
       max_tokens: 16000,
-      system: SYSTEM_PROMPT,
+      system: systemPrompt(locale),
       messages,
       output_config: { format: zodOutputFormat(CampaignCopySchema) },
     });
@@ -224,7 +250,7 @@ export async function generateText(
       return {
         copy: parsed.data,
         model: response.model,
-        promptVersion: PROMPT_VERSION,
+        promptVersion: PROMPT_VERSIONS[locale],
         inputTokens,
         outputTokens,
         latencyMs: Date.now() - started,

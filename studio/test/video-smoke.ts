@@ -1,9 +1,10 @@
 /**
  * Vérification du rendu vidéo, sans base ni clé API.
  *
- * Elle prouve trois choses que le reste suppose : Remotion rend un MP4
- * réellement encodé, Work Sans est bien la police servie par Chromium, et le
- * gabarit tient sur les cas limites (titre long, note absente).
+ * Elle prouve quatre choses que le reste suppose : Remotion rend un MP4
+ * réellement encodé, Work Sans est bien la police servie par Chromium, le
+ * gabarit tient sur les cas limites (note absente), et l'arabe sort en Cairo
+ * avec la mise en page retournée.
  *
  * Pas de ffprobe dans cet environnement — le ffmpeg fourni avec Playwright est
  * un build minimal orienté webm et refuse le H.264. Le conteneur MP4 est donc
@@ -56,6 +57,18 @@ const CAS = [
       cta: 'Réserver sur Mida',
       rating: null,
       photoUrl: null,
+    },
+  },
+  {
+    fichier: 'out/story-3-arabe.mp4',
+    input: {
+      headline: 'احجز طاولتك لهذا المساء',
+      subline: 'الياسمين — حيدرة، الجزائر العاصمة',
+      badge: 'مطبخ متوسطي',
+      cta: 'احجز على ميدا',
+      rating: 4.6,
+      photoUrl: null,
+      locale: 'ar' as const,
     },
   },
 ] as const;

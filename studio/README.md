@@ -162,16 +162,22 @@ serait trois fois plus lourd sans gain visible.
 **Les polices sont résolues par une configuration fontconfig dédiée.** Sans
 elle, librsvg retombe silencieusement sur la police système et le visuel sort
 dans la mauvaise typographie sans que rien ne le signale.
-`assertWorkSansAvailable()` compare deux rendus pour le détecter et échoue
-plutôt que de livrer.
+`assertPolicesDisponibles()` compare deux rendus pour le détecter et échoue
+plutôt que de livrer. Le témoin est écrit dans l'écriture de la police testée :
+demander « Réservé ce soir » à Cairo passerait même sans un seul glyphe arabe.
 
 **Le repli des lignes est estimé, pas mesuré.** librsvg n'expose pas de mesure
 de texte : les largeurs de glyphe sont approchées (`ADVANCE` dans
 `render/static.ts`), volontairement un peu larges. C'est pourquoi les longueurs
-sont contraintes dans le schéma de sortie plutôt que laissées libres.
+sont contraintes dans le schéma de sortie plutôt que laissées libres. Les mêmes
+valeurs servent à l'arabe — mesuré plutôt que supposé, voir « L'arabe ».
 
-**Next.js n'est toujours pas là.** Le studio web reste à faire ; c'est lui qui
-apportera les policies RLS que `0004` laisse délibérément vides.
+**Le studio web est arrivé sans policies RLS, contrairement à ce que cette
+section prédisait.** Voir « Le studio web » plus bas : c'est une porte à un
+seul opérateur, jamais de clé anon côté navigateur, donc rien à autoriser au
+niveau des lignes. Les policies de `0004` restent vides — elles ne seraient
+utiles que pour une authentification multi-utilisateur, un chantier différent
+de celui-ci.
 
 **Remotion est arrivé en Phase 2**, pour la vidéo — voir plus bas.
 
@@ -258,3 +264,123 @@ aucune modification de Mida.
 restreint : `expo start` échoue au démarrage s'il ne peut pas joindre
 `api.expo.dev` pour valider les versions — l'erreur est un `SyntaxError` sur du
 JSON, trompeuse. `EXPO_OFFLINE=1` la contourne.)
+
+---
+
+## L'arabe
+
+`campaigns.locale` acceptait `'ar'` depuis la migration `0002`, mais
+`runCampaign` levait à l'exécution : on pouvait créer une campagne arabe
+garantie d'échouer, après coup. La langue traverse maintenant toute la chaîne —
+l'invite, le texte, la police, le sens de lecture, la vidéo — et se choisit à la
+création, avec `locale` sur `create_campaign`.
+
+Une campagne ne mélange pas les deux langues. Deux langues, deux campagnes :
+`prompt_version` est distincte (`mida-fr-1`, `mida-ar-1`) pour qu'on puisse
+suivre leur qualité séparément dans le temps.
+
+### Un seul gabarit, retourné
+
+Le SVG ne connaît plus de côté : chaque bloc reçoit son `x` et son ancre du
+code. L'étiquette et la note permutent, le pied place la marque du côté où
+commence la lecture et l'appel à l'action du côté où elle finit — pour que le
+regard termine sur l'action dans les deux langues. Le mot-symbole « mida » reste
+en Work Sans : c'est une marque, pas du texte.
+
+### Le piège : `direction="rtl"`
+
+**librsvg ne rend qu'un seul glyphe** quand un `<text>` porte `direction="rtl"`.
+Sans erreur, sans avertissement : la phrase disparaît. Mesuré sur
+« احجز طاولتك هذا المساء » — 485 pixels allumés avec l'attribut, 11 890 sans.
+
+Il n'en faut pas : Pango applique déjà le bidirectionnel d'après les caractères,
+et l'alignement passe par `text-anchor`. `buildOverlay()` refuse de rendre un
+gabarit qui poserait l'attribut, commentaires XML exclus du contrôle — l'en-tête
+du gabarit énonce l'interdiction et se ferait prendre par sa propre règle.
+
+Chromium, lui, honore `direction: rtl` correctement, et retourne même l'ordre
+des boîtes flex : la vidéo n'a aucun code de miroir.
+
+### Cairo, et pourquoi la table `ADVANCE` n'a pas bougé
+
+Work Sans n'a aucun glyphe arabe. Cairo couvre l'arabe et le latin, et vient du
+même paquet `@expo-google-fonts` que celui qu'utilise déjà l'application.
+
+On pouvait craindre que le repli des lignes soit faux en arabe : les lettres se
+lient, donc la largeur rendue n'est pas la somme des glyphes isolés. Mesuré
+plutôt que supposé — largeur d'encre à 76 px, cinq phrases arabes en Cairo
+ExtraBold : facteur **0,485 à 0,521**. Trois phrases françaises en Work Sans
+ExtraBold : **0,486 à 0,514**. Presque identiques, donc le 0,58 garde sa marge
+dans les deux langues et la table reste inchangée.
+
+C'est peu d'échantillons. La contrainte de longueur du schéma de sortie reste le
+vrai garde-fou, pas cette mesure.
+
+### Ce qui n'a pas été fait
+
+Le texte arabe n'a **jamais été produit par le modèle** : comme le reste, la
+chaîne complète attend le projet Supabase et une clé API. Ce qui est vérifié,
+c'est le rendu — deux visuels et une vidéo, à partir de textes arabes écrits à
+la main dans les tests.
+
+Personne d'arabophone n'a relu l'invite. `CONSIGNE_LANGUE.ar` demande de l'arabe
+standard moderne et des chiffres occidentaux ; c'est un choix de départ, pas une
+validation éditoriale.
+
+---
+
+## Le studio web
+
+`app/` — Next.js 15, App Router. Une porte, deux pages : la liste des
+campagnes, le détail d'une campagne avec son texte et ses rendus.
+
+### La porte n'est pas une authentification
+
+`studioDb()` se connecte avec la clé `service_role` : elle contourne RLS par
+construction, et les tables du studio sont fermées sans aucune policy
+(`0004`). Rien de tout ça ne change avec le studio web — la clé ne quitte
+jamais le serveur, toutes les pages sont des composants serveur, aucune donnée
+ne transite par une route publique.
+
+Ce qui protège l'accès est donc plus simple qu'une authentification : un mot
+de passe partagé (`STUDIO_WEB_PASSWORD`), un cookie signé HMAC-SHA256
+(`STUDIO_WEB_SECRET`), vérifié par un middleware qui bloque tout sauf
+`/connexion`. Comparaisons à durée constante des deux côtés — le mot de passe
+proposé, la signature du cookie — pour qu'une réponse plus lente ne renseigne
+pas sur un préfixe correct.
+
+**Configuration absente = 503, jamais un studio ouvert.** Même arbitrage que
+pour le secret du cron `auto-approve-pro` côté Mida (PR #20) : perdre un accès
+coûte moins cher qu'en accorder un par défaut.
+
+Passer à plusieurs opérateurs avec des droits différents demanderait une vraie
+authentification et les policies RLS que `0004` laisse vides — un autre
+chantier, pas une variable de plus.
+
+### Les pages
+
+`/` liste les campagnes, la plus récente d'abord, avec un compte de pièces par
+`count` agrégé plutôt qu'une lecture des lignes. `/campagnes/[id]` réutilise
+`previewCampaign()` telle quelle : même fonction que le MCP, une seule source
+de vérité sur ce qu'est une pièce prête. Les visuels et vidéos sont servis par
+URL signée — `next/image` voudrait les recacher sous sa propre adresse, ce qui
+ne veut rien dire pour un lien qui expire.
+
+**« Relancer » retraite toute la campagne, pas seulement les pièces en échec.**
+`runCampaign()` n'a pas de filtre sur `status` : relancer sept restaurants
+dont un a échoué rappelle le modèle sept fois. Le bouton porte
+l'avertissement dans la page plutôt que d'agir en silence.
+
+### L'arabe
+
+`[lang="ar"]` bascule en `direction: rtl` par CSS — la mise en page du studio
+lui-même reste LTR, seul le contenu qui est en arabe se retourne. Posé sur le
+nom de la campagne, le nom de l'entité et le bloc de texte, où la langue vient
+de `campaigns.locale`.
+
+### Ce qui manque
+
+Pas de pagination sur la liste des campagnes — `limit(50)` fixe. Pas de
+formulaire de création : `create_campaign` reste un outil MCP, la logique de
+formats/consentement n'est pas dupliquée ici. Pas de suivi en direct d'une
+génération en cours (`status = 'generating'`) : il faut recharger la page.

@@ -212,8 +212,15 @@ Deno.serve(async (req) => {
 
     } else {
       // manual_review — email enrichi à l'admin
-      const approveUrl = `${BASE_URL}/approve-pro?id=${requestId}&step=confirm`;
-      const rejectUrl  = `${BASE_URL}/reject-pro?id=${requestId}&step=confirm`;
+      // Jeton admin dédié : jamais renvoyé au client, seulement à l'email admin.
+      const adminToken = crypto.randomUUID();
+      const { error: tokenErr } = await admin
+        .from("pro_request_admin_tokens")
+        .upsert({ request_id: requestId, token: adminToken });
+      if (tokenErr) throw new Error("admin_token: " + tokenErr.message);
+
+      const approveUrl = `${BASE_URL}/approve-pro?id=${requestId}&token=${adminToken}&step=confirm`;
+      const rejectUrl  = `${BASE_URL}/reject-pro?id=${requestId}&token=${adminToken}&step=confirm`;
 
       const scoreRow = (label: string, pts: number) =>
         `<tr><td style="color:#888;padding:4px 8px;">${label}</td><td style="padding:4px 8px;color:#4CAF82;font-weight:bold;">+${pts}</td></tr>`;

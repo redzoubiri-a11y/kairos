@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "Artizon",
+    "slug": "artizon",
+    "version": "1.0.0",
+    "scheme": "artizon",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.artizon.app"
+    },
+    "android": {
+      "package": "com.artizon.app",
+      "edgeToEdgeEnabled": true,
+      "versionCode": 1
+    },
+    "web": {
+      "bundler": "metro"
+    }
+  }
+}

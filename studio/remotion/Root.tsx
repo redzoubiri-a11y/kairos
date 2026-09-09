@@ -31,6 +31,7 @@ export const Root: React.FC = () => (
         badge: 'Terrasse',
         cta: 'Réserver sur Mida',
         rating: 4.6,
+        locale: 'fr' as const,
         photoUrl: null,
       } satisfies MidaStoryProps
     }

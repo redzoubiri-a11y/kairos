@@ -1,0 +1,60 @@
+{
+  "qualificationsRequises": ["Qualibat 4131"],
+  "postes": [
+    { "ref": "BA13", "libelle": "Plaque BA13 standard", "quantite": 880, "unite": "m2" },
+    { "ref": "BA13H", "libelle": "Plaque BA13 hydrofuge", "quantite": 120, "unite": "m2" },
+    { "ref": "OSS48", "libelle": "Ossature 48, rails et montants", "quantite": 400, "unite": "m2" },
+    { "ref": "LAINE", "libelle": "Laine minérale 45 mm", "quantite": 400, "unite": "m2" },
+    { "ref": "FINITION", "libelle": "Bande, enduit et visserie", "quantite": 400, "unite": "m2" }
+  ],
+  "offres": [
+    {
+      "fournisseur": "Négoce Rhône",
+      "delaiJours": 8,
+      "transport": 180,
+      "remise": 0.1,
+      "conditionsPaiement": "30 jours fin de mois",
+      "assuranceDecennale": true,
+      "attestationVigilance": true,
+      "qualifications": ["Qualibat 4131"],
+      "lignes": [
+        { "ref": "BA13", "prixUnitaire": 3.4, "unite": "m2" },
+        { "ref": "BA13H", "prixUnitaire": 5.35, "unite": "m2" },
+        { "ref": "OSS48", "prixUnitaire": 4.3, "unite": "m2" },
+        { "ref": "LAINE", "prixUnitaire": 4.7, "unite": "m2" },
+        { "ref": "FINITION", "prixUnitaire": 1.95, "unite": "m2" }
+      ]
+    },
+    {
+      "fournisseur": "Matériaux Sud-Est",
+      "delaiJours": 15,
+      "transport": 0,
+      "remise": 0.06,
+      "conditionsPaiement": "comptant",
+      "assuranceDecennale": true,
+      "attestationVigilance": true,
+      "qualifications": ["Qualibat 4131"],
+      "lignes": [
+        { "ref": "BA13", "prixUnitaire": 3.15, "unite": "m2" },
+        { "ref": "BA13H", "prixUnitaire": 5.1, "unite": "m2" },
+        { "ref": "OSS48", "prixUnitaire": 4.55, "unite": "m2" },
+        { "ref": "LAINE", "prixUnitaire": 4.45, "unite": "m2" },
+        { "ref": "FINITION", "prixUnitaire": 2.1, "unite": "m2" }
+      ]
+    },
+    {
+      "fournisseur": "Distri Bâtiment",
+      "delaiJours": 21,
+      "transport": 240,
+      "assuranceDecennale": true,
+      "attestationVigilance": false,
+      "qualifications": [],
+      "lignes": [
+        { "ref": "BA13", "prixUnitaire": 2.95, "unite": "m2" },
+        { "ref": "BA13H", "prixUnitaire": 4.8, "unite": "m2" },
+        { "ref": "OSS48", "prixUnitaire": 4.1, "unite": "m2" },
+        { "ref": "LAINE", "prixUnitaire": 4.2, "unite": "m2" }
+      ]
+    }
+  ]
+}

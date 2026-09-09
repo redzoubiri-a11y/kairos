@@ -8,6 +8,14 @@
 
 export type EntityKind = 'restaurant';
 
+/**
+ * Langues que le studio sait produire, de bout en bout : invite, texte, visuel,
+ * vidéo. La contrainte `check` de `campaigns.locale` (migration 0002) porte les
+ * deux mêmes valeurs — l'une ne doit pas s'élargir sans l'autre, sous peine de
+ * pouvoir créer une campagne qui échouera à l'exécution.
+ */
+export type Locale = 'fr' | 'ar';
+
 /** Portée d'un accord de communication, telle que stockée côté application. */
 export type MarketingScope = 'name' | 'photos' | 'logo' | 'promotions' | 'reviews';
 

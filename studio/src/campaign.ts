@@ -9,7 +9,8 @@
 import { studioDb, BUCKET_TEXTS, BUCKET_VISUALS } from './db.ts';
 import { openConnector } from './connectors/registry.ts';
 import type { AppConnector } from './connectors/types.ts';
-import { generateText, PROMPT_VERSION } from './generators/text.ts';
+import { generateText, PROMPT_VERSIONS } from './generators/text.ts';
+import type { Locale } from './types.ts';
 import { renderStatic } from './render/static.ts';
 import { renderVideo } from './render/video.ts';
 import { assetPath, putAsset, signedUrl } from './storage.ts';
@@ -33,7 +34,7 @@ export interface CreateCampaignInput {
   objective: string;
   externalIds: string[];
   template?: string;
-  locale?: 'fr' | 'ar';
+  locale?: Locale;
   /** Paramètres du gabarit, figés avec la campagne pour qu'elle reste rejouable. */
   params?: Record<string, unknown>;
   /** Formats produits. Défaut : l'image seule. */
@@ -231,14 +232,11 @@ export async function runCampaign(campaignId: string): Promise<{
     .single();
   if (campaignError) throw new Error(`Campagne introuvable : ${campaignError.message}`);
 
-  // Le schéma accepte 'ar' pour que l'architecture soit posée, mais le
-  // générateur est mono-langue (spec 3.3). Produire du français sous une
-  // étiquette arabe serait pire que de refuser.
-  if (campaign.locale !== 'fr') {
-    throw new Error(
-      `Campagne en « ${campaign.locale} » : la Phase 1 ne produit que du français.`,
-    );
-  }
+  // La langue vient de la campagne, décidée à sa création. Elle traverse tout :
+  // l'invite, le texte, la police du visuel, le sens de lecture, la vidéo. Le
+  // `check` de la colonne et le type Locale portent les deux mêmes valeurs, donc
+  // une valeur inattendue en base serait un bogue, pas une entrée à valider.
+  const locale = campaign.locale as Locale;
 
   const { data: items, error: itemsError } = await db
     .from('campaign_items')
@@ -266,6 +264,7 @@ export async function runCampaign(campaignId: string): Promise<{
       await db.from('campaign_items').update({ status: 'generating' }).eq('id', row.id);
 
       const generated = await generateText({
+        locale,
         entity,
         objective: campaign.objective as string,
       });
@@ -274,7 +273,7 @@ export async function runCampaign(campaignId: string): Promise<{
         campaign_item_id: row.id,
         kind: 'text',
         model: generated.model,
-        prompt_version: PROMPT_VERSION,
+        prompt_version: PROMPT_VERSIONS[locale],
         input: { objective: campaign.objective, external_id: entity.externalId },
         output: generated.copy,
         input_tokens: generated.inputTokens,
@@ -290,6 +289,7 @@ export async function runCampaign(campaignId: string): Promise<{
         cta: generated.copy.call_to_action,
         rating: entity.rating,
         photoUrl: cover?.url ?? null,
+        locale,
       });
 
       const visualAsset = await putAsset(
@@ -322,6 +322,7 @@ export async function runCampaign(campaignId: string): Promise<{
           cta: generated.copy.call_to_action,
           rating: entity.rating,
           photoUrl: cover?.url ?? null,
+          locale,
         });
 
         videoAsset = await putAsset(
@@ -437,6 +438,52 @@ export interface CampaignPreview {
   }[];
 }
 
+export interface CampaignSummary {
+  id: string;
+  slug: string;
+  name: string;
+  status: string;
+  locale: Locale;
+  createdAt: string;
+  /** Nombre de pièces rattachées, tous états confondus. */
+  items: number;
+}
+
+/**
+ * Les campagnes, la plus récente d'abord. Le décompte des pièces vient d'un
+ * count agrégé plutôt que d'une lecture des lignes : la liste n'a pas besoin
+ * des pièces elles-mêmes, seulement de leur nombre.
+ */
+export async function listCampaigns(limit = 50): Promise<CampaignSummary[]> {
+  const { data, error } = await studioDb()
+    .from('campaigns')
+    .select('id, slug, name, status, locale, created_at, campaign_items(count)')
+    .order('created_at', { ascending: false })
+    .limit(limit);
+  if (error) throw new Error(`Campagnes illisibles : ${error.message}`);
+
+  return (data ?? []).map((raw) => {
+    const c = raw as unknown as {
+      id: string;
+      slug: string;
+      name: string;
+      status: string;
+      locale: Locale;
+      created_at: string;
+      campaign_items: { count: number }[];
+    };
+    return {
+      id: c.id,
+      slug: c.slug,
+      name: c.name,
+      status: c.status,
+      locale: c.locale,
+      createdAt: c.created_at,
+      items: c.campaign_items?.[0]?.count ?? 0,
+    };
+  });
+}
+
 /** Relecture d'une campagne : le visuel par URL signée, le texte en clair. */
 export async function previewCampaign(campaignId: string): Promise<CampaignPreview> {
   const db = studioDb();
@@ -494,4 +541,15 @@ export async function previewCampaign(campaignId: string): Promise<CampaignPrevi
     status: campaign.status as string,
     items: preview,
   };
+}
+
+/** La langue seule, pour les pages qui n'ont pas besoin du reste de la campagne. */
+export async function langueCampagne(campaignId: string): Promise<Locale> {
+  const { data, error } = await studioDb()
+    .from('campaigns')
+    .select('locale')
+    .eq('id', campaignId)
+    .single();
+  if (error) throw new Error(`Campagne introuvable : ${error.message}`);
+  return data.locale as Locale;
 }

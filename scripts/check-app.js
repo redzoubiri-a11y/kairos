@@ -25,17 +25,20 @@ const traverse = require('@babel/traverse').default;
 const RACINE = path.join(__dirname, '..');
 
 // Le dépôt héberge plusieurs projets ; celui-ci ne vérifie que Mida (racine +
-// src/screens/scripts), jamais allotruck/, tasalle/ ni studio/, qui ont leurs
-// propres CI. `data/` est exclu aussi : fixtures JSON consommées par des
-// scripts d'import manuels, jamais par l'app.
+// src/screens/scripts), jamais allotruck/, tasalle/, studio/ ni artizon/, qui
+// ont chacun leur propre charte (jetons de thème différents) ou leur propre
+// CI. `data/` est exclu aussi : fixtures JSON consommées par des scripts
+// d'import manuels, jamais par l'app.
 //
 // `node_modules` est écarté à TOUTE profondeur, pas seulement à la racine.
 // Un projet voisin qui installe ses dépendances en pose un sous son propre
 // dossier ; tant qu'il figure dans la liste ci-dessus il n'est pas parcouru,
 // mais celui qu'on oublierait d'y ajouter noierait la sortie sous des
 // milliers de faux positifs venant de code tiers — constaté avec studio/,
-// 6437 erreurs, toutes hors de Mida.
-const EXCLUS = /^(allotruck|tasalle|sites|docs|data|studio|\.git|test-results)\/|(^|\/)node_modules\//;
+// 6437 erreurs, toutes hors de Mida, et avec artizon/ à l'identique (103
+// jetons de thème introuvables, 26 identifiants non résolus, tous relevant
+// de la charte et du moteur d'Artizon, aucun de Mida).
+const EXCLUS = /^(allotruck|tasalle|sites|docs|data|studio|artizon|\.git|test-results)\/|(^|\/)node_modules\//;
 
 function* fichiers(dossier) {
   for (const nom of fs.readdirSync(dossier)) {
@@ -135,7 +138,7 @@ for (const f of fichiers(RACINE)) {
   });
 }
 
-console.log(`${total} fichiers passés en revue (Mida uniquement — allotruck/, tasalle/, studio/, sites/, docs/, data/ exclus)`);
+console.log(`${total} fichiers passés en revue (Mida uniquement — allotruck/, tasalle/, studio/, artizon/, sites/, docs/, data/ exclus)`);
 
 if (rapport.length) {
   console.error(`\n${rapport.length} problème(s) :`);

@@ -138,7 +138,17 @@ jobs:
           done
 
       # Vérifier que le SQL se parse ne dit rien de son efficacité. Ces
-      # assertions vérifient que le verrou REFUSE : une pièce de campagne sans
-      # consentement, et un accord retiré après coup.
-      - name: Assertions sur le verrou de consentement
-        run: psql -v ON_ERROR_STOP=1 -f db/tests/consent_lock.sql
+      # assertions vérifient ce que le schéma REFUSE : une pièce de campagne
+      # sans consentement, un accord retiré après coup, une génération de texte
+      # sans modèle, un type de pièce inconnu.
+      #
+      # Tout fichier ajouté dans db/tests/ est joué : une assertion oubliée
+      # dans le répertoire est une assertion qui ne sert à rien. Le bouchon
+      # Supabase est écarté, il est appliqué avant les migrations.
+      - name: Assertions SQL
+        run: |
+          for f in db/tests/*.sql; do
+            case "$f" in *00_supabase_stub.sql) continue ;; esac
+            echo "── $f"
+            psql -v ON_ERROR_STOP=1 -f "$f"
+          done

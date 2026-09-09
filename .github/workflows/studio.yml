@@ -95,7 +95,7 @@ jobs:
           retention-days: 14
 
   schema:
-    name: Migrations et verrou de consentement
+    name: Migrations et assertions SQL
     runs-on: ubuntu-latest
 
     services:

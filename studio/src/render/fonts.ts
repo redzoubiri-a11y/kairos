@@ -12,6 +12,9 @@
  * l'application. La configuration système reste incluse en second, pour que les
  * caractères absents de Work Sans aient encore une police de secours.
  *
+ * Cairo s'y ajoute pour l'arabe. Work Sans n'a aucun glyphe arabe : le repli
+ * silencieux n'y serait pas une faute de typographie mais du tofu.
+ *
  * FONTCONFIG_FILE doit être posée AVANT le premier chargement de sharp : c'est
  * pourquoi static.ts importe sharp dynamiquement, après avoir appelé ici.
  */
@@ -30,12 +33,19 @@ const FACES = [
   '800ExtraBold/WorkSans_800ExtraBold.ttf',
 ] as const;
 
+/** Mêmes graisses en Cairo, pour l'arabe. */
+const FACES_AR = [
+  '400Regular/Cairo_400Regular.ttf',
+  '600SemiBold/Cairo_600SemiBold.ttf',
+  '800ExtraBold/Cairo_800ExtraBold.ttf',
+] as const;
+
 let configured: string | null = null;
 
-function workSansDir(): string {
+function paquetDir(nom: string): string {
   // On résout par le package.json : le chemin dans node_modules dépend de
   // l'endroit d'où le studio est lancé (racine, monorepo, script de test).
-  return dirname(require.resolve('@expo-google-fonts/work-sans/package.json'));
+  return dirname(require.resolve(`${nom}/package.json`));
 }
 
 /**
@@ -45,23 +55,29 @@ function workSansDir(): string {
 export function ensureFonts(): string {
   if (configured) return configured;
 
-  const source = workSansDir();
   const root = join(tmpdir(), 'kairos-studio-fonts');
   const fontsDir = join(root, 'fonts');
   const cacheDir = join(root, 'cache');
   mkdirSync(fontsDir, { recursive: true });
   mkdirSync(cacheDir, { recursive: true });
 
-  for (const face of FACES) {
-    const from = join(source, face);
-    const to = join(fontsDir, face.split('/')[1]!);
-    if (!existsSync(from)) {
-      throw new Error(
-        `Police introuvable : ${from}. ` +
-          `Le paquet @expo-google-fonts/work-sans est-il installé ?`,
-      );
+  const paquets = [
+    ['@expo-google-fonts/work-sans', FACES],
+    ['@expo-google-fonts/cairo', FACES_AR],
+  ] as const;
+
+  for (const [paquet, faces] of paquets) {
+    const source = paquetDir(paquet);
+    for (const face of faces) {
+      const from = join(source, face);
+      const to = join(fontsDir, face.split('/')[1]!);
+      if (!existsSync(from)) {
+        throw new Error(
+          `Police introuvable : ${from}. Le paquet ${paquet} est-il installé ?`,
+        );
+      }
+      if (!existsSync(to)) copyFileSync(from, to);
     }
-    if (!existsSync(to)) copyFileSync(from, to);
   }
 
   const configPath = join(root, 'fonts.conf');
@@ -85,22 +101,33 @@ export function ensureFonts(): string {
   return configPath;
 }
 
+/** Une chaîne par écriture : l'arabe doit être éprouvé sur des glyphes arabes. */
+const TEMOINS: Record<string, string> = {
+  'Cairo ExtraBold': 'احجز طاولتك',
+};
+const TEMOIN_PAR_DEFAUT = 'Réservé ce soir';
+
 /**
- * Vérifie que Work Sans est réellement utilisée, et pas seulement demandée.
+ * Vérifie qu'une famille est réellement utilisée, et pas seulement demandée.
  *
- * On rend deux fois la même chaîne : une fois dans la graisse voulue, une fois
+ * On rend deux fois la même chaîne : une fois dans la famille voulue, une fois
  * dans une famille qui n'existe nulle part. Si les deux images sont identiques,
  * c'est que la première a été servie par la police de repli — la configuration
  * n'a pas pris, et tout visuel produit ensuite serait dans la mauvaise
  * typographie. On préfère s'arrêter.
+ *
+ * Le témoin est écrit dans l'écriture de la famille : demander « Réservé ce
+ * soir » à Cairo passerait même si Cairo n'avait pas un glyphe arabe.
  */
-export async function assertWorkSansAvailable(
+export async function assertPolicesDisponibles(
   sharp: typeof import('sharp'),
+  family: string,
 ): Promise<void> {
-  const probe = async (family: string): Promise<number> => {
+  const texte = TEMOINS[family] ?? TEMOIN_PAR_DEFAUT;
+  const probe = async (famille: string): Promise<number> => {
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="520" height="140">
       <rect width="520" height="140" fill="#000000"/>
-      <text x="16" y="96" font-family="${family}" font-size="56" fill="#FFFFFF">Réservé ce soir</text>
+      <text x="16" y="96" font-family="${famille}" font-size="56" fill="#FFFFFF">${texte}</text>
     </svg>`;
     const { data } = await sharp(Buffer.from(svg))
       .greyscale()
@@ -111,17 +138,17 @@ export async function assertWorkSansAvailable(
     return lit;
   };
 
-  const [wanted, fallback] = await Promise.all([
-    probe('Work Sans ExtraBold'),
+  const [voulue, repli] = await Promise.all([
+    probe(family),
     probe('Kairos Police Absente'),
   ]);
 
-  if (wanted === fallback) {
+  if (voulue === repli) {
     throw new Error(
-      'Work Sans n\'est pas résolue par fontconfig : le rendu utiliserait la ' +
+      `${family} n'est pas résolue par fontconfig : le rendu utiliserait la ` +
         'police de repli du système. Vérifier FONTCONFIG_FILE ' +
-        `(${process.env.FONTCONFIG_FILE ?? 'non posée'}) et l'installation de ` +
-        '@expo-google-fonts/work-sans.',
+        `(${process.env.FONTCONFIG_FILE ?? 'non posée'}) et l'installation des ` +
+        'paquets @expo-google-fonts.',
     );
   }
 }

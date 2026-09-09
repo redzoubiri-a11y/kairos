@@ -1,9 +1,10 @@
 /**
  * Vérification du rendu visuel, sans base ni clé API.
  *
- * Elle prouve trois choses que le reste du studio suppose : Work Sans est bien
- * la police servie, le titre se replie sur deux lignes sans déborder, et le
- * bloc « note » disparaît proprement quand la note manque.
+ * Elle prouve quatre choses que le reste du studio suppose : Work Sans est bien
+ * la police servie, le titre se replie sur deux lignes sans déborder, le bloc
+ * « note » disparaît proprement quand la note manque, et l'arabe sort en Cairo
+ * avec la mise en page reflétée.
  */
 
 import { mkdirSync, writeFileSync } from 'node:fs';
@@ -56,6 +57,30 @@ const CASES = [
       cta: 'Réserver sur Mida',
       rating: 4.2,
       photoUrl: null,
+    },
+  },
+  {
+    file: 'out/smoke-5-arabe.jpg',
+    input: {
+      headline: 'احجز طاولتك لهذا المساء',
+      subline: 'الياسمين — حيدرة، الجزائر العاصمة',
+      badge: 'مطبخ متوسطي',
+      cta: 'احجز على ميدا',
+      rating: 4.6,
+      photoUrl: null,
+      locale: 'ar' as const,
+    },
+  },
+  {
+    file: 'out/smoke-6-arabe-long.jpg',
+    input: {
+      headline: 'طاولة لشخصين على الساعة الثامنة مساء دون انتظار طويل',
+      subline: 'الأناقة — ديدوش مراد، وسط الجزائر',
+      badge: 'سمك طازج',
+      cta: 'احجز على ميدا',
+      rating: null,
+      photoUrl: null,
+      locale: 'ar' as const,
     },
   },
 ] as const;

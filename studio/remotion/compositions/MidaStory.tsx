@@ -16,7 +16,8 @@
 
 import React from 'react';
 import { AbsoluteFill, Img, interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion';
-import { attendreWorkSans } from '../fonts';
+import { attendrePolices } from '../fonts';
+import type { Locale } from '../../src/types.ts';
 
 export const DUREE_SECONDES = 6;
 export const FPS = 30;
@@ -39,7 +40,14 @@ export type MidaStoryProps = {
   cta: string;
   rating: number | null;
   photoUrl: string | null;
+  locale: Locale;
 };
+
+/** Work Sans n'a aucun glyphe arabe ; Cairo couvre les deux écritures. */
+const POLICES = {
+  fr: { xb: 'Work Sans ExtraBold', sb: 'Work Sans SemiBold', rg: 'Work Sans Regular' },
+  ar: { xb: 'Cairo ExtraBold', sb: 'Cairo SemiBold', rg: 'Cairo Regular' },
+} as const;
 
 /**
  * Entrée décalée : chaque élément arrive après le précédent, jamais tous
@@ -66,8 +74,15 @@ export const MidaStory: React.FC<MidaStoryProps> = ({
   cta,
   rating,
   photoUrl,
+  locale,
 }) => {
-  attendreWorkSans();
+  attendrePolices();
+
+  const police = POLICES[locale];
+  // Contrairement à librsvg, Chromium honore direction: 'rtl' — il retourne
+  // aussi l'ordre des boîtes flex, donc l'étiquette et la note permutent, et le
+  // pied place la marque du côté où commence la lecture, sans code de miroir.
+  const rtl = locale === 'ar';
 
   const frame = useCurrentFrame();
   const { fps, durationInFrames } = useVideoConfig();
@@ -77,7 +92,13 @@ export const MidaStory: React.FC<MidaStoryProps> = ({
   const zoom = interpolate(frame, [0, durationInFrames], [1, 1.04]);
 
   return (
-    <AbsoluteFill style={{ backgroundColor: '#191919' }}>
+    <AbsoluteFill
+      style={{
+        backgroundColor: '#191919',
+        direction: rtl ? 'rtl' : 'ltr',
+        textAlign: rtl ? 'right' : 'left',
+      }}
+    >
       {photoUrl ? (
         <AbsoluteFill style={{ overflow: 'hidden' }}>
           <Img
@@ -107,7 +128,7 @@ export const MidaStory: React.FC<MidaStoryProps> = ({
             style={{
               backgroundColor: '#D8432B',
               color: '#FFFFFF',
-              fontFamily: 'Work Sans SemiBold',
+              fontFamily: police.sb,
               fontSize: 30,
               letterSpacing: 1.4,
               padding: '16px 36px',
@@ -115,7 +136,7 @@ export const MidaStory: React.FC<MidaStoryProps> = ({
               ...apparition(frame, fps, 0.1),
             }}
           >
-            {badge.toUpperCase()}
+            {rtl ? badge : badge.toUpperCase()}
           </div>
 
           {rating !== null && rating > 0 ? (
@@ -123,7 +144,7 @@ export const MidaStory: React.FC<MidaStoryProps> = ({
               style={{
                 backgroundColor: 'rgba(25,25,25,0.72)',
                 color: '#F5EDD6',
-                fontFamily: 'Work Sans SemiBold',
+                fontFamily: police.sb,
                 fontSize: 30,
                 padding: '16px 30px',
                 borderRadius: 40,
@@ -140,7 +161,7 @@ export const MidaStory: React.FC<MidaStoryProps> = ({
         <div
           style={{
             color: '#FFFFFF',
-            fontFamily: 'Work Sans ExtraBold',
+            fontFamily: police.xb,
             fontSize: 92,
             lineHeight: 1.08,
             ...apparition(frame, fps, 0.9),
@@ -152,7 +173,7 @@ export const MidaStory: React.FC<MidaStoryProps> = ({
         <div
           style={{
             color: '#F5F5F3',
-            fontFamily: 'Work Sans Regular',
+            fontFamily: police.rg,
             fontSize: 40,
             marginTop: 28,
             ...apparition(frame, fps, 1.4, 0.88),
@@ -179,10 +200,11 @@ export const MidaStory: React.FC<MidaStoryProps> = ({
             ...apparition(frame, fps, 2.0),
           }}
         >
+          {/* Le mot-symbole garde Work Sans dans les deux langues : c'est une marque. */}
           <div style={{ color: '#D8432B', fontFamily: 'Work Sans ExtraBold', fontSize: 48 }}>
             mida
           </div>
-          <div style={{ color: '#F5F5F3', fontFamily: 'Work Sans SemiBold', fontSize: 34 }}>
+          <div style={{ color: '#F5F5F3', fontFamily: police.sb, fontSize: 34 }}>
             {cta}
           </div>
         </div>

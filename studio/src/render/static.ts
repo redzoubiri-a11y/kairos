@@ -9,13 +9,41 @@
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { ensureFonts, assertWorkSansAvailable } from './fonts.ts';
+import { ensureFonts, assertPolicesDisponibles } from './fonts.ts';
+import type { Locale } from '../types.ts';
 
 const here = dirname(fileURLToPath(import.meta.url));
 
 export const CANVAS = 1080;
 const MARGIN = 72;
 const CONTENT_WIDTH = CANVAS - MARGIN * 2;
+
+/**
+ * Work Sans n'a aucun glyphe arabe : demandée sur de l'arabe, elle ne produit
+ * pas d'erreur, fontconfig sert autre chose et le visuel sort en tofu ou dans
+ * une police de système. Cairo couvre l'arabe et le latin, et vient du même
+ * paquet @expo-google-fonts que celui qu'utilise déjà l'application.
+ */
+const POLICES = {
+  fr: { xb: 'Work Sans ExtraBold', sb: 'Work Sans SemiBold', rg: 'Work Sans Regular' },
+  ar: { xb: 'Cairo ExtraBold', sb: 'Cairo SemiBold', rg: 'Cairo Regular' },
+} as const;
+
+/**
+ * Géométrie du sens de lecture. Le gabarit est symétrique : le code lui donne
+ * de quel côté commence la ligne, et tout suit.
+ */
+function sensDeLecture(locale: Locale) {
+  const rtl = locale === 'ar';
+  return {
+    rtl,
+    /** Bord où commence la lecture — gauche en français, droite en arabe. */
+    debutX: rtl ? CANVAS - MARGIN : MARGIN,
+    finX: rtl ? MARGIN : CANVAS - MARGIN,
+    ancreDebut: rtl ? 'end' : 'start',
+    ancreFin: rtl ? 'start' : 'end',
+  } as const;
+}
 
 /** Ligne de base de la DERNIÈRE ligne de titre. Le bloc grandit vers le haut. */
 const HEADLINE_BASELINE = 796;
@@ -30,6 +58,14 @@ const MAX_HEADLINE_LINES = 2;
  * il faut estimer. Ces valeurs viennent des métriques moyennes de Work Sans sur
  * du français courant. Elles sont volontairement un peu larges — mieux vaut
  * couper une ligne trop tôt que déborder du carré.
+ *
+ * Elles valent aussi pour l'arabe, ce qui n'allait pas de soi : les lettres se
+ * lient, donc la largeur rendue n'est pas la somme des glyphes isolés. Mesuré
+ * plutôt que supposé — largeur d'encre sur cinq phrases arabes en Cairo
+ * ExtraBold à 76 px : facteur 0,485 à 0,521, contre 0,486 à 0,514 pour trois
+ * phrases françaises en Work Sans ExtraBold. Le 0,58 garde donc sa marge dans
+ * les deux langues. C'est peu d'échantillons : la contrainte de longueur du
+ * schéma de sortie reste le vrai garde-fou.
  */
 const ADVANCE = {
   extraBold: 0.58,
@@ -102,6 +138,8 @@ export interface StaticRenderInput {
   rating?: number | null;
   /** URL de la photo de couverture. Absente : fond uni de la charte. */
   photoUrl?: string | null;
+  /** Décide la police et le sens de lecture. Français par défaut. */
+  locale?: Locale;
 }
 
 export interface StaticRenderResult {
@@ -131,6 +169,9 @@ function applyConditionals(svg: string, present: Record<string, boolean>): strin
 
 function buildOverlay(input: StaticRenderInput): string {
   const template = readFileSync(join(here, 'templates', 'mida-square.svg'), 'utf8');
+  const locale: Locale = input.locale ?? 'fr';
+  const police = POLICES[locale];
+  const sens = sensDeLecture(locale);
 
   const headlineLines = wrapText(
     input.headline,
@@ -148,31 +189,79 @@ function buildOverlay(input: StaticRenderInput): string {
   const headlineMarkup = headlineLines
     .map(
       (line, i) =>
-        `<text x="${MARGIN}" y="${firstBaseline + i * HEADLINE_LEADING}">${escapeXml(line)}</text>`,
+        `<text x="${sens.debutX}" y="${firstBaseline + i * HEADLINE_LEADING}">${escapeXml(line)}</text>`,
     )
     .join('');
 
-  const badge = input.badge.toUpperCase();
+  // L'arabe n'a pas de casse : toUpperCase() n'y ferait rien, mais le dire
+  // évite de croire plus tard que l'étiquette arabe a perdu ses capitales.
+  const badge = locale === 'ar' ? input.badge : input.badge.toUpperCase();
   const badgeWidth = Math.round(
-    Math.min(estimateWidth(badge, 24, 'semiBoldCaps', 1.2) + 56, 620),
+    Math.min(
+      estimateWidth(badge, 24, locale === 'ar' ? 'semiBold' : 'semiBoldCaps', 1.2) + 56,
+      620,
+    ),
   );
+  const badgeX = sens.rtl ? CANVAS - MARGIN - badgeWidth : MARGIN;
+  const badgeTexteX = sens.rtl ? badgeX + badgeWidth - 28 : badgeX + 28;
 
   const hasRating = typeof input.rating === 'number' && input.rating > 0;
-  const ratingX = CANVAS - MARGIN - 132;
+  // La note occupe le coin opposé à l'étiquette, quel que soit le sens.
+  const ratingX = sens.rtl ? MARGIN : CANVAS - MARGIN - 132;
+
+  // L'étoile se place du côté où commence la lecture. Le <text> n'a pas de
+  // contexte bidirectionnel — un caractère neutre suivi d'un nombre reste en
+  // ordre latin — donc on l'ordonne à la main, pour que l'image dise la même
+  // chose que la vidéo, où Chromium le fait tout seul.
+  const note = hasRating ? input.rating!.toFixed(1).replace('.', ',') : '';
+  const ratingTexte = sens.rtl ? `${note} ★` : `★ ${note}`;
 
   const subline = wrapText(input.subline, 34, 'regular', CONTENT_WIDTH, 1)[0] ?? '';
   const cta = wrapText(input.cta, 28, 'semiBold', 620, 1)[0] ?? '';
 
-  return applyConditionals(template, { rating: hasRating })
+  const svg = applyConditionals(template, { rating: hasRating })
+    .replace(/\{\{FONT_XB\}\}/g, police.xb)
+    .replace(/\{\{FONT_SB\}\}/g, police.sb)
+    .replace(/\{\{FONT_RG\}\}/g, police.rg)
     .replace(/\{\{HEADLINE_LINES\}\}/g, headlineMarkup)
     .replace(/\{\{BADGE_WIDTH\}\}/g, String(badgeWidth))
-    .replace(/\{\{BADGE_TEXT_X\}\}/g, String(MARGIN + 28))
+    .replace(/\{\{BADGE_X\}\}/g, String(badgeX))
+    .replace(/\{\{BADGE_TEXT_X\}\}/g, String(badgeTexteX))
     .replace(/\{\{BADGE_TEXT\}\}/g, escapeXml(badge))
     .replace(/\{\{RATING_X\}\}/g, String(ratingX))
     .replace(/\{\{RATING_TEXT_X\}\}/g, String(ratingX + 26))
-    .replace(/\{\{RATING\}\}/g, hasRating ? input.rating!.toFixed(1).replace('.', ',') : '')
+    .replace(/\{\{RATING_TEXTE\}\}/g, ratingTexte)
     .replace(/\{\{SUBLINE\}\}/g, escapeXml(subline))
+    .replace(/\{\{TEXT_X\}\}/g, String(sens.debutX))
+    .replace(/\{\{TEXT_ANCHOR\}\}/g, sens.ancreDebut)
+    .replace(/\{\{CTA_X\}\}/g, String(sens.finX))
+    .replace(/\{\{CTA_ANCHOR\}\}/g, sens.ancreFin)
     .replace(/\{\{CTA\}\}/g, escapeXml(cta));
+
+  // Garde-fou. direction="rtl" sur un <text> ne lève pas d'erreur dans librsvg :
+  // il ne rend qu'un seul glyphe et le reste de la phrase disparaît. Mesuré sur
+  // « احجز طاولتك هذا المساء » — 485 pixels allumés avec l'attribut, 11 890 sans.
+  // Pango applique déjà le bidirectionnel d'après les caractères ; l'alignement
+  // passe par text-anchor, jamais par direction.
+  // Les commentaires XML sont retirés avant le contrôle : l'en-tête du gabarit
+  // énonce l'interdiction, et se ferait prendre par sa propre règle.
+  const sansCommentaires = svg.replace(/<!--[\s\S]*?-->/g, '');
+  if (
+    /\bdirection\s*=\s*"rtl"/.test(sansCommentaires) ||
+    /direction\s*:\s*rtl/.test(sansCommentaires)
+  ) {
+    throw new Error(
+      'Le gabarit pose direction="rtl" : librsvg n\'en rendrait qu\'un glyphe. ' +
+        "Utiliser text-anchor pour l'alignement.",
+    );
+  }
+
+  const restants = svg.match(/\{\{[A-Z_]+\}\}/g);
+  if (restants) {
+    throw new Error(`Jetons non remplacés dans le gabarit : ${[...new Set(restants)].join(', ')}`);
+  }
+
+  return svg;
 }
 
 const MAX_PHOTO_BYTES = 20 * 1024 * 1024;
@@ -192,7 +281,7 @@ async function fetchPhoto(url: string): Promise<Buffer | null> {
   }
 }
 
-let fontsChecked = false;
+const fontsChecked = new Set<Locale>();
 
 export async function renderStatic(
   input: StaticRenderInput,
@@ -202,9 +291,10 @@ export async function renderStatic(
   // initialisation, et ne la relit jamais ensuite.
   const sharp = (await import('sharp')).default;
 
-  if (!fontsChecked) {
-    await assertWorkSansAvailable(sharp);
-    fontsChecked = true;
+  const locale: Locale = input.locale ?? 'fr';
+  if (!fontsChecked.has(locale)) {
+    await assertPolicesDisponibles(sharp, POLICES[locale].xb);
+    fontsChecked.add(locale);
   }
 
   const photo = input.photoUrl ? await fetchPhoto(input.photoUrl) : null;

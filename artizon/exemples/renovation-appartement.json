@@ -1,0 +1,145 @@
+{
+  "reference": "D-2026-0142",
+  "date": "2026-09-05",
+  "entreprise": {
+    "nom": "ARTIZON",
+    "forme": "SAS",
+    "siret": "000 000 000 00000",
+    "tvaIntracommunautaire": "FR00000000000",
+    "assuranceDecennale": {
+      "assureur": "à compléter",
+      "contrat": "à compléter",
+      "couvertureGeographique": "France métropolitaine"
+    }
+  },
+  "client": { "nom": "M. et Mme Client", "adresse": "Lyon 3e" },
+  "chantier": {
+    "adresse": "Appartement T3, 3e étage sans ascenseur, Lyon 3e",
+    "nature": "renovation",
+    "surfaceHabitable": 68,
+    "ageLogementAnnees": 52,
+    "typeLocal": "habitation",
+    "coefficientContexte": 1.2
+  },
+  "tva": { "natureTravaux": "amelioration" },
+  "parametres": {
+    "fraisChantier": 0,
+    "fraisGeneraux": 0.12,
+    "aleas": 0.05,
+    "marge": 0.09
+  },
+  "conditions": {
+    "validiteJours": 60,
+    "acompte": 0.3,
+    "retenueGarantie": 0.05,
+    "revisionPrix": false
+  },
+  "lots": [
+    {
+      "code": "01",
+      "libelle": "Installation et protections",
+      "lot": "installation",
+      "postes": [
+        { "ouvrage": "01.01", "quantite": 1, "coefficientContexte": 1 },
+        { "ouvrage": "01.02", "quantite": 68 }
+      ]
+    },
+    {
+      "code": "02",
+      "libelle": "Démolition et évacuation",
+      "lot": "demolition",
+      "postes": [
+        { "ouvrage": "02.01", "quantite": 24 },
+        { "ouvrage": "02.02", "quantite": 9 }
+      ]
+    },
+    {
+      "code": "03",
+      "libelle": "Plâtrerie",
+      "lot": "platrerie",
+      "postes": [
+        { "ouvrage": "03.01", "quantite": 28 },
+        { "ouvrage": "03.02", "quantite": 12 },
+        { "ouvrage": "03.04", "quantite": 22 }
+      ]
+    },
+    {
+      "code": "04",
+      "libelle": "Sols souples et préparation",
+      "lot": "sols",
+      "postes": [
+        { "ouvrage": "04.01", "quantite": 68 },
+        { "ouvrage": "06.01", "quantite": 46 }
+      ]
+    },
+    {
+      "code": "05",
+      "libelle": "Carrelage et faïence",
+      "lot": "carrelage",
+      "postes": [
+        { "ouvrage": "05.01", "quantite": 22, "consultations": 3 },
+        { "ouvrage": "05.02", "quantite": 18 },
+        { "ouvrage": "05.03", "quantite": 12 }
+      ]
+    },
+    {
+      "code": "07",
+      "libelle": "Peinture",
+      "lot": "peinture",
+      "postes": [
+        { "ouvrage": "07.01", "quantite": 185, "quantiteDPGF": 165, "consultations": 2 },
+        { "ouvrage": "07.02", "quantite": 68 }
+      ]
+    },
+    {
+      "code": "08",
+      "libelle": "Menuiserie intérieure",
+      "lot": "menuiserie",
+      "postes": [
+        { "ouvrage": "08.01", "quantite": 5 },
+        {
+          "code": "08.90",
+          "libelle": "Placard sur mesure, façades coulissantes",
+          "unite": "ens",
+          "quantite": 1,
+          "prixUnitaire": 2400,
+          "debourseTotal": 1700,
+          "consultations": 1,
+          "source": "ESTIME"
+        }
+      ]
+    },
+    {
+      "code": "09",
+      "libelle": "Électricité",
+      "lot": "electricite",
+      "complet": true,
+      "postes": [
+        { "ouvrage": "09.01", "quantite": 42, "consultations": 2 },
+        { "ouvrage": "09.02", "quantite": 1 }
+      ]
+    },
+    {
+      "code": "10",
+      "libelle": "Plomberie et sanitaire",
+      "lot": "plomberie",
+      "postes": [
+        { "ouvrage": "10.01", "quantite": 5 },
+        {
+          "code": "10.90",
+          "libelle": "Fourniture des appareils sanitaires par le client",
+          "unite": "ens",
+          "quantite": 0,
+          "pourMemoire": true,
+          "source": "BPU"
+        }
+      ]
+    },
+    {
+      "code": "11",
+      "libelle": "Nettoyage",
+      "lot": "nettoyage",
+      "postes": [{ "ouvrage": "11.01", "quantite": 68 }]
+    }
+  ]
+}

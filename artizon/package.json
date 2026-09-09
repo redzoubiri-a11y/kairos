@@ -1,0 +1,16 @@
+{
+  "name": "@artizon/chiffrage",
+  "version": "1.0.0",
+  "description": "Moteur de chiffrage BTP Artizon : metre, sous-detail de prix, devis, controles.",
+  "type": "module",
+  "main": "src/index.js",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "chiffrer": "node cli/chiffrer.js",
+    "comparer": "node cli/comparer.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

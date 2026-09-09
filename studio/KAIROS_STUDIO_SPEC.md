@@ -238,8 +238,8 @@ aucun navigateur ne parle à cette base. Le jour où une interface web arrive
 
 ### Limites assumées de la Phase 1
 
-- `generations.kind` n'accepte que `'text'`. La vidéo (Remotion) ajoutera
-  `'video'` — et une migration.
+- ~~`generations.kind` n'accepte que `'text'`.~~ **Levé en Phase 2** :
+  `0006_video.sql` étend `generations.kind` et `assets.kind` à `'video'`.
 - `campaigns.locale` accepte `fr` et `ar`, mais **seul `fr` est produit** : le
   générateur est mono-langue et `runCampaign` refuse explicitement une campagne
   qui ne serait pas en français, plutôt que de rendre du français sous une

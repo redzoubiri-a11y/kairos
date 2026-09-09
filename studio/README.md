@@ -172,8 +172,12 @@ de texte : les largeurs de glyphe sont approchées (`ADVANCE` dans
 sont contraintes dans le schéma de sortie plutôt que laissées libres. Les mêmes
 valeurs servent à l'arabe — mesuré plutôt que supposé, voir « L'arabe ».
 
-**Next.js n'est toujours pas là.** Le studio web reste à faire ; c'est lui qui
-apportera les policies RLS que `0004` laisse délibérément vides.
+**Le studio web est arrivé sans policies RLS, contrairement à ce que cette
+section prédisait.** Voir « Le studio web » plus bas : c'est une porte à un
+seul opérateur, jamais de clé anon côté navigateur, donc rien à autoriser au
+niveau des lignes. Les policies de `0004` restent vides — elles ne seraient
+utiles que pour une authentification multi-utilisateur, un chantier différent
+de celui-ci.
 
 **Remotion est arrivé en Phase 2**, pour la vidéo — voir plus bas.
 
@@ -322,3 +326,61 @@ la main dans les tests.
 Personne d'arabophone n'a relu l'invite. `CONSIGNE_LANGUE.ar` demande de l'arabe
 standard moderne et des chiffres occidentaux ; c'est un choix de départ, pas une
 validation éditoriale.
+
+---
+
+## Le studio web
+
+`app/` — Next.js 15, App Router. Une porte, deux pages : la liste des
+campagnes, le détail d'une campagne avec son texte et ses rendus.
+
+### La porte n'est pas une authentification
+
+`studioDb()` se connecte avec la clé `service_role` : elle contourne RLS par
+construction, et les tables du studio sont fermées sans aucune policy
+(`0004`). Rien de tout ça ne change avec le studio web — la clé ne quitte
+jamais le serveur, toutes les pages sont des composants serveur, aucune donnée
+ne transite par une route publique.
+
+Ce qui protège l'accès est donc plus simple qu'une authentification : un mot
+de passe partagé (`STUDIO_WEB_PASSWORD`), un cookie signé HMAC-SHA256
+(`STUDIO_WEB_SECRET`), vérifié par un middleware qui bloque tout sauf
+`/connexion`. Comparaisons à durée constante des deux côtés — le mot de passe
+proposé, la signature du cookie — pour qu'une réponse plus lente ne renseigne
+pas sur un préfixe correct.
+
+**Configuration absente = 503, jamais un studio ouvert.** Même arbitrage que
+pour le secret du cron `auto-approve-pro` côté Mida (PR #20) : perdre un accès
+coûte moins cher qu'en accorder un par défaut.
+
+Passer à plusieurs opérateurs avec des droits différents demanderait une vraie
+authentification et les policies RLS que `0004` laisse vides — un autre
+chantier, pas une variable de plus.
+
+### Les pages
+
+`/` liste les campagnes, la plus récente d'abord, avec un compte de pièces par
+`count` agrégé plutôt qu'une lecture des lignes. `/campagnes/[id]` réutilise
+`previewCampaign()` telle quelle : même fonction que le MCP, une seule source
+de vérité sur ce qu'est une pièce prête. Les visuels et vidéos sont servis par
+URL signée — `next/image` voudrait les recacher sous sa propre adresse, ce qui
+ne veut rien dire pour un lien qui expire.
+
+**« Relancer » retraite toute la campagne, pas seulement les pièces en échec.**
+`runCampaign()` n'a pas de filtre sur `status` : relancer sept restaurants
+dont un a échoué rappelle le modèle sept fois. Le bouton porte
+l'avertissement dans la page plutôt que d'agir en silence.
+
+### L'arabe
+
+`[lang="ar"]` bascule en `direction: rtl` par CSS — la mise en page du studio
+lui-même reste LTR, seul le contenu qui est en arabe se retourne. Posé sur le
+nom de la campagne, le nom de l'entité et le bloc de texte, où la langue vient
+de `campaigns.locale`.
+
+### Ce qui manque
+
+Pas de pagination sur la liste des campagnes — `limit(50)` fixe. Pas de
+formulaire de création : `create_campaign` reste un outil MCP, la logique de
+formats/consentement n'est pas dupliquée ici. Pas de suivi en direct d'une
+génération en cours (`status = 'generating'`) : il faut recharger la page.

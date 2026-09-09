@@ -438,6 +438,52 @@ export interface CampaignPreview {
   }[];
 }
 
+export interface CampaignSummary {
+  id: string;
+  slug: string;
+  name: string;
+  status: string;
+  locale: Locale;
+  createdAt: string;
+  /** Nombre de pièces rattachées, tous états confondus. */
+  items: number;
+}
+
+/**
+ * Les campagnes, la plus récente d'abord. Le décompte des pièces vient d'un
+ * count agrégé plutôt que d'une lecture des lignes : la liste n'a pas besoin
+ * des pièces elles-mêmes, seulement de leur nombre.
+ */
+export async function listCampaigns(limit = 50): Promise<CampaignSummary[]> {
+  const { data, error } = await studioDb()
+    .from('campaigns')
+    .select('id, slug, name, status, locale, created_at, campaign_items(count)')
+    .order('created_at', { ascending: false })
+    .limit(limit);
+  if (error) throw new Error(`Campagnes illisibles : ${error.message}`);
+
+  return (data ?? []).map((raw) => {
+    const c = raw as unknown as {
+      id: string;
+      slug: string;
+      name: string;
+      status: string;
+      locale: Locale;
+      created_at: string;
+      campaign_items: { count: number }[];
+    };
+    return {
+      id: c.id,
+      slug: c.slug,
+      name: c.name,
+      status: c.status,
+      locale: c.locale,
+      createdAt: c.created_at,
+      items: c.campaign_items?.[0]?.count ?? 0,
+    };
+  });
+}
+
 /** Relecture d'une campagne : le visuel par URL signée, le texte en clair. */
 export async function previewCampaign(campaignId: string): Promise<CampaignPreview> {
   const db = studioDb();
@@ -495,4 +541,15 @@ export async function previewCampaign(campaignId: string): Promise<CampaignPrevi
     status: campaign.status as string,
     items: preview,
   };
+}
+
+/** La langue seule, pour les pages qui n'ont pas besoin du reste de la campagne. */
+export async function langueCampagne(campaignId: string): Promise<Locale> {
+  const { data, error } = await studioDb()
+    .from('campaigns')
+    .select('locale')
+    .eq('id', campaignId)
+    .single();
+  if (error) throw new Error(`Campagne introuvable : ${error.message}`);
+  return data.locale as Locale;
 }

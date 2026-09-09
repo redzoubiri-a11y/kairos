@@ -41,6 +41,14 @@ jobs:
       - name: Types
         run: npm run typecheck
 
+      # `next build` a ses propres échecs, qu'aucun type ne voit : un composant
+      # serveur qui importerait un module navigateur, une route mal formée.
+      # Aucune variable d'environnement requise ici — configWeb() ne lit
+      # process.env qu'à la requête (middleware, route), jamais au build ;
+      # vérifié en le jouant sans elles avant d'écrire ce commentaire.
+      - name: Construire le studio web
+        run: npm run build
+
       # Le rendu est la seule vérification qui exerce réellement la chaîne
       # SVG → librsvg → Sharp. Elle attrape ce qu'aucun type ne voit : un
       # débordement du carré, un échappement XML manquant, et surtout une

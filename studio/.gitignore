@@ -3,3 +3,4 @@
 .env.local
 out/
 remotion/public/fonts/
+.next/

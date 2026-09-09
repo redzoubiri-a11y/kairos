@@ -15,10 +15,12 @@ import { DOCUMENT_TYPES } from '../utils/constants';
 import { formatDate } from '../utils/format';
 import { colors, radii, spacing, typography } from '../theme';
 
+// VERIFIED/REJECTED sont des decisions rendues (traitement "tampon") ; PENDING
+// reste en mouvement (etiquette plate) — meme regle que statusColors du theme.
 const STATUS_COPY = {
-  PENDING: { tone: { bg: colors.warningSoft, fg: colors.warning }, label: 'En cours de verification' },
-  VERIFIED: { tone: { bg: colors.successSoft, fg: colors.success }, label: 'Compte verifie' },
-  REJECTED: { tone: { bg: colors.dangerSoft, fg: colors.danger }, label: 'Dossier refuse' },
+  PENDING: { tone: { fg: colors.warning }, label: 'En cours de verification', sealed: false },
+  VERIFIED: { tone: { fg: colors.success }, label: 'Compte verifie', sealed: true },
+  REJECTED: { tone: { fg: colors.danger }, label: 'Dossier refuse', sealed: true },
 };
 
 export default function DocumentsScreen({ navigation }) {
@@ -107,7 +109,7 @@ export default function DocumentsScreen({ navigation }) {
         <ErrorBanner message={error} onRetry={load} />
 
         <Card>
-          <Badge tone={copy.tone} label={copy.label} />
+          <Badge tone={copy.tone} label={copy.label} sealed={copy.sealed} />
           {status === 'REJECTED' && profile?.rejectionReason ? (
             <Text style={styles.rejection}>Motif : {profile.rejectionReason}</Text>
           ) : null}

@@ -106,6 +106,14 @@ export function statusTone(status) {
   return STATUS_TONES[status] || 'neutral';
 }
 
+// Meme regle de decision que statusColors.sealed cote mobile : seul un statut
+// qui correspond a un jugement rendu recoit le traitement "tampon".
+const SEALED_STATUSES = new Set(['ACCEPTED', 'REJECTED', 'COMPLETED', 'VERIFIED']);
+
+export function statusSealed(status) {
+  return SEALED_STATUSES.has(status);
+}
+
 export const ROLE_TONES = {
   CLIENT: 'info',
   TRANSPORTER: 'success',

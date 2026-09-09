@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, radii, spacing, typography, fonts } from '../theme';
+import { colors, radii, spacing, typography } from '../theme';
 
 export default function Input({
   label,
@@ -23,12 +23,15 @@ export default function Input({
   const [hidden, setHidden] = useState(secureTextEntry);
 
   const borderColor = error ? colors.danger : focused ? colors.primary : colors.border;
+  // Repos : bordure 1px. Focus : 1.5px — pas de halo, une bordure plus
+  // epaisse suffit dans ce langage "papier net".
+  const borderWidth = focused ? 1.5 : 1;
 
   const field = (
     <View
       style={[
         styles.field,
-        { borderColor, backgroundColor: editable ? colors.card : colors.cardMuted },
+        { borderColor, borderWidth, backgroundColor: editable ? colors.card : colors.cardMuted },
         multiline && styles.multiline,
       ]}
     >
@@ -75,12 +78,11 @@ export default function Input({
 
 const styles = StyleSheet.create({
   wrapper: { marginBottom: spacing.lg },
-  label: { fontFamily: fonts.bodySemiBold, fontSize: typography.small.fontSize, color: colors.text, marginBottom: spacing.xs },
+  label: { ...typography.caption, color: colors.textMuted, marginBottom: spacing.xs },
   field: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 1.5,
-    borderRadius: radii.input,
+    borderRadius: radii.xs,
     paddingHorizontal: spacing.md,
     minHeight: 50,
   },

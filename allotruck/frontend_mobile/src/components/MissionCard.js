@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Card from './Card';
 import Badge from './Badge';
-import { colors, spacing, typography, fonts } from '../theme';
+import { colors, spacing, typography } from '../theme';
 import { formatDateTime, formatPrice, formatVolume, formatWeight } from '../utils/format';
 
 export default function MissionCard({ mission, onPress, counterpartName, style }) {
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
   goods: { ...typography.h3, color: colors.text, flex: 1, marginRight: spacing.sm },
   routeRow: { flexDirection: 'row', alignItems: 'center', marginTop: spacing.sm },
   route: { ...typography.body, color: colors.text, marginLeft: 6, flex: 1 },
-  date: { fontFamily: fonts.mono, fontSize: 11, color: colors.textMuted, marginTop: 4 },
+  date: { fontVariant: ['tabular-nums'], fontSize: 11, color: colors.textMuted, marginTop: 4 },
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     borderTopColor: colors.border,
     paddingTop: spacing.md,
   },
-  detail: { fontFamily: fonts.mono, fontSize: 11, color: colors.textMuted },
+  detail: { fontVariant: ['tabular-nums'], fontSize: 11, color: colors.textMuted },
   budget: { ...typography.bodyStrong, color: colors.primaryDark, fontWeight: '800' },
   counterpart: { flexDirection: 'row', alignItems: 'center', marginTop: spacing.sm },
   counterpartText: { ...typography.caption, color: colors.textMuted, marginLeft: 4, fontWeight: '400' },

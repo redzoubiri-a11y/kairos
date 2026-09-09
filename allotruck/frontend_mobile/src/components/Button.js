@@ -1,10 +1,12 @@
 import React from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, radii, shadows, spacing, fonts } from '../theme';
+import { colors, radii, spacing } from '../theme';
 
+// Un bordereau ne flotte pas : aucune variante n'a d'ombre, quel que soit
+// l'etat — la bordure (ou le fond plein pour la primaire) suffit.
 const VARIANTS = {
-  primary: { bg: colors.primary, fg: '#FFFFFF', border: 'transparent', shadow: shadows.accent },
+  primary: { bg: colors.primary, fg: '#FFFFFF', border: 'transparent' },
   secondary: { bg: 'transparent', fg: colors.primary, border: colors.primary },
   ghost: { bg: 'transparent', fg: colors.textMuted, border: 'transparent' },
   danger: { bg: colors.danger, fg: '#FFFFFF', border: 'transparent' },
@@ -13,9 +15,9 @@ const VARIANTS = {
 };
 
 const SIZES = {
-  sm: { paddingVertical: 8, paddingHorizontal: 14, fontSize: 13, icon: 15, radius: radii.button },
-  md: { paddingVertical: 14, paddingHorizontal: 20, fontSize: 15, icon: 18, radius: radii.button },
-  lg: { paddingVertical: 17, paddingHorizontal: 24, fontSize: 16, icon: 20, radius: radii.buttonLg },
+  sm: { paddingVertical: 8, paddingHorizontal: 14, fontSize: 13, icon: 15, radius: radii.xs },
+  md: { paddingVertical: 14, paddingHorizontal: 20, fontSize: 15, icon: 18, radius: radii.xs },
+  lg: { paddingVertical: 17, paddingHorizontal: 24, fontSize: 16, icon: 20, radius: radii.xs },
 };
 
 export default function Button({
@@ -41,7 +43,6 @@ export default function Button({
       onPress={isDisabled ? undefined : onPress}
       style={({ pressed }) => [
         styles.base,
-        v.shadow,
         {
           backgroundColor: v.bg,
           borderColor: v.border,
@@ -81,7 +82,7 @@ const styles = StyleSheet.create({
     minHeight: 48,
   },
   content: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
-  label: { fontFamily: fonts.bodyBold },
+  label: { fontWeight: '700' },
   iconLeft: { marginRight: spacing.sm },
   iconRight: { marginLeft: spacing.sm },
 });

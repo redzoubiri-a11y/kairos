@@ -1,6 +1,6 @@
 import React from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
-import { colors, radii, shadows, spacing } from '../theme';
+import { colors, radii, spacing } from '../theme';
 
 export default function Card({ children, onPress, style }) {
   if (onPress) {
@@ -20,11 +20,10 @@ export default function Card({ children, onPress, style }) {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.card,
-    borderRadius: radii.lg,
+    borderRadius: radii.sm,
     padding: spacing.lg,
     borderWidth: 1,
     borderColor: colors.border,
-    ...shadows.card,
   },
   pressed: { opacity: 0.9, transform: [{ scale: 0.995 }] },
 });

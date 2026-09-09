@@ -8,7 +8,7 @@ import Pagination from '../components/Pagination';
 import SearchInput from '../components/SearchInput';
 import { listTransporters, verifyTransporter } from '../api/admin';
 import { toastError, toastSuccess } from '../store/uiStore';
-import { VERIFICATION_LABELS, formatDate, formatNumber, statusTone } from '../utils';
+import { VERIFICATION_LABELS, formatDate, formatNumber, statusSealed, statusTone } from '../utils';
 
 const LIMIT = 20;
 
@@ -169,7 +169,7 @@ export default function TransportersPage() {
       key: 'verificationStatus',
       header: 'Statut',
       render: (row) => (
-        <Badge tone={statusTone(row.verificationStatus)}>
+        <Badge tone={statusTone(row.verificationStatus)} sealed={statusSealed(row.verificationStatus)}>
           {VERIFICATION_LABELS[row.verificationStatus]}
         </Badge>
       ),

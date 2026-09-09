@@ -1,3 +1,4 @@
-export default function Badge({ tone = 'neutral', children }) {
-  return <span className={`badge badge--${tone}`}>{children}</span>;
+export default function Badge({ tone = 'neutral', sealed = false, children }) {
+  const classes = ['badge', `badge--${tone}`, sealed ? 'badge--sealed' : ''].filter(Boolean).join(' ');
+  return <span className={classes}>{children}</span>;
 }

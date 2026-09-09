@@ -9,6 +9,7 @@ import {
   formatDateTime,
   formatDzd,
   formatNumber,
+  statusSealed,
   statusTone,
 } from '../utils';
 
@@ -153,7 +154,7 @@ export default function MissionsPage() {
       header: 'Statut',
       render: (row) => (
         <>
-          <Badge tone={statusTone(row.status)}>
+          <Badge tone={statusTone(row.status)} sealed={statusSealed(row.status)}>
             {MISSION_STATUS_LABELS[row.status] || row.status}
           </Badge>
           {row.statusReason && (

@@ -10,6 +10,7 @@ import {
   formatDateTime,
   formatDzd,
   formatNumber,
+  statusSealed,
   statusTone,
 } from '../utils';
 import { listTrips } from '../api/admin';
@@ -149,7 +150,9 @@ export default function TripsPage() {
       key: 'status',
       header: 'Statut',
       render: (row) => (
-        <Badge tone={statusTone(row.status)}>{TRIP_STATUS_LABELS[row.status] || row.status}</Badge>
+        <Badge tone={statusTone(row.status)} sealed={statusSealed(row.status)}>
+          {TRIP_STATUS_LABELS[row.status] || row.status}
+        </Badge>
       ),
     },
   ];

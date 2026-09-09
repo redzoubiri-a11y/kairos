@@ -14,6 +14,7 @@ import {
   formatDateTime,
   formatNumber,
   isImage,
+  statusSealed,
   statusTone,
 } from '../utils';
 
@@ -165,7 +166,10 @@ export default function TransporterDetailPage() {
         <div>
           <div className="row" style={{ gap: 12 }}>
             <h1 className="page__title">{transporter.companyName}</h1>
-            <Badge tone={statusTone(transporter.verificationStatus)}>
+            <Badge
+              tone={statusTone(transporter.verificationStatus)}
+              sealed={statusSealed(transporter.verificationStatus)}
+            >
               {VERIFICATION_LABELS[transporter.verificationStatus]}
             </Badge>
           </div>

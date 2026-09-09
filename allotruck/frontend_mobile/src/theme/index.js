@@ -1,34 +1,51 @@
+// AlloTruck — direction visuelle "Bordereau" (validee, tampon vert)
+//
+// Migre depuis design/bordereau/tokens.mobile.js : memes noms de roles
+// (colors, spacing, radii, typography, shadows, statusColors), valeurs
+// alignees sur la direction validee.
+
 export const colors = {
-  primary: '#E8593C',
-  primaryDark: '#C9431F',
-  primarySoft: 'rgba(232, 89, 60, 0.12)',
-
-  background: '#F5F0EB',
+  // Fond et surfaces — un bordereau pose a plat, pas une carte flottante.
+  background: '#F4F5F3',
   surface: '#FFFFFF',
-  surfaceRaised: '#FFFFFF',
+  surfaceMuted: '#F4F5F3',
   card: '#FFFFFF',
-  cardMuted: '#EDE7DC',
+  cardMuted: '#F4F5F3',
 
-  text: '#1A1A2E',
+  // Encre
+  text: '#16202A',
   textInverse: '#FFFFFF',
-  textMuted: 'rgba(26, 26, 46, 0.55)',
+  textMuted: '#57646D',
+  // Cette direction n'a pas de fond sombre : reserve pour compatibilite avec
+  // les ecrans qui reference encore ce role (onboarding notamment).
   textOnDark: '#FFFFFF',
 
-  border: 'rgba(26, 26, 46, 0.09)',
-  borderDark: 'rgba(255, 255, 255, 0.14)',
+  // Lignes de champ
+  border: '#C9CDC6',
+  borderDark: '#9AA096',
 
-  success: '#16A34A',
-  successSoft: '#DCFCE7',
-  danger: '#DC2626',
-  dangerSoft: '#FEE2E2',
-  warning: '#D97706',
-  warningSoft: '#FEF3C7',
-  info: '#1A1A2E',
-  infoSoft: 'rgba(26, 26, 46, 0.08)',
+  // Autorite — accent de marque de cette direction (boutons, liens, en-tetes
+  // de section). Remplace l'ambre puis l'orange-corail.
+  primary: '#0F3D5C',
+  primaryDark: '#0B2E45',
+  primarySoft: '#E2ECF2',
 
-  overlay: 'rgba(26, 26, 46, 0.55)',
+  // Semantique. Le vert du tampon "Acceptee" est la valeur validee — ne pas
+  // la faire deriver d'une echelle generique, c'est la couleur de decision.
+  success: '#2E7D5B',
+  successSoft: '#E4EFE8',
+  danger: '#A6342E',
+  dangerSoft: '#F3E1DF',
+  warning: '#9A6B14',
+  warningSoft: '#F3EAD4',
+  info: '#2C5C82',
+  infoSoft: '#E2ECF2',
+
+  overlay: 'rgba(22, 32, 42, 0.55)',
 };
 
+// Inchange : aucune des trois directions n'a remis en cause l'echelle
+// d'espacement existante.
 export const spacing = {
   xs: 4,
   sm: 8,
@@ -39,72 +56,64 @@ export const spacing = {
   xxxl: 48,
 };
 
+// Rayons quasi nuls : un document imprime ne s'arrondit pas. `pill` reste
+// disponible pour les rares elements qui en ont vraiment besoin (avatar),
+// mais n'est plus le vocabulaire par defaut des badges et boutons.
 export const radii = {
-  sm: 8,
-  md: 12,
-  lg: 20,
-  xl: 24,
+  xs: 2,
+  sm: 3,
+  md: 4,
+  lg: 6,
   pill: 999,
-  button: 13,
-  buttonLg: 18,
-  input: 11,
 };
 
-export const fonts = {
-  display: 'BricolageGrotesque_700Bold',
-  displayBlack: 'BricolageGrotesque_800ExtraBold',
-  displaySemiBold: 'BricolageGrotesque_600SemiBold',
-  body: 'HankenGrotesk_400Regular',
-  bodyMedium: 'HankenGrotesk_500Medium',
-  bodySemiBold: 'HankenGrotesk_600SemiBold',
-  bodyBold: 'HankenGrotesk_700Bold',
-  mono: 'SpaceMono_400Regular',
-  monoBold: 'SpaceMono_700Bold',
-};
-
+// Meme echelle que l'existant. `caption` gagne des majuscules et une lettre
+// plus espacee — c'est l'etiquette de champ du bordereau, elle doit se lire
+// comme une instruction. Plus de police display/mono dediee : la direction
+// s'appuie sur la police systeme partout.
 export const typography = {
-  h1: { fontFamily: fonts.displayBlack, fontSize: 28, letterSpacing: -0.5 },
-  h2: { fontFamily: fonts.display, fontSize: 22, letterSpacing: -0.3 },
-  h3: { fontFamily: fonts.displaySemiBold, fontSize: 18 },
-  body: { fontFamily: fonts.body, fontSize: 15 },
-  bodyStrong: { fontFamily: fonts.bodySemiBold, fontSize: 15 },
-  small: { fontFamily: fonts.body, fontSize: 13 },
-  caption: { fontFamily: fonts.mono, fontSize: 11, letterSpacing: 0.4 },
+  h1: { fontSize: 28, fontWeight: '800', letterSpacing: -0.5 },
+  h2: { fontSize: 22, fontWeight: '700', letterSpacing: -0.3 },
+  h3: { fontSize: 18, fontWeight: '700' },
+  body: { fontSize: 15, fontWeight: '400' },
+  bodyStrong: { fontSize: 15, fontWeight: '600' },
+  small: { fontSize: 13, fontWeight: '400' },
+  caption: {
+    fontSize: 11,
+    fontWeight: '600',
+    letterSpacing: 0.6,
+    textTransform: 'uppercase',
+  },
 };
 
+// Un bordereau pose a plat n'a pas d'ombre : la bordure suffit a le detacher
+// du papier. Reserve aux elements qui flottent reellement au-dessus du
+// contenu — une feuille modale, pas une carte de liste ni un bouton.
 export const shadows = {
-  card: {
-    shadowColor: '#1A1A2E',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.04,
-    shadowRadius: 2,
-    elevation: 1,
-  },
-  accent: {
-    shadowColor: '#E8593C',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.35,
-    shadowRadius: 16,
-    elevation: 6,
-  },
   sheet: {
-    shadowColor: '#1A1A2E',
-    shadowOffset: { width: 0, height: -6 },
-    shadowOpacity: 0.16,
-    shadowRadius: 20,
-    elevation: 16,
+    shadowColor: '#16202A',
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 14,
+    elevation: 8,
   },
 };
 
+// Regle de decision, pas une palette arbitraire : seul un statut qui
+// correspond a un jugement rendu recoit le traitement "tampon" (bordure
+// epaisse, leger pivot dans le composant qui l'affiche) — ACCEPTED, REJECTED,
+// COMPLETED, VERIFIED. Tout ce qui est encore en mouvement (PENDING,
+// IN_PROGRESS, SCHEDULED) ou simplement retire (CANCELLED) reste une
+// etiquette plate : rien n'a ete tranche, il n'y a donc rien a tamponner.
 export const statusColors = {
-  PENDING: { bg: colors.primarySoft, fg: colors.primary, label: 'En attente' },
-  ACCEPTED: { bg: colors.successSoft, fg: colors.success, label: 'Acceptee' },
-  REJECTED: { bg: colors.dangerSoft, fg: colors.danger, label: 'Refusee' },
-  IN_PROGRESS: { bg: colors.infoSoft, fg: colors.info, label: 'En cours' },
-  COMPLETED: { bg: colors.successSoft, fg: colors.success, label: 'Terminee' },
-  CANCELLED: { bg: colors.dangerSoft, fg: colors.danger, label: 'Annulee' },
-  SCHEDULED: { bg: colors.infoSoft, fg: colors.info, label: 'Planifie' },
-  VERIFIED: { bg: colors.successSoft, fg: colors.success, label: 'Verifie' },
+  PENDING: { fg: colors.warning, border: colors.border, label: 'En attente', sealed: false },
+  ACCEPTED: { fg: colors.success, border: colors.success, label: 'Acceptee', sealed: true },
+  REJECTED: { fg: colors.danger, border: colors.danger, label: 'Refusee', sealed: true },
+  IN_PROGRESS: { fg: colors.primary, border: colors.border, label: 'En cours', sealed: false },
+  COMPLETED: { fg: colors.success, border: colors.success, label: 'Terminee', sealed: true },
+  CANCELLED: { fg: colors.textMuted, border: colors.border, label: 'Annulee', sealed: false },
+  SCHEDULED: { fg: colors.primary, border: colors.border, label: 'Planifie', sealed: false },
+  VERIFIED: { fg: colors.success, border: colors.success, label: 'Verifie', sealed: true },
 };
 
-export default { colors, spacing, radii, fonts, typography, shadows, statusColors };
+export default { colors, spacing, radii, typography, shadows, statusColors };

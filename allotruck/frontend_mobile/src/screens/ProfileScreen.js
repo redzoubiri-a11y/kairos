@@ -37,11 +37,7 @@ export default function ProfileScreen({ navigation }) {
           {user?.phone ? <Text style={styles.phone}>{user.phone}</Text> : null}
 
           <Badge
-            tone={
-              isTransporter
-                ? { bg: colors.primarySoft, fg: colors.primaryDark }
-                : { bg: colors.infoSoft, fg: colors.info }
-            }
+            tone={isTransporter ? { fg: colors.primaryDark } : { fg: colors.info }}
             label={isTransporter ? 'Transporteur' : 'Client'}
             style={styles.roleBadge}
           />

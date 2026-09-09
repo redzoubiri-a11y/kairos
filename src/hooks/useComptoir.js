@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { supabase } from '../../supabase';
+import { notifyClient } from '../utils/notify';
 import { colors } from '../theme';
 import { typeErreur } from '../utils/typeErreur';
 
@@ -142,18 +143,7 @@ export default function useComptoir() {
           const date = new Date(resa.date + 'T12:00:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
           const notifTitle = 'Réservation confirmée ✓';
           const notifBody  = `Votre réservation chez ${restaurant?.name} le ${date} à ${resa.time_slot?.slice(0, 5)} a été confirmée.`;
-          try {
-            await supabase.from('notifications').insert({
-              recipient_id:   resa.user_id,
-              recipient_type: 'user',
-              type:           'resa_confirmed',
-              title:          notifTitle,
-              body:           notifBody,
-            });
-          } catch (_) {}
-          supabase.functions.invoke('push-manager', {
-            body: { user_id: resa.user_id, title: notifTitle, body: notifBody },
-          }).catch(() => {});
+          notifyClient({ userId: resa.user_id, type: 'resa_confirmed', title: notifTitle, body: notifBody });
         }
       })},
     ]);
@@ -169,23 +159,13 @@ export default function useComptoir() {
         if (resa.user_id) {
           const notifTitle = 'Comment était votre expérience ? ⭐';
           const notifBody  = `Votre visite chez ${restaurant?.name} est terminée. Partagez votre avis !`;
-          try {
-            await supabase.from('notifications').insert({
-              recipient_id:   resa.user_id,
-              recipient_type: 'user',
-              type:           'review_request',
-              title:          notifTitle,
-              body:           notifBody,
-            });
-          } catch (_) {}
-          supabase.functions.invoke('push-manager', {
-            body: {
-              user_id: resa.user_id,
-              title:   notifTitle,
-              body:    notifBody,
-              data:    { type: 'review_request', reservationId: resa.id },
-            },
-          }).catch(() => {});
+          notifyClient({
+            userId: resa.user_id,
+            type: 'review_request',
+            title: notifTitle,
+            body: notifBody,
+            data: { type: 'review_request', reservationId: resa.id },
+          });
         }
       })},
     ]);
@@ -215,18 +195,7 @@ export default function useComptoir() {
           const date = new Date(resa.date + 'T12:00:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
           const notifTitle = 'Réservation annulée';
           const notifBody  = `Votre réservation chez ${restaurant?.name} le ${date} à ${resa.time_slot?.slice(0, 5)} a été annulée par le restaurant.`;
-          try {
-            await supabase.from('notifications').insert({
-              recipient_id:   resa.user_id,
-              recipient_type: 'user',
-              type:           'resa_cancelled',
-              title:          notifTitle,
-              body:           notifBody,
-            });
-          } catch (_) {}
-          supabase.functions.invoke('push-manager', {
-            body: { user_id: resa.user_id, title: notifTitle, body: notifBody },
-          }).catch(() => {});
+          notifyClient({ userId: resa.user_id, type: 'resa_cancelled', title: notifTitle, body: notifBody });
         }
       })},
     ]);

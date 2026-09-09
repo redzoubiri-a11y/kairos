@@ -2,6 +2,7 @@ import { useState, useCallback, useMemo } from 'react';
 import { Alert, AppState } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { supabase } from '../../supabase';
+import { notifyClient } from '../utils/notify';
 import { typeErreur } from '../utils/typeErreur';
 import { colors } from '../theme';
 import { clientName } from './useComptoir';
@@ -38,11 +39,6 @@ function todayStr()    { return new Date().toISOString().split('T')[0]; }
 function tomorrowStr() { const d = new Date(); d.setDate(d.getDate()+1); return d.toISOString().split('T')[0]; }
 function weekEndStr()  { const d = new Date(); d.setDate(d.getDate()+6); return d.toISOString().split('T')[0]; }
 function greeting()    { const h = new Date().getHours(); return h < 12 ? 'Bonjour' : h < 18 ? 'Bon après-midi' : 'Bonsoir'; }
-
-async function sendNotification(users, type, title, body) {
-  if (!users?.id) return;
-  await supabase.from('notifications').insert({ recipient_id: users.id, recipient_type: 'user', type, title, body });
-}
 
 // Même raison que dans useProOrders : le Dashboard reste ouvert pendant le
 // service, il doit voir arriver réservations et commandes sans intervention.
@@ -158,17 +154,12 @@ export default function useDashboard() {
             const { error } = await supabase.from('reservations').update({ status: 'confirmed' }).eq('id', resa.id);
             if (error) throw error;
             setReservations(prev => prev.map(r => r.id === resa.id ? { ...r, status: 'confirmed' } : r));
-            sendNotification(
-              resa.users, 'confirm', 'Réservation confirmée ✅',
-              `Votre table chez ${restaurant?.name} le ${formatDate(resa.date)} à ${resa.time_slot?.slice(0,5)} est confirmée.`,
-            ).catch(() => {});
-            supabase.functions.invoke('push-manager', {
-              body: {
-                user_id: resa.user_id,
-                title: 'Réservation confirmée ✅',
-                body: `Votre table chez ${restaurant?.name} le ${formatDate(resa.date)} à ${resa.time_slot?.slice(0,5)} est confirmée.`,
-              },
-            }).catch(() => {});
+            notifyClient({
+              userId: resa.user_id,
+              type: 'confirm',
+              title: 'Réservation confirmée ✅',
+              body: `Votre table chez ${restaurant?.name} le ${formatDate(resa.date)} à ${resa.time_slot?.slice(0,5)} est confirmée.`,
+            });
           } catch {
             Alert.alert('Erreur', 'Impossible de confirmer la réservation. Vérifiez votre connexion.');
           } finally {
@@ -194,17 +185,12 @@ export default function useDashboard() {
               .eq('id', resa.id);
             if (error) throw error;
             setReservations(prev => prev.map(r => r.id === resa.id ? { ...r, status: 'cancelled', cancelled_at: new Date().toISOString() } : r));
-            sendNotification(
-              resa.users, 'cancellation', 'Réservation annulée',
-              `Votre réservation chez ${restaurant?.name} le ${formatDate(resa.date)} n'a pas pu être confirmée.`,
-            ).catch(() => {});
-            supabase.functions.invoke('push-manager', {
-              body: {
-                user_id: resa.user_id,
-                title: 'Réservation annulée ❌',
-                body: `Votre réservation chez ${restaurant?.name} le ${formatDate(resa.date)} n'a pas pu être confirmée.`,
-              },
-            }).catch(() => {});
+            notifyClient({
+              userId: resa.user_id,
+              type: 'cancellation',
+              title: 'Réservation annulée ❌',
+              body: `Votre réservation chez ${restaurant?.name} le ${formatDate(resa.date)} n'a pas pu être confirmée.`,
+            });
           } catch {
             Alert.alert('Erreur', 'Impossible de refuser la réservation. Vérifiez votre connexion.');
           } finally {

@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import { Animated } from 'react-native';
 import { supabase } from '../../supabase';
+import { notifyClient, notifyRestaurant } from '../utils/notify';
 
 export const MIDI_SLOTS = [
   { h:'12:00' }, { h:'12:30' }, { h:'13:00', badge:'Populaire' },
@@ -194,49 +195,18 @@ export default function useReservationForm(restaurant, onSuccess, existingResa =
           date, time_slot: heure, nb_adults: adults, nb_children: children, notes: noteText,
         }).eq('id', existingResa.id);
         if (resaErr) { setError(resaErr.message); return; }
-        try {
-          await supabase.from('notifications').insert({
-            recipient_id:   uid,
-            recipient_type: 'user',
-            type:           'new_resa',
-            title:          'Réservation modifiée',
-            body:           `Votre réservation chez ${restaurant.name} a été modifiée : ${formatDateLong(date)} à ${heure} pour ${adults} personne${adults > 1 ? 's' : ''}.`,
-          });
-          supabase.functions.invoke('push-manager', {
-            body: {
-              user_id: uid,
-              title: 'Réservation modifiée ✅',
-              body:  `Chez ${restaurant.name} · ${formatDateLong(date)} à ${heure} pour ${adults} personne${adults > 1 ? 's' : ''}.`,
-            },
-          });
-        } catch (_) {}
-        try {
-          const { data: ownerRows } = await supabase
-            .from('restaurant_owners').select('auth_id')
-            .eq('restaurant_id', restaurant.id).limit(1);
-          const owner = ownerRows?.[0] ?? null;
-          if (owner?.auth_id) {
-            // RPC dédiée (pas de lecture directe de `users`, verrouillée par RLS) —
-            // cf. supabase/migrations/20260816_lock_down_users_pii.sql
-            const { data: mgrId } = await supabase.rpc('get_user_id_by_auth', { p_auth_id: owner.auth_id });
-            if (mgrId) {
-              await supabase.from('notifications').insert({
-                recipient_id:   mgrId,
-                recipient_type: 'user',
-                type:           'new_resa',
-                title:          'Réservation modifiée',
-                body:           `Modification pour le ${formatDateLong(date)} à ${heure} · ${adults} couvert${adults > 1 ? 's' : ''}.`,
-              });
-            }
-          }
-          supabase.functions.invoke('push-manager', {
-            body: {
-              restaurant_id: restaurant.id,
-              title: 'Réservation modifiée',
-              body:  `${formatDateLong(date)} à ${heure} · ${adults} couvert${adults > 1 ? 's' : ''}.`,
-            },
-          });
-        } catch (_) {}
+        notifyClient({
+          userId: uid,
+          type: 'new_resa',
+          title: 'Réservation modifiée ✅',
+          body: `Chez ${restaurant.name} · ${formatDateLong(date)} à ${heure} pour ${adults} personne${adults > 1 ? 's' : ''}.`,
+        });
+        notifyRestaurant({
+          restaurantId: restaurant.id,
+          type: 'new_resa',
+          title: 'Réservation modifiée',
+          body: `${formatDateLong(date)} à ${heure} · ${adults} couvert${adults > 1 ? 's' : ''}.`,
+        });
       } else {
         const { error: resaErr } = await supabase.from('reservations').insert({
           user_id:       uid,
@@ -249,49 +219,18 @@ export default function useReservationForm(restaurant, onSuccess, existingResa =
           status:        'pending',
         });
         if (resaErr) { setError(resaErr.message); return; }
-        try {
-          await supabase.from('notifications').insert({
-            recipient_id:   uid,
-            recipient_type: 'user',
-            type:           'new_resa',
-            title:          'Demande envoyée',
-            body:           `Votre réservation chez ${restaurant.name} le ${formatDateLong(date)} à ${heure} pour ${adults} personne${adults > 1 ? 's' : ''} est en attente de confirmation.`,
-          });
-          supabase.functions.invoke('push-manager', {
-            body: {
-              user_id: uid,
-              title: 'Demande envoyée ✅',
-              body:  `Chez ${restaurant.name} · ${formatDateLong(date)} à ${heure} pour ${adults} personne${adults > 1 ? 's' : ''}. En attente de confirmation.`,
-            },
-          });
-        } catch (_) {}
-        try {
-          const { data: ownerRows } = await supabase
-            .from('restaurant_owners').select('auth_id')
-            .eq('restaurant_id', restaurant.id).limit(1);
-          const owner = ownerRows?.[0] ?? null;
-          if (owner?.auth_id) {
-            // RPC dédiée (pas de lecture directe de `users`, verrouillée par RLS) —
-            // cf. supabase/migrations/20260816_lock_down_users_pii.sql
-            const { data: mgrId } = await supabase.rpc('get_user_id_by_auth', { p_auth_id: owner.auth_id });
-            if (mgrId) {
-              await supabase.from('notifications').insert({
-                recipient_id:   mgrId,
-                recipient_type: 'user',
-                type:           'new_resa',
-                title:          'Nouvelle réservation',
-                body:           `Demande pour le ${formatDateLong(date)} à ${heure} · ${adults} couvert${adults > 1 ? 's' : ''}.`,
-              });
-            }
-          }
-          supabase.functions.invoke('push-manager', {
-            body: {
-              restaurant_id: restaurant.id,
-              title: 'Nouvelle réservation 📅',
-              body:  `Demande pour le ${formatDateLong(date)} à ${heure} · ${adults} couvert${adults > 1 ? 's' : ''}.`,
-            },
-          });
-        } catch (_) {}
+        notifyClient({
+          userId: uid,
+          type: 'new_resa',
+          title: 'Demande envoyée ✅',
+          body: `Chez ${restaurant.name} · ${formatDateLong(date)} à ${heure} pour ${adults} personne${adults > 1 ? 's' : ''}. En attente de confirmation.`,
+        });
+        notifyRestaurant({
+          restaurantId: restaurant.id,
+          type: 'new_resa',
+          title: 'Nouvelle réservation 📅',
+          body: `Demande pour le ${formatDateLong(date)} à ${heure} · ${adults} couvert${adults > 1 ? 's' : ''}.`,
+        });
       }
 
       onSuccess?.();

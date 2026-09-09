@@ -242,7 +242,7 @@ const s = StyleSheet.create({
   cuisineChipTxt:  { color: colors.textMuted, fontFamily: typography.body, fontSize: typography.size.caption },
   cuisineChipTxtOn:{ color: colors.primary, fontFamily: typography.bodySemibold },
   saveBtn:    { backgroundColor: colors.primary, borderRadius: radius.md, paddingVertical: spacing.md, alignItems: 'center', marginTop: spacing.xs },
-  saveBtnTxt: { color: '#FFFFFF', fontFamily: typography.bodyMedium, fontSize: typography.size.body },
+  saveBtnTxt: { color: colors.card, fontFamily: typography.bodyMedium, fontSize: typography.size.body },
 
   actions:      { flexDirection: 'row', borderTopWidth: 1, borderTopColor: colors.cardBorder },
   editToggle:   { flex: 1, paddingVertical: spacing.md, alignItems: 'center', borderRightWidth: 1, borderRightColor: colors.cardBorder },

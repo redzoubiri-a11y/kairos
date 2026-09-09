@@ -52,13 +52,13 @@ const s = StyleSheet.create({
   compCard: { backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, borderRadius: radius.card, overflow: 'hidden' },
 
   promoBadge: { position: 'absolute', top: 11, right: 11, backgroundColor: 'rgba(10,10,10,0.72)', borderRadius: radius.sm + 3, paddingHorizontal: spacing.lg - 2, paddingVertical: spacing.xs + 2 },
-  promoTxt:   { fontFamily: typography.bodySemibold, color: '#FFFFFF', fontSize: typography.size.caption - 0.5 },
+  promoTxt:   { fontFamily: typography.bodySemibold, color: colors.card, fontSize: typography.size.caption - 0.5 },
 
   featBody: { paddingHorizontal: spacing.xl, paddingTop: spacing.lg + 3, paddingBottom: spacing.xl },
   compBody: { paddingHorizontal: spacing.lg, paddingTop: spacing.lg - 1, paddingBottom: spacing.lg },
 
   top:      { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', gap: spacing.lg - 2 },
-  featName: { flex: 1, fontFamily: typography.display, fontSize: 18, color: colors.text, letterSpacing: -0.3 },
+  featName: { flex: 1, fontFamily: typography.display, fontSize: typography.size.heading2, color: colors.text, letterSpacing: -0.3 },
   compName: { flex: 1, fontFamily: typography.display, fontSize: typography.size.subheading + 0.5, color: colors.text, letterSpacing: -0.3 },
 
   ratingPill:  { flexDirection: 'row', alignItems: 'center', gap: 3, flexShrink: 0, backgroundColor: colors.tagGreenBg, paddingHorizontal: spacing.sm, paddingVertical: 5, borderRadius: radius.sm + 3 },
@@ -72,5 +72,5 @@ const s = StyleSheet.create({
   slot:       { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: spacing.sm + 1, borderRadius: radius.md, backgroundColor: colors.tagGreenBg },
   slotCta:    { backgroundColor: colors.resa },
   slotTxt:    { fontFamily: typography.bodySemibold, fontSize: typography.size.body, color: colors.statusConfirmedText },
-  slotCtaTxt: { color: '#FFFFFF' },
+  slotCtaTxt: { color: colors.card },
 });

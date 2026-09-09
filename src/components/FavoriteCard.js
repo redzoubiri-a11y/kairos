@@ -38,7 +38,7 @@ const s = StyleSheet.create({
   photoWrap: { height: 100, position: 'relative' },
   photo:     { width: '100%', height: '100%' },
   heart:     { position: 'absolute', top: spacing.sm, right: spacing.sm, width: 26, height: 26, borderRadius: 13, backgroundColor: 'rgba(255,255,255,0.9)', alignItems: 'center', justifyContent: 'center' },
-  heartTxt:  { fontSize: 12, color: colors.primary },
+  heartTxt:  { fontSize: typography.size.caption, color: colors.primary },
 
   body: { padding: spacing.md + 2 },
   name: { fontFamily: typography.display, fontSize: typography.size.caption + 1, color: colors.text },

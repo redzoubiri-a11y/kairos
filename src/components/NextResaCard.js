@@ -103,7 +103,7 @@ const s = StyleSheet.create({
   ratingTxt:     { color: colors.gold, fontFamily: typography.bodyMedium, fontSize: typography.size.caption },
   photoBottom:   { position:'absolute', bottom:0, left:0, right:0, padding: spacing.xl, backgroundColor:'rgba(10,10,10,0.65)' },
   photoCuisine:  { color:'rgba(255,255,255,0.75)', fontFamily: typography.bodyBold, fontSize: typography.size.xs, letterSpacing:2.5, marginBottom:3 },
-  photoName:     { color: '#FFFFFF', fontFamily: typography.display, fontSize: typography.size.title, letterSpacing:0.3, marginBottom:2 },
+  photoName:     { color: colors.card, fontFamily: typography.display, fontSize: typography.size.title, letterSpacing:0.3, marginBottom:2 },
   photoQuartier: { color:'rgba(255,255,255,0.65)', fontFamily: typography.body, fontSize: typography.size.caption },
   body:          { padding: spacing.xl, gap: spacing.lg },
   countdown:     { flexDirection:'row', alignItems:'center', justifyContent:'space-between', borderWidth:1, borderRadius: radius.lg, paddingHorizontal: spacing.xl, paddingVertical: spacing.lg },

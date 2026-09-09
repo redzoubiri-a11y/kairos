@@ -50,7 +50,7 @@ export default function ProDashboard({ navigation }) {
   }, []));
 
   const {
-    restaurant, reservations, loading, refreshing,
+    restaurant, reservations, loading, refreshing, erreur, reessayer,
     filter, setFilter, dateFilter, setDateFilter,
     acting,
     confirm, cancel, markArrived, signOut, onRefresh,
@@ -85,6 +85,27 @@ export default function ProDashboard({ navigation }) {
     return (
       <SafeAreaView style={s.root}>
         <SkeletonDashboard />
+      </SafeAreaView>
+    );
+  }
+
+  // Plein écran assumé : sans les réservations, aucune tuile du tableau de
+  // bord n'a de sens — les chiffres afficheraient zéro partout, ce qui
+  // équivaudrait à mentir sur l'activité du restaurant. Ne se déclenche que
+  // sur le tout premier chargement (cf. useDashboard) : les rechargements de
+  // fond gardent l'écran affiché tel quel plutôt que de le remplacer.
+  if (erreur) {
+    return (
+      <SafeAreaView style={s.root}>
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xxl }}>
+          <EmptyState
+            icon={<Text style={{ fontSize: 20 }}>{erreur === 'network' ? '📡' : '⚠️'}</Text>}
+            title={erreur === 'network' ? 'Pas de connexion' : 'Erreur serveur'}
+            subtitle={erreur === 'network' ? 'Vérifie ta connexion internet.' : "Une erreur inattendue s'est produite."}
+            actionLabel="Réessayer"
+            onAction={reessayer}
+          />
+        </View>
       </SafeAreaView>
     );
   }
@@ -332,9 +353,9 @@ const s = StyleSheet.create({
   header:         { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', paddingHorizontal: spacing.xl, paddingTop: spacing.lg, paddingBottom: spacing.md },
   headerLeft:     { flex: 1 },
   hRow:           { flexDirection: 'row', alignItems: 'center', gap: spacing.sm + 2 },
-  headerTitle:    { fontFamily: typography.display, color: '#FFFFFF', fontSize: typography.size.subheading + 2 },
+  headerTitle:    { fontFamily: typography.display, color: colors.card, fontSize: typography.size.subheading + 2 },
   proBadge:       { backgroundColor: colors.primary, borderRadius: radius.sm + 1, paddingHorizontal: spacing.sm - 1, paddingVertical: 3 },
-  proBadgeTxt:    { fontFamily: typography.bodyBold, color: '#FFFFFF', fontSize: 9.5, letterSpacing: 0.5 },
+  proBadgeTxt:    { fontFamily: typography.bodyBold, color: colors.card, fontSize: 9.5, letterSpacing: 0.5 },
   headerSub:      { fontFamily: typography.body, color: 'rgba(255,255,255,0.55)', fontSize: typography.size.caption, marginTop: spacing.xs },
   onlineBadge:    { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, flexShrink: 0, backgroundColor: 'rgba(76,175,130,0.15)', borderRadius: radius.full, paddingHorizontal: spacing.lg, paddingVertical: spacing.xs, borderWidth: 1, borderColor: 'rgba(76,175,130,0.35)' },
   onlineDot:      { width: 6, height: 6, borderRadius: radius.pill, backgroundColor: colors.green },
@@ -376,7 +397,7 @@ const s = StyleSheet.create({
   statusTabTxt:   { fontFamily: typography.body, color: colors.textDim, fontSize: typography.size.caption },
   statusTabTxtOn: { fontFamily: typography.bodySemibold, color: colors.text },
   badge:          { backgroundColor: colors.resa, borderRadius: radius.md, minWidth: 16, height: 16, alignItems: 'center', justifyContent: 'center', paddingHorizontal: spacing.xxs + 1 },
-  badgeTxt:       { fontFamily: typography.bodyBold, color: '#FFFFFF', fontSize: typography.size.xs },
+  badgeTxt:       { fontFamily: typography.bodyBold, color: colors.card, fontSize: typography.size.xs },
 
   listHead:    { paddingHorizontal: spacing.xxl, paddingBottom: spacing.xs },
   listHeadTxt: { fontFamily: typography.body, color: colors.textDim, fontSize: typography.size.sm, letterSpacing: 2 },

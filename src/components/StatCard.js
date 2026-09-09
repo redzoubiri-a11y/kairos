@@ -15,7 +15,7 @@ export default function StatCard({ icon, value, label, color, alert, sub }) {
 
 const s = StyleSheet.create({
   card:  { width: 92, backgroundColor: colors.card, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.cardBorder, paddingHorizontal: spacing.md, paddingVertical: spacing.sm, gap: 2 },
-  icon:  { fontSize: 14 },
+  icon:  { fontSize: typography.size.bodyLg },
   value: { fontFamily: typography.display, fontSize: 20, fontWeight: typography.weight.bold },
   label: { color: colors.textMuted, fontSize: typography.size.xs, lineHeight: 13, textTransform: 'uppercase', letterSpacing: 0.5 },
   sub:   { color: colors.textDim, fontSize: typography.size.xs, marginTop: 1 },

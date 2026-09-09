@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { supabase } from '../../supabase';
+import { typeErreur } from '../utils/typeErreur';
 
 // ── Helpers (partagés avec useReservations) ────────────────────────────────
 export function fmtShortMR(d) {
@@ -19,15 +20,17 @@ export default function useMyReservations() {
   const [refreshing,   setRefreshing]   = useState(false);
   const [acting,       setActing]       = useState(new Set()); // Set<resaId>
   const [feedback,     setFeedback]     = useState({});        // { [resaId]: ActionResult }
+  const [erreur,       setErreur]       = useState(null);
 
   // ── Chargement ──────────────────────────────────────────────────────────
   const load = useCallback(async (isRefresh = false) => {
     if (isRefresh) setRefreshing(true); else setLoading(true);
+    setErreur(null);
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
 
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('reservations')
         .select(`
           id, date, time_slot, nb_adults, nb_children, status, notes,
@@ -36,7 +39,11 @@ export default function useMyReservations() {
         .order('date',      { ascending: true })
         .order('time_slot', { ascending: true });
 
+      if (error) { setErreur(typeErreur(error)); setReservations([]); return; }
       setReservations(data ?? []);
+    } catch (e) {
+      setErreur(typeErreur(e));
+      setReservations([]);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -119,6 +126,7 @@ export default function useMyReservations() {
     upcomingResas,
     loading,
     refreshing,
+    erreur,
     acting,
     feedback,
     load,

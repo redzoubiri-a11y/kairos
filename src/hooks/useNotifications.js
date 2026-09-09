@@ -3,6 +3,7 @@ import { Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { supabase } from '../../supabase';
 import { colors } from '../theme';
+import { typeErreur } from '../utils/typeErreur';
 
 // bg/iconLib='ionicons' : valeurs exactes de Notifications.dc.html, pour les 3
 // types illustrés dans la maquette (resa_confirmed, review_ask, order_update).
@@ -61,32 +62,57 @@ export function grouped(notifs) {
 
 export default function useNotifications() {
   const [notifs,     setNotifs]     = useState([]);
-  const [loading,    setLoading]    = useState(true);
+  // false, et non true : `load` sort tôt sur `!userId` sans jamais y
+  // toucher. S'il valait true par défaut, un invité ou un échec de
+  // résolution d'identité laisserait ce drapeau bloqué à true pour
+  // toujours — c'est `resolving` ci-dessous qui porte l'attente initiale.
+  const [loading,    setLoading]    = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [userId,     setUserId]     = useState(null);
   const [tab,        setTab]        = useState('all');
+  const [erreur,     setErreur]     = useState(null);
+  // Tant que l'identité n'est pas résolue, `load` sort tôt sur `!userId` sans
+  // jamais toucher `loading` : sur un échec de cette résolution (réseau, pas
+  // de session), l'écran restait bloqué sur son indicateur de chargement
+  // indéfiniment, sans message ni sortie possible.
+  const [resolving,  setResolving]  = useState(true);
 
-  useEffect(() => {
-    (async () => {
-      const { data } = await supabase.auth.getUser();
+  const resolveUser = useCallback(async () => {
+    setResolving(true);
+    setErreur(null);
+    try {
+      const { data, error: authErr } = await supabase.auth.getUser();
+      if (authErr) { setErreur(typeErreur(authErr)); return; }
       const u = data?.user;
       if (!u) return;
-      const { data: row } = await supabase.from('users').select('id').eq('auth_id', u.id).maybeSingle();
+      const { data: row, error } = await supabase.from('users').select('id').eq('auth_id', u.id).maybeSingle();
+      if (error) { setErreur(typeErreur(error)); return; }
       if (row) setUserId(row.id);
-    })();
+    } catch (e) {
+      setErreur(typeErreur(e));
+    } finally {
+      setResolving(false);
+    }
   }, []);
+
+  useEffect(() => { resolveUser(); }, [resolveUser]);
 
   const load = useCallback(async (refresh = false) => {
     if (!userId) return;
     if (refresh) setRefreshing(true); else setLoading(true);
+    setErreur(null);
     try {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('notifications')
         .select('*')
         .eq('recipient_id', userId)
         .eq('recipient_type', 'user')
         .order('sent_at', { ascending: false });
+      if (error) { setErreur(typeErreur(error)); setNotifs([]); return; }
       setNotifs(data ?? []);
+    } catch (e) {
+      setErreur(typeErreur(e));
+      setNotifs([]);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -97,18 +123,21 @@ export default function useNotifications() {
 
   const markRead = useCallback(async (n) => {
     if (n.is_read) return;
-    await supabase.from('notifications').update({ is_read: true }).eq('id', n.id);
-    setNotifs(prev => prev.map(x => x.id === n.id ? { ...x, is_read: true } : x));
+    // Silencieux à dessein : si la marque comme lue échoue, la seule
+    // conséquence est qu'elle réapparaîtra comme non lue au prochain
+    // chargement — sans effet trompeur ni perte pour l'utilisateur.
+    const { error } = await supabase.from('notifications').update({ is_read: true }).eq('id', n.id);
+    if (!error) setNotifs(prev => prev.map(x => x.id === n.id ? { ...x, is_read: true } : x));
   }, []);
 
   const markAllRead = useCallback(async () => {
     if (!userId) return;
-    await supabase.from('notifications')
+    const { error } = await supabase.from('notifications')
       .update({ is_read: true })
       .eq('recipient_id', userId)
       .eq('recipient_type', 'user')
       .eq('is_read', false);
-    setNotifs(prev => prev.map(n => ({ ...n, is_read: true })));
+    if (!error) setNotifs(prev => prev.map(n => ({ ...n, is_read: true })));
   }, [userId]);
 
   const deleteNotif = useCallback((n) => {
@@ -117,7 +146,11 @@ export default function useNotifications() {
       {
         text: 'Supprimer', style: 'destructive',
         onPress: async () => {
-          await supabase.from('notifications').delete().eq('id', n.id);
+          // Ici en revanche l'utilisateur a explicitement demandé la
+          // suppression : un échec silencieux ferait réapparaître une
+          // notification qu'il croit avoir effacée.
+          const { error } = await supabase.from('notifications').delete().eq('id', n.id);
+          if (error) { Alert.alert('Erreur', "La notification n'a pas pu être supprimée. Vérifiez votre connexion et réessayez."); return; }
           setNotifs(prev => prev.filter(x => x.id !== n.id));
         },
       },
@@ -144,9 +177,15 @@ export default function useNotifications() {
 
   const groups    = useMemo(() => grouped(filtered), [filtered]);
   const onRefresh = useCallback(() => load(true), [load]);
+  // Selon la phase en échec : ré-identifier l'utilisateur, ou recharger la
+  // liste si l'identité, elle, a bien été résolue.
+  const reessayer = useCallback(
+    () => (userId ? load() : resolveUser()),
+    [userId, load, resolveUser],
+  );
 
   return {
-    loading, refreshing, tab, setTab,
+    loading: resolving || loading, refreshing, tab, setTab, erreur, reessayer,
     filtered, unread, unreadResa, unreadRappel, unreadCommande, groups,
     markRead, markAllRead, deleteNotif, onRefresh,
   };

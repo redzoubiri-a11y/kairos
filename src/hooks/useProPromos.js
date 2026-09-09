@@ -1,7 +1,9 @@
 import { useState, useCallback, useMemo } from 'react';
+import { Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { supabase } from '../../supabase';
 import { computePromoStatus } from '../utils/promoStatus';
+import { typeErreur } from '../utils/typeErreur';
 
 export const PROMO_TYPES = [
   { id: 'percent', icon: '%',   label: 'Réduction %',  desc: "Ex : −20% sur l'addition" },
@@ -24,31 +26,42 @@ export default function useProPromos() {
   const [promos,     setPromos]     = useState([]);
   const [loading,    setLoading]    = useState(true);
   const [saving,     setSaving]     = useState(false);
+  const [erreur,     setErreur]     = useState(null);
 
   const load = useCallback(async () => {
     setLoading(true);
+    setErreur(null);
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
 
-      const { data: ownerRows } = await supabase
+      // Sous coupure réseau, c'est cette requête qui échoue en premier :
+      // sans lecture de son erreur, la fonction sortait ici sans jamais
+      // atteindre le chargement des promotions plus bas.
+      const { data: ownerRows, error: ownerErr } = await supabase
         .from('restaurant_owners')
         .select('restaurant_id')
         .eq('auth_id', session.user.id)
         .limit(1);
+      if (ownerErr) { setErreur(typeErreur(ownerErr)); setPromos([]); return; }
       const restaurantId = ownerRows?.[0]?.restaurant_id;
       if (!restaurantId) return;
 
-      const { data: resto } = await supabase
+      const { data: resto, error: restoErr } = await supabase
         .from('restaurants').select('id, name').eq('id', restaurantId).maybeSingle();
+      if (restoErr) { setErreur(typeErreur(restoErr)); setPromos([]); return; }
       if (resto) setRestaurant(resto);
 
-      const { data: promoRows } = await supabase
+      const { data: promoRows, error } = await supabase
         .from('promotions')
         .select('*')
         .eq('restaurant_id', restaurantId)
         .order('created_at', { ascending: false });
+      if (error) { setErreur(typeErreur(error)); setPromos([]); return; }
       setPromos((promoRows ?? []).map(p => ({ ...p, status: computePromoStatus(p) })));
+    } catch (e) {
+      setErreur(typeErreur(e));
+      setPromos([]);
     } finally {
       setLoading(false);
     }
@@ -78,7 +91,10 @@ export default function useProPromos() {
 
   const togglePause = useCallback(async (promo) => {
     const nextPaused = !promo.is_paused;
-    await supabase.from('promotions').update({ is_paused: nextPaused }).eq('id', promo.id);
+    // L'écran affichait « en pause » même quand l'écriture échouait : le
+    // restaurateur croyait avoir coupé une promo qui restait active en base.
+    const { error } = await supabase.from('promotions').update({ is_paused: nextPaused }).eq('id', promo.id);
+    if (error) { Alert.alert('Erreur', "L'état de la promotion n'a pas pu être mis à jour. Vérifiez votre connexion et réessayez."); return; }
     setPromos(prev => prev.map(p => p.id === promo.id
       ? { ...p, is_paused: nextPaused, status: computePromoStatus({ ...p, is_paused: nextPaused }) }
       : p));
@@ -86,7 +102,8 @@ export default function useProPromos() {
 
   const incrementUse = useCallback(async (promo) => {
     const next = (promo.use_count || 0) + 1;
-    await supabase.from('promotions').update({ use_count: next }).eq('id', promo.id);
+    const { error } = await supabase.from('promotions').update({ use_count: next }).eq('id', promo.id);
+    if (error) { Alert.alert('Erreur', "Le compteur n'a pas pu être mis à jour. Vérifiez votre connexion et réessayez."); return; }
     setPromos(prev => prev.map(p => p.id === promo.id ? { ...p, use_count: next } : p));
   }, []);
 
@@ -94,7 +111,7 @@ export default function useProPromos() {
   const otherPromos   = useMemo(() => promos.filter(p => p.id !== activePromo?.id), [promos, activePromo]);
 
   return {
-    view, restaurant, promos, activePromo, otherPromos, loading, saving,
+    view, restaurant, promos, activePromo, otherPromos, loading, saving, erreur, reessayer: load,
     goList, goCreate, goActive, createPromo, togglePause, incrementUse,
   };
 }

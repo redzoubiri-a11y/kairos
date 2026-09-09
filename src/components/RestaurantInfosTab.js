@@ -135,13 +135,13 @@ const s = StyleSheet.create({
   dateCellOn:{ backgroundColor: colors.noir, borderColor: colors.noir },
   dateDow:   { fontFamily: typography.bodyBold, fontSize: typography.size.xs, color: colors.textDim },
   dateNum:   { fontFamily: typography.display, fontSize: typography.size.body, color: colors.text, marginTop: 2 },
-  dateTxtOn: { color: '#FFFFFF' },
+  dateTxtOn: { color: colors.card },
 
   slots: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginTop: spacing.lg - 2 },
   slot:  { paddingHorizontal: spacing.xl - 2, paddingVertical: spacing.sm + 1, borderRadius: radius.md, backgroundColor: colors.primary },
   slotOn:{ backgroundColor: colors.noir },
-  slotTxt: { fontFamily: typography.bodyBold, fontSize: typography.size.caption + 0.5, color: '#FFFFFF' },
-  slotTxtOn: { color: '#FFFFFF' },
+  slotTxt: { fontFamily: typography.bodyBold, fontSize: typography.size.caption + 0.5, color: colors.card },
+  slotTxtOn: { color: colors.card },
   slotsEmpty: { fontFamily: typography.body, fontSize: typography.size.body, color: colors.textDim, marginTop: spacing.lg - 2 },
 
   infoCard: { backgroundColor: colors.bg, borderRadius: radius.lg, paddingHorizontal: spacing.lg + 2 },

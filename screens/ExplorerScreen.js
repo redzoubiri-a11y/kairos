@@ -278,7 +278,7 @@ const s = StyleSheet.create({
   chip:     { paddingHorizontal: spacing.lg - 2, paddingVertical: spacing.sm + 1, borderRadius: radius.badgeSm, backgroundColor: colors.glassBgStrong, borderWidth: 1, borderColor: colors.cardBorder },
   chipOn:   { backgroundColor: colors.noir, borderColor: colors.noir },
   chipTxt:  { fontFamily: typography.bodyBold, fontSize: typography.size.caption + 0.5, color: colors.textMuted },
-  chipTxtOn:{ color: '#FFFFFF' },
+  chipTxtOn:{ color: colors.card },
 
   // Pin "goutte" — Explorer.dc.html : carré tourné 45°, un coin resté droit
   pinWrap: { alignItems: 'center' },
@@ -289,21 +289,21 @@ const s = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
   },
   pinInner:  { transform: [{ rotate: '-45deg' }], alignItems: 'center', justifyContent: 'center' },
-  pinRating: { fontFamily: typography.bodyBold, fontSize: 11, color: '#FFFFFF' },
-  pinDot: { width: 9, height: 9, borderRadius: 4.5, backgroundColor: '#FFFFFF' },
+  pinRating: { fontFamily: typography.bodyBold, fontSize: typography.size.sm, color: colors.card },
+  pinDot: { width: 9, height: 9, borderRadius: 4.5, backgroundColor: colors.card },
 
   promoBadge: {
     backgroundColor: colors.primary, borderRadius: radius.sm + 2,
     paddingHorizontal: spacing.sm, paddingVertical: 3, marginBottom: 3,
   },
-  promoBadgeTxt: { fontFamily: typography.bodyBold, fontSize: 10, color: '#FFFFFF' },
+  promoBadgeTxt: { fontFamily: typography.bodyBold, fontSize: typography.size.xs, color: colors.card },
 
   imgPlaceholder: { backgroundColor: colors.cardHover },
   distancePill: {
     marginTop: 3, backgroundColor: 'rgba(10,10,10,0.78)', borderRadius: radius.sm,
     paddingHorizontal: spacing.xs + 1, paddingVertical: 2,
   },
-  distanceTxt: { fontFamily: typography.bodySemibold, fontSize: typography.size.xs, color: '#FFFFFF' },
+  distanceTxt: { fontFamily: typography.bodySemibold, fontSize: typography.size.xs, color: colors.card },
 
   webFallback: { alignItems: 'center', justifyContent: 'center', backgroundColor: colors.cardHover, padding: spacing.xl },
   webFallbackTxt: { fontFamily: typography.body, fontSize: typography.size.body, color: colors.textMuted },
@@ -330,7 +330,7 @@ const s = StyleSheet.create({
   bottomRowName: { fontFamily: typography.display, fontSize: typography.size.subheading, color: colors.text },
   bottomRowMeta: { fontFamily: typography.body, fontSize: typography.size.caption, color: colors.textMuted, marginTop: 2 },
   bottomRowRating: { flexDirection: 'row', alignItems: 'center', gap: 3, marginTop: 4 },
-  bottomRowStar: { fontSize: 11, color: colors.star },
+  bottomRowStar: { fontSize: typography.size.sm, color: colors.star },
   bottomRowRatingTxt: { fontFamily: typography.bodyBold, fontSize: typography.size.caption, color: colors.text },
   bottomRowImgWrap: { width: 64, height: 64, flexShrink: 0 },
   bottomRowImg: { width: 64, height: 64, borderRadius: radius.md, flexShrink: 0 },
@@ -338,7 +338,7 @@ const s = StyleSheet.create({
     position: 'absolute', top: -4, left: -4,
     backgroundColor: colors.primary, borderRadius: radius.sm + 2,
     paddingHorizontal: spacing.xs + 1, paddingVertical: 2,
-    borderWidth: 1.5, borderColor: '#FFFFFF',
+    borderWidth: 1.5, borderColor: colors.card,
   },
-  bottomRowPromoTxt: { fontFamily: typography.bodyBold, fontSize: 9, color: '#FFFFFF' },
+  bottomRowPromoTxt: { fontFamily: typography.bodyBold, fontSize: 9, color: colors.card },
 });

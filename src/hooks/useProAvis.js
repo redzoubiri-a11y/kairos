@@ -1,7 +1,9 @@
 import { useState, useCallback, useMemo } from 'react';
+import { Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { supabase } from '../../supabase';
 import { colors } from '../theme';
+import { typeErreur } from '../utils/typeErreur';
 
 export const STARS   = [1, 2, 3, 4, 5];
 export const FILTERS = ['Tous', 'Sans réponse'];
@@ -29,36 +31,47 @@ export default function useProAvis() {
   const [refreshing, setRefreshing] = useState(false);
   const [filter,     setFilter]     = useState('Tous');
   const [restaurant, setRestaurant] = useState(null);
+  const [erreur,     setErreur]     = useState(null);
 
   const load = useCallback(async (isRefresh = false) => {
     if (isRefresh) setRefreshing(true); else setLoading(true);
+    setErreur(null);
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
 
-      const { data: ownerRows } = await supabase
+      // Sous coupure réseau, c'est cette requête qui échoue en premier :
+      // sans lecture de son erreur, la fonction sortait ici sans jamais
+      // atteindre le chargement des avis plus bas.
+      const { data: ownerRows, error: ownerErr } = await supabase
         .from('restaurant_owners')
         .select('restaurant_id')
         .eq('auth_id', session.user.id)
         .limit(1);
+      if (ownerErr) { setErreur(typeErreur(ownerErr)); setReviews([]); return; }
       const ownerRow = ownerRows?.[0] ?? null;
 
       if (!ownerRow?.restaurant_id) return;
 
-      const { data: resto } = await supabase
+      const { data: resto, error: restoErr } = await supabase
         .from('restaurants')
         .select('id, name')
         .eq('id', ownerRow.restaurant_id)
         .maybeSingle();
+      if (restoErr) { setErreur(typeErreur(restoErr)); setReviews([]); return; }
       if (resto) setRestaurant(resto);
 
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('reviews')
         .select('id, rating, comment, created_at, pro_response, moderation_status, users(first_name, last_name)')
         .eq('restaurant_id', ownerRow.restaurant_id)
         .order('created_at', { ascending: false });
+      if (error) { setErreur(typeErreur(error)); setReviews([]); return; }
 
       setReviews(data ?? []);
+    } catch (e) {
+      setErreur(typeErreur(e));
+      setReviews([]);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -83,17 +96,22 @@ export default function useProAvis() {
   }), [reviews, filter]);
 
   const handleApprove = useCallback(async (id) => {
-    await supabase.from('reviews').update({ moderation_status: 'approved' }).eq('id', id);
+    // L'écran retirait l'avis de la file de modération même quand
+    // l'écriture échouait — il pouvait rester en attente indéfiniment
+    // sans que personne ne s'en aperçoive.
+    const { error } = await supabase.from('reviews').update({ moderation_status: 'approved' }).eq('id', id);
+    if (error) { Alert.alert('Erreur', "L'avis n'a pas pu être approuvé. Vérifiez votre connexion et réessayez."); return; }
     setReviews(prev => prev.map(r => r.id === id ? { ...r, moderation_status: 'approved' } : r));
   }, []);
 
   const handleReject = useCallback(async (id) => {
-    await supabase.from('reviews').update({ moderation_status: 'rejected' }).eq('id', id);
+    const { error } = await supabase.from('reviews').update({ moderation_status: 'rejected' }).eq('id', id);
+    if (error) { Alert.alert('Erreur', "L'avis n'a pas pu être rejeté. Vérifiez votre connexion et réessayez."); return; }
     setReviews(prev => prev.filter(r => r.id !== id));
   }, []);
 
   return {
-    reviews, loading, refreshing, filter, setFilter, restaurant,
+    reviews, loading, refreshing, erreur, reessayer: load, filter, setFilter, restaurant,
     handleSaveResponse, handleApprove, handleReject,
     onRefresh, noReply, filtered,
   };

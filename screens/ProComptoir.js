@@ -40,7 +40,7 @@ const sk = StyleSheet.create({
 
 export default function ProComptoir({ navigation }) {
   const {
-    restaurant, reservations, visibleReservations, loading, refreshing,
+    restaurant, reservations, visibleReservations, loading, refreshing, erreur,
     acting, selectedResa, selectedResaId, stats, emptyDateStr,
     selectedDate, isToday, goPrevDay, goNextDay, goToday,
     load, confirm, arrive, cancel, noShow, selectResa,
@@ -193,6 +193,16 @@ export default function ProComptoir({ navigation }) {
               <View style={{ padding: spacing.xl, gap: spacing.lg }}>
                 {[1,2,3,4].map(i => <MLoader key={i} width="100%" height={64} borderRadius={radius.lg} />)}
               </View>
+            ) : erreur ? (
+              <View style={s.center}>
+                <EmptyState
+                  icon={<Text style={{ fontSize: 20 }}>{erreur === 'network' ? '📡' : '⚠️'}</Text>}
+                  title={erreur === 'network' ? 'Pas de connexion' : 'Erreur serveur'}
+                  subtitle={erreur === 'network' ? 'Vérifie ta connexion internet.' : "Une erreur inattendue s'est produite."}
+                  actionLabel="Réessayer"
+                  onAction={load}
+                />
+              </View>
             ) : visibleReservations.length === 0 ? (
               <View style={s.center}>
                 <EmptyState icon={<Text style={{ fontSize: 20 }}>📅</Text>} title="Aucune réservation" subtitle={emptyDateStr} />
@@ -241,7 +251,17 @@ export default function ProComptoir({ navigation }) {
           </View>
         }
         ListEmptyComponent={
-          loading ? <SkeletonComptoir /> : (
+          loading ? <SkeletonComptoir /> : erreur ? (
+            <View style={s.center}>
+              <EmptyState
+                icon={<Text style={{ fontSize: 20 }}>{erreur === 'network' ? '📡' : '⚠️'}</Text>}
+                title={erreur === 'network' ? 'Pas de connexion' : 'Erreur serveur'}
+                subtitle={erreur === 'network' ? 'Vérifie ta connexion internet.' : "Une erreur inattendue s'est produite."}
+                actionLabel="Réessayer"
+                onAction={load}
+              />
+            </View>
+          ) : (
             <View style={s.center}>
               <EmptyState icon={<Text style={{ fontSize: 20 }}>📅</Text>} title="Aucune réservation aujourd'hui" subtitle={emptyDateStr} />
             </View>
@@ -268,16 +288,16 @@ const s = StyleSheet.create({
   restoName:   { color: colors.text, fontFamily: typography.display, fontSize: typography.size.heading1, letterSpacing: -0.2 },
   dateStr:     { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.caption, textTransform: 'capitalize', marginTop: 1 },
   refreshBtn:  { width: 38, height: 38, backgroundColor: colors.card, borderRadius: 19, borderWidth: 1, borderColor: colors.cardBorder, alignItems: 'center', justifyContent: 'center' },
-  refreshTxt:  { color: colors.primary, fontSize: 18 },
+  refreshTxt:  { color: colors.primary, fontSize: typography.size.heading2 },
 
   // Sélecteur de date + "Plan de salle" — valeurs littérales de Comptoir Reservations.dc.html
   toolRow:        { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.xl, paddingVertical: spacing.md, gap: spacing.md, backgroundColor: colors.card },
   dateSelector:   { flexDirection: 'row', alignItems: 'center', gap: spacing.xs, flexShrink: 1 },
   dateArrow:      { width: 26, height: 26, alignItems: 'center', justifyContent: 'center' },
-  dateArrowTxt:   { fontFamily: typography.bodyMedium, color: colors.textMuted, fontSize: 18 },
+  dateArrowTxt:   { fontFamily: typography.bodyMedium, color: colors.textMuted, fontSize: typography.size.heading2 },
   datePill:       { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: colors.tagNeutralBg, borderRadius: 10, paddingHorizontal: 13, paddingVertical: spacing.sm + 1, flexShrink: 1 },
   datePillTxt:    { fontFamily: typography.bodySemibold, color: colors.text, fontSize: typography.size.bodyLg, textTransform: 'capitalize' },
-  dateChevron:    { color: colors.textDim, fontSize: 10 },
+  dateChevron:    { color: colors.textDim, fontSize: typography.size.xs },
   planSalleBtn:   { borderWidth: 1.5, borderColor: 'rgba(10,10,10,0.16)', borderRadius: 10, paddingHorizontal: 13, paddingVertical: spacing.sm + 1, alignItems: 'center' },
   planSalleTxt:   { fontFamily: typography.bodySemibold, color: colors.text, fontSize: typography.size.caption },
   planSalleSoon:  { fontFamily: typography.body, color: colors.textDim, fontSize: typography.size.xs, marginTop: 1 },
@@ -285,7 +305,7 @@ const s = StyleSheet.create({
   // 3 cases stats teintées — valeurs littérales (valeur SG700 17px, label DM Sans 500 9.5px)
   statsMain:      { flexDirection: 'row', gap: spacing.md, paddingHorizontal: spacing.xl, paddingBottom: spacing.md, backgroundColor: colors.card },
   statCard:       { flex: 1, borderRadius: 10, paddingVertical: 10, paddingHorizontal: spacing.sm, alignItems: 'center' },
-  statCardVal:    { fontFamily: typography.display, fontSize: 17, lineHeight: 20 },
+  statCardVal:    { fontFamily: typography.display, fontSize: typography.size.heading3, lineHeight: 20 },
   statCardLbl:    { fontFamily: typography.bodyMedium, color: colors.textMuted, fontSize: typography.size.xs + 0.5, marginTop: 3 },
 
   statsSecondary:     { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.sm, paddingBottom: spacing.md, backgroundColor: colors.card, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },

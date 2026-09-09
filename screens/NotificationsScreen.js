@@ -27,7 +27,7 @@ function SkeletonList() {
 
 export default function NotificationsScreen({ navigation }) {
   const {
-    loading, refreshing, tab, setTab,
+    loading, refreshing, tab, setTab, erreur, reessayer,
     filtered, unread, unreadResa, unreadRappel, unreadCommande, groups,
     markRead, markAllRead, deleteNotif, onRefresh,
   } = useNotifications();
@@ -78,6 +78,17 @@ export default function NotificationsScreen({ navigation }) {
 
       {loading ? (
         <SkeletonList />
+      ) : erreur ? (
+        <View style={s.center}>
+          <Text style={s.emptyEmoji}>{erreur === 'network' ? '📡' : '⚠️'}</Text>
+          <Text style={s.emptyTitle}>{erreur === 'network' ? 'Pas de connexion' : 'Erreur serveur'}</Text>
+          <Text style={s.emptySub}>
+            {erreur === 'network' ? 'Vérifie ta connexion internet.' : "Une erreur inattendue s'est produite."}
+          </Text>
+          <TouchableOpacity onPress={reessayer} style={s.retryBtn}>
+            <Text style={s.retryBtnTxt}>Réessayer</Text>
+          </TouchableOpacity>
+        </View>
       ) : filtered.length === 0 ? (
         <View style={s.center}>
           <Text style={s.emptyEmoji}>
@@ -163,14 +174,14 @@ const s = StyleSheet.create({
   tabTxt:       { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.body },
   tabTxtOn:     { fontFamily: typography.bodySemibold, color: colors.primary },
   tabBadge:     { backgroundColor: colors.primary, borderRadius: radius.md, minWidth: 16, height: 16, paddingHorizontal: spacing.xxs+1, alignItems: 'center', justifyContent: 'center' },
-  tabBadgeTxt:  { color: '#FFFFFF', fontSize: typography.size.xs, fontWeight: typography.weight.bold },
+  tabBadgeTxt:  { color: colors.card, fontSize: typography.size.xs, fontWeight: typography.weight.bold },
   tabLine:      { position: 'absolute', bottom: 0, left: '15%', right: '15%', height: 2, backgroundColor: colors.primary, borderRadius: 1 },
 
   groupLabel:   { fontFamily: typography.bodySemibold, color: colors.textFaint, fontSize: typography.size.caption - 0.5, letterSpacing: 0.84, textTransform: 'uppercase', paddingHorizontal: spacing.xxl, paddingTop: spacing.xxl, paddingBottom: spacing.md },
 
   card:         { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.lg, paddingHorizontal: spacing.xxl, paddingVertical: spacing.lg + 1, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   iconWrap:     { width: 38, height: 38, borderRadius: radius.full, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
-  icon:         { fontSize: 17 },
+  icon:         { fontSize: typography.size.heading3 },
   cardContent:  { flex: 1 },
   cardTitle:    { fontFamily: typography.bodySemibold, color: colors.text, fontSize: typography.size.bodyLg + 0.5, lineHeight: 17.5 },
   cardBody:     { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.bodyLg - 0.5, lineHeight: 18, marginTop: 3 },
@@ -185,4 +196,6 @@ const s = StyleSheet.create({
   emptyEmoji:   { fontSize: 52 },
   emptyTitle:   { fontFamily: typography.display, color: colors.text, fontSize: typography.size.heading1, textAlign: 'center', lineHeight: 26 },
   emptySub:     { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.bodyLg, textAlign: 'center', lineHeight: 20 },
+  retryBtn:     { marginTop: spacing.xl, paddingVertical: spacing.md, paddingHorizontal: spacing.xxl, borderRadius: radius.md, borderWidth: 1, borderColor: colors.cardBorder },
+  retryBtnTxt:  { fontFamily: typography.bodyMedium, color: colors.primary, fontSize: typography.size.body },
 });

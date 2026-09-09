@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert } from 'react-native';
 import { supabase } from '../../supabase';
 import { colors, typography, spacing, radius } from '../theme';
 import { formatDate, initials, avatarColor } from '../hooks/useProAvis';
@@ -33,7 +33,10 @@ export default function ReviewCard({ review, onSaveResponse, onApprove, onReject
     if (!text.trim()) return;
     setSaving(true);
     try {
-      await supabase.from('reviews').update({ pro_response: text.trim() }).eq('id', review.id);
+      // La réponse s'affichait comme publiée même quand l'écriture échouait :
+      // le restaurateur croyait avoir répondu, le client ne voyait rien.
+      const { error } = await supabase.from('reviews').update({ pro_response: text.trim() }).eq('id', review.id);
+      if (error) { Alert.alert('Erreur', "La réponse n'a pas pu être enregistrée. Vérifiez votre connexion et réessayez."); return; }
       setSaved(true);
       setReplying(false);
       onSaveResponse?.(review.id, text.trim());
@@ -126,7 +129,7 @@ const s = StyleSheet.create({
   rejectBtn:      { flex: 1, padding: spacing.md, borderRadius: radius.lg, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(224,90,90,0.35)', backgroundColor: 'rgba(224,90,90,0.08)' },
   rejectTxt:      { color: colors.red, fontFamily: typography.body, fontSize: typography.size.body },
   approveBtn:     { flex: 2, padding: spacing.md, borderRadius: radius.lg, alignItems: 'center', backgroundColor: colors.green },
-  approveTxt:     { color: '#FFFFFF', fontFamily: typography.bodyBold, fontSize: typography.size.body, fontWeight: typography.weight.bold },
+  approveTxt:     { color: colors.card, fontFamily: typography.bodyBold, fontSize: typography.size.body, fontWeight: typography.weight.bold },
   top:            { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },
   avatar:         { width: 38, height: 38, borderRadius: 19, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
   avatarTxt:      { fontFamily: typography.bodyMedium, fontSize: typography.size.bodyLg || 15, fontWeight: typography.weight.medium },
@@ -136,7 +139,7 @@ const s = StyleSheet.create({
   comment:        { color: colors.textMuted, fontFamily: typography.body, fontSize: typography.size.body, lineHeight: 20, fontStyle: 'italic' },
   responseWrap:   { backgroundColor: colors.cream, borderRadius: radius.lg, padding: spacing.lg },
   responseHeader: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.xs },
-  responseIcon:   { fontSize: 13 },
+  responseIcon:   { fontSize: typography.size.body },
   responseLabel:  { color: colors.primary, fontFamily: typography.bodyBold, fontSize: typography.size.caption, fontWeight: typography.weight.bold, flex: 1 },
   editTxt:        { color: colors.textDim, fontFamily: typography.body, fontSize: typography.size.xs },
   responseTxt:    { color: colors.textMuted, fontFamily: typography.body, fontSize: typography.size.body, lineHeight: 18 },
@@ -148,5 +151,5 @@ const s = StyleSheet.create({
   cancelBtn:      { flex: 1, padding: spacing.md, borderRadius: radius.lg, alignItems: 'center', borderWidth: 1, borderColor: colors.cardBorder },
   cancelTxt:      { color: colors.textMuted, fontFamily: typography.body, fontSize: typography.size.body },
   saveBtn:        { flex: 2, padding: spacing.md, borderRadius: radius.lg, alignItems: 'center', backgroundColor: colors.noir, shadowColor: '#000', shadowOpacity: 0.4, shadowRadius: 12, shadowOffset: { width: 0, height: 0 }, elevation: 6 },
-  saveTxt:        { color: '#FFFFFF', fontFamily: typography.bodyBold, fontSize: typography.size.body, fontWeight: typography.weight.bold },
+  saveTxt:        { color: colors.card, fontFamily: typography.bodyBold, fontSize: typography.size.body, fontWeight: typography.weight.bold },
 });

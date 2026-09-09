@@ -60,30 +60,30 @@ export default function MapScreen({ navigation }) {
         <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg, alignItems: 'center', justifyContent: 'center', gap: 16, padding: 32 }}>
           <Text style={{ fontSize: 48 }}>🗺️</Text>
           <Text style={{ color: colors.primary, fontFamily: typography.display, fontSize: 20, fontWeight: typography.weight.bold, letterSpacing: 1 }}>Carte</Text>
-          <Text style={{ color: colors.textMuted, fontSize: 13, textAlign: 'center', lineHeight: 20 }}>
+          <Text style={{ color: colors.textMuted, fontSize: typography.size.body, textAlign: 'center', lineHeight: 20 }}>
             La carte interactive est disponible sur l'application mobile.
           </Text>
           {loading ? (
             <ActivityIndicator color={colors.primary} />
           ) : (
             <View style={{ backgroundColor: colors.card, borderRadius: radius.xl, borderWidth: 1, borderColor: colors.cardBorder, padding: 14, width: '100%' }}>
-              <Text style={{ color: colors.textDim, fontSize: 11, letterSpacing: 2, marginBottom: 8 }}>RESTAURANTS DISPONIBLES</Text>
+              <Text style={{ color: colors.textDim, fontSize: typography.size.sm, letterSpacing: 2, marginBottom: 8 }}>RESTAURANTS DISPONIBLES</Text>
               {restaurants.slice(0, 6).map(r => (
                 <TouchableOpacity
                   key={r.id}
                   style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: colors.cardBorder }}
                   onPress={() => navigation.navigate('Restaurant', { id: r.id, restaurant: r })}
                 >
-                  <Text style={{ fontSize: 18 }}>{CUISINE_EMOJI[r.cuisine_type] || '🍽️'}</Text>
+                  <Text style={{ fontSize: typography.size.heading2 }}>{CUISINE_EMOJI[r.cuisine_type] || '🍽️'}</Text>
                   <View style={{ flex: 1 }}>
-                    <Text style={{ color: colors.text, fontSize: 13 }}>{r.name}</Text>
-                    <Text style={{ color: colors.textMuted, fontSize: 11 }}>{r.quartier || '—'}</Text>
+                    <Text style={{ color: colors.text, fontSize: typography.size.body }}>{r.name}</Text>
+                    <Text style={{ color: colors.textMuted, fontSize: typography.size.sm }}>{r.quartier || '—'}</Text>
                   </View>
-                  {r.avg_rating > 0 && <Text style={{ color: colors.star, fontSize: 11 }}>★ {Number(r.avg_rating).toFixed(1)}</Text>}
+                  {r.avg_rating > 0 && <Text style={{ color: colors.star, fontSize: typography.size.sm }}>★ {Number(r.avg_rating).toFixed(1)}</Text>}
                 </TouchableOpacity>
               ))}
               {restaurants.length > 6 && (
-                <Text style={{ color: colors.textDim, fontSize: 11, textAlign: 'center', marginTop: 8 }}>+{restaurants.length - 6} autres</Text>
+                <Text style={{ color: colors.textDim, fontSize: typography.size.sm, textAlign: 'center', marginTop: 8 }}>+{restaurants.length - 6} autres</Text>
               )}
             </View>
           )}
@@ -189,25 +189,25 @@ const s = StyleSheet.create({
     borderTopLeftRadius: 21, borderTopRightRadius: 21, borderBottomRightRadius: 21, borderBottomLeftRadius: 4,
   },
   pinInner:    { transform: [{ rotate: '-45deg' }], alignItems: 'center', justifyContent: 'center' },
-  pinRating:   { fontFamily: typography.bodyBold, fontSize: 11.5, color: '#FFFFFF' },
-  pinRatingLg: { fontSize: 13 },
-  pinEmoji:    { fontSize: 16 },
+  pinRating:   { fontFamily: typography.bodyBold, fontSize: 11.5, color: colors.card },
+  pinRatingLg: { fontSize: typography.size.body },
+  pinEmoji:    { fontSize: typography.size.subheading },
 
   backBtn:    {
     position: 'absolute', left: spacing.xl,
-    width: 38, height: 38, borderRadius: 19, backgroundColor: '#FFFFFF',
+    width: 38, height: 38, borderRadius: 19, backgroundColor: colors.card,
     alignItems: 'center', justifyContent: 'center',
     shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 12, shadowOffset: { width: 0, height: 4 }, elevation: 4,
   },
-  backBtnTxt: { color: colors.text, fontSize: 16 },
+  backBtnTxt: { color: colors.text, fontSize: typography.size.subheading },
 
   recenterBtn: {
     position: 'absolute', right: spacing.xl, bottom: 210,
-    width: 42, height: 42, borderRadius: 21, backgroundColor: '#FFFFFF',
+    width: 42, height: 42, borderRadius: 21, backgroundColor: colors.card,
     alignItems: 'center', justifyContent: 'center',
     shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 12, shadowOffset: { width: 0, height: 4 }, elevation: 4,
   },
-  recenterTxt: { color: colors.text, fontSize: 17 },
+  recenterTxt: { color: colors.text, fontSize: typography.size.heading3 },
 
   spinner: {
     position: 'absolute', bottom: 140, alignSelf: 'center',
@@ -221,7 +221,7 @@ const s = StyleSheet.create({
   },
   card: {
     flex: 1, flexDirection: 'row', alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.card,
     borderRadius: radius.floating, overflow: 'hidden',
     padding: spacing.md + 2, gap: spacing.md + 2,
     shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 20, shadowOffset: { width: 0, height: 8 }, elevation: 6,
@@ -234,7 +234,7 @@ const s = StyleSheet.create({
 
   closeBtn: {
     width: 38, height: 38, borderRadius: 19,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.card,
     alignItems: 'center', justifyContent: 'center',
     shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 10, shadowOffset: { width: 0, height: 4 }, elevation: 4,
   },

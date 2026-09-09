@@ -45,8 +45,8 @@ const styles = StyleSheet.create({
   text: { fontFamily: typography.bodyBold },
   // lineHeight explicite : sans lui, Android rogne le haut des lettres (accents,
   // majuscules) avec certaines polices custom à cette taille — texte coupé.
-  tagText: { fontSize: 10, lineHeight: 14, letterSpacing: 0.4 },
-  filterText: { fontSize: 11, lineHeight: 15, fontFamily: typography.bodyMedium },
+  tagText: { fontSize: typography.size.xs, lineHeight: 14, letterSpacing: 0.4 },
+  filterText: { fontSize: typography.size.sm, lineHeight: 15, fontFamily: typography.bodyMedium },
   choiceText: { fontSize: 11.5, lineHeight: 16, fontFamily: typography.bodyMedium },
   // Chip actif — doc : DM Sans 600, distinct des chips inactifs (500)
   filterTextActive: { fontFamily: typography.bodySemibold },

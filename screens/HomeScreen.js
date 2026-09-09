@@ -213,16 +213,16 @@ const s = StyleSheet.create({
   searchPlaceholder: { flex: 1, fontFamily: typography.body, fontSize: typography.size.caption + 0.5, color: colors.textDim },
   bell:    { width: 36, height: 36, borderRadius: radius.md + 2, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder, alignItems: 'center', justifyContent: 'center' },
   notifBadge: { position: 'absolute', top: -4, right: -4, minWidth: 16, height: 16, borderRadius: 8, backgroundColor: colors.noir, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 3, borderWidth: 1.5, borderColor: colors.bg },
-  notifBadgeTxt: { fontFamily: typography.bodyBold, color: '#FFFFFF', fontSize: typography.size.xs },
+  notifBadgeTxt: { fontFamily: typography.bodyBold, color: colors.card, fontSize: typography.size.xs },
 
   areaTabs: { flexDirection: 'row', gap: spacing.sm, paddingHorizontal: spacing.xl },
   areaTab:  { paddingHorizontal: spacing.lg + 3, paddingVertical: spacing.sm + 1, borderRadius: radius.md, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.cardBorder },
   areaTabOn:{ backgroundColor: colors.primary, borderColor: colors.primary },
   areaTabTxt:  { fontFamily: typography.bodyBold, fontSize: typography.size.body, color: colors.textMuted },
-  areaTabTxtOn:{ color: '#FFFFFF' },
+  areaTabTxtOn:{ color: colors.card },
 
   quickSearchCard: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, marginHorizontal: spacing.xl, marginTop: spacing.lg, backgroundColor: colors.noir, borderRadius: radius.md, paddingHorizontal: spacing.xl, paddingVertical: spacing.lg },
-  quickSearchTitle: { fontFamily: typography.display, color: '#FFFFFF', fontSize: typography.size.body + 1 },
+  quickSearchTitle: { fontFamily: typography.display, color: colors.card, fontSize: typography.size.body + 1 },
   quickSearchSub:   { fontFamily: typography.body, color: 'rgba(255,255,255,0.6)', fontSize: typography.size.caption, marginTop: 2 },
   quickSearchArrow: { color: 'rgba(255,255,255,0.6)', fontSize: 22 },
 

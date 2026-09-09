@@ -5,7 +5,7 @@ function fmtDate(iso) {
   return new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
-export default function PointsHistoryModal({ visible, onClose, balance, history, loading }) {
+export default function PointsHistoryModal({ visible, onClose, balance, history, loading, erreur, onRetry }) {
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View style={s.overlay}>
@@ -13,10 +13,21 @@ export default function PointsHistoryModal({ visible, onClose, balance, history,
           <View style={s.drag} />
 
           <Text style={s.title}>Historique des points</Text>
-          <Text style={s.balance}>{balance.toLocaleString('fr-FR')} pts</Text>
+          {/* Sur erreur, le solde réel est inconnu — mieux vaut le taire
+              que d'afficher 0 pts, qui laisserait croire à une perte. */}
+          <Text style={s.balance}>{erreur ? '—' : balance.toLocaleString('fr-FR') + ' pts'}</Text>
 
           {loading ? (
             <ActivityIndicator color={colors.text} style={{ marginVertical: spacing.xxl }} />
+          ) : erreur ? (
+            <View style={{ alignItems: 'center', marginVertical: spacing.xxl }}>
+              <Text style={s.empty}>
+                {erreur === 'network' ? 'Pas de connexion. Vérifie ta connexion internet.' : 'Une erreur est survenue.'}
+              </Text>
+              <TouchableOpacity onPress={onRetry} style={s.retryBtn}>
+                <Text style={s.retryBtnTxt}>Réessayer</Text>
+              </TouchableOpacity>
+            </View>
           ) : history.length === 0 ? (
             <Text style={s.empty}>Aucun mouvement pour l'instant.</Text>
           ) : (
@@ -59,6 +70,8 @@ const s = StyleSheet.create({
   rowDate:  { fontFamily: typography.body, color: colors.textDim, fontSize: typography.size.caption, marginTop: 2 },
   rowAmount:{ fontFamily: typography.bodyBold, color: colors.statusConfirmedText, fontSize: typography.size.subheading },
 
+  retryBtn:    { marginTop: spacing.md, paddingVertical: spacing.sm, paddingHorizontal: spacing.xl, borderRadius: radius.md, borderWidth: 1, borderColor: colors.cardBorder },
+  retryBtnTxt: { fontFamily: typography.bodyMedium, color: colors.primary, fontSize: typography.size.body },
   closeBtn:    { marginTop: spacing.xl, alignItems: 'center', paddingVertical: spacing.md },
   closeBtnTxt: { fontFamily: typography.bodyMedium, color: colors.textMuted, fontSize: typography.size.bodyLg },
 });

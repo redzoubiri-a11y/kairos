@@ -1,12 +1,12 @@
 import { useCallback } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors, typography, spacing } from '../src/theme';
+import { colors, typography, spacing, radius } from '../src/theme';
 import useMyOrders from '../src/hooks/useMyOrders';
 import OrderCard from '../src/components/OrderCard';
 
 export default function MyOrdersScreen({ navigation }) {
-  const { loading, refreshing, active, history, cancelling, onRefresh, cancel } = useMyOrders();
+  const { loading, refreshing, active, history, cancelling, erreur, reessayer, onRefresh, cancel } = useMyOrders();
 
   const goRestaurant = useCallback((restaurant) => {
     if (restaurant?.id) navigation.navigate('Restaurant', { id: restaurant.id, restaurant });
@@ -32,6 +32,17 @@ export default function MyOrdersScreen({ navigation }) {
       >
         {loading ? (
           <ActivityIndicator style={{ marginTop: 60 }} color={colors.text} />
+        ) : erreur ? (
+          <View style={s.emptyWrap}>
+            <Text style={{ fontSize: 44 }}>{erreur === 'network' ? '📡' : '⚠️'}</Text>
+            <Text style={s.emptyTitle}>{erreur === 'network' ? 'Pas de connexion' : 'Erreur serveur'}</Text>
+            <Text style={s.emptySub}>
+              {erreur === 'network' ? 'Vérifie ta connexion internet.' : "Une erreur inattendue s'est produite."}
+            </Text>
+            <TouchableOpacity onPress={reessayer} style={s.retryBtn}>
+              <Text style={s.retryBtnTxt}>Réessayer</Text>
+            </TouchableOpacity>
+          </View>
         ) : active.length === 0 && history.length === 0 ? (
           <View style={s.emptyWrap}>
             <Text style={{ fontSize: 44 }}>🛍️</Text>
@@ -92,6 +103,8 @@ const s = StyleSheet.create({
   emptyWrap:  { alignItems: 'center', paddingVertical: spacing.section * 2, gap: spacing.md },
   emptyTitle: { color: colors.text, fontSize: typography.size.heading2, fontWeight: typography.weight.medium },
   emptySub:   { color: colors.textMuted, fontSize: typography.size.body, textAlign: 'center' },
+  retryBtn:   { marginTop: spacing.md, paddingVertical: spacing.md, paddingHorizontal: spacing.xxl, borderRadius: radius.md, borderWidth: 1, borderColor: colors.cardBorder },
+  retryBtnTxt:{ color: colors.text, fontSize: typography.size.body, fontWeight: typography.weight.medium },
 
   cardWrap: { marginHorizontal: spacing.xl, marginBottom: spacing.lg },
 });

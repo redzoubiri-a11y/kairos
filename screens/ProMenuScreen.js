@@ -222,7 +222,7 @@ const s = StyleSheet.create({
   headerSub:    { fontFamily: typography.bodyBold, color: colors.primary, fontSize: typography.size.xs, letterSpacing: 3, marginBottom: 2 },
   headerTitle:  { color: colors.text, fontFamily: typography.display, fontSize: typography.size.title, letterSpacing: -0.3 },
   addBtn:       { backgroundColor: colors.primary, borderRadius: radius.lg, paddingHorizontal: spacing.lg, paddingVertical: spacing.md },
-  addBtnTxt:    { fontFamily: typography.bodyBold, color: '#FFFFFF', fontSize: typography.size.body },
+  addBtnTxt:    { fontFamily: typography.bodyBold, color: colors.card, fontSize: typography.size.body },
 
   subBar:  { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingHorizontal: spacing.xxl, paddingVertical: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.cardBorder },
   subDot:  { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.green },
@@ -233,7 +233,7 @@ const s = StyleSheet.create({
   catChip:      { paddingHorizontal: spacing.lg, paddingVertical: spacing.md, borderRadius: radius.pill, backgroundColor: colors.tagNeutralBg },
   catChipOn:    { backgroundColor: colors.noir },
   catChipTxt:   { fontFamily: typography.body, color: colors.text, fontSize: typography.size.body },
-  catChipTxtOn: { fontFamily: typography.bodySemibold, color: '#FFFFFF' },
+  catChipTxtOn: { fontFamily: typography.bodySemibold, color: colors.card },
   catChipMuted: { fontFamily: typography.body, color: colors.textDim, fontSize: typography.size.body },
 
   empty:      { alignItems: 'center', justifyContent: 'center', paddingVertical: 60, gap: spacing.lg },
@@ -242,7 +242,7 @@ const s = StyleSheet.create({
   emptySub:   { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.body, textAlign: 'center' },
 
   addDashed:     { borderWidth: 1, borderStyle: 'dashed', borderColor: colors.primarySoft, borderRadius: radius.xl, paddingVertical: spacing.xxl, alignItems: 'center', gap: spacing.sm, marginTop: spacing.sm },
-  addDashedPlus: { color: colors.primary, fontSize: 26 },
+  addDashedPlus: { color: colors.primary, fontSize: typography.size.title },
   addDashedTxt:  { fontFamily: typography.body, color: colors.textMuted, fontSize: typography.size.body },
 
   nextBtn:    { backgroundColor: colors.text, borderRadius: radius.xl, paddingVertical: spacing.lg, alignItems: 'center', marginTop: spacing.xl },

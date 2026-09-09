@@ -27,7 +27,7 @@ const tr = StyleSheet.create({
   sub:     { color: colors.textDim, fontSize: typography.size.caption, marginTop: spacing.xxs },
   track:   { width: 38, height: 22, borderRadius: 11, backgroundColor: colors.cardBorder, borderWidth: 1, borderColor: colors.cardBorder, justifyContent: 'center', paddingHorizontal: 3 },
   trackOn: { backgroundColor: colors.primary, borderColor: colors.primary },
-  thumb:   { width: 16, height: 16, borderRadius: 8, backgroundColor: '#FFFFFF', alignSelf: 'flex-start' },
+  thumb:   { width: 16, height: 16, borderRadius: 8, backgroundColor: colors.card, alignSelf: 'flex-start' },
   thumbOn: { alignSelf: 'flex-end' },
 });
 
@@ -262,7 +262,7 @@ const s = StyleSheet.create({
   headerSub:   { color: colors.gold, fontSize: typography.size.xs, letterSpacing: 3, marginBottom: 2 },
   headerTitle: { color: colors.text, fontFamily: typography.display, fontSize: typography.size.title, fontWeight: typography.weight.bold, letterSpacing: -0.3 },
   saveBtn:     { backgroundColor: colors.noir, borderRadius: radius.xl, paddingVertical: 15, alignItems: 'center' },
-  saveBtnTxt:  { color: '#FFFFFF', fontSize: typography.size.subheading, fontWeight: typography.weight.bold, letterSpacing: 0.3 },
+  saveBtnTxt:  { color: colors.card, fontSize: typography.size.subheading, fontWeight: typography.weight.bold, letterSpacing: 0.3 },
   terminerBtn: { alignItems: 'center', paddingVertical: spacing.lg },
   terminerTxt: { color: colors.gold, fontSize: typography.size.body, fontWeight: typography.weight.medium },
 });

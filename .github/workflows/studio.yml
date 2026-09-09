@@ -60,6 +60,40 @@ jobs:
           path: studio/out/*.jpg
           retention-days: 14
 
+  video:
+    name: Rendu vidéo
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: studio/package-lock.json
+
+      - run: npm ci
+
+      # Job séparé du précédent : Remotion télécharge son propre Chromium au
+      # premier rendu (environ 150 Mo) et encode deux vidéos de 6 s. C'est une
+      # minute de plus, qui n'a pas à retarder le retour des types et du rendu
+      # statique.
+      #
+      # Ce que ça attrape et qu'aucun type ne voit : une police non chargée —
+      # Chromium retombe silencieusement sur son serif et la vidéo sort dans la
+      # mauvaise typographie. Le gabarit interrompt le rendu dans ce cas plutôt
+      # que de livrer, donc ce job passe au rouge.
+      - name: Rendu vidéo
+        run: npm run video:smoke
+
+      - name: Joindre les vidéos produites
+        uses: actions/upload-artifact@v4
+        with:
+          name: videos-${{ github.sha }}
+          path: studio/out/*.mp4
+          retention-days: 14
+
   schema:
     name: Migrations et verrou de consentement
     runs-on: ubuntu-latest

@@ -16,6 +16,7 @@ import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import type { Locale } from '../types.ts';
 
 const ici = dirname(fileURLToPath(import.meta.url));
 const RACINE = join(ici, '..', '..');
@@ -67,6 +68,8 @@ export interface VideoRenderInput {
   cta: string;
   rating?: number | null;
   photoUrl?: string | null;
+  /** Décide la police et le sens de lecture, comme au rendu statique. */
+  locale?: Locale;
 }
 
 export interface VideoRenderResult {
@@ -116,6 +119,7 @@ export async function renderVideo(input: VideoRenderInput): Promise<VideoRenderR
     badge: input.badge,
     cta: input.cta,
     rating: input.rating ?? null,
+    locale: input.locale ?? 'fr',
     photoUrl: input.photoUrl ?? null,
   };
 

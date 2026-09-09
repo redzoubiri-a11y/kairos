@@ -162,13 +162,15 @@ serait trois fois plus lourd sans gain visible.
 **Les polices sont résolues par une configuration fontconfig dédiée.** Sans
 elle, librsvg retombe silencieusement sur la police système et le visuel sort
 dans la mauvaise typographie sans que rien ne le signale.
-`assertWorkSansAvailable()` compare deux rendus pour le détecter et échoue
-plutôt que de livrer.
+`assertPolicesDisponibles()` compare deux rendus pour le détecter et échoue
+plutôt que de livrer. Le témoin est écrit dans l'écriture de la police testée :
+demander « Réservé ce soir » à Cairo passerait même sans un seul glyphe arabe.
 
 **Le repli des lignes est estimé, pas mesuré.** librsvg n'expose pas de mesure
 de texte : les largeurs de glyphe sont approchées (`ADVANCE` dans
 `render/static.ts`), volontairement un peu larges. C'est pourquoi les longueurs
-sont contraintes dans le schéma de sortie plutôt que laissées libres.
+sont contraintes dans le schéma de sortie plutôt que laissées libres. Les mêmes
+valeurs servent à l'arabe — mesuré plutôt que supposé, voir « L'arabe ».
 
 **Next.js n'est toujours pas là.** Le studio web reste à faire ; c'est lui qui
 apportera les policies RLS que `0004` laisse délibérément vides.
@@ -258,3 +260,65 @@ aucune modification de Mida.
 restreint : `expo start` échoue au démarrage s'il ne peut pas joindre
 `api.expo.dev` pour valider les versions — l'erreur est un `SyntaxError` sur du
 JSON, trompeuse. `EXPO_OFFLINE=1` la contourne.)
+
+---
+
+## L'arabe
+
+`campaigns.locale` acceptait `'ar'` depuis la migration `0002`, mais
+`runCampaign` levait à l'exécution : on pouvait créer une campagne arabe
+garantie d'échouer, après coup. La langue traverse maintenant toute la chaîne —
+l'invite, le texte, la police, le sens de lecture, la vidéo — et se choisit à la
+création, avec `locale` sur `create_campaign`.
+
+Une campagne ne mélange pas les deux langues. Deux langues, deux campagnes :
+`prompt_version` est distincte (`mida-fr-1`, `mida-ar-1`) pour qu'on puisse
+suivre leur qualité séparément dans le temps.
+
+### Un seul gabarit, retourné
+
+Le SVG ne connaît plus de côté : chaque bloc reçoit son `x` et son ancre du
+code. L'étiquette et la note permutent, le pied place la marque du côté où
+commence la lecture et l'appel à l'action du côté où elle finit — pour que le
+regard termine sur l'action dans les deux langues. Le mot-symbole « mida » reste
+en Work Sans : c'est une marque, pas du texte.
+
+### Le piège : `direction="rtl"`
+
+**librsvg ne rend qu'un seul glyphe** quand un `<text>` porte `direction="rtl"`.
+Sans erreur, sans avertissement : la phrase disparaît. Mesuré sur
+« احجز طاولتك هذا المساء » — 485 pixels allumés avec l'attribut, 11 890 sans.
+
+Il n'en faut pas : Pango applique déjà le bidirectionnel d'après les caractères,
+et l'alignement passe par `text-anchor`. `buildOverlay()` refuse de rendre un
+gabarit qui poserait l'attribut, commentaires XML exclus du contrôle — l'en-tête
+du gabarit énonce l'interdiction et se ferait prendre par sa propre règle.
+
+Chromium, lui, honore `direction: rtl` correctement, et retourne même l'ordre
+des boîtes flex : la vidéo n'a aucun code de miroir.
+
+### Cairo, et pourquoi la table `ADVANCE` n'a pas bougé
+
+Work Sans n'a aucun glyphe arabe. Cairo couvre l'arabe et le latin, et vient du
+même paquet `@expo-google-fonts` que celui qu'utilise déjà l'application.
+
+On pouvait craindre que le repli des lignes soit faux en arabe : les lettres se
+lient, donc la largeur rendue n'est pas la somme des glyphes isolés. Mesuré
+plutôt que supposé — largeur d'encre à 76 px, cinq phrases arabes en Cairo
+ExtraBold : facteur **0,485 à 0,521**. Trois phrases françaises en Work Sans
+ExtraBold : **0,486 à 0,514**. Presque identiques, donc le 0,58 garde sa marge
+dans les deux langues et la table reste inchangée.
+
+C'est peu d'échantillons. La contrainte de longueur du schéma de sortie reste le
+vrai garde-fou, pas cette mesure.
+
+### Ce qui n'a pas été fait
+
+Le texte arabe n'a **jamais été produit par le modèle** : comme le reste, la
+chaîne complète attend le projet Supabase et une clé API. Ce qui est vérifié,
+c'est le rendu — deux visuels et une vidéo, à partir de textes arabes écrits à
+la main dans les tests.
+
+Personne d'arabophone n'a relu l'invite. `CONSIGNE_LANGUE.ar` demande de l'arabe
+standard moderne et des chiffres occidentaux ; c'est un choix de départ, pas une
+validation éditoriale.

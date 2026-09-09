@@ -216,7 +216,34 @@ async function assertOwned(userId, tripId) {
 }
 
 async function update(userId, tripId, data) {
-  await assertOwned(userId, tripId);
+  const trip = await assertOwned(userId, tripId);
+
+  // Meme garde-fou qu'a la creation, qui manquait ici : sans lui, un PATCH
+  // pouvait declarer une capacite libre superieure a ce que le camion porte
+  // reellement. mission.service traite freeVolumeM3/freeWeightKg comme la
+  // verite terrain a la creation et a l'acceptation d'une mission — les
+  // gonfler ici aurait vide de son sens le garde-fou de capacite deja en place
+  // sur les missions.
+  if (data.freeVolumeM3 !== undefined || data.freeWeightKg !== undefined) {
+    const truck = await prisma.truck.findUnique({ where: { id: trip.truckId } });
+    const freeVolumeM3 = data.freeVolumeM3 ?? trip.freeVolumeM3;
+    const freeWeightKg = data.freeWeightKg ?? trip.freeWeightKg;
+    if (freeVolumeM3 > truck.volumeM3) {
+      throw ApiError.badRequest('Le volume libre depasse le volume total du camion');
+    }
+    if (freeWeightKg > truck.capacityKg) {
+      throw ApiError.badRequest('La charge libre depasse la capacite du camion');
+    }
+  }
+
+  // Meme raisonnement pour l'ordre des dates : create() le verifiait, update()
+  // laissait passer une arrivee reculee avant un depart inchange (ou l'inverse).
+  const departureAt = data.departureAt ?? trip.departureAt;
+  const arrivalAt = data.arrivalAt ?? trip.arrivalAt;
+  if (arrivalAt && arrivalAt <= departureAt) {
+    throw ApiError.badRequest("L'arrivee doit etre posterieure au depart");
+  }
+
   return prisma.trip.update({ where: { id: tripId }, data, include: TRIP_INCLUDE });
 }
 

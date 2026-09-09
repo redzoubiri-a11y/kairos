@@ -549,4 +549,60 @@ test('camions et trajets', async (t) => {
     assert.ok(body.items.some((item) => item.id === myTrip.id));
     assert.ok(!body.items.some((item) => item.id === otherTrip.id));
   });
+
+  // Le defaut corrige : create() verifiait la capacite libre declaree contre
+  // celle du camion, update() ne verifiait rien du tout. mission.service
+  // traite freeVolumeM3/freeWeightKg comme la verite terrain a l'acceptation :
+  // sans ce garde-fou, un PATCH pouvait gonfler la capacite libre au-dela de
+  // ce que le camion porte reellement, et faire accepter des missions pour
+  // plus de fret qu'il n'en tient.
+  await t.test('refuse une mise a jour qui depasserait la capacite totale du camion', async () => {
+    const transporter = await h.createTransporter();
+    const truck = await h.createTruck(transporter.token, { volumeM3: 20, capacityKg: 3500 });
+    const trip = await h.createTrip(transporter.token, truck.id, { freeVolumeM3: 18, freeWeightKg: 3000 });
+
+    const tropDeVolume = await h.api('PATCH', `/trips/${trip.id}`, {
+      token: transporter.token,
+      body: { freeVolumeM3: 50 },
+    });
+    assert.equal(tropDeVolume.status, 400);
+
+    const tropDePoids = await h.api('PATCH', `/trips/${trip.id}`, {
+      token: transporter.token,
+      body: { freeWeightKg: 4000 },
+    });
+    assert.equal(tropDePoids.status, 400);
+
+    const after = await h.api('GET', `/trips/${trip.id}`, { token: transporter.token });
+    assert.equal(after.body.freeVolumeM3, 18);
+    assert.equal(after.body.freeWeightKg, 3000);
+  });
+
+  await t.test('accepte une mise a jour de capacite qui reste dans les bornes du camion', async () => {
+    const transporter = await h.createTransporter();
+    const truck = await h.createTruck(transporter.token, { volumeM3: 20, capacityKg: 3500 });
+    const trip = await h.createTrip(transporter.token, truck.id, { freeVolumeM3: 18, freeWeightKg: 3000 });
+
+    const { status } = await h.api('PATCH', `/trips/${trip.id}`, {
+      token: transporter.token,
+      body: { freeVolumeM3: 19, freeWeightKg: 3400 },
+    });
+    assert.equal(status, 200);
+
+    const after = await h.api('GET', `/trips/${trip.id}`, { token: transporter.token });
+    assert.equal(after.body.freeVolumeM3, 19);
+    assert.equal(after.body.freeWeightKg, 3400);
+  });
+
+  await t.test('refuse une mise a jour qui ferait arriver le trajet avant son depart', async () => {
+    const transporter = await h.createTransporter();
+    const truck = await h.createTruck(transporter.token);
+    const trip = await h.createTrip(transporter.token, truck.id, { departureAt: h.tomorrowAt(10) });
+
+    const { status } = await h.api('PATCH', `/trips/${trip.id}`, {
+      token: transporter.token,
+      body: { arrivalAt: h.tomorrowAt(6) },
+    });
+    assert.equal(status, 400);
+  });
 });

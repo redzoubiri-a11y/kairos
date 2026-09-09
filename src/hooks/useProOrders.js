@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { Alert, AppState } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { supabase } from '../../supabase';
+import { notifyClient } from '../utils/notify';
 import { colors } from '../theme';
 
 // Libellés littéraux d'OrderCard.dc.html (vocabulaire commande, distinct du
@@ -22,12 +23,6 @@ const REFRESH_MS = 30000;
 
 const NEXT_STATUS = { pending: 'confirmed', confirmed: 'ready', ready: 'collected' };
 const NEXT_LABEL  = { pending: 'Confirmer', confirmed: 'Marquer prête', ready: 'Marquer récupérée' };
-
-async function notifyClient(userId, title, body) {
-  if (!userId) return;
-  await supabase.from('notifications').insert({ recipient_id: userId, recipient_type: 'user', type: 'order_update', title, body }).catch(() => {});
-  supabase.functions.invoke('push-manager', { body: { user_id: userId, title, body } }).catch(() => {});
-}
 
 export default function useProOrders() {
   const [restaurantId, setRestaurantId] = useState(null);
@@ -90,7 +85,7 @@ export default function useProOrders() {
           ready:     'Votre commande est prête ! Vous pouvez venir la récupérer.',
           collected: 'Commande récupérée. Merci !',
         };
-        notifyClient(order.user_id, `Commande ${ORDER_STATUS[next].label.toLowerCase()}`, messages[next] || '');
+        notifyClient({ userId: order.user_id, type: 'order_update', title: `Commande ${ORDER_STATUS[next].label.toLowerCase()}`, body: messages[next] || '' });
       }
       setActing(p => { const n = new Set(p); n.delete(order.id); return n; });
     })();
@@ -104,7 +99,7 @@ export default function useProOrders() {
         const { error } = await supabase.from('orders').update({ status: 'cancelled', cancelled_at: new Date().toISOString() }).eq('id', order.id);
         if (!error) {
           setOrders(prev => prev.map(o => o.id === order.id ? { ...o, status: 'cancelled' } : o));
-          notifyClient(order.user_id, 'Commande annulée', 'Votre commande a été annulée par le restaurant.');
+          notifyClient({ userId: order.user_id, type: 'order_update', title: 'Commande annulée', body: 'Votre commande a été annulée par le restaurant.' });
         }
         setActing(p => { const n = new Set(p); n.delete(order.id); return n; });
       }},

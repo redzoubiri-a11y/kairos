@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../supabase';
+import { notifyClient, notifyRestaurant } from '../utils/notify';
 
 export default function useClickCollect(restaurantId) {
   const [dishes,  setDishes]  = useState([]);
@@ -61,39 +62,18 @@ export default function useClickCollect(restaurantId) {
 
       const modeLabel = mode === 'table' ? `Table n°${tableNumber}` : 'à emporter';
 
-      try {
-        await supabase.from('notifications').insert({
-          recipient_id: userRow.id, recipient_type: 'user', type: 'new_order',
-          title: 'Commande envoyée', body: `Votre commande (${modeLabel}) a été envoyée, en attente de confirmation du restaurant.`,
-        });
-        supabase.functions.invoke('push-manager', {
-          body: { user_id: userRow.id, title: 'Commande envoyée ✅', body: 'En attente de confirmation du restaurant.' },
-        }).catch(() => {});
-
-        const { data: ownerRows } = await supabase
-          .from('restaurant_owners').select('auth_id')
-          .eq('restaurant_id', restaurantId).limit(1);
-        const owner = ownerRows?.[0] ?? null;
-        if (owner?.auth_id) {
-          // RPC dédiée (pas de lecture directe de `users`, verrouillée par RLS) —
-          // cf. supabase/migrations/20260816_lock_down_users_pii.sql
-          const { data: mgrId } = await supabase.rpc('get_user_id_by_auth', { p_auth_id: owner.auth_id });
-          if (mgrId) {
-            await supabase.from('notifications').insert({
-              recipient_id: mgrId, recipient_type: 'user', type: 'new_order',
-              title: 'Nouvelle commande 🛍️',
-              body: `${modeLabel} · ${total.toLocaleString('fr-FR')} DA`,
-            });
-          }
-        }
-        supabase.functions.invoke('push-manager', {
-          body: {
-            restaurant_id: restaurantId,
-            title: 'Nouvelle commande 🛍️',
-            body: `${modeLabel} · ${total.toLocaleString('fr-FR')} DA`,
-          },
-        }).catch(() => {});
-      } catch (_) {}
+      notifyClient({
+        userId: userRow.id,
+        type: 'new_order',
+        title: 'Commande envoyée ✅',
+        body: `Votre commande (${modeLabel}) a été envoyée, en attente de confirmation du restaurant.`,
+      });
+      notifyRestaurant({
+        restaurantId,
+        type: 'new_order',
+        title: 'Nouvelle commande 🛍️',
+        body: `${modeLabel} · ${total.toLocaleString('fr-FR')} DA`,
+      });
 
       return { orderId: order.id };
     } finally {

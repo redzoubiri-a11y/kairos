@@ -19,6 +19,23 @@ export default function VolumeSlider({
   const widthRef = useRef(0);
   const valueRef = useRef(value);
   valueRef.current = value;
+  // Le PanResponder ci-dessous n'est construit qu'une fois (useRef) : ses
+  // gestionnaires referment sur le setFromX du tout premier rendu, qui
+  // fermait lui-meme sur min/max/step/onChange de ce meme premier rendu. Un
+  // ecran qui fait varier `max` apres coup (DeclareRouteScreen : 100 par
+  // defaut avant que l'utilisateur choisisse son camion, puis le volume reel
+  // du camion) laissait le glissement suivre l'ancien plafond, desynchronise
+  // de la piste affichee qui, elle, se redessine avec le max courant. Ces
+  // refs, tenues a jour a chaque rendu, donnent a ce meme setFromX toujours
+  // en vie un acces aux valeurs actuelles.
+  const minRef = useRef(min);
+  const maxRef = useRef(max);
+  const stepRef = useRef(step);
+  const onChangeRef = useRef(onChange);
+  minRef.current = min;
+  maxRef.current = max;
+  stepRef.current = step;
+  onChangeRef.current = onChange;
 
   const clamp = (v) => Math.min(max, Math.max(min, v));
   const quantize = (v) => Math.round(clamp(v) / step) * step;
@@ -27,9 +44,13 @@ export default function VolumeSlider({
   const setFromX = (x) => {
     const usable = widthRef.current - THUMB;
     if (usable <= 0) return;
+    const currentMin = minRef.current;
+    const currentMax = maxRef.current;
+    const currentStep = stepRef.current;
     const r = Math.min(1, Math.max(0, (x - THUMB / 2) / usable));
-    const next = quantize(min + r * (max - min));
-    if (next !== valueRef.current) onChange(next);
+    const clamped = Math.min(currentMax, Math.max(currentMin, currentMin + r * (currentMax - currentMin)));
+    const next = Math.round(clamped / currentStep) * currentStep;
+    if (next !== valueRef.current) onChangeRef.current(next);
   };
 
   const panResponder = useRef(

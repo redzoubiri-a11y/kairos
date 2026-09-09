@@ -27,16 +27,26 @@ function html(title: string, content: string): Response {
 Deno.serve(async (req) => {
   const url = new URL(req.url);
   const requestId = url.searchParams.get("id");
+  const token = url.searchParams.get("token");
   const step = url.searchParams.get("step");
 
   if (!requestId) return txt("MIDA\n\nErreur : identifiant manquant.");
+  if (!token) return txt("MIDA\n\nErreur : jeton manquant.");
+
+  const { data: tokenRow } = await admin
+    .from("pro_request_admin_tokens")
+    .select("request_id")
+    .eq("request_id", requestId)
+    .eq("token", token)
+    .maybeSingle();
+  if (!tokenRow) return txt("MIDA\n\nErreur : jeton invalide ou expiré.");
 
   const { data: row } = await admin.from("pro_requests").select("*").eq("id", requestId).single();
   if (!row) return txt("MIDA\n\nDemande introuvable ou deja traitee.");
   if (row.status !== "pending") return txt("MIDA\n\nCette demande a deja ete traitee : " + row.status);
 
   if (step !== "confirm") {
-    const confirmUrl = BASE_URL + "/approve-pro?id=" + requestId + "&step=confirm";
+    const confirmUrl = BASE_URL + "/approve-pro?id=" + requestId + "&token=" + token + "&step=confirm";
     return html("Approuver", `
       <h1>MIDA</h1>
       <h2>Approuver cette demande ?</h2>
@@ -78,6 +88,7 @@ Deno.serve(async (req) => {
     await admin.from("restaurant_owners").update({ restaurant_id: restoId }).eq("id", ownerRow.id);
     await admin.auth.admin.updateUserById(row.user_id, { app_metadata: { role: "manager" } });
     await admin.from("pro_requests").update({ status: "approved" }).eq("id", requestId);
+    await admin.from("pro_request_admin_tokens").delete().eq("request_id", requestId);
 
     if (RESEND_KEY && userEmail) {
       const resendRes = await fetch("https://api.resend.com/emails", {

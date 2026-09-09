@@ -156,16 +156,28 @@ async function updateStatus(user, missionId, status, reason) {
   }
 
   const updated = await prisma.$transaction(async (tx) => {
-    const next = await tx.mission.update({
-      where: { id: missionId },
+    // La transition elle-meme doit etre atomique, pas seulement le decompte de
+    // capacite qui la suit : deux CANCELLED concomitants sur la meme mission
+    // (double-tap, retry sur timeout) lisaient tous deux `mission.status`
+    // ACCEPTED avant la transaction, passaient tous deux ALLOWED_TRANSITIONS,
+    // puis credi-taient tous deux la capacite du trajet/camion — la mission
+    // n'etait annulee qu'une fois, mais sa place restituee deux fois. La
+    // condition dans le `where` rend la transition elle-meme atomique : seul
+    // le premier appel la franchit, le second echoue proprement au lieu de
+    // rejouer un decompte deja fait.
+    const { count: transitioned } = await tx.mission.updateMany({
+      where: { id: missionId, status: mission.status },
       data: {
         status,
         statusReason: reason ?? null,
         ...(status === 'ACCEPTED' ? { acceptedAt: new Date() } : {}),
         ...(status === 'COMPLETED' ? { completedAt: new Date() } : {}),
       },
-      include: MISSION_INCLUDE,
     });
+    if (transitioned === 0) {
+      throw ApiError.conflict('Cette mission a deja change de statut entre-temps. Rechargez pour voir son etat actuel.');
+    }
+    const next = await tx.mission.findUniqueOrThrow({ where: { id: missionId }, include: MISSION_INCLUDE });
 
     // Accepting consumes the declared free capacity of the trip.
     //

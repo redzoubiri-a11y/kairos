@@ -565,4 +565,46 @@ test('missions', async (t) => {
     const afterRead = await h.api('GET', '/notifications/list?unreadOnly=true', { token: client.token });
     assert.equal(afterRead.body.items.length, 0);
   });
+
+  // La transition elle-meme doit etre atomique, pas seulement le decompte qui
+  // la suit : sans le `where` conditionne sur le statut lu, deux annulations
+  // concomitantes (double-tap, retry sur timeout) lisaient toutes deux
+  // ACCEPTED avant la transaction, franchissaient toutes deux
+  // ALLOWED_TRANSITIONS, puis restituaient toutes deux la capacite — la
+  // mission n'etait annulee qu'une fois, sa place rendue deux fois.
+  await t.test('deux annulations simultanees ne restituent la capacite qu une fois', async () => {
+    const { transporter, client, truck, trip } = await scenario();
+    const mission = await h.createMission(client.token, {
+      transporterId: transporter.profileId,
+      truckId: truck.id,
+      tripId: trip.id,
+      volumeM3: 5,
+      weightKg: 800,
+    });
+
+    await h.api('PATCH', '/missions/update-status', {
+      token: transporter.token,
+      body: { missionId: mission.id, status: 'ACCEPTED' },
+    });
+
+    const [a, b] = await Promise.all([
+      h.api('PATCH', '/missions/update-status', {
+        token: client.token,
+        body: { missionId: mission.id, status: 'CANCELLED', reason: 'Report' },
+      }),
+      h.api('PATCH', '/missions/update-status', {
+        token: client.token,
+        body: { missionId: mission.id, status: 'CANCELLED', reason: 'Report' },
+      }),
+    ]);
+
+    const reussites = [a, b].filter((r) => r.status === 200);
+    const conflits = [a, b].filter((r) => r.status === 409);
+    assert.equal(reussites.length, 1, 'une seule annulation aboutit');
+    assert.equal(conflits.length, 1, 'l autre echoue proprement en conflit');
+
+    const after = await h.api('GET', `/trips/${trip.id}`, { token: client.token });
+    assert.equal(after.body.freeVolumeM3, 18);
+    assert.equal(after.body.freeWeightKg, 3000);
+  });
 });

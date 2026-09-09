@@ -70,7 +70,7 @@ Deno.serve(async (req) => {
     // ── 2. Charger les données du restaurant ─────────────────────────────────
     const { data: resto } = await admin
       .from("restaurants")
-      .select("name, cuisine_type, city, quartier, neighborhood, avg_ticket, has_kids_menu, has_kids_chairs")
+      .select("name, cuisine_type, city, quartier, avg_ticket, has_kids_menu, has_kids_chairs")
       .eq("id", restaurant_id)
       .maybeSingle();
 
@@ -89,7 +89,7 @@ Deno.serve(async (req) => {
     const facts = [
       `Nom : ${resto.name}`,
       resto.cuisine_type && `Type de cuisine : ${resto.cuisine_type}`,
-      (resto.quartier || resto.neighborhood) && `Quartier : ${resto.quartier || resto.neighborhood}`,
+      resto.quartier && `Quartier : ${resto.quartier}`,
       resto.city && `Ville : ${resto.city}`,
       resto.avg_ticket && `Ticket moyen : ${resto.avg_ticket} DA`,
       resto.has_kids_menu && `A un menu enfant`,

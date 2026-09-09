@@ -11,8 +11,20 @@ import { openConnector } from './connectors/registry.ts';
 import type { AppConnector } from './connectors/types.ts';
 import { generateText, PROMPT_VERSION } from './generators/text.ts';
 import { renderStatic } from './render/static.ts';
+import { renderVideo } from './render/video.ts';
 import { assetPath, putAsset, signedUrl } from './storage.ts';
 import type { AppEntity } from './types.ts';
+
+/**
+ * Ce qu'une campagne produit par pièce.
+ *
+ * La vidéo est facultative et ne l'est pas par hasard : elle coûte une
+ * trentaine de secondes par entité là où l'image en coûte moins d'une. Sept
+ * fondateurs, c'est la différence entre dix secondes et quatre minutes.
+ */
+export type CampaignFormat = 'image' | 'video';
+
+export const FORMATS_PAR_DEFAUT: CampaignFormat[] = ['image'];
 
 export interface CreateCampaignInput {
   appKey: string;
@@ -24,6 +36,8 @@ export interface CreateCampaignInput {
   locale?: 'fr' | 'ar';
   /** Paramètres du gabarit, figés avec la campagne pour qu'elle reste rejouable. */
   params?: Record<string, unknown>;
+  /** Formats produits. Défaut : l'image seule. */
+  formats?: CampaignFormat[];
 }
 
 export interface CreateCampaignResult {
@@ -139,7 +153,7 @@ export async function createCampaign(
           objective: input.objective,
           locale: input.locale ?? 'fr',
           template: input.template ?? 'mida-square',
-          params: input.params ?? {},
+          params: { ...(input.params ?? {}), formats: input.formats ?? FORMATS_PAR_DEFAUT },
           status: 'draft',
         },
         { onConflict: 'app_id,slug' },
@@ -172,8 +186,28 @@ export interface ProducedItem {
   entityName: string;
   visual: { bucket: string; path: string; bytes: number };
   text: { bucket: string; path: string; bytes: number };
+  /** Absente quand la campagne ne demande pas ce format. */
+  video?: { bucket: string; path: string; bytes: number; durationInFrames: number };
   photoMissing: boolean;
   repaired: boolean;
+}
+
+/**
+ * Relit les formats demandés par une campagne.
+ *
+ * `params` est du jsonb : le moteur l'écrit, mais rien n'empêche de l'éditer à
+ * la main dans l'éditeur SQL. On valide plutôt que de faire confiance, et on
+ * retombe sur l'image seule — le format qui ne coûte rien — plutôt que
+ * d'échouer sur une campagne dont le reste est bon.
+ */
+function lireFormats(params: unknown): CampaignFormat[] {
+  const brut = (params as { formats?: unknown } | null)?.formats;
+  if (!Array.isArray(brut)) return FORMATS_PAR_DEFAUT;
+
+  const connus = brut.filter(
+    (f): f is CampaignFormat => f === 'image' || f === 'video',
+  );
+  return connus.length > 0 ? connus : FORMATS_PAR_DEFAUT;
 }
 
 /**
@@ -192,7 +226,7 @@ export async function runCampaign(campaignId: string): Promise<{
 
   const { data: campaign, error: campaignError } = await db
     .from('campaigns')
-    .select('id, slug, objective, template, locale')
+    .select('id, slug, objective, template, locale, params')
     .eq('id', campaignId)
     .single();
   if (campaignError) throw new Error(`Campagne introuvable : ${campaignError.message}`);
@@ -211,6 +245,8 @@ export async function runCampaign(campaignId: string): Promise<{
     .select('id, entity_id, entities(name, slug, payload)')
     .eq('campaign_id', campaignId);
   if (itemsError) throw new Error(`Pièces illisibles : ${itemsError.message}`);
+
+  const formats = lireFormats(campaign.params);
 
   await db.from('campaigns').update({ status: 'generating' }).eq('id', campaignId);
 
@@ -270,6 +306,48 @@ export async function runCampaign(campaignId: string): Promise<{
         'application/json; charset=utf-8',
       );
 
+      // La vidéo n'est produite que si la campagne la demande : une trentaine
+      // de secondes par entité, contre moins d'une pour l'image. Elle réutilise
+      // le même texte — un visuel et une story qui ne diraient pas la même
+      // chose seraient deux campagnes, pas une.
+      let videoAsset: Awaited<ReturnType<typeof putAsset>> | null = null;
+      let video: Awaited<ReturnType<typeof renderVideo>> | null = null;
+
+      if (formats.includes('video')) {
+        const debutRendu = Date.now();
+        video = await renderVideo({
+          headline: generated.copy.headline,
+          subline: generated.copy.subline,
+          badge: generated.copy.badge,
+          cta: generated.copy.call_to_action,
+          rating: entity.rating,
+          photoUrl: cover?.url ?? null,
+        });
+
+        videoAsset = await putAsset(
+          BUCKET_VISUALS,
+          assetPath(campaign.slug as string, key, 'mp4'),
+          video.buffer,
+          video.mime,
+        );
+
+        // Un rendu n'appelle aucun modèle : model et prompt_version restent
+        // nuls (0007), et ce qu'il a produit est décrit dans input/output.
+        await db.from('generations').insert({
+          campaign_item_id: row.id,
+          kind: 'video',
+          input: { template: 'mida-story', external_id: entity.externalId },
+          output: {
+            largeur: video.width,
+            hauteur: video.height,
+            images: video.durationInFrames,
+            fps: video.fps,
+            octets: video.buffer.byteLength,
+          },
+          latency_ms: Date.now() - debutRendu,
+        });
+      }
+
       await db.from('assets').upsert(
         [
           {
@@ -280,6 +358,17 @@ export async function runCampaign(campaignId: string): Promise<{
             height: visual.height,
           },
           { campaign_item_id: row.id, kind: 'text', ...textAsset },
+          ...(videoAsset && video
+            ? [
+                {
+                  campaign_item_id: row.id,
+                  kind: 'video',
+                  ...videoAsset,
+                  width: video.width,
+                  height: video.height,
+                },
+              ]
+            : []),
         ],
         { onConflict: 'bucket,path' },
       );
@@ -302,6 +391,16 @@ export async function runCampaign(campaignId: string): Promise<{
           path: textAsset.path,
           bytes: textAsset.bytes,
         },
+        ...(videoAsset && video
+          ? {
+              video: {
+                bucket: videoAsset.bucket,
+                path: videoAsset.path,
+                bytes: videoAsset.bytes,
+                durationInFrames: video.durationInFrames,
+              },
+            }
+          : {}),
         photoMissing: visual.photoMissing,
         repaired: generated.repaired,
       });
@@ -332,6 +431,8 @@ export interface CampaignPreview {
     status: string;
     error: string | null;
     visualUrl: string | null;
+    /** Nulle quand la campagne n'a pas demandé ce format. */
+    videoUrl: string | null;
     copy: Record<string, unknown> | null;
   }[];
 }
@@ -364,11 +465,15 @@ export async function previewCampaign(campaignId: string): Promise<CampaignPrevi
     };
 
     const image = item.assets.find((a) => a.kind === 'image');
+    const video = item.assets.find((a) => a.kind === 'video');
 
     const { data: generation } = await db
       .from('generations')
       .select('output')
       .eq('campaign_item_id', item.id)
+      // Depuis 0006 cette table porte aussi les rendus vidéo : sans ce filtre,
+      // « la plus récente » rendrait les dimensions du MP4 au lieu du texte.
+      .eq('kind', 'text')
       .order('created_at', { ascending: false })
       .limit(1)
       .maybeSingle();
@@ -378,6 +483,7 @@ export async function previewCampaign(campaignId: string): Promise<CampaignPrevi
       status: item.status,
       error: item.error,
       visualUrl: image ? await signedUrl(image.bucket, image.path) : null,
+      videoUrl: video ? await signedUrl(video.bucket, video.path) : null,
       copy: (generation?.output as Record<string, unknown> | undefined) ?? null,
     });
   }

@@ -164,6 +164,8 @@ server.registerTool(
     title: 'Créer une campagne',
     description:
       'Crée la campagne et fige un instantané des entités retenues. ' +
+      'Produit un visuel carré 1080², et une story 1080×1920 de 6 s si le ' +
+      'format vidéo est demandé — tous deux à partir du même texte. ' +
       "Les entités sans accord de communication sont écartées et nommées dans " +
       'la réponse. Avec run à true, les pièces sont produites dans la foulée : ' +
       'un texte et un visuel par entité, déposés dans le Storage du studio.',
@@ -179,6 +181,14 @@ server.registerTool(
         .min(10)
         .describe("L'intention de la campagne, en clair — elle entre dans le prompt"),
       external_ids: z.array(z.string()).min(1).max(50),
+      formats: z
+        .array(z.enum(['image', 'video']))
+        .optional()
+        .describe(
+          "Formats produits. Défaut : l'image seule. La vidéo coûte une " +
+            "trentaine de secondes par entité contre moins d'une pour l'image — " +
+            'sept fondateurs, c\'est dix secondes ou quatre minutes.',
+        ),
       run: z.boolean().optional().default(false),
     },
   },
@@ -190,6 +200,7 @@ server.registerTool(
         name: args.name,
         objective: args.objective,
         externalIds: args.external_ids,
+        formats: args.formats,
       });
 
       if (!args.run) return asText(created);
@@ -207,8 +218,9 @@ server.registerTool(
   {
     title: 'Relire une campagne',
     description:
-      'Rend, pour chaque pièce, son état, son texte et une URL signée vers son ' +
-      "visuel. Les seaux sont privés : l'URL expire au bout d'une heure.",
+      'Rend, pour chaque pièce, son état, son texte et des URL signées vers son ' +
+      "visuel et sa vidéo. Les seaux sont privés : les URL expirent au bout " +
+      "d'une heure.",
     inputSchema: {
       campaign_id: z.string().uuid(),
     },

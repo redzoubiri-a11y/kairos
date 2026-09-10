@@ -108,13 +108,20 @@ const TEMOINS: Record<string, string> = {
 const TEMOIN_PAR_DEFAUT = 'Réservé ce soir';
 
 /**
- * Vérifie qu'une famille est réellement utilisée, et pas seulement demandée.
+ * Vérifie qu'une famille est réellement utilisée, et à la bonne graisse.
  *
- * On rend deux fois la même chaîne : une fois dans la famille voulue, une fois
- * dans une famille qui n'existe nulle part. Si les deux images sont identiques,
- * c'est que la première a été servie par la police de repli — la configuration
- * n'a pas pris, et tout visuel produit ensuite serait dans la mauvaise
- * typographie. On préfère s'arrêter.
+ * Deux contrôles, parce qu'il y a deux façons de rendre le mauvais texte :
+ *
+ * 1. **La famille n'est pas résolue.** On rend la même chaîne dans la famille
+ *    voulue et dans une famille qui n'existe nulle part. Images identiques =
+ *    la première a été servie par la police de repli du système.
+ *
+ * 2. **La graisse n'est pas honorée.** Depuis que le gabarit demande une
+ *    famille et une graisse séparées, un moteur peut résoudre « Work Sans » et
+ *    servir le Regular là où on demandait l'ExtraBold : le premier contrôle
+ *    passerait, et le visuel sortirait en typographie fine sans que rien ne le
+ *    signale. On compare donc aussi la graisse voulue au Regular de la même
+ *    famille — elles doivent différer.
  *
  * Le témoin est écrit dans l'écriture de la famille : demander « Réservé ce
  * soir » à Cairo passerait même si Cairo n'avait pas un glyphe arabe.
@@ -122,12 +129,13 @@ const TEMOIN_PAR_DEFAUT = 'Réservé ce soir';
 export async function assertPolicesDisponibles(
   sharp: typeof import('sharp'),
   family: string,
+  weight: number,
 ): Promise<void> {
-  const texte = TEMOINS[family] ?? TEMOIN_PAR_DEFAUT;
-  const probe = async (famille: string): Promise<number> => {
+  const texte = TEMOINS[family] ?? TEMOINS[`${family} ExtraBold`] ?? TEMOIN_PAR_DEFAUT;
+  const probe = async (famille: string, graisse: number = 400): Promise<number> => {
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="520" height="140">
       <rect width="520" height="140" fill="#000000"/>
-      <text x="16" y="96" font-family="${famille}" font-size="56" fill="#FFFFFF">${texte}</text>
+      <text x="16" y="96" font-family="${famille}" font-weight="${graisse}" font-size="56" fill="#FFFFFF">${texte}</text>
     </svg>`;
     const { data } = await sharp(Buffer.from(svg))
       .greyscale()
@@ -138,17 +146,30 @@ export async function assertPolicesDisponibles(
     return lit;
   };
 
-  const [voulue, repli] = await Promise.all([
-    probe(family),
-    probe('Kairos Police Absente'),
+  const [voulue, repli, regular] = await Promise.all([
+    probe(family, weight),
+    probe('Kairos Police Absente', weight),
+    probe(family, 400),
   ]);
+
+  const ou = `Vérifier FONTCONFIG_FILE (${process.env.FONTCONFIG_FILE ?? 'non posée'}), ` +
+    "l'installation des paquets @expo-google-fonts, et — sur macOS, où le moteur " +
+    'ignore fontconfig — la présence des .ttf dans ~/Library/Fonts.';
 
   if (voulue === repli) {
     throw new Error(
-      `${family} n'est pas résolue par fontconfig : le rendu utiliserait la ` +
-        'police de repli du système. Vérifier FONTCONFIG_FILE ' +
-        `(${process.env.FONTCONFIG_FILE ?? 'non posée'}) et l'installation des ` +
-        'paquets @expo-google-fonts.',
+      `La famille « ${family} » n'est pas résolue : le rendu utiliserait la ` +
+        `police de repli du système. ${ou}`,
+    );
+  }
+
+  // Une graisse non honorée ne lève aucune erreur et ne se voit qu'à l'œil, sur
+  // un visuel déjà publié. Si le 800 rend exactement le même dessin que le 400,
+  // c'est que le moteur sert la même fonte pour les deux.
+  if (weight !== 400 && voulue === regular) {
+    throw new Error(
+      `La graisse ${weight} de « ${family} » n'est pas honorée : le rendu est ` +
+        `identique au Regular. Le visuel sortirait en typographie fine. ${ou}`,
     );
   }
 }

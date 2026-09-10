@@ -24,9 +24,15 @@ const CONTENT_WIDTH = CANVAS - MARGIN * 2;
  * une police de système. Cairo couvre l'arabe et le latin, et vient du même
  * paquet @expo-google-fonts que celui qu'utilise déjà l'application.
  */
+// Famille et graisse séparées, jamais le nom composé « Work Sans ExtraBold ».
+// fontconfig accepte le nom composé, mais lui seul : macOS (CoreText, qu'utilise
+// le sharp livré pour Darwin) ne connaît que la famille, et retombe en silence
+// sur Helvetica. Séparer les deux rend le gabarit lisible partout — et le
+// garde-fou d'assertPolicesDisponibles vérifie désormais que la graisse est
+// réellement honorée, pas seulement que la famille existe.
 const POLICES = {
-  fr: { xb: 'Work Sans ExtraBold', sb: 'Work Sans SemiBold', rg: 'Work Sans Regular' },
-  ar: { xb: 'Cairo ExtraBold', sb: 'Cairo SemiBold', rg: 'Cairo Regular' },
+  fr: { famille: 'Work Sans', xb: 800, sb: 600, rg: 400 },
+  ar: { famille: 'Cairo', xb: 800, sb: 600, rg: 400 },
 } as const;
 
 /**
@@ -220,9 +226,10 @@ function buildOverlay(input: StaticRenderInput): string {
   const cta = wrapText(input.cta, 28, 'semiBold', 620, 1)[0] ?? '';
 
   const svg = applyConditionals(template, { rating: hasRating })
-    .replace(/\{\{FONT_XB\}\}/g, police.xb)
-    .replace(/\{\{FONT_SB\}\}/g, police.sb)
-    .replace(/\{\{FONT_RG\}\}/g, police.rg)
+    .replace(/\{\{FONT_FAMILY\}\}/g, police.famille)
+    .replace(/\{\{W_XB\}\}/g, String(police.xb))
+    .replace(/\{\{W_SB\}\}/g, String(police.sb))
+    .replace(/\{\{W_RG\}\}/g, String(police.rg))
     .replace(/\{\{HEADLINE_LINES\}\}/g, headlineMarkup)
     .replace(/\{\{BADGE_WIDTH\}\}/g, String(badgeWidth))
     .replace(/\{\{BADGE_X\}\}/g, String(badgeX))
@@ -293,7 +300,7 @@ export async function renderStatic(
 
   const locale: Locale = input.locale ?? 'fr';
   if (!fontsChecked.has(locale)) {
-    await assertPolicesDisponibles(sharp, POLICES[locale].xb);
+    await assertPolicesDisponibles(sharp, POLICES[locale].famille, POLICES[locale].xb);
     fontsChecked.add(locale);
   }
 

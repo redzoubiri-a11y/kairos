@@ -23,7 +23,8 @@
 
   Jetons remplacés par render/static.ts — notés ici sans leurs accolades, pour
   que ce commentaire ne soit pas lui-même substitué :
-    FONT_XB, FONT_SB, FONT_RG               familles, selon la langue
+    FONT_FAMILY                             famille, selon la langue
+    W_XB, W_SB, W_RG                        graisses (800 / 600 / 400)
     BADGE_*                                 étiquette, côté début de ligne
     HEADLINE_LINES                          1 ou 2 lignes, positionnées côté code
     SUBLINE, TEXT_X, TEXT_ANCHOR            nom + quartier
@@ -59,7 +60,7 @@
   <g>
     <rect x="{{BADGE_X}}" y="72" width="{{BADGE_WIDTH}}" height="56" rx="28" fill="#D8432B"/>
     <text x="{{BADGE_TEXT_X}}" y="109" text-anchor="{{TEXT_ANCHOR}}"
-          font-family="{{FONT_SB}}" font-size="24" letter-spacing="1.2"
+          font-family="{{FONT_FAMILY}}" font-weight="{{W_SB}}" font-size="24" letter-spacing="1.2"
           fill="#FFFFFF">{{BADGE_TEXT}}</text>
   </g>
 
@@ -70,7 +71,7 @@
     <rect x="{{RATING_X}}" y="72" width="132" height="56" rx="28"
           fill="#191919" fill-opacity="0.72"/>
     <text x="{{RATING_TEXT_X}}" y="110"
-          font-family="{{FONT_SB}}" font-size="26" fill="#F5EDD6">{{RATING_TEXTE}}</text>
+          font-family="{{FONT_FAMILY}}" font-weight="{{W_SB}}" font-size="26" fill="#F5EDD6">{{RATING_TEXTE}}</text>
   </g>
   <!--/if:rating-->
 
@@ -79,10 +80,10 @@
        du <text> parent. Le style reste ici, la géométrie est calculée au rendu,
        et le bloc est calé sur sa dernière ligne pour que le bas de la
        composition ne bouge jamais. -->
-  <g font-family="{{FONT_XB}}" font-size="76" fill="#FFFFFF" text-anchor="{{TEXT_ANCHOR}}"
+  <g font-family="{{FONT_FAMILY}}" font-weight="{{W_XB}}" font-size="76" fill="#FFFFFF" text-anchor="{{TEXT_ANCHOR}}"
      >{{HEADLINE_LINES}}</g>
 
-  <text x="{{TEXT_X}}" y="890" text-anchor="{{TEXT_ANCHOR}}" font-family="{{FONT_RG}}" font-size="34"
+  <text x="{{TEXT_X}}" y="890" text-anchor="{{TEXT_ANCHOR}}" font-family="{{FONT_FAMILY}}" font-weight="{{W_RG}}" font-size="34"
         fill="#F5F5F3" fill-opacity="0.88">{{SUBLINE}}</text>
 
   <line x1="72" y1="936" x2="1008" y2="936" stroke="#F5F5F3" stroke-opacity="0.22" stroke-width="2"/>
@@ -91,8 +92,8 @@
        côté où elle finit — pour que le regard termine sur l'action, en
        français comme en arabe. Même ligne de base pour les deux. -->
   <text x="{{TEXT_X}}" y="1008" text-anchor="{{TEXT_ANCHOR}}"
-        font-family="Work Sans ExtraBold" font-size="40" fill="#D8432B">mida</text>
-  <text x="{{CTA_X}}" y="1006" text-anchor="{{CTA_ANCHOR}}" font-family="{{FONT_SB}}"
+        font-family="Work Sans" font-weight="800" font-size="40" fill="#D8432B">mida</text>
+  <text x="{{CTA_X}}" y="1006" text-anchor="{{CTA_ANCHOR}}" font-family="{{FONT_FAMILY}}" font-weight="{{W_SB}}"
         font-size="28" fill="#F5F5F3">{{CTA}}</text>
 
 </svg>

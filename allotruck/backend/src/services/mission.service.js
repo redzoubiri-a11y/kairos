@@ -189,6 +189,26 @@ async function updateStatus(user, missionId, status, reason) {
     // camion ne porte. La condition dans le `where` rend le controle atomique :
     // deux acceptations simultanees ne peuvent pas la franchir ensemble.
     if (status === 'ACCEPTED' && next.tripId) {
+      // trip.freeVolumeM3/freeWeightKg n'est qu'un instantane fige a la
+      // creation (ou mise a jour) du trajet : rien ne le recalcule si le
+      // camion est redimensionne (truck.service.update) apres coup. Un
+      // transporteur pouvait corriger son camion a 5 m3 puis accepter une
+      // mission de 15 m3 deja en attente sur un trajet qui en promettait
+      // encore 18 — le trajet l'acceptait sans broncher, car son propre
+      // decompte n'avait pas bouge. On revalide ici contre la capacite
+      // reelle et actuelle du camion, derivee du trajet (pas de
+      // next.truckId, optionnel et fourni par le client) au moment precis
+      // ou la capacite est reellement engagee.
+      const trip = await tx.trip.findUnique({ where: { id: next.tripId }, select: { truckId: true } });
+      const truck = await tx.truck.findUnique({ where: { id: trip.truckId } });
+      if (next.volumeM3 > truck.volumeM3 || next.weightKg > truck.capacityKg) {
+        throw ApiError.badRequest(
+          `Ce camion ne peut plus transporter cette mission : sa capacite actuelle est de ` +
+            `${truck.volumeM3} m3 et ${truck.capacityKg} kg, la mission en demande ${next.volumeM3} m3 et ` +
+            `${next.weightKg} kg. Le camion a ete redimensionne depuis la creation du trajet.`
+        );
+      }
+
       const { count } = await tx.trip.updateMany({
         where: {
           id: next.tripId,

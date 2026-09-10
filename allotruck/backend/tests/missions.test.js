@@ -56,6 +56,36 @@ test('missions', async (t) => {
     assert.equal(status, 400);
   });
 
+  await t.test('refuse d accepter une mission que le camion, redimensionne depuis, ne peut plus porter', async () => {
+    const { transporter, client, truck, trip } = await scenario();
+    const mission = await h.createMission(client.token, {
+      transporterId: transporter.profileId,
+      truckId: truck.id,
+      tripId: trip.id,
+      volumeM3: 15,
+      weightKg: 2500,
+    });
+
+    // Le transporteur corrige son camion (erreur de saisie, changement de
+    // vehicule) apres avoir declare le trajet : la mission en attente depasse
+    // desormais la vraie capacite du camion, alors que le trajet promet
+    // toujours 18 m3.
+    const resize = await h.api('PATCH', `/trucks/${truck.id}`, {
+      token: transporter.token,
+      body: { volumeM3: 5 },
+    });
+    assert.equal(resize.status, 200);
+
+    const accept = await h.api('PATCH', '/missions/update-status', {
+      token: transporter.token,
+      body: { missionId: mission.id, status: 'ACCEPTED' },
+    });
+    assert.equal(accept.status, 400);
+
+    const tripAfter = await h.api('GET', `/trips/${trip.id}`, { token: transporter.token });
+    assert.equal(tripAfter.body.freeVolumeM3, 18, 'la capacite du trajet ne doit pas avoir ete decomptee');
+  });
+
   await t.test('refuse une mission vers un transporteur non verifie', async () => {
     const unverified = await h.createTransporter({ verified: false });
     const client = await h.createClient();

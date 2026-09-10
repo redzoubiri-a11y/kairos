@@ -28,9 +28,11 @@ select r.id,
        true,
        array['name', 'photos', 'promotions']::text[],
        now(),
-       'contrat',
-       'TODO_REDOUANE : lien vers le contrat partenaire fondateur signé',
-       'TODO_REDOUANE : qui a recueilli l''accord'
+       'verbal',
+       'Accord verbal recueilli en personne dans chaque établissement par le 
+        fondateur de Mida, avant le 2026-09-10. Aucune trace écrite : ni contrat 
+        signé, ni message, ni courriel. À faire confirmer par écrit.',
+       'Redouane Zoubiri'
 from public.restaurants r
 where r.slug in (
   'terraza-zianis',

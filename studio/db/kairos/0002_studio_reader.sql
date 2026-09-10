@@ -100,13 +100,15 @@ comment on view studio_read.restaurant_photos is
 -- `user_id` et la jointure vers `users` sont volontairement absents : le studio
 -- cite un avis, il n'a pas à savoir de qui il vient.
 -- ---------------------------------------------------------------------------
+-- `pro_response` a été retiré le 2026-09-10 : la colonne n'existe pas dans
+-- public.reviews sur Kairos (vérifié par information_schema), et elle n'était
+-- lue nulle part — ni par le connecteur, ni par les types, ni par les tests.
 create or replace view studio_read.reviews as
 select
   rv.id,
   rv.restaurant_id,
   rv.rating,
   rv.comment,
-  rv.pro_response,
   rv.created_at
 from public.reviews rv
 join public.restaurants r on r.id = rv.restaurant_id

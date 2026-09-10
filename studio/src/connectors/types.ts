@@ -42,9 +42,28 @@ export interface AppConnector {
   find(query: FindQuery): Promise<AppEntitySummary[]>;
 
   /** null si l'entité n'existe pas, n'est pas publiée, ou n'est pas lisible. */
-  get(kind: EntityKind, externalId: string): Promise<AppEntity | null>;
+  get(
+    kind: EntityKind,
+    externalId: string,
+    options?: GetOptions,
+  ): Promise<AppEntity | null>;
 
   close(): Promise<void>;
+}
+
+export interface GetOptions {
+  /**
+   * Rend la fiche complète, sans filtrer sur les portées accordées.
+   *
+   * Réservé aux pièces destinées **au propriétaire de l'entité lui-même** :
+   * lui montrer ses propres photos n'est pas les republier, et c'est ce qui
+   * rend une campagne de démarchage utile — un visuel sans la photo du
+   * restaurant n'a aucun pouvoir de conviction.
+   *
+   * `consent` reste rendu tel quel : l'appelant voit toujours que rien n'a été
+   * accordé. Ce qui change, c'est ce qu'il a le droit de montrer, et à qui.
+   */
+  pourLeProprietaire?: boolean;
 }
 
 export interface ConnectorHealth {

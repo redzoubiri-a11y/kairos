@@ -39,7 +39,16 @@ export interface CreateCampaignInput {
   params?: Record<string, unknown>;
   /** Formats produits. Défaut : l'image seule. */
   formats?: CampaignFormat[];
+  /**
+   * Nature de la campagne. Défaut : 'publication', qui exige l'accord de chaque
+   * entité. 'demarchage' produit la même pièce pour la montrer au restaurateur
+   * lui-même — le texte reste tourné vers le client, puisque ce qu'on lui
+   * montre est justement ce que Mida publierait pour lui.
+   */
+  kind?: CampaignKind;
 }
+
+export type CampaignKind = 'publication' | 'demarchage';
 
 export interface CreateCampaignResult {
   campaignId: string;
@@ -47,6 +56,12 @@ export interface CreateCampaignResult {
   included: { externalId: string; name: string }[];
   /** Nommés, avec la raison : une exclusion silencieuse est une exclusion qu'on refera. */
   excluded: { externalId: string; name: string; reason: string }[];
+  kind: CampaignKind;
+  /**
+   * Entités retenues qui n'ont donné aucun accord — vide hors démarchage.
+   * Ces pièces ne doivent être montrées qu'au restaurateur concerné.
+   */
+  sansAccord: string[];
 }
 
 async function appIdFor(appKey: string): Promise<string> {
@@ -105,12 +120,19 @@ export async function createCampaign(
 
     const appId = await appIdFor(input.appKey);
 
+    const kind: CampaignKind = input.kind ?? 'publication';
+
     const included: CreateCampaignResult['included'] = [];
     const excluded: CreateCampaignResult['excluded'] = [];
+    const sansAccord: string[] = [];
     const entityIds: string[] = [];
 
     for (const externalId of input.externalIds) {
-      const entity = await ownConnector.get('restaurant', externalId);
+      // En démarchage, la fiche est demandée entière : c'est au restaurateur
+      // qu'on la montre, et un visuel sans sa photo ne le convaincra pas.
+      const entity = await ownConnector.get('restaurant', externalId, {
+        pourLeProprietaire: kind === 'demarchage',
+      });
 
       if (!entity) {
         excluded.push({
@@ -124,7 +146,11 @@ export async function createCampaign(
       // Le déclencheur SQL refuserait la pièce de toute façon ; on filtre ici
       // pour pouvoir dire QUI a été écarté et pourquoi, au lieu de faire
       // échouer la campagne entière sur la première exclusion.
-      if (!entity.consent.granted) {
+      //
+      // Une campagne de démarchage n'écarte personne : c'est précisément aux
+      // restaurants sans accord qu'elle s'adresse. Les entités retenues sont
+      // nommées dans `sansAccord` pour que l'appelant sache ce qu'il produit.
+      if (!entity.consent.granted && kind === 'publication') {
         excluded.push({
           externalId,
           name: entity.name,
@@ -132,6 +158,8 @@ export async function createCampaign(
         });
         continue;
       }
+
+      if (!entity.consent.granted) sansAccord.push(entity.name);
 
       entityIds.push(await snapshotEntity(appId, entity));
       included.push({ externalId, name: entity.name });
@@ -155,6 +183,7 @@ export async function createCampaign(
           locale: input.locale ?? 'fr',
           template: input.template ?? 'mida-square',
           params: { ...(input.params ?? {}), formats: input.formats ?? FORMATS_PAR_DEFAUT },
+          kind,
           status: 'draft',
         },
         { onConflict: 'app_id,slug' },
@@ -176,7 +205,7 @@ export async function createCampaign(
       throw new Error(`Ajout des pièces : ${itemsError.message}`);
     }
 
-    return { campaignId, slug: input.slug, included, excluded };
+    return { campaignId, slug: input.slug, included, excluded, kind, sansAccord };
   } finally {
     if (!connector) await ownConnector.close();
   }
@@ -227,7 +256,7 @@ export async function runCampaign(campaignId: string): Promise<{
 
   const { data: campaign, error: campaignError } = await db
     .from('campaigns')
-    .select('id, slug, objective, template, locale, params')
+    .select('id, slug, objective, template, locale, params, kind')
     .eq('id', campaignId)
     .single();
   if (campaignError) throw new Error(`Campagne introuvable : ${campaignError.message}`);
@@ -267,6 +296,7 @@ export async function runCampaign(campaignId: string): Promise<{
         locale,
         entity,
         objective: campaign.objective as string,
+        kind: (campaign.kind as 'publication' | 'demarchage') ?? 'publication',
       });
 
       await db.from('generations').insert({

@@ -17,7 +17,9 @@ import type {
   EntityReview,
   MarketingScope,
 } from '../types.ts';
-import type { AppConnector, ConnectorHealth, FindQuery } from './types.ts';
+import type { AppConnector, ConnectorHealth, FindQuery,
+  GetOptions,
+} from './types.ts';
 
 /** Combien d'avis et de photos on remonte : au-delà, on encombre le prompt sans le nourrir. */
 const MAX_REVIEWS = 5;
@@ -151,7 +153,11 @@ export class MidaConnector implements AppConnector {
     }));
   }
 
-  async get(kind: EntityKind, externalId: string): Promise<AppEntity | null> {
+  async get(
+    kind: EntityKind,
+    externalId: string,
+    options?: GetOptions,
+  ): Promise<AppEntity | null> {
     this.#assertKind(kind);
     const sql = this.#sql;
 
@@ -170,17 +176,22 @@ export class MidaConnector implements AppConnector {
     if (!row) return null;
 
     const scopes = (row.consent_scopes ?? []) as MarketingScope[];
+
+    // Pour une pièce destinée au propriétaire, la fiche est rendue entière : on
+    // lui montre son établissement, on ne le communique à personne.
+    const tout = options?.pourLeProprietaire === true;
+    const autorise = (portee: MarketingScope) => tout || scopes.includes(portee);
     const granted = row.consent_granted ?? false;
 
     const [photoRows, promoRows, reviewRows] = await Promise.all([
-      scopes.includes('photos')
+      autorise('photos')
         ? sql<{ url: string; position: number }[]>`
             select url, position from studio_read.restaurant_photos
             where restaurant_id = ${externalId}
             order by position asc limit ${MAX_PHOTOS}`
         : Promise.resolve([] as { url: string; position: number }[]),
 
-      scopes.includes('promotions')
+      autorise('promotions')
         ? sql<
             {
               title: string;
@@ -199,7 +210,7 @@ export class MidaConnector implements AppConnector {
             order by start_date asc nulls first`
         : Promise.resolve([]),
 
-      scopes.includes('reviews')
+      autorise('reviews')
         ? sql<{ rating: number; comment: string | null; created_at: Date }[]>`
             select rating, comment, created_at from studio_read.reviews
             where restaurant_id = ${externalId} and comment is not null

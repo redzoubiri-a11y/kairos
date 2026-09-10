@@ -167,8 +167,8 @@ server.registerTool(
       'Produit un visuel carré 1080², et une story 1080×1920 de 6 s si le ' +
       'format vidéo est demandé — tous deux à partir du même texte. ' +
       'Français ou arabe, au choix — la mise en page se retourne pour ' +
-      "l'arabe. Les entités sans accord de communication sont écartées et nommées dans " +
-      'la réponse. Avec run à true, les pièces sont produites dans la foulée : ' +
+      "l'arabe. En publication, les entités sans accord de communication sont " +
+      'écartées et nommées dans la réponse ; en démarchage elles sont retenues.  Avec run à true, les pièces sont produites dans la foulée : ' +
       'un texte et un visuel par entité, déposés dans le Storage du studio.',
     inputSchema: {
       app: z.string(),
@@ -199,6 +199,17 @@ server.registerTool(
             'Défaut : le français. Une campagne ne mélange pas les deux — deux ' +
             'langues, deux campagnes.',
         ),
+      kind: z
+        .enum(['publication', 'demarchage'])
+        .optional()
+        .describe(
+          "Nature de la campagne. « publication » (défaut) diffuse au public et " +
+            "exige l'accord de chaque restaurant. « demarchage » produit la même " +
+            'pièce pour la montrer au restaurateur lui-même, et accepte donc les ' +
+            "restaurants sans accord — ils sont nommés dans « sansAccord ». Une " +
+            'pièce de démarchage ne se publie pas : la base refuse de requalifier ' +
+            'la campagne tant que les accords manquent.',
+        ),
       run: z.boolean().optional().default(false),
     },
   },
@@ -212,6 +223,7 @@ server.registerTool(
         externalIds: args.external_ids,
         formats: args.formats,
         locale: args.locale,
+        kind: args.kind,
       });
 
       if (!args.run) return asText(created);

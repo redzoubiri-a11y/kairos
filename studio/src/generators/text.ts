@@ -176,6 +176,12 @@ function factsFor(entity: AppEntity): string {
 
 export interface GenerateTextOptions {
   entity: AppEntity;
+  /**
+   * 'demarchage' autorise un texte pour un restaurant sans accord : la pièce
+   * lui est montrée à lui, elle n'est pas publiée. Le texte reste tourné vers
+   * le client — c'est justement ce que Mida publierait pour lui.
+   */
+  kind?: 'publication' | 'demarchage';
   /** L'intention de la campagne, en clair. Reprise telle quelle dans le prompt. */
   objective: string;
   /** Langue du texte produit. Français par défaut. */
@@ -200,7 +206,11 @@ export async function generateText(
   const { entity, objective } = options;
   const locale: Locale = options.locale ?? 'fr';
 
-  if (!entity.consent.granted) {
+  // Second refus, doublant celui de la base — et il doit connaître la même
+  // distinction, sinon une campagne de démarchage passe le déclencheur SQL puis
+  // échoue ici, ce qui est le pire des deux mondes : la pièce est enregistrée,
+  // rien n'est produit.
+  if (!entity.consent.granted && (options.kind ?? 'publication') === 'publication') {
     throw new Error(
       `« ${entity.name} » n'a pas donné son accord de communication : aucun texte ne sera écrit.`,
     );
